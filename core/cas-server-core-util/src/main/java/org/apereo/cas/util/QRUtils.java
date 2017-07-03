@@ -34,8 +34,11 @@ public final class QRUtils {
      *
      * @param stream the stream
      * @param key    the key
+     * @param width  the width
+     * @param height the height
      */
-    public static void generateQRCode(final OutputStream stream, final String key) {
+    public static void generateQRCode(final OutputStream stream, final String key,
+                                      final int width, final int height) {
         try {
             final Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
             hintMap.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
@@ -43,19 +46,19 @@ public final class QRUtils {
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 
             final QRCodeWriter qrCodeWriter = new QRCodeWriter();
-            final BitMatrix byteMatrix = qrCodeWriter.encode(key, BarcodeFormat.QR_CODE, 250, 250, hintMap);
-            final int width = byteMatrix.getWidth();
-            final BufferedImage image = new BufferedImage(width, width, BufferedImage.TYPE_INT_RGB);
+            final BitMatrix byteMatrix = qrCodeWriter.encode(key, BarcodeFormat.QR_CODE, width, height, hintMap);
+            final int byteMatrixWidth = byteMatrix.getWidth();
+            final BufferedImage image = new BufferedImage(byteMatrixWidth, byteMatrixWidth, BufferedImage.TYPE_INT_RGB);
             image.createGraphics();
 
             final Graphics2D graphics = (Graphics2D) image.getGraphics();
             try {
                 graphics.setColor(Color.WHITE);
-                graphics.fillRect(0, 0, width, width);
+                graphics.fillRect(0, 0, byteMatrixWidth, byteMatrixWidth);
                 graphics.setColor(Color.BLACK);
 
-                IntStream.range(0, width)
-                        .forEach(i -> IntStream.range(0, width)
+                IntStream.range(0, byteMatrixWidth)
+                        .forEach(i -> IntStream.range(0, byteMatrixWidth)
                                 .filter(j -> byteMatrix.get(i, j))
                                 .forEach(j -> graphics.fillRect(i, j, 1, 1)));
             } finally {

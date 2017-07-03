@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +43,6 @@ public class SqrlAuthenticationController {
     public ResponseEntity sqrl(@ModelAttribute final SqrlClientRequest request,
                                @RequestParam("nut") final String nut,
                                final HttpServletRequest httpRequest) {
-        LOGGER.error("TEST12");
         final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, httpRequest.getRemoteAddr());
         return new ResponseEntity(sqrlAuthResponse.toEncodedString(), HttpStatus.OK);
     }
@@ -59,7 +57,6 @@ public class SqrlAuthenticationController {
     @GetMapping(path = "/authcheck")
     public ResponseEntity checkAuthentication(@RequestParam("nut") final String nut,
                                               final HttpServletRequest httpRequest) {
-        LOGGER.error("TEST1");
         if (server.checkAuthenticationStatus(nut, httpRequest.getRemoteAddr())) {
             return new ResponseEntity(HttpStatus.RESET_CONTENT);
         }
