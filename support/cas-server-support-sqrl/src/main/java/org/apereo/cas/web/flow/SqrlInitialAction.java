@@ -57,7 +57,7 @@ public class SqrlInitialAction extends AbstractAction {
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final Base64OutputStream os = new Base64OutputStream(out);
-        QRUtils.generateQRCode(os, url, 120, 120);
+        QRUtils.generateQRCode(os, url, QRUtils.WIDTH_MEDIUM, QRUtils.WIDTH_MEDIUM);
         final String result = new String(out.toByteArray());
 
         requestContext.getFlowScope().put("sqrlUrl", url);
