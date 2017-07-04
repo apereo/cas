@@ -1,11 +1,15 @@
 package org.apereo.cas.web;
 
+import org.jsqrl.model.SqrlAuthResponse;
+import org.jsqrl.model.SqrlClientRequest;
 import org.jsqrl.server.JSqrlServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,36 +33,34 @@ public class SqrlAuthenticationController {
     /**
      * Sqrl response entity.
      *
+     * @param request     the request
+     * @param nut         the nut
      * @param httpRequest the http request
      * @return the response entity
      */
     @PostMapping(path = "/sqrl/authn")
-    public ResponseEntity<String> sqrl(final HttpServletRequest httpRequest) {
-        /*
-        final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, httpRequest.getRemoteAddr());
-        LOGGER.info("SQRL authentication response [{}] with nut [{}]", sqrlAuthResponse, nut);
-        return new ResponseEntity(sqrlAuthResponse.toEncodedString(), HttpStatus.OK);
-        */
+    public ResponseEntity<String> sqrl(@ModelAttribute final SqrlClientRequest request,
+                                       @RequestParam("nut") final String nut,
+                                       final HttpServletRequest httpRequest) {
+        final String remoteAddr = httpRequest.getRemoteAddr();
+        LOGGER.info("SQRL authentication response command [{}] w/ client: [{}] and Parameters [{}]. "
+                        + "Decoded client data [{}] w/ server [{}]'s decoded data [{}]. "
+                        + "Request version [{}] with ids [{}] and urs [{}]. Remote address is [{}]",
+                request.getCommand(), request.getClient(), request.getClientParameters(),
+                request.getDecodedClientData(), request.getServer(), request.getDecodedServerData(),
+                request.getRequestVersion(), request.getIds(), request.getUrs(), remoteAddr);
 
-        LOGGER.info("SQRL authentication response");
-        return new ResponseEntity("", HttpStatus.OK);
+        try {
+            LOGGER.info("Handling SQRL authentication client request for  nut [{}]", nut);
+            final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, remoteAddr);
+            LOGGER.info("SQRL authentication response [{}] for nut [{}]", sqrlAuthResponse, nut);
+            final String s = sqrlAuthResponse.toEncodedString();
+            LOGGER.debug("Returning encoded response [{}] with status [{}]", s, HttpStatus.OK);
+            return new ResponseEntity(s, HttpStatus.OK);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    /**
-     * Sqrl authn response entity.
-     *
-     * @param httpRequest the http request
-     * @return the response entity
-     */
-    @PostMapping(path = "/sqrl")
-    public ResponseEntity<String> sqrlAuthn(final HttpServletRequest httpRequest) {
-        /*
-        final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, httpRequest.getRemoteAddr());
-        LOGGER.info("SQRL authentication response [{}] with nut [{}]", sqrlAuthResponse, nut);
-        return new ResponseEntity(sqrlAuthResponse.toEncodedString(), HttpStatus.OK);
-        */
-
-        LOGGER.info("SQRL authentication response 2");
-        return new ResponseEntity("", HttpStatus.OK);
-    }
 }

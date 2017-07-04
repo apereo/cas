@@ -46,23 +46,23 @@ public class SqrlInitialAction extends AbstractAction {
         
         requestContext.getFlowScope().put("sqrlEnabled", Boolean.TRUE);
 
-        LOGGER.info("Creating SQRL authentication request for [{}]", request.getRemoteAddr());
+        LOGGER.debug("Creating SQRL authentication request for [{}]", request.getRemoteAddr());
         final String sqrlNut = jSqrlServer.createAuthenticationRequest(request.getRemoteAddr(), true);
-        LOGGER.info("Created SQRL nut [{}]", sqrlNut);
+        LOGGER.debug("Created SQRL nut [{}]", sqrlNut);
         
         final String sfn = SqrlUtil.unpaddedBase64UrlEncoded(config.getSfn());
-        LOGGER.info("Encoded SQRL sfn is [{}]", sfn);
+        LOGGER.debug("Encoded SQRL sfn is [{}]", sfn);
         
         final String prefix = casProperties.getServer().getPrefix();
         final String url = prefix.replaceAll("https?://", "qrl://")
                 + "/sqrl/authn?nut=" + sqrlNut + "&sfn=" + sfn;
-        LOGGER.info("Generating SQRL QR code based on URL [{}]", url);
+        LOGGER.debug("Generating SQRL QR code based on URL [{}]", url);
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final Base64OutputStream os = new Base64OutputStream(out);
         QRUtils.generateQRCode(os, url, QRUtils.WIDTH_MEDIUM, QRUtils.WIDTH_MEDIUM);
         final String result = new String(out.toByteArray());
-        LOGGER.info("Generated SQRL QR code [{}]", result);
+        LOGGER.debug("Generated SQRL QR code for [{}]", url);
         
         requestContext.getFlowScope().put("sqrlUrl", url);
         requestContext.getFlowScope().put("sqrlUrlEncoded", EncodingUtils.encodeBase64(url.getBytes()));
