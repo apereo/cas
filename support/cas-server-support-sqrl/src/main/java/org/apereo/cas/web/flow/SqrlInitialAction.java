@@ -70,7 +70,7 @@ public class SqrlInitialAction extends AbstractAction {
         requestContext.getFlowScope().put("sqrlUrlEncoded", EncodingUtils.encodeBase64(url.getBytes()));
         requestContext.getFlowScope().put("nut", sqrlNut);
         requestContext.getFlowScope().put("sfn", sfn);
-
+        requestContext.getFlowScope().put("casServerUrl", prefix);
 
         return null;
     }
