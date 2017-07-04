@@ -156,7 +156,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                                                             final Resource resource, final String entityId) {
         LOGGER.debug("Evaluating metadata resource [{}]", resource.getFilename());
         try (InputStream in = getResourceInputStream(resource, entityId)) {
-            if (in.available() > 0) {
+            if (in.available() > 0 || in.markSupported()) {
                 LOGGER.debug("Parsing [{}]", resource.getFilename());
                 final Document document = this.configBean.getParserPool().parse(in);
                 return buildSingleMetadataResolver(metadataFilter, resource, document);
