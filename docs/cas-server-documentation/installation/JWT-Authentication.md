@@ -90,6 +90,10 @@ Configure the appropriate service in your service registry to hold the secrets:
     "jwtEncryptionSecretMethod" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "A192CBC-HS384" ] ]
+    },
+    "jwtSecretsAreBase64Encoded" : {
+       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+       "values" : [ "java.util.HashSet", [ "false" ] ]
     }
   }
 }
