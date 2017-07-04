@@ -52,15 +52,16 @@ public class SqrlAuthenticationController {
                 request.getRequestVersion(), request.getIds(), request.getUrs(), remoteAddr);
 
         try {
-            LOGGER.info("Handling SQRL authentication client request for  nut [{}]", nut);
+            LOGGER.info("Handling SQRL authentication client request for nut [{}]", nut);
             final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, remoteAddr);
-            LOGGER.info("SQRL authentication response [{}] for nut [{}]", sqrlAuthResponse, nut);
+            LOGGER.info("SQRL authentication response created for nut [{}]. Preparing response...", nut);
             final String s = sqrlAuthResponse.toEncodedString();
             LOGGER.info("Returning encoded response [{}] with status [{}]", s, HttpStatus.OK);
             return new ResponseEntity(s, HttpStatus.OK);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        LOGGER.info("Could not process SQL authentication request. Returning status [{}]", HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -75,13 +76,13 @@ public class SqrlAuthenticationController {
     public ResponseEntity checkAuthentication(@RequestParam("nut") final String nut,
                                               final HttpServletRequest httpRequest) {
         final String remoteAddr = httpRequest.getRemoteAddr();
-        LOGGER.debug("Checking for SQRL authentication success against nut [{}] for client [{}]", nut, remoteAddr);
+        LOGGER.info("Checking for SQRL authentication success against nut [{}] for client [{}]", nut, remoteAddr);
 
         if (server.checkAuthenticationStatus(nut, remoteAddr)) {
             LOGGER.info("SQRL authentication request [{}] is authenticated. Returning status [{}]", remoteAddr, HttpStatus.RESET_CONTENT);
             return new ResponseEntity(HttpStatus.RESET_CONTENT);
         }
-        LOGGER.debug("SQRL request is not authenticated yet");
+        LOGGER.info("SQRL request is not authenticated yet");
         return new ResponseEntity(HttpStatus.OK);
     }
 }
