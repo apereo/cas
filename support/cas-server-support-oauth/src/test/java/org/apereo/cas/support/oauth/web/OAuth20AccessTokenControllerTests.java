@@ -684,7 +684,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
-        final int timeLeft = getTimeLeft(body, service.isGenerateRefreshToken(), json);
+        final int timeLeft = getTimeLeft(body, false, json);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 
