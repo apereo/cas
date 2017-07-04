@@ -4,6 +4,8 @@ import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.util.Base64;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
@@ -26,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -70,6 +74,9 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         final String encryptionSecretMethod =
                 StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD),
                         EncryptionMethod.A192CBC_HS384.getName());
+        // Determine if secrets are Base64 encoded
+        final boolean secretsAreBase64Encoded =
+                BooleanUtils.toBoolean(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED));
 
         if (StringUtils.isNotBlank(signingSecret)) {
             Set<Algorithm> sets = new HashSet<>();
@@ -81,7 +88,8 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             final JWSAlgorithm signingAlg = findAlgorithmFamily(sets, signingSecretAlg);
 
             final JwtAuthenticator a = new JwtAuthenticator();
-            a.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, signingAlg));
+            a.setSignatureConfiguration(new SecretSignatureConfiguration(getSecretBytes(signingSecret, secretsAreBase64Encoded),
+                    signingAlg));
 
             if (StringUtils.isNotBlank(encryptionSecret)) {
                 sets = new HashSet<>();
@@ -100,7 +108,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 sets.addAll(EncryptionMethod.Family.AES_GCM);
 
                 final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod);
-                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, encAlg, encMethod));
+                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(getSecretBytes(encryptionSecret, secretsAreBase64Encoded), encAlg, encMethod));
             } else {
                 LOGGER.warn("JWT authentication is configured to share a single key for both signing/encryption");
             }
@@ -158,5 +166,17 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         LOGGER.warn("Service [{}] does not define a property [{}] in the registry",
                 service.getServiceId(), propName);
         return null;
+    }
+
+    /**
+     * Convert secret to bytes honoring {@link TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED}
+     * config parameter.
+     *
+     * @param secret                - String to be represented to byte[]
+     * @param secretIsBase64Encoded - is this a base64 encoded #secret?
+     * @return byte[] representation of #secret
+     */
+    private byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
+        return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(UTF_8);
     }
 }
