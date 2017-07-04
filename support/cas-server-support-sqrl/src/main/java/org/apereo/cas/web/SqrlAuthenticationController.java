@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RestController("sqrlAuthenticationController")
+@Controller("sqrlAuthenticationController")
 public class SqrlAuthenticationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SqrlAuthenticationController.class);
 
@@ -56,8 +56,8 @@ public class SqrlAuthenticationController {
             final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, remoteAddr);
             LOGGER.debug("SQRL authentication response created for nut [{}]. Preparing response...", nut);
             final String s = sqrlAuthResponse.toEncodedString();
-            LOGGER.info("Returning encoded response [{}] with status [{}]", s, HttpStatus.OK);
-            return new ResponseEntity(HttpStatus.OK);
+            LOGGER.info("Prepared encoded response [{}]. Returning status [{}]", s, HttpStatus.OK);
+            return new ResponseEntity(s, HttpStatus.OK);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -76,13 +76,13 @@ public class SqrlAuthenticationController {
     public ResponseEntity checkAuthentication(@RequestParam("nut") final String nut,
                                               final HttpServletRequest httpRequest) {
         final String remoteAddr = httpRequest.getRemoteAddr();
-        LOGGER.info("Checking for SQRL authentication success against nut [{}] for client [{}]", nut, remoteAddr);
+        LOGGER.debug("Checking for SQRL authentication success against nut [{}] for client [{}]", nut, remoteAddr);
 
         if (server.checkAuthenticationStatus(nut, remoteAddr)) {
             LOGGER.info("SQRL authentication request [{}] is authenticated. Returning status [{}]", remoteAddr, HttpStatus.RESET_CONTENT);
             return new ResponseEntity(HttpStatus.RESET_CONTENT);
         }
-        LOGGER.info("SQRL request is not authenticated yet");
+        LOGGER.debug("SQRL request is not authenticated yet");
         return new ResponseEntity(HttpStatus.OK);
     }
 }
