@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.security.GeneralSecurityException;
@@ -37,6 +36,7 @@ import java.util.UUID;
 public class FortressAuthenticationHandlerTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(FortressAuthenticationHandlerTests.class);
     private static final String FORTRESS_SESSION_KEY = "fortressSession";
+    private static final String USERNAME = "username";
 
     @Mock
     private AccessMgr accessManager;
@@ -63,7 +63,7 @@ public class FortressAuthenticationHandlerTests {
     @Test
     public void testAuthenticateSuccessfully() throws SecurityException, GeneralSecurityException, PreventedException {
         UUID sessionId = UUID.randomUUID();
-        Session session = new Session(new User("username"), sessionId.toString());
+        Session session = new Session(new User(USERNAME), sessionId.toString());
         session.setAuthenticated(true);
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(session);
         try {
