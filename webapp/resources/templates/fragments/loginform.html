@@ -18,8 +18,8 @@
                 }, 8000);
             </script>
 
-            <!-- <a th:href="${sqrlUrl}"> -->
-            <a th:href="'http://localhost:25519/' + ${sqrlUrlEncoded}">
+            <!-- <a th:href="'http://localhost:25519/' + ${sqrlUrlEncoded}"> -->
+            <a th:href="${sqrlUrl}" th:title="${casServerUrl}">
                 <img id="sqrlImg" th:title="${sqrlUrl}" th:src="@{'data:image/jpeg;base64,'+${sqrlImage}}" />
             </a>
         </span>
