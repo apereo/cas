@@ -18,8 +18,9 @@
                 }, 8000);
             </script>
 
+            <!-- <a th:href="${sqrlUrl}"> -->
             <a th:href="'http://localhost:25519/' + ${sqrlUrlEncoded}">
-                <img id="sqrlImg" th:title="${sqrlurl}" th:src="@{'data:image/jpeg;base64,'+${sqrlImage}}" />
+                <img id="sqrlImg" th:title="${sqrlUrl}" th:src="@{'data:image/jpeg;base64,'+${sqrlImage}}" />
             </a>
         </span>
         <span class="fa-stack fa-2x hidden-xs" th:unless="${sqrlEnabled}">
