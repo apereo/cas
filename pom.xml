@@ -84,14 +84,17 @@
             <type>war</type>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-support-bootadmin-client</artifactId>
-            <version>${cas.version}</version>
-        </dependency>
+        
         <dependency>
             <groupId>org.apereo.cas</groupId>
             <artifactId>cas-server-support-sqrl</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        
+        <!--
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-bootadmin-client</artifactId>
             <version>${cas.version}</version>
         </dependency>
         <dependency>
@@ -104,6 +107,7 @@
             <artifactId>cas-server-support-eureka-client</artifactId>
             <version>${cas.version}</version>
         </dependency>
+        -->
     </dependencies>
 
     <properties>
