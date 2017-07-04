@@ -63,20 +63,16 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         final String signingSecret = getRegisteredServiceJwtSigningSecret(service);
         final String encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
-        final String signingSecretAlg =
-                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING_ALG),
-                        JWSAlgorithm.HS256.getName());
+        final String serviceSigningAlg = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING_ALG);
+        final String signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
 
-        final String encryptionSecretAlg =
-                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_ALG),
-                        JWEAlgorithm.DIR.getName());
+        final String encryptionAlg = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_ALG);
+        final String encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
 
-        final String encryptionSecretMethod =
-                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD),
-                        EncryptionMethod.A192CBC_HS384.getName());
-        // Determine if secrets are Base64 encoded
-        final boolean secretsAreBase64Encoded =
-                BooleanUtils.toBoolean(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED));
+        final String encryptionMethod = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD);
+        final String encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
+        final String secretIsBase64String = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED);
+        final boolean secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
 
         if (StringUtils.isNotBlank(signingSecret)) {
             Set<Algorithm> sets = new HashSet<>();
@@ -88,8 +84,8 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             final JWSAlgorithm signingAlg = findAlgorithmFamily(sets, signingSecretAlg);
 
             final JwtAuthenticator a = new JwtAuthenticator();
-            a.setSignatureConfiguration(new SecretSignatureConfiguration(getSecretBytes(signingSecret, secretsAreBase64Encoded),
-                    signingAlg));
+            final byte[] secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
+            a.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
 
             if (StringUtils.isNotBlank(encryptionSecret)) {
                 sets = new HashSet<>();
@@ -130,7 +126,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @return the registered service jwt secret
      */
     private String getRegisteredServiceJwtEncryptionSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
+        return getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
     }
 
     /**
@@ -140,7 +136,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @return the registered service jwt secret
      */
     private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
+        return getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
     }
 
     /**
@@ -150,7 +146,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param propName the prop name
      * @return the registered service jwt secret
      */
-    protected String getRegisteredServiceJwtSecret(final RegisteredService service, final String propName) {
+    protected String getRegisteredServiceJwtProperty(final RegisteredService service, final String propName) {
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);

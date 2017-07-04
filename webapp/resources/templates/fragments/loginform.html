@@ -1,28 +1,7 @@
 <div class="box" id="login">
     <div class="login-header">
         <h2 th:text="#{cas.login.pagetitle}"></h2>
-        <span th:if="${sqrlEnabled}">
-            
-            <script th:inline="javascript">
-                setInterval(function() {
-                    $.ajax({
-                        type:"get",
-                        url:'/cas/sqrl/authcheck?nut=' + [[${nut}]],
-                        datatype:"html",
-                        statusCode:{
-                            205: function(){
-                                alert("Working!")
-                            }
-                        }
-                    });
-                }, 8000);
-            </script>
-
-            <!-- <a th:href="'http://localhost:25519/' + ${sqrlUrlEncoded}"> -->
-            <a th:href="${sqrlUrl}" th:title="${casServerUrl}">
-                <img id="sqrlImg" th:title="${sqrlUrl}" th:src="@{'data:image/jpeg;base64,'+${sqrlImage}}" />
-            </a>
-        </span>
+        <span th:if="${sqrlEnabled}" th:replace="fragments/sqrl" />
         <span class="fa-stack fa-2x hidden-xs" th:unless="${sqrlEnabled}">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
