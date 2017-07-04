@@ -44,7 +44,7 @@ public class SqrlAuthenticationController {
                                        @RequestParam("nut") final String nut,
                                        final HttpServletRequest httpRequest) {
         final String remoteAddr = httpRequest.getRemoteAddr();
-        LOGGER.info("SQRL authentication response command [{}] w/ client: [{}] and Parameters [{}]. "
+        LOGGER.debug("SQRL authentication response command [{}] w/ client: [{}] and Parameters [{}]. "
                         + "Decoded client data [{}] w/ server [{}]'s decoded data [{}]. "
                         + "Request version [{}] with ids [{}] and urs [{}]. Remote address is [{}]",
                 request.getCommand(), request.getClient(), request.getClientParameters(),
@@ -52,12 +52,12 @@ public class SqrlAuthenticationController {
                 request.getRequestVersion(), request.getIds(), request.getUrs(), remoteAddr);
 
         try {
-            LOGGER.info("Handling SQRL authentication client request for nut [{}]", nut);
+            LOGGER.debug("Handling SQRL authentication client request for nut [{}]", nut);
             final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, remoteAddr);
-            LOGGER.info("SQRL authentication response created for nut [{}]. Preparing response...", nut);
+            LOGGER.debug("SQRL authentication response created for nut [{}]. Preparing response...", nut);
             final String s = sqrlAuthResponse.toEncodedString();
             LOGGER.info("Returning encoded response [{}] with status [{}]", s, HttpStatus.OK);
-            return new ResponseEntity(s, HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
