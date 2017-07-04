@@ -88,6 +88,9 @@ Submit a pull request from your topic branch onto the target branch of CAS, typi
 
 Be prepared to sync changes with the target branch of the CAS repository since the target branch may move during review and consideration of the pull request.
 
+If you have already identified an enhancement or a bug fix, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues.
+The pull request IS the issue and it will be tracked and tagged as such. Do NOT log issues hoping for the issue to get resolved in the future by someone else. If you need additional help,
+please reach out to a [commercial affiliate](https://www.apereo.org/content/commercial-affiliates) for assistance and better support.
 
 #### Creating Pull Requests
 
@@ -100,10 +103,3 @@ A pull request should contain the following:
 Source code changes SHOULD contain test coverage and Javadoc changes as needed.
 While documentation is frequently outside the scope of a pull request, there should be some consideration for how
 new features and functional changes will be documented. 
-
-
-When creating a pull request, make sure that the pull references the Github issue number:
-
-![](https://camo.githubusercontent.com/0d91dc7e679d86bd4814faae37f0316279074571/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3539372f3439383937372f64383262643761382d626332362d313165322d383663652d3835613435336334643638332e706e67)
-
-This allows the pull request to be linked to the issue. When the pull is merged, the issue will automatically be closed as well.
