@@ -9,7 +9,7 @@ Verify and authenticate credentials using the [SQRL protocol](https://www.grc.co
 
 In summary, the CAS login presents a QR code containing the URL of its authentication service, plus a non and sends it to the matching public key to identify the user, and the signature to authenticate it.
 
-
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>This module is in an experimental state. The SQRL protocol is still under development and CAS support will eventually improve once the protocol state is finalized.</p></div>
 
 ## Configuration
 
