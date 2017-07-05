@@ -43,14 +43,6 @@ public abstract class AbstractJpaProperties implements Serializable {
     private boolean autocommit;
     private boolean dataSourceProxy;
 
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(final Map<String, String> properties) {
-        this.properties = properties;
-    }
-
     public String getDefaultCatalog() {
         return defaultCatalog;
     }
