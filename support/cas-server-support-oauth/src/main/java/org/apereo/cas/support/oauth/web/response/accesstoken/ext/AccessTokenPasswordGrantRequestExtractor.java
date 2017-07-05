@@ -73,10 +73,21 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+        final boolean generateRefreshToken = isAllowedToGenerateRefreshToken(registeredService);
 
         final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
-        return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket);
+        return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket, generateRefreshToken);
+    }
+    
+    /**
+     * Is allowed to generate refresh token ?
+     *
+     * @param registeredService the registered service
+     * @return the boolean
+     */
+    protected boolean isAllowedToGenerateRefreshToken(final OAuthRegisteredService registeredService) {
+        return registeredService != null && registeredService.isGenerateRefreshToken();
     }
 
     @Override
