@@ -215,7 +215,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static Date getExpireAt(final Ticket ticket) {
         final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
         
-        // expiration policy can specify not to delete automatically 
+        // expiration policy can specify not to delete automatically
         if (ttl < 1) {
             return null;
         }
