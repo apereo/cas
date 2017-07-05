@@ -883,6 +883,51 @@ to be a JSON map as such:
 }
 ```
 
+### Python/Javascript/Groovy
+
+Similiar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
+
+```properties
+# cas.authn.attributeRepository.script[0].config.location=file:/etc/cas/script.groovy
+# cas.authn.attributeRepository.script[0].order=0
+# cas.authn.attributeRepository.script[0].caseInsensitive=false
+```
+
+While Javascript and Groovy should be natively supported by CAS, Python scripts may need
+to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+
+The Groovy script may be defined as:
+
+```groovy
+import java.util.*
+
+Map<String, List<Object>> run(final Object... args) {
+    def uid = args[0]
+    def logger = args[1]
+
+    logger.debug("Things are happening just fine")
+    return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+}
+```
+
+The Javascript script may be defined as:
+
+```javascript
+function run(args) {
+    var uid = args[0]
+    var logger = args[1]
+    print("Things are happening just fine")
+
+    var map = {};
+    map["username"] = uid;
+    map["likes"] = "chees";
+    map["id"] = [1234,2,3,4,5];
+    map["another"] = "attribute";
+
+    return map;
+}
+```
+
 ### JDBC
 
 If you wish to directly and separately retrieve attributes from a JDBC source,
