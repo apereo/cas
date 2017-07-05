@@ -4029,6 +4029,8 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
+Database-specific properties can be specified under cas.serviceRegistry.jpa.properties, similar to Spring Boot JPA properties.
+
 ## Ticket Registry
 
 To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).
@@ -4090,6 +4092,8 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.crypto.encryption.keySize=16
 # cas.ticket.registry.jpa.crypto.alg=AES
 ```
+
+Database-specific properties can be specified under cas.ticket.registry.jpa.properties, similar to Spring Boot JPA properties.
 
 ### Couchbase Ticket Registry
 
