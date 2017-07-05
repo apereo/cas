@@ -1,8 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-
 import java.io.Serializable;
+import java.util.Date;
+
+import org.springframework.data.mongodb.core.index.Indexed;
 
 /**
  * This is {@link TicketHolder}.
@@ -29,10 +30,10 @@ public class TicketHolder implements Serializable {
     private final String type;
 
     @Indexed
-    private final long expireAt;
+    private final Date expireAt;
 
     public TicketHolder(final String json, final String ticketId,
-                        final String type, final long expireAt) {
+                        final String type, final Date expireAt) {
         this.json = json;
         this.ticketId = ticketId;
         this.type = type;
@@ -51,7 +52,7 @@ public class TicketHolder implements Serializable {
         return type;
     }
 
-    public long getExpireAt() {
+    public Date getExpireAt() {
         return expireAt;
     }
 
