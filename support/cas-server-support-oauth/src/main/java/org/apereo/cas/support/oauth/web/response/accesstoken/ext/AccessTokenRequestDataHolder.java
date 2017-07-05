@@ -50,6 +50,18 @@ public class AccessTokenRequestDataHolder {
         this.token = null;
         this.generateRefreshToken = false;
     }
+    
+    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+                                        final OAuthRegisteredService registeredService,
+                                        final TicketGrantingTicket ticketGrantingTicket,
+                                        final boolean generateRefreshToken) {
+        this.service = service;
+        this.authentication = authentication;
+        this.registeredService = registeredService;
+        this.ticketGrantingTicket = ticketGrantingTicket;
+        this.token = null;
+        this.generateRefreshToken = generateRefreshToken;
+    }
 
     public Service getService() {
         return service;

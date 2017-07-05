@@ -509,7 +509,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyUserAuthWithRefreshToken() throws Exception {
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
-        internalVerifyUserAuth(false, false);
+        internalVerifyUserAuth(true, false);
     }
 
     @Test
@@ -525,7 +525,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
         registeredService.setJsonFormat(true);
-        internalVerifyUserAuth(false, true);
+        internalVerifyUserAuth(true, true);
     }
 
     private void internalVerifyUserAuth(final boolean refreshToken, final boolean json) throws Exception {
