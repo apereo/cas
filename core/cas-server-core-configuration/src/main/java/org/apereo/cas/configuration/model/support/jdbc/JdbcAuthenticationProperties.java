@@ -54,6 +54,7 @@ public class JdbcAuthenticationProperties {
     }
 
     public static class Query extends AbstractJpaProperties {
+        private static final long serialVersionUID = 7806132208223986680L;
         private String sql;
         private String credentialCriteria;
         private String fieldPassword;
@@ -154,6 +155,7 @@ public class JdbcAuthenticationProperties {
     }
 
     public static class Bind extends AbstractJpaProperties {
+        private static final long serialVersionUID = 4268982716707687796L;
         private String credentialCriteria;
 
         @NestedConfigurationProperty
@@ -207,6 +209,7 @@ public class JdbcAuthenticationProperties {
     }
 
     public static class Search extends AbstractJpaProperties {
+        private static final long serialVersionUID = 6912107600297453730L;
         private String fieldUser;
         private String fieldPassword;
         private String tableUsers;
@@ -289,6 +292,7 @@ public class JdbcAuthenticationProperties {
     }
 
     public static class Encode extends AbstractJpaProperties {
+        private static final long serialVersionUID = -6647373426301411768L;
         private String credentialCriteria;
         private String algorithmName;
         private String sql;

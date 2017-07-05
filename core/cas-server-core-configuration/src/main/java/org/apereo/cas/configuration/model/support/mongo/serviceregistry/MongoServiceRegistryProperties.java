@@ -9,6 +9,8 @@ import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstancePro
  * @since 5.0.0
  */
 public class MongoServiceRegistryProperties extends AbstractMongoInstanceProperties {
+    private static final long serialVersionUID = -227092724742371662L;
+
     public MongoServiceRegistryProperties() {
         setCollectionName("cas-service-registry");
     }
