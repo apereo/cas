@@ -103,27 +103,25 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> {
-            casProperties.getAuthn().getWsfed()
-                    .stream()
-                    .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
-                            && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
-                    .forEach(wsfed -> {
-                        final AuthenticationHandler handler =
-                                new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
-                        if (!wsfed.isAttributeResolverEnabled()) {
-                            plan.registerAuthenticationHandler(handler);
-                        } else {
-                            final WsFederationCredentialsToPrincipalResolver r = new WsFederationCredentialsToPrincipalResolver();
-                            r.setConfiguration(getWsFederationConfiguration(wsfed));
-                            r.setAttributeRepository(attributeRepository);
-                            r.setPrincipalAttributeName(wsfed.getPrincipal().getPrincipalAttribute());
-                            r.setReturnNullIfNoAttributes(wsfed.getPrincipal().isReturnNull());
-                            r.setPrincipalFactory(adfsPrincipalFactory());
+        return plan -> casProperties.getAuthn().getWsfed()
+                .stream()
+                .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
+                        && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
+                .forEach(wsfed -> {
+                    final AuthenticationHandler handler =
+                            new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
+                    if (!wsfed.isAttributeResolverEnabled()) {
+                        plan.registerAuthenticationHandler(handler);
+                    } else {
+                        final WsFederationCredentialsToPrincipalResolver r = new WsFederationCredentialsToPrincipalResolver();
+                        r.setConfiguration(getWsFederationConfiguration(wsfed));
+                        r.setAttributeRepository(attributeRepository);
+                        r.setPrincipalAttributeName(wsfed.getPrincipal().getPrincipalAttribute());
+                        r.setReturnNullIfNoAttributes(wsfed.getPrincipal().isReturnNull());
+                        r.setPrincipalFactory(adfsPrincipalFactory());
 
-                            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
-                        }
-                    });
-        };
+                        plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
+                    }
+                });
     }
 }
