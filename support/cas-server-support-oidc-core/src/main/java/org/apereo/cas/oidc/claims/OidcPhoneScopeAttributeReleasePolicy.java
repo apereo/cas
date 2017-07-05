@@ -3,8 +3,9 @@ package org.apereo.cas.oidc.claims;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.oidc.OidcConstants;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcPhoneScopeAttributeReleasePolicy}.
@@ -15,7 +16,7 @@ import java.util.List;
 public class OidcPhoneScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
-    private final List<String> allowedAttributes = Arrays.asList("phone_number", "phone_number_verified");
+    private final List<String> allowedAttributes = Stream.of("phone_number", "phone_number_verified").collect(Collectors.toList());
 
     public OidcPhoneScopeAttributeReleasePolicy() {
         super(OidcConstants.PHONE);
