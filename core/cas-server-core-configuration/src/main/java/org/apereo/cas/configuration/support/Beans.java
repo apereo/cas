@@ -271,6 +271,7 @@ public final class Beans {
         }
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
         
         return bean;

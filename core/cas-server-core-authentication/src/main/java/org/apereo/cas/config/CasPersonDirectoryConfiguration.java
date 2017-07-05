@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
-import org.apereo.services.persondir.support.CascadingPersonAttributeDao;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
@@ -286,7 +285,7 @@ public class CasPersonDirectoryConfiguration {
                 .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
                 .build();
         impl.setUserInfoCache(graphs.asMap());
-        impl.setCachedPersonAttributesDao(aggregatingAttributeRepositories());
+        impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
 
         LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
                 casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
@@ -294,8 +293,8 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "aggregatingAttributeRepositories")
-    public IPersonAttributeDao aggregatingAttributeRepositories() {
+    @ConditionalOnMissingBean(name = "aggregatingAttributeRepository")
+    public IPersonAttributeDao aggregatingAttributeRepository() {
         final MergingPersonAttributeDaoImpl mergingDao = new MergingPersonAttributeDaoImpl();
         final String merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
         LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
