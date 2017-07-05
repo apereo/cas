@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -190,5 +193,13 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     public void setDataSourceProxy(final boolean dataSourceProxy) {
         this.dataSourceProxy = dataSourceProxy;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
     }
 }
