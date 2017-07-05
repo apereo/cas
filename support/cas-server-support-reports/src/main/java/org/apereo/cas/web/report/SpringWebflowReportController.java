@@ -51,122 +51,120 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
         final Map<String, FlowDefinitionRegistry> map =
                 this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
-        map.forEach((k, v) -> {
-            Arrays.stream(v.getFlowDefinitionIds()).forEach(id -> {
-                final Map<String, Object> flowDetails = new HashMap<>();
-                final Flow def = Flow.class.cast(v.getFlowDefinition(id));
+        map.forEach((k, v) -> Arrays.stream(v.getFlowDefinitionIds()).forEach(id -> {
+            final Map<String, Object> flowDetails = new HashMap<>();
+            final Flow def = Flow.class.cast(v.getFlowDefinition(id));
 
-                final Map<String, Map> states = new HashMap<>();
-                Arrays.stream(def.getStateIds()).forEach(st -> {
+            final Map<String, Map> states = new HashMap<>();
+            Arrays.stream(def.getStateIds()).forEach(st -> {
 
-                    final State state = (State) def.getState(st);
-                    final Map<String, Object> stateMap = new HashMap<>();
+                final State state = (State) def.getState(st);
+                final Map<String, Object> stateMap = new HashMap<>();
 
-                    if (!state.getAttributes().asMap().isEmpty()) {
-                        stateMap.put("attributes", state.getAttributes().asMap());
-                    }
-                    if (StringUtils.isNotBlank(state.getCaption())) {
-                        stateMap.put("caption", state.getCaption());
-                    }
+                if (!state.getAttributes().asMap().isEmpty()) {
+                    stateMap.put("attributes", state.getAttributes().asMap());
+                }
+                if (StringUtils.isNotBlank(state.getCaption())) {
+                    stateMap.put("caption", state.getCaption());
+                }
 
-                    List acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
+                List acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+
+                if (!acts.isEmpty()) {
+                    stateMap.put("entryActions", acts);
+                }
+
+                if (state instanceof EndState) {
+                    stateMap.put("isEndState", Boolean.TRUE);
+                }
+                if (state.isViewState()) {
+                    stateMap.put("isViewState", state.isViewState());
+                    stateMap.put("isRedirect", ((ViewState) state).getRedirect());
+
+                    acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
                             .map(Object::toString)
                             .collect(Collectors.toList());
 
                     if (!acts.isEmpty()) {
-                        stateMap.put("entryActions", acts);
+                        stateMap.put("renderActions", ((ViewState) state).getRenderActionList());
                     }
 
-                    if (state instanceof EndState) {
-                        stateMap.put("isEndState", Boolean.TRUE);
-                    }
-                    if (state.isViewState()) {
-                        stateMap.put("isViewState", state.isViewState());
-                        stateMap.put("isRedirect", ((ViewState) state).getRedirect());
-                       
-                        acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
-                                .map(Object::toString)
-                                .collect(Collectors.toList());
+                    acts = Arrays.stream(((ViewState) state).getVariables())
+                            .map(value -> value.getName() + " -> " + value.getValueFactory().toString())
+                            .collect(Collectors.toList());
 
-                        if (!acts.isEmpty()) {
-                            stateMap.put("renderActions", ((ViewState) state).getRenderActionList());
-                        }
-
-                        acts = Arrays.stream(((ViewState) state).getVariables())
-                                .map(value -> value.getName() + " -> " + value.getValueFactory().toString())
-                                .collect(Collectors.toList());
-
-                        if (!acts.isEmpty()) {
-                            stateMap.put("viewVariables", acts);
-                        }
-
-                        final Field field = ReflectionUtils.findField(((ViewState) state).getViewFactory().getClass(), "viewId");
-                        ReflectionUtils.makeAccessible(field);
-                        final Expression exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
-                        stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
-
+                    if (!acts.isEmpty()) {
+                        stateMap.put("viewVariables", acts);
                     }
 
-                    if (state instanceof TransitionableState) {
-                        final TransitionableState stDef = TransitionableState.class.cast(state);
+                    final Field field = ReflectionUtils.findField(((ViewState) state).getViewFactory().getClass(), "viewId");
+                    ReflectionUtils.makeAccessible(field);
+                    final Expression exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
+                    stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
 
-                        acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
-                                .map(Object::toString)
-                                .collect(Collectors.toList());
+                }
 
-                        if (!acts.isEmpty()) {
-                            stateMap.put("exitActions", acts);
-                        }
+                if (state instanceof TransitionableState) {
+                    final TransitionableState stDef = TransitionableState.class.cast(state);
 
-                        acts = Arrays.stream(stDef.getTransitions())
-                                .map(tr -> tr.getId() + " -> " + tr.getTargetStateId())
-                                .collect(Collectors.toList());
+                    acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
+                            .map(Object::toString)
+                            .collect(Collectors.toList());
 
-                        if (!acts.isEmpty()) {
-                            stateMap.put("transitions", acts);
-                        }
+                    if (!acts.isEmpty()) {
+                        stateMap.put("exitActions", acts);
                     }
 
-                    states.put(st, stateMap);
-                });
-                flowDetails.put("states", states);
-                flowDetails.put("startState", def.getStartState().getId());
-                flowDetails.put("possibleOutcomes", def.getPossibleOutcomes());
-                flowDetails.put("stateCount", def.getStateCount());
+                    acts = Arrays.stream(stDef.getTransitions())
+                            .map(tr -> tr.getId() + " -> " + tr.getTargetStateId())
+                            .collect(Collectors.toList());
 
-
-                List acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
-                        .map(Object::toString)
-                        .collect(Collectors.toList());
-                if (!acts.isEmpty()) {
-                    flowDetails.put("endActions", acts);
+                    if (!acts.isEmpty()) {
+                        stateMap.put("transitions", acts);
+                    }
                 }
 
-                acts = StreamSupport.stream(def.getGlobalTransitionSet().spliterator(), false)
-                        .map(tr -> tr.getId() + " -> " + tr.getTargetStateId() + " @ " + tr.getExecutionCriteria().toString())
-                        .collect(Collectors.toList());
-                if (!acts.isEmpty()) {
-                    flowDetails.put("globalTransitions", acts);
-                }
-
-                acts = Arrays.stream(def.getExceptionHandlerSet().toArray())
-                        .map(Object::toString)
-                        .collect(Collectors.toList());
-                if (!acts.isEmpty()) {
-                    flowDetails.put("exceptionHandlers", acts);
-                }
-
-                final String vars = Arrays.stream(def.getVariables())
-                        .map(FlowVariable::getName)
-                        .collect(Collectors.joining(","));
-
-                if (StringUtils.isNotBlank(vars)) {
-                    flowDetails.put("variables", vars);
-                }
-
-                jsonMap.put(id, flowDetails);
+                states.put(st, stateMap);
             });
-        });
+            flowDetails.put("states", states);
+            flowDetails.put("startState", def.getStartState().getId());
+            flowDetails.put("possibleOutcomes", def.getPossibleOutcomes());
+            flowDetails.put("stateCount", def.getStateCount());
+
+
+            List acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+            if (!acts.isEmpty()) {
+                flowDetails.put("endActions", acts);
+            }
+
+            acts = StreamSupport.stream(def.getGlobalTransitionSet().spliterator(), false)
+                    .map(tr -> tr.getId() + " -> " + tr.getTargetStateId() + " @ " + tr.getExecutionCriteria().toString())
+                    .collect(Collectors.toList());
+            if (!acts.isEmpty()) {
+                flowDetails.put("globalTransitions", acts);
+            }
+
+            acts = Arrays.stream(def.getExceptionHandlerSet().toArray())
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+            if (!acts.isEmpty()) {
+                flowDetails.put("exceptionHandlers", acts);
+            }
+
+            final String vars = Arrays.stream(def.getVariables())
+                    .map(FlowVariable::getName)
+                    .collect(Collectors.joining(","));
+
+            if (StringUtils.isNotBlank(vars)) {
+                flowDetails.put("variables", vars);
+            }
+
+            jsonMap.put(id, flowDetails);
+        }));
 
         return jsonMap;
     }
