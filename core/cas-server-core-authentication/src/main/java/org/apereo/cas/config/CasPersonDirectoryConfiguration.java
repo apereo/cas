@@ -80,11 +80,11 @@ public class CasPersonDirectoryConfiguration {
         return list;
     }
 
-    @ConditionalOnMissingBean(name = "mergingAttributeRepository")
+    @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean
     @RefreshScope
-    public IPersonAttributeDao mergingAttributeRepository() {
-        return cachingAttributeRepositories();
+    public IPersonAttributeDao attributeRepository() {
+        return cachingAttributeRepository();
     }
 
     @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
@@ -273,8 +273,8 @@ public class CasPersonDirectoryConfiguration {
     }
     
     @Bean
-    @ConditionalOnMissingBean(name = "cachingAttributeRepositories")
-    public IPersonAttributeDao cachingAttributeRepositories() {
+    @ConditionalOnMissingBean(name = "cachingAttributeRepository")
+    public IPersonAttributeDao cachingAttributeRepository() {
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
