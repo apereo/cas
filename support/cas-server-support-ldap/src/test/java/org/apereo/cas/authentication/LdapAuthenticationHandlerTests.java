@@ -103,9 +103,8 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         try {
             this.getEntries().stream()
                     .map(entry -> entry.getAttribute("sAMAccountName").getStringValue())
-                    .forEach(username -> this.handler.forEach(Unchecked.consumer(h -> {
-                        h.authenticate(new UsernamePasswordCredential(username, "badpassword"));
-                    })));
+                    .forEach(username -> this.handler.forEach(
+                            Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(username, "bad")))));
         } catch (final Exception e) {
             throw e.getCause();
         }
