@@ -1107,11 +1107,73 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 ### LDAP Surrogate Accounts
 
 ```properties
-# cas.authn.surrogate.ldap.baseDn=
+# cas.authn.surrogate.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.surrogate.ldap.connectionStrategy=
+# cas.authn.surrogate.ldap.baseDn=dc=example,dc=org
+# cas.authn.surrogate.ldap.userFilter=cn={user}
+# cas.authn.surrogate.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.surrogate.ldap.bindCredential=Password
+# cas.authn.surrogate.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.surrogate.ldap.connectTimeout=5000
+# cas.authn.surrogate.ldap.trustCertificates=
+# cas.authn.surrogate.ldap.keystore=
+# cas.authn.surrogate.ldap.keystorePassword=
+# cas.authn.surrogate.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.surrogate.ldap.poolPassivator=NONE|CLOSE|BIND
+# cas.authn.surrogate.ldap.minPoolSize=3
+# cas.authn.surrogate.ldap.maxPoolSize=10
+# cas.authn.surrogate.ldap.validateOnCheckout=true
+# cas.authn.surrogate.ldap.validatePeriodically=true
+# cas.authn.surrogate.ldap.validatePeriod=600
+# cas.authn.surrogate.ldap.validateTimeout=5000
+# cas.authn.surrogate.ldap.failFast=true
+# cas.authn.surrogate.ldap.idleTime=500
+# cas.authn.surrogate.ldap.prunePeriod=600
+# cas.authn.surrogate.ldap.blockWaitTime=5000
+# cas.authn.surrogate.ldap.useSsl=true
+# cas.authn.surrogate.ldap.useStartTls=false
+
+# cas.authn.surrogate.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.authn.surrogate.ldap.validator.baseDn=
+# cas.authn.surrogate.ldap.validator.searchFilter=(objectClass=*)
+# cas.authn.surrogate.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.surrogate.ldap.validator.attributeName=objectClass
+# cas.authn.surrogate.ldap.validator.attributeValues=top
+# cas.authn.surrogate.ldap.validator.dn=
+
 # cas.authn.surrogate.ldap.searchFilter=principal={user}
 # cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
 # cas.authn.surrogate.ldap.memberAttributeName=memberOf
 # cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
+```
+
+### JDBC Surrogate Accounts
+
+```properties
+
+# cas.authn.surrogate.jdbc.validationQuery=SELECT 1
+# cas.authn.surrogate.jdbc.maxWait=5000
+# cas.authn.surrogate.jdbc.healthQuery=
+# cas.authn.surrogate.jdbc.isolateInternalQueries=false
+# cas.authn.surrogate.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.surrogate.jdbc.failFast=true
+# cas.authn.surrogate.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.surrogate.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.surrogate.jdbc.leakThreshold=10
+# cas.authn.surrogate.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.surrogate.jdbc.batchSize=1
+# cas.authn.surrogate.jdbc.user=sa
+# cas.authn.surrogate.jdbc.ddlAuto=create-drop
+# cas.authn.surrogate.jdbc.maxAgeDays=180
+# cas.authn.surrogate.jdbc.password=
+# cas.authn.surrogate.jdbc.autocommit=false
+# cas.authn.surrogate.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.surrogate.jdbc.idleTimeout=5000
+# cas.authn.surrogate.jdbc.dataSourceName=
+# cas.authn.surrogate.jdbc.dataSourceProxy=false
+
+# cas.authn.surrogate.jdbc.surrogateSearchQuery=SELECT COUNT(*) FROM surrogate WHERE username=?
+# cas.authn.surrogate.jdbc.surrogateAccountQuery=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
 ```
 
 ## Risk-based Authentication
@@ -1865,6 +1927,7 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 
 ```properties
 # cas.authn.gua.ldap.imageAttribute=userImageIdentifier
+
 # cas.authn.gua.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.gua.ldap.connectionStrategy=
 # cas.authn.gua.ldap.baseDn=dc=example,dc=org
