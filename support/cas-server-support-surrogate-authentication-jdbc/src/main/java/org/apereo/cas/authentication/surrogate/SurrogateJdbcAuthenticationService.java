@@ -1,21 +1,15 @@
 package org.apereo.cas.authentication.surrogate;
 
-import com.sun.jndi.toolkit.dir.SearchFilter;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.support.Beans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.naming.directory.SearchResult;
 import javax.persistence.NoResultException;
 import javax.sql.DataSource;
-import javax.xml.ws.Response;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +66,9 @@ public class SurrogateJdbcAuthenticationService implements SurrogateAuthenticati
         return new ArrayList<>();
     }
 
+    /**
+     * The type Surrogate account.
+     */
     public static class SurrogateAccount {
         private String surrogateAccount;
 
