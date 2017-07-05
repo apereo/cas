@@ -396,6 +396,7 @@ public class X509Properties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = -1655068554291000206L;
         private String baseDn;
         private String searchFilter;
         

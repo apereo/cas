@@ -149,6 +149,7 @@ public class PrincipalAttributesProperties {
     }
     
     public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = 6915428382578138387L;
         private String sql;
         private boolean singleRow = true;
         private boolean requireAllAttributes = true;
@@ -233,6 +234,7 @@ public class PrincipalAttributesProperties {
     }
 
     public static class Json extends AbstractConfigProperties {
+        private static final long serialVersionUID = -6573755681498251678L;
         private int order;
 
         public int getOrder() {
@@ -245,6 +247,7 @@ public class PrincipalAttributesProperties {
     }
 
     public static class Groovy extends AbstractConfigProperties {
+        private static final long serialVersionUID = 7901595963842506684L;
         private boolean caseInsensitive;
         private int order;
 
@@ -266,6 +269,7 @@ public class PrincipalAttributesProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = 5760065368731012063L;
         private boolean subtreeSearch = true;
         private String baseDn;
         private String userFilter;
