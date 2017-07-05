@@ -28,11 +28,20 @@ public class PrincipalAttributesProperties {
 
     private Set<String> defaultAttributesToRelease = new HashSet<>();
     private List<Jdbc> jdbc = new ArrayList<>();
+    private List<Rest> rest = new ArrayList<>();
     private List<Groovy> groovy = new ArrayList();
     private List<Ldap> ldap = new ArrayList();
     private List<Json> json = new ArrayList();
     private Stub stub = new Stub();
     private Grouper grouper = new Grouper();
+
+    public List<Rest> getRest() {
+        return rest;
+    }
+
+    public void setRest(final List<Rest> rest) {
+        this.rest = rest;
+    }
 
     public Stub getStub() {
         return stub;
@@ -145,6 +154,63 @@ public class PrincipalAttributesProperties {
 
         public void setAttributes(final Map<String, String> attributes) {
             this.attributes = attributes;
+        }
+    }
+
+    public static class Rest {
+        private int order;
+        private String url;
+        private String method;
+        private boolean caseInsensitive;
+        private String basicAuthUsername;
+        private String basicAuthPassword;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(final String url) {
+            this.url = url;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public void setMethod(final String method) {
+            this.method = method;
+        }
+
+        public boolean isCaseInsensitive() {
+            return caseInsensitive;
+        }
+
+        public void setCaseInsensitive(final boolean caseInsensitive) {
+            this.caseInsensitive = caseInsensitive;
+        }
+
+        public String getBasicAuthUsername() {
+            return basicAuthUsername;
+        }
+
+        public void setBasicAuthUsername(final String basicAuthUsername) {
+            this.basicAuthUsername = basicAuthUsername;
+        }
+
+        public String getBasicAuthPassword() {
+            return basicAuthPassword;
+        }
+
+        public void setBasicAuthPassword(final String basicAuthPassword) {
+            this.basicAuthPassword = basicAuthPassword;
         }
     }
     
