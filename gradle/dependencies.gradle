@@ -7,44 +7,44 @@ ext.libraries = [
                     force = true
                 }
         ],
-        semver : [
-            dependencies.create("com.vdurmont:semver4j:$semverVersion") {
-                force = true
-            }
+        semver                  : [
+                dependencies.create("com.vdurmont:semver4j:$semverVersion") {
+                    force = true
+                }
         ],
-        swagger : [
-            dependencies.create("io.swagger:swagger-annotations:$swaggerVersion") {
-                exclude(group: "org.apache.commons", module: "commons-lang3")
-                exclude(group: "org.slf4j", module: "slf4j-api")
-                exclude(group: "com.google.guava", module: "guava")
-                force = true
-            },
-            dependencies.create("io.swagger:swagger-core:$swaggerVersion") {
-                exclude(group: "org.slf4j", module: "slf4j-api")
-                exclude(group: "com.google.guava", module: "guava")
-                exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                exclude(group: "org.apache.commons", module: "commons-lang3")
-                force = true
-            },
-            dependencies.create("io.swagger:swagger-jaxrs:$swaggerVersion") {
-                exclude(group: "org.slf4j", module: "slf4j-api")
-                exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                exclude(group: "com.google.guava", module: "guava")
-                exclude(group: "org.apache.commons", module: "commons-lang3")
-                force = true
-            },
-            dependencies.create("io.swagger:swagger-models:$swaggerVersion") {
-                exclude(group: "org.slf4j", module: "slf4j-api")
-                exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                exclude(group: "org.apache.commons", module: "commons-lang3")
-                exclude(group: "com.google.guava", module: "guava")
-                force = true
-            }
+        swagger                 : [
+                dependencies.create("io.swagger:swagger-annotations:$swaggerVersion") {
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                },
+                dependencies.create("io.swagger:swagger-core:$swaggerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    force = true
+                },
+                dependencies.create("io.swagger:swagger-jaxrs:$swaggerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    force = true
+                },
+                dependencies.create("io.swagger:swagger-models:$swaggerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                }
         ],
-        swaggerfox : [
+        swaggerfox              : [
                 dependencies.create("io.springfox:springfox-swagger2:$swaggerSpringFoxVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml", module: "classmate")
@@ -58,7 +58,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        swaggerui : [
+        swaggerui               : [
                 dependencies.create("io.springfox:springfox-swagger-ui:$swaggerSpringFoxVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml", module: "classmate")
@@ -1010,7 +1010,7 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
-        sqrlserver : [
+        sqrlserver              : [
                 dependencies.create("com.github.banichols:jsqrl-server:-SNAPSHOT") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
@@ -1582,6 +1582,7 @@ ext.libraries = [
         persondirectory         : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {
             exclude(group: "commons-logging", module: "commons-logging")
             exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "org.apache.httpcomponents", module: "httpclient")
             exclude(group: "org.apache.commons", module: "commons-lang3")
             exclude(group: "org.apache.commons", module: "commons-collections4")
             exclude(group: "org.springframework", module: "spring-beans")
@@ -2579,7 +2580,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        webjars                : [
+        webjars                 : [
                 dependencies.create("org.webjars:headjs:$headjsVersion") {
                     force = true
                 },
