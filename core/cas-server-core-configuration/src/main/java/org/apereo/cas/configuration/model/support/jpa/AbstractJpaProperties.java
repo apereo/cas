@@ -14,6 +14,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractJpaProperties implements Serializable {
 
+    private static final long serialVersionUID = 761486823496930920L;
     private String dialect = "org.hibernate.dialect.HSQLDialect";
     private String ddlAuto = "create-drop";
     private String driverClass = "org.hsqldb.jdbcDriver";

@@ -19,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 
 public class ServiceRegistryProperties extends AbstractConfigProperties {
 
+    private static final long serialVersionUID = -368826011744304210L;
     @NestedConfigurationProperty
     private JpaServiceRegistryProperties jpa = new JpaServiceRegistryProperties();
 
