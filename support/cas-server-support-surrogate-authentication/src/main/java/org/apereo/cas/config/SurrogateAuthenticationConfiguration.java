@@ -125,7 +125,7 @@ public class SurrogateAuthenticationConfiguration {
     @Autowired
     @RefreshScope
     @Bean
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("mergingAttributeRepository") final IPersonAttributeDao attributeRepository,
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
                                                               @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         final SurrogatePrincipalResolver bean = new SurrogatePrincipalResolver();
         bean.setAttributeRepository(attributeRepository);
