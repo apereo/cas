@@ -73,6 +73,7 @@ public class ManagementWebappProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = -8129280052479631538L;
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 

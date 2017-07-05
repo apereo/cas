@@ -52,9 +52,12 @@ public class EventsProperties {
     }
 
     public static class Jpa extends AbstractJpaProperties {
+        private static final long serialVersionUID = 7647381223153797806L;
     }
 
     public static class Mongodb extends AbstractMongoClientProperties {
+        private static final long serialVersionUID = -1918436901491275547L;
+
         public Mongodb() {
             setCollection("MongoDbCasEventRepository");
         }

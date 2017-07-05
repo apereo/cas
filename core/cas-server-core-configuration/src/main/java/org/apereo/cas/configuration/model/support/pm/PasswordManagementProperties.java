@@ -76,6 +76,7 @@ public class PasswordManagementProperties {
     }
 
     public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = 4746591112640513465L;
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
@@ -147,6 +148,7 @@ public class PasswordManagementProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = -2610186056194686825L;
         private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
         private String baseDn;
         private String userFilter;

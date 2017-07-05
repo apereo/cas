@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 
 public class CouchbaseServiceRegistryProperties implements Serializable {
+    private static final long serialVersionUID = -4975171412161962007L;
     private boolean queryEnabled = true;
 
     private String nodeSet = "localhost:8091";

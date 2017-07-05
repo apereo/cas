@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 public class ConnectionPoolingProperties implements Serializable {
+    private static final long serialVersionUID = -5307463292890944799L;
     private int minSize = 6;
     private int maxSize = 18;
     private String maxWait = "PT2S";
