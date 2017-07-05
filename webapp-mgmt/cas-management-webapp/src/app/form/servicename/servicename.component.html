@@ -1,0 +1,21 @@
+<div class="form-group">
+  <label class="col-sm-3" for="serviceName">
+    <span style="float:right">
+      <ng-container i18n="services.form.label.name">
+        {{ messages.services_form_label_name }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.name"
+        [myTooltip]="messages.services_form_tooltip_name"></i>
+    </span>
+  </label>
+  <div class="col-sm-9">
+    <div class="input-group">
+      <div class="input-group-addon input-group-required"
+           i18n-title="services.form.required"
+           [title]="messages.services_form_required">
+        <i class="fa fa-exclamation-triangle"></i>
+      </div>
+      <input type="text" class="form-control" id="serviceName" [(ngModel)]="serviceData.name">
+    </div>
+  </div>
+</div>

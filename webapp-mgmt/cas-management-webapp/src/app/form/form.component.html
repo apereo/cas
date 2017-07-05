@@ -1,0 +1,69 @@
+<div class="casmgmt-form service-editor form-horizontal" autocomplete="off" id="serviceForm"
+      novalidate="novalidate">
+
+  <app-saveformtop (save)="saveForm()"></app-saveformtop>
+  <app-alert #alert></app-alert>
+
+  <div id="exTab1">
+    <ul class="nav nav-tabs nav-justified">
+      <li [ngClass]="{'active' : active === 'basics'}">
+        <a (click)="goto('basics')"><br>
+          <ng-container i18n>Basics</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'servicetype'}">
+        <a (click)="goto('servicetype')">
+          <ng-container i18n>Service</ng-container><br>
+          <ng-container i18n>Type</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'logout'}">
+        <a (click)="goto('logout')"><br>
+          <ng-container i18n>Logout</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'accessstrategy'}">
+        <a (click)="goto('accessstrategy')">
+          <ng-container i18n>Access</ng-container><br>
+          <ng-container i18n>Strategy</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'multiauth'}">
+        <a (click)="goto('multiauth')">
+          <ng-container i18n>Multifactor</ng-container><br>
+          <ng-container i18n>Authentication</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'proxy'}">
+        <a (click)="goto('proxy')">
+          <ng-container i18n>Proxy</ng-container><br>
+          <ng-container i18n>Authentication</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'userattr'}">
+        <a (click)="goto('userattr')">
+          <ng-container i18n>Username Attribute</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'attrRelease'}">
+        <a (click)="goto('attrRelease')">
+          <ng-container i18n>Attribute Release</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'properties'}">
+        <a (click)="goto('properties')"><br>
+          <ng-container i18n>Properties</ng-container>
+        </a>
+      </li>
+      <li [ngClass]="{'active' : active === 'advanced'}">
+        <a (click)="goto('advanced')"><br>
+          <ng-container>Advanced</ng-container>
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content clearfix" style="margin-right:auto;margin-left:auto; width:800px;">
+      <router-outlet name="form"></router-outlet>
+    </div>
+  </div>
+</div>
