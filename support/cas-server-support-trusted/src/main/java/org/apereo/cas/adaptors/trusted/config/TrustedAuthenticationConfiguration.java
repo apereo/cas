@@ -62,7 +62,7 @@ public class TrustedAuthenticationConfiguration {
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("mergingAttributeRepository")
+    @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @Bean
