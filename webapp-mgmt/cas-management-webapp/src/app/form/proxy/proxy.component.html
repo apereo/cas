@@ -1,0 +1,65 @@
+<div class="proxy-policy-container">
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <ng-container i18n="services.form.header.proxyPolicy">
+          {{ messages.services_form_header_proxyPolicy }}
+        </ng-container>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div class="radio-group">
+
+        <!-- Proxy Policy Radio Button - Refuse -->
+        <label class="radio-inline">
+          <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="REFUSE"
+                 [(ngModel)]="serviceData.proxyPolicy.type" checked="true">
+          <ng-container i18n="services.form.label.proxyPolicy.refuse">
+            {{ messages.services_form_label_proxyPolicy_refuse }}
+          </ng-container>
+        </label>
+
+        <!-- Proxy Policy Radio Button - Regex -->
+        <label class="radio-inline">
+          <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="REGEX"
+                 [(ngModel)]="serviceData.proxyPolicy.type">
+          <ng-container i18n="services.form.label.proxyPolicy.regex">
+            {{ messages.services_form_label_proxyPolicy_regex }}
+          </ng-container>
+        </label>
+      </div>
+
+      <!-- Proxy Policy Refuse Options -->
+      <div class="well well-sm" *ngIf="serviceData.proxyPolicy.type === 'REFUSE'">
+        <ng-container i18n="management.services.service.noAction">
+          {{ messages.management_services_service_noAction }}
+        </ng-container>
+      </div>
+
+      <!-- Proxy Policy Regex Options -->
+      <div class="form-group" *ngIf="serviceData.proxyPolicy.type === 'REGEX'">
+        <label class="col-sm-3" for="proxyPolicyRegex">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.proxyPolicy.regex">
+              {{ messages.services_form_label_proxyPolicy_regex }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.proxyPolicy.regex"
+               [myTooltip]="messages.services_form_tooltip_proxyPolicy_regex"></i>
+          </span>
+        </label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <div class="input-group-addon input-group-required"
+                 i18n-title="services.form.required"
+                 [title]="messages.services_form_required">
+              <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <input type="text" class="form-control" id="proxyPolicyRegex"
+                   [(ngModel)]="serviceData.proxyPolicy.value">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

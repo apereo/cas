@@ -1,0 +1,60 @@
+<div class="attribute-release-policy-container" id="attribute-release-policy-container"
+     *ngIf="serviceData.type != 'oidc'">
+
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <ng-container i18n="services.form.header.attrRelPolicy">
+        {{ messages.services_form_header_attrRelPolicy }}
+        </ng-container>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <app-attribute-release-checks [serviceData]="serviceData"
+                                    [formData]="formData"
+                                    [selectOptions]="selectOptions"></app-attribute-release-checks>
+      <app-attribute-release-filters [serviceData]="serviceData"
+                                     [formData]="formData"
+                                     [selectOptions]="selectOptions"></app-attribute-release-filters>
+      <app-attribute-release-principal-repo [serviceData]="serviceData"
+                                            [formData]="formData"
+                                            [selectOptions]="selectOptions"></app-attribute-release-principal-repo>
+    </div>
+  </div>
+
+  <app-attribute-release-policies [serviceData]="serviceData"
+                                  [formData]="formData"
+                                  [selectOptions]="selectOptions"></app-attribute-release-policies>
+</div>
+
+
+<div class="attribute-release-policy-container" id="attribute-release-policy-container"
+     *ngIf="serviceData.type == 'oidc'">
+
+  <div class="well well-sm">
+    <ng-container i18n="management.services.service.noAction">
+      {{ messages.management_services_service_noAction }}
+    </ng-container>
+  </div>
+</div>
+
+<div class="attribute-release-policy-container" id="attribute-release-policy-container"
+     *ngIf="serviceData.type == 'wsfed'">
+
+  <h1>{{serviceFormCtrl.serviceData.type}}</h1>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <ng-container i18n="services.form.header.attrRelPolicy">
+          {{ messages.services_form_header_attrRelPolicy }}
+        </ng-container></h3>
+    </div>
+    <div class="panel-body">
+      <app-attribute-release-principal-repo [serviceData]="serviceData"
+                                            [formData]="formData"
+                                            [selectOptions]="selectOptions"></app-attribute-release-principal-repo>
+    </div>
+  </div>
+
+  <app-wsfedattrrelpolicies [serviceData]="serviceData" [formData]="formData"></app-wsfedattrrelpolicies>
+</div>

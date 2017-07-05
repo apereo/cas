@@ -36,7 +36,6 @@ ajcore.*
 reports
 
 *.asc
-*.css
 /.nb-gradle/
 etc/loadtests/loadtests/**
 etc/loadtests/locustfiles/**

@@ -11,9 +11,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -114,7 +116,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param idAsLong the id
      * @param response the response
      */
-    @PostMapping(value = "/deleteRegisteredService")
+    @GetMapping(value = "/deleteRegisteredService")
     public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
                                         final HttpServletResponse response) {
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
@@ -165,31 +167,18 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         JsonUtils.render(model, response);
     }
 
-    /**
-     * Updates the {@link RegisteredService#getEvaluationOrder()}.
-     *
-     * @param response the response
-     * @param id       the service ids, whose order also determines the service evaluation order
-     */
-    @PostMapping(value = "/updateRegisteredServiceEvaluationOrder")
-    public void updateRegisteredServiceEvaluationOrder(final HttpServletResponse response,
-                                                       @RequestParam("id") final long... id) {
-        if (id == null || id.length == 0) {
-            throw new IllegalArgumentException("No service id was received. Re-examine the request");
-        }
-        for (int i = 0; i < id.length; i++) {
-            final long svcId = id[i];
-            final RegisteredService svc = this.servicesManager.findServiceBy(svcId);
-            if (svc == null) {
-                throw new IllegalArgumentException("Service id " + svcId + " cannot be found.");
-            }
-            svc.setEvaluationOrder(i);
-            this.servicesManager.save(svc);
-        }
+    @PostMapping(value = "/updateOrder", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateOrder(final HttpServletRequest request, final HttpServletResponse response,
+                            @RequestBody final RegisteredServiceViewBean[] svcs) throws Exception {
+        RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(svcs[0].getAssignedId()));
+        RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(svcs[1].getAssignedId()));
+        svcA.setEvaluationOrder(svcs[0].getEvalOrder());
+        svcB.setEvaluationOrder(svcs[1].getEvalOrder());
+        this.servicesManager.save(svcA);
+        this.servicesManager.save(svcB);
         final Map<String, Object> model = new HashMap<>();
-        model.put(STATUS, HttpServletResponse.SC_OK);
+        model.put("STATUS", HttpServletResponse.SC_OK);
         JsonUtils.render(model, response);
     }
-
 
 }

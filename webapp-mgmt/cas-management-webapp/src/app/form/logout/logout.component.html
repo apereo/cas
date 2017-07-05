@@ -1,0 +1,14 @@
+<div class="form-group">
+  <label class="col-sm-3" for="logoutUrl">
+    <span style="float:right">
+      <ng-container i18n="services.form.label.logoutUrl">
+        {{ messages.services_form_label_logoutUrl }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.logoutUrl"
+        [myTooltip]="messages.services_form_tooltip_logoutUrl"></i>
+    </span>
+  </label>
+  <div class="col-sm-9">
+    <input type="text" class="form-control" id="logoutUrl" [(ngModel)]="serviceData.logoutUrl">
+  </div>
+</div>

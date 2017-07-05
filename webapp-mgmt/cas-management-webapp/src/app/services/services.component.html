@@ -1,0 +1,174 @@
+<div class="titleBar">
+  <div class="title">
+    <h1><i class="fa fa-gears"></i>
+      <ng-container i18n>Manage Services</ng-container>
+    </h1>
+  </div>
+</div>
+
+<div class="services-table-container">
+  <div class="row">
+    <div class="col-sm-12">
+      <app-alert #alert></app-alert>
+      <table class="table table-hover table-striped services-table">
+        <thead>
+          <tr>
+            <th class="col-sm-3">
+              <ng-container i18n="management.services.table.header.serviceName">
+                {{messages.management_services_table_header_serviceName}}
+              </ng-container>
+            </th>
+            <th class="col-sm-3">
+              <ng-container i18n="management.services.table.header.serviceId">
+                {{messages.management_services_table_header_serviceId}}
+              </ng-container>
+            </th>
+            <th class="col-sm-4">
+              <ng-container i18n="management.services.table.header.serviceDesc">
+                {{messages.management_services_table_header_serviceDesc}}
+              </ng-container>
+            </th>
+            <th class="col-sm-1"></th>
+            <th class="col-sm-1"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="assignedId_{{ item.assignedId }}"
+              *ngFor="let item of dataTable; let i = index;"
+              [ngClass]="{ 'row-disabled': !item.sasCASEnabled }">
+            <td colspan="5">
+              <table class="table-service">
+                <tr class="main-row">
+                  <td class="col-sm-2">
+                    <div class="grabber-icon" style="margin-top:auto;margin-bottom:auto;">
+                      <div (click)="moveUp(item);" *ngIf="i != 0" class="fa fa-arrow-up" style="display:block;position:relative;" [style.top]="needsPadding(item)"></div>
+                      <div (click)="moveDown(item);" *ngIf="i != dataTable.length - 1" class="fa  fa-arrow-down" style="display:block;position:relative;" [style.bottom]="needsPadding(item)"></div>
+                    </div>
+                    <div style="display:inline-block;">
+                      <div class="serviceName" [ngClass]="{'middle': i != 0 && i != dataTable.length - 1}">{{item.name}}
+                        <a href="javascript://" class="more" (click)="toggleDetail(item.assignedId)">
+                         <i class="fa fa-chevron-{{ detailRow === item.assignedId ? 'up' : 'down' }}"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="col-sm-3">{{ item.serviceId }}</td>
+                  <td class="col-sm-4">{{ item.description }}</td>
+                  <td class="col-sm-1">
+                    <button class="btn btn-success" (click)="serviceEdit( item.assignedId )">
+                      <i class="fa fa-lg fa-pencil"></i>
+                      <ng-container i18n="management.services.table.button.edit">
+                        {{ messages.management_services_table_button_edit }}
+                      </ng-container>
+                    </button>
+                  </td>
+                  <td class="col-sm-1">
+                    <button class="btn btn-warning" (click)="serviceDuplicate( item.assignedId )">
+                      <i class="fa fa-lg fa-clone"></i>
+                      <ng-container i18n="management.services.table.button.duplicate">
+                        {{ messages.management_services_table_button_duplicate }}
+                      </ng-container>
+                    </button>
+                  </td>
+                  <td class="col-sm-1">
+                    <button class="btn btn-danger" (click)="openModalDelete(item)">
+                      <i class="fa fa-lg fa-trash"></i>
+                      <ng-container i18n="management.services.table.button.delete">
+                        {{ messages.management_services_table_button_delete }}
+                      </ng-container>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="detail-row" *ngIf="detailRow == item.assignedId">
+                  <td colspan="6">
+                    <table class="table-details">
+                      <tr>
+                        <td class="col-sm-2 detail-label">
+                          <ng-container i18n="management.services.table.details.description">
+                            {{messages.management_services_table_details_description }}
+                          </ng-container>
+                        </td>
+                        <td class="col-sm-8">{{ item.description }}</td>
+                        <td class="col-sm-2 detail-logo" colspan="2" rowspan="5" *ngIf="item.logoUrl">
+                          <img src="{{ item.logoUrl }}" alt="{{ item.name }}"/>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="col-sm-2 detail-label">
+                          <ng-container i18n="management.services.table.details.proxyPolicy">
+                            {{messages.management_services_table_details_proxyPolicy }}
+                          </ng-container>
+                        </td>
+                        <td class="col-sm-8">
+                          <span *ngIf="!item.proxyPolicy.value">{{ item.proxyPolicy.type | uppercase }}</span>
+                          <span *ngIf="item.proxyPolicy.value">{{ item.proxyPolicy.value }}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="col-sm-2 detail-label">
+                          <ng-container i18n="managemnt.services.table.details.attrPolicy">
+                            {{ messages.management_services_table_details_attrPolicy }}
+                          </ng-container>
+                        </td>
+                        <td class="col-sm-8">{{ item.attrRelease.attrPolicy | uppercase }}</td>
+                      </tr>
+                      <tr>
+                        <td class="col-sm-2 detail-label">
+                          <ng-container i18n="management.services.table.details.releaseCred">
+                            {{ messages.management_services_table_details_releaseCred }}
+                          </ng-container>
+                        </td>
+                        <td class="col-sm-8">{{ item.attrRelease.releasePassword }} </td>
+                      </tr>
+                      <tr>
+                        <td class="col-sm-2 detail-label">
+                          <ng-container i18n="management.services.table.details.releaseProxy">
+                            {{ messages.management_services_table_details_releaseProxy }}
+                          </ng-container>
+                        </td>
+                        <td class="col-sm-8">{{ item.attrRelease.releaseTicket }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true"
+     [ngClass]="{ 'show': deleteItem, 'fade': !deleteItem }">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div id="deleteModalLabel" class="modal-header">
+        <h3>
+          <ng-container i18n="managemnet.services.table.modal.delete.header">
+            {{messages.management_services_table_modal_delete_header}}
+          </ng-container>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <span i18n="management.services.table.modal.delete.msgPt1">
+          {{messages.management_services_table_modal_delete_msgPt1}}
+        </span> {{ deleteItem != null ? deleteItem.name : '' }}.<br/>
+        <span i18n="management.services.table.modal.delete.msgPt2">
+          {{messages.management_services_table_modal_delete_msgPt2}}
+        </span>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" (click)="closeModalDelete();">
+          <ng-container i18n>Cancel</ng-container>
+        </button>
+        <button class="btn btn-danger btn-ok" (click)="delete()">
+          <ng-container i18n>Delete</ng-container>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
