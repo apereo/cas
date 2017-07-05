@@ -32,8 +32,17 @@ public class PrincipalAttributesProperties {
     private List<Groovy> groovy = new ArrayList();
     private List<Ldap> ldap = new ArrayList();
     private List<Json> json = new ArrayList();
+    private List<Script> script = new ArrayList<>();
     private Stub stub = new Stub();
     private Grouper grouper = new Grouper();
+
+    public List<Script> getScript() {
+        return script;
+    }
+
+    public void setScript(final List<Script> script) {
+        this.script = script;
+    }
 
     public List<Rest> getRest() {
         return rest;
@@ -312,6 +321,28 @@ public class PrincipalAttributesProperties {
         }
     }
 
+    public static class Script extends AbstractConfigProperties {
+        private static final long serialVersionUID = 4221139939506528713L;
+        private boolean caseInsensitive;
+        private int order;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+
+        public boolean isCaseInsensitive() {
+            return caseInsensitive;
+        }
+
+        public void setCaseInsensitive(final boolean caseInsensitive) {
+            this.caseInsensitive = caseInsensitive;
+        }
+    }
+    
     public static class Groovy extends AbstractConfigProperties {
         private static final long serialVersionUID = 7901595963842506684L;
         private boolean caseInsensitive;

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,6 +16,7 @@ import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
+import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
@@ -38,6 +40,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
 import javax.naming.directory.SearchControls;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +75,7 @@ public class CasPersonDirectoryConfiguration {
         list.addAll(groovyAttributeRepositories());
         list.addAll(grouperAttributeRepositories());
         list.addAll(restfulAttributeRepositories());
+        list.addAll(scriptedAttributeRepositories());
         list.addAll(stubAttributeRepositories());
 
         OrderComparator.sort(list);
@@ -242,6 +246,24 @@ public class CasPersonDirectoryConfiguration {
         return list;
     }
 
+    @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
+    @Bean
+    @RefreshScope
+    public List<IPersonAttributeDao> scriptedAttributeRepositories() {
+        final List<IPersonAttributeDao> list = new ArrayList<>();
+        casProperties.getAuthn().getAttributeRepository().getScript()
+                .forEach(Unchecked.consumer(script -> {
+                    final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
+                    final String scriptFile = IOUtils.toString(script.getConfig().getLocation().getInputStream(), StandardCharsets.UTF_8);
+                    dao.setScriptFile(scriptFile);
+                    dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
+                    dao.setOrder(script.getOrder());
+                    LOGGER.debug("Configured scripted attribute sources from [{}]", script.getConfig().getLocation());
+                    list.add(dao);
+                }));
+        return list;
+    }
+
     @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
     @Bean
     @RefreshScope
@@ -271,7 +293,7 @@ public class CasPersonDirectoryConfiguration {
 
         return list;
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "cachingAttributeRepository")
     public IPersonAttributeDao cachingAttributeRepository() {
