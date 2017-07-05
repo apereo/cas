@@ -10,6 +10,8 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
 /**
@@ -52,13 +54,15 @@ public class MetadataUIUtils {
      * @param metadataAdapter   the metadata adapter
      * @param entityId          the entity id
      * @param registeredService the registered service
+     * @param requestContext    the request context
      * @return the simple metadata ui info
      */
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
                                                                             final String entityId,
-                                                                            final RegisteredService registeredService) {
+                                                                            final RegisteredService registeredService,
+                                                                            final HttpServletRequest requestContext) {
         final EntityDescriptor entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
-        return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService);
+        return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService, requestContext);
     }
 
     /**
@@ -67,12 +71,14 @@ public class MetadataUIUtils {
      * @param entityDescriptor  the entity descriptor
      * @param entityId          the entity id
      * @param registeredService the registered service
+     * @param requestContext    the request context
      * @return the simple metadata ui info
      */
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor,
                                                                             final String entityId,
-                                                                            final RegisteredService registeredService) {
-        final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService);
+                                                                            final RegisteredService registeredService,
+                                                                            final HttpServletRequest requestContext) {
+        final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
         if (entityDescriptor == null) {
             LOGGER.debug("Entity descriptor not found for [{}]", entityId);
             return mdui;
