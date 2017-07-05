@@ -1422,6 +1422,7 @@ ext.libraries = [
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.zaxxer", module: "HikariCP")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -1464,6 +1465,7 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.zaxxer", module: "HikariCP")
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-http:$pac4jVersion") {
