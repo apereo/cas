@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-sm-12">
+
+    <div class="form-group">
+      <label class="col-sm-3 important" for="casEnabled">
+        <span style="float:right">
+          <ng-container i18n="services.form.label.sas.casEnabled">
+            {{ messages.services_form_label_sas_casEnabled }}
+          </ng-container>
+          <i i18n-myTooltip="services.form.tooltip.sas.casEnabled"
+            [myTooltip]="messages.services_form_tooltip_sas_casEnabled"></i>
+        </span>
+      </label>
+      <div class="col-sm-1">
+        <div class="checkbox checkbox-inline">
+          <input type="checkbox" id="casEnabled" [(ngModel)]="serviceData.supportAccess.casEnabled">
+        </div>
+      </div>
+      <div class="col-sm-8">
+        <div class="alert alert-danger" role="alert" *ngIf="!serviceData.supportAccess.casEnabled">
+          <p>
+            <i class="fa fa-lg fa-info-circle"></i>
+            <ng-container i18n="services.form.warning.casDisabled">
+              {{ messages.services_form_warning_casDisabled }}
+            </ng-container>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

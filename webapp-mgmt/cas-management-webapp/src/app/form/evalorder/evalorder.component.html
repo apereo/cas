@@ -1,0 +1,14 @@
+<div class="form-group">
+  <label class="col-sm-3" for="evalOrder">
+    <span style="float:right">
+      <ng-container i18n="services.form.label.evalOrder">
+        {{ messages.services_form_label_evalOrder }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.evalOrder"
+        [myTooltip]="messages.services_form_tooltip_evalOrder"></i>
+    </span>
+  </label>
+  <div class="col-sm-7">
+    <input type="text" class="form-control" id="evalOrder" [(ngModel)]="serviceData.evalOrder">
+  </div>
+</div>

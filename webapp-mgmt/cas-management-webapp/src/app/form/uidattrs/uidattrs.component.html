@@ -1,0 +1,121 @@
+<!-- Username Attribute Provider Options -->
+<div class="username-attribute-provider-container">
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <ng-container i18n="services.form.header.usernameAttProvider">
+          {{ messages.services_form_header_usernameAttProvider }}
+        </ng-container>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div class="radio-group">
+        <!-- Username Attribute Provider Radio Button - Default -->
+        <label class="radio-inline">
+          <input type="radio" name="uapRadio" id="uapDefault" value="default"
+                 [(ngModel)]="serviceData.userAttrProvider.type"
+                 [checked]="serviceData.userAttrProvider.type == 'default'">
+          <ng-container i18n="services.form.label.uap.default">
+            {{ messages.services_form_label_uap_default }}
+          </ng-container>
+        </label>
+        <!-- Username Attribute Provider Radio Button - Anonymous -->
+        <label class="radio-inline">
+          <input type="radio" name="uapRadio" id="uapAnon" value="anon"
+                 [(ngModel)]="serviceData.userAttrProvider.type"
+                 [checked]="serviceData.userAttrProvider.type == 'anon'">
+          <ng-container i18n="services.form.label.uap.anon">
+            {{ messages.services_form_label_uap_anon }}
+          </ng-container>
+        </label>
+        <!-- Username Attribute Provider Radio Button - Principle Attribute -->
+        <label class="radio-inline">
+          <input type="radio" name="uapRadio" id="uapAtt" value="attr"
+                 [(ngModel)]="serviceData.userAttrProvider.type"
+                 [checked]="serviceData.userAttrProvider.type == 'attr'">
+          <ng-container i18n="services.form.label.uap.principleAtt">
+            {{ messages.services_form_label_uap_principleAtt }}
+          </ng-container>
+        </label>
+      </div>
+
+      <!-- Username Attribute Provider Default Options -->
+      <div class="well well-sm" *ngIf="serviceData.userAttrProvider.type == 'default'">
+        <ng-container i18n="management.services.service.noAction">
+          {{ messages.management_services_service_noAction }}
+        </ng-container>
+      </div>
+      <!-- Username Attribute Provider Anonymous Options -->
+      <div class="form-group" *ngIf="serviceData.userAttrProvider.type == 'anon'">
+        <label class="col-sm-4" for="uapSaltSetting">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.uap.saltSetting">
+              {{ messages.services_form_label_uap_saltSetting }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.uap.saltSetting"
+              [myTooltip]="messages.services_form_tooltip_uap_saltSetting"></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <div class="input-group-addon input-group-required"
+                 i18n-title="services.form.required"
+                 [title]="messages.services_form_required">
+              <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <input type="text" class="form-control" id="uapSaltSetting"
+                   [(ngModel)]="serviceData.userAttrProvider.valueAnon" >
+          </div>
+        </div>
+      </div>
+      <!-- Username Attribute Provider Principle Attribute Options -->
+      <div class="form-group" *ngIf="serviceData.userAttrProvider.type == 'attr'">
+        <label class="col-sm-4" for="uapUsernameAttribute">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.uap.usernameAttribute">
+              {{ messages.services_form_label_uap_usernameAttribute }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.uap.usernameAttribute"
+              [myTooltip]="messages.services_form_tooltip_uap_usernameAttribute"></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <div class="input-group-addon input-group-required"
+                 i18n-title="services.form.required"
+                 [title]="messages.services_form_required">
+              <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <select class="form-control" id="uapUsernameAttribute" [(ngModel)]="serviceData.userAttrProvider.valueAttr">
+              <option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+                {{ opt }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" *ngIf="serviceData.userAttrProvider.type == 'attr'">
+        <div class="col-sm-4">
+          <div class="checkbox">
+            <label for="canonicalizationMode">
+              <input type="checkbox" id="canonicalizationMode"
+                     [(ngModel)]="serviceData.userAttrProvider.canonicalization" />
+              <ng-container i18n="services.form.label.uap.canonicalizationMode">
+                {{ messages.services_form_label_uap_cononicalizationMode }}
+              </ng-container>
+              <i i18n-myTooltip="services.form.tooltip.uap.canonicalizationMode"
+                 [myTooltip="messages.services_form_tooltip_uap_canonicalizationMode"></i>
+            </label>
+          </div>
+        </div>
+        <div class="col-sm-8" *ngIf="serviceData.userAttrProvider.canonicalization">
+          <select class="form-control" id="canonicalizationType" [(ngModel)]="serviceData.userAttrProvider.canonicalizationMode">
+            <option *ngFor="let opt of selectOptions.canonicalizationList"
+                    [value]="opt.value"
+                    [selected]="opt === serviceData.userAttrProvider.canonicalizationMode">{{ opt.name }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
