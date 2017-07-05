@@ -1,0 +1,222 @@
+<!-- SAML Client -->
+<div class="saml-client-container" *ngIf="serviceData.type=='saml'">
+  <div class="panel panel-warning">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <ng-container i18n="services.form.header.samlclient">
+          {{ messages.services_form_header_samlclient }}
+        </ng-container>
+      </h3>
+    </div>
+    <div class="panel-body">
+
+      <!--Metadata Location: text-->
+      <div class="form-group">
+
+        <label class="col-sm-4" for="samlMetadataLocation">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.saml.metadata.location">
+              {{ messages.services_form_label_saml_metadata_location }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.saml.metadata.location"
+              [myTooltip]="messages.services_form_tooltip_saml_metadata_location"></i>
+          </span>
+        </label>
+
+        <div class="col-sm-8">
+          <div class="input-group">
+            <div class="input-group-addon input-group-required"
+                 i18n-title="services.form.required"
+                 [title]="messages.services_form_required">
+              <i class="fa fa-exclamation-triangle"></i>
+            </div>
+
+            <input type="text" autocomplete="off" class="form-control" id="samlMetadataLocation"
+                   [(ngModel)]="serviceData.saml.mdLoc">
+          </div>
+        </div>
+
+      </div>
+
+      <!--Metadata Maximum Validity: integer-->
+      <div class="form-group">
+        <label class="col-sm-4" for="samlMetadataMaxValidity">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.saml.metadata.maximumvalidity">
+              {{ messages.services_form_label_saml_metadata_maximumvalidity }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.saml.metadata.maximumvalidity"
+              [myTooltip]="messages.services_form_tooltip_saml_metadata_maximumvalidity"></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <input type="text" autocomplete="off" class="form-control" id="samlMetadataMaxValidity"
+                 [(ngModel)]="serviceData.saml.mdMaxVal">
+        </div>
+      </div>
+
+      <!--Authentication Context Class: text-->
+      <div class="form-group">
+        <label class="col-sm-4" for="samlAuthContextClass">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.saml.authenticationcontextclass">
+              {{ messages.services_form_label_saml_authenticationcontextclass }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.saml.authenticationcontextclass"
+              [myTooltip]="messages.services_form_tooltip_saml_authenticationcontextclass"></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <input type="text" autocomplete="off" class="form-control" id="samlAuthContextClass"
+                 [(ngModel)]="serviceData.saml.authCtxCls">
+        </div>
+      </div>
+
+      <!--Metadata Signature Public Key Location: text-->
+      <div class="form-group">
+        <label class="col-sm-4" for="samlMetadataPublicKeyLocation">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.saml.metadata.signaturepublickeylocation">
+             {{ messages.services_form_label_saml_metadata_signaturepublickeylocation }}
+            </ng-container>
+           <i i18n-myTooltip="services.form.tooltip.saml.metadata.signaturepublickeylocation"
+             [myTooltip]="messages.services_form_tooltip_saml_metadata_signaturepublickeylocation"></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <input type="text" autocomplete="off" class="form-control" id="samlmetadatapublickeylocation"
+                 [(ngModel)]="serviceData.saml.mdSigLoc">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-md-8 col-md-offset-4">
+          <!--Sign Assertions: true/false-->
+          <div class="checkbox">
+            <label for="samlSignAssertions">
+              <input type="checkbox" id="samlSignAssertions"
+                     [(ngModel)]="serviceData.saml.signAssert">
+              <ng-container i18n="services.form.label.saml.signassertions">
+                {{ messages.services_form_label_saml_signassertions }}
+              </ng-container>
+              <i i18n-myTooltip="services.form.tooltip.saml.signassertions"
+                [myTooltip]="messages.services_form_tooltip_saml_signassertions"></i>
+            </label>
+          </div>
+          <!--Sign Responses: true/false-->
+          <div class="checkbox">
+            <label for="samlSignResponses">
+              <input type="checkbox" id="samlSignResponses"
+                     [(ngModel)]="serviceData.saml.signResp">
+              <ng-container i18n="services.form.label.saml.signresponses">
+                {{ messages.services_form_label_saml_signresponses }}
+              </ng-container>
+              <i i18n-myTooltip="services.form.tooltip.saml.signresponses"
+                [myTooltip]="messages.services_form_tooltip_saml_signresponses"></i>
+            </label>
+          </div>
+          <!--Encrypt Assertions: true/false-->
+          <div class="checkbox">
+            <label for="samlEncryptAssertions">
+              <input type="checkbox" id="samlEncryptAssertions"
+                     [(ngModel)]="serviceData.saml.encAssert">
+              <ng-container i18n="services.form.label.saml.encryptassertions">
+                {{ messages.services_form_label_saml_encryptassertions }}
+              </ng-container>
+              <i i18n-myTooltip="services.form.tooltip.saml.encrpytassertions"
+                [myTooltip]="messages.services_form_tooltip_saml_encryptassertions"></i>
+            </label>
+          </div>
+
+          <div class="checkbox">
+            <label for="samlRemoveEmptyEntities">
+              <input type="checkbox" id="samlRemoveEmptyEntities"
+                     [(ngModel)]="serviceData.saml.removeEmptyEntities">
+              <ng-container i18n="services.form.saml.removeEmptyEntities">
+                {{ messages.services_form_label_saml_removeEmptyEntities }}
+              </ng-container>
+              <i i18n-myTooltip="services.form.tooltip.saml.removeEmptyEntitities"
+                [myTooltip]="messages.services_form_tooltip_saml_removeEmptyEntities"></i>
+            </label>
+          </div>
+
+          <div class="checkbox">
+            <label for="samlRemoveRoleless">
+              <input type="checkbox" id="samlRemoveRoleless"
+                     [(ngModel)]="serviceData.saml.removeRoleless">
+              <ng-container i18n="services.form.label.saml.removeRoleless">
+                {{ messages.services_form_label_saml_removeRoleless }}
+              </ng-container>
+              <i i18n-myTooltip="services.form.tooltip.saml.removeRoleless"
+                [myTooltip]="messages.services_form_tooltip_saml_removeRoleless"></i>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+
+
+      <div class="form-group">
+        <label class="col-sm-4" for="samlMetadataPattern">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.saml.metadata.pattern">
+              {{ messages.services_form_label_saml_metadata_pattern }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.saml.metadata.pattern"
+              [myTooltip]="messages.services_form_tooltip_saml_metadata_pattern"></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <input type="text" autocomplete="off" class="form-control" id="samlMetadataPattern"
+                 [(ngModel)]="serviceData.saml.mdPattern">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4" for="samlMetadataDirection">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.saml.metadata.dir">
+              {{ messages.services_form_label_saml_metadata_dir }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.saml.metadata.dir"
+              [myTooltip]="messages.services_form_tooltip_saml_metadata_dir" ></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <select class="form-control" id="samlMetadataDirection" [(ngModel)]="serviceData.saml.dir">
+              <option *ngFor="let opt of selectOptions.samlDirectionList" [value]="opt.value">
+                {{ opt.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4" for="samlMetadataRole">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.saml.metadata.role">
+              {{ messages.services_form_label_saml_metadata_role }}
+            </ng-container>
+            <i i18n-myTooltip="services.form.tooltip.saml.metadata.role"
+              [myTooltip]="messages.services_form_tooltip_saml_metadata_role"></i>
+          </span>
+        </label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <select class="form-control" multiple="true" id="samlMetadataRole"
+                    [(ngModel)]="serviceData.saml.roles">
+              <option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
+                {{ opt.name}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-samlservicespane [serviceData]="serviceData"></app-samlservicespane>

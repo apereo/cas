@@ -1,0 +1,40 @@
+<div class="checkbox-group">
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" value="0"
+             [(ngModel)]="serviceData.attrRelease.excludeDefault"
+             [checked]="serviceData.attrRelease.excludeDefault"/>
+      <ng-container i18n="services.form.label.attrRelease.excludeDefault">
+        {{ messages.services_form_label_attrRelease_excludeDefault }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.attrRelease.excludeDefault"
+         [myTooltip]="messages.services_form_tooltip_attrRelease_excludeDefault"></i>
+    </label>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" value="1"
+             [(ngModel)]="serviceData.attrRelease.releasePassword"
+             [checked]="serviceData.attrRelease.releasePassword"/>
+      <ng-container i18n="services.form.label.attrRelease.releaseCredPassword">
+        {{ messages.services_form_label_attrRelease_releaseCredPassword }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.attrRelease.releaseCredPassword"
+         [myTooltip]="messages.services_form_tooltip_attrRelease_releaseCredPassword"></i>
+    </label>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" value="1"
+             [(ngModel)]="serviceData.attrRelease.releaseTicket"
+             [checked]="serviceData.attrRelease.releaseTicket"/>
+      <ng-container i18n="services.form.label.attrRelease.releaseProxyTicket">
+        {{ messages.services_form_label_attrRelease_releaseProxyTicket }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.attrRelease.releaseProxyTicket"
+         [myTooltip]="messages.services_form_tooltip_attrRelease_releaseProxyTicket"></i>
+    </label>
+  </div>
+</div>

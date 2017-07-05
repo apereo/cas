@@ -1,0 +1,14 @@
+<div class="form-group">
+  <label class="col-sm-3" for="reqHandler">
+    <span style="float:right">
+      <ng-container i18n="services.form.label.requiredHandlers">
+        {{ messages.services_form_label_requiredHandlers }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.requiredHandlers"
+        [myTooltip]="messages.services_form_tooltip_requiredHandlers"></i>
+    </span>
+  </label>
+  <div class="col-sm-7">
+    <input class="form-control noresize" id="reqHandler" [(ngModel)]="serviceData.reqHandlersStr">
+  </div>
+</div>

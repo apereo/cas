@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+@import "main/resources/static/css/cas-management.css";
+@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css";
+@import "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css";
+
+.menuCell {
+  border: 1px solid grey;
+  padding: 5px;
+  border-radius: 3px;
+  width: 90px;
+}
+
+.menuCell:hover {
+  background: green;
+  color:white;
+}
+
+.checkCell {
+  margin:5px;
+}
