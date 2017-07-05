@@ -726,8 +726,9 @@ By default, the execution order is the following but can be adjusted per source:
 3. JSON
 4. Groovy
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
-6. Shibboleth
-7. Stub
+6. REST
+7. Shibboleth
+8. Stub
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
@@ -742,7 +743,6 @@ The following mergeing strategies can be used to resolve conflicts when the same
 | `REPLACE`               | Overwrites existing attribute values, if any.
 | `ADD`                   | Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain.
 | `MERGE`                 | Combines all values into a single attribute, essentially creating a multi-valued attribute.
-
 
 ### Stub
 
@@ -855,6 +855,31 @@ The format of the file may be:
         "firstName":["Json2"],
         "eduPersonAffiliation":["employee", "student"]
     }
+}
+```
+
+### REST
+
+If you wish to directly and separately retrieve attributes from a REST endpoint,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.rest[0].method=GET|POST
+# cas.authn.attributeRepository.rest[0].order=0
+# cas.authn.attributeRepository.rest[0].caseInsensitive=false
+# cas.authn.attributeRepository.rest[0].basicAuthUsername=uid
+# cas.authn.attributeRepository.rest[0].basicAuthPassword=password
+# cas.authn.attributeRepository.rest[0].url=https://rest.somewhere.org/attributes
+```
+
+The authenticating user id is passed in form of a request parameter under `username.` The response is expected
+to be a JSON map as such:
+
+```json
+{
+  "name" : "JohnSmith",
+  "age" : 29,
+  "messages": ["msg 1", "msg 2", "msg 3"]
 }
 ```
 
