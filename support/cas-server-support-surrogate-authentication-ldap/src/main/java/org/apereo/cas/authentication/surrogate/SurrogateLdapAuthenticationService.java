@@ -22,18 +22,18 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link LdapSurrogateUsernamePasswordService}.
+ * This is {@link SurrogateLdapAuthenticationService}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class LdapSurrogateUsernamePasswordService implements SurrogateAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapSurrogateUsernamePasswordService.class);
+public class SurrogateLdapAuthenticationService implements SurrogateAuthenticationService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateLdapAuthenticationService.class);
     private final ConnectionFactory connectionFactory;
     private final SurrogateAuthenticationProperties.Ldap ldapProperties;
 
-    public LdapSurrogateUsernamePasswordService(final ConnectionFactory connectionFactory,
-                                                final SurrogateAuthenticationProperties.Ldap ldap) {
+    public SurrogateLdapAuthenticationService(final ConnectionFactory connectionFactory,
+                                              final SurrogateAuthenticationProperties.Ldap ldap) {
         this.connectionFactory = connectionFactory;
         this.ldapProperties = ldap;
     }
@@ -44,7 +44,7 @@ public class LdapSurrogateUsernamePasswordService implements SurrogateAuthentica
             if (username.equalsIgnoreCase(surrogate.getId())) {
                 return true;
             }
-            
+
             final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), Arrays.asList(username));
             LOGGER.debug("Using search filter: [{}]", filter);
 
