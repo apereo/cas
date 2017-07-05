@@ -729,8 +729,9 @@ By default, the execution order is the following but can be adjusted per source:
 4. Groovy
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
 6. REST
-7. Shibboleth
-8. Stub
+7. Script
+8. Shibboleth
+9. Stubbed/Static
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
