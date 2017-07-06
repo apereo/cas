@@ -52,7 +52,16 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter());
         }
-        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType());
+        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(), isAllowedToGenerateRefreshToken());
+    }
+    
+    /**
+     * Is allowed to generate refresh token ?
+     *
+     * @return the boolean
+     */
+    protected boolean isAllowedToGenerateRefreshToken() {
+        return true;
     }
 
     protected String getOAuthParameterName() {

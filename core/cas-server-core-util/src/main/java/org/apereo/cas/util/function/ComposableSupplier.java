@@ -30,6 +30,6 @@ public interface ComposableSupplier<T> extends Supplier<T> {
      */
     default Consumer<T> andThen(final Consumer<T> after) {
         Objects.requireNonNull(after);
-        return (T t) -> after.accept(get());
+        return t -> after.accept(get());
     }
 }

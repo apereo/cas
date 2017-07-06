@@ -9,12 +9,10 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
-import org.apereo.cas.authentication.surrogate.LdapSurrogateUsernamePasswordService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.SurrogateSelectionAction;
@@ -22,7 +20,6 @@ import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.ldaptive.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -110,13 +107,6 @@ public class SurrogateAuthenticationConfiguration {
                 LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getConfig().getLocation());
                 return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
             }
-            if (StringUtils.hasText(su.getLdap().getLdapUrl()) && StringUtils.hasText(su.getLdap().getSearchFilter())
-                    && StringUtils.hasText(su.getLdap().getBaseDn()) && StringUtils.hasText(su.getLdap().getMemberAttributeName())) {
-                LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
-                        su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
-                final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(su.getLdap());
-                return new LdapSurrogateUsernamePasswordService(factory, su.getLdap());
-            }
 
             final Map<String, Set> accounts = new LinkedHashMap<>();
             su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
@@ -135,7 +125,7 @@ public class SurrogateAuthenticationConfiguration {
     @Autowired
     @RefreshScope
     @Bean
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("mergingAttributeRepository") final IPersonAttributeDao attributeRepository,
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
                                                               @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         final SurrogatePrincipalResolver bean = new SurrogatePrincipalResolver();
         bean.setAttributeRepository(attributeRepository);

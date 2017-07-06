@@ -42,7 +42,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
     private static final String ATTR_NAME_PASSWORD = "userPassword";
     
     @Autowired
-    @Qualifier("mergingAttributeRepository")
+    @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @BeforeClass

@@ -100,6 +100,7 @@ public class AuditProperties {
     }
 
     public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = 4227475246873515918L;
         private int maxAgeDays = 180;
 
         private String isolationLevelName = "ISOLATION_READ_COMMITTED";
