@@ -1,11 +1,5 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
@@ -15,6 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +63,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
      *
      * @param allowed the allowed attributes.
      */
-    public void setAllowedAttributes(final Map<String, Object> allowed) {
+    public void setAllowedAttributes(final Map allowed) {
         this.allowedAttributes = allowed;
     }
 
@@ -99,14 +94,16 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 .stream()
                 .map(entry -> {
                     final String key = entry.getKey();
-                    final Collection<String> mappedAtributes = (Collection<String>) entry.getValue();
+                    final Collection mappedAttributes = CollectionUtils.wrap(entry.getValue());
                     LOGGER.debug("Attempting to map allowed attribute name [{}]", key);
-                    return Triple.of(key, resolvedAttributes.get(key), mappedAtributes);
+                    return Triple.of(key, resolvedAttributes.get(key), mappedAttributes);
                 })
                 .forEach(entry -> {
                     final Collection<String> mappedAttributes = entry.getRight();
-                    mappedAttributes.forEach(mapped -> mapSingleAttributeDefinition(entry.getLeft(), mapped,
-                            entry.getMiddle(), resolvedAttributes, attributesToRelease));
+                    mappedAttributes.forEach(mapped -> {
+                        mapSingleAttributeDefinition(entry.getLeft(), mapped,
+                                entry.getMiddle(), resolvedAttributes, attributesToRelease);
+                    });
                 });
         return attributesToRelease;
     }
