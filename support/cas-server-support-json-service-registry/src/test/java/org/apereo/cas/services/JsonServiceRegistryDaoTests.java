@@ -38,10 +38,26 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     }
 
     @Test
-    public void verifyExistingDefinitionForCompatibility() throws IOException {
+    public void verifyExistingDefinitionForCompatibility2() throws IOException {
+        final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
+        final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
+        final RegisteredService service = serializer.from(resource.getInputStream());
+        assertNotNull(service);
+        assertNotNull(service.getAttributeReleasePolicy());
+        final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        assertNotNull(policy);
+        assertEquals(policy.getAllowedAttributes().size(), 2);
+    }
+    
+    @Test
+    public void verifyExistingDefinitionForCompatibility1() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
         final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
         final RegisteredService service = serializer.from(resource.getInputStream());
         assertNotNull(service);
+        assertNotNull(service.getAttributeReleasePolicy());
+        final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        assertNotNull(policy);
+        assertEquals(policy.getAllowedAttributes().size(), 2);
     }
 }
