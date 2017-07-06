@@ -78,7 +78,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @param registeredService the registered service
      */
     protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId, final RegisteredService registeredService) {
-        final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);
+        final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(
+            this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequest(requestContext));
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }
 
