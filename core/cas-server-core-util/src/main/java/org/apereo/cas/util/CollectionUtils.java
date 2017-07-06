@@ -64,7 +64,10 @@ public final class CollectionUtils {
      */
     public static <K, V> Map<K, Collection<V>> wrap(final Multimap<K, V> source) {
         if (source != null && !source.isEmpty()) {
-            return new HashMap<>(source.asMap());
+            final Map inner = source.asMap();
+            final Map map = new HashMap<>();
+            inner.forEach((k, v) -> map.put(k, wrap(v)));
+            return map;
         }
         return new HashMap<>();
     }
