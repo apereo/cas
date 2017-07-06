@@ -234,7 +234,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         }
         LOGGER.debug("Locale [en] not found.");
 
-        if (!items.size().isEmpty()) {
+        if (!items.isEmpty()) {
             LOGGER.debug("Loading first available locale [{}]", ((LocalizedName) items.get(0)).getValue());
             return ((XSString) items.get(0)).getValue();
         }
