@@ -97,7 +97,6 @@ public class OidcServerDiscoverySettings {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
     }
 
-
     public List<String> getScopesSupported() {
         return scopesSupported;
     }

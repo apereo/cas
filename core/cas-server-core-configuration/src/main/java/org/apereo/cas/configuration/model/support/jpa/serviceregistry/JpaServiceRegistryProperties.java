@@ -11,6 +11,8 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 
 public class JpaServiceRegistryProperties extends AbstractJpaProperties {
 
+    private static final long serialVersionUID = 352435146313504995L;
+
     public JpaServiceRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-service-registry");
     }

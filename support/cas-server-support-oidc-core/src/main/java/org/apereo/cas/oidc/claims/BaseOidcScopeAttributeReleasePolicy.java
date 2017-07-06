@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseOidcScopeAttributeReleasePolicy.class);
 
     private List<String> allowedAttributes;
+
+    @JsonIgnore
+    private List<String> supportedClaims = new ArrayList<>();
 
     @JsonIgnore
     private String scopeName;
@@ -83,6 +87,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
                 .append("allowedAttributes", getAllowedAttributes())
+                .append("supportedClaims", supportedClaims)
                 .append("scopeName", scopeName)
                 .toString();
     }
@@ -95,8 +100,16 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         resolvedAttributes.putAll(attributes);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
-        
-        getAllowedAttributes()
+
+        final List<String> allowedClaims = new ArrayList<>(getAllowedAttributes());
+        allowedClaims.retainAll(getSupportedClaims());
+
+        LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
+                        + "supported claims [{}], the final collection of allowed attributes is [{}]",
+                getClass().getSimpleName(), getAllowedAttributes(),
+                getScopeName(), getSupportedClaims(), allowedClaims);
+
+        allowedClaims
                 .stream()
                 .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
                 .filter(p -> p.getValue() != null)
@@ -121,5 +134,13 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         final Object value = resolvedAttributes.get(claim);
         LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
         return Pair.of(claim, value);
+    }
+
+    public void setSupportedClaims(final List<String> supportedClaims) {
+        this.supportedClaims = supportedClaims;
+    }
+
+    protected List<String> getSupportedClaims() {
+        return supportedClaims;
     }
 }

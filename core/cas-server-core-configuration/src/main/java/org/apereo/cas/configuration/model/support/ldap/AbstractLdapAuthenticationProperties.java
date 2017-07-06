@@ -13,6 +13,8 @@ import java.util.List;
  */
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapProperties {
 
+    private static final long serialVersionUID = 3849857270054289852L;
+
     /**
      * The enum Search entry handler types.
      */
