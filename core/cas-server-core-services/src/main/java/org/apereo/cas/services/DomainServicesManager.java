@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +22,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Default implementation of the {@link ServicesManager} interface.
+ * Implementation of the {@link ServicesManager} interface that organizes services by domain into
+ * a hash for quicker lookup.
  *
- * @author Scott Battaglia
- * @since 3.1
+ * @author Travis Schmidt
+ * @since 5.1.2
  */
 public class DomainServicesManager implements ServicesManager, Serializable {
 
@@ -39,7 +41,11 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
     private Map<String, TreeSet<RegisteredService>> domains = new ConcurrentHashMap<>();
 
-    Pattern domainPattern = Pattern.compile("^https?://([^:/]+)");
+    /**
+     * This regular expression is used to strip the domain form the serviceId that is set in
+     * the Service and also passed as the service parameter to the login endpoint.
+     */
+    private final Pattern domainPattern = RegexUtils.createPattern("^(https?|imaps?)://([^:/]+)/i");
 
     /**
      * Instantiates a new default services manager impl.
@@ -73,8 +79,21 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
         return services.values().stream()
                 .filter(predicate)
-                .sorted()
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(final Service serviceId, final Class<T> clazz) {
+        return findServiceBy(serviceId.getId(), clazz);
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
+        return getServicesForDomain(getDomain(serviceId)).stream()
+                .filter(s -> s.getClass().isAssignableFrom(clazz) && s.matches(serviceId))
+                .map(clazz::cast)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -109,20 +128,6 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         return r;
     }
 
-    @Override
-    public List<String> getDomains() {
-        return domains.keySet().stream().sorted().collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<RegisteredService> getServicesForDomain(String domain) {
-        if(domain.contains("/")) {
-            domain = getDomain(domain);
-        }
-        return domains.containsKey(domain) ? domains.get(domain) : Collections.EMPTY_LIST;
-    }
-
-
     /**
      * Load services that are provided by the DAO.
      */
@@ -154,16 +159,6 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     }
 
     @Override
-    public <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz) {
-        return (T)findServiceBy(serviceId.getId());
-    }
-
-    @Override
-    public <T extends RegisteredService> T findServiceBy(String serviceId, Class<T> clazz) {
-        return (T)findServiceBy(serviceId);
-    }
-
-    @Override
     public boolean matchesExistingService(final String service) {
         return findServiceBy(service) != null;
     }
@@ -173,24 +168,35 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         return services.size();
     }
 
+    @Override
+    public List<String> getDomains() {
+        return domains.keySet().stream().sorted().collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<RegisteredService> getServicesForDomain(final String domain) {
+        return domains.containsKey(domain) ? domains.get(domain) : Collections.EMPTY_LIST;
+    }
+
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
         }
     }
 
-    private String getDomain(String service) {
+    private String getDomain(final String service) {
         Matcher match = domainPattern.matcher(service.toLowerCase());
         return match.lookingAt() && !match.group(1).contains("*") ? match.group(1) : "default";
     }
 
-    private void addToDomain(RegisteredService r, Map<String,TreeSet<RegisteredService>> map) {
+    private void addToDomain(final RegisteredService r, final Map<String,TreeSet<RegisteredService>> map) {
         String domain = getDomain(r.getServiceId());
         TreeSet<RegisteredService> services;
-        if (map.containsKey(domain))
+        if (map.containsKey(domain)) {
             services = map.get(domain);
-        else
+        } else {
             services = new TreeSet<RegisteredService>();
+        }
         services.add(r);
         map.put(domain,services);
     }
