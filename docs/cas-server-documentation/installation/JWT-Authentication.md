@@ -47,6 +47,8 @@ Once the token is generated, you may pass it to the `/login` endpoint of CAS as 
 /cas/login?service=https://...&token=<TOKEN_VALUE>
 ```
 
+The `token` parameter may also be passed as a request header.
+
 ## Configuration
 
 JWT authentication support is enabled by including the following dependency in the WAR overlay:

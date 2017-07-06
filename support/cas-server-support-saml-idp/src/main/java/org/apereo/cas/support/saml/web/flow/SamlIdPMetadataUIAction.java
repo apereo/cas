@@ -57,7 +57,7 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
                 }
 
                 final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().getEntityDescriptor(),
-                        service.getId(), registeredService);
+                        service.getId(), registeredService, WebUtils.getHttpServletRequest(requestContext));
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
             }
         }
