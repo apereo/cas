@@ -1,6 +1,7 @@
 package org.apereo.cas.util.services;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -27,7 +28,8 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
     private static final Logger LOGGER = LoggerFactory.getLogger(JasigRegisteredServiceDeserializationProblemHandler.class);
 
     @Override
-    public JavaType handleUnknownTypeId(final DeserializationContext ctxt, final JavaType baseType,
+    public JavaType handleUnknownTypeId(final DeserializationContext ctxt,
+                                        final JavaType baseType,
                                         final String subTypeId, final TypeIdResolver idResolver,
                                         final String failureMsg) throws IOException {
 
@@ -57,23 +59,20 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
             final CachingPrincipalAttributesRepository repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
             switch (propertyName) {
                 case "duration":
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
+                    for (int i = 1; i <= 6; i++) {
+                        p.nextToken();
+                    }
                     final String timeUnit = p.getText();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
+                    for (int i = 1; i <= 3; i++) {
+                        p.nextToken();
+                    }
                     final int expiration = p.getValueAsInt();
 
                     repo.setTimeUnit(timeUnit);
                     repo.setExpiration(expiration);
 
                     LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
-                                    + "It is STRONGLY recommended that you review the configuration and upgrade the legacy syntax.",
+                                    + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
                             propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
 
                     handled = true;
@@ -84,5 +83,35 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
         }
 
         return handled;
+    }
+
+    @Override
+    public Object handleWeirdKey(final DeserializationContext ctxt, final Class<?> rawKeyType, final String keyValue, final String failureMsg) throws IOException {
+        return super.handleWeirdKey(ctxt, rawKeyType, keyValue, failureMsg);
+    }
+
+    @Override
+    public Object handleWeirdStringValue(final DeserializationContext ctxt, final Class<?> targetType, final String valueToConvert, final String failureMsg) throws IOException {
+        return super.handleWeirdStringValue(ctxt, targetType, valueToConvert, failureMsg);
+    }
+
+    @Override
+    public Object handleWeirdNumberValue(final DeserializationContext ctxt, final Class<?> targetType, final Number valueToConvert, final String failureMsg) throws IOException {
+        return super.handleWeirdNumberValue(ctxt, targetType, valueToConvert, failureMsg);
+    }
+
+    @Override
+    public Object handleUnexpectedToken(final DeserializationContext ctxt, final Class<?> targetType, final JsonToken t, final JsonParser p, final String failureMsg) throws IOException {
+        return super.handleUnexpectedToken(ctxt, targetType, t, p, failureMsg);
+    }
+
+    @Override
+    public Object handleInstantiationProblem(final DeserializationContext ctxt, final Class<?> instClass, final Object argument, final Throwable t) throws IOException {
+        return super.handleInstantiationProblem(ctxt, instClass, argument, t);
+    }
+
+    @Override
+    public Object handleMissingInstantiator(final DeserializationContext ctxt, final Class<?> instClass, final JsonParser p, final String msg) throws IOException {
+        return super.handleMissingInstantiator(ctxt, instClass, p, msg);
     }
 }
