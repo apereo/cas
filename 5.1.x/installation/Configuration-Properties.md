@@ -737,10 +737,10 @@ The following mergeing strategies can be used to resolve conflicts when the same
 Static attributes that need to be mapped to a hardcoded value belong here.
 
 ```properties
-# cas.authn.attributeRepository.stub[0].attributes.uid=uid
-# cas.authn.attributeRepository.stub[0].attributes.displayName=displayName
-# cas.authn.attributeRepository.stub[0].attributes.cn=commonName
-# cas.authn.attributeRepository.stub[0].attributes.affiliation=groupMembership
+# cas.authn.attributeRepository.stub.attributes.uid=uid
+# cas.authn.attributeRepository.stub.attributes.displayName=displayName
+# cas.authn.attributeRepository.stub.attributes.cn=commonName
+# cas.authn.attributeRepository.stub.attributes.affiliation=groupMembership
 ```
 
 ### LDAP
