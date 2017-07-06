@@ -63,11 +63,8 @@ public final class CollectionUtils {
      * @return the map
      */
     public static <K, V> Map<K, Collection<V>> wrap(final Multimap<K, V> source) {
-        if (source != null) {
-            final Map result = new HashMap<>();
-            final Multimap map = Multimap.class.cast(source);
-            map.forEach((k, v) -> result.put(k, CollectionUtils.wrap(v)));
-            return result;
+        if (source != null && !source.isEmpty()) {
+            return new HashMap<>(source.asMap());
         }
         return new HashMap<>();
     }
@@ -81,7 +78,7 @@ public final class CollectionUtils {
      * @return the map
      */
     public static <K, V> Map<K, V> wrap(final Map<K, V> source) {
-        if (source != null) {
+        if (source != null && !source.isEmpty()) {
             return new HashMap<>(source);
         }
         return new HashMap<>();
@@ -135,7 +132,7 @@ public final class CollectionUtils {
      */
     public static <T> List<T> wrap(final List<T> source) {
         final List<T> list = new ArrayList<>();
-        if (source != null) {
+        if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
         return list;
@@ -150,7 +147,7 @@ public final class CollectionUtils {
      */
     public static <T> Set<T> wrap(final Set<T> source) {
         final Set<T> list = new LinkedHashSet<>();
-        if (source != null) {
+        if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
         return list;
