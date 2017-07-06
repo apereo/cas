@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * a hash for quicker lookup.
  *
  * @author Travis Schmidt
- * @since 5.1.2
+ * @since 5.2.0
  */
 public class DomainServicesManager implements ServicesManager, Serializable {
 

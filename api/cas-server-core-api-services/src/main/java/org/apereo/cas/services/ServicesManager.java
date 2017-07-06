@@ -125,7 +125,7 @@ public interface ServicesManager {
     /**
      * Return a list of services for the passed domain.
      *
-     * @param domain
+     * @param domain the domain name
      * @return list of services
      */
     default Collection<RegisteredService> getServicesForDomain(String domain) {
