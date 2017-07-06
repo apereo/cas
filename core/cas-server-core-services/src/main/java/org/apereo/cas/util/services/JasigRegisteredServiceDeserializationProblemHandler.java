@@ -1,7 +1,6 @@
 package org.apereo.cas.util.services;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -26,6 +25,8 @@ import java.io.IOException;
  */
 public class JasigRegisteredServiceDeserializationProblemHandler extends DeserializationProblemHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JasigRegisteredServiceDeserializationProblemHandler.class);
+    private static final int TOKEN_COUNT_DURATION = 6;
+    private static final int TOKEN_COUNT_EXPIRATION = 3;
 
     @Override
     public JavaType handleUnknownTypeId(final DeserializationContext ctxt,
@@ -59,11 +60,11 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
             final CachingPrincipalAttributesRepository repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
             switch (propertyName) {
                 case "duration":
-                    for (int i = 1; i <= 6; i++) {
+                    for (int i = 1; i <= TOKEN_COUNT_DURATION; i++) {
                         p.nextToken();
                     }
                     final String timeUnit = p.getText();
-                    for (int i = 1; i <= 3; i++) {
+                    for (int i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
                         p.nextToken();
                     }
                     final int expiration = p.getValueAsInt();
@@ -83,35 +84,5 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
         }
 
         return handled;
-    }
-
-    @Override
-    public Object handleWeirdKey(final DeserializationContext ctxt, final Class<?> rawKeyType, final String keyValue, final String failureMsg) throws IOException {
-        return super.handleWeirdKey(ctxt, rawKeyType, keyValue, failureMsg);
-    }
-
-    @Override
-    public Object handleWeirdStringValue(final DeserializationContext ctxt, final Class<?> targetType, final String valueToConvert, final String failureMsg) throws IOException {
-        return super.handleWeirdStringValue(ctxt, targetType, valueToConvert, failureMsg);
-    }
-
-    @Override
-    public Object handleWeirdNumberValue(final DeserializationContext ctxt, final Class<?> targetType, final Number valueToConvert, final String failureMsg) throws IOException {
-        return super.handleWeirdNumberValue(ctxt, targetType, valueToConvert, failureMsg);
-    }
-
-    @Override
-    public Object handleUnexpectedToken(final DeserializationContext ctxt, final Class<?> targetType, final JsonToken t, final JsonParser p, final String failureMsg) throws IOException {
-        return super.handleUnexpectedToken(ctxt, targetType, t, p, failureMsg);
-    }
-
-    @Override
-    public Object handleInstantiationProblem(final DeserializationContext ctxt, final Class<?> instClass, final Object argument, final Throwable t) throws IOException {
-        return super.handleInstantiationProblem(ctxt, instClass, argument, t);
-    }
-
-    @Override
-    public Object handleMissingInstantiator(final DeserializationContext ctxt, final Class<?> instClass, final JsonParser p, final String msg) throws IOException {
-        return super.handleMissingInstantiator(ctxt, instClass, p, msg);
     }
 }
