@@ -30,8 +30,7 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
         mapper.addHandler(new JasigRegisteredServiceDeserializationProblemHandler());
         return mapper;
     }
-
-
+    
     @Override
     protected Class<RegisteredService> getTypeToSerialize() {
         return RegisteredService.class;
