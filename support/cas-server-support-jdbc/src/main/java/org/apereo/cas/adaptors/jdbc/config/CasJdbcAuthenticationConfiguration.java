@@ -181,8 +181,6 @@ public class CasJdbcAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer jdbcAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> {
-            jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, personDirectoryPrincipalResolver));
-        };
+        return plan -> jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, personDirectoryPrincipalResolver));
     }
 }

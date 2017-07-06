@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Common properties for all jpa configs.
@@ -26,6 +28,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     private String healthQuery = StringUtils.EMPTY;
     private String idleTimeout = "PT10M";
     private String dataSourceName;
+    private Map<String, String> properties = new HashMap<String, String>();
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
@@ -179,5 +182,13 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     public void setDataSourceProxy(final boolean dataSourceProxy) {
         this.dataSourceProxy = dataSourceProxy;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
     }
 }
