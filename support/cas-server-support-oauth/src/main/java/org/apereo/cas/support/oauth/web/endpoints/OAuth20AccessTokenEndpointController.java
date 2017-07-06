@@ -158,7 +158,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                 responseHolder.getRegisteredService(),
                 responseHolder.getService(),
                 accessToken, refreshToken,
-                casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
+                casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds(), type);
     }
 
     private static OAuth20ResponseTypes getOAuth20ResponseType(final J2EContext context) {
