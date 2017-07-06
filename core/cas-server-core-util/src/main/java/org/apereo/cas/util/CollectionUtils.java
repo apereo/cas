@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,24 @@ public final class CollectionUtils {
         return c;
     }
 
+    /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param source the source
+     * @return the map
+     */
+    public static <K, V> Map<K, Collection<V>> wrap(final Multimap<K, V> source) {
+        if (source != null) {
+            final Map result = new HashMap<>();
+            final Multimap map = Multimap.class.cast(source);
+            map.forEach((k, v) -> result.put(k, CollectionUtils.wrap(v)));
+            return result;
+        }
+        return new HashMap<>();
+    }
+    
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *

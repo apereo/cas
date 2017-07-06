@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -18,7 +19,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,13 +42,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldPassword;
     private final String fieldExpired;
     private final String fieldDisabled;
-    private Map<String, String> principalAttributeMap = Collections.emptyMap();
+    private final Map<String, Collection<String>> principalAttributeMap;
 
     public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, 
                                               final PrincipalFactory principalFactory,
                                               final Integer order, final DataSource dataSource, final String sql,
                                               final String fieldPassword, final String fieldExpired, final String fieldDisabled,
-                                              final Map<String, String> attributes) {
+                                              final Map<String, Collection<String>> attributes) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.sql = sql;
         this.fieldPassword = fieldPassword;
@@ -88,18 +89,19 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-
-            this.principalAttributeMap.entrySet().forEach(a -> {
-                final Object attribute = dbFields.get(a.getKey());
+            this.principalAttributeMap.forEach((key, attributeNames) -> {
+                final Object attribute = dbFields.get(key);
                 if (attribute != null) {
-                    LOGGER.debug("Found attribute [{}] from the query results", a);
+                    LOGGER.debug("Found attribute [{}] from the query results", key);
 
                     if (attribute != null) {
-                        LOGGER.debug("Found attribute [{}] from the query results", a);
-                        final String principalAttrName = a.getValue();
-                        attributes.put(principalAttrName, attribute.toString());
+                        LOGGER.debug("Found attribute [{}] from the query results", key);
+                        attributeNames.forEach(s -> {
+                            LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
+                            attributes.put(s, CollectionUtils.wrap(attribute.toString()));
+                        });
                     } else {
-                        LOGGER.warn("Requested attribute [{}] could not be found in the query results", a.getKey());
+                        LOGGER.warn("Requested attribute [{}] could not be found in the query results", key);
                     }
                 }
             });
