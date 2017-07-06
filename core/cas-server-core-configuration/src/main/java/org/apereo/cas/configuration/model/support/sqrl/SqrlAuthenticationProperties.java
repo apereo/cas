@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.sqrl;
 
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-
 /**
  * This is {@link SqrlAuthenticationProperties}.
  *
@@ -9,25 +7,22 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
  * @since 5.2.0
  */
 public class SqrlAuthenticationProperties {
-    private String aesKey;
+    private long nutExpirationSeconds = 200L;
+    private String sfn = "sqrl-example";
 
-    private Jpa jpa = new Jpa();
-
-    public String getAesKey() {
-        return aesKey;
+    public String getSfn() {
+        return sfn;
     }
 
-    public void setAesKey(final String aesKey) {
-        this.aesKey = aesKey;
-    }
-    
-    public Jpa getJpa() {
-        return jpa;
+    public void setSfn(final String sfn) {
+        this.sfn = sfn;
     }
 
-    public void setJpa(final Jpa jpa) {
-        this.jpa = jpa;
+    public long getNutExpirationSeconds() {
+        return nutExpirationSeconds;
     }
 
-    public static class Jpa extends AbstractJpaProperties {}
+    public void setNutExpirationSeconds(final long nutExpirationSeconds) {
+        this.nutExpirationSeconds = nutExpirationSeconds;
+    }
 }

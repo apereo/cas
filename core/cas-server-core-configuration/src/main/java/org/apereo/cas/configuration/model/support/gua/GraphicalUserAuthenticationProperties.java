@@ -43,6 +43,7 @@ public class GraphicalUserAuthenticationProperties {
     }
     
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = 4666838063728336692L;
         private String baseDn;
         private String userFilter;
         private String imageAttribute;

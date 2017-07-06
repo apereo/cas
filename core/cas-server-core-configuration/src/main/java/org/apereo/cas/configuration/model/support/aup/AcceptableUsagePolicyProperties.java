@@ -31,6 +31,7 @@ public class AcceptableUsagePolicyProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = -7991011278378393382L;
         private String baseDn;
         private String userFilter;
 

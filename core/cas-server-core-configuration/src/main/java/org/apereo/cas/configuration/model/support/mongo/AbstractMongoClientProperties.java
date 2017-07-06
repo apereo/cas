@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 public abstract class AbstractMongoClientProperties implements Serializable {
+    private static final long serialVersionUID = 2844298699021872943L;
     private String clientUri = StringUtils.EMPTY;
     private String collection = StringUtils.EMPTY;
     private boolean dropCollection;

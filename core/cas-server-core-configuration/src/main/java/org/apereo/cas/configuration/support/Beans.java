@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -271,6 +273,7 @@ public final class Beans {
         }
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
         
         return bean;
@@ -477,9 +480,9 @@ public final class Beans {
      * @param list the list
      * @return the map
      */
-    public static Map<String, String> transformPrincipalAttributesListIntoMap(final List<String> list) {
-        final Map<String, String> attributes = new HashMap<>();
+    public static Multimap<String, String> transformPrincipalAttributesListIntoMap(final List<String> list) {
 
+        final Multimap<String, String> multimap = ArrayListMultimap.create();
         if (list.isEmpty()) {
             LOGGER.debug("No principal attributes are defined");
         } else {
@@ -490,14 +493,14 @@ public final class Beans {
                     final String name = attrCombo[0].trim();
                     final String value = attrCombo[1].trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
-                    attributes.put(name, value);
+                    multimap.put(name, value);
                 } else {
                     LOGGER.debug("Mapped principal attribute name [{}]", attributeName);
-                    attributes.put(attributeName, attributeName);
+                    multimap.put(attributeName, attributeName);
                 }
             });
         }
-        return attributes;
+        return multimap;
     }
 
     /**

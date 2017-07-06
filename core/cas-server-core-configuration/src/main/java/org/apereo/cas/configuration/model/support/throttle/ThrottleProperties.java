@@ -109,7 +109,8 @@ public class ThrottleProperties {
     public static class Jdbc extends AbstractJpaProperties {
         private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
                 + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
-        
+        private static final long serialVersionUID = -9199878384425691919L;
+
         private String auditQuery = SQL_AUDIT_QUERY;
 
         public String getAuditQuery() {

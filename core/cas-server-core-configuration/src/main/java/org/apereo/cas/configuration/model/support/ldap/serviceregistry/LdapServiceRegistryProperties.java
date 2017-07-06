@@ -10,7 +10,8 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
  */
 
 public class LdapServiceRegistryProperties extends AbstractLdapProperties {
-    
+
+    private static final long serialVersionUID = 2372867394066286022L;
     private String objectClass = "casRegisteredService";
     private String idAttribute = "uid";
     private String serviceDefinitionAttribute = "description";

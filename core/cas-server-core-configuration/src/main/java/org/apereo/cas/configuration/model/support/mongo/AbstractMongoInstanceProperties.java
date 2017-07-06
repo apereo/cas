@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 public abstract class AbstractMongoInstanceProperties implements Serializable {
+    private static final long serialVersionUID = -2471243083598934186L;
     private Conns conns = new Conns();
     
     private int port = 27017;

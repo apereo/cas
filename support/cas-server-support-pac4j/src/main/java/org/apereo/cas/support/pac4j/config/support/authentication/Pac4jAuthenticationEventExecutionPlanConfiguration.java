@@ -276,8 +276,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     properties.add(client);
                 });
     }
-
-
+    
     private void configureOidcClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getOidc()

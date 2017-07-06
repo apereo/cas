@@ -21,7 +21,7 @@ dependencies:
     - "~/.gradle/caches"
 compile:
   override:
-    - ./gradlew clean checkstyleMain bootRepackage install  -x test --stacktrace
+    - ./gradlew clean checkstyleMain bootRepackage install -x test --stacktrace --parallel --build-cache
 test:
   override:
     - ./gradlew checkstyleTest test --stacktrace

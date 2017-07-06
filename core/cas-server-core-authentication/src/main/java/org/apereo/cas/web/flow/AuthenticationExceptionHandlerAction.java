@@ -236,7 +236,8 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         LOGGER.debug("Located current event [{}]", currentEvent);
 
         final Exception error = currentEvent.getAttributes().get("error", Exception.class);
-        LOGGER.debug("Located error attribute [{}] from the current event", error);
+        LOGGER.debug("Located error attribute [{}] with message [{}] from the current event",
+                error.getClass(), error.getMessage());
 
         final String event = handle(error, requestContext.getMessageContext());
         LOGGER.debug("Final event id resolved from the error is [{}]", event);

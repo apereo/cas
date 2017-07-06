@@ -7,4 +7,5 @@ package org.apereo.cas.configuration.model.support.dynamodb;
  * @since 5.1.0
  */
 public class DynamoDbServiceRegistryProperties extends AbstractDynamoDbProperties {
+    private static final long serialVersionUID = 809653348774854955L;
 }

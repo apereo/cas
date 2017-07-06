@@ -41,5 +41,6 @@ public class ConsentProperties {
     }
 
     public static class Jpa extends AbstractJpaProperties {
+        private static final long serialVersionUID = 1646689616653363554L;
     }
 }
