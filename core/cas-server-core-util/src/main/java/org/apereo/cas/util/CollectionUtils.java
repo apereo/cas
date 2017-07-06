@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,7 @@ public final class CollectionUtils {
         }
         return new HashMap<>();
     }
-    
+
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
@@ -113,7 +114,14 @@ public final class CollectionUtils {
     public static <T> List<T> wrap(final T source) {
         final List<T> list = new ArrayList<>();
         if (source != null) {
-            list.add(source);
+            if (source instanceof Collection) {
+                final Iterator it = ((Collection) source).iterator();
+                while (it.hasNext()) {
+                    list.add((T) it.next());
+                }
+            } else {
+                list.add(source);
+            }
         }
         return list;
     }
