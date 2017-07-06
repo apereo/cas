@@ -5,6 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -29,6 +32,14 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     @Test
     public void verifyLegacyServiceDefn() throws Exception {
         final ClassPathResource resource = new ClassPathResource("Legacy-10000003.json");
+        final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
+        final RegisteredService service = serializer.from(resource.getInputStream());
+        assertNotNull(service);
+    }
+
+    @Test
+    public void verifyExistingDefinitionForCompatibility() throws IOException {
+        final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
         final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
         final RegisteredService service = serializer.from(resource.getInputStream());
         assertNotNull(service);
