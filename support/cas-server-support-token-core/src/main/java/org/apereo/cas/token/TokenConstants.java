@@ -41,5 +41,12 @@ public interface TokenConstants {
      * Jwt encryption secret method defined for a given service.
      **/
     String PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD = "jwtEncryptionSecretMethod";
+
+
+    /**
+     * Secrets are Base64 encoded.
+     **/
+    String PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED = "jwtSecretsAreBase64Encoded";
+
 }
 

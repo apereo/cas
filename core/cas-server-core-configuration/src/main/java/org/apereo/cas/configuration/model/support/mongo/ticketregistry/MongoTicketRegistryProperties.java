@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MongoTicketRegistryProperties extends AbstractMongoInstanceProperties {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoTicketRegistryProperties.class);
+    private static final long serialVersionUID = 8243690796900311918L;
 
     @Override
     public void setCollectionName(final String collectionName) {

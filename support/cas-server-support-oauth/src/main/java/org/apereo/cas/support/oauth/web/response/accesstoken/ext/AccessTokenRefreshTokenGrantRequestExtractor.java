@@ -34,6 +34,11 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     protected String getOAuthParameterName() {
         return OAuth20Constants.REFRESH_TOKEN;
     }
+    
+    @Override
+    protected boolean isAllowedToGenerateRefreshToken() {
+        return false;
+    }
 
     @Override
     public boolean supports(final HttpServletRequest context) {
