@@ -119,11 +119,14 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     @Override
     public RegisteredService findServiceBy(final String serviceId) {
         String domain = serviceId != null ? getDomain(serviceId) : StringUtils.EMPTY;
+        LOGGER.debug("Domain mapped to the service identifier is [{}]", serviceId);
+
         domain = domains.containsKey(domain) ? domain : "default";
-        LOGGER.debug("Looking up domain [{}] for service identifier [{}]", domain, serviceId);
+        LOGGER.debug("Looking up services under domain [{}] for service identifier [{}]", domain, serviceId);
 
         final Set<RegisteredService> registeredServices = domains.get(domain);
         if (registeredServices == null || registeredServices.isEmpty()) {
+            LOGGER.debug("No services could be located for domain [{}]", domain);
             return null;
         }
         return registeredServices
@@ -207,7 +210,9 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     private String getDomain(final String service) {
         final Matcher match = domainPattern.matcher(service.toLowerCase());
-        return match.lookingAt() && !match.group(1).contains("*") ? match.group(1) : "default";
+        final String domain = match.lookingAt() && !match.group(1).contains("*") ? match.group(1) : "default";
+        LOGGER.debug("Domain found for service identifier [{}]", domain);
+        return domain;
     }
 
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
@@ -218,6 +223,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         } else {
             services = new TreeSet<>();
         }
+        LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
         services.add(r);
         map.put(domain, services);
     }
