@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
@@ -116,7 +117,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     @Override
     public RegisteredService findServiceBy(final String serviceId) {
-        String domain = serviceId != null ? getDomain(serviceId) : "";
+        String domain = serviceId != null ? getDomain(serviceId) : StringUtils.EMPTY;
         domain = domains.containsKey(domain) ? domain : "default";
         return domains.get(domain)
                 .stream()
@@ -126,7 +127,10 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return services.values().stream().sorted().collect(Collectors.toList());
+        return services.values()
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     @Override
