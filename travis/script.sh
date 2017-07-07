@@ -6,5 +6,3 @@ then
 else
   sudo ./gradlew checkstyleTest test --stacktrace --parallel --build-cache
 fi
-
-
