@@ -15,22 +15,55 @@ will allow the user to next reset their password and login again. To learn more 
 or [this guide](Sending-Email-Configuration.html).
 
 You may also specify a pattern for accepted passwords. 
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
 
 ## LDAP
 
 The updated password may be stored inside an LDAP server.
+
+LDAP support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-pm-ldap</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-password-management).
 
 ## JDBC
 
 The updated password may be stored inside a database.
+
+JDBC support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-pm-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-password-management).
 
 ## REST
 
 Tasks such as locating user's email and security questions as well as management
 and updating of the password are delegated to user-defined rest endpoints.
+
+REST support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-pm-rest</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-password-management).
 
