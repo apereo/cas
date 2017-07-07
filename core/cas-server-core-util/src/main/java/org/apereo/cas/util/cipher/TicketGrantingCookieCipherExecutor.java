@@ -25,4 +25,14 @@ public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor
     public String getName() {
         return "Ticket-granting Cookie";
     }
+
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.tgc.encryptionKey";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.tgc.signingKey";
+    }
 }
