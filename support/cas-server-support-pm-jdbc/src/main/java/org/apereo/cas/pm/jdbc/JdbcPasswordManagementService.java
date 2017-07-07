@@ -18,6 +18,8 @@ import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +33,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor, 
+    public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
                                          final DataSource dataSource) {
@@ -55,8 +57,8 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final String username) {
-        final String email = this.jdbcTemplate.queryForObject(passwordManagementProperties.getJdbc().getSqlFindEmail(),
-                String.class, username);
+        final String query = passwordManagementProperties.getJdbc().getSqlFindEmail();
+        final String email = this.jdbcTemplate.queryForObject(query, String.class, username);
         if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
             return email;
         }
@@ -65,7 +67,14 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final Map map = jdbcTemplate.queryForMap(passwordManagementProperties.getJdbc().getSqlSecurityQuestions(), username);
+        final String sqlSecurityQuestions = passwordManagementProperties.getJdbc().getSqlSecurityQuestions();
+        final Map<String, String> map = new LinkedHashMap<>();
+        final List<Map<String, Object>> results = jdbcTemplate.queryForList(sqlSecurityQuestions, username);
+        results.forEach(row -> {
+            if (row.containsKey("question") && row.containsKey("answer")) {
+                map.put(row.get("question").toString(), row.get("answer").toString());
+            }
+        });
         LOGGER.debug("Found [{}] security questions for [{}]", map.size(), username);
         return map;
     }

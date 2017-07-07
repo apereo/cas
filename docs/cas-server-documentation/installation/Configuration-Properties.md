@@ -4892,7 +4892,9 @@ The following LDAP types are supported:
 ### JDBC Password Management
 
 ```properties
+# The two fields indicated below are expected to be returned
 # cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
+
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
 

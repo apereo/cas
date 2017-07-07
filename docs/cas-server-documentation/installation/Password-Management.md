@@ -42,7 +42,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## LDAP
 
-The updated password may be stored inside an LDAP server.
+The account password and security questions may be stored inside an LDAP server.
 
 LDAP support is enabled by including the following dependencies in the WAR overlay:
 
@@ -58,7 +58,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## JDBC
 
-The updated password may be stored inside a database.
+The account password and security questions may be stored inside a database.
 
 JDBC support is enabled by including the following dependencies in the WAR overlay:
 
@@ -71,6 +71,18 @@ JDBC support is enabled by including the following dependencies in the WAR overl
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-password-management).
+
+The expected database schema for the user accounts is:
+
+```sql
+create table pm_table_accounts (id int, userid varchar(255), password varchar(255), email varchar(255));
+```
+
+The expected database schema for account security questions is:
+
+```sql
+create table pm_table_questions (id int, userid varchar(255), question varchar(255), answer varchar(255);
+```
 
 ## REST
 
