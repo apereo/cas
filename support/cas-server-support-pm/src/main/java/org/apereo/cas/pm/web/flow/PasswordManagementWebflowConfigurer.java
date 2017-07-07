@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
