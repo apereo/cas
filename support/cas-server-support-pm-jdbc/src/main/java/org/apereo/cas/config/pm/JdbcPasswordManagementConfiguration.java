@@ -12,6 +12,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
 import java.io.Serializable;
 
 /**
@@ -29,6 +30,11 @@ public class JdbcPasswordManagementConfiguration {
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
     private CipherExecutor<Serializable, String> passwordManagementCipherExecutor;
+
+    @Bean
+    public DataSource jdbcPasswordManagementDataSource() {
+        return Beans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
+    }
     
     @RefreshScope
     @Bean
@@ -36,6 +42,6 @@ public class JdbcPasswordManagementConfiguration {
         return new JdbcPasswordManagementService(passwordManagementCipherExecutor,
                 casProperties.getServer().getPrefix(),
                 casProperties.getAuthn().getPm(),
-                Beans.newDataSource(casProperties.getAuthn().getPm().getJdbc()));
+                jdbcPasswordManagementDataSource());
     }
 }
