@@ -331,7 +331,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public SpringResourceTemplateResolver staticTemplateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+        final SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
         resolver.setApplicationContext(this.context);
         resolver.setPrefix("classpath:/dist/");
         resolver.setSuffix(".html");
@@ -344,7 +344,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/dist/","classpath:/static/");
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/dist/", "classpath:/static/");
     }
 }

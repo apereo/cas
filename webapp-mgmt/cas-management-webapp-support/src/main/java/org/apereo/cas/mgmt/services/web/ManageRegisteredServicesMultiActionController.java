@@ -167,11 +167,18 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         JsonUtils.render(model, response);
     }
 
+    /**
+     * Method will update the order of two services passed in.
+     *
+     * @param request the request
+     * @param response the response
+     * @param svcs the services to be updated
+     */
     @PostMapping(value = "/updateOrder", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateOrder(final HttpServletRequest request, final HttpServletResponse response,
-                            @RequestBody final RegisteredServiceViewBean[] svcs) throws Exception {
-        RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(svcs[0].getAssignedId()));
-        RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(svcs[1].getAssignedId()));
+                            @RequestBody final RegisteredServiceViewBean[] svcs) {
+        final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(svcs[0].getAssignedId()));
+        final RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(svcs[1].getAssignedId()));
         svcA.setEvaluationOrder(svcs[0].getEvalOrder());
         svcB.setEvaluationOrder(svcs[1].getEvalOrder());
         this.servicesManager.save(svcA);
