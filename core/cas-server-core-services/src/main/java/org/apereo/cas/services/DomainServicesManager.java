@@ -83,6 +83,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
         return services.values().stream()
                 .filter(predicate)
+                .sorted()
                 .collect(Collectors.toSet());
     }
 
