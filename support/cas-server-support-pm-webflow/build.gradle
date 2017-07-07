@@ -1,0 +1,11 @@
+description = "Apereo CAS Password Management - Core"
+dependencies {
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-configuration")
+    compile project(":support:cas-server-support-pm")
+    implementation libraries.pac4j
+    testImplementation project(":core:cas-server-core-services")
+}

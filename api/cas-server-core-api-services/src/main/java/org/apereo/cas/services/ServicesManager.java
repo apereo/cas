@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -120,4 +121,24 @@ public interface ServicesManager {
     default int count() {
         return 0;
     }
+
+    /**
+     * Return a list of services for the passed domain.
+     *
+     * @param domain the domain name
+     * @return list of services
+     */
+    default Collection<RegisteredService> getServicesForDomain(String domain) {
+        return new ArrayList<>();
+    }
+
+    /**
+     * Returns a list of domains being managed by the ServiceManager.
+     *
+     * @return list of domain names
+     */
+    default Collection<String> getDomains() {
+        return new ArrayList<>();
+    }
+
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.binding.expression.Expression;
 import org.springframework.http.MediaType;
 import org.springframework.util.ReflectionUtils;
@@ -62,7 +63,7 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
                 final Map<String, Object> stateMap = new HashMap<>();
 
                 if (!state.getAttributes().asMap().isEmpty()) {
-                    stateMap.put("attributes", state.getAttributes().asMap());
+                    stateMap.put("attributes", CollectionUtils.wrap(state.getAttributes()));
                 }
                 if (StringUtils.isNotBlank(state.getCaption())) {
                     stateMap.put("caption", state.getCaption());
