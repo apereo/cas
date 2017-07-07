@@ -21,7 +21,7 @@ public class DelegatedClientEndpointConfiguration {
     @RefreshScope
     @Bean
     @Lazy
-    public DelegatedClientEndpointController creDelegatedClientEndpointController(){
+    public DelegatedClientEndpointController createDelegatedClientEndpointController(){
          return new DelegatedClientEndpointController();
     }
 }
