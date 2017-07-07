@@ -1,7 +1,10 @@
 package org.apereo.cas.services.web.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
+import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -15,11 +18,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.theme.CookieThemeResolver;
+import org.springframework.web.servlet.theme.FixedThemeResolver;
+import org.springframework.web.servlet.theme.SessionThemeResolver;
 import org.thymeleaf.dialect.IPostProcessorDialect;
-import org.thymeleaf.engine.AbstractTemplateHandler;
-import org.thymeleaf.model.ICloseElementTag;
-import org.thymeleaf.model.IOpenElementTag;
-import org.thymeleaf.model.IText;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.postprocessor.PostProcessor;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -109,41 +111,32 @@ public class CasThemesConfiguration {
     @Bean
     public ThemeResolver themeResolver() {
         final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
-        return new ServiceThemeResolver(defaultThemeName, servicesManager, serviceThemeResolverSupportedBrowsers);
+
+        final FixedThemeResolver fixedResolver = new FixedThemeResolver();
+        fixedResolver.setDefaultThemeName(defaultThemeName);
+
+        final SessionThemeResolver sessionThemeResolver = new SessionThemeResolver();
+        sessionThemeResolver.setDefaultThemeName(defaultThemeName);
+
+        final TicketGrantingCookieProperties tgc = casProperties.getTgc();
+        final CookieThemeResolver cookieThemeResolver = new CookieThemeResolver();
+        cookieThemeResolver.setDefaultThemeName(defaultThemeName);
+        cookieThemeResolver.setCookieDomain(tgc.getDomain());
+        cookieThemeResolver.setCookieHttpOnly(tgc.isHttpOnly());
+        cookieThemeResolver.setCookieMaxAge(tgc.getMaxAge());
+        cookieThemeResolver.setCookiePath(tgc.getPath());
+        cookieThemeResolver.setCookieSecure(tgc.isSecure());
+
+        final ServiceThemeResolver serviceThemeResolver =
+                new ServiceThemeResolver(defaultThemeName, servicesManager, serviceThemeResolverSupportedBrowsers);
+
+        final ChainingThemeResolver chainingThemeResolver = new ChainingThemeResolver();
+        chainingThemeResolver.addResolver(cookieThemeResolver)
+                .addResolver(sessionThemeResolver)
+                .addResolver(serviceThemeResolver)
+                .addResolver(fixedResolver);
+        chainingThemeResolver.setDefaultThemeName(defaultThemeName);
+        return chainingThemeResolver;
     }
 
-    /**
-     * The Cas thymeleaf output template handler which attempts to compress the whitespace
-     * produced by thymeleaf's conditional flags.
-     */
-    public static class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
-        private boolean writeWhitespace;
-
-        public CasThymeleafOutputTemplateHandler() {
-        }
-
-        @Override
-        public void handleText(final IText text) {
-            final String contentString = text.getText();
-            if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
-                if (!writeWhitespace) {
-                    return;
-                }
-                writeWhitespace = false;
-            }
-            super.handleText(text);
-        }
-
-        @Override
-        public void handleCloseElement(final ICloseElementTag tag) {
-            super.handleCloseElement(tag);
-            writeWhitespace = true;
-        }
-
-        @Override
-        public void handleOpenElement(final IOpenElementTag openElementTag) {
-            super.handleOpenElement(openElementTag);
-            writeWhitespace = true;
-        }
-    }
 }
