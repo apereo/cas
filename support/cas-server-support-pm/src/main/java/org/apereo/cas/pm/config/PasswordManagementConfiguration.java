@@ -73,8 +73,8 @@ public class PasswordManagementConfiguration {
                     + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
                     + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
         } else {
-            LOGGER.info("Password management is disabled. To enabled the password management functionality, " +
-                    "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
+            LOGGER.info("Password management is disabled. To enabled the password management functionality, "
+                    + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),
                 casProperties.getServer().getPrefix(),
