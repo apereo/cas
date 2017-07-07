@@ -18,6 +18,8 @@ import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -65,7 +67,14 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final Map map = jdbcTemplate.queryForMap(passwordManagementProperties.getJdbc().getSqlSecurityQuestions(), username);
+        final String sqlSecurityQuestions = passwordManagementProperties.getJdbc().getSqlSecurityQuestions();
+        final Map<String, String> map = new LinkedHashMap<>();
+        final List<Map<String, Object>> results = jdbcTemplate.queryForList(sqlSecurityQuestions, username);
+        results.forEach(row -> {
+            if (row.containsKey("question") && row.containsKey("answer")) {
+                map.put(row.get("question").toString(), row.get("answer").toString());
+            }
+        });
         LOGGER.debug("Found [{}] security questions for [{}]", map.size(), username);
         return map;
     }
