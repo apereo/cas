@@ -35,6 +35,7 @@ out
 ajcore.*
 reports
 
+webapp/resources/static/css/*
 *.asc
 /.nb-gradle/
 etc/loadtests/loadtests/**
