@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -119,10 +120,17 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     public RegisteredService findServiceBy(final String serviceId) {
         String domain = serviceId != null ? getDomain(serviceId) : StringUtils.EMPTY;
         domain = domains.containsKey(domain) ? domain : "default";
-        return domains.get(domain)
+        LOGGER.debug("Looking up domain [{}] for service identifier [{}]", domain, serviceId);
+
+        final Set<RegisteredService> registeredServices = domains.get(domain);
+        if (registeredServices == null || registeredServices.isEmpty()) {
+            return null;
+        }
+        return registeredServices
                 .stream()
                 .filter(s -> s.matches(serviceId))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -174,7 +182,6 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         this.domains = localDomains;
         LOGGER.info("Loaded [{}] services from [{}].", this.services.size(), this.serviceRegistryDao);
     }
-
 
 
     @Override
