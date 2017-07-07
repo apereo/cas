@@ -1,0 +1,110 @@
+package org.apereo.cas.token.authentication;
+
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.TokenAuthenticationConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.token.TokenConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
+import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
+import org.pac4j.jwt.profile.JwtGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+/**
+ * This is {@link TokenAuthenticationHandlerTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.2.0
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        TokenAuthenticationHandlerTests.TokenAuthenticationTests.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        TokenAuthenticationConfiguration.class})
+public class TokenAuthenticationHandlerTests {
+
+    private static final String signingSecret = RandomStringUtils.randomAlphanumeric(256);
+    private static final String encryptionSecret = RandomStringUtils.randomAlphanumeric(48);
+
+    @Autowired
+    @Qualifier("tokenAuthenticationHandler")
+    private AuthenticationHandler tokenAuthenticationHandler;
+
+    @Test
+    public void verifyKeysAreSane() throws Exception {
+        final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+        g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
+        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
+                JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
+
+        final CommonProfile profile = new CommonProfile();
+        profile.setId("casuser");
+        final String token = g.generate(profile);
+        final TokenCredential c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
+        final HandlerResult result = this.tokenAuthenticationHandler.authenticate(c);
+        assertNotNull(result);
+        assertEquals(result.getPrincipal().getId(), profile.getId());
+    }
+
+    @Configuration
+    public static class TokenAuthenticationTests {
+        @Bean
+        public List inMemoryRegisteredServices() {
+            final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".*");
+            svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+
+            DefaultRegisteredServiceProperty p = new DefaultRegisteredServiceProperty();
+            p.addValue(signingSecret);
+            svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING, p);
+
+            p = new DefaultRegisteredServiceProperty();
+            p.addValue(encryptionSecret);
+            svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION, p);
+
+            final List l = new ArrayList();
+            l.add(svc);
+            return l;
+        }
+    }
+
+}
