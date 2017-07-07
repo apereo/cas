@@ -5,6 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -32,5 +35,29 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
         final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
         final RegisteredService service = serializer.from(resource.getInputStream());
         assertNotNull(service);
+    }
+
+    @Test
+    public void verifyExistingDefinitionForCompatibility2() throws IOException {
+        final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
+        final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
+        final RegisteredService service = serializer.from(resource.getInputStream());
+        assertNotNull(service);
+        assertNotNull(service.getAttributeReleasePolicy());
+        final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        assertNotNull(policy);
+        assertEquals(policy.getAllowedAttributes().size(), 2);
+    }
+    
+    @Test
+    public void verifyExistingDefinitionForCompatibility1() throws IOException {
+        final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
+        final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
+        final RegisteredService service = serializer.from(resource.getInputStream());
+        assertNotNull(service);
+        assertNotNull(service.getAttributeReleasePolicy());
+        final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        assertNotNull(policy);
+        assertEquals(policy.getAllowedAttributes().size(), 2);
     }
 }
