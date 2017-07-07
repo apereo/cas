@@ -60,7 +60,8 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         this.serviceRegistryDao = serviceRegistryDao;
     }
 
-    @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+    @Audit(action = "DELETE_SERVICE",
+            actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
@@ -138,7 +139,8 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         return findServiceBy(service) != null;
     }
 
-    @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+    @Audit(action = "SAVE_SERVICE",
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
@@ -203,7 +205,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         if (map.containsKey(domain)) {
             services = map.get(domain);
         } else {
-            services = new TreeSet<RegisteredService>();
+            services = new TreeSet<>();
         }
         services.add(r);
         map.put(domain, services);
