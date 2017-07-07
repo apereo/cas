@@ -161,6 +161,10 @@ public final class Beans {
      * for this is to use the {@link AbstractJpaProperties#isDataSourceProxy()} setting and then the dataSource will be
      * wrapped in an application level class. If that is an issue, don't do it.
      *
+     * If user wants to do lookup as resource, they may include <code>java:/comp/env</code>
+     * in <code>dataSourceName</code> and put resource reference in web.xml
+     * otherwise <code>dataSourceName</code> is used as JNDI name.
+     *
      * @param jpaProperties the jpa properties
      * @return the data source
      */
@@ -171,11 +175,6 @@ public final class Beans {
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
                 final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-                /*
-                 if user wants to do lookup as resource, they may include java:/comp/env
-                 in dataSourceName and put resource reference in web.xml
-                 otherwise dataSourceName is used as JNDI name
-                  */
                 dsLookup.setResourceRef(false);
                 final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
                 if (!proxyDataSource) {
