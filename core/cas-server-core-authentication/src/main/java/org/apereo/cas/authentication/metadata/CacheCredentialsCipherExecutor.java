@@ -26,4 +26,14 @@ public class CacheCredentialsCipherExecutor extends BaseStringCipherExecutor {
     public String getName() {
         return "Credential Caching & Clearpass";
     }
+
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.clearpass.encryptionKey";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.clearpass.signingKey";
+    }
 }

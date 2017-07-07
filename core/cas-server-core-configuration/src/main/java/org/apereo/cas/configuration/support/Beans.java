@@ -117,6 +117,7 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -160,6 +161,10 @@ public final class Beans {
      * for this is to use the {@link AbstractJpaProperties#isDataSourceProxy()} setting and then the dataSource will be
      * wrapped in an application level class. If that is an issue, don't do it.
      *
+     * If user wants to do lookup as resource, they may include <code>java:/comp/env</code>
+     * in <code>dataSourceName</code> and put resource reference in web.xml
+     * otherwise <code>dataSourceName</code> is used as JNDI name.
+     *
      * @param jpaProperties the jpa properties
      * @return the data source
      */
@@ -170,11 +175,6 @@ public final class Beans {
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
                 final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-                /*
-                 if user wants to do lookup as resource, they may include java:/comp/env
-                 in dataSourceName and put resource reference in web.xml
-                 otherwise dataSourceName is used as JNDI name
-                  */
                 dsLookup.setResourceRef(false);
                 final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
                 if (!proxyDataSource) {
@@ -472,7 +472,18 @@ public final class Beans {
         return entryResolver;
     }
 
+    /**
+     * Transform principal attributes list into map map.
+     *
+     * @param list the list
+     * @return the map
+     */
+    public static Map<String, Collection<String>> transformPrincipalAttributesListIntoMap(final List<String> list) {
+        final Multimap<String, String> map = transformPrincipalAttributesListIntoMultiMap(list);
+        return CollectionUtils.wrap(map);
+    }
 
+    
     /**
      * Transform principal attributes into map.
      * Items in the list are defined in the syntax of "cn", or "cn:commonName" for virtual renaming and maps.
@@ -480,7 +491,7 @@ public final class Beans {
      * @param list the list
      * @return the map
      */
-    public static Multimap<String, String> transformPrincipalAttributesListIntoMap(final List<String> list) {
+    public static Multimap<String, String> transformPrincipalAttributesListIntoMultiMap(final List<String> list) {
 
         final Multimap<String, String> multimap = ArrayListMultimap.create();
         if (list.isEmpty()) {
