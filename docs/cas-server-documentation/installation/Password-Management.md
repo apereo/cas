@@ -18,6 +18,28 @@ You may also specify a pattern for accepted passwords.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
 
+## JSON
+
+Accounts and password may be stored inside a static modest JSON resource, whose location is taught to CAS via settings.
+This option is most useful during development, testing and demos and is not suitable for production.
+
+The outline of the JSON file may match the following:
+
+```json
+{
+  "casuser" : {
+    "email" : "casuser@example.org",
+    "password" : "p@ssw0rd",
+    "securityQuestions" : {
+      "question1" : "answer1",
+      "question2" : "answer2"
+    }
+  }
+}
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-password-management).
+
 ## LDAP
 
 The updated password may be stored inside an LDAP server.
@@ -72,3 +94,24 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 | Get Email Address         | `GET`     | `username`          | `200`. Email address in the body.
 | Get Security Questions    | `GET`     | `username`          | `200`. Security questions map in the body.
 | Update Password           | `POST`    | `username`, `password`, `oldPassword` | `200`. `true/false` in the body.
+
+## Custom
+
+You may also inject your own implementation for password management into CAS that would itself handle account updates and retrievals.
+In order to do this, you will need to design a configuration class that roughly matches the following: 
+
+```java
+package org.apereo.cas.pm;
+
+@Configuration("MyPasswordConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyPasswordConfiguration {
+
+    @Bean
+    public PasswordManagementService passwordChangeService() {
+        ...
+    }
+}
+```
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
