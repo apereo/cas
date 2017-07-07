@@ -14,7 +14,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -108,12 +112,27 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     }
 
     @Override
+    public RegisteredService findServiceBy(final String serviceId) {
+        String domain = serviceId != null ? getDomain(serviceId) : "";
+        domain = domains.containsKey(domain) ? domain : "default";
+        return domains.get(domain)
+                .stream()
+                .filter(s -> s.matches(serviceId))
+                .findFirst().orElse(null);
+    }
+
+    @Override
     public Collection<RegisteredService> getAllServices() {
         return Collections.unmodifiableCollection(services.values().stream().sorted().collect(Collectors.toList()));
     }
 
     @Override
     public boolean matchesExistingService(final Service service) {
+        return matchesExistingService(service.getId());
+    }
+
+    @Override
+    public boolean matchesExistingService(final String service) {
         return findServiceBy(service) != null;
     }
 
@@ -123,7 +142,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
-        addToDomain(r,this.domains);
+        addToDomain(r, this.domains);
         publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
     }
@@ -142,26 +161,13 @@ public class DomainServicesManager implements ServicesManager, Serializable {
                     LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
-        Map<String, TreeSet<RegisteredService>> localDomains = new ConcurrentHashMap<>();
-        this.services.values().stream().forEach(r -> addToDomain(r,localDomains));
+        final Map<String, TreeSet<RegisteredService>> localDomains = new ConcurrentHashMap<>();
+        this.services.values().stream().forEach(r -> addToDomain(r, localDomains));
         this.domains = localDomains;
         LOGGER.info("Loaded [{}] services from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 
-    @Override
-    public RegisteredService findServiceBy(final String serviceId) {
-        String domain = serviceId != null ? getDomain(serviceId) : "";
-        domain = domains.containsKey(domain) ? domain : "default";
-        return domains.get(domain)
-                .stream()
-                .filter(s -> s.matches(serviceId))
-                .findFirst().orElse(null);
-    }
 
-    @Override
-    public boolean matchesExistingService(final String service) {
-        return findServiceBy(service) != null;
-    }
 
     @Override
     public int count() {
@@ -185,19 +191,19 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     }
 
     private String getDomain(final String service) {
-        Matcher match = domainPattern.matcher(service.toLowerCase());
+        final Matcher match = domainPattern.matcher(service.toLowerCase());
         return match.lookingAt() && !match.group(1).contains("*") ? match.group(1) : "default";
     }
 
-    private void addToDomain(final RegisteredService r, final Map<String,TreeSet<RegisteredService>> map) {
-        String domain = getDomain(r.getServiceId());
-        TreeSet<RegisteredService> services;
+    private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
+        final String domain = getDomain(r.getServiceId());
+        final TreeSet<RegisteredService> services;
         if (map.containsKey(domain)) {
             services = map.get(domain);
         } else {
             services = new TreeSet<RegisteredService>();
         }
         services.add(r);
-        map.put(domain,services);
+        map.put(domain, services);
     }
 }
