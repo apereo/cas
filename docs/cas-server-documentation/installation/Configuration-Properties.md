@@ -737,6 +737,14 @@ Note that if no *explicit* attribute mappings are defined, all permitted attribu
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
 if explicit attribute mappings are defined, then *only mapped attributes* are retrieved.
 
+### Multimapped Attribute
+
+Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to grab the attribute `uid` from the attribute source and rename it to `userId`:
+
+```properties
+# cas.authn.attributeRepository.[type-placeholder].attributes.uid=userId
+```
+
 ### Merging Strategies
 
 The following mergeing strategies can be used to resolve conflicts when the same attribute are found from multiple sources:
@@ -752,10 +760,10 @@ The following mergeing strategies can be used to resolve conflicts when the same
 Static attributes that need to be mapped to a hardcoded value belong here.
 
 ```properties
-# cas.authn.attributeRepository.stub[0].attributes.uid=uid
-# cas.authn.attributeRepository.stub[0].attributes.displayName=displayName
-# cas.authn.attributeRepository.stub[0].attributes.cn=commonName
-# cas.authn.attributeRepository.stub[0].attributes.affiliation=groupMembership
+# cas.authn.attributeRepository.stub.attributes.uid=uid
+# cas.authn.attributeRepository.stub.attributes.displayName=displayName
+# cas.authn.attributeRepository.stub.attributes.cn=commonName
+# cas.authn.attributeRepository.stub.attributes.affiliation=groupMembership
 ```
 
 ### LDAP
@@ -1766,9 +1774,16 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
 # cas.authn.ldap[0].connectTimeout=5000
-# cas.authn.ldap[0].baseDn=dc=example,dc=org
-# cas.authn.ldap[0].userFilter=cn={user}
 # cas.authn.ldap[0].subtreeSearch=true
+
+# BaseDn used to start the LDAP search looking for accounts
+# cas.authn.ldap[0].baseDn=dc=example,dc=org
+
+# The search filter to use while looking for accounts.
+# cas.authn.ldap[0].userFilter=cn={user}
+#
+# Bind credentials used to connect to the LDAP instance
+#
 # cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.ldap[0].bindCredential=Password
 
@@ -1776,7 +1791,16 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=password
+
+#
+# Define attributes to be retrieved from LDAP as part of the same authentication transaction
+# The left-hand size notes the source while the right-hand size indicate an optional renaming/remapping
+# of the attribute definition. The same attribute name is allowed to be mapped multiple times to
+# different attribute names.
+#
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
+
+
 # cas.authn.ldap[0].collectDnAttribute=false
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
@@ -4803,6 +4827,11 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
+### JSON Password Management
+
+```properties
+# cas.authn.pm.json.config.location=classpath:jsonResourcePassword.json
+```
 
 ### LDAP Password Management
 
@@ -4863,7 +4892,9 @@ The following LDAP types are supported:
 ### JDBC Password Management
 
 ```properties
+# The two fields indicated below are expected to be returned
 # cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
+
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
 

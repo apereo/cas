@@ -25,9 +25,12 @@ import java.io.IOException;
  */
 public class JasigRegisteredServiceDeserializationProblemHandler extends DeserializationProblemHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JasigRegisteredServiceDeserializationProblemHandler.class);
+    private static final int TOKEN_COUNT_DURATION = 6;
+    private static final int TOKEN_COUNT_EXPIRATION = 3;
 
     @Override
-    public JavaType handleUnknownTypeId(final DeserializationContext ctxt, final JavaType baseType,
+    public JavaType handleUnknownTypeId(final DeserializationContext ctxt,
+                                        final JavaType baseType,
                                         final String subTypeId, final TypeIdResolver idResolver,
                                         final String failureMsg) throws IOException {
 
@@ -57,23 +60,20 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
             final CachingPrincipalAttributesRepository repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
             switch (propertyName) {
                 case "duration":
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
+                    for (int i = 1; i <= TOKEN_COUNT_DURATION; i++) {
+                        p.nextToken();
+                    }
                     final String timeUnit = p.getText();
-                    p.nextToken();
-                    p.nextToken();
-                    p.nextToken();
+                    for (int i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
+                        p.nextToken();
+                    }
                     final int expiration = p.getValueAsInt();
 
                     repo.setTimeUnit(timeUnit);
                     repo.setExpiration(expiration);
 
                     LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
-                                    + "It is STRONGLY recommended that you review the configuration and upgrade the legacy syntax.",
+                                    + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
                             propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
 
                     handled = true;

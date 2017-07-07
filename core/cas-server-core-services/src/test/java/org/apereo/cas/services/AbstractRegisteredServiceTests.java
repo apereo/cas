@@ -1,8 +1,11 @@
 package org.apereo.cas.services;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -151,10 +154,10 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Map<String, String> mappedAttr = new HashMap<>();
+        final Multimap<String, String> mappedAttr = ArrayListMultimap.create();
         mappedAttr.put(ATTR_1, "newAttr1");
 
-        policy.setAllowedAttributes(mappedAttr);
+        policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
 
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);

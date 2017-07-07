@@ -1,11 +1,13 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import com.google.common.collect.Multimap;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -147,8 +149,11 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-                null, null, Beans.transformPrincipalAttributesListIntoMap(Arrays.asList("phone:phoneNumber")));
+        final Multimap<String, String> map = Beans.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null,
+                this.dataSource, SQL, PASSWORD_FIELD,
+                null, null,
+                CollectionUtils.wrap(map));
         final HandlerResult result = q.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"));
         assertNotNull(result);

@@ -18,9 +18,18 @@ public class DefaultTicketCipherExecutor extends BaseBinaryCipherExecutor {
         setSecretKeyAlgorithm(secretKeyAlg);
     }
 
-
     @Override
     public String getName() {
         return "Ticketing";
+    }
+
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.ticket.registry.[registry-name].encryption.key";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.ticket.registry.[registry-name].signing.key";
     }
 }

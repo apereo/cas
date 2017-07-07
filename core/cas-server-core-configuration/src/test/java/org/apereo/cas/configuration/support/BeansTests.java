@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.collect.Multimap;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -22,12 +23,12 @@ public class BeansTests {
     @Test
     public void verifyPrincipalAttributeTransformations() {
         final List<String> list = Stream.of("a1", "a2:newA2", "a1:newA1").collect(Collectors.toList());
-        final Multimap<String, String> result = Beans.transformPrincipalAttributesListIntoMap(list);
+        final Multimap<String, String> result = Beans.transformPrincipalAttributesListIntoMultiMap(list);
         assertEquals(result.size(), 3);
         assertTrue(result.containsKey("a2"));
         assertTrue(result.containsKey("a1"));
 
-        final Map<String, Collection<String>> map = result.asMap();
+        final Map<String, Collection<String>> map = CollectionUtils.wrap(result);
         assertEquals(map.get("a2").size(), 1);
         assertEquals(map.get("a1").size(), 2);
         assertTrue(map.get("a2").contains("newA2"));

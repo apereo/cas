@@ -15,22 +15,89 @@ will allow the user to next reset their password and login again. To learn more 
 or [this guide](Sending-Email-Configuration.html).
 
 You may also specify a pattern for accepted passwords. 
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
+
+## JSON
+
+Accounts and password may be stored inside a static modest JSON resource, whose location is taught to CAS via settings.
+This option is most useful during development, testing and demos and is not suitable for production.
+
+The outline of the JSON file may match the following:
+
+```json
+{
+  "casuser" : {
+    "email" : "casuser@example.org",
+    "password" : "p@ssw0rd",
+    "securityQuestions" : {
+      "question1" : "answer1",
+      "question2" : "answer2"
+    }
+  }
+}
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-password-management).
 
 ## LDAP
 
-The updated password may be stored inside an LDAP server.
+The account password and security questions may be stored inside an LDAP server.
+
+LDAP support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-pm-ldap</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-password-management).
 
 ## JDBC
 
-The updated password may be stored inside a database.
+The account password and security questions may be stored inside a database.
+
+JDBC support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-pm-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-password-management).
+
+The expected database schema for the user accounts is:
+
+```sql
+create table pm_table_accounts (id int, userid varchar(255), password varchar(255), email varchar(255));
+```
+
+The expected database schema for account security questions is:
+
+```sql
+create table pm_table_questions (id int, userid varchar(255), question varchar(255), answer varchar(255);
+```
 
 ## REST
 
 Tasks such as locating user's email and security questions as well as management
 and updating of the password are delegated to user-defined rest endpoints.
+
+REST support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-pm-rest</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-password-management).
 
@@ -39,3 +106,24 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 | Get Email Address         | `GET`     | `username`          | `200`. Email address in the body.
 | Get Security Questions    | `GET`     | `username`          | `200`. Security questions map in the body.
 | Update Password           | `POST`    | `username`, `password`, `oldPassword` | `200`. `true/false` in the body.
+
+## Custom
+
+You may also inject your own implementation for password management into CAS that would itself handle account updates and retrievals.
+In order to do this, you will need to design a configuration class that roughly matches the following: 
+
+```java
+package org.apereo.cas.pm;
+
+@Configuration("MyPasswordConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyPasswordConfiguration {
+
+    @Bean
+    public PasswordManagementService passwordChangeService() {
+        ...
+    }
+}
+```
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.

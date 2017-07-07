@@ -22,10 +22,10 @@ public class BinaryCipherExecutorTests {
     @Test
     public void checkEncodingDecoding() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
-        final CipherExecutor<byte[], byte[]> cc = new BaseBinaryCipherExecutor("1234567890123456",
+        final CipherExecutor<byte[], byte[]> cc = new TestBinaryCipherExecutor("1234567890123456",
                 "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
-                512, 16) {
-        };
+                512,
+                16);
         final byte[] bytes = cc.encode(value.getBytes());
         final byte[] decoded = cc.decode(bytes);
         assertEquals(new String(decoded), value);
@@ -34,7 +34,7 @@ public class BinaryCipherExecutorTests {
     @Test
     public void checkEncodingDecodingBadKeys() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
-        final CipherExecutor<byte[], byte[]> cc = new BaseBinaryCipherExecutor("0000",
+        final CipherExecutor<byte[], byte[]> cc = new TestBinaryCipherExecutor("0000",
                 "1234", 512, 16) {
         };
 
@@ -42,5 +42,21 @@ public class BinaryCipherExecutorTests {
         this.thrown.expectMessage("Unable to init cipher instance.");
 
         cc.encode(value.getBytes());
+    }
+
+    private static class TestBinaryCipherExecutor extends BaseBinaryCipherExecutor {
+        TestBinaryCipherExecutor(final String encKey, final String signingKey, final int sKey, final int eKey) {
+            super(encKey, signingKey, sKey, eKey);
+        }
+
+        @Override
+        protected String getEncryptionKeySetting() {
+            return "undefined";
+        }
+
+        @Override
+        protected String getSigningKeySetting() {
+            return "undefined";
+        }
     }
 }

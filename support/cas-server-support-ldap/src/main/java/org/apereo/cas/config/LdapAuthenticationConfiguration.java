@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -78,7 +79,7 @@ public class LdapAuthenticationConfiguration {
                 .stream()
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
-                    final Multimap<String, String> multiMapAttributes = Beans.transformPrincipalAttributesListIntoMap(l.getPrincipalAttributeList());
+                    final Multimap<String, String> multiMapAttributes = Beans.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
@@ -121,7 +122,7 @@ public class LdapAuthenticationConfiguration {
                         handler.setPasswordPolicyConfiguration(cfg);
                     }
 
-                    final Map<String, Collection<String>> attributes = multiMapAttributes.asMap();
+                    final Map<String, Collection<String>> attributes = CollectionUtils.wrap(multiMapAttributes);
                     handler.setPrincipalAttributeMap(attributes);
 
                     LOGGER.debug("Initializing ldap authentication handler for [{}]", l.getLdapUrl());

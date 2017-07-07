@@ -1,0 +1,19 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "principalIdAttribute": "someAttribute",
+    "excludeDefaultAttributes": false,
+    "authorizedToReleaseCredentialPassword": true,
+    "authorizedToReleaseProxyGrantingTicket": true,
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "eduPersonAffiliation" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+      "groupMembership" : "group"
+    }
+  }
+}
