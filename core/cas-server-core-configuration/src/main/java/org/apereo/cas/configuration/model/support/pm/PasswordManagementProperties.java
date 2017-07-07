@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.LinkedHashMap;
@@ -24,8 +25,17 @@ public class PasswordManagementProperties {
     private Ldap ldap = new Ldap();
     private Jdbc jdbc = new Jdbc();
     private Rest rest = new Rest();
-
+    private Json json = new Json();
+    
     private Reset reset = new Reset();
+
+    public Json getJson() {
+        return json;
+    }
+
+    public void setJson(final Json json) {
+        this.json = json;
+    }
 
     public Reset getReset() {
         return reset;
@@ -258,5 +268,10 @@ public class PasswordManagementProperties {
         public void setSecurityQuestionsEnabled(final boolean securityQuestionsEnabled) {
             this.securityQuestionsEnabled = securityQuestionsEnabled;
         }
+    }
+
+    public static class Json extends AbstractConfigProperties {
+
+        private static final long serialVersionUID = 1129426669588789974L;
     }
 }
