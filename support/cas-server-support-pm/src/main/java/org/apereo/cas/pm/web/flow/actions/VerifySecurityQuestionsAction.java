@@ -1,4 +1,4 @@
-package org.apereo.cas.pm.web.flow;
+package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
