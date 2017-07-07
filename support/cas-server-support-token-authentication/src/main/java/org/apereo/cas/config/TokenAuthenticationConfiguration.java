@@ -45,6 +45,7 @@ public class TokenAuthenticationConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "tokenAuthenticationHandler")
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
