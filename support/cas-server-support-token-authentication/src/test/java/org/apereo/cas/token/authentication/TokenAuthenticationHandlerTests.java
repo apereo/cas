@@ -63,8 +63,8 @@ import static org.junit.Assert.*;
         TokenAuthenticationConfiguration.class})
 public class TokenAuthenticationHandlerTests {
 
-    private static final String signingSecret = RandomStringUtils.randomAlphanumeric(256);
-    private static final String encryptionSecret = RandomStringUtils.randomAlphanumeric(48);
+    private static final String SIGNING_SECRET = RandomStringUtils.randomAlphanumeric(256);
+    private static final String ENCRYPTION_SECRET = RandomStringUtils.randomAlphanumeric(48);
 
     @Autowired
     @Qualifier("tokenAuthenticationHandler")
@@ -73,8 +73,8 @@ public class TokenAuthenticationHandlerTests {
     @Test
     public void verifyKeysAreSane() throws Exception {
         final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
-        g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
-        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
+        g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
+        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET,
                 JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
         final CommonProfile profile = new CommonProfile();
@@ -86,7 +86,7 @@ public class TokenAuthenticationHandlerTests {
         assertEquals(result.getPrincipal().getId(), profile.getId());
     }
 
-    @Configuration
+    @Configuration("TokenAuthenticationTests")
     public static class TokenAuthenticationTests {
         @Bean
         public List inMemoryRegisteredServices() {
@@ -94,11 +94,11 @@ public class TokenAuthenticationHandlerTests {
             svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
             DefaultRegisteredServiceProperty p = new DefaultRegisteredServiceProperty();
-            p.addValue(signingSecret);
+            p.addValue(SIGNING_SECRET);
             svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING, p);
 
             p = new DefaultRegisteredServiceProperty();
-            p.addValue(encryptionSecret);
+            p.addValue(ENCRYPTION_SECRET);
             svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION, p);
 
             final List l = new ArrayList();
