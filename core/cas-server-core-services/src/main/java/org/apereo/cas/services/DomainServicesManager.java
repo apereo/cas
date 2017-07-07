@@ -79,6 +79,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         return service != null ? findServiceBy(service.getId()) : null;
     }
 
+
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
         return services.values().stream()
@@ -124,7 +125,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(services.values().stream().sorted().collect(Collectors.toList()));
+        return services.values().stream().sorted().collect(Collectors.toList());
     }
 
     @Override

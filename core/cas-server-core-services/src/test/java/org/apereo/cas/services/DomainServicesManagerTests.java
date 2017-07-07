@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,13 +7,12 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
 /**
- * @author battags
- * @since 3.0.0
+ * @author Travis Schmidt
+ * @since 5.2.0
  */
 public class DomainServicesManagerTests {
 
@@ -107,8 +105,8 @@ public class DomainServicesManagerTests {
         r.setName(TEST);
         r.setServiceId(TEST);
 
-        final Service service = new SimpleService(TEST);
-        final Service service2 = new SimpleService("fdfa");
+        final Service service = RegisteredServiceTestUtils.getService(TEST);
+        final Service service2 = RegisteredServiceTestUtils.getService("fdfa");
 
         this.domainServicesManager.save(r);
 
@@ -141,13 +139,13 @@ public class DomainServicesManagerTests {
 
         this.domainServicesManager.save(r);
 
-        final SimpleService service = new SimpleService("HTTP://www.TEST.edu/param=hello");
+        final Service service = RegisteredServiceTestUtils.getService("HTTP://www.TEST.edu/param=hello");
         assertEquals(r, this.domainServicesManager.findServiceBy(service));
     }
 
     @Test
     public void verifyEmptyServicesRegistry() {
-        final SimpleService s = new SimpleService("http://www.google.com");
+        final Service s = RegisteredServiceTestUtils.getService("http://www.google.com");
 
         domainServicesManager.getAllServices().forEach(svc -> domainServicesManager.delete(svc.getId()));
 
@@ -231,39 +229,5 @@ public class DomainServicesManagerTests {
         final Collection<RegisteredService> serviceRetrieved = domainServicesManager.findServiceBy(RegexRegisteredService.class::isInstance);
 
         assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
-    }
-
-    private static class SimpleService implements Service {
-
-        /**
-         * Comment for {@code serialVersionUID}.
-         */
-        private static final long serialVersionUID = 6572142033945243669L;
-
-        private final String id;
-
-        protected SimpleService(final String id) {
-            this.id = id;
-        }
-
-        @Override
-        public Map<String, Object> getAttributes() {
-            return null;
-        }
-
-        @Override
-        public String getId() {
-            return this.id;
-        }
-
-        @Override
-        public void setPrincipal(final Principal principal) {
-            // nothing to do
-        }
-
-        @Override
-        public boolean matches(final Service service) {
-            return true;
-        }
     }
 }
