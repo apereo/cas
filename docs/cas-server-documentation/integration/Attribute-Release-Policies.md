@@ -132,6 +132,33 @@ release `affiliation` and `group` to the web application configured.
 }
 ```
 
+## Return MultiMapped
+
+The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
+essentially allowed for duplicate attributes values mapped to different names. 
+For example, the following configuration will recognize the resolved 
+attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` to the web application configured whose values
+stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`.
+
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "eduPersonAffiliation" : [ "java.util.ArrayList", [ "affiliation", "personAffiliation" ] ],
+      "groupMembership" : "group"
+    }
+  }
+}
+```
+
 ### Inline Groovy Attributes
 
 Principal attributes that are mapped may produce their values from an inline groovy script. As an example, if you currently

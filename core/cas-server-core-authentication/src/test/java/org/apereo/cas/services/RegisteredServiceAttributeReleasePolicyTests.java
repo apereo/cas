@@ -1,9 +1,12 @@
 package org.apereo.cas.services;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -51,9 +54,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Map<String, String> mappedAttr = new HashMap<>();
+        final Multimap<String, String> mappedAttr = ArrayListMultimap.create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
-        policy.setAllowedAttributes(mappedAttr);
+        policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
 
         final Principal p = mock(Principal.class);
         final Map<String, Object> map = new HashMap<>();
@@ -94,11 +97,10 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Map<String, String> mappedAttr = new HashMap<>();
+        final Multimap<String, String> mappedAttr = ArrayListMultimap.create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
 
-        policy.setAllowedAttributes(mappedAttr);
-
+        policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
         final Principal p = mock(Principal.class);
 
         final Map<String, Object> map = new HashMap<>();
@@ -115,8 +117,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
 
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnMappedAttributeReleasePolicy p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
+        final ReturnMappedAttributeReleasePolicy p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }

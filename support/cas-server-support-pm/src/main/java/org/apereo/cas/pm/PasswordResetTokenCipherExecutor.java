@@ -35,4 +35,14 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     public String getName() {
         return "Password Reset Token";
     }
+    
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.authn.pm.reset.security.encryptionKey";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.authn.pm.reset.security.signingKey";
+    }
 }
