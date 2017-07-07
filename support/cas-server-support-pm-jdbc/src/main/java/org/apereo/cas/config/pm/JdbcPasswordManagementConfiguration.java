@@ -2,7 +2,6 @@ package org.apereo.cas.config.pm;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
@@ -34,7 +33,6 @@ public class JdbcPasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         return new JdbcPasswordManagementService(passwordManagementCipherExecutor,
                 casProperties.getServer().getPrefix(),
                 casProperties.getAuthn().getPm(),
