@@ -1,4 +1,4 @@
-package org.apereo.cas.pm.ldap;
+package org.apereo.cas.config.pm.org.apereo.cas.pm.ldap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;

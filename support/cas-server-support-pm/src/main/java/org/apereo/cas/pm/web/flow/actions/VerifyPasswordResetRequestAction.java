@@ -1,4 +1,4 @@
-package org.apereo.cas.pm.web.flow;
+package org.apereo.cas.pm.web.flow.actions;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Map;
 
-import static org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction.*;
+import static org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction.*;
 
 /**
  * This is {@link VerifyPasswordResetRequestAction}.
