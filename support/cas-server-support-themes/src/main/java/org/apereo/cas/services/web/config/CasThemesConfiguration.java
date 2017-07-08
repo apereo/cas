@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
+import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -127,12 +128,15 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
-        final ServiceThemeResolver serviceThemeResolver =
-                new ServiceThemeResolver(defaultThemeName, servicesManager, serviceThemeResolverSupportedBrowsers);
+        final ServiceThemeResolver serviceThemeResolver = new ServiceThemeResolver(servicesManager, serviceThemeResolverSupportedBrowsers);
 
+        final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
+        header.setDefaultThemeName(defaultThemeName);
+        
         final ChainingThemeResolver chainingThemeResolver = new ChainingThemeResolver();
         chainingThemeResolver.addResolver(cookieThemeResolver)
                 .addResolver(sessionThemeResolver)
+                .addResolver(header)
                 .addResolver(serviceThemeResolver)
                 .addResolver(fixedResolver);
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
