@@ -44,10 +44,9 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
      */
     private final Map<Pattern, String> overrides;
 
-    public ServiceThemeResolver(final String defaultThemeName, final ServicesManager servicesManager,
+    public ServiceThemeResolver(final ServicesManager servicesManager,
                                 final Map<String, String> mobileOverrides) {
         super();
-        super.setDefaultThemeName(defaultThemeName);
         this.servicesManager = servicesManager;
         this.overrides = mobileOverrides.entrySet().stream()
                 .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
