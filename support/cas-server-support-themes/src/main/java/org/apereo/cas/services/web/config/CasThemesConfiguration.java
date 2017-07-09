@@ -129,7 +129,8 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
         final ServiceThemeResolver serviceThemeResolver = new ServiceThemeResolver(servicesManager, serviceThemeResolverSupportedBrowsers);
-
+        serviceThemeResolver.setDefaultThemeName(defaultThemeName);
+        
         final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
         header.setDefaultThemeName(defaultThemeName);
         

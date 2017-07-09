@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ThemeResolver;
@@ -27,6 +26,7 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
      * Add resolver to the chain.
      *
      * @param r the resolver
+     * @return the chaining theme resolver
      */
     public ChainingThemeResolver addResolver(final ThemeResolver r) {
         chain.add(r);
@@ -38,11 +38,14 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
         final Iterator<ThemeResolver> it = chain.iterator();
         while (it.hasNext()) {
             final ThemeResolver r = it.next();
+            LOGGER.debug("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
             final String resolverTheme = r.resolveThemeName(httpServletRequest);
             if (!resolverTheme.equalsIgnoreCase(getDefaultThemeName())) {
+                LOGGER.debug("Resolved theme [{}]", resolverTheme);
                 return resolverTheme;
             }
         }
+        LOGGER.debug("No specific theme could be found. Using default theme [{}}", getDefaultThemeName());
         return getDefaultThemeName();
     }
 
