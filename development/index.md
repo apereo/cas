@@ -16,7 +16,7 @@ title: CAS - Home
 providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2F-Authentication.html), 
 [YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Microsoft Azure](installation/MicrosoftAzure-Authentication.html), etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
-* Built-in Support for [password management](installation/Password-Management.html).
+* Built-in support for [password management](installation/Password-Management.html).
 * [Monitor and track](installation/Monitoring-Statistics.html) application behavior, statistics and logs in real time.
 * Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc).
