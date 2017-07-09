@@ -135,10 +135,12 @@ release `affiliation` and `group` to the web application configured.
 ### Return MultiMapped
 
 The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
-essentially allowed for duplicate attributes values mapped to different names. 
+with duplicate attributes values mapped to different names.
+
 For example, the following configuration will recognize the resolved 
-attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` to the web application configured whose values
+attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` whose values
 stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`.
+In otherwise, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
 
 
 ```json
