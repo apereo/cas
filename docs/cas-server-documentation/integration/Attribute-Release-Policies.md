@@ -140,7 +140,7 @@ with duplicate attributes values mapped to different names.
 For example, the following configuration will recognize the resolved 
 attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` whose values
 stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`.
-In otherwise, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
+In other words, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
 
 
 ```json
