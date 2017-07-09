@@ -16,6 +16,18 @@ import java.util.Map;
 public interface ConsentEngine extends Serializable {
 
     /**
+     * Store consent decision.
+     *
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @return true /false
+     */
+    boolean storeConsentDecision(Service service,
+                                 RegisteredService registeredService,
+                                 Authentication authentication);
+
+    /**
      * Gets consentable attributes.
      *
      * @param authentication    the authentication
@@ -33,7 +45,7 @@ public interface ConsentEngine extends Serializable {
      * @param service           the service
      * @param registeredService the registered service
      * @param authentication    the authentication
-     * @return the boolean
+     * @return true /false
      */
     boolean isConsentRequiredFor(Service service, RegisteredService registeredService, Authentication authentication);
 }

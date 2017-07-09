@@ -1,6 +1,5 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -40,6 +39,9 @@ public class ConsentDecision {
     @Column(nullable = false)
     private LocalDateTime date;
 
+    @Column(nullable = false)
+    private ConsentOptions options;
+
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private Long reminder = 14L;
 
@@ -58,14 +60,6 @@ public class ConsentDecision {
 
     public void setDate(final LocalDateTime date) {
         this.date = date;
-    }
-
-    public long getReminder() {
-        return reminder;
-    }
-
-    public void setReminder(final long reminder) {
-        this.reminder = reminder;
     }
 
     public TimeUnit getReminderTimeUnit() {
@@ -116,35 +110,50 @@ public class ConsentDecision {
         this.attributeValues = attributeValues;
     }
 
+    public ConsentOptions getOptions() {
+        return options;
+    }
+
+    public void setOptions(final ConsentOptions options) {
+        this.options = options;
+    }
+
+    public void setReminder(final Long reminder) {
+        this.reminder = reminder;
+    }
+
+    public Long getReminder() {
+        return reminder;
+    }
+
+
     /**
      * Build consent decision consent decision.
      *
      * @param service           the service
      * @param registeredService the registered service
-     * @param authentication    the authentication
+     * @param principalId       the principal id
+     * @param attributes        the attributes
      * @return the consent decision
      */
     public static ConsentDecision buildConsentDecision(final Service service,
                                                        final RegisteredService registeredService,
-                                                       final Authentication authentication) {
+                                                       final String principalId,
+                                                       final Map<String, Object> attributes) {
         final ConsentDecision consent = new ConsentDecision();
-        consent.setPrincipal(authentication.getPrincipal().getId());
+        consent.setPrincipal(principalId);
         consent.setService(service.getId());
 
-        final Map<String, Object> attributes =
-                registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(),
-                        service, registeredService);
-
-        final String names = DigestUtils.sha512(attributes.keySet().stream().collect(Collectors.joining("|")));
+        final String allNames = attributes.keySet().stream().collect(Collectors.joining("|"));
+        final String names = DigestUtils.sha512(allNames);
         consent.setAttributeNames(names);
 
-        final String values = DigestUtils.sha512(attributes.values().stream()
+        final String allValues = attributes.values().stream()
                 .map(CollectionUtils::toCollection)
-                .map(c -> {
-                    final String value = c.stream().map(Object::toString).collect(Collectors.joining());
-                    return value;
-                })
-                .collect(Collectors.joining("|")));
+                .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
+                .collect(Collectors.joining("|"));
+        
+        final String values = DigestUtils.sha512(allValues);
         consent.setAttributeValues(values);
 
         consent.setDate(LocalDateTime.now());

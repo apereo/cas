@@ -25,7 +25,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     public Map<String, Object> getConsentableAttributes(final Authentication authentication,
                                                         final Service service,
                                                         final RegisteredService registeredService) {
-        return null;
+        return registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(), service, registeredService);
     }
 
     @Override
@@ -33,6 +33,18 @@ public class DefaultConsentEngine implements ConsentEngine {
                                         final RegisteredService registeredService,
                                         final Authentication authentication) {
         final ConsentDecision decision = consentRepository.findConsentDecision(service, registeredService, authentication);
-        return decision == null;
+        if (decision == null || decision.getOptions() == ConsentOptions.ALWAYS) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean storeConsentDecision(final Service service, final RegisteredService registeredService,
+                                        final Authentication authentication) {
+        final Map<String, Object> attributes = getConsentableAttributes(authentication, service, registeredService);
+        final ConsentDecision decision = ConsentDecision.buildConsentDecision(service, registeredService,
+                authentication.getPrincipal().getId(), attributes);
+        return consentRepository.storeConsentDecision(decision);
     }
 }
