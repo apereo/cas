@@ -13,7 +13,7 @@ and navigated. In order for this navigation to work, some form of conversational
 ## Client-side Sessions
 
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte
-stream in the flow execution identifier provided to the client when rendering a view. CAS automatically attempts to store
+stream in the flow execution identifier provided to the client when rendering a view. By default, CAS automatically attempts to store
 and keep track of this state on the client in an encrypted form via encryption and signing keys
 to remove the need for session cleanup, termination and replication.
 
@@ -34,6 +34,10 @@ In the event that you wish to use server-side session storage for managing the w
 via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
 
 Doing so will likely require you to also enable sticky sessions and/or session replication in a clustered deployment of CAS.
+
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+Generally speaking, you do not need to enable server-side sessions unless you have a rather specialized deployment or are in need of features that store bits and pieces of data into a sever-backed session object. It is recommended that you stick with the default client-side session storage and only switch if and when mandated by a specific CAS behavior.</p></div>
 
 ### Hazelcast Session Replication
 
