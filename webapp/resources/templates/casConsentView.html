@@ -4,7 +4,7 @@
 <head>
     <title th:text="#{screen.consent.title}"></title>
 
-    <link rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}" />
+    <link rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}"/>
     <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
     <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
 
@@ -22,7 +22,7 @@
 
         function jqueryReady() {
             head.load(
-                    /*[[@{/js/consent.js}]]*/
+                /*[[@{/js/consent.js}]]*/
             );
         }
     </script>
@@ -31,38 +31,39 @@
 <body id="cas">
 <div layout:fragment="content">
 
-    <div class="alert alert-info">
-        <h1 th:text="#{screen.consent.title}"></h1>
-        <p>The following attributes will be released to <strong>[<span th:text="${service.id}"/>]</strong>:</p>
-        <table id="attributesTable" class="display table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Attribute</th>
-                <th>Value(s)</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+    <form method="post" id="fm1">
+        <div class="alert alert-info">
+            <h1 th:text="#{screen.consent.title}"></h1>
+            <p>The following attributes will be released to <strong>[<span th:text="${service.id}"/>]</strong>:</p>
+            <table id="attributesTable" class="display table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Value(s)</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
 
-        <br><br>
-        <div class="panel panel-primary">
-            <div class="panel-heading">Consent Options</div>
-            <div class="panel-body">
-                <div class="radio">
-                    <label><input type="radio" name="optradio" value="always"><strong>Every Time</strong></label>
-                    <span class="help-block">Show the consent screen every time I attempt to log into <span th:text="${service.id}"/></span>
-                </div>
-                <div class="radio">
-                    <label><input type="radio" name="optradio" value="name" checked><strong>Attribute Name</strong></label>
-                    <span class="help-block">
+            <br><br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Consent Options</div>
+                <div class="panel-body">
+                    <div class="radio">
+                        <label><input type="radio" name="option" value="0"><strong>Every Time</strong></label>
+                        <span class="help-block">Show the consent screen every time I attempt to log into <span th:text="${service.id}"/></span>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="option" value="1" checked><strong>Attribute Name</strong></label>
+                        <span class="help-block">
                         Show the consent screen, if an attribute is added or removed from the collection of attributes released
                         to <span th:text="${service.id}"/>.
                     </span>
-                </div>
-                <div class="radio">
-                    <label><input type="radio" name="optradio" value="value"><strong>Attribute Value</strong></label>
-                    <span class="help-block">
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="option" value="2"><strong>Attribute Value</strong></label>
+                        <span class="help-block">
                          Show the consent screen, if:
                         <ul>
                             <li>A new attribute is authorized for release to <span th:text="${service.id}"/>.</li>
@@ -70,36 +71,37 @@
                             <li>The value of an attribute authorized for release to <span th:text="${service.id}"/> has changed.</li>
                         </ul>
                     </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">Reminder Options</div>
-            <div class="panel-body">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Reminder Options</div>
+                <div class="panel-body">
                 <span>
                     Show the consent screen, as a reminder, in that event that there is no change to the collection of attributes
                     released to <span th:text="${service.id}"/>  <p/>
                 </span>
-                <table>
-                    <tr>
-                        <td>
-                            <input class="form-control" type="number">
-                        </td>
-                        <td>
-                            <select class="selectpicker">
-                                <option value="day">Days</option>
-                                <option value="hour">Hours</option>
-                                <option value="month">Months</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
+                    <table>
+                        <tr>
+                            <td>
+                                <input name="reminder" id="reminder"
+                                       class="form-control" type="number" th:value="${reminder}">
+                            </td>
+                            <td>
+                                <select name="reminderTimeUnit" id="reminderTimeUnit" class="selectpicker">
+                                    <option value="days" th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'days'}">Days</option>
+                                    <option value="hours" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'hours'}">Hours</option>
+                                    <option value="months" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'months'}">Months</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
 
+                </div>
             </div>
-        </div>
 
-        <div align="center">
-            <form method="post" id="fm1">
+            <div align="center">
+
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="confirm"/>
                 <input class="btn btn-primary btn-lg"
@@ -110,10 +112,11 @@
                 &nbsp;
                 <a class="btn btn-success btn-lg" id="cancel" name="cancel"
                    th:href="@{/login}" th:text="#{screen.consent.cancel}"/>
-            </form>
-        </div>
 
-    </div>
+            </div>
+
+        </div>
+    </form>
 </div>
 </body>
 </html>
