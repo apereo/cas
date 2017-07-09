@@ -14,6 +14,7 @@ import java.io.Serializable;
  */
 @FunctionalInterface
 public interface ConsentRepository extends Serializable {
+
     /**
      * Gets consent decision.
      *
@@ -23,4 +24,12 @@ public interface ConsentRepository extends Serializable {
      * @return the consent decision
      */
     ConsentDecision findConsentDecision(Service service, RegisteredService registeredService, Authentication authentication);
+
+    /**
+     * Store consent decision.
+     *
+     * @param decision the decision
+     * @return true/false
+     */
+    boolean storeConsentDecision(ConsentDecision decision);
 }
