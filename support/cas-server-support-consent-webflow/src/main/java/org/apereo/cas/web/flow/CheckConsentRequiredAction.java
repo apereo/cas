@@ -3,10 +3,8 @@ package org.apereo.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.consent.ConsentEngine;
-import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -32,19 +30,13 @@ public class CheckConsentRequiredAction extends AbstractAction {
 
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ConsentRepository consentRepository;
     private final ConsentEngine consentEngine;
 
     public CheckConsentRequiredAction(final ServicesManager servicesManager,
                                       final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                      final AuthenticationSystemSupport authenticationSystemSupport,
-                                      final ConsentRepository consentRepository,
                                       final ConsentEngine consentEngine) {
         this.servicesManager = servicesManager;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.consentRepository = consentRepository;
         this.consentEngine = consentEngine;
     }
 
@@ -62,8 +54,7 @@ public class CheckConsentRequiredAction extends AbstractAction {
         final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
         final RegisteredService registeredService = getRegisteredServiceForConsent(requestContext, service);
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
-        final Map<String, Object> attributes =
-                registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(), service, registeredService);
+        final Map<String, Object> attributes = consentEngine.getConsentableAttributes(authentication, service, registeredService);
         requestContext.getFlowScope().put("attributes", attributes);
         requestContext.getFlowScope().put("principal", authentication.getPrincipal().getId());
     }
