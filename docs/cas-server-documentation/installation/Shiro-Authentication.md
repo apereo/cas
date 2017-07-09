@@ -43,3 +43,16 @@ casuser = Mellon, admin
 [roles]
 admin = system,admin,staff,superuser:*
 ```
+
+## Logging
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<AsyncLogger name="org.apache.shiro" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```
