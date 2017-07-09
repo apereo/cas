@@ -56,7 +56,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreHttpConfiguration.class,
-        TokenAuthenticationHandlerTests.TokenAuthenticationTests.class,
+        TokenAuthenticationHandlerTests.TestTokenAuthenticationConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
@@ -87,7 +87,7 @@ public class TokenAuthenticationHandlerTests {
     }
 
     @Configuration("TokenAuthenticationTests")
-    public static class TokenAuthenticationTests {
+    public static class TestTokenAuthenticationConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".*");
