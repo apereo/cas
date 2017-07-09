@@ -132,7 +132,7 @@ release `affiliation` and `group` to the web application configured.
 }
 ```
 
-## Return MultiMapped
+### Return MultiMapped
 
 The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
 essentially allowed for duplicate attributes values mapped to different names. 
