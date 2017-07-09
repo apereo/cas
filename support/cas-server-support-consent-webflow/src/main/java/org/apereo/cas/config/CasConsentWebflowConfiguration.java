@@ -74,16 +74,17 @@ public class CasConsentWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
-        return new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine);
+        return new CheckConsentRequiredAction(servicesManager,
+                authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
     @Bean
     public Action confirmConsentAction() {
-        return new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies,
-                authenticationSystemSupport, consentRepository, consentEngine);
+        return new ConfirmConsentAction(servicesManager,
+                authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
     }
-    
+
     @Bean
     public CasWebflowConfigurer consentWebflowConfigurer() {
         return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);

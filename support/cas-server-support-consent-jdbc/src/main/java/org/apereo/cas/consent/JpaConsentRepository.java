@@ -49,4 +49,15 @@ public class JpaConsentRepository implements ConsentRepository {
             return null;
         }
     }
+
+    @Override
+    public boolean storeConsentDecision(final ConsentDecision decision) {
+        try {
+            this.entityManager.merge(decision);
+            return true;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
 }

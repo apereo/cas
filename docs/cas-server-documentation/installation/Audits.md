@@ -78,5 +78,6 @@ The following events are tracked and recorded in the audit log:
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
+| `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`

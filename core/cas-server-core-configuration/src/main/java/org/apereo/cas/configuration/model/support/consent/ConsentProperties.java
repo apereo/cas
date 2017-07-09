@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.1.0
  */
 public class ConsentProperties {
-    private int reminder = 14;
+    private int reminder = 30;
     private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
 
     private Jpa jpa = new Jpa();
