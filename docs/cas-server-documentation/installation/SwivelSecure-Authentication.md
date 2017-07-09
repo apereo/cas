@@ -24,3 +24,16 @@ Support is enabled by including the following module in the overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#swivel-secure).
+
+## Logging
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<AsyncLogger name="com.swiveltechnologies" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```
