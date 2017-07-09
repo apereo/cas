@@ -1953,7 +1953,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
 # cas.authn.spnego.jcifsDomain=
 # cas.authn.spnego.ipsToCheckPattern=127.+
-# cas.authn.spnego.kerberosDebug=
+# cas.authn.spnego.kerberosDebug=true
 # cas.authn.spnego.send401OnAuthenticationFailure=true
 # cas.authn.spnego.kerberosRealm=EXAMPLE.COM
 # cas.authn.spnego.ntlm=false
