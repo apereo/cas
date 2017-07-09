@@ -28,5 +28,5 @@ create table pm_table_accounts (id int, userid varchar(255), password varchar(25
 The expected database schema for account security questions is:
 
 ```sql
-create table pm_table_questions (id int, userid varchar(255), question varchar(255), answer varchar(255);
+create table pm_table_questions (id int, userid varchar(255), question varchar(255), answer varchar(255));
 ```
