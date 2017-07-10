@@ -105,10 +105,10 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
         params.add(new Object[]{
                 handler,
-                new X509CertificateCredential(createCertificates("user-expired.crt")),
-                true,
-                new CertificateExpiredException(),
-        });
+            new X509CertificateCredential(createCertificates("user-expired.crt")),
+            true,
+            new CertificateExpiredException(),
+    });
 
         // Test case #4: Untrusted issuer
         handler = new X509CredentialsAuthenticationHandler(
@@ -124,29 +124,29 @@ public class X509CredentialsAuthenticationHandlerTests {
                 RegexUtils.createPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"));
         params.add(new Object[]{
                 handler,
-                new X509CertificateCredential(createCertificates("snake-oil.crt")),
-                true,
-                new FailedLoginException(),
-        });
+            new X509CertificateCredential(createCertificates("snake-oil.crt")),
+            true,
+            new FailedLoginException(),
+    });
 
         // Test case #6: Check key usage on a cert without keyUsage extension
-        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), 
+        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"),
                 false, true, false);
         credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
         params.add(new Object[]{
                 handler,
-                credential,
-                true,
-                new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
-        });
+            credential,
+            true,
+            new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+    });
 
         // Test case #7: Require key usage on a cert without keyUsage extension
-        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), 
+        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"),
                 false, true, true);
         params.add(new Object[]{
-                handler,
-                new X509CertificateCredential(createCertificates(USER_VALID_CRT)),
-                true, new FailedLoginException(),
+            handler,
+            new X509CertificateCredential(createCertificates(USER_VALID_CRT)),
+            true, new FailedLoginException(),
         });
 
         // Test case #8: Require key usage on a cert with acceptable keyUsage extension values
@@ -253,7 +253,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             try {
                 certs[i++] = CertUtil.readCertificate(new ClassPathResource(file).getInputStream());
             } catch (final Exception e) {
-                throw new RuntimeException("Error creating certificate at " + file, e);
+                throw new IllegalArgumentException("Error creating certificate at " + file, e);
             }
         }
         return certs;

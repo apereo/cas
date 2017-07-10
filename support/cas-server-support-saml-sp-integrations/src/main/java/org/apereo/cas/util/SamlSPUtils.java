@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -23,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -71,9 +71,9 @@ public final class SamlSPUtils {
                 service.setRequiredNameIdFormat(sp.getNameIdFormat());
             }
 
-            final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(attributesToRelease);
+            final Multimap<String, String> attributes = Beans.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
             final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
-            policy.addPolicy(new ReturnMappedAttributeReleasePolicy(attributes));
+            policy.addPolicy(new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(attributes)));
             service.setAttributeReleasePolicy(policy);
             
             service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());

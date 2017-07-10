@@ -1,14 +1,15 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.profile.UserProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -20,10 +21,12 @@ import java.security.GeneralSecurityException;
  * @since 4.1.0
  */
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPac4jAuthenticationHandler.class);
+    
     private boolean isTypedIdUsed;
 
-    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                              final PrincipalFactory principalFactory,
                                               final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
@@ -40,26 +43,28 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
     protected HandlerResult createResult(final ClientCredential credentials, final UserProfile profile)
             throws GeneralSecurityException, PreventedException {
 
-        if (profile != null) {
-            final String id;
-            if (isTypedIdUsed) {
-                id = profile.getTypedId();
-            } else {
-                id = profile.getId();
-            }
-            if (StringUtils.isNotBlank(id)) {
-                credentials.setUserProfile(profile);
-                credentials.setTypedIdUsed(isTypedIdUsed);
-                return new DefaultHandlerResult(
-                        this,
-                        new BasicCredentialMetaData(credentials),
-                        this.principalFactory.createPrincipal(id, profile.getAttributes()));
-            }
+        if (profile == null) {
+            throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
+        }
 
+        final String id;
+        if (isTypedIdUsed) {
+            id = profile.getTypedId();
+            LOGGER.debug("Delegated authentication indicates usage of typed profile id [{}]", id);
+        } else {
+            id = profile.getId();
+        }
+
+        if (StringUtils.isBlank(id)) {
             throw new FailedLoginException("No identifier found for this user profile: " + profile);
         }
 
-        throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
+        credentials.setUserProfile(profile);
+        credentials.setTypedIdUsed(isTypedIdUsed);
+        
+        final Principal principal = this.principalFactory.createPrincipal(id, profile.getAttributes());
+        LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
+        return createHandlerResult(credentials, principal, null);
     }
 
     public void setTypedIdUsed(final boolean typedIdUsed) {

@@ -6,6 +6,7 @@ package org.apereo.cas.services;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@FunctionalInterface
 public interface RegisteredServiceCipherExecutor {
     /**
      * Encode string.

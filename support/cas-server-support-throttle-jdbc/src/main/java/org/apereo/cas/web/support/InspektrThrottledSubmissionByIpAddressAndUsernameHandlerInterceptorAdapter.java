@@ -87,11 +87,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             final String remoteAddress = clientInfo.getClientIpAddress();
             
             final List<Timestamp> failures = this.jdbcTemplate.query(
-                    this.sqlQueryAudit,
-                    new Object[]{remoteAddress, userToUse, this.authenticationFailureCode,
+                this.sqlQueryAudit,
+                new Object[]{
+                    remoteAddress, userToUse, this.authenticationFailureCode,
                     this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
-                    new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-                    (resultSet, i) -> resultSet.getTimestamp(1));
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
+                (resultSet, i) -> resultSet.getTimestamp(1));
             if (failures.size() < 2) {
                 return false;
             }

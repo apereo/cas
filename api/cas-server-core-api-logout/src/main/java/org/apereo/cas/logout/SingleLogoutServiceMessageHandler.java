@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface SingleLogoutServiceMessageHandler {
 
     /**

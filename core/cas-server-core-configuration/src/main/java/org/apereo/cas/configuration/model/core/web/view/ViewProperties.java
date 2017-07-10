@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 
 public class ViewProperties implements Serializable {
+    private static final long serialVersionUID = 2719748442042197738L;
     private String defaultRedirectUrl;
 
     private Cas2 cas2 = new Cas2();
@@ -40,6 +41,7 @@ public class ViewProperties implements Serializable {
     }
 
     public static class Cas2 implements Serializable {
+        private static final long serialVersionUID = -7954879759474698003L;
         private String success = "protocol/2.0/casServiceValidationSuccess";
         private String failure = "protocol/2.0/casServiceValidationFailure";
         private boolean v3ForwardCompatible;
@@ -79,6 +81,7 @@ public class ViewProperties implements Serializable {
         }
 
         public static class Proxy implements Serializable {
+            private static final long serialVersionUID = 6765987342872282599L;
             private String success = "protocol/2.0/casProxySuccessView";
             private String failure = "protocol/2.0/casProxyFailureView";
 
@@ -101,6 +104,7 @@ public class ViewProperties implements Serializable {
     }
 
     public static class Cas3 implements Serializable {
+        private static final long serialVersionUID = -2345062034300650858L;
         private String success = "protocol/3.0/casServiceValidationSuccess";
         private String failure = "protocol/3.0/casServiceValidationFailure";
 

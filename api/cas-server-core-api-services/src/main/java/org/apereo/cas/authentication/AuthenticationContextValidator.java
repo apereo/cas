@@ -13,6 +13,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface AuthenticationContextValidator {
 
     /**

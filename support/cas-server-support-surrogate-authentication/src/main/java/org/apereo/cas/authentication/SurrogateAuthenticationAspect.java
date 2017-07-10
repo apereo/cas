@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -39,12 +40,12 @@ public class SurrogateAuthenticationAspect {
      * @param jp         the jp
      * @param credential the credential
      * @return the object
-     * @throws Throwable the throwable
+     * @throws Exception the exception
      */
     @Around(value = "execution(public org.apereo.cas.authentication.HandlerResult "
             + "org.apereo.cas.authentication.AuthenticationHandler.authenticate(..)) "
             + "&& args(credential)")
-    public Object handleSurrogate(final ProceedingJoinPoint jp, final Credential credential) throws Throwable {
+    public Object handleSurrogate(final ProceedingJoinPoint jp, final Credential credential) throws Exception {
         try {
             if (!credential.getClass().equals(SurrogateUsernamePasswordCredential.class)) {
                 return jp.proceed();
@@ -66,7 +67,7 @@ public class SurrogateAuthenticationAspect {
             LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", result.getPrincipal(), targetUserId);
             throw new FailedLoginException();
         } catch (final Throwable e) {
-            throw e;
+            throw Throwables.propagate(e);
         }
     }
 }

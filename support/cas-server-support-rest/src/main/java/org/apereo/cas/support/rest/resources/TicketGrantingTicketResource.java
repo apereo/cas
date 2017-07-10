@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.rest.BadRequestException;
 import org.apereo.cas.support.rest.CredentialFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -60,16 +62,19 @@ public class TicketGrantingTicketResource {
 
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final ServiceFactory serviceFactory;
     private final CredentialFactory credentialFactory;
 
     private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     public TicketGrantingTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
                                         final CredentialFactory credentialFactory,
-                                        final CentralAuthenticationService centralAuthenticationService) {
+                                        final CentralAuthenticationService centralAuthenticationService,
+                                        final ServiceFactory serviceFactory) {
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.credentialFactory = credentialFactory;
         this.centralAuthenticationService = centralAuthenticationService;
+        this.serviceFactory = serviceFactory;
     }
 
     /**
@@ -78,47 +83,21 @@ public class TicketGrantingTicketResource {
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
-     * @throws JsonProcessingException in case of JSON parsing failure
+     * @throws Exception in case of JSON parsing failure
      */
     @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                             final HttpServletRequest request) throws JsonProcessingException {
+                                                             final HttpServletRequest request) throws Exception {
 
         try {
-            final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
-            final AuthenticationResult authenticationResult =
-                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
-
-            final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-            final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
-            final HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(ticketReference);
-            headers.setContentType(MediaType.TEXT_HTML);
-            final String tgtUrl = ticketReference.toString();
-            final String response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
-                    .append(DOCTYPE_AND_OPENING_FORM)
-                    .append(tgtUrl)
-                    .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
-                    .toString();
-            return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
-
+            final TicketGrantingTicket tgtId = createTicketGrantingTicketForRequest(requestBody, request);
+            return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
-            final List<String> authnExceptions = e.getHandlerErrors().values().stream()
-                    .map(Class::getSimpleName)
-                    .collect(Collectors.toList());
-            final Map<String, List<String>> errorsMap = new HashMap<>();
-            errorsMap.put("authentication_exceptions", authnExceptions);
-            LOGGER.error("[{}] Caused by: [{}]", e.getMessage(), authnExceptions, e);
-            try {
-                return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-            } catch (final JsonProcessingException exception) {
-                LOGGER.error(e.getMessage(), e);
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            return createResponseEntityForAuthnFailure(e);
         } catch (final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -135,5 +114,44 @@ public class TicketGrantingTicketResource {
     public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
+    }
+
+    private ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request,
+                                                                 final TicketGrantingTicket tgtId) throws Exception {
+        final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ticketReference);
+        headers.setContentType(MediaType.TEXT_HTML);
+        final String tgtUrl = ticketReference.toString();
+        final String response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
+                .append(DOCTYPE_AND_OPENING_FORM)
+                .append(tgtUrl)
+                .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
+                .toString();
+        return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
+    }
+
+    private TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
+                                                                      final HttpServletRequest request) {
+        final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
+        final Service service = this.serviceFactory.createService(request);
+        final AuthenticationResult authenticationResult =
+                authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+        return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+    }
+
+    private ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e) {
+        final List<String> authnExceptions = e.getHandlerErrors().values().stream()
+                .map(Class::getSimpleName)
+                .collect(Collectors.toList());
+        final Map<String, List<String>> errorsMap = new HashMap<>();
+        errorsMap.put("authentication_exceptions", authnExceptions);
+        LOGGER.error("[{}] Caused by: [{}]", e.getMessage(), authnExceptions, e);
+        try {
+            return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+        } catch (final JsonProcessingException exception) {
+            LOGGER.error(e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

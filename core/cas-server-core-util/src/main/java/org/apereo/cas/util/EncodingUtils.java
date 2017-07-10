@@ -53,6 +53,21 @@ public final class EncodingUtils {
     }
 
     /**
+     * Hex decode string.
+     *
+     * @param data the data
+     * @return the string
+     */
+    public static String hexDecode(final char[] data) {
+        try {
+            final byte[] result = Hex.decodeHex(data);
+            return new String(result);
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+    
+    /**
      * Hex encode string.
      *
      * @param data the data
@@ -76,21 +91,6 @@ public final class EncodingUtils {
     public static String hexEncode(final byte[] data) {
         try {
             final char[] result = Hex.encodeHex(data);
-            return new String(result);
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Hex decode string.
-     *
-     * @param data the data
-     * @return the string
-     */
-    public static String hexDecode(final char[] data) {
-        try {
-            final byte[] result = Hex.decodeHex(data);
             return new String(result);
         } catch (final Exception e) {
             return null;

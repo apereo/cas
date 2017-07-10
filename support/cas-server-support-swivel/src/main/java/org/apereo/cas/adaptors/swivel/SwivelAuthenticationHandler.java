@@ -70,22 +70,32 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             throw new FailedLoginException("Swivel url/shared secret is not specified and cannot be blank.");
         }
 
+        if (StringUtils.isBlank(swivelCredential.getId()) || StringUtils.isBlank(swivelCredential.getToken())) {
+            throw new FailedLoginException("Swivel credentials are not specified can cannot be blank");
+        }
+
         /**
          * Create a new session with the Swivel server. We do not support
          * the user having a password on his/her Swivel account, just the
          * one-time code.
          */
+        LOGGER.debug("Preparing Swivel request to [{}]", swivelProperties.getSwivelUrl());
         final AgentXmlRequest req = new AgentXmlRequest(swivelProperties.getSwivelUrl(), swivelProperties.getSharedSecret());
         req.setIgnoreSSLErrors(swivelProperties.isIgnoreSslErrors());
-        req.login(uid, StringUtils.EMPTY, swivelCredential.getToken());
+
+        try {
+            LOGGER.debug("Submitting Swivel request to [{}] for [{}]", swivelProperties.getSwivelUrl(), uid);
+            req.login(uid, StringUtils.EMPTY, swivelCredential.getToken());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
 
         /**
          * Send the request. It will return either PASS (user authenticated)
          * or FAIL (user not authenticated).
          */
         if (!req.send()) {
-            LOGGER.error("Swivel request error: [{}], [{}], [{}]", req.getResponseCode(),
-                    req.getAgentError(), req.getResponse());
+            LOGGER.error("Swivel request error: [{}], [{}], [{}]", req.getResponseCode(), req.getAgentError(), req.getResponse());
             throw new FailedLoginException("Failed to authenticate swivel token: " + req.getResponse());
         }
 

@@ -134,7 +134,7 @@ public class CouchbaseClientFactory {
                     }
                 }
             } catch (final Exception e) {
-                throw new RuntimeException("Failed to connect to Couchbase getBucket", e);
+                throw new IllegalArgumentException("Failed to connect to Couchbase getBucket", e);
             }
         }
         return this.bucket;

@@ -34,7 +34,8 @@ Usage policy user decisions are stored and rememberd via the following ways.
 ### Default
 
 By default the task of remembering the user's choice is kept in memory by default and will be lost upon
-container restarts and/or in clustered deployments.   
+container restarts and/or in clustered deployments. This option is only useful during development, testing
+and demos and is not at all suitable for production.
 
 ### LDAP
 

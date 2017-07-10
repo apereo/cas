@@ -13,6 +13,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@FunctionalInterface
 public interface PrincipalElectionStrategy extends Serializable {
 
     /**

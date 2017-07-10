@@ -1,7 +1,5 @@
 package org.apereo.cas.support.rest.resources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.slf4j.Logger;
@@ -33,8 +31,6 @@ public class TicketStatusResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketStatusResource.class);
 
     private final CentralAuthenticationService centralAuthenticationService;
-
-    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     public TicketStatusResource(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;

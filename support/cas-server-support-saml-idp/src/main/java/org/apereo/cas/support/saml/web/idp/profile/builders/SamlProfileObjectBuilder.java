@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * @param <T> the type parameter
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface SamlProfileObjectBuilder<T extends XMLObject> {
 
     /**

@@ -7,8 +7,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.authentication.TokenCredential;
+import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -31,24 +31,23 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationAction.class);
 
+    private final TokenRequestExtractor tokenRequestExtractor;
     private final ServicesManager servicesManager;
 
     public TokenAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                      final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                     final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, 
+                                     final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+                                     final TokenRequestExtractor tokenRequestExtractor,
                                      final ServicesManager servicesManager) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        this.tokenRequestExtractor = tokenRequestExtractor;
         this.servicesManager = servicesManager;
     }
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-
-        String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
-        if (StringUtils.isBlank(authTokenValue)) {
-            authTokenValue = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);
-        }
+        final String authTokenValue = this.tokenRequestExtractor.extract(request);
         final Service service = WebUtils.getService(requestContext);
 
         if (StringUtils.isNotBlank(authTokenValue) && service != null) {

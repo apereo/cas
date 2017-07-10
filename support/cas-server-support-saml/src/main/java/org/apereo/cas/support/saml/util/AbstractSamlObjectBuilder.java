@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
@@ -98,13 +99,17 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the t
      */
     public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        final QName qName = getSamlObjectQName(objectType);
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+        try {
+            final QName qName = getSamlObjectQName(objectType);
+            final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+            if (builder == null) {
+                throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+            }
+            return objectType.cast(builder.buildObject(qName));
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-        return objectType.cast(builder.buildObject(qName));
     }
 
     /**
@@ -115,12 +120,16 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the t
      */
     public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
-        final QName qName = getSamlObjectQName(objectType);
-        final SOAPObjectBuilder<T> builder = (SOAPObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+        try {
+            final QName qName = getSamlObjectQName(objectType);
+            final SOAPObjectBuilder<T> builder = (SOAPObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+            if (builder == null) {
+                throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+            }
+            return objectType.cast(builder.buildObject(qName));
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-        return objectType.cast(builder.buildObject(qName));
     }
 
     /**
@@ -128,9 +137,9 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      *
      * @param objectType the object type
      * @return the saml object QName
-     * @throws RuntimeException the exception
+     * @throws Exception the exception
      */
-    public QName getSamlObjectQName(final Class objectType) throws RuntimeException {
+    public QName getSamlObjectQName(final Class objectType) throws Exception {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
             return (QName) f.get(null);
@@ -221,7 +230,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             doc.setRootElement((org.jdom.Element) signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
-        throw new RuntimeException("Error signing SAML Response: Null document");
+        throw new IllegalArgumentException("Error signing SAML Response: Null document");
     }
 
     /**
@@ -273,7 +282,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                     signatureMethod = sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null);
                     break;
                 default:
-                    throw new RuntimeException("Error signing SAML element: Unsupported type of key");
+                    throw new IllegalArgumentException("Error signing SAML element: Unsupported type of key");
             }
 
             final CanonicalizationMethod canonicalizationMethod = sigFactory
@@ -307,7 +316,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             return toJdom(w3cElement);
 
         } catch (final Exception e) {
-            throw new RuntimeException("Error signing SAML element: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Error signing SAML element: " + e.getMessage(), e);
         }
     }
 

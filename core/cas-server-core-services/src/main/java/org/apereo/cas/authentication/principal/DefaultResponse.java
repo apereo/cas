@@ -94,7 +94,7 @@ public class DefaultResponse implements Response {
                     String param;
                     try {
                         param = String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
-                    } catch (final RuntimeException e) {
+                    } catch (final Exception e) {
                         param = String.join("=", entry.getKey(), entry.getValue());
                     }
                     return param;

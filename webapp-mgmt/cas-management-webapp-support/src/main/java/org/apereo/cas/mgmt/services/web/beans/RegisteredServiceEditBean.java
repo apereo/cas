@@ -318,6 +318,18 @@ public class RegisteredServiceEditBean implements Serializable {
             return this.customComponent;
         }
 
+        /**
+         * Get the current properties for the specified custom component. The returned {@link Map} should only contain
+         * nested Maps, Arrays, and simple objects.
+         *
+         * @param componentName name of the component to get the properties for (this should be unique for each
+         *                      component)
+         * @return current custom component properties
+         */
+        public Map<String, ?> getCustomComponent(final String componentName) {
+            return this.customComponent.get(componentName);
+        }
+
         public RegisteredServiceSamlTypeEditBean getSaml() {
             return saml;
         }
@@ -334,19 +346,7 @@ public class RegisteredServiceEditBean implements Serializable {
         public void setCustomComponent(final Map<String, Map<String, ?>> customComponent) {
             this.customComponent = customComponent;
         }
-
-        /**
-         * Get the current properties for the specified custom component. The returned {@link Map} should only contain
-         * nested Maps, Arrays, and simple objects.
-         *
-         * @param componentName name of the component to get the properties for (this should be unique for each
-         *                      component)
-         * @return current custom component properties
-         */
-        public Map<String, ?> getCustomComponent(final String componentName) {
-            return this.customComponent.get(componentName);
-        }
-
+        
         /**
          * This is reserved for usage by any custom components that need to present their config to the management UI.
          * The provided {@link Map} should only contain nested Maps, Arrays, and simple objects.

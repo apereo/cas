@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
@@ -79,8 +78,8 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
                 }
                 addProfileRolesFromAttributes(profile, groupAttribute, this.groupPrefix);
             }
-        } catch (final LdapException e) {
-            throw new RuntimeException("LDAP error fetching roles for user.", e);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("LDAP error fetching roles for user.", e);
         }
         return profile;
     }

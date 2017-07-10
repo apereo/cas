@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface AdaptiveAuthenticationPolicy {
     
     /**

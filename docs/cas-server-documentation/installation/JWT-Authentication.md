@@ -47,6 +47,8 @@ Once the token is generated, you may pass it to the `/login` endpoint of CAS as 
 /cas/login?service=https://...&token=<TOKEN_VALUE>
 ```
 
+The `token` parameter may also be passed as a request header.
+
 ## Configuration
 
 JWT authentication support is enabled by including the following dependency in the WAR overlay:
@@ -90,6 +92,10 @@ Configure the appropriate service in your service registry to hold the secrets:
     "jwtEncryptionSecretMethod" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "A192CBC-HS384" ] ]
+    },
+    "jwtSecretsAreBase64Encoded" : {
+       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+       "values" : [ "java.util.HashSet", [ "false" ] ]
     }
   }
 }

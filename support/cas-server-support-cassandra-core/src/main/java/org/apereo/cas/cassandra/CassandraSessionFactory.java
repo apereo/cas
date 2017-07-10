@@ -12,6 +12,7 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface CassandraSessionFactory {
     /**
      * The enum Retry policy type.

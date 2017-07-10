@@ -17,6 +17,8 @@ import java.util.List;
  * @since 5.0.0
  */
 public abstract class AbstractLdapProperties implements Serializable {
+    private static final long serialVersionUID = 2682743362616979324L;
+
     /**
      * The ldap type used to handle specific ops.
      */

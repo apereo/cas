@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -207,8 +208,20 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return count.get();
     }
 
-    private static int getTimeToLive(final Ticket ticket) {
-        return ticket.getExpirationPolicy().getTimeToLive().intValue();
+    /**
+     * Calculate the time at which the ticket is eligible for automatic deletion by MongoDb.
+     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
+     */
+    private static Date getExpireAt(final Ticket ticket) {
+        final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        
+        // expiration policy can specify not to delete automatically
+        if (ttl < 1) {
+            return null;
+        }
+        
+        final Date expireAt = new Date(System.currentTimeMillis() + (ttl * 1000));
+        return expireAt;
     }
 
     private static String serializeTicketForMongoDocument(final Ticket ticket) {
@@ -229,8 +242,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         final String json = serializeTicketForMongoDocument(encTicket);
         if (StringUtils.isNotBlank(json)) {
             LOGGER.trace("Serialized ticket into a JSON document as \n [{}]", JsonValue.readJSON(json).toString(Stringify.FORMATTED));
-            final int timeToLive = getTimeToLive(ticket);
-            return new TicketHolder(json, encTicket.getId(), encTicket.getClass().getName(), timeToLive);
+            final Date expireAt = getExpireAt(ticket);
+            return new TicketHolder(json, encTicket.getId(), encTicket.getClass().getName(), expireAt);
         }
         throw new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON");
     }

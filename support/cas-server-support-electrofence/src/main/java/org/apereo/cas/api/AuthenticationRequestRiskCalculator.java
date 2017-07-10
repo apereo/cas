@@ -12,6 +12,7 @@ import java.math.BigDecimal;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface AuthenticationRequestRiskCalculator {
     /**
      * Highest risk score for an authn request.

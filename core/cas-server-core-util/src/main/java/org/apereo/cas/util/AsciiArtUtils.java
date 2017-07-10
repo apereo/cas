@@ -37,6 +37,28 @@ public final class AsciiArtUtils {
      * @param asciiArt   the ascii art
      * @param additional the additional
      */
+    public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
+        try {
+            out.println(ANSI_CYAN);
+            if (StringUtils.isNotBlank(additional)) {
+                out.println(FigletFont.convertOneLine(asciiArt));
+                out.println(additional);
+            } else {
+                out.print(FigletFont.convertOneLine(asciiArt));
+            }
+            out.println(ANSI_RESET);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+    
+    /**
+     * Print ascii art.
+     *
+     * @param out        the out
+     * @param asciiArt   the ascii art
+     * @param additional the additional
+     */
     public static void printAsciiArtWarning(final Logger out, final String asciiArt, final String additional) {
         try {
             out.warn(ANSI_CYAN);
@@ -64,25 +86,4 @@ public final class AsciiArtUtils {
         }
     }
 
-    /**
-     * Print ascii art.
-     *
-     * @param out        the out
-     * @param asciiArt   the ascii art
-     * @param additional the additional
-     */
-    public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
-        try {
-            out.println(ANSI_CYAN);
-            if (StringUtils.isNotBlank(additional)) {
-                out.println(FigletFont.convertOneLine(asciiArt));
-                out.println(additional);
-            } else {
-                out.print(FigletFont.convertOneLine(asciiArt));
-            }
-            out.println(ANSI_RESET);
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
 }

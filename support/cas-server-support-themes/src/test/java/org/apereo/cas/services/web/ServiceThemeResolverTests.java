@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -37,7 +38,8 @@ public class ServiceThemeResolverTests {
 
         mobileBrowsers = new HashMap<>();
         mobileBrowsers.put(MOZILLA, "theme");
-        this.serviceThemeResolver = new ServiceThemeResolver(DEFAULT_THEME_NAME, servicesManager, mobileBrowsers);
+        this.serviceThemeResolver = new ServiceThemeResolver(servicesManager, mobileBrowsers);
+        this.serviceThemeResolver.setDefaultThemeName(DEFAULT_THEME_NAME);
     }
 
     @Test
@@ -53,7 +55,7 @@ public class ServiceThemeResolverTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final RequestContext ctx = mock(RequestContext.class);
         final MutableAttributeMap scope = new LocalAttributeMap();
-        scope.put("service", RegisteredServiceTestUtils.getService(r.getServiceId()));
+        scope.put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
         request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
@@ -63,16 +65,17 @@ public class ServiceThemeResolverTests {
     @Test
     public void verifyGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "myServiceId");
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "myServiceId");
         request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
         assertEquals(DEFAULT_THEME_NAME, this.serviceThemeResolver.resolveThemeName(request));
     }
 
     @Test
     public void verifyGetDefaultServiceWithNoServicesManager() {
-        this.serviceThemeResolver = new ServiceThemeResolver(DEFAULT_THEME_NAME, null, mobileBrowsers);
+        this.serviceThemeResolver = new ServiceThemeResolver(null, mobileBrowsers);
+        this.serviceThemeResolver.setDefaultThemeName(DEFAULT_THEME_NAME);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "myServiceId");
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "myServiceId");
         request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
         assertEquals(DEFAULT_THEME_NAME, this.serviceThemeResolver.resolveThemeName(request));
     }

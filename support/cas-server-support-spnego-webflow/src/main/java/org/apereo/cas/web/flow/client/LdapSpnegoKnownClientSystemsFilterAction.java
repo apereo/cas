@@ -124,7 +124,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
                 return processSpnegoAttribute(searchResult);
             }
-            throw new RuntimeException("Failed to establish a connection ldap. " + searchResult.getMessage());
+            throw new IllegalArgumentException("Failed to establish a connection ldap. " + searchResult.getMessage());
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);

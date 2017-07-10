@@ -33,4 +33,14 @@ public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
     public String getName() {
         return "CAS Protocol Tickets";
     }
+
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.ticket.security.encryptionKey";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.ticket.security.signingKey";
+    }
 }

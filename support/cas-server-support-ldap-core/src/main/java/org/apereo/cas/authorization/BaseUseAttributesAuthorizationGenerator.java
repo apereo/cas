@@ -86,7 +86,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             userResult = response.getResult();
 
             if (userResult.size() == 0) {
-                throw new RuntimeException(new AccountNotFoundException(username + " not found."));
+                throw new IllegalArgumentException(new AccountNotFoundException(username + " not found."));
             }
             if (userResult.size() > 1 && !this.allowMultipleResults) {
                 throw new IllegalStateException(
@@ -96,7 +96,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             final LdapEntry userEntry = userResult.getEntry();
             return generateAuthorizationForLdapEntry(profile, userEntry);
         } catch (final LdapException e) {
-            throw new RuntimeException("LDAP error fetching details for user.", e);
+            throw new IllegalArgumentException("LDAP error fetching details for user.", e);
         }
     }
 

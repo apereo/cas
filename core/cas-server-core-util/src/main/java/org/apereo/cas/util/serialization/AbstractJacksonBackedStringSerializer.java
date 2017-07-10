@@ -118,6 +118,11 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    public T from(final Writer writer) {
+        return from(writer.toString());
+    }
+    
+    @Override
     public T from(final InputStream json) {
         try {
             final String jsonString = isJsonFormat()
@@ -159,10 +164,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         }
     }
 
-    @Override
-    public T from(final Writer writer) {
-        return from(writer.toString());
-    }
 
     @Override
     public void to(final File out, final T object) {
@@ -239,6 +240,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                             + "specially if the fragment describes a CAS registered service definition. "
                             + "Internal parsing error is [{}]",
                     StringUtils.abbreviate(jsonString, ABBREVIATE_MAX_WIDTH), getTypeToSerialize(), e.getMessage());
+            LOGGER.trace(e.getMessage(), e);
         }
         return null;
     }

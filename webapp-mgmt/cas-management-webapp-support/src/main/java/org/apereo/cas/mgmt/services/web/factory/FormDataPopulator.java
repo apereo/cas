@@ -8,6 +8,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
  * @author Daniel Frett
  * @since 4.2
  */
+@FunctionalInterface
 public interface FormDataPopulator {
     /**
      * Method called to populate a {@link RegisteredServiceEditBean.FormData} object with dynamic form configuration data.

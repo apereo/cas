@@ -121,7 +121,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                     final Object methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
                     final String realmNames = CollectionUtils.toCollection(methods)
                             .stream()
-                            .map(o -> o.toString())
+                            .map(Object::toString)
                             .collect(Collectors.joining(","));
 
                     introspect.setRealmName(realmNames);

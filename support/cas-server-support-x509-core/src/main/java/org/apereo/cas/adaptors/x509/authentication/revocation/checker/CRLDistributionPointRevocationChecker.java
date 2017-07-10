@@ -201,7 +201,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         final List<DistributionPoint> points;
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
-        } catch (final RuntimeException e) {
+        } catch (final Exception e) {
             LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert), e);
             return new URI[0];
         }
@@ -215,7 +215,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                     LOGGER.debug("Found CRL distribution point [{}].", name);
                     try {
                         addURL(urls, DERIA5String.getInstance(name.getName()).getString());
-                    } catch (final RuntimeException e) {
+                    } catch (final Exception e) {
                         LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
                     }
                 });

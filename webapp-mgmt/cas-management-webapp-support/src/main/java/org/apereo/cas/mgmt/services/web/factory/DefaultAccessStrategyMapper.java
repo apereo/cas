@@ -6,11 +6,11 @@ import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSupportAccessEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 
 import java.net.URI;
 import java.util.Iterator;
@@ -41,9 +41,9 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             accessBean.setRequiredAttr(def.getRequiredAttributes());
 
             def.getRejectedAttributes().forEach(
-                    (k, v) -> accessBean.getRejectedAttr().add(new RegisteredServiceEditBean.ServiceData.PropertyBean(
-                            k, org.springframework.util.StringUtils.collectionToCommaDelimitedString(v)
-                    )));
+                (k, v) -> accessBean.getRejectedAttr().add(new RegisteredServiceEditBean.ServiceData.PropertyBean(
+                        k, org.springframework.util.StringUtils.collectionToCommaDelimitedString(v)
+                )));
 
             accessBean.setCaseSensitive(def.isCaseInsensitive());
             accessBean.setType(RegisteredServiceSupportAccessEditBean.Types.DEFAULT);

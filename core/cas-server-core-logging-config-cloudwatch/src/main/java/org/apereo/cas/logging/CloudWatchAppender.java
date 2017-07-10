@@ -189,7 +189,7 @@ public class CloudWatchAppender extends AbstractAppender {
             while (!shutdown) {
                 try {
                     flush();
-                } catch (final Throwable e) {
+                } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
                 if (!shutdown && queue.size() < AWS_DRAIN_LIMIT) {

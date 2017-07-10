@@ -141,7 +141,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         try {
             LOGGER.info("Shutting down Hazelcast instance [{}]", this.hazelcastInstance.getConfig().getInstanceName());
             this.hazelcastInstance.shutdown();
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             LOGGER.debug(e.getMessage());
         }
     }
