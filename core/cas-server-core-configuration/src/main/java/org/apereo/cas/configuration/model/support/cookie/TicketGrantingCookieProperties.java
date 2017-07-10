@@ -15,9 +15,7 @@ public class TicketGrantingCookieProperties extends CookieProperties {
     private String rememberMeMaxAge = "P14D";
 
     private String encryptionKey = StringUtils.EMPTY;
-
     private String signingKey = StringUtils.EMPTY;
-    
     private boolean cipherEnabled = true;
     
     public TicketGrantingCookieProperties() {

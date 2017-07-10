@@ -22,7 +22,8 @@ public interface ConsentRepository extends Serializable {
      * @param authentication    the authentication
      * @return the consent decision
      */
-    ConsentDecision findConsentDecision(Service service, RegisteredService registeredService,
+    ConsentDecision findConsentDecision(Service service,
+                                        RegisteredService registeredService,
                                         Authentication authentication);
 
     /**

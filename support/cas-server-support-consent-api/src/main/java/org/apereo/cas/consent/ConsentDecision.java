@@ -1,9 +1,7 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DigestUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ConsentDecision}.
@@ -28,7 +24,7 @@ public class ConsentDecision {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
@@ -48,10 +44,10 @@ public class ConsentDecision {
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
     private String attributeNames;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
     private String attributeValues;
 
     public LocalDateTime getDate() {
@@ -126,37 +122,16 @@ public class ConsentDecision {
         return reminder;
     }
 
-
-    /**
-     * Build consent decision consent decision.
-     *
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param principalId       the principal id
-     * @param attributes        the attributes
-     * @return the consent decision
-     */
-    public static ConsentDecision buildConsentDecision(final Service service,
-                                                       final RegisteredService registeredService,
-                                                       final String principalId,
-                                                       final Map<String, Object> attributes) {
-        final ConsentDecision consent = new ConsentDecision();
-        consent.setPrincipal(principalId);
-        consent.setService(service.getId());
-
-        final String allNames = attributes.keySet().stream().collect(Collectors.joining("|"));
-        final String names = DigestUtils.sha512(allNames);
-        consent.setAttributeNames(names);
-
-        final String allValues = attributes.values().stream()
-                .map(CollectionUtils::toCollection)
-                .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
-                .collect(Collectors.joining("|"));
-        
-        final String values = DigestUtils.sha512(allValues);
-        consent.setAttributeValues(values);
-
-        consent.setDate(LocalDateTime.now());
-        return consent;
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("principal", principal)
+                .append("service", service)
+                .append("date", date)
+                .append("options", options)
+                .append("reminder", reminder)
+                .append("reminderTimeUnit", reminderTimeUnit)
+                .toString();
     }
 }
