@@ -4815,6 +4815,12 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.cipherEnabled=true
 ```
 
+### JSON Attribute Consent
+
+```properties
+# cas.consent.json.config.location=file:/etc/cas/config/consent.json
+```
+
 ### JPA Attribute Consent
 
 ```properties
