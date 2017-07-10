@@ -19,9 +19,10 @@ The current members of the PMC are:
 - [Robert Oschwald](https://github.com/robertoschwald)
 - [Dmitriy Kopylenko](https://github.com/dima767)
 - [Marvin Addison](https://github.com/serac)
+- [Jeff Sittler](https://github.com/mindblender)
 - [Jérôme Leleu](https://github.com/leleuj)
 - [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
-- Ian Dolphin
+- [Ian Dolphin](https://www.apereo.org/content/leadership) [Executive Director, Apereo Foundation]
 
 ## Structure
 
