@@ -57,10 +57,10 @@ public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttr
             if (attribute != null) {
                 addProfileRoles(userEntry, profile, attribute, this.rolePrefix);
             } else {
-                LOGGER.debug("Configured role attribute cannot be found for this user");
+                LOGGER.warn("Configured role attribute cannot be found for this user");
             }
         } else {
-            LOGGER.debug("No attributes are retrieved for this user.");
+            LOGGER.warn("No attributes are retrieved for this user.");
         }
         return profile;
     }
