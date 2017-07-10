@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentEngine;
+import org.apereo.cas.consent.ConsentOptions;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -16,7 +17,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link AbstractConsentAction}.
@@ -27,16 +27,16 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractConsentAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractConsentAction.class);
 
-    /* CAS Settings. */
+    /** CAS Settings. */
     protected final CasConfigurationProperties casProperties;
 
-    /* The services manager. */
+    /** The services manager. */
     protected final ServicesManager servicesManager;
 
-    /* Service selection strategies. */
+    /** Service selection strategies. */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
-    /* The consent engine that handles calculations. */
+    /** The consent engine that handles calculations. */
     protected final ConsentEngine consentEngine;
 
     public AbstractConsentAction(final CasConfigurationProperties casProperties, final ServicesManager servicesManager,
@@ -78,9 +78,11 @@ public abstract class AbstractConsentAction extends AbstractAction {
         requestContext.getFlowScope().put("principal", authentication.getPrincipal().getId());
 
         final ConsentDecision decision = consentEngine.findConsentDecision(service, registeredService, authentication);
-        requestContext.getFlowScope().put("reminder", decision == null ? casProperties.getConsent().getReminder() : decision.getReminder());
-        requestContext.getFlowScope().put("reminderTimeUnit", decision == null ?
-                casProperties.getConsent().getReminderTimeUnit().name():
-                decision.getReminderTimeUnit().name());
+        requestContext.getFlowScope().put("option", decision == null
+                ? ConsentOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
+        requestContext.getFlowScope().put("reminder", decision == null
+                ? casProperties.getConsent().getReminder() : decision.getReminder());
+        requestContext.getFlowScope().put("reminderTimeUnit", decision == null
+                ? casProperties.getConsent().getReminderTimeUnit().name() : decision.getReminderTimeUnit().name());
     }
 }

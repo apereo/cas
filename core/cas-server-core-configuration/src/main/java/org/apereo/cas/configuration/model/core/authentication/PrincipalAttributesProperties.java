@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -166,7 +167,8 @@ public class PrincipalAttributesProperties {
         }
     }
 
-    public static class Rest {
+    public static class Rest implements Serializable {
+        private static final long serialVersionUID = -30055974448426360L;
         private int order;
         private String url;
         private String method;

@@ -46,6 +46,7 @@ public class JpaConsentRepository implements ConsentRepository {
                     .setParameter("service", service.getId())
                     .getSingleResult();
         } catch (final NoResultException e) {
+            LOGGER.debug(e.getMessage());
             return null;
         }
     }
@@ -53,7 +54,11 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         try {
-            this.entityManager.merge(decision);
+            final boolean isNew = decision.getId() < 0;
+            final ConsentDecision mergedDecision = this.entityManager.merge(decision);
+            if (!isNew) {
+                this.entityManager.persist(mergedDecision);
+            }
             return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
