@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 
@@ -17,6 +18,15 @@ public class SurrogateAuthenticationProperties {
     private Simple simple = new Simple();
     private Json json = new Json();
     private Ldap ldap = new Ldap();
+    private Jdbc jdbc = new Jdbc();
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
 
     public Simple getSimple() {
         return simple;
@@ -63,9 +73,11 @@ public class SurrogateAuthenticationProperties {
     }
 
     public static class Json extends AbstractConfigProperties {
+        private static final long serialVersionUID = 3599367681439517829L;
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = -3848837302921751926L;
         private String baseDn;
         private String searchFilter;
         private String surrogateSearchFilter;
@@ -110,6 +122,29 @@ public class SurrogateAuthenticationProperties {
 
         public void setSearchFilter(final String searchFilter) {
             this.searchFilter = searchFilter;
+        }
+    }
+
+    public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = 8970195444880123796L;
+
+        private String surrogateSearchQuery = "SELECT COUNT(*) FROM surrogate WHERE username=?";
+        private String surrogateAccountQuery = "SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?";
+
+        public String getSurrogateSearchQuery() {
+            return surrogateSearchQuery;
+        }
+
+        public void setSurrogateSearchQuery(final String surrogateSearchQuery) {
+            this.surrogateSearchQuery = surrogateSearchQuery;
+        }
+
+        public String getSurrogateAccountQuery() {
+            return surrogateAccountQuery;
+        }
+
+        public void setSurrogateAccountQuery(final String surrogateAccountQuery) {
+            this.surrogateAccountQuery = surrogateAccountQuery;
         }
     }
 }

@@ -89,7 +89,7 @@ public class WsFederationAction extends AbstractAction {
 
             final WsFederationConfiguration cfg = this.configuration
                     .stream()
-                    .filter(c -> c.isAutoRedirect())
+                    .filter(WsFederationConfiguration::isAutoRedirect)
                     .findFirst()
                     .orElse(null);
             if (cfg != null) {

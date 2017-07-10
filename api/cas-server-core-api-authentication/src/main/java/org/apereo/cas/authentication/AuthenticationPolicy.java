@@ -8,6 +8,7 @@ import org.springframework.core.Ordered;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface AuthenticationPolicy extends Ordered {
     /**
      * Determines whether an authentication event isSatisfiedBy arbitrary security policy.

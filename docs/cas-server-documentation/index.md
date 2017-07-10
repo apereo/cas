@@ -16,7 +16,7 @@ title: CAS - Home
 providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2F-Authentication.html), 
 [YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Microsoft Azure](installation/MicrosoftAzure-Authentication.html), etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
-* Built-in Support for [password management](installation/Password-Management.html).
+* Built-in support for [password management](installation/Password-Management.html).
 * [Monitor and track](installation/Monitoring-Statistics.html) application behavior, statistics and logs in real time.
 * Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc).
@@ -45,11 +45,11 @@ and integration tests. They are <strong>NOT</strong> set up for internal demos a
 
 The following demos are provided by the Apereo CAS project:
 
-| Demo                                                                                      | Source Branch            | Location
+| Topic                                                                                      | Source Branch            | Location
 |-------------------------------------------------------------------------------------------|--------------------------|---------------------------------------------------------------------
 | [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com)
-| [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://jasigcas.herokuapp.com/cas)
-| [CAS Services Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp`      | [Link](https://jasigcasmgmt.herokuapp.com/cas-management) 
+| [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas)
+| [CAS Services Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp`      | [Link](https://casservermgmt.herokuapp.com/cas-management) 
 | [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [Link](https://casbootadminserver.herokuapp.com/)
 | [CAS Zipkin Server](installation/Monitoring-Statistics.html#distributed-tracing)          | `heroku-zipkinserver`    | [Link](https://caszipkinserver.herokuapp.com/)
 | [CAS Service Discovery Server](installation/Service-Discovery-Guide.html)                 | `heroku-discoveryserver` | [Link](https://caseureka.herokuapp.com/)

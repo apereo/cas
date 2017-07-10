@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -14,6 +15,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -77,13 +79,13 @@ public class LdapAuthenticationConfiguration {
                 .stream()
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
-                    final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(l.getPrincipalAttributeList());
-                    LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, l.getLdapUrl());
+                    final Multimap<String, String> multiMapAttributes = Beans.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
+                    LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
                     final Authenticator authenticator = Beans.newLdaptiveAuthenticator(l);
                     LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
-                            attributes.keySet(), l.getLdapUrl(), l.getBaseDn());
+                            multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
                     LOGGER.debug("Creating ldap authentication handler for [{}]", l.getLdapUrl());
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(l.getName(),
@@ -116,9 +118,11 @@ public class LdapAuthenticationConfiguration {
 
                     if (l.getPasswordPolicy().isEnabled()) {
                         LOGGER.debug("Password policy is enabled for [{}]. Constructing password policy configuration", l.getLdapUrl());
-                        handler.setPasswordPolicyConfiguration(createLdapPasswordPolicyConfiguration(l, authenticator, attributes));
+                        final LdapPasswordPolicyConfiguration cfg = createLdapPasswordPolicyConfiguration(l, authenticator, multiMapAttributes);
+                        handler.setPasswordPolicyConfiguration(cfg);
                     }
 
+                    final Map<String, Collection<String>> attributes = CollectionUtils.wrap(multiMapAttributes);
                     handler.setPrincipalAttributeMap(attributes);
 
                     LOGGER.debug("Initializing ldap authentication handler for [{}]", l.getLdapUrl());
@@ -145,7 +149,7 @@ public class LdapAuthenticationConfiguration {
 
     private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
                                                                                   final Authenticator authenticator,
-                                                                                  final Map<String, String> attributes) {
+                                                                                  final Multimap<String, String> attributes) {
         final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
 

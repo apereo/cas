@@ -151,7 +151,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                     }
                     return null;
                 } catch (final Exception e) {
-                    throw new RuntimeException(e.getMessage(), e);
+                    throw new IllegalArgumentException(e.getMessage(), e);
                 }
             }
         });

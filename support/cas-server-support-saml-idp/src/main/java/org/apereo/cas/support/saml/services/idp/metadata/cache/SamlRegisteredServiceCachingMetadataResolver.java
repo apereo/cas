@@ -11,6 +11,7 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface SamlRegisteredServiceCachingMetadataResolver {
 
     /**

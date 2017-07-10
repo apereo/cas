@@ -78,6 +78,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
         final Credential credential = WebUtils.getCredential(context);
         final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+
+        LOGGER.debug("Recording and tracking initial authentication results in the request context");
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
@@ -88,6 +90,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         final String id = event.getId();
+        LOGGER.debug("Resolved from the initial authentication leg is [{}]", id);
 
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
@@ -96,6 +99,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return CollectionUtils.wrapSet(event);
         }
 
+        LOGGER.debug("Validating authentication context for event [{}] and service [{}]", id, service);
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {

@@ -192,6 +192,10 @@ public class WsFederationConfiguration implements Serializable {
         createSigningWallet(this.signingCertificateResources);
     }
 
+    public void setSigningCertificateResources(final List<Resource> signingCertificateResources) {
+        this.signingCertificateResources = signingCertificateResources;
+    }
+
     public boolean isAutoRedirect() {
         return autoRedirect;
     }
@@ -246,10 +250,6 @@ public class WsFederationConfiguration implements Serializable {
 
     public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {
         this.attributesType = attributesType;
-    }
-
-    public void setSigningCertificateResources(final List<Resource> signingCertificateResources) {
-        this.signingCertificateResources = signingCertificateResources;
     }
 
     public Resource getEncryptionPrivateKey() {

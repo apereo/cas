@@ -17,6 +17,7 @@ import java.util.function.Function;
  *
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface ComposableFunction<T, R> extends Function<T, R> {
 
     /**
@@ -28,6 +29,6 @@ public interface ComposableFunction<T, R> extends Function<T, R> {
      */
     default Consumer<T> andThen(final Consumer<R> after) {
         Objects.requireNonNull(after);
-        return (T t) -> after.accept(apply(t));
+        return t -> after.accept(apply(t));
     }
 }

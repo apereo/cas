@@ -169,7 +169,7 @@ public class BaseSamlObjectSigner {
                                                                            final MessageContext<T> outboundContext) throws SAMLException {
         final SecurityParametersContext secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         if (secParametersContext == null) {
-            throw new RuntimeException("No signature signing parameters could be determined");
+            throw new IllegalArgumentException("No signature signing parameters could be determined");
         }
         final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(adaptor.getSsoDescriptor());
         secParametersContext.setSignatureSigningParameters(signingParameters);

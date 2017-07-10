@@ -223,7 +223,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 if (RegexUtils.isValidRegex(data.getServiceId())) {
                     regSvc = new RegexRegisteredService();
                 } else {
-                    throw new RuntimeException("Invalid service type.");
+                    throw new IllegalArgumentException("Invalid service type.");
                 }
             }
 

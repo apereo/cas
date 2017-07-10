@@ -17,4 +17,14 @@ public class SecurityTokenServiceCredentialCipherExecutor extends BaseStringCiph
     public String getName() {
         return "WSFederation Security Token Service";
     }
+
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.authn.wsfedIdP.sts.encryptionKey";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.authn.wsfedIdP.sts.signingKey";
+    }
 }

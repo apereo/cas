@@ -71,7 +71,7 @@ and/or other instructed locations to avoid surprises.
 
 ## CAS Configuration Server Overlay
 
-َSee this [Maven WAR overlay](https://github.com/apereo/cas-configserver-overlay) for more details.
+See this [Maven WAR overlay](https://github.com/apereo/cas-configserver-overlay) for more details.
 
 To learn more about the configuration server, please [review this guide](Configuration-Server-Management.html).
 

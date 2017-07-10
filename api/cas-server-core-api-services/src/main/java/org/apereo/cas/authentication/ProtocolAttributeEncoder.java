@@ -16,6 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@FunctionalInterface
 public interface ProtocolAttributeEncoder {
 
     /**

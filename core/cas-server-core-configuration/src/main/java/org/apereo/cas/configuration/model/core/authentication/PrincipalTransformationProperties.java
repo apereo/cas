@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 public class PrincipalTransformationProperties implements Serializable {
 
+    private static final long serialVersionUID = 1678602647607236322L;
+
     public enum CaseConversion {
         /** No conversion. */
         NONE,

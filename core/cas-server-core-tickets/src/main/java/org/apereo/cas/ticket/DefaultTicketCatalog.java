@@ -47,6 +47,17 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
+    public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
+        final List list = ticketMetadataMap.values()
+                .stream()
+                .filter(t -> t.getImplementationClass().isInstance(ticketClass))
+                .collect(Collectors.toList());
+        OrderComparator.sort(list);
+        LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
+        return list;
+    }
+
+    @Override
     public void register(final TicketDefinition ticketDefinition) {
         LOGGER.debug("Registering/Updating ticket definition [{}]", ticketDefinition);
         ticketMetadataMap.put(ticketDefinition.getPrefix(), ticketDefinition);
@@ -71,14 +82,4 @@ public class DefaultTicketCatalog implements TicketCatalog {
         return list;
     }
 
-    @Override
-    public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
-        final List list = ticketMetadataMap.values()
-                .stream()
-                .filter(t -> t.getImplementationClass().isInstance(ticketClass))
-                .collect(Collectors.toList());
-        OrderComparator.sort(list);
-        LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
-        return list;
-    }
 }

@@ -13,10 +13,19 @@ public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
                                      final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
+    @Override
+    
+    protected String getEncryptionKeySetting() {
+        return "cas.authn.token.crypto.encryption.key";
+    }
 
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.authn.token.crypto.signing.key";
+    }
 
     @Override
     public String getName() {
-        return "Tokened Tickets";
+        return "Token/JWT Tickets";
     }
 }

@@ -102,8 +102,6 @@ public class MultifactorAuthenticationTests {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
-
-    
     
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {

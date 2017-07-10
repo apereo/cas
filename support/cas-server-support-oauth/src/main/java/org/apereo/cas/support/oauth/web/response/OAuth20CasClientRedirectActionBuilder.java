@@ -10,6 +10,7 @@ import org.pac4j.core.redirect.RedirectAction;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface OAuth20CasClientRedirectActionBuilder {
 
     /**

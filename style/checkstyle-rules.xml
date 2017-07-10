@@ -134,6 +134,14 @@
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
         </module>
+        <module name="IllegalThrows">
+            <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="IllegalCatch">
+            <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
+            <property name="severity" value="error"/>
+        </module>
         <module name="IllegalImport">
             <property name="severity" value="error"/>
         </module>
@@ -233,7 +241,9 @@
         <module name="StringLiteralEquality">
             <property name="severity" value="error"/>
         </module>
-
+        <module name="Indentation">
+            <property name="severity" value="error"/>
+        </module>
         <!--
         <module name="MissingCtor">
             <property name="severity" value="error" />
@@ -324,6 +334,10 @@
             <property name="severity" value="error"/>
         </module>
         <module name="UpperEll"/>
+
+        <module name="OverloadMethodsDeclarationOrder">
+            <property name="severity" value="error"/>
+        </module>
         <module name="MissingOverride">
             <property name="severity" value="error"/>
         </module>
