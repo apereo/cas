@@ -47,8 +47,10 @@ public class JpaConsentRepository implements ConsentRepository {
                     .getSingleResult();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
-            return null;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
         }
+        return null;
     }
 
     @Override
