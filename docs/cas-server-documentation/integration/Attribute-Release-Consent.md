@@ -83,14 +83,14 @@ The consent decision object in transit will and must match the following structu
 ```
 
 | Field                     | Description    
-|---------------------------|----------------------------------------------------------------------------
-| `id`                      | `-1` for new decision records or a valid numeric value for existing records      
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------
+| `id`                      | `-1` for new decision records or a valid numeric value for existing records.      
 | `principal`               | The authenticated user id.
 | `service`                 | Target application url to which attributes are about to be released.
 | `date`                    | Date/Time of the decision record.
-| `options`                 | Indicates how changes in attributes are determined for this application.
+| `options`                 | Indicates how changes in attributes are determined for this application. (i.e. `ATTRIBUTE_NAME`, `ATTRIBUTE_VALUE`, `ALWAYS`)
 | `reminder`                | Indicates the period after which user will be reminded to consent again, in case no changes are found.
-| `reminderTimeUnit`        | The reminder time unit (i.e. `MONTHS`, `DAYS`, etc)
+| `reminderTimeUnit`        | The reminder time unit (i.e. `MONTHS`, `DAYS`, `HOURS`, etc).
 | `attributeNames`          | SHA-512 of attribute names for this application, signed and encrypted.
 | `attributeValues`         | SHA-512 of attribute values for this application, signed and encrypted.
 
