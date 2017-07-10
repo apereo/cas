@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author David Rodriguez
  * @since 5.2.0
  */
-@Configuration("hazelcastTicketRegistryTicketMetadataCatalogConfiguration")
+@Configuration("cassandraTicketRegistryTicketMetadataCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CassandraTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
 
