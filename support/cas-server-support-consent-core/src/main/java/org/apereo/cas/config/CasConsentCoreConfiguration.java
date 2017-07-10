@@ -8,6 +8,7 @@ import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DefaultConsentEngine;
+import org.apereo.cas.consent.JsonConsentRepository;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,5 +59,11 @@ public class CasConsentCoreConfiguration {
     @RefreshScope
     public ConsentDecisionBuilder consentDecisionBuilder() {
         return new ConsentDecisionBuilder(consentCipherExecutor());
+    }
+
+    @ConditionalOnMissingBean(name = "consentRepository")
+    @Bean
+    public ConsentRepository consentRepository() {
+        return new JsonConsentRepository(casProperties.getConsent().getJson().getConfig().getLocation());
     }
 }
