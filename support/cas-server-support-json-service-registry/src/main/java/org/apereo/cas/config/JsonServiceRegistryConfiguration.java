@@ -49,7 +49,7 @@ public class JsonServiceRegistryConfiguration {
             }
 
             return new JsonServiceRegistryDao(registry.getConfig().getLocation(), registry.isWatcherEnabled(), eventPublisher);
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }

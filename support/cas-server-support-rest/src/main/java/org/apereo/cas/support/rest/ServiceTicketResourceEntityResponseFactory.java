@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface ServiceTicketResourceEntityResponseFactory {
 
     /**

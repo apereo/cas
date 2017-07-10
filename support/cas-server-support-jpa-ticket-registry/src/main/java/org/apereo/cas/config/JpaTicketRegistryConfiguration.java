@@ -44,8 +44,8 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     public String[] ticketPackagesToScan() {
         return new String[]{
-                "org.apereo.cas.ticket",
-                "org.apereo.cas.adaptors.jdbc"
+            "org.apereo.cas.ticket",
+            "org.apereo.cas.adaptors.jdbc"
         };
     }
     

@@ -67,14 +67,14 @@ public final class RegisteredServiceTestUtils {
         return getService(CONST_TEST_URL);
     }
 
-    public static Service getService2() {
-        return getService(CONST_TEST_URL2);
-    }
-
     public static AbstractWebApplicationService getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
+    }
+
+    public static Service getService2() {
+        return getService(CONST_TEST_URL2);
     }
 
     public static Map<String, Set<String>> getTestAttributes() {

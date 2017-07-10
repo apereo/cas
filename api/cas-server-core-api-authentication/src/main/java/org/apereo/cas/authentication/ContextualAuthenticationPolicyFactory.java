@@ -8,6 +8,7 @@ package org.apereo.cas.authentication;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface ContextualAuthenticationPolicyFactory<T> {
 
     /**

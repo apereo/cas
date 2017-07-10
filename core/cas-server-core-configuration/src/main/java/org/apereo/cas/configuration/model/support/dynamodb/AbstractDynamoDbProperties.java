@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 public abstract class AbstractDynamoDbProperties implements Serializable {
+    private static final long serialVersionUID = -8349917272283787550L;
     private Resource credentialsPropertiesFile;
             
     private String credentialAccessKey;

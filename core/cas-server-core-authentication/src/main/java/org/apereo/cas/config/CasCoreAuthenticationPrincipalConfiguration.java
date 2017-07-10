@@ -42,7 +42,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     private List<IPersonAttributeDao> attributeRepositories;
 
     @Autowired
-    @Qualifier("mergingAttributeRepository")
+    @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @ConditionalOnMissingBean(name = "principalElectionStrategy")

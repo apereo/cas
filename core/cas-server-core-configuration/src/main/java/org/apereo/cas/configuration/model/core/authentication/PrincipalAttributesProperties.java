@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,11 +29,29 @@ public class PrincipalAttributesProperties {
 
     private Set<String> defaultAttributesToRelease = new HashSet<>();
     private List<Jdbc> jdbc = new ArrayList<>();
+    private List<Rest> rest = new ArrayList<>();
     private List<Groovy> groovy = new ArrayList();
     private List<Ldap> ldap = new ArrayList();
     private List<Json> json = new ArrayList();
+    private List<Script> script = new ArrayList<>();
     private Stub stub = new Stub();
     private Grouper grouper = new Grouper();
+
+    public List<Script> getScript() {
+        return script;
+    }
+
+    public void setScript(final List<Script> script) {
+        this.script = script;
+    }
+
+    public List<Rest> getRest() {
+        return rest;
+    }
+
+    public void setRest(final List<Rest> rest) {
+        this.rest = rest;
+    }
 
     public Stub getStub() {
         return stub;
@@ -147,8 +166,67 @@ public class PrincipalAttributesProperties {
             this.attributes = attributes;
         }
     }
+
+    public static class Rest implements Serializable {
+        private static final long serialVersionUID = -30055974448426360L;
+        private int order;
+        private String url;
+        private String method;
+        private boolean caseInsensitive;
+        private String basicAuthUsername;
+        private String basicAuthPassword;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(final String url) {
+            this.url = url;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public void setMethod(final String method) {
+            this.method = method;
+        }
+
+        public boolean isCaseInsensitive() {
+            return caseInsensitive;
+        }
+
+        public void setCaseInsensitive(final boolean caseInsensitive) {
+            this.caseInsensitive = caseInsensitive;
+        }
+
+        public String getBasicAuthUsername() {
+            return basicAuthUsername;
+        }
+
+        public void setBasicAuthUsername(final String basicAuthUsername) {
+            this.basicAuthUsername = basicAuthUsername;
+        }
+
+        public String getBasicAuthPassword() {
+            return basicAuthPassword;
+        }
+
+        public void setBasicAuthPassword(final String basicAuthPassword) {
+            this.basicAuthPassword = basicAuthPassword;
+        }
+    }
     
     public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = 6915428382578138387L;
         private String sql;
         private boolean singleRow = true;
         private boolean requireAllAttributes = true;
@@ -233,6 +311,7 @@ public class PrincipalAttributesProperties {
     }
 
     public static class Json extends AbstractConfigProperties {
+        private static final long serialVersionUID = -6573755681498251678L;
         private int order;
 
         public int getOrder() {
@@ -244,7 +323,30 @@ public class PrincipalAttributesProperties {
         }
     }
 
+    public static class Script extends AbstractConfigProperties {
+        private static final long serialVersionUID = 4221139939506528713L;
+        private boolean caseInsensitive;
+        private int order;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+
+        public boolean isCaseInsensitive() {
+            return caseInsensitive;
+        }
+
+        public void setCaseInsensitive(final boolean caseInsensitive) {
+            this.caseInsensitive = caseInsensitive;
+        }
+    }
+    
     public static class Groovy extends AbstractConfigProperties {
+        private static final long serialVersionUID = 7901595963842506684L;
         private boolean caseInsensitive;
         private int order;
 
@@ -266,6 +368,7 @@ public class PrincipalAttributesProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = 5760065368731012063L;
         private boolean subtreeSearch = true;
         private String baseDn;
         private String userFilter;

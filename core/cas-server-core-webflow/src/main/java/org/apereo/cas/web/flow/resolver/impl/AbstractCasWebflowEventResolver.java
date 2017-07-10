@@ -140,6 +140,17 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id    the id
+     * @param error the error
+     * @return the event
+     */
+    protected Event newEvent(final String id, final Exception error) {
+        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+    }
+
+    /**
      * New event based on the given id.
      *
      * @param id the id
@@ -169,16 +180,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     }
 
-    /**
-     * New event based on the id, which contains an error attribute referring to the exception occurred.
-     *
-     * @param id    the id
-     * @param error the error
-     * @return the event
-     */
-    protected Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
-    }
 
     /**
      * Gets credential from context.

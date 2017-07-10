@@ -9,6 +9,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@FunctionalInterface
 public interface MetadataResolverAdapter {
     /**
      * Gets entity descriptor for entity id.

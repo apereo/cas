@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc.config;
 
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
@@ -15,6 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 
 /**
  * This is {@link CasJdbcAuthenticationConfiguration}.
@@ -126,13 +127,14 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
-        final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(b.getPrincipalAttributeList());
+        final Multimap<String, String> attributes = Beans.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
         LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
 
         final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(),
                 Beans.newDataSource(b), b.getSql(), b.getFieldPassword(),
-                b.getFieldExpired(), b.getFieldDisabled(), attributes);
+                b.getFieldExpired(), b.getFieldDisabled(),
+                CollectionUtils.wrap(attributes));
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
@@ -181,8 +183,6 @@ public class CasJdbcAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer jdbcAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> {
-            jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, personDirectoryPrincipalResolver));
-        };
+        return plan -> jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, personDirectoryPrincipalResolver));
     }
 }

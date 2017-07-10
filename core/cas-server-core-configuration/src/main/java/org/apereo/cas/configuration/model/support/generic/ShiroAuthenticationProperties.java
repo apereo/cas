@@ -17,6 +17,7 @@ import java.util.Set;
 
 public class ShiroAuthenticationProperties extends AbstractConfigProperties {
 
+    private static final long serialVersionUID = 8997401036330472417L;
     private Set<String> requiredRoles = new HashSet<>();
 
     private Set<String> requiredPermissions = new HashSet<>();

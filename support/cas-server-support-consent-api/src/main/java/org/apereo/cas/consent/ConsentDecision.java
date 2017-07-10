@@ -1,10 +1,7 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DigestUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,9 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ConsentDecision}.
@@ -29,7 +24,7 @@ public class ConsentDecision {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
@@ -38,7 +33,10 @@ public class ConsentDecision {
     private String service;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime date = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private ConsentOptions options = ConsentOptions.ATTRIBUTE_NAME;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private Long reminder = 14L;
@@ -46,10 +44,10 @@ public class ConsentDecision {
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
     private String attributeNames;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
     private String attributeValues;
 
     public LocalDateTime getDate() {
@@ -58,14 +56,6 @@ public class ConsentDecision {
 
     public void setDate(final LocalDateTime date) {
         this.date = date;
-    }
-
-    public long getReminder() {
-        return reminder;
-    }
-
-    public void setReminder(final long reminder) {
-        this.reminder = reminder;
     }
 
     public TimeUnit getReminderTimeUnit() {
@@ -116,38 +106,32 @@ public class ConsentDecision {
         this.attributeValues = attributeValues;
     }
 
-    /**
-     * Build consent decision consent decision.
-     *
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param authentication    the authentication
-     * @return the consent decision
-     */
-    public static ConsentDecision buildConsentDecision(final Service service,
-                                                       final RegisteredService registeredService,
-                                                       final Authentication authentication) {
-        final ConsentDecision consent = new ConsentDecision();
-        consent.setPrincipal(authentication.getPrincipal().getId());
-        consent.setService(service.getId());
+    public ConsentOptions getOptions() {
+        return options;
+    }
 
-        final Map<String, Object> attributes =
-                registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(),
-                        service, registeredService);
+    public void setOptions(final ConsentOptions options) {
+        this.options = options;
+    }
 
-        final String names = DigestUtils.sha512(attributes.keySet().stream().collect(Collectors.joining("|")));
-        consent.setAttributeNames(names);
+    public void setReminder(final Long reminder) {
+        this.reminder = reminder;
+    }
 
-        final String values = DigestUtils.sha512(attributes.values().stream()
-                .map(CollectionUtils::toCollection)
-                .map(c -> {
-                    final String value = c.stream().map(Object::toString).collect(Collectors.joining());
-                    return value;
-                })
-                .collect(Collectors.joining("|")));
-        consent.setAttributeValues(values);
+    public Long getReminder() {
+        return reminder;
+    }
 
-        consent.setDate(LocalDateTime.now());
-        return consent;
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("principal", principal)
+                .append("service", service)
+                .append("date", date)
+                .append("options", options)
+                .append("reminder", reminder)
+                .append("reminderTimeUnit", reminderTimeUnit)
+                .toString();
     }
 }
