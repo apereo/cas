@@ -20,18 +20,21 @@ import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @author David Rodriguez
  *
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
         CassandraTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
@@ -60,8 +63,17 @@ public class CassandraTicketRegistryTests extends AbstractTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    public CassandraTicketRegistryTests(final boolean useEncryption) {
+        super(useEncryption);
+    }
+
     @Override
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return ticketRegistry;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() throws Exception {
+        return Arrays.asList(false, true);
     }
 }
