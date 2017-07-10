@@ -23,6 +23,13 @@ Support is enabled by including the following module in the Overlay:
 
 User consent decisions may be stored and remembered using one of the following options.
 
+### JSON
+
+This is the default option, most useful for demo and testing purposes. Consent decisions are all
+kept inside a static JSON resource whose path is taught to CAS via settings.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-attribute-consent).
+
 ### JDBC
 
 Support is enabled by including the following module in the Overlay:
