@@ -3701,10 +3701,6 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -3715,14 +3711,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
