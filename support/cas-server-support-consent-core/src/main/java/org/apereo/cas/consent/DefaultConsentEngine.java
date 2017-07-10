@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
+    private static final String PROP_REGISTERED_SERVICE_CONSENT_ENABLED = "attributeConsentEnabled";
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConsentEngine.class);
     private final ConsentRepository consentRepository;
     private final ConsentDecisionBuilder consentDecisionBuilder;
@@ -43,6 +45,11 @@ public class DefaultConsentEngine implements ConsentEngine {
     public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication) {
+        if (consentIsIgnoredForService(registeredService)) {
+            LOGGER.debug("Consent is conditionally ignored for service [{}]", registeredService.getName());
+            return Pair.of(false, null);
+        }
+        
         LOGGER.debug("Locating consent decision for service [{}]", service);
         final ConsentDecision decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
@@ -70,6 +77,14 @@ public class DefaultConsentEngine implements ConsentEngine {
 
         LOGGER.debug("Consent is not required");
         return Pair.of(false, null);
+    }
+
+    private boolean consentIsIgnoredForService(final RegisteredService registeredService) {
+        if (registeredService.getProperties().containsKey(PROP_REGISTERED_SERVICE_CONSENT_ENABLED)) {
+            final RegisteredServiceProperty prop = registeredService.getProperties().get(PROP_REGISTERED_SERVICE_CONSENT_ENABLED);
+            return prop.contains(Boolean.FALSE.toString());
+        }
+        return false;
     }
 
     @Audit(action = "SAVE_CONSENT",

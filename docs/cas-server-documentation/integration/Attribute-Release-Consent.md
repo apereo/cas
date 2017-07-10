@@ -78,3 +78,24 @@ public class MyConfiguration {
 ```
 
 [See this guide](../installation/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
+## Disable Consent Per Service
+
+Consent by default is enabled for all services. If you wish to conditionally bypass and ignore consent on a per-service basis,
+you may decorate the service definition as such:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "sample service",
+  "id" : 100,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "attributeConsentEnabled" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "false" ] ]
+    }
+  }
+}
+```
