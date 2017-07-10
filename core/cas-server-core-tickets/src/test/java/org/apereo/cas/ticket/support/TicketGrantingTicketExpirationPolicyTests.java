@@ -47,16 +47,16 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void verifyTgtIsExpiredByHardTimeOut() throws InterruptedException {
         // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
         final ZonedDateTime creationTime = ticketGrantingTicket.getCreationTime();
-         while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.SECONDS).isAfter(ZonedDateTime.now(ZoneOffset.UTC))) {
-             ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
-             Thread.sleep((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
-             assertFalse(this.ticketGrantingTicket.isExpired());
-         }
+        while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.SECONDS).isAfter(ZonedDateTime.now(ZoneOffset.UTC))) {
+            ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
+            Thread.sleep((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
+            assertFalse(this.ticketGrantingTicket.isExpired());
+        }
 
-         // final sliding window extension past the HARD_TIMEOUT
-         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
-         Thread.sleep((SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER) * 1_000);
-         assertTrue(ticketGrantingTicket.isExpired());
+        // final sliding window extension past the HARD_TIMEOUT
+        ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
+        Thread.sleep((SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER) * 1_000);
+        assertTrue(ticketGrantingTicket.isExpired());
     }
 
     @Test

@@ -221,7 +221,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
                 return true;
             }).findFirst().ifPresent(callback -> {
-                throw new RuntimeException(new UnsupportedCallbackException(callback, "Unrecognized Callback"));
+                throw new IllegalArgumentException(new UnsupportedCallbackException(callback, "Unrecognized Callback"));
             });
         }
     }

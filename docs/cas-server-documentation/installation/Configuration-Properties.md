@@ -565,6 +565,8 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.idleTimeout=5000
 # cas.adminPagesSecurity.jdbc.dataSourceName=
 # cas.adminPagesSecurity.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.adminPagesSecurity.jdbc.properties.propertyName=propertyValue
 ```
 
 #### LDAP Authentication
@@ -726,12 +728,22 @@ By default, the execution order is the following but can be adjusted per source:
 3. JSON
 4. Groovy
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
-6. Shibboleth
-7. Stub
+6. REST
+7. Script
+8. Shibboleth
+9. Stubbed/Static
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
 if explicit attribute mappings are defined, then *only mapped attributes* are retrieved.
+
+### Multimapped Attribute
+
+Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to grab the attribute `uid` from the attribute source and rename it to `userId`:
+
+```properties
+# cas.authn.attributeRepository.[type-placeholder].attributes.uid=userId
+```
 
 ### Merging Strategies
 
@@ -743,16 +755,15 @@ The following mergeing strategies can be used to resolve conflicts when the same
 | `ADD`                   | Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain.
 | `MERGE`                 | Combines all values into a single attribute, essentially creating a multi-valued attribute.
 
-
 ### Stub
 
 Static attributes that need to be mapped to a hardcoded value belong here.
 
 ```properties
-# cas.authn.attributeRepository.stub[0].attributes.uid=uid
-# cas.authn.attributeRepository.stub[0].attributes.displayName=displayName
-# cas.authn.attributeRepository.stub[0].attributes.cn=commonName
-# cas.authn.attributeRepository.stub[0].attributes.affiliation=groupMembership
+# cas.authn.attributeRepository.stub.attributes.uid=uid
+# cas.authn.attributeRepository.stub.attributes.displayName=displayName
+# cas.authn.attributeRepository.stub.attributes.cn=commonName
+# cas.authn.attributeRepository.stub.attributes.affiliation=groupMembership
 ```
 
 ### LDAP
@@ -817,20 +828,18 @@ the following settings are then relevant:
 The Groovy script may be designed as:
 
 ```groovy
-import java.util.List
-import java.util.Map
+import java.util.*
 
-class SampleGroovyPersonAttributeDao {
-    def Map<String, List<Object>> run(final Object... args) {
-        def uid = args[0]
-        def logger = args[1];
-        def casProperties = args[2]
-        def casApplicationContext = args[3]
+def Map<String, List<Object>> run(final Object... args) {
+    def uid = args[0]
+    def logger = args[1];
+    def casProperties = args[2]
+    def casApplicationContext = args[3]
 
-        logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
-        return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
-    }
+    logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
+    return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
+
 ```
 
 ### JSON
@@ -855,6 +864,76 @@ The format of the file may be:
         "firstName":["Json2"],
         "eduPersonAffiliation":["employee", "student"]
     }
+}
+```
+
+### REST
+
+If you wish to directly and separately retrieve attributes from a REST endpoint,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.rest[0].method=GET|POST
+# cas.authn.attributeRepository.rest[0].order=0
+# cas.authn.attributeRepository.rest[0].caseInsensitive=false
+# cas.authn.attributeRepository.rest[0].basicAuthUsername=uid
+# cas.authn.attributeRepository.rest[0].basicAuthPassword=password
+# cas.authn.attributeRepository.rest[0].url=https://rest.somewhere.org/attributes
+```
+
+The authenticating user id is passed in form of a request parameter under `username.` The response is expected
+to be a JSON map as such:
+
+```json
+{
+  "name" : "JohnSmith",
+  "age" : 29,
+  "messages": ["msg 1", "msg 2", "msg 3"]
+}
+```
+
+### Python/Javascript/Groovy
+
+Similiar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
+
+```properties
+# cas.authn.attributeRepository.script[0].config.location=file:/etc/cas/script.groovy
+# cas.authn.attributeRepository.script[0].order=0
+# cas.authn.attributeRepository.script[0].caseInsensitive=false
+```
+
+While Javascript and Groovy should be natively supported by CAS, Python scripts may need
+to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+
+The Groovy script may be defined as:
+
+```groovy
+import java.util.*
+
+Map<String, List<Object>> run(final Object... args) {
+    def uid = args[0]
+    def logger = args[1]
+
+    logger.debug("Things are happening just fine")
+    return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+}
+```
+
+The Javascript script may be defined as:
+
+```javascript
+function run(args) {
+    var uid = args[0]
+    var logger = args[1]
+    print("Things are happening just fine")
+
+    var map = {};
+    map["username"] = uid;
+    map["likes"] = "chees";
+    map["id"] = [1234,2,3,4,5];
+    map["another"] = "attribute";
+
+    return map;
 }
 ```
 
@@ -904,6 +983,9 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 # cas.authn.attributeRepository.jdbc[0].dataSourceName=
 # cas.authn.attributeRepository.jdbc[0].dataSourceProxy=false
+
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.attributeRepository.jdbc[0].properties.propertyName=propertyValue
 ```
 
 ### Grouper
@@ -1067,6 +1149,9 @@ same IP address.
 # cas.authn.throttle.jdbc.pool.maxWait=2000
 # cas.authn.throttle.jdbc.dataSourceName=
 # cas.authn.throttle.jdbc.dataSourceProxy=false
+
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.throttle.jdbc.properties.propertyName=propertyValue
 ```
 
 ## Adaptive Authentication
@@ -1107,11 +1192,75 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 ### LDAP Surrogate Accounts
 
 ```properties
-# cas.authn.surrogate.ldap.baseDn=
+# cas.authn.surrogate.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.surrogate.ldap.connectionStrategy=
+# cas.authn.surrogate.ldap.baseDn=dc=example,dc=org
+# cas.authn.surrogate.ldap.userFilter=cn={user}
+# cas.authn.surrogate.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.surrogate.ldap.bindCredential=Password
+# cas.authn.surrogate.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.surrogate.ldap.connectTimeout=5000
+# cas.authn.surrogate.ldap.trustCertificates=
+# cas.authn.surrogate.ldap.keystore=
+# cas.authn.surrogate.ldap.keystorePassword=
+# cas.authn.surrogate.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.surrogate.ldap.poolPassivator=NONE|CLOSE|BIND
+# cas.authn.surrogate.ldap.minPoolSize=3
+# cas.authn.surrogate.ldap.maxPoolSize=10
+# cas.authn.surrogate.ldap.validateOnCheckout=true
+# cas.authn.surrogate.ldap.validatePeriodically=true
+# cas.authn.surrogate.ldap.validatePeriod=600
+# cas.authn.surrogate.ldap.validateTimeout=5000
+# cas.authn.surrogate.ldap.failFast=true
+# cas.authn.surrogate.ldap.idleTime=500
+# cas.authn.surrogate.ldap.prunePeriod=600
+# cas.authn.surrogate.ldap.blockWaitTime=5000
+# cas.authn.surrogate.ldap.useSsl=true
+# cas.authn.surrogate.ldap.useStartTls=false
+
+# cas.authn.surrogate.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.authn.surrogate.ldap.validator.baseDn=
+# cas.authn.surrogate.ldap.validator.searchFilter=(objectClass=*)
+# cas.authn.surrogate.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.surrogate.ldap.validator.attributeName=objectClass
+# cas.authn.surrogate.ldap.validator.attributeValues=top
+# cas.authn.surrogate.ldap.validator.dn=
+
 # cas.authn.surrogate.ldap.searchFilter=principal={user}
 # cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
 # cas.authn.surrogate.ldap.memberAttributeName=memberOf
 # cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
+```
+
+### JDBC Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.jdbc.validationQuery=SELECT 1
+# cas.authn.surrogate.jdbc.maxWait=5000
+# cas.authn.surrogate.jdbc.healthQuery=
+# cas.authn.surrogate.jdbc.isolateInternalQueries=false
+# cas.authn.surrogate.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.surrogate.jdbc.failFast=true
+# cas.authn.surrogate.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.surrogate.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.surrogate.jdbc.leakThreshold=10
+# cas.authn.surrogate.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.surrogate.jdbc.batchSize=1
+# cas.authn.surrogate.jdbc.user=sa
+# cas.authn.surrogate.jdbc.ddlAuto=create-drop
+# cas.authn.surrogate.jdbc.maxAgeDays=180
+# cas.authn.surrogate.jdbc.password=
+# cas.authn.surrogate.jdbc.autocommit=false
+# cas.authn.surrogate.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.surrogate.jdbc.idleTimeout=5000
+# cas.authn.surrogate.jdbc.dataSourceName=
+# cas.authn.surrogate.jdbc.dataSourceProxy=false
+
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.surrogate.jdbc.properties.propertyName=propertyValue
+
+# cas.authn.surrogate.jdbc.surrogateSearchQuery=SELECT COUNT(*) FROM surrogate WHERE username=?
+# cas.authn.surrogate.jdbc.surrogateAccountQuery=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
 ```
 
 ## Risk-based Authentication
@@ -1360,6 +1509,8 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].order=0
 # cas.authn.jdbc.query[0].dataSourceName=
 # cas.authn.jdbc.query[0].dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.jdbc.query[0].properties.propertyName=propertyValue
 
 # cas.authn.jdbc.query[0].fieldPassword=password
 # cas.authn.jdbc.query[0].fieldExpired=
@@ -1406,6 +1557,8 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].order=0
 # cas.authn.jdbc.search[0].dataSourceName=
 # cas.authn.jdbc.search[0].dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.jdbc.search[0].properties.propertyName=propertyValue
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
@@ -1444,6 +1597,9 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].order=0
 # cas.authn.jdbc.bind[0].dataSourceName=
 # cas.authn.jdbc.bind[0].dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.jdbc.bind[0].properties.propertyName=propertyValue
+
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
@@ -1496,6 +1652,9 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].order=0
 # cas.authn.jdbc.encode[0].dataSourceName=
 # cas.authn.jdbc.encode[0].dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.jdbc.encode[0].properties.propertyName=propertyValue
+
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
@@ -1615,9 +1774,16 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
 # cas.authn.ldap[0].connectTimeout=5000
-# cas.authn.ldap[0].baseDn=dc=example,dc=org
-# cas.authn.ldap[0].userFilter=cn={user}
 # cas.authn.ldap[0].subtreeSearch=true
+
+# BaseDn used to start the LDAP search looking for accounts
+# cas.authn.ldap[0].baseDn=dc=example,dc=org
+
+# The search filter to use while looking for accounts.
+# cas.authn.ldap[0].userFilter=cn={user}
+#
+# Bind credentials used to connect to the LDAP instance
+#
 # cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.ldap[0].bindCredential=Password
 
@@ -1625,7 +1791,16 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=password
+
+#
+# Define attributes to be retrieved from LDAP as part of the same authentication transaction
+# The left-hand size notes the source while the right-hand size indicate an optional renaming/remapping
+# of the attribute definition. The same attribute name is allowed to be mapped multiple times to
+# different attribute names.
+#
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
+
+
 # cas.authn.ldap[0].collectDnAttribute=false
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
@@ -1778,7 +1953,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
 # cas.authn.spnego.jcifsDomain=
 # cas.authn.spnego.ipsToCheckPattern=127.+
-# cas.authn.spnego.kerberosDebug=
+# cas.authn.spnego.kerberosDebug=true
 # cas.authn.spnego.send401OnAuthenticationFailure=true
 # cas.authn.spnego.kerberosRealm=EXAMPLE.COM
 # cas.authn.spnego.ntlm=false
@@ -1865,6 +2040,7 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 
 ```properties
 # cas.authn.gua.ldap.imageAttribute=userImageIdentifier
+
 # cas.authn.gua.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.gua.ldap.connectionStrategy=
 # cas.authn.gua.ldap.baseDn=dc=example,dc=org
@@ -2325,6 +2501,8 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 # cas.authn.mfa.trusted.jpa.idleTimeout=5000
 # cas.authn.mfa.trusted.jpa.dataSourceName=
 # cas.authn.mfa.trusted.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.mfa.trusted.jpa.properties.propertyName=propertyValue
 
 # cas.authn.mfa.trusted.jpa.pool.suspension=false
 # cas.authn.mfa.trusted.jpa.pool.minSize=6
@@ -2424,6 +2602,8 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
 # cas.authn.mfa.gauth.jpa.database.dataSourceName=
 # cas.authn.mfa.gauth.jpa.database.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.mfa.gauth.jpa.database.properties.propertyName=propertyValue
 
 # cas.authn.mfa.gauth.jpa.database.pool.suspension=false
 # cas.authn.mfa.gauth.jpa.database.pool.minSize=6
@@ -2485,6 +2665,8 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.jpa.idleTimeout=5000
 # cas.authn.mfa.yubikey.jpa.dataSourceName=
 # cas.authn.mfa.yubikey.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.mfa.yubikey.jpa.properties.propertyName=propertyValue
 
 # cas.authn.mfa.yubikey.jpa.pool.suspension=false
 # cas.authn.mfa.yubikey.jpa.pool.minSize=6
@@ -2623,6 +2805,8 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.jpa.idleTimeout=5000
 # cas.authn.mfa.u2f.jpa.dataSourceName=
 # cas.authn.mfa.u2f.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.mfa.u2f.jpa.properties.propertyName=propertyValue
 
 # cas.authn.mfa.u2f.jpa.pool.suspension=false
 # cas.authn.mfa.u2f.jpa.pool.minSize=6
@@ -3043,8 +3227,8 @@ The signature location MUST BE the public key used to sign the metadata.
 Allow CAS to authenticate accounts via SQRL. To learn more about this topic, [please review this guide](../protocol/SQRL-Protocol.html).
 
 ```properties
-# 24-character AES Key
-# cas.authn.sqrl.aesKey=
+# cas.authn.sqrl.nutExpirationSeconds=200
+# cas.authn.sqrl.sfn=sqrl-example
 ```
 
 ## OpenID Connect
@@ -3477,6 +3661,8 @@ Store audit logs inside a database.
 # cas.audit.jdbc.idleTimeout=5000
 # cas.audit.jdbc.dataSourceName=
 # cas.audit.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.audit.jdbc.properties.propertyName=propertyValue
 
 # cas.audit.jdbc.pool.suspension=false
 # cas.audit.jdbc.pool.minSize=6
@@ -3553,6 +3739,8 @@ for authentication or attribute retrieval.
 # cas.monitor.jdbc.idleTimeout=5000
 # cas.monitor.jdbc.dataSourceName=
 # cas.monitor.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.monitor.jdbc.properties.propertyName=propertyValue
 ```
 
 ### LDAP Connection Pool
@@ -3660,6 +3848,8 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.idleTimeout=5000
 # cas.events.jpa.dataSourceName=
 # cas.events.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.events.jpa.properties.propertyName=propertyValue
 
 # cas.events.jpa.pool.suspension=false
 # cas.events.jpa.pool.minSize=6
@@ -3900,6 +4090,8 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.idleTimeout=5000
 # cas.serviceRegistry.jpa.dataSourceName=
 # cas.serviceRegistry.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.serviceRegistry.jpa.properties.propertyName=propertyValue
 
 # cas.serviceRegistry.jpa.pool.suspension=false
 # cas.serviceRegistry.jpa.pool.minSize=6
@@ -3954,6 +4146,8 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.idleTimeout=5000
 # cas.ticket.registry.jpa.dataSourceName=
 # cas.ticket.registry.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.ticket.registry.jpa.properties.propertyName=propertyValue
 
 # cas.ticket.registry.jpa.pool.suspension=false
 # cas.ticket.registry.jpa.pool.minSize=6
@@ -4198,8 +4392,14 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.writeConcern=NORMAL
 # cas.ticket.registry.mongo.host=localhost
 
-# cas.ticket.mongo.conns.lifetime=60000
-# cas.ticket.mongo.conns.perHost=10
+# cas.ticket.registry.mongo.conns.lifetime=60000
+# cas.ticket.registry.mongo.conns.perHost=10
+
+# cas.ticket.registry.mongo.crypto.signing.key=
+# cas.ticket.registry.mongo.crypto.signing.keySize=512
+# cas.ticket.registry.mongo.crypto.encryption.key=
+# cas.ticket.registry.mongo.crypto.encryption.keySize=16
+# cas.ticket.registry.mongo.crypto.alg=AES
 ```
 
 ### Redis Ticket Registry
@@ -4601,6 +4801,59 @@ To learn more about this topic, [please review this guide](../integration/SCIM-I
 # cas.scim.password=
 ```
 
+## Attribute Consent
+
+CAS provides the ability to enforce user-informed consent upon attribute release. 
+To learn more about this topic, [please review this guide](../integration/Attribute-Release-Consent.html).
+
+```properties
+# cas.consent.reminder=30
+# cas.consent.reminderTimeUnit=HOURS|DAYS|MONTHS
+
+# cas.consent.encryptionKey=
+# cas.consent.signingKey=
+# cas.consent.cipherEnabled=true
+```
+
+### JSON Attribute Consent
+
+```properties
+# cas.consent.json.config.location=file:/etc/cas/config/consent.json
+```
+
+### JPA Attribute Consent
+
+```properties
+# cas.consent.jpa.validationQuery=SELECT 1
+# cas.consent.jpa.maxWait=5000
+# cas.consent.jpa.healthQuery=
+# cas.consent.jpa.isolateInternalQueries=false
+# cas.consent.jpa.url=jpa:hsqldb:mem:cas-hsql-database
+# cas.consent.jpa.failFast=true
+# cas.consent.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.consent.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.consent.jpa.leakThreshold=10
+# cas.consent.jpa.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.consent.jpa.batchSize=1
+# cas.consent.jpa.user=sa
+# cas.consent.jpa.ddlAuto=create-drop
+# cas.consent.jpa.maxAgeDays=180
+# cas.consent.jpa.password=
+# cas.consent.jpa.autocommit=false
+# cas.consent.jpa.driverClass=org.hsqldb.jpaDriver
+# cas.consent.jpa.idleTimeout=5000
+# cas.consent.jpa.dataSourceName=
+# cas.consent.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.consent.jpa.properties.propertyName=propertyValue
+```
+
+### REST Attribute Consent
+
+```properties
+# cas.consent.rest.endpoint=https://api.example.org/trustedBrowser
+```
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.
@@ -4627,6 +4880,11 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
+### JSON Password Management
+
+```properties
+# cas.authn.pm.json.config.location=classpath:jsonResourcePassword.json
+```
 
 ### LDAP Password Management
 
@@ -4687,7 +4945,9 @@ The following LDAP types are supported:
 ### JDBC Password Management
 
 ```properties
+# The two fields indicated below are expected to be returned
 # cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
+
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
 
@@ -4709,6 +4969,8 @@ The following LDAP types are supported:
 # cas.authn.pm.jdbc.idleTimeout=5000
 # cas.authn.pm.jdbc.dataSourceName=
 # cas.authn.pm.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.pm.jdbc.properties.propertyName=propertyValue
 
 # cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.pm.jdbc.passwordEncoder.characterEncoding=

@@ -91,7 +91,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId, final RegisteredService registeredService) {
         LOGGER.debug("Locating SAML MDUI for entity [{}]", entityId);
-        final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);
+        final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(
+            this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequest(requestContext));
         LOGGER.debug("Located SAML MDUI for entity [{}] as [{}]", entityId, mdui);
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }
@@ -130,18 +131,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         LOGGER.debug("Located service definition [{}]", registeredService);
         return registeredService;
     }
-
-    /**
-     * Gets entity id from request.
-     *
-     * @param requestContext the request context
-     * @return the entity id from request
-     */
-    protected String getEntityIdFromRequest(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-        return request.getParameter(this.entityIdParameterName);
-    }
-
+    
     /**
      * Gets registered service from request.
      *
@@ -152,5 +142,16 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         final Service currentService = WebUtils.getService(requestContext);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(currentService);
         return registeredService;
+    }
+
+    /**
+     * Gets entity id from request.
+     *
+     * @param requestContext the request context
+     * @return the entity id from request
+     */
+    protected String getEntityIdFromRequest(final RequestContext requestContext) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        return request.getParameter(this.entityIdParameterName);
     }
 }

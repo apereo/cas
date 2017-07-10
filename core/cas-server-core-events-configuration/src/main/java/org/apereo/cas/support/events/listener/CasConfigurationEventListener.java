@@ -64,7 +64,7 @@ public class CasConfigurationEventListener {
             try {
                 keys = this.contextRefresher.refresh();
                 LOGGER.debug("Refreshed the following settings: [{}].", keys);
-            } catch (final Throwable e) {
+            } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
             } finally {
                 rebind();

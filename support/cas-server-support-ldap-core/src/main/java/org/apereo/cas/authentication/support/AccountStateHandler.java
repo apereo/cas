@@ -12,6 +12,7 @@ import org.ldaptive.auth.AuthenticationResponse;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface AccountStateHandler {
     /**
      * Handles the account state producing an error or warning messages as appropriate to the state.

@@ -44,6 +44,11 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
         final long count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
         return count == providers.size();
     }
+    
+    @Override
+    protected boolean isAvailable() {
+        return true;
+    }
 
     @Override
     public String getId() {
@@ -55,10 +60,6 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
         return findProvider(identifier) != null;
     }
 
-    @Override
-    protected boolean isAvailable() {
-        return true;
-    }
 
     @Override
     public int getOrder() {

@@ -10,6 +10,7 @@ import org.springframework.util.MultiValueMap;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
+@FunctionalInterface
 public interface CredentialFactory {
 
     /**

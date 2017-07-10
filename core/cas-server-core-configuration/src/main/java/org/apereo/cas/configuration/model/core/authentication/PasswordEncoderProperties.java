@@ -10,6 +10,8 @@ import java.io.Serializable;
  */
 
 public class PasswordEncoderProperties implements Serializable {
+    private static final long serialVersionUID = -2396781005262069816L;
+
     public enum PasswordEncoderTypes {
         /**
          * No password encoding will take place.
