@@ -52,16 +52,16 @@ public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttr
 
     @Override
     protected CommonProfile generateAuthorizationForLdapEntry(final CommonProfile profile, final LdapEntry userEntry) {
-        if (userEntry.getAttributes().isEmpty()) {
-            throw new IllegalStateException("No attributes are retrieved for this user.");
+        if (!userEntry.getAttributes().isEmpty()) {
+            final LdapAttribute attribute = userEntry.getAttribute(this.roleAttribute);
+            if (attribute != null) {
+                addProfileRoles(userEntry, profile, attribute, this.rolePrefix);
+            } else {
+                LOGGER.debug("Configured role attribute cannot be found for this user");
+            }
+        } else {
+            LOGGER.debug("No attributes are retrieved for this user.");
         }
-
-        final LdapAttribute attribute = userEntry.getAttribute(this.roleAttribute);
-        if (attribute == null) {
-            throw new IllegalStateException("Configured role attribute cannot be found for this user");
-        }
-
-        addProfileRoles(userEntry, profile, attribute, this.rolePrefix);
         return profile;
     }
 }
