@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.consent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.AbstractConfigProperties;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -18,10 +19,19 @@ public class ConsentProperties {
 
     private Rest rest = new Rest();
     private Jpa jpa = new Jpa();
-
+    private Json json = new Json();
+    
     private String encryptionKey = StringUtils.EMPTY;
     private String signingKey = StringUtils.EMPTY;
     private boolean cipherEnabled = true;
+
+    public Json getJson() {
+        return json;
+    }
+
+    public void setJson(final Json json) {
+        this.json = json;
+    }
 
     public Jpa getJpa() {
         return jpa;
@@ -79,6 +89,10 @@ public class ConsentProperties {
         this.cipherEnabled = cipherEnabled;
     }
 
+    public static class Json extends AbstractConfigProperties {
+        private static final long serialVersionUID = 7079027843747126083L;
+    }
+    
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 1646689616653363554L;
     }
