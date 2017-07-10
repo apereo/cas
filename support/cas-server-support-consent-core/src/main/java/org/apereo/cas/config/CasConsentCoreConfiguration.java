@@ -1,9 +1,14 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
+import org.apereo.cas.consent.ConsentCipherExecutor;
+import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DefaultConsentEngine;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +38,25 @@ public class CasConsentCoreConfiguration {
     @Bean
     @RefreshScope
     public ConsentEngine consentEngine(@Qualifier("consentRepository") final ConsentRepository consentRepository) {
-        return new DefaultConsentEngine(consentRepository);
+        return new DefaultConsentEngine(consentRepository, consentDecisionBuilder());
+    }
+
+    @ConditionalOnMissingBean(name = "consentCipherExecutor")
+    @Bean
+    @RefreshScope
+    public CipherExecutor consentCipherExecutor() {
+        final ConsentProperties consent = casProperties.getConsent();
+        if (consent.isCipherEnabled()) {
+            return new ConsentCipherExecutor(consent.getEncryptionKey(), consent.getSigningKey());
+        }
+        LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    @ConditionalOnMissingBean(name = "consentDecisionBuilder")
+    @Bean
+    @RefreshScope
+    public ConsentDecisionBuilder consentDecisionBuilder() {
+        return new ConsentDecisionBuilder(consentCipherExecutor());
     }
 }
