@@ -770,7 +770,7 @@ if (array.length == 3) {
                     {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
                     {name: 'SAML2 Service Provider', value: 'saml'},
                     {name: 'OpenID Connect Client', value: 'oidc'},
-                    {name: 'WS Federation', value: 'wsfed'}
+                    {name: 'WS Federation Client', value: 'wsfed'}
                 ],
                 oidcScopes: [
                     {name: 'Profile', value: 'profile'},
@@ -778,10 +778,7 @@ if (array.length == 3) {
                     {name: 'Address', value: 'address'},
                     {name: 'Phone', value: 'phone'},
                     {name: 'Offline Access', value: 'offline_access'},
-                    {name: 'User Defined', value: 'user_defined'},
-                    {name: 'OAuth2 Client', value: 'oauth'},
-                    {name: 'SAML2 Service Provider', value: 'saml'},
-                    {name: 'OpenID Connect Client', value: 'oidc'}
+                    {name: 'User Defined', value: 'user_defined'}
                 ],
                 logoutTypeList: [
                     {name: 'NONE', value: 'none'},
