@@ -6,5 +6,6 @@ dependencies {
     compile project(":core:cas-server-core-configuration")
     compile project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
