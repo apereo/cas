@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -127,7 +128,7 @@ public class PasswordManagementProperties {
         }
     }
 
-    public static class Rest {
+    public static class Rest implements Serializable {
         private String endpointUrlEmail;
         private String endpointUrlSecurityQuestions;
         private String endpointUrlChange;

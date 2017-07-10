@@ -1,0 +1,6 @@
+description = "Apereo CAS Consent REST Support"
+dependencies {
+    compile project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-consent-api")
+    compile project(":core:cas-server-core-configuration")
+}
