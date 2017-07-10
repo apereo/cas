@@ -33,10 +33,10 @@ public class ConsentDecision {
     private String service;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime date = LocalDateTime.now();
 
     @Column(nullable = false)
-    private ConsentOptions options;
+    private ConsentOptions options = ConsentOptions.ATTRIBUTE_NAME;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private Long reminder = 14L;
