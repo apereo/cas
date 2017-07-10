@@ -30,22 +30,22 @@ public class CassandraTicketRegistryConfiguration {
     @Autowired
     private CassandraProperties cassandraProperties;
 
-    @Bean(name = {"ticketRegistry", "cassandraTicketRegistry"})
-    public TicketRegistry cassandraTicketRegistry(@Qualifier("ticketSerializer") final TicketSerializer ticketSerializer,
+    @Bean
+    public TicketRegistry ticketRegistry(@Qualifier("cassandraTicketSerializer") final TicketSerializer ticketSerializer,
                                                   @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         return new CassandraTicketRegistry<>(ticketCatalog, cassandraProperties.getContactPoints(), cassandraProperties.getUsername(),
                 cassandraProperties.getPassword(), ticketSerializer, String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
                 cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
     }
 
-    @Bean(name = "ticketRegistryCleaner")
-    public TicketRegistryCleaner cassandraTicketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final CassandraTicketRegistryDao ticketRegistry,
+    @Bean
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketRegistry") final CassandraTicketRegistryDao ticketRegistry,
                                                                 @Qualifier("logoutManager") final LogoutManager logoutManager) {
         return new CassandraTicketRegistryCleaner(ticketRegistry, logoutManager);
     }
 
-    @Bean(name = "ticketSerializer")
-    public TicketSerializer<String> ticketSerializer() {
+    @Bean
+    public TicketSerializer<String> cassandraTicketSerializer() {
         return new JacksonJsonSerializer();
     }
 }
