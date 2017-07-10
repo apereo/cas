@@ -4801,6 +4801,53 @@ To learn more about this topic, [please review this guide](../integration/SCIM-I
 # cas.scim.password=
 ```
 
+## Attribute Consent
+
+CAS provides the ability to enforce user-informed consent upon attribute release. 
+To learn more about this topic, [please review this guide](../integration/Attribute-Release-Consent.html).
+
+```properties
+# cas.consent.reminder=30
+# cas.consent.reminderTimeUnit=HOURS|DAYS|MONTHS
+
+# cas.consent.encryptionKey=
+# cas.consent.signingKey=
+# cas.consent.cipherEnabled=true
+```
+
+### JPA Attribute Consent
+
+```properties
+# cas.consent.jpa.validationQuery=SELECT 1
+# cas.consent.jpa.maxWait=5000
+# cas.consent.jpa.healthQuery=
+# cas.consent.jpa.isolateInternalQueries=false
+# cas.consent.jpa.url=jpa:hsqldb:mem:cas-hsql-database
+# cas.consent.jpa.failFast=true
+# cas.consent.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.consent.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.consent.jpa.leakThreshold=10
+# cas.consent.jpa.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.consent.jpa.batchSize=1
+# cas.consent.jpa.user=sa
+# cas.consent.jpa.ddlAuto=create-drop
+# cas.consent.jpa.maxAgeDays=180
+# cas.consent.jpa.password=
+# cas.consent.jpa.autocommit=false
+# cas.consent.jpa.driverClass=org.hsqldb.jpaDriver
+# cas.consent.jpa.idleTimeout=5000
+# cas.consent.jpa.dataSourceName=
+# cas.consent.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.consent.jpa.properties.propertyName=propertyValue
+```
+
+### REST Attribute Consent
+
+```properties
+# cas.consent.rest.endpoint=https://api.example.org/trustedBrowser
+```
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.
