@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
+import org.apereo.cas.web.flow.ConfirmConsentAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +74,15 @@ public class CasConsentWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
-        return new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies,
-                authenticationSystemSupport, consentRepository, consentEngine);
+        return new CheckConsentRequiredAction(servicesManager,
+                authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
+    }
+
+    @ConditionalOnMissingBean(name = "confirmConsentAction")
+    @Bean
+    public Action confirmConsentAction() {
+        return new ConfirmConsentAction(servicesManager,
+                authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
     }
 
     @Bean

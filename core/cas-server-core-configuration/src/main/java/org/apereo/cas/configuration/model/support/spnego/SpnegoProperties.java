@@ -306,6 +306,7 @@ public class SpnegoProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = -8835216200501334936L;
         private String baseDn;
         private String searchFilter;
 

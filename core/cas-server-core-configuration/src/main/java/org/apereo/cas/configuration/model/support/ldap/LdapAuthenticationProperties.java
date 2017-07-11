@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
+    private static final long serialVersionUID = -5357843463521189892L;
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 

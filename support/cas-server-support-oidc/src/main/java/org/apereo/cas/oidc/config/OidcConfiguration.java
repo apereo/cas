@@ -293,7 +293,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager,
-                userDefinedScopeBasedAttributeReleasePolicies(), oidcAttributeToScopeClaimMapper());
+                userDefinedScopeBasedAttributeReleasePolicies(), oidcAttributeToScopeClaimMapper(), casProperties);
     }
 
     @RefreshScope
