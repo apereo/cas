@@ -3,13 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.TicketSerializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.registry.CassandraTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
-import org.apereo.cas.ticket.registry.CassandraTicketRegistryDao;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,12 +32,6 @@ public class CassandraTicketRegistryConfiguration {
         return new CassandraTicketRegistry<>(ticketCatalog, cassandraProperties.getContactPoints(), cassandraProperties.getUsername(),
                 cassandraProperties.getPassword(), ticketSerializer, String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
                 cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
-    }
-
-    @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketRegistry") final CassandraTicketRegistryDao ticketRegistry,
-                                                                @Qualifier("logoutManager") final LogoutManager logoutManager) {
-        return new CassandraTicketRegistryCleaner(ticketRegistry, logoutManager);
     }
 
     @Bean

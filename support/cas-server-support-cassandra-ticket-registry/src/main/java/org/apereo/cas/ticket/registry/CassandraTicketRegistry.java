@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -32,7 +33,7 @@ import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfigur
  *
  * @since 5.2.0
  */
-public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implements CassandraTicketRegistryDao {
+public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraTicketRegistry.class);
 
@@ -139,7 +140,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
         if (TGT_TABLE.equals(storageName)) {
-            return deleteTicketGrantingTicket(ticketId);
+            return session.execute(this.deleteTgtStmt.bind(ticketId)).wasApplied();
         } else if (ST_TABLE.equals(storageName)) {
             session.executeAsync(this.deleteStStmt.bind(ticketId));
             return true;
@@ -191,7 +192,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
     }
 
     @Override
-    public Stream<Ticket> getExpiredTgts() {
+    public Collection<Ticket> getTickets() {
         final long lastRun = getLastRunTimestamp();
         final long currentTime = currentTimeBucket();
 
@@ -202,18 +203,8 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
                     updateLastRunTimestamp(time);
                     return getExpiredTGTsIn(time);
                 })
-                .flatMap(Function.identity());
-    }
-
-    @Override
-    public Collection<Ticket> getTickets() {
-        return null;
-    }
-
-    @Override
-    public boolean deleteTicketGrantingTicket(final String id) {
-        LOGGER.debug("Deleting ticket {}", id);
-        return session.execute(this.deleteTgtStmt.bind(id)).wasApplied();
+                .flatMap(Function.identity())
+                .collect(Collectors.toList());
     }
 
     private Stream<Ticket> getExpiredTGTsIn(final long lastRunBucket) {
