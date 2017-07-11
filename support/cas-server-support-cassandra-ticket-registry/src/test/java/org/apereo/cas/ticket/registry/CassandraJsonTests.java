@@ -12,7 +12,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.stream.Stream;
+import java.util.Collection;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -31,8 +31,7 @@ public class CassandraJsonTests {
     @Before
     public void setUp() throws Exception {
         final DefaultTicketCatalog ticketCatalog = new DefaultTicketCatalog();
-        dao = new CassandraTicketRegistry<>(ticketCatalog, "localhost", "", "", new JacksonJsonSerializer(), String.class, "cas2.ticketgrantingticket",
-                "cas2.serviceticket", "cas2.ticket_cleaner", "cas2.ticket_cleaner_lastrun");
+        dao = new CassandraTicketRegistry<>(ticketCatalog, "localhost", "", "", "cas2", new JacksonJsonSerializer(), String.class);
     }
 
     @Test
@@ -57,10 +56,10 @@ public class CassandraJsonTests {
         dao.addTicket(notExpired);
 
         //when
-        final Stream<Ticket> expiredTgts = dao.getExpiredTgts();
+        final Collection<Ticket> expiredTgts = dao.getTickets();
 
         //then
         final long expiredTgtsInserted = 2;
-        assertThat(expiredTgts.count(), is(expiredTgtsInserted));
+        assertThat(expiredTgts.size(), is(expiredTgtsInserted));
     }
 }
