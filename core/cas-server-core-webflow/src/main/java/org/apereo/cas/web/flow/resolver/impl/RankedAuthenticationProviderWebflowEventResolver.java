@@ -14,6 +14,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -25,7 +26,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,7 +55,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         this.authenticationContextValidator = authenticationContextValidator;
         this.initialAuthenticationAttemptWebflowEventResolver = casDelegatingWebflowEventResolver;
     }
-
+    
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         final String tgt = WebUtils.getTicketGrantingTicketId(context);
@@ -78,6 +78,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
         final Credential credential = WebUtils.getCredential(context);
         final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+
+        LOGGER.debug("Recording and tracking initial authentication results in the request context");
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
@@ -88,14 +90,16 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         final String id = event.getId();
+        LOGGER.debug("Resolved from the initial authentication leg is [{}]", id);
 
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
             LOGGER.debug("Returning webflow event as [{}]", id);
-            return Collections.singleton(event);
+            return CollectionUtils.wrapSet(event);
         }
 
+        LOGGER.debug("Validating authentication context for event [{}] and service [{}]", id, service);
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {
@@ -104,11 +108,11 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         if (result.getValue().isPresent()) {
-            return Collections.singleton(validateEventIdForMatchingTransitionInContext(id, context,
+            return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, result.getValue().get())));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
-        return Collections.singleton(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
+        return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
     }
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
@@ -119,6 +123,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
     }
 
     private Set<Event> resumeFlow() {
-        return Collections.singleton(new EventFactorySupport().success(this));
+        return CollectionUtils.wrapSet(new EventFactorySupport().success(this));
     }
 }
+
