@@ -96,9 +96,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
-        final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        final String encTicketId = encodeTicketId(ticketIdToDelete);
+        final TicketDefinition metadata = this.ticketCatalog.find(ticketIdToDelete);
         final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
         return map.remove(encTicketId) != null;
     }
@@ -127,7 +127,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
                 final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(t);
                 tickets.addAll(map.values().stream().limit(this.pageSize).collect(Collectors.toList()));
             });
-            return tickets;
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
@@ -142,7 +141,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         try {
             LOGGER.info("Shutting down Hazelcast instance [{}]", this.hazelcastInstance.getConfig().getInstanceName());
             this.hazelcastInstance.shutdown();
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             LOGGER.debug(e.getMessage());
         }
     }
@@ -155,7 +154,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
         try {
             final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);
-            LOGGER.debug("Located Hazelcast map instance [{}] for [{}]", inst, mapName);
+            LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

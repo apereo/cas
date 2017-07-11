@@ -97,6 +97,11 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     }
 
     @Override
+    public RegisteredService findServiceBy(final String serviceId) {
+        return orderedServices.stream().filter(r -> r.matches(serviceId)).findFirst().orElse(null);
+    }
+
+    @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
 
@@ -114,6 +119,11 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
 
     @Override
     public boolean matchesExistingService(final Service service) {
+        return findServiceBy(service) != null;
+    }
+
+    @Override
+    public boolean matchesExistingService(final String service) {
         return findServiceBy(service) != null;
     }
 
@@ -139,7 +149,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     @PostConstruct
     public void load() {
         LOGGER.debug("Loading services from [{}]", this.serviceRegistryDao);
-        this.services = this.serviceRegistryDao.load().stream()
+        this.services = this.serviceRegistryDao.load()
+                .stream()
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                     return r.getId();
@@ -147,16 +158,6 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
         publishEvent(new CasRegisteredServicesLoadedEvent(this, this.orderedServices));
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
-    }
-
-    @Override
-    public RegisteredService findServiceBy(final String serviceId) {
-        return orderedServices.stream().filter(r -> r.matches(serviceId)).findFirst().orElse(null);
-    }
-
-    @Override
-    public boolean matchesExistingService(final String service) {
-        return findServiceBy(service) != null;
     }
 
     @Override

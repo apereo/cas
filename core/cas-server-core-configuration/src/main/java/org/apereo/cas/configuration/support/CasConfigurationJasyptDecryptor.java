@@ -30,8 +30,8 @@ public class CasConfigurationJasyptDecryptor {
         ITERATIONS("cas.standalone.config.security.iteration", null),
         PASSWORD("cas.standalone.config.security.psw", null);
 
-        private String name;
-        private String defaultValue;
+        private final String name;
+        private final String defaultValue;
 
         JasyptEncryptionParameters(final String name, final String defaultValue) {
             this.name = name;
@@ -75,7 +75,7 @@ public class CasConfigurationJasyptDecryptor {
         final String iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         if (StringUtils.isNotBlank(iter) && NumberUtils.isCreatable(iter)) {
             LOGGER.debug("Configured decryptor iterations");
-            decryptor.setKeyObtentionIterations(Integer.valueOf(iter));
+            decryptor.setKeyObtentionIterations(Integer.parseInt(iter));
         }
     }
 

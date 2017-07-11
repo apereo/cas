@@ -221,9 +221,9 @@ public class MonitorProperties {
         private Status status = new Status();
         private SingleSignOnStatus singleSignOnStatus = new SingleSignOnStatus();
         private SpringWebflowReport springWebflowReport = new SpringWebflowReport();
-         private RegisteredServicesReport registeredServicesReport = new RegisteredServicesReport();
+        private RegisteredServicesReport registeredServicesReport = new RegisteredServicesReport();
 
-         
+
         public Endpoints() {
             setSensitive(Boolean.TRUE);
             setEnabled(Boolean.FALSE);

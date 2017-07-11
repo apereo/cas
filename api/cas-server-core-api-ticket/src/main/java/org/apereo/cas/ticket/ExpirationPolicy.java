@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @see Ticket
  * @since 3.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface ExpirationPolicy extends Serializable {
 
     /**
@@ -27,8 +27,9 @@ public interface ExpirationPolicy extends Serializable {
     /**
      * Describes the time duration where this policy should consider the item alive.
      * Once this time passes, the item is considered expired and dead.
+     *
      * @return time to live in seconds. A zero value indicates the time duration
-     * is not supported or is inactive. 
+     * is not supported or is inactive.
      */
     Long getTimeToLive();
 

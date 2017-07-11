@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -12,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link OpenIdServiceFactoryConfiguration}.
@@ -28,7 +28,7 @@ public class OpenIdServiceFactoryConfiguration implements ServiceFactoryConfigur
     
     @Override
     public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
-        return Collections.singleton(openIdServiceFactory());
+        return CollectionUtils.wrap(openIdServiceFactory());
     }
 
     @Bean

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
     private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
-    private OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
+    private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
 
     public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,

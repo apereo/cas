@@ -5,6 +5,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,7 +94,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
                 registeredService.getName(), entityID);
         try {
-            criterions.add(new BindingCriterion(Collections.singletonList(SAMLConstants.SAML2_POST_BINDING_URI)));
+            criterions.add(new BindingCriterion(CollectionUtils.wrap(SAMLConstants.SAML2_POST_BINDING_URI)));
             criterions.add(new EntityIdCriterion(entityID));
 
             LOGGER.info("Locating metadata for entityID [{}] with binding [{}] by attempting to run through the metadata chain...",
@@ -118,7 +118,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
             LOGGER.warn("Could not locate SPSSODescriptor in the metadata for [{}]", entityID);
             return Optional.empty();
         } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 

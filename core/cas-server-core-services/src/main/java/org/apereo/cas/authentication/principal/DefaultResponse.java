@@ -30,11 +30,11 @@ public class DefaultResponse implements Response {
     private static final int CONST_REDIRECT_RESPONSE_BUFFER = 100;
     private static final long serialVersionUID = -8251042088720603062L;
 
-    private ResponseType responseType;
+    private final ResponseType responseType;
 
-    private String url;
+    private final String url;
 
-    private Map<String, String> attributes;
+    private final Map<String, String> attributes;
 
     /**
      * Instantiates a new response.
@@ -94,7 +94,7 @@ public class DefaultResponse implements Response {
                     String param;
                     try {
                         param = String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
-                    } catch (final RuntimeException e) {
+                    } catch (final Exception e) {
                         param = String.join("=", entry.getKey(), entry.getValue());
                     }
                     return param;

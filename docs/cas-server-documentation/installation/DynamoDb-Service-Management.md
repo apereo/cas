@@ -7,7 +7,7 @@ title: CAS - DynamoDb Service Registry
 
 Stores registered service data in a [DynamoDb](https://aws.amazon.com/dynamodb/) instance.
 
-Support is enabled by adding the following module into the Maven overlay:
+Support is enabled by adding the following module into the overlay:
 
 ```xml
 <dependency>

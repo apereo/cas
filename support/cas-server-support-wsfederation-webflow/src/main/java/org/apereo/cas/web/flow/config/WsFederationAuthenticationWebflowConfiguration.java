@@ -23,9 +23,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class WsFederationAuthenticationWebflowConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
@@ -35,6 +32,6 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WsFederationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, casProperties.getAuthn().getWsfed().isAutoRedirect());
+        return new WsFederationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 }

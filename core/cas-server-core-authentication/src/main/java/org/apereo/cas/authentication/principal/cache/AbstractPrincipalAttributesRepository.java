@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -153,9 +154,12 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(
             final Map<String, List<Object>> attributes) {
-        return attributes.entrySet().stream()
+        return attributes.entrySet()
+                .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
+                    entry -> entry.getValue().size() == 1
+                                ? entry.getValue().get(0) : entry.getValue(),
+                    (e, f) -> f == null ? e : f));
     }
 
     /***
@@ -173,7 +177,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             if (values instanceof List) {
                 convertedAttributes.put(key, (List) values);
             } else {
-                convertedAttributes.put(key, Collections.singletonList(values));
+                convertedAttributes.put(key, CollectionUtils.wrap(values));
             }
         });
         return convertedAttributes;
@@ -293,7 +297,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         if (this.attributeRepository == null) {
             final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
             if (context != null) {
-                return context.getBean("attributeRepository", IPersonAttributeDao.class);
+                return context.getBean(IPersonAttributeDao.class);
             }
             LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
         }

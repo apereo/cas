@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.gauth;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
@@ -51,7 +50,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final GoogleAuthenticatorTokenCredential tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
-        if (!NumberUtils.isCreatable(tokenCredential.getToken())) {
+        if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.",
                     new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
         }
@@ -60,11 +59,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
         final RequestContext context = RequestContextHolder.getRequestContext();
         if (context == null) {
-            new IllegalArgumentException("No request context could be found to locate an authentication event");
+            throw new IllegalArgumentException("No request context could be found to locate an authentication event");
         }
         final Authentication authentication = WebUtils.getAuthentication(context);
         if (authentication == null) {
-            new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
+            throw new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
         }
         final String uid = authentication.getPrincipal().getId();
 

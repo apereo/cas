@@ -103,8 +103,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     @Override
     public String encode(final Serializable value) {
         final String encoded = encryptValue(value);
-        final String signed = new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-        return signed;
+        return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
 
     @Override
@@ -156,7 +155,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
-            throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
+            throw new IllegalArgumentException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
                     + e.getMessage(), e);
         }
     }

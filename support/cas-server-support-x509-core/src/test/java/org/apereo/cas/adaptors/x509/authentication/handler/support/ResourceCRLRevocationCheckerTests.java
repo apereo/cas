@@ -49,7 +49,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
         try {
             this.checker.init();
         } catch (final Exception e) {
-            throw new RuntimeException("ResourceCRLRevocationChecker initialization failed", e);
+            throw new IllegalArgumentException("ResourceCRLRevocationChecker initialization failed", e);
         }
     }
 
@@ -70,9 +70,9 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                 new ResourceCRLRevocationChecker(new ClassPathResource[]{
                         new ClassPathResource("userCA-valid.crl"),
                 }, zeroThresholdPolicy),
-                new String[]{"user-valid.crt"},
-                null,
-        });
+            new String[]{"user-valid.crt"},
+            null,
+    });
 
         // Test case #2
         // Revoked certificate on valid CRL data
@@ -82,8 +82,8 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                         new ClassPathResource("intermediateCA-valid.crl"),
                         new ClassPathResource("rootCA-valid.crl"),
                 }, zeroThresholdPolicy),
-                new String[]{"user-revoked.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
-                new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
+            new String[]{"user-revoked.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
+            new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
         });
 
         // Test case #3
@@ -94,8 +94,8 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                         new ClassPathResource("intermediateCA-valid.crl"),
                         new ClassPathResource("rootCA-valid.crl"),
                 }, zeroThresholdPolicy),
-                new String[]{"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
-                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
+            new String[]{"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
+            new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #4
@@ -106,19 +106,19 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                         new ClassPathResource("intermediateCA-expired.crl"),
                         new ClassPathResource("rootCA-valid.crl"),
                 }, zeroThresholdPolicy),
-                new String[]{"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
-                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
+            new String[]{"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
+            new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #5
         // Valid certificate on expired CRL data with custom expiration
         // policy to always allow expired CRL data
         params.add(new Object[]{
-                new ResourceCRLRevocationChecker(new ClassPathResource[]{
-                        new ClassPathResource("userCA-expired.crl"),
-                }, crl -> {}),
-                new String[]{"user-valid.crt"},
-                null,
+            new ResourceCRLRevocationChecker(new ClassPathResource[]{
+                    new ClassPathResource("userCA-expired.crl"),
+            }, crl -> {}),
+            new String[]{"user-valid.crt"},
+            null,
         });
 
         return params;

@@ -195,7 +195,9 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     protected String handleAuthenticationException(final AuthenticationException e,
                                                    final MessageContext messageContext) {
         // find the first error in the error list that matches the handlerErrors
-        final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
+        final String handlerErrorName = this.errors
+                .stream()
+                .filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {
                     LOGGER.error("Unable to translate handler errors of the authentication exception [{}]"
                             + "Returning [{}]", e, UNKNOWN);
@@ -228,11 +230,17 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         return match.orElse(UNKNOWN);
     }
 
-
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final String event = handle(requestContext.getAttributes().get("error", Exception.class),
-                requestContext.getMessageContext());
+        final Event currentEvent = requestContext.getCurrentEvent();
+        LOGGER.debug("Located current event [{}]", currentEvent);
+
+        final Exception error = currentEvent.getAttributes().get("error", Exception.class);
+        LOGGER.debug("Located error attribute [{}] from the current event", error);
+
+        final String event = handle(error, requestContext.getMessageContext());
+        LOGGER.debug("Final event id resolved from the error is [{}]", event);
+
         return new EventFactorySupport().event(this, event);
     }
 }

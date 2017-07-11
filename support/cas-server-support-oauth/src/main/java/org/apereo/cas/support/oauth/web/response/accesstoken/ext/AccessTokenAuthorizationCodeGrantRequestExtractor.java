@@ -33,7 +33,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
                                                              final HttpServletRequest request, final HttpServletResponse response,
                                                              final CentralAuthenticationService centralAuthenticationService,
                                                              final OAuthProperties oAuthProperties) {
-        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService, oAuthProperties);
+        super(servicesManager, ticketRegistry, request, response,
+                centralAuthenticationService, oAuthProperties);
     }
 
     @Override
@@ -47,23 +48,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        // we generate a refresh token if requested by the service but not from a refresh token
-        final boolean generateRefreshToken = isAllowedToGenerateRefreshToken(registeredService);
         final OAuthToken token = getOAuthTokenFromRequest();
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter());
         }
-        return new AccessTokenRequestDataHolder(token, generateRefreshToken, registeredService);
-    }
-
-    /**
-     * Is allowed to generate refresh token ?
-     *
-     * @param registeredService the registered service
-     * @return the boolean
-     */
-    protected boolean isAllowedToGenerateRefreshToken(final OAuthRegisteredService registeredService) {
-        return registeredService != null && registeredService.isGenerateRefreshToken();
+        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType());
     }
 
     protected String getOAuthParameterName() {
@@ -100,6 +89,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     @Override
     public boolean supports(final HttpServletRequest context) {
         final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        return OAuth20Utils.isGrantType(grantType, getGrantType());
+    }
+
+    @Override
+    public OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.AUTHORIZATION_CODE;
     }
 }

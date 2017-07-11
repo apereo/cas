@@ -31,7 +31,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     private final String callbackUrl;
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    private final int order = Ordered.HIGHEST_PRECEDENCE;
 
     public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -45,9 +45,15 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     public Service resolveServiceFrom(final Service service) {
         final Optional<NameValuePair> clientId = resolveClientIdFromService(service);
         final Optional<NameValuePair> redirectUri = resolveRedirectUri(service);
+        final Optional<NameValuePair> grantType = resolveGrantType(service);
 
-        if (clientId.isPresent() && redirectUri.isPresent()) {
-            return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
+        if (clientId.isPresent()) {
+            if (redirectUri.isPresent()) {
+                return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
+            }
+            if (grantType.isPresent()) {
+                return this.webApplicationServiceFactory.createService(clientId.get().getValue());
+            }
         }
         return service;
     }
@@ -66,6 +72,16 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
             return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI)).findFirst();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<NameValuePair> resolveGrantType(final Service service) {
+        try {
+            final URIBuilder builder = new URIBuilder(service.getId());
+            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE)).findFirst();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }

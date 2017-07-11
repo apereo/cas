@@ -18,7 +18,7 @@ import java.util.Optional;
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20CasCallbackUrlResolver.class);
 
-    private String callbackUrl;
+    private final String callbackUrl;
 
     public OAuth20CasCallbackUrlResolver(final String callbackUrl) {
         this.callbackUrl = callbackUrl;
@@ -43,6 +43,12 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
             parameter = getQueryParameter(context, OAuth20Constants.ACR_VALUES);
+            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+
+            parameter = getQueryParameter(context, OAuth20Constants.RESPONSE_TYPE);
+            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+
+            parameter = getQueryParameter(context, OAuth20Constants.GRANT_TYPE);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
             final String callbackResolved = builder.build().toString();

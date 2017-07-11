@@ -16,13 +16,10 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
     private static final String WS_FEDERATION_ACTION = "wsFederationAction";
     private static final String WS_FEDERATION_REDIRECT = "wsFederationRedirect";
-
-    private boolean autoRedirect = true;
-
-    public WsFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                         final boolean redirect) {
+    
+    public WsFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         super(flowBuilderServices, loginFlowDefinitionRegistry);
-        this.autoRedirect = redirect;
     }
 
     @Override
@@ -35,9 +32,9 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
                     CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, WS_FEDERATION_REDIRECT));
 
-            if (this.autoRedirect) {
-                setStartState(flow, actionState);
-            }
+            final String currentStartState = getStartState(flow).getId();
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_PROCEED, currentStartState));
+            setStartState(flow, actionState);
         }
     }
 }

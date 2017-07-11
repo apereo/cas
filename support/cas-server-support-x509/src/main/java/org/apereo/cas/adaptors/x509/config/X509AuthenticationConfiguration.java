@@ -18,7 +18,6 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevoca
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -50,6 +49,7 @@ import net.sf.ehcache.Cache;
  * This is {@link X509AuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("x509AuthenticationConfiguration")
@@ -62,7 +62,7 @@ public class X509AuthenticationConfiguration {
     private ResourceLoader resourceLoader;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier("mergingAttributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @Autowired
@@ -270,18 +270,11 @@ public class X509AuthenticationConfiguration {
         return new X509SerialNumberAndIssuerDNPrincipalResolver(x509.getSerialNumberPrefix(), x509.getValueDelimiter());
     }
 
-    /**
-     * The type X 509 authentication event execution plan configuration.
-     */
-    @Configuration("x509AuthenticationEventExecutionPlanConfiguration")
-    public class X509AuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
-
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            PrincipalResolver resolver = personDirectoryPrincipalResolver;
+    @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer x509AuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            PrincipalResolver resolver = null;
             if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
                 switch (casProperties.getAuthn().getX509().getPrincipalType()) {
                     case SERIAL_NO:
@@ -301,8 +294,8 @@ public class X509AuthenticationConfiguration {
                         break;
                 }
             }
-            
+
             plan.registerAuthenticationHandlerWithPrincipalResolver(x509CredentialsAuthenticationHandler(), resolver);
-        }
+        };
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -14,6 +13,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,8 +27,8 @@ import org.springframework.web.util.CookieGenerator;
  */
 @Configuration("SurrogateWebflowEventResolutionConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SurrogateWebflowEventResolutionConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-    
+public class SurrogateWebflowEventResolutionConfiguration {
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -60,10 +60,11 @@ public class SurrogateWebflowEventResolutionConfiguration implements Authenticat
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector selector;
-    
+
+    @ConditionalOnMissingBean(name = "surrogateWebflowEventResolver")
     @Bean
-    public CasWebflowEventResolver surrogateWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
-                                                                     final AuthenticationSystemSupport authenticationSystemSupport) {
+    public CasWebflowEventResolver surrogateWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
+                                                                 final AuthenticationSystemSupport authenticationSystemSupport) {
         final CasWebflowEventResolver r = new SurrogateWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
                 servicesManager, ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies,

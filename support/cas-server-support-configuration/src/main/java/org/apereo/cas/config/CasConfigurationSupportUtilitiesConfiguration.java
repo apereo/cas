@@ -2,9 +2,14 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.config.monitor.ConfigurationDirectoryPathWatchService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
+import org.apereo.cas.support.events.AbstractCasEvent;
+import org.apereo.cas.support.events.config.CasConfigurationCreatedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.util.function.ComposableFunction;
+import org.apereo.cas.util.PathWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +22,7 @@ import org.springframework.context.annotation.Profile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.function.Consumer;
 
 /**
  * This is {@link CasConfigurationSupportUtilitiesConfiguration}.
@@ -27,11 +33,17 @@ import java.io.File;
 @Configuration("casConfigurationSupportUtilitiesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConfigurationSupportUtilitiesConfiguration {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationSupportUtilitiesConfiguration.class);
+    private static final int INTERVAL = 5_000;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath());
+
     /**
      * The watch configuration.
      */
@@ -45,7 +57,9 @@ public class CasConfigurationSupportUtilitiesConfiguration {
         @Autowired
         @Qualifier("configurationPropertiesEnvironmentManager")
         private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
-        
+
+        private final Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
+
         @PostConstruct
         public void init() {
             runNativeConfigurationDirectoryPathWatchService();
@@ -56,8 +70,12 @@ public class CasConfigurationSupportUtilitiesConfiguration {
                 final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
                 if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                     LOGGER.debug("Starting to watch configuration directory [{}]", config);
-                    final Thread th = new Thread(new ConfigurationDirectoryPathWatchService(config.toPath(), eventPublisher));
-                    th.start();
+                    new Thread(new PathWatcher(config.toPath(),
+                            createConfigurationCreatedEvent.andThen(publish),
+                            createConfigurationModifiedEvent.andThen(publish),
+                            createConfigurationDeletedEvent.andThen(publish),
+                            INTERVAL))
+                        .start();
                 } else {
                     LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
                 }

@@ -36,13 +36,13 @@ public class JpaLockingStrategy implements LockingStrategy {
      * each one of which may be for a different application or usage within
      * a single application.
      */
-    private String applicationId;
+    private final String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
-    private String uniqueId;
+    private final String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
-    private long lockTimeout;
+    private final long lockTimeout;
 
     /**
      *
@@ -66,37 +66,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         }
         this.lockTimeout = lockTimeout;
     }
-
-    @Override
-    public boolean acquire() {
-        final Lock lock;
-        try {
-            lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
-        } catch (final Exception e) {
-            LOGGER.debug("[{}] failed querying for [{}] lock.", this.uniqueId, this.applicationId, e);
-            return false;
-        }
-
-        boolean result = false;
-        if (lock != null) {
-            final ZonedDateTime expDate = lock.getExpirationDate();
-            if (lock.getUniqueId() == null) {
-                // No one currently possesses lock
-                LOGGER.debug("[{}] trying to acquire [{}] lock.", this.uniqueId, this.applicationId);
-                result = acquire(lock);
-            } else if (expDate == null || ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
-                // Acquire expired lock regardless of who formerly owned it
-                LOGGER.debug("[{}] trying to acquire expired [{}] lock.", this.uniqueId, this.applicationId);
-                result = acquire(lock);
-            }
-        } else {
-            // First acquisition attempt for this applicationId
-            LOGGER.debug("Creating [{}] lock initially held by [{}].", applicationId, uniqueId);
-            result = acquire(new Lock());
-        }
-        return result;
-    }
-
+    
     @Override
     public void release() {
         final Lock lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
@@ -153,6 +123,36 @@ public class JpaLockingStrategy implements LockingStrategy {
         return success;
     }
 
+    @Override
+    public boolean acquire() {
+        final Lock lock;
+        try {
+            lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
+        } catch (final Exception e) {
+            LOGGER.debug("[{}] failed querying for [{}] lock.", this.uniqueId, this.applicationId, e);
+            return false;
+        }
+
+        boolean result = false;
+        if (lock != null) {
+            final ZonedDateTime expDate = lock.getExpirationDate();
+            if (lock.getUniqueId() == null) {
+                // No one currently possesses lock
+                LOGGER.debug("[{}] trying to acquire [{}] lock.", this.uniqueId, this.applicationId);
+                result = acquire(lock);
+            } else if (expDate == null || ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
+                // Acquire expired lock regardless of who formerly owned it
+                LOGGER.debug("[{}] trying to acquire expired [{}] lock.", this.uniqueId, this.applicationId);
+                result = acquire(lock);
+            }
+        } else {
+            // First acquisition attempt for this applicationId
+            LOGGER.debug("Creating [{}] lock initially held by [{}].", applicationId, uniqueId);
+            result = acquire(new Lock());
+        }
+        return result;
+    }
+
 
     /**
      * Describes a database lock.
@@ -180,7 +180,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
         @Version
         @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
-        private Long version = 0L;
+        private final Long version = 0L;
         
         /**
          * @return the applicationId

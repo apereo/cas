@@ -1,7 +1,40 @@
 <div class="box" id="login">
     <div class="login-header">
         <h2 th:text="#{cas.login.pagetitle}"></h2>
-        <span class="fa-stack fa-2x hidden-xs">
+        <span th:if="${sqrlEnabled}">
+            
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+
+                var sqrlurl =  /*[[${sqrlUrl}]]*/
+
+                /*]]>*/
+            </script>
+
+            <script type="text/javascript" th:inline="javascript">
+                function jqueryReady() {
+
+                    head.load(
+                            /*[[@{/js/sqrl/sqrl.js}]]*/
+                    );
+                }
+            </script>
+
+            <img id="sqrlImg" th:title="${sqrlurl}" th:src="@{'data:image/jpeg;base64,'+${sqrlImage}}"
+                 onclick="sqrlInProgress(sqrlurl)"/>
+
+            <div id="cancelSqrl" style="visibility: hidden">
+                <br/>
+                <div>Waiting for SQRL client to authenticate...</div>
+                <button type="button" class="btn btn-danger" onclick="location.reload()">Cancel</button>
+            </div>
+            <!--
+            <span th:text="${#servletContext.getAttribute('sqrlCorrelator')}" />
+            <span th:text="${#servletContext.getAttribute('sqrlUrl')}" />
+            <span th:text="${#servletContext.getAttribute('sqrlRefreshSeconds')}" />
+            -->
+        </span>
+        <span class="fa-stack fa-2x hidden-xs" th:unless="${sqrlEnabled}">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
         </span>
@@ -42,7 +75,7 @@
 
         <section class="row">
             <label for="password" th:utext="#{screen.welcome.label.password}"/>
-            
+
             <div>
                 <input class="required"
                        type="password"
@@ -62,11 +95,11 @@
         </section>
         <section class="row check">
             <p th:if="${rememberMeAuthenticationEnabled}">
-                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"  />
+                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"/>
                 <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}"/>
             </p>
         </section>
-        
+
         <section class="row" th:if="${recaptchaSiteKey}">
             <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
         </section>
@@ -89,19 +122,19 @@
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         <input type="hidden" name="_eventId" value="resetPassword"/>
         <span class="fa fa-unlock"></span>
-        <a th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)" onclick="$('#passwordManagementForm').submit();" />
+        <a th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)" onclick="$('#passwordManagementForm').submit();"/>
         <p/>
     </form>
-   
+
     <div th:unless="${passwordManagementEnabled}">
         <span class="fa fa-question-circle"></span>
-        <span th:utext="#{screen.pm.button.forgotpwd}" />
+        <span th:utext="#{screen.pm.button.forgotpwd}"/>
         <p/>
     </div>
-    
+
     <script type="text/javascript" th:inline="javascript">
         var i = [[#{screen.welcome.button.loginwip}]]
-        $("#fm1").submit(function() {
+        $("#fm1").submit(function () {
             $(":submit").attr("disabled", true);
             $(":submit").attr("value", i);
             return true;

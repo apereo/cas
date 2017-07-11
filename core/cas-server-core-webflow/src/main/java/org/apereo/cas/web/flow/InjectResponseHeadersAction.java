@@ -31,7 +31,7 @@ public class InjectResponseHeadersAction extends RedirectToServiceAction {
                                           final Response response) {
         final HttpServletResponse httpResponse = WebUtils.getHttpServletResponse(requestContext);
         httpResponse.addHeader(CasProtocolConstants.PARAMETER_SERVICE, response.getUrl());
-        response.getAttributes().forEach((k, v) -> httpResponse.addHeader(k, v));
+        response.getAttributes().forEach(httpResponse::addHeader);
         return success();
     }
 }

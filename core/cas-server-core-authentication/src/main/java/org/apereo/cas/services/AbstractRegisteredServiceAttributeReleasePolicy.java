@@ -92,6 +92,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     @Override
     public Map<String, Object> getAttributes(final Principal principal, final Service selectedService,
                                              final RegisteredService registeredService) {
+
+        LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
+                principal.getId(), selectedService.getId(), registeredService.getServiceId());
+
         LOGGER.debug("Locating principal attributes for [{}]", principal.getId());
         final Map<String, Object> principalAttributes = getPrincipalAttributesRepository() == null
                 ? principal.getAttributes() : getPrincipalAttributesRepository().getAttributes(principal);
@@ -123,7 +127,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.debug("Invoking attribute filter [{}] on the final set of attributes", getAttributeFilter());
             return getAttributeFilter().filter(attributesToRelease);
         }
-
+        LOGGER.debug("Finalizing attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
+                principal.getId(), selectedService.getId(), registeredService.getServiceId());
         return returnFinalAttributesCollection(attributesToRelease, registeredService);
     }
 

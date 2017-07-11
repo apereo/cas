@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver
         extends PrincipalAttributeMultifactorAuthenticationPolicyEventResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver.class);
+    private static final Class[] PREDICATE_CTOR_PARAMETERS = {Object.class, Object.class, Object.class, Object.class};
 
     private final Resource predicateResource;
 
@@ -70,16 +71,15 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             final Class<Predicate> predicateClass = classLoader.parseClass(script);
 
             final Object[] args = {service, principal, providers, LOGGER};
-            final Class[] types = {Object.class, Object.class, Object.class, Object.class};
 
-            final Constructor<Predicate> ctor = predicateClass.getDeclaredConstructor(types);
+            final Constructor<Predicate> ctor = predicateClass.getDeclaredConstructor(PREDICATE_CTOR_PARAMETERS);
             final Predicate<MultifactorAuthenticationProvider> predicate = ctor.newInstance(args);
 
             return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-                    input -> providers.stream()
-                            .filter(predicate)
-                            .findFirst()
-                            .isPresent());
+                input -> providers.stream()
+                        .filter(predicate)
+                        .findFirst()
+                        .isPresent());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

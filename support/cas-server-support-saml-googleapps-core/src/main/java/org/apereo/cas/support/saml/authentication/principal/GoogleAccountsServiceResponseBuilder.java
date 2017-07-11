@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
@@ -31,7 +32,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 
-import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -179,10 +179,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         response.getAssertions().add(assertion);
 
-        final StringWriter writer = new StringWriter();
-        this.samlObjectBuilder.marshalSamlXmlObject(response, writer);
-
-        final String result = writer.toString();
+        final String result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
         LOGGER.debug("Generated Google SAML response: [{}]", result);
         return result;
     }
