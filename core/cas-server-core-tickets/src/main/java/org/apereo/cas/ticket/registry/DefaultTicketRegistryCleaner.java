@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
