@@ -8,10 +8,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import org.apereo.cas.TicketSerializer;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,8 +106,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
 
         if (TGT_TABLE.equals(storageName)) {
             final String parentTgtId = ticket.getGrantingTicket() == null ? null : ticket.getGrantingTicket().getId();
-            final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
-            session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serialize(ticket), parentTgtId, calculateExpirationDate(tgt) / TEN));
+            session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serialize(ticket), parentTgtId, calculateExpirationDate(ticket) / TEN));
         } else if (ST_TABLE.equals(storageName)) {
             session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serialize(ticket)));
         } else {
@@ -178,8 +174,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
         if (TGT_TABLE.equals(storageName)) {
-            final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
-            session.execute(this.updateTgtStmt.bind(serializer.serialize(ticket), ticket.getId(), calculateExpirationDate(tgt) / TEN));
+            session.execute(this.updateTgtStmt.bind(serializer.serialize(ticket), ticket.getId(), calculateExpirationDate(ticket) / TEN));
         } else if (ST_TABLE.equals(storageName)) {
             session.execute(this.updateStStmt.bind(serializer.serialize(ticket), ticket.getId()));
         } else {
@@ -233,9 +228,9 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
         return System.currentTimeMillis() / TEN_SECONDS;
     }
 
-    private static long calculateExpirationDate(final TicketGrantingTicketImpl ticket) {
+    private static long calculateExpirationDate(final Ticket ticket) {
         final ZonedDateTime ticketTtl = ticket.getCreationTime().plusSeconds(ticket.getExpirationPolicy().getTimeToLive());
-        final ZonedDateTime ticketTtk = ticket.getLastTimeUsed().plusSeconds(ticket.getExpirationPolicy().getTimeToIdle());
+        final ZonedDateTime ticketTtk = ((TicketState) ticket).getLastTimeUsed().plusSeconds(ticket.getExpirationPolicy().getTimeToIdle());
 
         return ticketTtl.isBefore(ticketTtk) ? ticketTtl.toEpochSecond() : ticketTtk.toEpochSecond();
     }
