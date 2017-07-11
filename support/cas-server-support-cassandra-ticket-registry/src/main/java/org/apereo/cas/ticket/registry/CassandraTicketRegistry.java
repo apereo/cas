@@ -25,8 +25,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration.ST_TABLE;
-import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration.TGT_TABLE;
+import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration.*;
 
 /**
  * @author David Rodriguez
@@ -64,35 +63,34 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     private final Session session;
 
     public CassandraTicketRegistry(final TicketCatalog ticketCatalog, final String contactPoints, final String username, final String password,
-                                   final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra, final String tgtTable, final String stTable,
-                                   final String expiryTable, final String lastRunTable) {
+                                   final String keyspace, final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
         this.ticketCatalog = ticketCatalog;
         this.serializer = serializer;
         this.typeToWriteToCassandra = typeToWriteToCassandra;
         final Cluster cluster = Cluster.builder().addContactPoints(contactPoints.split(",")).withCredentials(username, password)
                 .withProtocolVersion(ProtocolVersion.V3).build();
 
-        this.session = cluster.connect();
+        this.session = cluster.connect(keyspace);
 
-        this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ")
+        this.selectTgtStmt = session.prepare("select ticket from " + TGT_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.insertTgtStmt = session.prepare("insert into " + TGT_TABLE + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.deleteTgtStmt = session.prepare("delete from " + TGT_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.updateTgtStmt = session.prepare("update " + TGT_TABLE + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        this.selectStStmt = session.prepare("select ticket from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.insertStStmt = session.prepare("insert into " + stTable + " (id, ticket) values (?, ?) ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.deleteStStmt = session.prepare("delete from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.updateStStmt = session.prepare("update " + stTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.selectStStmt = session.prepare("select ticket from " + ST_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.insertStStmt = session.prepare("insert into " + ST_TABLE + " (id, ticket) values (?, ?) ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.deleteStStmt = session.prepare("delete from " + ST_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.updateStStmt = session.prepare("update " + ST_TABLE + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
 
-        this.selectExStmt = session.prepare("select ticket, id from " + expiryTable + " where expiration_bucket = ? ")
+        this.selectExStmt = session.prepare("select ticket, id from " + EXPIRY_TABLE + " where expiration_bucket = ? ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.selectDateExStmt = session.prepare("select expiration_bucket from " + expiryTable)
+        this.selectDateExStmt = session.prepare("select expiration_bucket from " + EXPIRY_TABLE)
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        this.selectLrStmt = session.prepare("select last_run from " + lastRunTable + " where id = 'LASTRUN' ")
+        this.selectLrStmt = session.prepare("select last_run from " + LAST_RUN_TABLE + " where id = 'LASTRUN' ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateLrStmt = session.prepare("update " + lastRunTable + " set last_run = ? where id = 'LASTRUN' ")
+        this.updateLrStmt = session.prepare("update " + LAST_RUN_TABLE + " set last_run = ? where id = 'LASTRUN' ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         final long lastRun = getLastRunTimestamp();
@@ -124,9 +122,8 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     public int deleteTicket(final String id) {
         if (deleteSingleTicket(id)) {
             return 1;
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     @Override

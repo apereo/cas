@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.TicketSerializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
 import org.apereo.cas.serializer.JacksonJsonSerializer;
@@ -20,18 +21,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @Configuration("cassandraTicketRegistryConfiguration")
 @EnableScheduling
-@EnableConfigurationProperties({CasConfigurationProperties.class, CassandraProperties.class})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CassandraTicketRegistryConfiguration {
 
     @Autowired
-    private CassandraProperties cassandraProperties;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("cassandraTicketSerializer") final TicketSerializer ticketSerializer,
                                                   @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+        final CassandraTicketRegistryProperties cassandraProperties = casProperties.getTicket().getRegistry().getCassandra();
+
         return new CassandraTicketRegistry<>(ticketCatalog, cassandraProperties.getContactPoints(), cassandraProperties.getUsername(),
-                cassandraProperties.getPassword(), ticketSerializer, String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
-                cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
+                cassandraProperties.getPassword(), cassandraProperties.getKeyspace(), ticketSerializer, String.class);
     }
 
     @Bean

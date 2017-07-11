@@ -25,6 +25,8 @@ public class CassandraTicketRegistryTicketCatalogConfiguration extends CasCoreTi
      * Name for the serviceTicket tickets table.
      */
     public static final String ST_TABLE = "serviceTicket";
+    public static final String LAST_RUN_TABLE = "ticket_cleaner_lastrun";
+    public static final String EXPIRY_TABLE = "ticket_cleaner";
 
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
@@ -51,6 +52,9 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private RedisTicketRegistryProperties redis = new RedisTicketRegistryProperties();
+
+    @NestedConfigurationProperty
+    private CassandraTicketRegistryProperties cassandra = new CassandraTicketRegistryProperties();
 
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
@@ -149,6 +153,14 @@ public class TicketRegistryProperties {
 
     public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
         this.dynamoDb = dynamoDb;
+    }
+
+    public CassandraTicketRegistryProperties getCassandra() {
+        return cassandra;
+    }
+
+    public void setCassandra(CassandraTicketRegistryProperties cassandra) {
+        this.cassandra = cassandra;
     }
 
     public static class InMemory {
