@@ -97,7 +97,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         if (config.isDirectory() && config.exists()) {
             loadSettingsFromConfigurationSources(environment, props, config);
         } else {
-            LOGGER.warn("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
+            LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path.", config);
         }
 
         if (LOGGER.isDebugEnabled()) {
