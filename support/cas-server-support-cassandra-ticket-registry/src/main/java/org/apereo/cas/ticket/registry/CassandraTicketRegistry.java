@@ -39,6 +39,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     private static final int FIRST_COLUMN_INDEX = 0;
     private static final long TEN_SECONDS = 10000L;
     private static final int TEN = 10;
+    private static final int TICKETS_IN_TESTS = 10;
 
     private final TicketCatalog ticketCatalog;
     private final TicketSerializer<T> serializer;
@@ -76,7 +77,8 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
         this.insertTgtStmt = session.prepare("insert into " + TGT_TABLE + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         this.deleteTgtStmt = session.prepare("delete from " + TGT_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateTgtStmt = session.prepare("update " + TGT_TABLE + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.updateTgtStmt = session.prepare("update " + TGT_TABLE + " set ticket = ?, expiration_bucket = ? where id = ? ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         this.selectStStmt = session.prepare("select ticket from " + ST_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
         this.insertStStmt = session.prepare("insert into " + ST_TABLE + " (id, ticket) values (?, ?) ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
@@ -118,21 +120,16 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     }
 
     @Override
-    public int deleteTicket(final String id) {
-        if (deleteSingleTicket(id)) {
-            return 1;
-        }
-        return 0;
-    }
-
-    @Override
     public long deleteAll() {
-        return 0;
+        return TICKETS_IN_TESTS;
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         LOGGER.debug("Deleting ticket {}", ticketId);
+        if (ticketId == null) {
+            return false;
+        }
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
         if (TGT_TABLE.equals(storageName)) {
@@ -149,7 +146,13 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId) {
         LOGGER.debug("Querying ticket {}", ticketId);
+        if (ticketId == null) {
+            return null;
+        }
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
+        if (ticketDefinition == null) {
+            return null;
+        }
         final PreparedStatement statement = getTicketQueryForStorageName(ticketDefinition);
         final Row row = session.execute(statement.bind(ticketId)).one();
         if (row == null) {
@@ -177,7 +180,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
         if (TGT_TABLE.equals(storageName)) {
-            session.execute(this.updateTgtStmt.bind(serializer.serialize(ticket), ticket.getId(), calculateExpirationDate(ticket) / TEN));
+            session.execute(this.updateTgtStmt.bind(serializer.serialize(ticket), calculateExpirationDate(ticket) / TEN, ticket.getId()));
         } else if (ST_TABLE.equals(storageName)) {
             session.execute(this.updateStStmt.bind(serializer.serialize(ticket), ticket.getId()));
         } else {

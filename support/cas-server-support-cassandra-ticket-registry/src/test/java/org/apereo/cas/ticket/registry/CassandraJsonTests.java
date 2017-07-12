@@ -1,15 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.serializer.JacksonJsonSerializer;
-import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.utils.TicketCatalogUtils;
 import org.apereo.cas.utils.TicketCreatorUtils;
-import org.cassandraunit.CassandraCQLUnit;
-import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -24,14 +21,11 @@ import static org.junit.Assert.*;
  */
 public class CassandraJsonTests {
 
-    @Rule
-    public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema.cql"), "cassandra.yaml", 120_000L);
     private CassandraTicketRegistry<String> dao;
 
     @Before
     public void setUp() throws Exception {
-        final DefaultTicketCatalog ticketCatalog = new DefaultTicketCatalog();
-        dao = new CassandraTicketRegistry<>(ticketCatalog, "localhost", "", "", "cas2", new JacksonJsonSerializer(), String.class);
+        dao = new CassandraTicketRegistry<>(TicketCatalogUtils.getTicketCatalog(), "localhost", "", "", "cas2", new JacksonJsonSerializer(), String.class);
     }
 
     @Test

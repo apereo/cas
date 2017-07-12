@@ -1,10 +1,20 @@
+plugins {
+    id "com.github.william-hill-online.cassandra" version "0.4"
+}
 
 description = "Apereo CAS Cassandra ticket registry"
+
+cassandra {
+    port 9042
+    schemaFilePath "$projectDir/src/test/resources/schema.cql,$projectDir/src/test/resources/schema-binary.cql"
+}
+
+test.dependsOn startCassandra
+test.finalizedBy stopCassandra
+
 dependencies {
-    compile project(":core:cas-server-core")
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-logout")
 
     compile libraries.cassandra
     compile libraries.spring
