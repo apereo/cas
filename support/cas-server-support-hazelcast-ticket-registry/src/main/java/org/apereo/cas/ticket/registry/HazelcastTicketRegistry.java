@@ -107,7 +107,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
                 .map(this::getTicketMapInstanceByMetadata)
                 .filter(Objects::nonNull)
                 .mapToInt(instance -> {
-                    int size = instance.size();
+                    final int size = instance.size();
                     instance.evictAll();
                     instance.clear();
                     return size;
