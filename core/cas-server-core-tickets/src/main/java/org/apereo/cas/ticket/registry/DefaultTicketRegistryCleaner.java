@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
@@ -65,27 +63,25 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * Clean tickets.
      */
     protected void cleanInternal() {
-        final Collection<Ticket> ticketsToRemove = ticketRegistry.getTickets()
+        final int ticketsDeleted = ticketRegistry.getTickets()
                 .stream()
                 .filter(Ticket::isExpired)
-                .collect(Collectors.toSet());
-        LOGGER.debug("[{}] expired tickets found.", ticketsToRemove.size());
+                .mapToInt(ticket -> {
+                    if (ticket instanceof TicketGrantingTicket) {
+                        LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                        logoutManager.performLogout((TicketGrantingTicket) ticket);
+                        return ticketRegistry.deleteTicket(ticket.getId());
+                    } else if (ticket instanceof ServiceTicket) {
+                        LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+                        return ticketRegistry.deleteTicket(ticket.getId());
+                    } else {
+                        LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
+                        return 0;
+                    }
+                })
+                .sum();
 
-        int count = 0;
-
-        for (final Ticket ticket : ticketsToRemove) {
-            if (ticket instanceof TicketGrantingTicket) {
-                LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                logoutManager.performLogout((TicketGrantingTicket) ticket);
-                count += ticketRegistry.deleteTicket(ticket.getId());
-            } else if (ticket instanceof ServiceTicket) {
-                LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                count += ticketRegistry.deleteTicket(ticket.getId());
-            } else {
-                LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
-            }
-        }
-        LOGGER.info("[{}] expired tickets removed.", count);
+        LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
     }
 
     /**
