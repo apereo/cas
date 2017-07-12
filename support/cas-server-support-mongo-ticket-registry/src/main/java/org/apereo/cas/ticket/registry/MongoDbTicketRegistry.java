@@ -29,8 +29,10 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbTicketRegistry.class);
     private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
+    private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
     private final boolean dropCollection;
     private final TicketCatalog ticketCatalog;
@@ -187,9 +189,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 .map(this::getTicketCollectionInstanceByMetadata)
                 .filter(StringUtils::isNotBlank)
                 .mapToLong(collectionName -> {
-                    final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
-                    final long countTickets = this.mongoTemplate.count(query, collectionName);
-                    mongoTemplate.remove(query, collectionName);
+                    final long countTickets = this.mongoTemplate.count(SELECT_ALL_NAMES_QUERY, collectionName);
+                    mongoTemplate.remove(SELECT_ALL_NAMES_QUERY, collectionName);
                     return countTickets;
                 })
                 .sum();
