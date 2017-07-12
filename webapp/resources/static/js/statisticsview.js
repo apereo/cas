@@ -20,10 +20,10 @@ var Gauge = function (wrapper, percent, options) {
         .range(["green", "green", "goldenrod", "red"]);
 
     var arc = d3.svg.arc()
-            .startAngle(0)
-            .innerRadius(width * 0.4)
-            .outerRadius(width * 0.5)
-        ;
+        .startAngle(0)
+        .innerRadius(width * 0.4)
+        .outerRadius(width * 0.5)
+    ;
 
     var svg = d3.select(wrapper).append("svg")
         .attr("width", width)
@@ -87,7 +87,7 @@ var Gauge = function (wrapper, percent, options) {
 function upTime(countTo, el) {
     var wrapper = document.getElementById('uptime-panel');
     var element = document.getElementById(el);
-    var difference = new Date(countTo*1000);
+    var difference = new Date(countTo * 1000);
 
     var days = Math.floor(difference / (60 * 60 * 1000 * 24) * 1);
     var hours = Math.floor((difference % (60 * 60 * 1000 * 24)) / (60 * 60 * 1000) * 1);
@@ -96,7 +96,7 @@ function upTime(countTo, el) {
 
     clearTimeout(upTime.to);
 
-    if (isNaN(days) || isNaN(hours) || isNaN(mins) || isNaN(secs) ) {
+    if (isNaN(days) || isNaN(hours) || isNaN(mins) || isNaN(secs)) {
         wrapper.style.display = 'none';
     } else {
         days = (days == 1) ? days + ' day ' : days + ' days ';
@@ -108,10 +108,10 @@ function upTime(countTo, el) {
         element.innerHTML = timeString;
         wrapper.style.display = 'block';
 
-        upTime.to = setTimeout(function() {
+        upTime.to = setTimeout(function () {
             countTo = countTo + 1;
             upTime(countTo, el);
-        },1000);
+        }, 1000);
 
     }
 }
@@ -133,28 +133,36 @@ var casStatistics = function (urls, messages) {
 
     var memoryGauage;
 
-    var getRemoteJSON = function(url) {
-        return $.getJSON( url);
+    var getRemoteJSON = function (url) {
+        return $.getJSON(url);
     };
 
-    var tickets = function() {
+    var tickets = function () {
         var data = getRemoteJSON(urls.tickets);
-        data.done(function( data ) {
-            updateElementValue( 'unexpiredTgts', data.unexpiredTgts );
-            updateElementValue( 'unexpiredSts', data.unexpiredSts );
-            updateElementValue( 'expiredTgts', data.expiredTgts );
-            updateElementValue( 'expiredSts', data.expiredSts );
-            setTimeout( tickets, timers.tickets );
-        });
+        data
+            .error(function (xhr, status, err) {
+                console.error(status + " " + err);  
+            })
+            .done(function (data) {
+                updateElementValue('unexpiredTgts', data.unexpiredTgts);
+                updateElementValue('unexpiredSts', data.unexpiredSts);
+                updateElementValue('expiredTgts', data.expiredTgts);
+                updateElementValue('expiredSts', data.expiredSts);
+                setTimeout(tickets, timers.tickets);
+            });
     };
 
-    var updateElementValue = function(el, val) {
-        $( '#' + el ).text( val );
+    var updateElementValue = function (el, val) {
+        $('#' + el).text(val);
     };
 
-    var memory = function() {
+    var memory = function () {
         var data = getRemoteJSON(urls.memory);
-        data.done(function( data ) {
+        data
+            .error(function (xhr, status, err) {
+                console.error(status + " " + err);
+            })
+            .done(function (data) {
             updateElementValue('freeMemory', data.freeMemory.toFixed(2));
             // updateElementValue('totalMemory', data.totalMemory);
             // updateElementValue('maxMemory', data.maxMemory);
@@ -162,28 +170,30 @@ var casStatistics = function (urls, messages) {
 
             var memCalc = (data.totalMemory / data.maxMemory).toFixed(2);
 
-            if ( !memoryGauage ) {
-                memoryGauage = new Gauge('#maxMemoryGauge', memCalc, {width: 200, height: 200,
+            if (!memoryGauage) {
+                memoryGauage = new Gauge('#maxMemoryGauge', memCalc, {
+                    width: 200, height: 200,
                     label: messages.memoryGaugeTitle,
-                    textClass: 'runtimeStatistics'});
+                    textClass: 'runtimeStatistics'
+                });
             } else {
-                memoryGauage.update( memCalc );
+                memoryGauage.update(memCalc);
             }
 
-            setTimeout( memory, timers.memory );
+            setTimeout(memory, timers.memory);
         });
 
     };
-    var availability = function() {
+    var availability = function () {
         var data = getRemoteJSON(urls.availability);
-        data.done(function( data ) {
+        data.done(function (data) {
             updateElementValue('upTime', data.upTime);
-            setTimeout( availability, timers.availability );
+            setTimeout(availability, timers.availability);
         });
     };
 
     // initialization *******
-    ( function init () {
+    (function init() {
         $('#loading, .statisticsView').toggle();
         tickets();
         memory();
@@ -192,18 +202,18 @@ var casStatistics = function (urls, messages) {
 
     // Public Methods
     return {
-        getTickets: function() {
+        getTickets: function () {
             return tickets();
         },
-        getMemory: function() {
+        getMemory: function () {
             return memory();
         },
-        getAvailability: function() {
+        getAvailability: function () {
             return availability();
         },
-        updateGauge: function(val){
+        updateGauge: function (val) {
             if (memoryGauage) {
-                memoryGauage.update( val );
+                memoryGauage.update(val);
             } else {
                 return 'unable to update';
             }
