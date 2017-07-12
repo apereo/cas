@@ -187,10 +187,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 .map(this::getTicketCollectionInstanceByMetadata)
                 .filter(StringUtils::isNotBlank)
                 .mapToLong(collectionName -> {
-                        final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
-                        final long countTickets = this.mongoTemplate.count(query, collectionName);
-                        mongoTemplate.remove(query, collectionName);
-                        return countTickets;
+                    final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
+                    final long countTickets = this.mongoTemplate.count(query, collectionName);
+                    mongoTemplate.remove(query, collectionName);
+                    return countTickets;
                 })
                 .sum();
     }
@@ -201,7 +201,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      */
     private static Date getExpireAt(final Ticket ticket) {
         final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        
+
         // expiration policy can specify not to delete automatically
         if (ttl < 1) {
             return null;
