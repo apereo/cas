@@ -13,9 +13,8 @@ import javax.annotation.PreDestroy;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -61,8 +60,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     public void addTicket(final Ticket ticket) {
         final long ttl = ticket.getExpirationPolicy().getTimeToLive();
         if (ttl < 0) {
-            throw new IllegalArgumentException("The expiration policy of ticket "
-                    + ticket.getId() + "is set to use a negative ttl");
+            throw new IllegalArgumentException("The expiration policy of ticket " + ticket.getId() + "is set to use a negative ttl");
         }
 
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
@@ -105,32 +103,25 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public long deleteAll() {
-        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        final AtomicLong count = new AtomicLong();
-        metadata.forEach(r -> {
-            final IMap<String, Ticket> instance = getTicketMapInstanceByMetadata(r);
-            if (instance != null) {
-                count.addAndGet(instance.size());
-                instance.evictAll();
-                instance.clear();
-            }
-        });
-        return count.get();
+        return this.ticketCatalog.findAll().stream()
+                .map(this::getTicketMapInstanceByMetadata)
+                .filter(Objects::nonNull)
+                .mapToInt(instance -> {
+                    int size = instance.size();
+                    instance.evictAll();
+                    instance.clear();
+                    return size;
+                })
+                .sum();
     }
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Ticket> tickets = new HashSet<>();
-        try {
-            final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-            metadata.forEach(t -> {
-                final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(t);
-                tickets.addAll(map.values().stream().limit(this.pageSize).collect(Collectors.toList()));
-            });
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return decodeTickets(tickets);
+        return this.ticketCatalog.findAll().stream()
+                .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
+                .flatMap(tickets -> tickets.stream().limit(pageSize).collect(Collectors.toList()).stream())
+                .map(this::decodeTicket)
+                .collect(Collectors.toSet());
     }
 
     /**

@@ -19,8 +19,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -157,22 +156,12 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Ticket> tickets = new HashSet<>();
-        try {
-            final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-            metadata.forEach(t -> {
-                final String map = getTicketCollectionInstanceByMetadata(t);
-                final Collection<TicketHolder> ticketHolders = this.mongoTemplate.findAll(TicketHolder.class, map);
-                final Collection<Ticket> colTickets = ticketHolders
-                        .stream()
-                        .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
-                        .collect(Collectors.toList());
-                tickets.addAll(colTickets);
-            });
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return decodeTickets(tickets);
+        return this.ticketCatalog.findAll().stream()
+                .map(this::getTicketCollectionInstanceByMetadata)
+                .map(map -> mongoTemplate.findAll(TicketHolder.class, map))
+                .flatMap(List::stream)
+                .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -194,18 +183,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        final AtomicLong count = new AtomicLong();
-        metadata.forEach(r -> {
-            final String collectionName = getTicketCollectionInstanceByMetadata(r);
-            if (StringUtils.isNotBlank(collectionName)) {
-                final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
-                final long countTickets = this.mongoTemplate.count(query, collectionName);
-                count.addAndGet(countTickets);
-                mongoTemplate.remove(query, collectionName);
-            }
-        });
-        return count.get();
+        return ticketCatalog.findAll().stream()
+                .map(this::getTicketCollectionInstanceByMetadata)
+                .filter(StringUtils::isNotBlank)
+                .mapToInt(collectionName -> mongoTemplate.remove(getMatchingAllNamesQuery(), collectionName).getN())
+                .sum();
+    }
+
+    private static Query getMatchingAllNamesQuery() {
+        // TODO: Could this Query be converted to an static field?
+        return new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
     }
 
     /**
@@ -219,9 +206,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         if (ttl < 1) {
             return null;
         }
-        
-        final Date expireAt = new Date(System.currentTimeMillis() + (ttl * 1000));
-        return expireAt;
+
+        return new Date(System.currentTimeMillis() + (ttl * 1000));
     }
 
     private static String serializeTicketForMongoDocument(final Ticket ticket) {
