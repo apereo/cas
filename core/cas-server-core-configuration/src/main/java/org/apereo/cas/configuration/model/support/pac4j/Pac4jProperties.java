@@ -445,6 +445,52 @@ public class Pac4jProperties {
         private int maximumAuthenticationLifetime = 600;
         private String serviceProviderEntityId;
         private String serviceProviderMetadataPath;
+        private String clientName;
+        private boolean forceAuth;
+        private String authnContextClassRef;
+        private String keystoreAlias;
+        private String nameIdPolicyFormat;
+        private boolean wantsAssertionsSigned;
+
+        public boolean isForceAuth() {
+            return forceAuth;
+        }
+
+        public void setForceAuth(final boolean forceAuth) {
+            this.forceAuth = forceAuth;
+        }
+
+        public String getAuthnContextClassRef() {
+            return authnContextClassRef;
+        }
+
+        public void setAuthnContextClassRef(final String authnContextClassRef) {
+            this.authnContextClassRef = authnContextClassRef;
+        }
+
+        public String getKeystoreAlias() {
+            return keystoreAlias;
+        }
+
+        public void setKeystoreAlias(final String keystoreAlias) {
+            this.keystoreAlias = keystoreAlias;
+        }
+
+        public String getNameIdPolicyFormat() {
+            return nameIdPolicyFormat;
+        }
+
+        public void setNameIdPolicyFormat(final String nameIdPolicyFormat) {
+            this.nameIdPolicyFormat = nameIdPolicyFormat;
+        }
+
+        public boolean isWantsAssertionsSigned() {
+            return wantsAssertionsSigned;
+        }
+
+        public void setWantsAssertionsSigned(final boolean wantsAssertionsSigned) {
+            this.wantsAssertionsSigned = wantsAssertionsSigned;
+        }
 
         public String getKeystorePassword() {
             return this.keystorePassword;
@@ -500,6 +546,14 @@ public class Pac4jProperties {
 
         public void setServiceProviderMetadataPath(final String serviceProviderMetadataPath) {
             this.serviceProviderMetadataPath = serviceProviderMetadataPath;
+        }
+
+        public String getClientName() {
+            return clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 

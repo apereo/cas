@@ -67,7 +67,7 @@ public class ServiceWarningAction extends AbstractAction {
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
 
         if (request.getParameterMap().containsKey("ignorewarn")) {
-            if (Boolean.valueOf(request.getParameter("ignorewarn"))) {
+            if (Boolean.parseBoolean(request.getParameter("ignorewarn"))) {
                 this.warnCookieGenerator.removeCookie(response);
             }
         }

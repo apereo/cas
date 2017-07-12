@@ -17,6 +17,7 @@ import java.io.Serializable;
  * @param <T> the type parameter
  * @since 5.1.0
  */
+@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface ResponseBuilderLocator<T extends WebApplicationService> extends Serializable {
 

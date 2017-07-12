@@ -4,6 +4,8 @@ import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.util.Base64;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
@@ -26,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -59,17 +63,16 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         final String signingSecret = getRegisteredServiceJwtSigningSecret(service);
         final String encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
-        final String signingSecretAlg =
-                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING_ALG),
-                        JWSAlgorithm.HS256.getName());
+        final String serviceSigningAlg = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING_ALG);
+        final String signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
 
-        final String encryptionSecretAlg =
-                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_ALG),
-                        JWEAlgorithm.DIR.getName());
+        final String encryptionAlg = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_ALG);
+        final String encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
 
-        final String encryptionSecretMethod =
-                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD),
-                        EncryptionMethod.A192CBC_HS384.getName());
+        final String encryptionMethod = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD);
+        final String encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
+        final String secretIsBase64String = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED);
+        final boolean secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
 
         if (StringUtils.isNotBlank(signingSecret)) {
             Set<Algorithm> sets = new HashSet<>();
@@ -81,7 +84,8 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             final JWSAlgorithm signingAlg = findAlgorithmFamily(sets, signingSecretAlg);
 
             final JwtAuthenticator a = new JwtAuthenticator();
-            a.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, signingAlg));
+            final byte[] secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
+            a.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
 
             if (StringUtils.isNotBlank(encryptionSecret)) {
                 sets = new HashSet<>();
@@ -100,7 +104,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 sets.addAll(EncryptionMethod.Family.AES_GCM);
 
                 final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod);
-                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, encAlg, encMethod));
+                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(getSecretBytes(encryptionSecret, secretsAreBase64Encoded), encAlg, encMethod));
             } else {
                 LOGGER.warn("JWT authentication is configured to share a single key for both signing/encryption");
             }
@@ -122,7 +126,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @return the registered service jwt secret
      */
     private String getRegisteredServiceJwtEncryptionSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
+        return getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
     }
 
     /**
@@ -132,7 +136,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @return the registered service jwt secret
      */
     private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
+        return getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
     }
 
     /**
@@ -142,7 +146,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param propName the prop name
      * @return the registered service jwt secret
      */
-    protected String getRegisteredServiceJwtSecret(final RegisteredService service, final String propName) {
+    protected String getRegisteredServiceJwtProperty(final RegisteredService service, final String propName) {
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
@@ -158,5 +162,17 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         LOGGER.warn("Service [{}] does not define a property [{}] in the registry",
                 service.getServiceId(), propName);
         return null;
+    }
+
+    /**
+     * Convert secret to bytes honoring {@link TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED}
+     * config parameter.
+     *
+     * @param secret                - String to be represented to byte[]
+     * @param secretIsBase64Encoded - is this a base64 encoded #secret?
+     * @return byte[] representation of #secret
+     */
+    private byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
+        return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(UTF_8);
     }
 }

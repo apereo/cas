@@ -140,6 +140,7 @@ public class MonitorProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = 4722929378440179113L;
         private String maxWait = "PT5S";
 
         @NestedConfigurationProperty
@@ -163,6 +164,7 @@ public class MonitorProperties {
     }
 
     public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = -7139788158851782673L;
         private String validationQuery = "SELECT 1";
         private String maxWait = "PT5S";
 
@@ -221,9 +223,9 @@ public class MonitorProperties {
         private Status status = new Status();
         private SingleSignOnStatus singleSignOnStatus = new SingleSignOnStatus();
         private SpringWebflowReport springWebflowReport = new SpringWebflowReport();
-         private RegisteredServicesReport registeredServicesReport = new RegisteredServicesReport();
+        private RegisteredServicesReport registeredServicesReport = new RegisteredServicesReport();
 
-         
+
         public Endpoints() {
             setSensitive(Boolean.TRUE);
             setEnabled(Boolean.FALSE);

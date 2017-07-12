@@ -32,7 +32,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      */
     private String secretKeyAlgorithm = "AES";
 
-    private String encryptionSecretKey;
+    private final String encryptionSecretKey;
 
 
     /**
@@ -52,16 +52,16 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
             signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
-            LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
-                    signingKeyToUse, signingKeySize);
+            LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
+                    signingKeyToUse, signingKeySize, getSigningKeySetting());
         }
         setSigningKey(signingKeyToUse);
 
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
             this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
-            LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
-                    this.encryptionSecretKey, encryptionKeySize);
+            LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
+                    this.encryptionSecretKey, encryptionKeySize, getEncryptionKeySetting());
         } else {
             this.encryptionSecretKey = encryptionSecretKey;
         }
@@ -93,8 +93,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(StandardCharsets.UTF_8),
                     this.secretKeyAlgorithm);
             final CipherService cipher = new AesCipherService();
-            final byte[] result = cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
-            return result;
+            return cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -115,4 +114,18 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     public String getName() {
         return null;
     }
+
+    /**
+     * Gets encryption key setting.
+     *
+     * @return the encryption key setting
+     */
+    protected abstract String getEncryptionKeySetting();
+
+    /**
+     * Gets signing key setting.
+     *
+     * @return the signing key setting
+     */
+    protected abstract String getSigningKeySetting();
 }

@@ -36,7 +36,10 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("id_token_signing_alg_values_supported")
     private List<String> idTokenSigningAlgValuesSupported;
 
-    private CasConfigurationProperties casProperties;
+    @JsonProperty("introspection_endpoint_auth_methods_supported")
+    private List<String> introspectionSupportedAuthenticationMethods;
+
+    private final CasConfigurationProperties casProperties;
     private final String issuer;
     private final String serverPrefix;
 
@@ -45,6 +48,14 @@ public class OidcServerDiscoverySettings {
         this.issuer = issuer;
         this.serverPrefix = casProperties.getServer().getPrefix();
         this.casProperties = casProperties;
+    }
+
+    public List<String> getIntrospectionSupportedAuthenticationMethods() {
+        return introspectionSupportedAuthenticationMethods;
+    }
+
+    public void setIntrospectionSupportedAuthenticationMethods(final List<String> introspectionSupportedAuthenticationMethods) {
+        this.introspectionSupportedAuthenticationMethods = introspectionSupportedAuthenticationMethods;
     }
 
     public String getIssuer() {
@@ -79,6 +90,11 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("end_session_endpoint")
     public String getEndSessionEndpoint() {
         return casProperties.getServer().getLogoutUrl();
+    }
+
+    @JsonProperty("introspection_endpoint")
+    public String getIntrospectionEndpoint() {
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
     }
 
     public List<String> getScopesSupported() {

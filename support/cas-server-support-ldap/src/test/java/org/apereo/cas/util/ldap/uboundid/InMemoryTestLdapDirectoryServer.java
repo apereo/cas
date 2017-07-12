@@ -33,7 +33,7 @@ import java.util.Properties;
 public class InMemoryTestLdapDirectoryServer implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryTestLdapDirectoryServer.class);
 
-    private InMemoryDirectoryServer directoryServer;
+    private final InMemoryDirectoryServer directoryServer;
 
     private Collection<LdapEntry> ldapEntries;
 
@@ -114,7 +114,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
                         populateDefaultEntries(c);
                     }
                     retryCount = 0;
-                } catch (final Throwable e) {
+                } catch (final Exception e) {
                     Thread.sleep(2000);
                     retryCount--;
                 }
@@ -165,7 +165,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
     public boolean isAlive() {
         try {
             return getConnection() != null;
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             return false;
         }
     }

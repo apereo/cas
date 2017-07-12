@@ -72,9 +72,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      * The default status codes we accept.
      */
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[]{
-            HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
-            HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-            HttpURLConnection.HTTP_ACCEPTED, HttpURLConnection.HTTP_NO_CONTENT};
+        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
+        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
+        HttpURLConnection.HTTP_ACCEPTED, HttpURLConnection.HTTP_NO_CONTENT};
 
     /**
      * 20% of the total of threads in the pool to handle overhead.
@@ -228,8 +228,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
             final RequestConfig requestConfig = RequestConfig.custom()
                     .setSocketTimeout(this.readTimeout)
-                    .setConnectTimeout(Long.valueOf(this.connectionTimeout).intValue())
-                    .setConnectionRequestTimeout(Long.valueOf(this.connectionTimeout).intValue())
+                    .setConnectTimeout((int) this.connectionTimeout)
+                    .setConnectionRequestTimeout((int) this.connectionTimeout)
                     .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
                     .setRedirectsEnabled(this.redirectsEnabled)
                     .setAuthenticationEnabled(this.authenticationEnabled)

@@ -19,7 +19,7 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlAssertionRealmCodec.class);
 
     private final String realm;
-    private boolean uppercase = true;
+    private final boolean uppercase = true;
 
     public SamlAssertionRealmCodec(final String realm) {
         this.realm = realm;
@@ -41,7 +41,7 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     }
 
     private String parseCNValue(final String name) {
-        final int len = name.indexOf(",") > 0 ? name.indexOf(",") : name.length();
+        final int len = name.indexOf(',') > 0 ? name.indexOf(',') : name.length();
         String realm = name.substring(name.indexOf("CN=") + "CN=".length(), len);
 
         if (uppercase) {

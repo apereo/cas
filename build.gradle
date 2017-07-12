@@ -38,7 +38,6 @@ buildScan {
 buildscript {
     repositories {
         mavenLocal()
-        mavenCentral()
         jcenter()
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -49,14 +48,14 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:7.4.0"
+        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.1"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
-        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+        classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
         classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.7.2"
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.5"
     }
 }
@@ -68,7 +67,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-    
+
     if (project.name == "cas-server-support-bom") {
         logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
@@ -81,7 +80,7 @@ allprojects {
         required = isArtifactSigningRequired
         sign configurations.archives
     }
-        
+
     idea {
         module {
             downloadSources = false
@@ -92,7 +91,7 @@ allprojects {
             }
         }
     }
-    
+
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -127,6 +126,7 @@ subprojects {
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
+
 
     repositories {
         mavenLocal()
@@ -287,9 +287,6 @@ subprojects {
 
         provided libraries.javax
 
-        if (Boolean.getBoolean("genConfigMetadata")) {
-            optional libraries.springbootconfigmetadata
-        }
 
         if (!Boolean.getBoolean("skipFindbugs")) {
             findbugs libraries.findbugs
@@ -299,12 +296,8 @@ subprojects {
         }
 
         testImplementation libraries.tests
-        runtimeOnly libraries.javaximpl
     }
 
-    if (Boolean.getBoolean("genConfigMetadata")) {
-        compileJava.dependsOn(processResources)
-    }
 
     generateRebel.enabled = Boolean.getBoolean("enableJRebelAgent")
     if (Boolean.getBoolean("enableJRebelAgent")) {
@@ -330,6 +323,13 @@ task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggre
 task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
     baseName = "${project.archivesBaseName}"
     from rootProject.file("src")
+}
+
+task gradleHome(description: "Display GRADLE_HOME environment variable") {
+    doFirst {
+        println "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
+    }
+
 }
 
 artifacts {

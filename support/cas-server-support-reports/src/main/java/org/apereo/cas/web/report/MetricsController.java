@@ -24,7 +24,7 @@ import java.util.Properties;
  */
 public class MetricsController extends BaseCasMvcEndpoint {
 
-    private Properties initParameters = new Properties();
+    private final Properties initParameters = new Properties();
 
     @Autowired
     private ApplicationContext applicationContext;

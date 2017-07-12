@@ -2,21 +2,26 @@ package org.apereo.cas.config;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
+import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
+import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
@@ -32,10 +37,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 
 import javax.naming.directory.SearchControls;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +74,8 @@ public class CasPersonDirectoryConfiguration {
         list.addAll(jsonAttributeRepositories());
         list.addAll(groovyAttributeRepositories());
         list.addAll(grouperAttributeRepositories());
+        list.addAll(restfulAttributeRepositories());
+        list.addAll(scriptedAttributeRepositories());
         list.addAll(stubAttributeRepositories());
 
         OrderComparator.sort(list);
@@ -80,7 +88,7 @@ public class CasPersonDirectoryConfiguration {
     @Bean
     @RefreshScope
     public IPersonAttributeDao attributeRepository() {
-        return composeMergedAndCachedAttributeRepositories(attributeRepositories());
+        return cachingAttributeRepository();
     }
 
     @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
@@ -174,7 +182,7 @@ public class CasPersonDirectoryConfiguration {
                     ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
                 }
 
-                jdbcDao.setQueryAttributeMapping(Collections.singletonMap("username", jdbc.getUsername()));
+                jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
                 final Map<String, String> mapping = jdbc.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", jdbc.getUrl(), jdbc.getAttributes());
@@ -238,24 +246,57 @@ public class CasPersonDirectoryConfiguration {
         return list;
     }
 
-    private IPersonAttributeDao composeMergedAndCachedAttributeRepositories(final List<IPersonAttributeDao> list) {
-        final MergingPersonAttributeDaoImpl mergingDao = new MergingPersonAttributeDaoImpl();
+    @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
+    @Bean
+    @RefreshScope
+    public List<IPersonAttributeDao> scriptedAttributeRepositories() {
+        final List<IPersonAttributeDao> list = new ArrayList<>();
+        casProperties.getAuthn().getAttributeRepository().getScript()
+                .forEach(Unchecked.consumer(script -> {
+                    final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
+                    final String scriptFile = IOUtils.toString(script.getConfig().getLocation().getInputStream(), StandardCharsets.UTF_8);
+                    dao.setScriptFile(scriptFile);
+                    dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
+                    dao.setOrder(script.getOrder());
+                    LOGGER.debug("Configured scripted attribute sources from [{}]", script.getConfig().getLocation());
+                    list.add(dao);
+                }));
+        return list;
+    }
 
-        final String merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
-        LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
-        switch (merger.toLowerCase()) {
-            case "merge":
-                mergingDao.setMerger(new MultivaluedAttributeMerger());
-                break;
-            case "add":
-                mergingDao.setMerger(new NoncollidingAttributeAdder());
-                break;
-            case "replace":
-            default:
-                mergingDao.setMerger(new ReplacingAttributeAdder());
-                break;
-        }
+    @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
+    @Bean
+    @RefreshScope
+    public List<IPersonAttributeDao> restfulAttributeRepositories() {
+        final List<IPersonAttributeDao> list = new ArrayList<>();
+        casProperties.getAuthn().getAttributeRepository().getRest().forEach(rest -> {
+            if (StringUtils.isNotBlank(rest.getUrl())) {
 
+                final RestfulPersonAttributeDao dao = new RestfulPersonAttributeDao();
+                dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
+                dao.setOrder(rest.getOrder());
+                dao.setUrl(rest.getUrl());
+                dao.setMethod(HttpMethod.resolve(rest.getMethod()).name());
+
+                if (StringUtils.isNotBlank(rest.getBasicAuthPassword()) && StringUtils.isNotBlank(rest.getBasicAuthUsername())) {
+                    dao.setBasicAuthPassword(rest.getBasicAuthPassword());
+                    dao.setBasicAuthUsername(rest.getBasicAuthUsername());
+                    LOGGER.debug("Basic authentication credentials are located for REST endpoint [{}]", rest.getUrl());
+                } else {
+                    LOGGER.debug("Basic authentication credentials are not defined for REST endpoint [{}]", rest.getUrl());
+                }
+
+                LOGGER.debug("Configured REST attribute sources from [{}]", rest.getUrl());
+                list.add(dao);
+            }
+        });
+
+        return list;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "cachingAttributeRepository")
+    public IPersonAttributeDao cachingAttributeRepository() {
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
@@ -266,17 +307,44 @@ public class CasPersonDirectoryConfiguration {
                 .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
                 .build();
         impl.setUserInfoCache(graphs.asMap());
+        impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
+
+        LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
+                casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
+        return impl;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "aggregatingAttributeRepository")
+    public IPersonAttributeDao aggregatingAttributeRepository() {
+        final MergingPersonAttributeDaoImpl mergingDao = new MergingPersonAttributeDaoImpl();
+        final String merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
+        LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
+        mergingDao.setMerger(getAttributeMerger(merger));
+
+        final List<IPersonAttributeDao> list = attributeRepositories();
         mergingDao.setPersonAttributeDaos(list);
-        impl.setCachedPersonAttributesDao(mergingDao);
 
         if (list.isEmpty()) {
             LOGGER.debug("No attribute repository sources are available/defined to merge together.");
         } else {
             LOGGER.debug("Configured attribute repository sources to merge together: [{}]", list);
-            LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
-                    casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
         }
-        return impl;
+
+        return mergingDao;
     }
+
+    private IAttributeMerger getAttributeMerger(final String merger) {
+        switch (merger.toLowerCase()) {
+            case "merge":
+                return new MultivaluedAttributeMerger();
+            case "add":
+                return new NoncollidingAttributeAdder();
+            case "replace":
+            default:
+                return new ReplacingAttributeAdder();
+        }
+    }
+
 }
 

@@ -21,6 +21,7 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -40,7 +41,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -140,6 +140,17 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id    the id
+     * @param error the error
+     * @return the event
+     */
+    protected Event newEvent(final String id, final Exception error) {
+        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+    }
+
+    /**
      * New event based on the given id.
      *
      * @param id the id
@@ -169,16 +180,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     }
 
-    /**
-     * New event based on the id, which contains an error attribute referring to the exception occurred.
-     *
-     * @param id    the id
-     * @param error the error
-     * @return the event
-     */
-    protected Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
-    }
 
     /**
      * Gets credential from context.
@@ -373,7 +374,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
-                        return Collections.singleton(event);
+                        return CollectionUtils.wrapSet(event);
                     }
                     LOGGER.debug("Provider [{}] could not be verified", provider);
                 } else {
@@ -561,13 +562,13 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builder, credential);
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
-            return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             final MessageContext messageContext = context.getMessageContext();
             messageContext.addMessage(new MessageBuilder().error()
                     .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName())).build());
-            return Collections.singleton(new EventFactorySupport().error(this));
+            return CollectionUtils.wrapSet(new EventFactorySupport().error(this));
         }
     }
 }

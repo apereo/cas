@@ -22,15 +22,15 @@ public class MockServiceTicket implements ServiceTicket {
 
     private static final long serialVersionUID = 8203377063087967768L;
 
-    private String id;
+    private final String id;
 
-    private ZonedDateTime created;
+    private final ZonedDateTime created;
 
-    private Service service;
+    private final Service service;
     
     private ExpirationPolicy expiration = new NeverExpiresExpirationPolicy();
     
-    private TicketGrantingTicket parent;
+    private final TicketGrantingTicket parent;
 
     public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
         this.service = service;

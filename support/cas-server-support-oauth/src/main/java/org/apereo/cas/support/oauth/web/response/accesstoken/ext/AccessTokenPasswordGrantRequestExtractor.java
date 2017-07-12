@@ -76,12 +76,19 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
         final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
-        return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket);
+
+        return new AccessTokenRequestDataHolder(service, authentication,
+                registeredService, ticketGrantingTicket, getGrantType());
     }
 
     @Override
     public boolean supports(final HttpServletRequest context) {
         final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
+        return OAuth20Utils.isGrantType(grantType, getGrantType());
+    }
+
+    @Override
+    public OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.PASSWORD;
     }
 }

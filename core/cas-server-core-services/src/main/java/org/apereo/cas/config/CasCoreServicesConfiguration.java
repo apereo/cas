@@ -16,7 +16,7 @@ import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
-import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -116,7 +116,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DefaultServicesManager(serviceRegistryDao);
+        return new DomainServicesManager(serviceRegistryDao);
     }
 
     @Bean
@@ -124,7 +124,7 @@ public class CasCoreServicesConfiguration {
     public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
         return new RegisteredServicesEventListener(servicesManager);
     }
-    
+
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
     @Bean
     @RefreshScope
@@ -144,16 +144,16 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO) final ServiceRegistryDao serviceRegistryDao) {
-        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher), serviceRegistryDao, servicesManager(serviceRegistryDao),
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryDao,
+                servicesManager(serviceRegistryDao),
                 casProperties.getServiceRegistry().isInitFromJson());
     }
 
-    @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryDao embeddedJsonServiceRegistry(final ApplicationEventPublisher publisher) {
+    public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
-            return new EmbeddedServiceRegistryDao(publisher);
+            return new EmbeddedServiceRegistryDao(eventPublisher);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

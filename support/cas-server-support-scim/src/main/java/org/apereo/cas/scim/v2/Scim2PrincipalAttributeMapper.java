@@ -9,8 +9,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
-import java.util.Collections;
-
 /**
  * This is {@link Scim2PrincipalAttributeMapper}.
  *
@@ -44,7 +42,7 @@ public class Scim2PrincipalAttributeMapper {
                     final UsernamePasswordCredential credential) {
         user.setUserName(p.getId());
         user.setPassword(credential.getPassword());
-        user.setActive(true);
+        user.setActive(Boolean.TRUE);
 
         String attr = getPrincipalAttributeValue(p, "nickName");
         user.setNickName(attr);
@@ -62,21 +60,21 @@ public class Scim2PrincipalAttributeMapper {
         user.setName(name);
 
         final Email email = new Email();
-        email.setPrimary(true);
+        email.setPrimary(Boolean.TRUE);
         attr = getPrincipalAttributeValue(p, "mail");
         if (StringUtils.isBlank(attr)) {
             attr = getPrincipalAttributeValue(p, "email");
         }
         email.setValue(attr);
-        user.setEmails(Collections.singletonList(email));
+        user.setEmails(CollectionUtils.wrap(email));
 
         final PhoneNumber phone = new PhoneNumber();
-        phone.setPrimary(true);
+        phone.setPrimary(Boolean.TRUE);
         attr = getPrincipalAttributeValue(p, "phone");
         if (StringUtils.isBlank(attr)) {
             attr = getPrincipalAttributeValue(p, "phoneNumber");
         }
         phone.setValue(attr);
-        user.setPhoneNumbers(Collections.singletonList(phone));
+        user.setPhoneNumbers(CollectionUtils.wrap(phone));
     }
 }

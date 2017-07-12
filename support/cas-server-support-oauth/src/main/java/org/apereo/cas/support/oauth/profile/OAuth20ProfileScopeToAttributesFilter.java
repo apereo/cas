@@ -11,6 +11,7 @@ import org.pac4j.core.context.J2EContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface OAuth20ProfileScopeToAttributesFilter {
 
     /**

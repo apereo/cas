@@ -11,6 +11,7 @@ import java.security.cert.X509Certificate;
  * @since 3.4.6
  *
  */
+@FunctionalInterface
 public interface RevocationChecker {
     /**
      * Checks the revocation status of the given certificate.

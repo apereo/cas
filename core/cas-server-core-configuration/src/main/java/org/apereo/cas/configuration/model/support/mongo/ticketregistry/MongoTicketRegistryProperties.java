@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.mongo.ticketregistry;
 
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link MongoTicketRegistryProperties}.
@@ -9,7 +11,19 @@ import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstancePro
  * @since 5.1.0
  */
 public class MongoTicketRegistryProperties extends AbstractMongoInstanceProperties {
-    public MongoTicketRegistryProperties() {
-        setCollectionName("cas-ticket-registry");
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoTicketRegistryProperties.class);
+    private static final long serialVersionUID = 8243690796900311918L;
+
+    @Override
+    public void setCollectionName(final String collectionName) {
+        LOGGER.warn("Cannot set collection name for MongoDb Ticket Registry. "
+                + "Collection names for tickets are dynamically determined by the ticket catalog");
+    }
+
+    @Override
+    public String getCollectionName() {
+        LOGGER.warn("Cannot retrieve collection name for MongoDb Ticket Registry. "
+                + "Collection names for tickets are dynamically determined by the ticket catalog");
+        return null;
     }
 }

@@ -9,6 +9,7 @@ import java.io.File;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface SamlIdpMetadataAndCertificatesGenerationService {
 
     /**

@@ -11,6 +11,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface AuthnContextClassRefBuilder {
 
     /**
@@ -22,6 +23,7 @@ public interface AuthnContextClassRefBuilder {
      * @param service      the service
      * @return the authentication method from assertion
      */
-    String build(Assertion assertion, AuthnRequest authnRequest, SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    String build(Assertion assertion, AuthnRequest authnRequest,
+                 SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                  SamlRegisteredService service);
 }

@@ -1,5 +1,8 @@
 package org.apereo.cas.util.spring.boot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
+import com.vdurmont.semver4j.Semver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +14,12 @@ import org.springframework.core.env.Environment;
 
 import javax.crypto.Cipher;
 import java.io.PrintStream;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Formatter;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -23,11 +29,19 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public abstract class AbstractCasBanner implements Banner {
-    /** Line separator length. */
-    public static final int SEPARATOR_REPEAT_COUNT = 60;
-    /** A line separator. */
+    /**
+     * Line separator length.
+     */
+    private static final int SEPARATOR_REPEAT_COUNT = 60;
+    private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
+
+    /**
+     * A line separator.
+     */
     public static final String LINE_SEPARATOR = String.join(StringUtils.EMPTY, Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-"));
-    
+
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
         AsciiArtUtils.printAsciiArt(out, getTitle(), collectEnvironmentInfo(environment, sourceClass));
@@ -77,10 +91,53 @@ public abstract class AbstractCasBanner implements Banner {
             formatter.format("OS Version: %s%n", properties.get("os.version"));
             formatter.format("%s%n", LINE_SEPARATOR);
 
+            injectUpdateInfoIntoBannerIfNeeded(formatter);
+
             injectEnvironmentInfoIntoBanner(formatter, environment, sourceClass);
 
             return formatter.toString();
         }
+    }
+
+    private static void injectUpdateInfoIntoBannerIfNeeded(final Formatter formatter) {
+        try {
+            final Properties properties = System.getProperties();
+            if (!properties.containsKey("CAS_UPDATE_CHECK_ENABLED")) {
+                return;
+            }
+            
+            final URL url = new URL(UPDATE_CHECK_MAVEN_URL);
+            final Map results = MAPPER.readValue(url, Map.class);
+            if (!results.containsKey("response")) {
+                return;
+            }
+            final Map response = (Map) results.get("response");
+            if (!response.containsKey("numFound") && (int) response.get("numFound") != 1) {
+                return;
+            }
+
+            final List docs = (List) response.get("docs");
+            if (docs.isEmpty()) {
+                return;
+            }
+
+            final Map entry = (Map) docs.get(0);
+            final String latestVersion = (String) entry.get("latestVersion");
+            if (StringUtils.isNotBlank(latestVersion)) {
+                final String currentVersion = CasVersion.getVersion();
+                final Semver latestSem = new Semver(latestVersion);
+                final Semver currentSem = new Semver(currentVersion);
+                formatter.format("Update Available: %s [Latest Version: %s / Stable: %s]%n",
+                        StringUtils.capitalize(BooleanUtils.toStringYesNo(currentSem.isLowerThan(latestSem))),
+                        latestVersion,
+                        StringUtils.capitalize(BooleanUtils.toStringYesNo(latestSem.isStable())));
+                formatter.format("%s%n", LINE_SEPARATOR);
+            }
+
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+
     }
     
     /**

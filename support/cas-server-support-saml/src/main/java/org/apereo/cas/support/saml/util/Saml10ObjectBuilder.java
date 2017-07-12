@@ -49,7 +49,7 @@ import java.util.Map;
  */
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(Saml10ObjectBuilder.class);
-    
+
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
     private static final long serialVersionUID = -4711012620700270554L;
 
@@ -59,14 +59,15 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
     /**
      * Create a new SAML response object.
-     * @param id the id
+     *
+     * @param id           the id
      * @param issueInstant the issue instant
-     * @param recipient the recipient
-     * @param service the service
+     * @param recipient    the recipient
+     * @param service      the service
      * @return the response
      */
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
-                                         final String recipient, final WebApplicationService service) {
+                                final String recipient, final WebApplicationService service) {
 
         final Response samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
@@ -97,9 +98,9 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * Create a new SAML1 response object.
      *
      * @param authnStatement the authn statement
-     * @param issuer the issuer
-     * @param issuedAt the issued at
-     * @param id the id
+     * @param issuer         the issuer
+     * @param issuedAt       the issued at
+     * @param id             the id
      * @return the assertion
      */
     public Assertion newAssertion(final AuthenticationStatement authnStatement, final String issuer,
@@ -116,7 +117,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     /**
      * New conditions element.
      *
-     * @param issuedAt the issued at
+     * @param issuedAt    the issued at
      * @param audienceUri the service id
      * @param issueLength the issue length
      * @return the conditions
@@ -134,9 +135,19 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     }
 
     /**
-     * Create a new SAML status object.
+     * New status status.
      *
      * @param codeValue the code value
+     * @return the status
+     */
+    public Status newStatus(final QName codeValue) {
+        return newStatus(codeValue, StringUtils.EMPTY);
+    }
+
+    /**
+     * Create a new SAML status object.
+     *
+     * @param codeValue     the code value
      * @param statusMessage the status message
      * @return the status
      */
@@ -145,7 +156,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         final StatusCode code = newSamlObject(StatusCode.class);
         code.setValue(codeValue);
         status.setStatusCode(code);
-        if (statusMessage != null) {
+        if (StringUtils.isNotBlank(statusMessage)) {
             final StatusMessage message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);
             status.setStatusMessage(message);
@@ -156,9 +167,9 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     /**
      * New authentication statement.
      *
-     * @param authenticationDate the authentication date
+     * @param authenticationDate   the authentication date
      * @param authenticationMethod the authentication method
-     * @param subjectId the subject id
+     * @param subjectId            the subject id
      * @return the authentication statement
      */
     public AuthenticationStatement newAuthenticationStatement(final ZonedDateTime authenticationDate,
@@ -167,7 +178,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
         final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
         authnStatement.setAuthenticationInstant(DateTimeUtils.dateTimeOf(authenticationDate));
-        
+
         authnStatement.setAuthenticationMethod(
                 authenticationMethod != null && !authenticationMethod.isEmpty()
                         ? authenticationMethod.iterator().next().toString()
@@ -190,7 +201,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     /**
      * New subject element with given confirmation method.
      *
-     * @param identifier the identifier
+     * @param identifier         the identifier
      * @param confirmationMethod the confirmation method
      * @return the subject
      */
@@ -219,12 +230,12 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                                    final List<XMLObject> attributeList) {
         addAttributeValuesToSamlAttribute(attributeName, attributeValue, attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
     }
-    
+
     /**
      * New attribute statement.
      *
-     * @param subject the subject
-     * @param attributes the attributes
+     * @param subject            the subject
+     * @param attributes         the attributes
      * @param attributeNamespace the attribute namespace
      * @return the attribute statement
      */
@@ -241,7 +252,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
             }
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
-            
+
             if (StringUtils.isNotBlank(attributeNamespace)) {
                 attribute.setAttributeNamespace(attributeNamespace);
             }
@@ -258,8 +269,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * Uses {@link CasHttpSoap11Encoder} to handle encoding.
      *
      * @param httpResponse the http response
-     * @param httpRequest the http request
-     * @param samlMessage the saml response
+     * @param httpRequest  the http request
+     * @param samlMessage  the saml response
      * @throws Exception the exception in case encoding fails.
      */
     public void encodeSamlResponse(final HttpServletResponse httpResponse,
@@ -267,7 +278,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                    final Response samlMessage) throws Exception {
 
         SamlUtils.logSamlObject(this.configBean, samlMessage);
-        
+
         final HTTPSOAP11Encoder encoder = new CasHttpSoap11Encoder();
         final MessageContext<SAMLObject> context = new MessageContext();
         context.setMessage(samlMessage);

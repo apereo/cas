@@ -12,6 +12,15 @@ public interface CasWebflowConstants {
      */
     String TRANSITION_ID_SUCCESS = "success";
 
+    /** Proceed transition id. */
+    String TRANSITION_ID_PROCEED = "proceed";
+
+    /** Confirm transition id. */
+    String TRANSITION_ID_CONFIRM = "confirm";
+
+    /** Cancel transition id. */
+    String TRANSITION_ID_CANCEL = "cancel";
+
     /**
      * The state id 'success'.
      */

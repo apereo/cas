@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.InetAddressUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -80,7 +81,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public org.opensaml.saml.saml2.ecp.Response newEcpResponse(final String assertionConsumerUrl) {
         final org.opensaml.saml.saml2.ecp.Response samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
-        samlResponse.setSOAP11MustUnderstand(true);
+        samlResponse.setSOAP11MustUnderstand(Boolean.TRUE);
         samlResponse.setSOAP11Actor(ActorBearing.SOAP11_ACTOR_NEXT);
         samlResponse.setAssertionConsumerServiceURL(assertionConsumerUrl);
         return samlResponse;
@@ -184,18 +185,20 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param attributes            the attributes
      * @param setFriendlyName       the set friendly name
      * @param configuredNameFormats the configured name formats
+     * @param defaultNameFormat     the default name format
      * @return the attribute statement
      */
     public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
                                                     final boolean setFriendlyName,
-                                                    final Map<String, String> configuredNameFormats) {
+                                                    final Map<String, String> configuredNameFormats,
+                                                    final String defaultNameFormat) {
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
-            final Attribute attribute = newAttribute(setFriendlyName, e, configuredNameFormats);
+            final Attribute attribute = newAttribute(setFriendlyName, e, configuredNameFormats, defaultNameFormat);
             attrStatement.getAttributes().add(attribute);
         }
 
@@ -220,45 +223,53 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      *
      * @param setFriendlyName       the set friendly name
      * @param e                     the entry to process and turn into a saml attribute
-     * @param configuredNameFormats the configured name formats. If an attribute is found in this collection, the linked name format
-     *                              will be used.
+     * @param configuredNameFormats the configured name formats. If an attribute is found in this
+     *                              collection, the linked name format will be used.
+     * @param defaultNameFormat     the default name format
      * @return the attribute
      */
     protected Attribute newAttribute(final boolean setFriendlyName,
                                      final Map.Entry<String, Object> e,
-                                     final Map<String, String> configuredNameFormats) {
+                                     final Map<String, String> configuredNameFormats,
+                                     final String defaultNameFormat) {
         final Attribute attribute = newSamlObject(Attribute.class);
         attribute.setName(e.getKey());
 
         if (setFriendlyName) {
             attribute.setFriendlyName(e.getKey());
         }
+
         addAttributeValuesToSaml2Attribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
             final String nameFormat = configuredNameFormats.get(attribute.getName());
             LOGGER.debug("Found name format [{}] for attribute [{}]", nameFormat, attribute.getName());
-            switch (nameFormat.trim().toLowerCase()) {
-                case "basic":
-                    attribute.setNameFormat(Attribute.BASIC);
-                    break;
-                case "uri":
-                    attribute.setNameFormat(Attribute.URI_REFERENCE);
-                    break;
-                case "unspecified":
-                    attribute.setNameFormat(Attribute.UNSPECIFIED);
-                    break;
-                default:
-                    attribute.setNameFormat(nameFormat);
-                    break;
-            }
+            configureAttributeNameFormat(attribute, nameFormat);
             LOGGER.debug("Attribute [{}] is assigned the name format of [{}]", attribute.getName(), attribute.getNameFormat());
         } else {
             LOGGER.debug("Skipped name format, as no name formats are defined or none is found for attribute [{}]", attribute.getName());
+            configureAttributeNameFormat(attribute, defaultNameFormat);
         }
 
         LOGGER.debug("Attribute [{}] has [{}] value(s)", attribute.getName(), attribute.getAttributeValues().size());
         return attribute;
+    }
+
+    private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
+        switch (nameFormat.trim().toLowerCase()) {
+            case "basic":
+                attribute.setNameFormat(Attribute.BASIC);
+                break;
+            case "uri":
+                attribute.setNameFormat(Attribute.URI_REFERENCE);
+                break;
+            case "unspecified":
+                attribute.setNameFormat(Attribute.UNSPECIFIED);
+                break;
+            default:
+                attribute.setNameFormat(nameFormat);
+                break;
+        }
     }
 
     /**
@@ -332,6 +343,14 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         data.setRecipient(recipient);
         data.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
         data.setInResponseTo(inResponseTo);
+
+        if (StringUtils.isNotBlank(inResponseTo)) {
+            final String ip = InetAddressUtils.getByName(inResponseTo);
+            if (StringUtils.isNotBlank(ip)) {
+                data.setAddress(ip);
+            }
+        }
+
         confirmation.setSubjectConfirmationData(data);
 
         final Subject subject = newSamlObject(Subject.class);
@@ -346,9 +365,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public String generateSecureRandomId() {
         final SecureRandom generator = new SecureRandom();
         final char[] charMappings = {
-                'a', 'b', 'c', 'd', 'e', 'f', 'g',
-                'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-                'p'};
+            'a', 'b', 'c', 'd', 'e', 'f', 'g',
+            'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+            'p'};
 
         final int charsLength = 40;
         final int generatorBytesLength = 20;

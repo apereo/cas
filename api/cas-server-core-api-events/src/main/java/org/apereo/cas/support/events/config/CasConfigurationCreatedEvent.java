@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public class CasConfigurationCreatedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -9038763901650896455L;
 
-    private final Path file;
+    private final transient Path file;
 
     /**
      * Instantiates a new Abstract cas sso event.

@@ -413,6 +413,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Json extends AbstractConfigProperties {
+            private static final long serialVersionUID = -6883660787308509919L;
         }
 
         public Jpa getJpa() {
@@ -433,9 +434,11 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         public static class Memory implements Serializable {
 
+            private static final long serialVersionUID = 771866433203773277L;
         }
 
         public static class Jpa extends AbstractJpaProperties {
+            private static final long serialVersionUID = -4334840263678287815L;
         }
 
         public static class Cleaner {
@@ -552,9 +555,12 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Jpa extends AbstractJpaProperties {
+            private static final long serialVersionUID = -4420099402220880361L;
         }
 
         public static class Mongodb extends AbstractMongoClientProperties {
+            private static final long serialVersionUID = 6876845341227039713L;
+
             public Mongodb() {
                 setCollection("MongoDbYubiKeyRepository");
             }
@@ -617,6 +623,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Server implements Serializable {
+            private static final long serialVersionUID = -3911282132573730184L;
             private String protocol = "EAP_MSCHAPv2";
             private int retries = 3;
             private String nasIdentifier;
@@ -703,6 +710,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Client implements Serializable {
+            private static final long serialVersionUID = -7961769318651312854L;
             private String inetAddress = "localhost";
             private String sharedSecret = "N0Sh@ar3d$ecReT";
             private int socketTimeout;
@@ -989,6 +997,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Rest implements Serializable {
+            private static final long serialVersionUID = 3659099897056632608L;
             private String endpoint;
 
             public String getEndpoint() {
@@ -1001,9 +1010,12 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Jpa extends AbstractJpaProperties {
+            private static final long serialVersionUID = -8329950619696176349L;
         }
 
         public static class Mongodb extends AbstractMongoClientProperties {
+            private static final long serialVersionUID = 4940497540189318943L;
+
             public Mongodb() {
                 setCollection("MongoDbCasTrustedAuthnMfaRepository");
             }
@@ -1210,9 +1222,11 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Json extends AbstractConfigProperties {
+            private static final long serialVersionUID = 4303355159388663888L;
         }
 
         public static class Rest implements Serializable {
+            private static final long serialVersionUID = 4518622579150572559L;
             private String endpointUrl;
 
             public String getEndpointUrl() {
@@ -1225,6 +1239,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Mongodb extends AbstractMongoClientProperties {
+            private static final long serialVersionUID = -200556119517414696L;
             private String tokenCollection;
 
             public Mongodb() {
@@ -1242,6 +1257,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Jpa implements Serializable {
+            private static final long serialVersionUID = -2689797889546802618L;
             private Database database = new Database();
 
             public Database getDatabase() {
@@ -1253,13 +1269,16 @@ public class MultifactorAuthenticationProperties implements Serializable {
             }
 
             public static class Database extends AbstractJpaProperties {
+                private static final long serialVersionUID = -7446381055350251885L;
+
                 public Database() {
                     super.setUrl("jdbc:hsqldb:mem:cas-gauth");
                 }
             }
         }
 
-        public static class Cleaner {
+        public static class Cleaner implements Serializable {
+            private static final long serialVersionUID = -6036042153454544990L;
             private boolean enabled = true;
             private String startDelay = "PT1M";
             private String repeatInterval = "PT1M";

@@ -14,7 +14,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
+public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     private final String authenticationContextAttribute;
     private final AuthenticationHandler authenticationHandler;
     private final MultifactorAuthenticationProvider provider;
@@ -30,12 +30,12 @@ public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthent
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
-                obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
+            obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
             builder.mergeAttribute(this.authenticationContextAttribute, this.provider.getId());
         }
     }
 
-    
+
     @Override
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);

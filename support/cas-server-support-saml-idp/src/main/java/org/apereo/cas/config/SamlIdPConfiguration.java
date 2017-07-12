@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -72,6 +73,10 @@ public class SamlIdPConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("shibbolethCompatiblePersistentIdGenerator")
+    private PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator;
 
     @Autowired
     @Qualifier("casClientTicketValidator")
@@ -204,7 +209,7 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder() {
-        return new SamlProfileSamlNameIdBuilder(openSamlConfigBean);
+        return new SamlProfileSamlNameIdBuilder(openSamlConfigBean, shibbolethCompatiblePersistentIdGenerator);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlConditionsBuilder")
@@ -218,7 +223,7 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder() {
-        return new DefaultAuthnContextClassRefBuilder();
+        return new DefaultAuthnContextClassRefBuilder(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAssertionBuilder")

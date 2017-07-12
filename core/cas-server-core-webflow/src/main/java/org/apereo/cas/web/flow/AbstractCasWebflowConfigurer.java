@@ -34,6 +34,7 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
@@ -49,6 +50,7 @@ import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactor
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
+import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.expression.spel.ActionPropertyAccessor;
@@ -60,6 +62,7 @@ import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccesso
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -299,6 +302,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
+    public Transition createTransition(final String targetState) {
+        final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
+        return new Transition(resolver);
+    }
+    
+    @Override
     public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
         final TransitionCriteria criteria;
 
@@ -351,12 +360,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return parser;
 
     }
-
-    @Override
-    public Transition createTransition(final String targetState) {
-        final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
-        return new Transition(resolver);
-    }
+    
 
     @Override
     public EndState createEndState(final Flow flow, final String id) {
@@ -600,6 +604,51 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final Field field = ReflectionUtils.findField(state.getViewFactory().getClass(), "binderConfiguration");
         ReflectionUtils.makeAccessible(field);
         return (BinderConfiguration) ReflectionUtils.getField(field, state.getViewFactory());
+    }
+
+    /**
+     * Clone action state.
+     *
+     * @param source the source
+     * @param target the target
+     */
+    protected void cloneActionState(final ActionState source, final ActionState target) {
+        source.getActionList().forEach(a -> target.getActionList().add(a));
+        source.getExitActionList().forEach(a -> target.getExitActionList().add(a));
+        source.getAttributes().asMap().forEach((k, v) -> target.getAttributes().put(k, v));
+        source.getTransitionSet().forEach(t -> target.getTransitionSet().addAll(t));
+
+        final Field field = ReflectionUtils.findField(target.getExceptionHandlerSet().getClass(), "exceptionHandlers");
+        ReflectionUtils.makeAccessible(field);
+        final List<FlowExecutionExceptionHandler> list = (List<FlowExecutionExceptionHandler>)
+                ReflectionUtils.getField(field, target.getExceptionHandlerSet());
+        list.forEach(h -> source.getExceptionHandlerSet().add(h));
+        
+        target.setDescription(source.getDescription());
+        target.setCaption(source.getCaption());
+    }
+
+    /**
+     * Gets transition execution criteria chain for transition.
+     *
+     * @param def the def
+     * @return the transition execution criteria chain for transition
+     */
+    protected List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
+
+        if (def.getExecutionCriteria() instanceof TransitionCriteriaChain) {
+            final TransitionCriteriaChain chain = (TransitionCriteriaChain) def.getExecutionCriteria();
+            final Field field = ReflectionUtils.findField(chain.getClass(), "criteriaChain");
+            ReflectionUtils.makeAccessible(field);
+            return (List<TransitionCriteria>) ReflectionUtils.getField(field, chain);
+        }
+
+        if (def.getExecutionCriteria() != null) {
+            final List c = new ArrayList<>();
+            c.add(def.getExecutionCriteria());
+            return c;
+        }
+        return new ArrayList<>();
     }
 
     /**

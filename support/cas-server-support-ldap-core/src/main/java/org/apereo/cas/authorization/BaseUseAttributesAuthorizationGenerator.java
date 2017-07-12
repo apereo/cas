@@ -1,6 +1,7 @@
 package org.apereo.cas.authorization;
 
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -15,8 +16,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-
-import java.util.Collections;
 
 /**
  * This is {@link BaseUseAttributesAuthorizationGenerator}.
@@ -81,13 +80,13 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
                     Beans.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
-                            Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Collections.singletonList(username)));
+                            Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username)));
 
             LOGGER.debug("LDAP user search response: [{}]", response);
             userResult = response.getResult();
 
             if (userResult.size() == 0) {
-                throw new RuntimeException(new AccountNotFoundException(username + " not found."));
+                throw new IllegalArgumentException(new AccountNotFoundException(username + " not found."));
             }
             if (userResult.size() > 1 && !this.allowMultipleResults) {
                 throw new IllegalStateException(
@@ -97,7 +96,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             final LdapEntry userEntry = userResult.getEntry();
             return generateAuthorizationForLdapEntry(profile, userEntry);
         } catch (final LdapException e) {
-            throw new RuntimeException("LDAP error fetching details for user.", e);
+            throw new IllegalArgumentException("LDAP error fetching details for user.", e);
         }
     }
 

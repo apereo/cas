@@ -27,9 +27,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     private Credential providedCredential;
 
-    private Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
-    private PrincipalElectionStrategy principalElectionStrategy;
+    private final PrincipalElectionStrategy principalElectionStrategy;
 
     /**
      * Instantiates a new default authentication result builder.
@@ -60,8 +60,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         this.providedCredential = credential;
         return this;
     }
-
-
+    
     @Override
     public AuthenticationResult build() {
         return build(null);
@@ -105,7 +104,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         final Authentication auth = authenticationBuilder.build();
         LOGGER.debug("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;
-
     }
 
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,

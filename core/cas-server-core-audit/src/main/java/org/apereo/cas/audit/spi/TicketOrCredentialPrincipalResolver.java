@@ -32,9 +32,9 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
-    private CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
     
-    private PrincipalIdProvider principalIdProvider = new PrincipalIdProvider() {};
+    private AuditPrincipalIdProvider auditPrincipalIdProvider = new AuditPrincipalIdProvider() {};
 
     /**
      * Instantiates a new Ticket or credential principal resolver.
@@ -117,7 +117,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
                 } else if (ticket instanceof TicketGrantingTicket) {
                     authentication = TicketGrantingTicket.class.cast(ticket).getAuthentication();
                 }
-                return this.principalIdProvider.getPrincipalIdFrom(authentication);
+                return this.auditPrincipalIdProvider.getPrincipalIdFrom(authentication);
             } catch (final InvalidTicketException e) {
                 LOGGER.trace(e.getMessage(), e);
             }
@@ -131,11 +131,11 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
      *
      * @return principal id provider
      */
-    public PrincipalIdProvider getPrincipalIdProvider() {
-        return principalIdProvider;
+    public AuditPrincipalIdProvider getAuditPrincipalIdProvider() {
+        return auditPrincipalIdProvider;
     }
 
-    public void setPrincipalIdProvider(final PrincipalIdProvider principalIdProvider) {
-        this.principalIdProvider = principalIdProvider;
+    public void setAuditPrincipalIdProvider(final AuditPrincipalIdProvider auditPrincipalIdProvider) {
+        this.auditPrincipalIdProvider = auditPrincipalIdProvider;
     }
 }

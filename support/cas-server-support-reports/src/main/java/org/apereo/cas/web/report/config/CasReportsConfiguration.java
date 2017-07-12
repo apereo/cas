@@ -34,7 +34,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -46,7 +45,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 
 /**
  * This is {@link CasReportsConfiguration}.
- *
+ * The {@link MvcEndpoint} instances in this configuration class
+ * MUST NOT be marked as {@link org.springframework.cloud.context.config.annotation.RefreshScope}
+ * because they are not quite reloadable and the proxy that is created interferes with web mvc.
  * @author Misagh Moayyed
  * @since 5.0.0
  */
@@ -62,7 +63,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -90,13 +91,11 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     private HealthCheckRegistry healthCheckRegistry;
 
     @Bean
-    @RefreshScope
     public MvcEndpoint dashboardController() {
         return new DashboardController(casProperties);
     }
 
     @Bean
-    @RefreshScope
     public MvcEndpoint personDirectoryAttributeResolutionController() {
         return new PersonDirectoryAttributeResolutionController(casProperties);
     }
@@ -104,86 +103,61 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Profile("standalone")
     @ConditionalOnBean(name = "configurationPropertiesEnvironmentManager")
     @Bean
-    @RefreshScope
     public MvcEndpoint internalConfigController() {
         return new ConfigurationStateController(casProperties);
     }
 
     @Bean
-    @RefreshScope
     public MvcEndpoint healthCheckController() {
         return new HealthCheckController(healthCheckMonitor, casProperties);
     }
 
     @Bean
-    @RefreshScope
     public MvcEndpoint singleSignOnSessionsReportController() {
         return new SingleSignOnSessionsReportController(centralAuthenticationService, casProperties);
     }
 
-    
     @Bean
-    @RefreshScope
     public MvcEndpoint registeredServicesReportController() {
         return new RegisteredServicesReportController(casProperties, servicesManager);
     }
 
     @Bean
-    @RefreshScope
     @Autowired
     public MvcEndpoint loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
         return new LoggingConfigController(auditTrailManager, casProperties);
     }
 
     @Bean
-    @RefreshScope
     public MvcEndpoint ssoStatusController() {
         return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
     }
 
     @Bean
-    @RefreshScope
     public MvcEndpoint swfReportController() {
         return new SpringWebflowReportController(casProperties);
     }
 
     @Autowired
     @Bean
-    @RefreshScope
     public MvcEndpoint statisticsController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
         return new StatisticsController(auditTrailManager, centralAuthenticationService,
                 metricsRegistry, healthCheckRegistry, casProperties);
     }
 
     @Bean
-    @RefreshScope
     public MvcEndpoint metricsController() {
         return new MetricsController(casProperties);
     }
 
     @Bean
-    @RefreshScope
     public LoggingOutputSocketMessagingController loggingOutputController() {
         return new LoggingOutputSocketMessagingController();
     }
 
-    @Override
-    public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/logs");
-        if (StringUtils.isNotBlank(serverProperties.getContextPath())) {
-            config.setApplicationDestinationPrefixes(serverProperties.getContextPath());
-        }
-    }
-
-    @Override
-    public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        registry.addEndpoint("/logoutput")
-                .addInterceptors(new HttpSessionHandshakeInterceptor())
-                .withSockJS();
-    }
 
     /**
-     * The Trusted devices configuration for the UI.
+     * The type Trusted devices configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @Configuration("trustedDevicesConfiguration")
@@ -208,5 +182,20 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         public MvcEndpoint authenticationEventsController(@Qualifier("casEventRepository") final CasEventRepository eventRepository) {
             return new AuthenticationEventsController(eventRepository, casProperties);
         }
+    }
+
+    @Override
+    public void configureMessageBroker(final MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/logs");
+        if (StringUtils.isNotBlank(serverProperties.getContextPath())) {
+            config.setApplicationDestinationPrefixes(serverProperties.getContextPath());
+        }
+    }
+
+    @Override
+    public void registerStompEndpoints(final StompEndpointRegistry registry) {
+        registry.addEndpoint("/logoutput")
+                .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .withSockJS();
     }
 }

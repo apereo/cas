@@ -400,7 +400,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
             }
-            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":7"));
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
             accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
@@ -509,7 +509,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyUserAuthWithRefreshToken() throws Exception {
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
-        internalVerifyUserAuth(false, false);
+        internalVerifyUserAuth(true, false);
     }
 
     @Test
@@ -525,7 +525,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
         registeredService.setJsonFormat(true);
-        internalVerifyUserAuth(false, true);
+        internalVerifyUserAuth(true, true);
     }
 
     private void internalVerifyUserAuth(final boolean refreshToken, final boolean json) throws Exception {
@@ -548,7 +548,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
             }
-            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":7"));
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
             accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals("text/plain", mockResponse.getContentType());
@@ -671,7 +671,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             assertEquals("application/json", mockResponse.getContentType());
             assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
             assertFalse(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
-            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":7"));
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
             accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals("text/plain", mockResponse.getContentType());

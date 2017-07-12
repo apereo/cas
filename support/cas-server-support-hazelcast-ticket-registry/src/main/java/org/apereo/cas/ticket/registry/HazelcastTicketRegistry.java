@@ -96,9 +96,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
-        final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        final String encTicketId = encodeTicketId(ticketIdToDelete);
+        final TicketDefinition metadata = this.ticketCatalog.find(ticketIdToDelete);
         final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
         return map.remove(encTicketId) != null;
     }
@@ -141,7 +141,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         try {
             LOGGER.info("Shutting down Hazelcast instance [{}]", this.hazelcastInstance.getConfig().getInstanceName());
             this.hazelcastInstance.shutdown();
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             LOGGER.debug(e.getMessage());
         }
     }

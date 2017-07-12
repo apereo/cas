@@ -94,7 +94,13 @@ layout: null
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
 
 *   [Password Management](#pswmgmt)
-    *   [Overview](/$version/installation/Password-Management.html) 
+    *   [Overview](/$version/installation/Password-Management.html)
+    *   [Account Management](#pwmOptions)
+        *   [JSON](/$version/installation/Password-Management-JSON.html)
+        *   [LDAP](/$version/installation/Password-Management-LDAP.html)
+        *   [JDBC](/$version/installation/Password-Management-JDBC.html)
+        *   [REST](/$version/installation/Password-Management-REST.html)
+        *   [Custom](/$version/installation/Password-Management-Custom.html) 
 
 * [Ticketing](#ticketingconfig)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
@@ -169,6 +175,7 @@ layout: null
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
+    *   [SQRL](/$version/protocol/SQRL-Protocol.html)
 
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)
@@ -178,10 +185,12 @@ layout: null
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
+    *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
+    *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Issue Tracker](https://github.com/apereo/cas/issues)
     *   [Security Vulnerability Response](/cas/developer/Sec-Vuln-Response.html)
     *   [PMC](/cas/developer/Project-Commitee.html)

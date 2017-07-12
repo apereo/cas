@@ -24,7 +24,7 @@ import java.io.Serializable;
  */
 public final class SerializationUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SerializationUtils.class);
-    
+
     private SerializationUtils() {
     }
 
@@ -90,7 +90,7 @@ public final class SerializationUtils {
                 try {
                     in.close();
                 } catch (final IOException e) {
-                   LOGGER.error(e.getMessage(), e);
+                    LOGGER.error("Unable to serialize", e);
                 }
             }
         }

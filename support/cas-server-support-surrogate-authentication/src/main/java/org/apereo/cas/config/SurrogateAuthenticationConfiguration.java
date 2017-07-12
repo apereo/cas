@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.spi.PrincipalIdProvider;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.SurrogateAuthenticationAspect;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -10,12 +9,10 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
-import org.apereo.cas.authentication.surrogate.LdapSurrogateUsernamePasswordService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.SurrogateSelectionAction;
@@ -23,7 +20,6 @@ import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.ldaptive.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -49,12 +45,13 @@ import java.util.Set;
  *
  * @author Misagh Moayyed
  * @author John Gasper
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
-public class SurrogateAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class SurrogateAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
 
     @Autowired
@@ -110,13 +107,6 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
                 LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getConfig().getLocation());
                 return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
             }
-            if (StringUtils.hasText(su.getLdap().getLdapUrl()) && StringUtils.hasText(su.getLdap().getSearchFilter())
-                    && StringUtils.hasText(su.getLdap().getBaseDn()) && StringUtils.hasText(su.getLdap().getMemberAttributeName())) {
-                LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
-                        su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
-                final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(su.getLdap());
-                return new LdapSurrogateUsernamePasswordService(factory, su.getLdap());
-            }
 
             final Map<String, Set> accounts = new LinkedHashMap<>();
             su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
@@ -146,7 +136,7 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
     }
 
     @Bean
-    public PrincipalIdProvider principalIdProvider() {
+    public AuditPrincipalIdProvider principalIdProvider() {
         return new SurrogatePrincipalIdProvider();
     }
 }

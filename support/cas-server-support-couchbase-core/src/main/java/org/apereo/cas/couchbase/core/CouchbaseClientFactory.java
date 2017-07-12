@@ -33,7 +33,7 @@ public class CouchbaseClientFactory {
 
     private Cluster cluster;
     private Bucket bucket;
-    private List<View> views;
+    private final List<View> views;
     private final Set<String> nodes;
 
     /* The name of the getBucket, will use the default getBucket unless otherwise specified. */
@@ -134,7 +134,7 @@ public class CouchbaseClientFactory {
                     }
                 }
             } catch (final Exception e) {
-                throw new RuntimeException("Failed to connect to Couchbase getBucket", e);
+                throw new IllegalArgumentException("Failed to connect to Couchbase getBucket", e);
             }
         }
         return this.bucket;

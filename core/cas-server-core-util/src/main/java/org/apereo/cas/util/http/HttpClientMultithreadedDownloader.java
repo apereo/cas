@@ -3,6 +3,7 @@ package org.apereo.cas.util.http;
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.WGet;
 import com.github.axet.wget.info.DownloadInfo;
+import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class HttpClientMultithreadedDownloader {
             LOGGER.info("Starting to download resource [{}] into [{}]", this.resourceToDownload, targetDestination);
             w.download(stop, status);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -81,7 +82,7 @@ public class HttpClientMultithreadedDownloader {
                     break;
 
                 case RETRYING:
-                    LOGGER.debug(info.getState() + " retry: [{}], delay: [{}]", info.getRetry(), info.getDelay());
+                    LOGGER.debug("[{}] retry: [{}], delay: [{}]", info.getState(), info.getRetry(), info.getDelay());
                     break;
 
                 case DOWNLOADING:

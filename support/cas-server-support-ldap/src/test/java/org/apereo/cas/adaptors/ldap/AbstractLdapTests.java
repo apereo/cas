@@ -27,7 +27,7 @@ public abstract class AbstractLdapTests {
                 DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getInputStream(), ldifFile, schema.getInputStream());
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 

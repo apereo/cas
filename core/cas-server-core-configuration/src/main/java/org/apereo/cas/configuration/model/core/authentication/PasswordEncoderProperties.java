@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import java.io.Serializable;
+
 /**
  * This is {@link PasswordEncoderProperties}.
  *
@@ -7,7 +9,9 @@ package org.apereo.cas.configuration.model.core.authentication;
  * @since 5.0.0
  */
 
-public class PasswordEncoderProperties {
+public class PasswordEncoderProperties implements Serializable {
+    private static final long serialVersionUID = -2396781005262069816L;
+
     public enum PasswordEncoderTypes {
         /**
          * No password encoding will take place.

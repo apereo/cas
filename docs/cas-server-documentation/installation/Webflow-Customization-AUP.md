@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-Customize the policy by modifying the `src/main/resources/casAcceptableUsagePolicyView.html`. See [this guide](User-Interface-Customization.html)
+Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](User-Interface-Customization.html)
 to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes,
 if you wish to dynamically alter the page to present different text, etc.
 
@@ -34,7 +34,8 @@ Usage policy user decisions are stored and rememberd via the following ways.
 ### Default
 
 By default the task of remembering the user's choice is kept in memory by default and will be lost upon
-container restarts and/or in clustered deployments.   
+container restarts and/or in clustered deployments. This option is only useful during development, testing
+and demos and is not at all suitable for production.
 
 ### LDAP
 

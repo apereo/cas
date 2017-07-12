@@ -180,13 +180,9 @@ public class CasEmbeddedContainerTomcatConfiguration {
             ajpConnector.setSecure(ajp.isSecure());
             ajpConnector.setAllowTrace(ajp.isAllowTrace());
             ajpConnector.setScheme(ajp.getScheme());
-            if (ajp.getAsyncTimeout() > 0) {
-                ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
-            }
+            ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
             ajpConnector.setEnableLookups(ajp.isEnableLookups());
-            if (ajp.getMaxPostSize() > 0) {
-                ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
-            }
+            ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
             ajpConnector.addUpgradeProtocol(new Http2Protocol());
 
             if (ajp.getProxyPort() > 0) {

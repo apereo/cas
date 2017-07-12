@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
+    private static final long serialVersionUID = -5357843463521189892L;
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
@@ -34,9 +35,18 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     private List additionalAttributes = new ArrayList();
 
     private boolean allowMissingPrincipalAttributeValue = true;
+    private boolean collectDnAttribute;
 
     private Integer order;
-    
+
+    public boolean isCollectDnAttribute() {
+        return collectDnAttribute;
+    }
+
+    public void setCollectDnAttribute(final boolean collectDnAttribute) {
+        this.collectDnAttribute = collectDnAttribute;
+    }
+
     public Integer getOrder() {
         return order;
     }

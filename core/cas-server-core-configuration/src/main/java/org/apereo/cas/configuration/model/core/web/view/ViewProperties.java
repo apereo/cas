@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.web.view;
 
+import java.io.Serializable;
+
 /**
  * This is {@link ViewProperties}.
  *
@@ -7,9 +9,10 @@ package org.apereo.cas.configuration.model.core.web.view;
  * @since 5.0.0
  */
 
-public class ViewProperties {
+public class ViewProperties implements Serializable {
+    private static final long serialVersionUID = 2719748442042197738L;
     private String defaultRedirectUrl;
-    
+
     private Cas2 cas2 = new Cas2();
     private Cas3 cas3 = new Cas3();
 
@@ -37,11 +40,21 @@ public class ViewProperties {
         this.defaultRedirectUrl = defaultRedirectUrl;
     }
 
-    public static class Cas2 {
+    public static class Cas2 implements Serializable {
+        private static final long serialVersionUID = -7954879759474698003L;
         private String success = "protocol/2.0/casServiceValidationSuccess";
         private String failure = "protocol/2.0/casServiceValidationFailure";
+        private boolean v3ForwardCompatible;
 
         private Proxy proxy = new Proxy();
+
+        public boolean isV3ForwardCompatible() {
+            return v3ForwardCompatible;
+        }
+
+        public void setV3ForwardCompatible(final boolean v3ForwardCompatible) {
+            this.v3ForwardCompatible = v3ForwardCompatible;
+        }
 
         public Proxy getProxy() {
             return proxy;
@@ -66,8 +79,9 @@ public class ViewProperties {
         public void setFailure(final String failure) {
             this.failure = failure;
         }
-        
-        public static class Proxy {
+
+        public static class Proxy implements Serializable {
+            private static final long serialVersionUID = 6765987342872282599L;
             private String success = "protocol/2.0/casProxySuccessView";
             private String failure = "protocol/2.0/casProxyFailureView";
 
@@ -88,8 +102,9 @@ public class ViewProperties {
             }
         }
     }
-    
-    public static class Cas3 {
+
+    public static class Cas3 implements Serializable {
+        private static final long serialVersionUID = -2345062034300650858L;
         private String success = "protocol/3.0/casServiceValidationSuccess";
         private String failure = "protocol/3.0/casServiceValidationFailure";
 
@@ -108,7 +123,5 @@ public class ViewProperties {
         public void setFailure(final String failure) {
             this.failure = failure;
         }
-        
-        
     }
 }

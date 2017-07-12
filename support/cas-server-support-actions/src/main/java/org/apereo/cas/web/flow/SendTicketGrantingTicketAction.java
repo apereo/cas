@@ -31,9 +31,9 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private CentralAuthenticationService centralAuthenticationService;
-    private ServicesManager servicesManager;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final ServicesManager servicesManager;
 
     public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService,
                                           final ServicesManager servicesManager,

@@ -51,6 +51,13 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(uid).and("publicId").is(yubikeyPublicId));
+        return this.mongoTemplate.count(query, YubiKeyAccount.class, this.collectionName) > 0;
+    }
+
+    @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (accountValidator.isValid(uid, token)) {
             final String yubikeyPublicId = YubicoClient.getPublicId(token);
@@ -61,12 +68,5 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             this.mongoTemplate.save(account, this.collectionName);
         }
         return false;
-    }
-
-    @Override
-    public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
-        final Query query = new Query();
-        query.addCriteria(Criteria.where("username").is(uid).and("publicId").is(yubikeyPublicId));
-        return this.mongoTemplate.count(query, YubiKeyAccount.class, this.collectionName) > 0;
     }
 }

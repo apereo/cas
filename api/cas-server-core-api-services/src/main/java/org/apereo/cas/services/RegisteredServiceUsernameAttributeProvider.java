@@ -13,6 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceUsernameAttributeProvider extends Serializable {
     /**
