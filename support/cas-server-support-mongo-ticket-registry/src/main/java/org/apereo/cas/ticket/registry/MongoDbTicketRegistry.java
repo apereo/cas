@@ -183,16 +183,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        return ticketCatalog.findAll().stream()
+        return this.ticketCatalog.findAll().stream()
                 .map(this::getTicketCollectionInstanceByMetadata)
                 .filter(StringUtils::isNotBlank)
-                .mapToInt(collectionName -> mongoTemplate.remove(getMatchingAllNamesQuery(), collectionName).getN())
+                .mapToLong(collectionName -> {
+                        final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
+                        final long countTickets = this.mongoTemplate.count(query, collectionName);
+                        mongoTemplate.remove(query, collectionName);
+                        return countTickets;
+                })
                 .sum();
-    }
-
-    private static Query getMatchingAllNamesQuery() {
-        // TODO: Could this Query be converted to an static field?
-        return new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
     }
 
     /**
