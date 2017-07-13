@@ -117,7 +117,7 @@ public class MyConfiguration {
 
 ## Disable Consent Per Service
 
-Consent by default is enabled for all services. If you wish to conditionally bypass and ignore consent on a per-service basis,
+Consent by default will be enabled for all services. If you wish to conditionally bypass and ignore consent on a per-service basis,
 you may decorate the service definition as such:
 
 ```json
