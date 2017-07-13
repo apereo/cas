@@ -120,7 +120,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         LOGGER.debug("getTickets() isn't supported. Returning empty list");
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**

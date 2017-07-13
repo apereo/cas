@@ -3383,6 +3383,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].keystorePassword=
 # cas.authn.pac4j.saml[0].privateKeyPassword=
 # cas.authn.pac4j.saml[0].keystorePath=
+# cas.authn.pac4j.saml[0].keystoreAlias=
 
 # The entityID assigned to CAS acting as the SP
 # cas.authn.pac4j.saml[0].serviceProviderEntityId=
@@ -3397,6 +3398,16 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # (Optional) Friendly name for IdP, e.g. "This Organization" or "That Organization"
 # cas.authn.pac4j.saml[0].clientName=
+
+# Control aspects of the authentication request sent to IdP
+# cas.authn.pac4j.saml[0].authnContextClassRef=
+# cas.authn.pac4j.saml[0].nameIdPolicyFormat=
+# cas.authn.pac4j.saml[0].forceAuth=false
+
+# Define whether metadata requires assertions signed
+# cas.authn.pac4j.saml[0].wantsAssertionsSigned=
+
+
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  

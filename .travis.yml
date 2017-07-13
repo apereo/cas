@@ -4,7 +4,6 @@
 # Install travis: gem install travis
 # Login to travis: travis login
 # Encrypt the token: travis encrypt VAR_NAME=[OAUTH-TOKEN] -r apereo/cas --add env.global
-#
 
 language: java
 sudo: required

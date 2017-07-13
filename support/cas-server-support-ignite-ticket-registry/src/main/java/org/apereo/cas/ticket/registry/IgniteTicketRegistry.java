@@ -6,7 +6,6 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.ssl.SslContextFactory;
@@ -22,11 +21,9 @@ import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -81,17 +78,15 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        final AtomicLong count = new AtomicLong();
-        metadata.forEach(r -> {
-            final IgniteCache<String, Ticket> instance = getIgniteCacheFromMetadata(r);
-            if (instance != null) {
-                count.addAndGet(instance.size());
-                instance.removeAll();
-                instance.clear();
-            }
-        });
-        return count.get();
+        return this.ticketCatalog.findAll().stream()
+                .map(this::getIgniteCacheFromMetadata)
+                .filter(Objects::nonNull)
+                .mapToLong(instance -> {
+                    final int size = instance.size();
+                    instance.removeAll();
+                    return size;
+                })
+                .sum();
     }
 
     @Override
@@ -132,18 +127,13 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Set<Ticket> tickets = new HashSet<>();
-        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        metadata.forEach(t -> {
-            final IgniteCache<String, Ticket> cache = getIgniteCacheFromMetadata(t);
-            final QueryCursor<Cache.Entry<String, Ticket>> cursor = cache.query(new ScanQuery<>());
-            final List<Cache.Entry<String, Ticket>> entries = cursor.getAll();
-            final List<Ticket> allTickets = entries.stream().map(Cache.Entry::getValue).collect(Collectors.toList());
-            tickets.addAll(decodeTickets(allTickets)
-                    .stream()
-                    .collect(Collectors.toList()));
-        });
-        return tickets;
+        return this.ticketCatalog.findAll().stream()
+                .map(this::getIgniteCacheFromMetadata)
+                .map(cache -> cache.query(new ScanQuery<>()).getAll().stream())
+                .flatMap(Function.identity())
+                .map(Cache.Entry::getValue)
+                .map(object -> decodeTicket((Ticket) object))
+                .collect(Collectors.toSet());
     }
 
     @Override
