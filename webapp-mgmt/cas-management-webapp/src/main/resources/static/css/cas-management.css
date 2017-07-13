@@ -6921,6 +6921,7 @@ html {
   display: none;
 }
 
+#requiredAttributes table thead tr th,
 #rejectedAttributes table thead tr th,
 #properties-container table thead tr th {
   text-align: left;
