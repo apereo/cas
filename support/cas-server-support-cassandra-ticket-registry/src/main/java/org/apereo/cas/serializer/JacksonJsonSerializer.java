@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.TicketSerializer;
 import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
@@ -35,8 +36,8 @@ public class JacksonJsonSerializer implements TicketSerializer<String> {
         try {
             return mapper.writeValueAsString(ticket);
         } catch (final JsonProcessingException e) {
-            LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
-            return "";
+            LOGGER.error("Error writing ticket {}: {}", ticket.getId(), e);
+            return StringUtils.EMPTY;
         }
     }
 
@@ -45,7 +46,7 @@ public class JacksonJsonSerializer implements TicketSerializer<String> {
         try {
             return mapper.readValue(ticket, ticketClass);
         } catch (final IOException e) {
-            LOGGER.info("Error reading TGT: ", e);
+            LOGGER.error("Error reading TGT: ", e);
             return null;
         }
     }

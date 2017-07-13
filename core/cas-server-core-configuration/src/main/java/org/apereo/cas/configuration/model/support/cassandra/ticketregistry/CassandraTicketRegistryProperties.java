@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseC
 /**
  * This is {@link CassandraTicketRegistryProperties}.
  *
- * @author Misagh Moayyed
+ * @author David Rodriguez
  * @since 5.2.0
  */
 public class CassandraTicketRegistryProperties extends BaseCassandraProperties {

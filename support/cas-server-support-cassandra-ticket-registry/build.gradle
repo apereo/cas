@@ -2,7 +2,7 @@ plugins {
     id "com.github.william-hill-online.cassandra" version "0.4"
 }
 
-description = "Apereo CAS Cassandra ticket registry"
+description = "Apereo CAS Cassandra Ticket Registry"
 
 cassandra {
     port 9042

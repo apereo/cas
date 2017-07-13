@@ -39,7 +39,7 @@ public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
         try {
             serialized = mapper.writeValueAsBytes(ticket);
         } catch (final JsonProcessingException e) {
-            LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
+            LOGGER.error("Error writing ticket {}: {}", ticket.getId(), e);
             serialized = new byte[]{};
         }
         return ByteBuffer.wrap(serialized);
@@ -50,7 +50,7 @@ public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
         try {
             return mapper.readValue(ticket.array(), TicketGrantingTicketImpl.class);
         } catch (final IOException e) {
-            LOGGER.info("Error reading TGT: ", e);
+            LOGGER.error("Error reading TGT: ", e);
             return null;
         }
     }

@@ -25,8 +25,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration.*;
-
 /**
  * @author David Rodriguez
  *
@@ -35,6 +33,8 @@ import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfigur
 public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraTicketRegistry.class);
+    private static final String LAST_RUN_TABLE = "ticket_cleaner_lastrun";
+    private static final String EXPIRY_TABLE = "ticket_cleaner";
 
     private static final int FIRST_COLUMN_INDEX = 0;
     private static final long TEN_SECONDS = 10000L;
@@ -62,6 +62,8 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     private final PreparedStatement updateLrStmt;
 
     private final Session session;
+    private final String tgtTable;
+    private final String stTable;
 
     public CassandraTicketRegistry(final TicketCatalog ticketCatalog, final String contactPoints, final String username, final String password,
                                    final String keyspace, final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
@@ -73,17 +75,19 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
 
         this.session = cluster.connect(keyspace);
 
-        this.selectTgtStmt = session.prepare("select ticket from " + TGT_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.insertTgtStmt = session.prepare("insert into " + TGT_TABLE + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ")
+        tgtTable = ticketCatalog.find("TGT").getProperties().getStorageName();
+        stTable = ticketCatalog.find("ST").getProperties().getStorageName();
+        this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.deleteTgtStmt = session.prepare("delete from " + TGT_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateTgtStmt = session.prepare("update " + TGT_TABLE + " set ticket = ?, expiration_bucket = ? where id = ? ")
+        this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ?, expiration_bucket = ? where id = ? ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        this.selectStStmt = session.prepare("select ticket from " + ST_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.insertStStmt = session.prepare("insert into " + ST_TABLE + " (id, ticket) values (?, ?) ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.deleteStStmt = session.prepare("delete from " + ST_TABLE + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.updateStStmt = session.prepare("update " + ST_TABLE + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.selectStStmt = session.prepare("select ticket from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.insertStStmt = session.prepare("insert into " + stTable + " (id, ticket) values (?, ?) ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.deleteStStmt = session.prepare("delete from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.updateStStmt = session.prepare("update " + stTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
 
         this.selectExStmt = session.prepare("select ticket, id from " + EXPIRY_TABLE + " where expiration_bucket = ? ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
@@ -109,13 +113,13 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
 
-        if (TGT_TABLE.equals(storageName)) {
+        if (tgtTable.equals(storageName)) {
             final String parentTgtId = ticket.getGrantingTicket() == null ? null : ticket.getGrantingTicket().getId();
             session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serialize(ticket), parentTgtId, calculateExpirationDate(ticket) / TEN));
-        } else if (ST_TABLE.equals(storageName)) {
+        } else if (stTable.equals(storageName)) {
             session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serialize(ticket)));
         } else {
-            LOGGER.error("Inserting unknown ticket type {}", ticket.getClass().getName());
+            LOGGER.error("Failed to insert ticket type {}", ticket.getClass().getName());
         }
     }
 
@@ -132,13 +136,13 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
         }
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
-        if (TGT_TABLE.equals(storageName)) {
+        if (tgtTable.equals(storageName)) {
             return session.execute(this.deleteTgtStmt.bind(ticketId)).wasApplied();
-        } else if (ST_TABLE.equals(storageName)) {
+        } else if (stTable.equals(storageName)) {
             session.executeAsync(this.deleteStStmt.bind(ticketId));
             return true;
         } else {
-            LOGGER.error("Deleting unknown ticket type {}", ticketId);
+            LOGGER.error("Failed to delete ticket type {}", ticketId);
             return false;
         }
     }
@@ -164,9 +168,9 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
 
     private PreparedStatement getTicketQueryForStorageName(final TicketDefinition ticketDefinition) {
         final String storageName = ticketDefinition.getProperties().getStorageName();
-        if (TGT_TABLE.equals(storageName)) {
+        if (tgtTable.equals(storageName)) {
             return this.selectTgtStmt;
-        } else if (ST_TABLE.equals(storageName)) {
+        } else if (stTable.equals(storageName)) {
             return this.selectStStmt;
         }
         LOGGER.error("Requesting unknown ticket type {}", ticketDefinition.getImplementationClass());
@@ -179,12 +183,12 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
         LOGGER.debug("Updating ticket {}", ticketId);
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
-        if (TGT_TABLE.equals(storageName)) {
+        if (tgtTable.equals(storageName)) {
             session.execute(this.updateTgtStmt.bind(serializer.serialize(ticket), calculateExpirationDate(ticket) / TEN, ticket.getId()));
-        } else if (ST_TABLE.equals(storageName)) {
+        } else if (stTable.equals(storageName)) {
             session.execute(this.updateStStmt.bind(serializer.serialize(ticket), ticket.getId()));
         } else {
-            LOGGER.error("Updating unknown ticket type {}", ticket.getClass().getName());
+            LOGGER.error("Failed to update ticket type {}", ticket.getClass().getName());
         }
         return ticket;
     }

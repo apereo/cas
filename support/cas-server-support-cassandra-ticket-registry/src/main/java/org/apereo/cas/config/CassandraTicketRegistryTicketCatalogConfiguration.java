@@ -16,25 +16,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CassandraTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
 
-    /**
-     * Name for the ticketGrantingTicket tickets table.
-     */
-    public static final String TGT_TABLE = "ticketGrantingTicket";
-
-    /**
-     * Name for the serviceTicket tickets table.
-     */
-    public static final String ST_TABLE = "serviceTicket";
-
-    /**
-     * Name for the last run table.
-     */
-    public static final String LAST_RUN_TABLE = "ticket_cleaner_lastrun";
-
-    /**
-     * Name for the expiry table.
-     */
-    public static final String EXPIRY_TABLE = "ticket_cleaner";
+    private static final String TGT_TABLE = "ticketGrantingTicket";
+    private static final String ST_TABLE = "serviceTicket";
 
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {

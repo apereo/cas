@@ -1,6 +1,5 @@
 package org.apereo.cas.utils;
 
-import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -26,16 +25,16 @@ public final class TicketCatalogUtils {
     public static TicketCatalog getTicketCatalog() {
         final DefaultTicketCatalog ticketCatalog = new DefaultTicketCatalog();
         final DefaultTicketDefinition pt = new DefaultTicketDefinition(ProxyTicketImpl.class, "PT");
-        pt.getProperties().setStorageName(CassandraTicketRegistryTicketCatalogConfiguration.ST_TABLE);
+        pt.getProperties().setStorageName("serviceticket");
         ticketCatalog.register(pt);
         final DefaultTicketDefinition pgt = new DefaultTicketDefinition(ProxyGrantingTicketImpl.class, "PGT");
-        pgt.getProperties().setStorageName(CassandraTicketRegistryTicketCatalogConfiguration.TGT_TABLE);
+        pgt.getProperties().setStorageName("ticketgrantingticket");
         ticketCatalog.register(pgt);
         final DefaultTicketDefinition st = new DefaultTicketDefinition(ServiceTicketImpl.class, "ST");
-        st.getProperties().setStorageName(CassandraTicketRegistryTicketCatalogConfiguration.ST_TABLE);
+        st.getProperties().setStorageName("serviceticket");
         ticketCatalog.register(st);
         final DefaultTicketDefinition tgt = new DefaultTicketDefinition(TicketGrantingTicketImpl.class, "TGT");
-        tgt.getProperties().setStorageName(CassandraTicketRegistryTicketCatalogConfiguration.TGT_TABLE);
+        tgt.getProperties().setStorageName("ticketgrantingticket");
         ticketCatalog.register(tgt);
         return ticketCatalog;
     }
