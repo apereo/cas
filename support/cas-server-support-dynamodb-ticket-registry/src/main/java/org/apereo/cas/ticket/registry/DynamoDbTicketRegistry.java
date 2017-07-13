@@ -69,5 +69,4 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         final String ticketId = encodeTicketId(ticketIdToDelete);
         return this.dbTableService.delete(ticketId);
     }
-
 }
