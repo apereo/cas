@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import DashboardCircle from './DashboardCircle'
 
-const JavaSucks = React.createClass({
+const Dashboard = React.createClass({
   render: function () {
     return (
       <ul>
@@ -14,4 +14,4 @@ const JavaSucks = React.createClass({
   }
 })
 
-ReactDOM.render(React.createElement(JavaSucks), document.getElementById('app-launcher'))
+ReactDOM.render(React.createElement(Dashboard), document.getElementById('app-launcher'))
