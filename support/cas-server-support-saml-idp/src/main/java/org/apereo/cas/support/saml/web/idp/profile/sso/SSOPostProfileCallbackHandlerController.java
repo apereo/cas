@@ -46,7 +46,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
     private static final Logger LOGGER = LoggerFactory.getLogger(SSOPostProfileCallbackHandlerController.class);
 
     private final HostnameVerifier hostnameVerifier;
-    
+
     /**
      * Instantiates a new idp-sso post saml profile handler controller.
      *
@@ -67,6 +67,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      * @param samlObjectSignatureValidator                 the saml object signature validator
+     * @param hostnameVerifier                             the hostname verifier
      */
     public SSOPostProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                                    final ParserPool parserPool,
