@@ -36,20 +36,34 @@
                 <span th:remove="tag" th:text="#{management.services.service.noAction}" />
             </div>
             <!-- Username Attribute Provider Anonymous Options -->
-            <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'anon'">
-                <label class="col-sm-4" for="uapSaltSetting">
-                    <span th:remove="tag" th:text="#{services.form.label.uap.saltSetting}" />
-                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
-                       data-toggle="tooltip"
-                       data-placement="top"
-                       th:title="#{services.form.tooltip.uap.saltSetting}"></i>
-                </label>
-                <div class="col-sm-8">
-                    <div class="input-group">
-                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
-                            <i class="fa fa-exclamation-triangle"></i>
+            <div ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'anon'">
+                <div class="form-group">
+                    <label class="col-sm-4" for="uapSaltSetting">
+                        <span th:remove="tag" th:text="#{services.form.label.uap.saltSetting}" />
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                           data-toggle="tooltip"
+                           data-placement="top"
+                           th:title="#{services.form.tooltip.uap.saltSetting}"></i>
+                    </label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                                <i class="fa fa-exclamation-triangle"></i>
+                            </div>
+                            <input type="text" class="form-control" id="uapSaltSetting" ng-model="serviceFormCtrl.serviceData.userAttrProvider.valueAnon" />
                         </div>
-                        <input type="text" class="form-control" id="uapSaltSetting" ng-model="serviceFormCtrl.serviceData.userAttrProvider.valueAnon" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" for="uapPrincipalAttribute">
+                        <span th:remove="tag" th:text="#{services.form.label.uap.principalAttribute}" />
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                           data-toggle="tooltip"
+                           data-placement="top"
+                           th:title="#{services.form.tooltip.uap.principalAttribute}"></i>
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="uapPrincipalAttribute" ng-model="serviceFormCtrl.serviceData.userAttrProvider.valueAnonPrincipalAttribute" />
                     </div>
                 </div>
             </div>
