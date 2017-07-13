@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -177,7 +177,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
             return map.getAll(map.getKeysWithExpiryCheck());
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
-            return Collections.emptyMap();
+            return new HashMap<>(0);
         }
     }
 }

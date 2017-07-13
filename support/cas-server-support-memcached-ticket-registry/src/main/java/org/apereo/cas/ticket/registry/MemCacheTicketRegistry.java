@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
@@ -120,7 +120,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         LOGGER.debug("getTickets() isn't supported. Returning empty list");
-        return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 
     /**
