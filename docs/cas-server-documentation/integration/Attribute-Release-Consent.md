@@ -28,7 +28,7 @@ User consent decisions may be stored and remembered using one of the following o
 This is the default option, most useful for demo and testing purposes. Consent decisions are all
 kept inside a static JSON resource whose path is taught to CAS via settings.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#json-attribute-consent).
 
 ### JDBC
 
@@ -42,7 +42,7 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jpa-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jpa-attribute-consent).
 
 
 ### REST
@@ -57,7 +57,43 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-attribute-consent).
+
+Endpoints must be designed to accept/process `application/json`.
+
+| Operation                 | Method    | Data                                 | Expected Response
+|---------------------------|-----------|--------------------------------------------------------------------------------------
+| Locate consent decision   | `GET`     | `service`, `principal` as headers    | `200`. The consent decision object in the body.
+| Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
+
+The consent decision object in transit will and must match the following structure:
+
+```json
+{
+   "id":1000,
+   "principal": "casuser",
+   "service": "https://google.com",
+   "date":[ 2017, 7, 10, 14, 10, 17 ],
+   "options": "ATTRIBUTE_NAME",
+   "reminder": 14,
+   "reminderTimeUnit": "DAYS",
+   "attributeNames": "...",
+   "attributeValues": "..."
+}
+```
+
+| Field                     | Description    
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------
+| `id`                      | `-1` for new decision records or a valid numeric value for existing records.      
+| `principal`               | The authenticated user id.
+| `service`                 | Target application url to which attributes are about to be released.
+| `date`                    | Date/Time of the decision record.
+| `options`                 | Indicates how changes in attributes are determined for this application. (i.e. `ATTRIBUTE_NAME`, `ATTRIBUTE_VALUE`, `ALWAYS`)
+| `reminder`                | Indicates the period after which user will be reminded to consent again, in case no changes are found.
+| `reminderTimeUnit`        | The reminder time unit (i.e. `MONTHS`, `DAYS`, `HOURS`, etc).
+| `attributeNames`          | SHA-512 of attribute names for this application, signed and encrypted.
+| `attributeValues`         | SHA-512 of attribute values for this application, signed and encrypted.
+
 
 ### Custom
 
@@ -81,7 +117,7 @@ public class MyConfiguration {
 
 ## Disable Consent Per Service
 
-Consent by default is enabled for all services. If you wish to conditionally bypass and ignore consent on a per-service basis,
+Consent by default will be enabled for all services. If you wish to conditionally bypass and ignore consent on a per-service basis,
 you may decorate the service definition as such:
 
 ```json
