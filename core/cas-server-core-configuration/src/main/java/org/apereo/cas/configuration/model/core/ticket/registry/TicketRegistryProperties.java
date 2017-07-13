@@ -159,7 +159,7 @@ public class TicketRegistryProperties {
         return cassandra;
     }
 
-    public void setCassandra(CassandraTicketRegistryProperties cassandra) {
+    public void setCassandra(final CassandraTicketRegistryProperties cassandra) {
         this.cassandra = cassandra;
     }
 

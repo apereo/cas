@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.cassandra.ticketregistry;
 
-import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 
 /**
