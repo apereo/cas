@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.apereo.cas.ticket.Ticket;
 
@@ -87,4 +88,7 @@ public interface TicketRegistry {
      */
     long serviceTicketCount();
 
+    default Stream<Ticket> getTicketsStream() {
+        return getTickets().stream();
+    }
 }
