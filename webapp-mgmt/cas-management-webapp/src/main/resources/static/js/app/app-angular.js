@@ -802,7 +802,6 @@ if (array.length == 3) {
                 serviceTypeList: [
                     {name: 'CAS Client', value: 'cas'},
                     {name: 'OAuth2 Client', value: 'oauth'},
-                    {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
                     {name: 'SAML2 Service Provider', value: 'saml'},
                     {name: 'OpenID Connect Client', value: 'oidc'},
                     {name: 'WS Federation Client', value: 'wsfed'}
