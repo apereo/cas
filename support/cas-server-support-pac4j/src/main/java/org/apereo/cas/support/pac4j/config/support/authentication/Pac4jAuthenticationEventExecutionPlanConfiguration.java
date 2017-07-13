@@ -3,12 +3,12 @@ package org.apereo.cas.support.pac4j.config.support.authentication;
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -235,8 +235,21 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                     cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                     cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+                    cfg.setForceAuth(saml.isForceAuth());
+
+                    if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
+                        cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
+                    }
+                    if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {
+                        cfg.setKeystoreAlias(saml.getKeystoreAlias());
+                    }
+                    if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
+                        cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
+                    }
+                    cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+
                     final SAML2Client client = new SAML2Client(cfg);
-                    
+
                     final int count = index.intValue();
 
                     if (saml.getClientName() != null) {
@@ -276,7 +289,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     properties.add(client);
                 });
     }
-    
+
     private void configureOidcClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getOidc()

@@ -16,7 +16,7 @@
             <li><a href="#5a" data-toggle="tab">Multifactor Authentication</a></li>
             <li><a href="#6a" data-toggle="tab">Proxy Authentication</a></li>
             <li><a href="#7a" data-toggle="tab">Username Attribute</a></li>
-            <li><a href="#8a" data-toggle="tab">Attribute Release</a></li>
+            <li ng-if="serviceFormCtrl.serviceData.type != 'oidc'"><a href="#8a" data-toggle="tab">Attribute Release</a></li>
             <li><a href="#9a" data-toggle="tab">Properties</a></li>
             <li><a href="#100a" data-toggle="tab">Advanced</a></li>
         </ul>
