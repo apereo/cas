@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link ConsentProperties}.
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ConsentProperties {
     private int reminder = 30;
-    private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
+    private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
     private Rest rest = new Rest();
     private Jpa jpa = new Jpa();
@@ -49,11 +49,11 @@ public class ConsentProperties {
         this.reminder = reminder;
     }
 
-    public TimeUnit getReminderTimeUnit() {
+    public ChronoUnit getReminderTimeUnit() {
         return reminderTimeUnit;
     }
 
-    public void setReminderTimeUnit(final TimeUnit reminderTimeUnit) {
+    public void setReminderTimeUnit(final ChronoUnit reminderTimeUnit) {
         this.reminderTimeUnit = reminderTimeUnit;
     }
 

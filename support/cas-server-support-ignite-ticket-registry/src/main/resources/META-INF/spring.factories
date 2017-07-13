@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.IgniteTicketRegistryConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.IgniteTicketRegistryConfiguration,\
+org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration
