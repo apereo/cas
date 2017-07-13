@@ -96,6 +96,7 @@ For example, the below example only allows release of `memberOf` if it contains 
     "attributeFilter" : {
       "@class": "org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter",
       "patterns": {
+          "@class" : "java.util.HashMap",
           "memberOf": "^\\w{3}$"
       },
       "excludeUnmappedAttributes": false,
