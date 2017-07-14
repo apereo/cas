@@ -2,8 +2,8 @@ package org.apereo.cas.services;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,6 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link ScriptedRegisteredServiceAttributeReleasePolicy}.
@@ -29,7 +28,6 @@ import java.util.regex.Pattern;
 public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private static final long serialVersionUID = -979532578142774128L;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptedRegisteredServiceAttributeReleasePolicy.class);
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
 
     private String scriptFile;
 
@@ -56,7 +54,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
             if (StringUtils.isBlank(this.scriptFile)) {
                 return new HashMap<>();
             }
-            final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(this.scriptFile);
+            final Matcher matcherInline = ScriptingUtils.getInlineGroovyScriptMatcher(this.scriptFile);
             if (matcherInline.find()) {
                 return getAttributesFromInlineGroovyScript(attributes, matcherInline);
             }

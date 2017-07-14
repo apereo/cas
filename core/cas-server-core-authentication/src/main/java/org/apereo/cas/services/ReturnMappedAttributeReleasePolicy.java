@@ -1,16 +1,13 @@
 package org.apereo.cas.services;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -36,9 +32,6 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private static final long serialVersionUID = -6249488544306639050L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReturnMappedAttributeReleasePolicy.class);
-
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
-    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
 
     private Map<String, Object> allowedAttributes;
 
@@ -113,8 +106,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                      final Object attributeValue,
                                                      final Map<String, Object> resolvedAttributes,
                                                      final Map<String, Object> attributesToRelease) {
-        final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(mappedAttributeName);
-        final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(mappedAttributeName);
+        final Matcher matcherInline = ScriptingUtils.getInlineGroovyScriptMatcher(mappedAttributeName);
+        final Matcher matcherFile = ScriptingUtils.getInlineGroovyScriptMatcher(mappedAttributeName);
 
         if (matcherInline.find()) {
             processInlineGroovyAttribute(resolvedAttributes, attributesToRelease, matcherInline, attributeName);
@@ -166,20 +159,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     private static Object getGroovyAttributeValue(final String groovyScript,
                                                   final Map<String, Object> resolvedAttributes) {
-        try {
-            final Binding binding = new Binding();
-            final GroovyShell shell = new GroovyShell(binding);
-            binding.setVariable("attributes", resolvedAttributes);
-            binding.setVariable("logger", LOGGER);
-
-            LOGGER.debug("Executing groovy script [{}] with attributes binding of [{}]",
-                    StringUtils.abbreviate(groovyScript, groovyScript.length() / 2), resolvedAttributes);
-            final Object res = shell.evaluate(groovyScript);
-            return res;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
+        return ScriptingUtils.executeGroovyShellScript(groovyScript,
+                CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER));
     }
 
 
