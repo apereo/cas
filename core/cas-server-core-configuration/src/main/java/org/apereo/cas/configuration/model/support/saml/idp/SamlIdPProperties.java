@@ -6,7 +6,6 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -275,7 +274,7 @@ public class SamlIdPProperties {
          */
         public Map<String, String> configureAttributeNameFormats() {
             if (this.attributeNameFormats.isEmpty()) {
-                return Collections.emptyMap();
+                return new HashMap<>(0);
             }
             final Map<String, String> nameFormats = new HashMap<>();
             this.attributeNameFormats.forEach(value -> Arrays.stream(value.split(",")).forEach(format -> {

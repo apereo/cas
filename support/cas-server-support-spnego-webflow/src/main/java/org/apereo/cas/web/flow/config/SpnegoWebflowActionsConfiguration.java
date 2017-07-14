@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -97,7 +97,7 @@ public class SpnegoWebflowActionsConfiguration {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
         final SearchFilter filter = Beans.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
-                "host", Collections.emptyList());
+                "host", new ArrayList<>(0));
 
         final SearchRequest searchRequest = Beans.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         return new LdapSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(), 
