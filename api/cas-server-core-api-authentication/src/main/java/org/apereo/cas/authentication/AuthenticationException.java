@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +31,8 @@ public class AuthenticationException extends RuntimeException {
     public AuthenticationException(final String msg) {
         this(
             msg,
-            Collections.emptyMap(),
-            Collections.emptyMap());
+            new HashMap<>(0),
+            new HashMap<>(0));
     }
 
     /**
@@ -49,7 +48,7 @@ public class AuthenticationException extends RuntimeException {
      * @param handlerErrors Map of handler names to errors.
      */
     public AuthenticationException(final Map<String, Class<? extends Exception>> handlerErrors) {
-        this(handlerErrors, Collections.emptyMap());
+        this(handlerErrors, new HashMap<>(0));
     }
 
     /**

@@ -23,9 +23,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -73,8 +73,8 @@ public class ShibbolethAttributeResolverConfiguration {
                     getClass().getName(),
                     casProperties.getShibAttributeResolver().getResources(),
                     CollectionUtils.wrap(cfg),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
+                    new ArrayList<>(0),
+                    new ArrayList<>(0),
                     this.applicationContext
             );
 

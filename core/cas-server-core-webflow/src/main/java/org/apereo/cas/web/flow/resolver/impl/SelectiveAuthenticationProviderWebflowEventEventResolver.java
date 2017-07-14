@@ -20,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -94,7 +94,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
 
         if (providers == null || providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");
-            return Pair.of(resolveEvents, Collections.emptySet());
+            return Pair.of(resolveEvents, new HashSet<>(0));
         }
 
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providers.values());

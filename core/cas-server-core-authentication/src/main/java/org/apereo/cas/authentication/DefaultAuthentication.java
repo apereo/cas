@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +120,7 @@ public class DefaultAuthentication implements Authentication {
         Assert.notEmpty(credentials, "Credential cannot be empty");
 
         this.credentials = credentials;
-        this.failures = failures.isEmpty() ? Collections.emptyMap() : failures;
+        this.failures = failures.isEmpty() ? new HashMap<>(0) : failures;
     }
 
     @Override

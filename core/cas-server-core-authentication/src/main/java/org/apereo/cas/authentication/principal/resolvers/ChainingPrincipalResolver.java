@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,8 +106,8 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
                     + "with different identifiers which typically is the result of a configuration issue.",
-                    Collections.emptyMap(),
-                    Collections.emptyMap());
+                    new HashMap<>(0),
+                    new HashMap<>(0));
         }
         final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);

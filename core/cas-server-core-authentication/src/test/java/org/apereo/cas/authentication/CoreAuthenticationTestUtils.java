@@ -97,7 +97,7 @@ public final class CoreAuthenticationTestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return getPrincipal(name, Collections.emptyMap());
+        return getPrincipal(name, new HashMap<>(0));
     }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
@@ -113,7 +113,7 @@ public final class CoreAuthenticationTestUtils {
     }
 
     public static Authentication getAuthentication(final Principal principal) {
-        return getAuthentication(principal, Collections.emptyMap());
+        return getAuthentication(principal, new HashMap<>(0));
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {

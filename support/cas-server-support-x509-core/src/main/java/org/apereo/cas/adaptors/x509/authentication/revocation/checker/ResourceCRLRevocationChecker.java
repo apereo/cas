@@ -15,6 +15,7 @@ import javax.annotation.PreDestroy;
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -213,7 +214,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
             return CollectionUtils.wrap(this.crlIssuerMap.get(principal));
         }
         LOGGER.warn("Could not locate CRL for issuer principal [{}]", principal);
-        return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 
     /**
