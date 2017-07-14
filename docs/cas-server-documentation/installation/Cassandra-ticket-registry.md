@@ -19,9 +19,8 @@ Cassandra integration is enabled by including the following dependency in the WA
 There are four core configuration concerns with Cassandra:
 
 1. Keyspace
-2. Ticket cleaning
-3. Object serialization mechanism
-4. Multi datacenter replication
+2. Object serialization mechanism
+3. Multi datacenter replication
 
 ### Keyspace
 We suggest the following Keysapace definition:
@@ -30,24 +29,24 @@ We suggest the following Keysapace definition:
 ```cql
 CREATE KEYSPACE cas WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': '3'}  AND durable_writes = true;
 
-CREATE TABLE cas.ticket_cleaner (
-    expiry_type text,
-    date_bucket bigint,
-    id text,
-    PRIMARY KEY ((expiry_type, date_bucket), id)
-);
-
-CREATE TABLE cas.ticketgrantingticket (
+CREATE TABLE IF NOT EXISTS cas.ticketgrantingticket (
     id text PRIMARY KEY,
-    ticket text
+    ticket text,
+    ticket_granting_ticket_id text,
+    expiration_bucket bigint
 ) WITH default_time_to_live = 5184000;
 
-CREATE TABLE cas.serviceticket (
+CREATE MATERIALIZED VIEW IF NOT EXISTS cas.ticket_cleaner AS
+SELECT expiration_bucket, ticket, id FROM ticketgrantingticket
+WHERE id IS NOT NULL AND expiration_bucket IS NOT NULL AND ticket IS NOT NULL
+PRIMARY KEY (expiration_bucket, id);
+
+CREATE TABLE IF NOT EXISTS cas.serviceticket (
     id text PRIMARY KEY,
     ticket text
 ) WITH default_time_to_live = 60;
 
-CREATE TABLE cas.ticket_cleaner_lastrun (
+CREATE TABLE IF NOT EXISTS cas.ticket_cleaner_lastrun (
     id text PRIMARY KEY,
     last_run bigint
 );
@@ -57,45 +56,28 @@ CREATE TABLE cas.ticket_cleaner_lastrun (
 ```cql
 CREATE KEYSPACE cas WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': '3'}  AND durable_writes = true;
 
-CREATE TABLE cas.ticket_cleaner (
-    expiry_type text,
-    date_bucket bigint,
-    id text,
-    PRIMARY KEY ((expiry_type, date_bucket), id)
-);
-
-CREATE TABLE cas.ticketgrantingticket (
+CREATE TABLE IF NOT EXISTS cas.ticketgrantingticket (
     id text PRIMARY KEY,
-    ticket blob
+    ticket blob,
+    ticket_granting_ticket_id text,
+    expiration_bucket bigint
 ) WITH default_time_to_live = 5184000;
 
-CREATE TABLE cas.serviceticket (
+CREATE MATERIALIZED VIEW IF NOT EXISTS cas.ticket_cleaner AS
+SELECT expiration_bucket, ticket, id FROM ticketgrantingticket
+WHERE id IS NOT NULL AND expiration_bucket IS NOT NULL AND ticket IS NOT NULL
+PRIMARY KEY (expiration_bucket, id);
+
+CREATE TABLE IF NOT EXISTS cas.serviceticket (
     id text PRIMARY KEY,
     ticket blob
 ) WITH default_time_to_live = 60;
 
-CREATE TABLE cas.ticket_cleaner_lastrun (
+CREATE TABLE IF NOT EXISTS cas.ticket_cleaner_lastrun (
     id text PRIMARY KEY,
     last_run bigint
 );
 ```
-
-### Ticket cleaning
-Cassandra supports [TTL](https://en.wikipedia.org/wiki/Time_to_live). We use this feature to clean up Service Tickets as we know the maximum duration.
-This TTL has to be defined in the schema definition:
-```cql
-CREATE TABLE cas.serviceticket (
-    id text PRIMARY KEY,
-    ticket text
-) WITH default_time_to_live = 60;
-```
-
-For TicketGrantingTickets we follow a different approach. When a new TGT is stored, its id is stored in the ticket_cleaner table, within a bucket based on the ticket expiration time.
-This time bucket is 10 seconds.
-The ticket cleaner will check the last bucket period, and retrieve all the ticket's id for the next bucket in the ticket_cleaner table, then it'll run queries agains the TGT table in order to retrieve the whole ticket, and run the cleaning process itself:
-- check if expired, and if so
-- logout user from services
-- remove ticket
 
 ### Object Serialization
 Our Cassandra ticket registry implementation can store tickets as String or bytes of data, so CAS tickets must be serialized to a byte array prior to storage. 
