@@ -1,21 +1,19 @@
 package org.apereo.cas.services;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Resolves the username for the service to be the default principal id.
@@ -29,9 +27,6 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroovyRegisteredServiceUsernameProvider.class);
 
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
-    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
-
     private String groovyScript;
 
     public GroovyRegisteredServiceUsernameProvider() {
@@ -43,8 +38,8 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service) {
-        final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(this.groovyScript);
-        final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(this.groovyScript);
+        final Matcher matcherInline = ScriptingUtils.getInlineGroovyScriptMatcher(this.groovyScript);
+        final Matcher matcherFile = ScriptingUtils.getGroovyFileScriptMatcher(this.groovyScript);
 
         if (matcherInline.find()) {
             return resolveUsernameFromInlineGroovyScript(principal, service, matcherInline.group(1));
@@ -96,18 +91,10 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static Object getGroovyAttributeValue(final Principal principal, final String script) {
-        try {
-            final Binding binding = new Binding();
-            final GroovyShell shell = new GroovyShell(binding);
-            binding.setVariable("attributes", principal.getAttributes());
-            binding.setVariable("id", principal.getId());
-            binding.setVariable("logger", LOGGER);
-            final Object res = shell.evaluate(script);
-            return res;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
+        return ScriptingUtils.executeGroovyShellScript(script,
+                CollectionUtils.wrap("attributes", principal.getAttributes(),
+                        "id", principal.getId(),
+                        "logger", LOGGER));
     }
 
     @Override
