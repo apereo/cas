@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +66,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found for [{}]", onOrAfterDate);
         }
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 
     @Override
@@ -80,7 +79,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found for [{}]", principal);
         }
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 
     @Override

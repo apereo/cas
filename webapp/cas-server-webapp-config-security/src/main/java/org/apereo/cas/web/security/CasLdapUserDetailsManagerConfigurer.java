@@ -18,8 +18,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.ProviderManagerBuilder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * This is {@link CasLdapUserDetailsManagerConfigurer}.
@@ -70,13 +70,13 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
         return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
-                Collections.emptyList(), Arrays.asList(ldapAuthz.getRoleAttribute()));
+                new ArrayList<>(0), Arrays.asList(ldapAuthz.getRoleAttribute()));
     }
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
         return Beans.newLdaptiveSearchExecutor(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
-                Collections.emptyList(), Arrays.asList(ldapAuthz.getGroupAttribute()));
+                new ArrayList<>(0), Arrays.asList(ldapAuthz.getGroupAttribute()));
     }
 
     @Override
