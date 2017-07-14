@@ -5,11 +5,6 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link ConsentWebflowConfigurer}.
@@ -53,14 +48,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createConsentRequiredCheckAction(final Flow flow) {
-        final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
-        final List<Action> actions = StreamSupport.stream(sendTicket.getActionList().spliterator(), false).collect(Collectors.toList());
-        actions.add(0, createEvaluateAction("checkConsentRequiredAction"));
-        sendTicket.getActionList().forEach(a -> sendTicket.getActionList().remove(a));
-        actions.forEach(sendTicket.getActionList()::add);
-
-        final ActionState generateServiceTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
-        final ActionState consentTicketAction = createActionState(flow, ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT);
-        cloneActionState(generateServiceTicket, consentTicketAction);
+        createEvaluateActionForActionState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, "checkConsentRequiredAction");
+        cloneAndCreateActionState(flow, ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }
 }

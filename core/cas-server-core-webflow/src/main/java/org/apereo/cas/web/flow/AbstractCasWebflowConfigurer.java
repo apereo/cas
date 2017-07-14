@@ -67,6 +67,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -672,5 +674,39 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> createTransitionForState(state, v.getId(), v.getId()));
+    }
+
+    /**
+     * Create evaluate action for action state action.
+     *
+     * @param flow             the flow
+     * @param actionStateId    the action state id
+     * @param evaluateActionId the evaluate action id
+     * @return the action
+     */
+    protected Action createEvaluateActionForActionState(final Flow flow, final String actionStateId,
+                                                      final String evaluateActionId) {
+        final ActionState sendTicket = (ActionState) flow.getState(actionStateId);
+        final List<Action> actions = StreamSupport.stream(sendTicket.getActionList().spliterator(), false)
+                .collect(Collectors.toList());
+        final Action evaluateAction = createEvaluateAction(evaluateActionId);
+        actions.add(0, evaluateAction);
+        sendTicket.getActionList().forEach(a -> sendTicket.getActionList().remove(a));
+        actions.forEach(sendTicket.getActionList()::add);
+        return evaluateAction;
+    }
+
+    /**
+     * Clone and create action state.
+     *
+     * @param flow                 the flow
+     * @param actionStateId        the action state id
+     * @param actionStateIdToClone the action state id to clone
+     */
+    protected void cloneAndCreateActionState(final Flow flow, final String actionStateId,
+                                             final String actionStateIdToClone) {
+        final ActionState generateServiceTicket = (ActionState) flow.getState(actionStateIdToClone);
+        final ActionState consentTicketAction = createActionState(flow, actionStateId);
+        cloneActionState(generateServiceTicket, consentTicketAction);
     }
 }

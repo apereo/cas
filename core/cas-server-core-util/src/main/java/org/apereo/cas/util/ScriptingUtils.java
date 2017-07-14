@@ -1,7 +1,9 @@
 package org.apereo.cas.util;
 
+import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
+import groovy.lang.GroovyShell;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,9 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link ScriptingUtils}.
@@ -18,9 +23,61 @@ import java.security.PrivilegedAction;
  * @since 5.1.0
  */
 public final class ScriptingUtils {
+    /**
+     * Pattern indicating groovy script is inlined.
+     */
+    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
+
+    /**
+     * Pattern indicating groovy script is a file/resource.
+     */
+    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptingUtils.class);
 
     private ScriptingUtils() {
+    }
+
+    /**
+     * Gets inline groovy script matcher.
+     *
+     * @param script the script
+     * @return the inline groovy script matcher
+     */
+    public static Matcher getInlineGroovyScriptMatcher(final String script) {
+        return INLINE_GROOVY_PATTERN.matcher(script);
+    }
+
+    /**
+     * Gets groovy file script matcher.
+     *
+     * @param script the script
+     * @return the groovy file script matcher
+     */
+    public static Matcher getGroovyFileScriptMatcher(final String script) {
+        return FILE_GROOVY_PATTERN.matcher(script);
+    }
+
+    /**
+     * Execute groovy shell script t.
+     *
+     * @param <T>       the type parameter
+     * @param script    the script
+     * @param variables the variables
+     * @return the t
+     */
+    public static <T> T executeGroovyShellScript(final String script,
+                                                 final Map<String, Object> variables) {
+        try {
+            final Binding binding = new Binding();
+            final GroovyShell shell = new GroovyShell(binding);
+            variables.forEach(binding::setVariable);
+            LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, variables);
+            return (T) shell.evaluate(script);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
