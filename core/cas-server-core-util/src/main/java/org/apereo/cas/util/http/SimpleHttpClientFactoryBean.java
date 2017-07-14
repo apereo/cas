@@ -39,7 +39,6 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -316,7 +315,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     public List<Integer> getAcceptableCodes() {
-        return Collections.unmodifiableList(this.acceptableCodes);
+        return new ArrayList<>(this.acceptableCodes);
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {
