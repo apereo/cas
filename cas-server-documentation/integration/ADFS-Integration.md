@@ -11,7 +11,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-wsfederation-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
