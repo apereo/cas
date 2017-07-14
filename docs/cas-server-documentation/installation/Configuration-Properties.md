@@ -3406,8 +3406,6 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # Define whether metadata requires assertions signed
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
-
-
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  
