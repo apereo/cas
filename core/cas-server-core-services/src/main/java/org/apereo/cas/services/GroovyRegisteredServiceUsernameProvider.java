@@ -10,6 +10,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.AbstractResource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -46,7 +47,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
         }
 
         if (matcherFile.find()) {
-            return resolveUsernameFromExternalGroovyScript(principal, service);
+            return resolveUsernameFromExternalGroovyScript(principal, service, matcherFile.group(1));
         }
 
         LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]",
@@ -54,14 +55,16 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
         return principal.getId();
     }
 
-    private String resolveUsernameFromExternalGroovyScript(final Principal principal, final Service service) {
+    private String resolveUsernameFromExternalGroovyScript(final Principal principal, final Service service,
+                                                           final String scriptFile) {
         try {
-            LOGGER.debug("Found inline groovy script to execute");
-            final String script = IOUtils.toString(ResourceUtils.getResourceFrom(this.groovyScript).getInputStream(), StandardCharsets.UTF_8);
+            LOGGER.debug("Found groovy script to execute");
+            final AbstractResource resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
+            final String script = IOUtils.toString(resourceFrom.getInputStream(), StandardCharsets.UTF_8);
 
             final Object result = getGroovyAttributeValue(principal, script);
             if (result != null) {
-                LOGGER.debug("Found username [{}] from script [{}]", result, this.groovyScript);
+                LOGGER.debug("Found username [{}] from script [{}]", result, scriptFile);
                 return result.toString();
             }
         } catch (final IOException e) {
