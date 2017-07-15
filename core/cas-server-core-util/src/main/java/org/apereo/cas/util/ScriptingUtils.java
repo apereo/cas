@@ -91,8 +91,13 @@ public final class ScriptingUtils {
         try {
             final Binding binding = new Binding();
             final GroovyShell shell = new GroovyShell(binding);
-            variables.forEach(binding::setVariable);
-            LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, variables);
+            if (variables != null && !variables.isEmpty()) {
+                variables.forEach(binding::setVariable);
+            }
+            if (!binding.hasVariable("logger")) {
+                binding.setVariable("logger", LOGGER);
+            }
+            LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, binding.getVariables());
             return (T) shell.evaluate(script);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
