@@ -3449,6 +3449,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].authnContextClassRef=
 # cas.authn.pac4j.saml[0].nameIdPolicyFormat=
 # cas.authn.pac4j.saml[0].forceAuth=false
+# cas.authn.pac4j.saml[0].passive=false
 
 # Define whether metadata requires assertions signed
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
@@ -3464,6 +3465,15 @@ Delegate authentication to Yahoo.
 ```properties
 # cas.authn.pac4j.yahoo.id=
 # cas.authn.pac4j.yahoo.secret=
+```
+
+### Orcid
+
+Delegate authentication to Orcid.
+
+```properties
+# cas.authn.pac4j.orcid.id=
+# cas.authn.pac4j.orcid.secret=
 ```
 
 ### Dropbox
