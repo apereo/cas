@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class GroovyRegisteredServiceUsernameProviderTests {
 
     @Test
-    public void testUsernameProvider() throws Exception {
+    public void verifyUsernameProvider() throws Exception {
         final GroovyRegisteredServiceUsernameProvider p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("file:src/test/resources/uid.groovy");
         final String id =
