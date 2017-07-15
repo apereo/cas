@@ -335,7 +335,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                     final PrincipalResolver resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
                                     authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                                     final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build());
-                                    failures.getValue().forEach(e -> handleAuthenticationException(e, handler.getName(), builder));
                                     return failures.getKey();
                                 } catch (final Exception e) {
                                     handleAuthenticationException(e, handler.getName(), builder);
@@ -379,6 +378,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(authentication);
         if (!failures.getKey()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
+            failures.getValue().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
     }
@@ -423,15 +423,15 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     protected void handleAuthenticationException(final Throwable e, final String name,
                                                  final AuthenticationBuilder builder) {
+        String msg = e.getMessage();
+        if (e.getCause() != null) {
+            msg += " / " + e.getCause().getMessage();
+        }
         if (e instanceof GeneralSecurityException) {
-            String msg = e.getMessage();
-            if (e.getCause() != null) {
-                msg += " / " + e.getCause().getMessage();
-            }
             LOGGER.debug("[{}] exception details: [{}].", name, msg);
             builder.addFailure(name, e.getClass());
         } else {
-            LOGGER.error("[{}]: [{}] (Details: [{}])", name, e.getMessage(), e.getCause().getMessage());
+            LOGGER.error("[{}]: [{}]", name, msg);
             builder.addFailure(name, e.getClass());
         }
     }

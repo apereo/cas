@@ -117,7 +117,9 @@ public final class CollectionUtils {
      */
     public static <K, V> Map<K, V> wrap(final String key, final Object value,
                                         final String key2, final Object value2) {
-        return (Map) wrap(key, value).put(key2, value2);
+        final Map m = wrap(key, value);
+        m.put(key2, value2);
+        return m;
     }
 
     /**
@@ -136,7 +138,9 @@ public final class CollectionUtils {
     public static <K, V> Map<K, V> wrap(final String key, final Object value,
                                         final String key2, final Object value2,
                                         final String key3, final Object value3) {
-        return (Map) wrap(key, value, key2, value2).put(key3, value3);
+        final Map m = wrap(key, value, key2, value2);
+        m.put(key3, value3);
+        return m;
     }
 
     /**
@@ -158,7 +162,9 @@ public final class CollectionUtils {
                                         final String key2, final Object value2,
                                         final String key3, final Object value3,
                                         final String key4, final Object value4) {
-        return (Map) wrap(key, value, key2, value2, key3, value3).put(key4, value4);
+        final Map m = wrap(key, value, key2, value2, key3, value3);
+        m.put(key4, value4);
+        return m;
     }
 
     /**
