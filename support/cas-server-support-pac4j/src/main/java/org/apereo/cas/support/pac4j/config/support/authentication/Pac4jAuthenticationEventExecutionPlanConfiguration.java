@@ -236,7 +236,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                     cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
                     cfg.setForceAuth(saml.isForceAuth());
-
+                    
                     if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
                         cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
                     }

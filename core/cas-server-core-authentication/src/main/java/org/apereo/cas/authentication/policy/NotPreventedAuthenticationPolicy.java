@@ -21,7 +21,7 @@ public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authentication) {
+    public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
         final boolean fail = authentication.getFailures().values().stream()
                 .anyMatch(failure -> failure.isAssignableFrom(PreventedException.class));
         if (fail) {

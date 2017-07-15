@@ -54,7 +54,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
             if (StringUtils.isBlank(this.scriptFile)) {
                 return new HashMap<>();
             }
-            final Matcher matcherInline = ScriptingUtils.getInlineGroovyScriptMatcher(this.scriptFile);
+            final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
             if (matcherInline.find()) {
                 return getAttributesFromInlineGroovyScript(attributes, matcherInline);
             }
