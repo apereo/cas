@@ -22,7 +22,7 @@ public class PrincipalException extends AuthenticationException {
      */
     public PrincipalException(
             final String message,
-            final Map<String, Class<? extends Exception>> handlerErrors,
+            final Map<String, Class<? extends Throwable>> handlerErrors,
             final Map<String, HandlerResult> handlerSuccesses) {
         super(message, handlerErrors, handlerSuccesses);
     }

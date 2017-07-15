@@ -106,8 +106,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                      final Object attributeValue,
                                                      final Map<String, Object> resolvedAttributes,
                                                      final Map<String, Object> attributesToRelease) {
-        final Matcher matcherInline = ScriptingUtils.getInlineGroovyScriptMatcher(mappedAttributeName);
-        final Matcher matcherFile = ScriptingUtils.getInlineGroovyScriptMatcher(mappedAttributeName);
+        final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
+        final Matcher matcherFile = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
 
         if (matcherInline.find()) {
             processInlineGroovyAttribute(resolvedAttributes, attributesToRelease, matcherInline, attributeName);

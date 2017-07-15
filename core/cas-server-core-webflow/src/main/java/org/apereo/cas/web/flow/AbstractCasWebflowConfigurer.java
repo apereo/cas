@@ -684,15 +684,15 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param evaluateActionId the evaluate action id
      * @return the action
      */
-    protected Action createEvaluateActionForActionState(final Flow flow, final String actionStateId,
-                                                      final String evaluateActionId) {
-        final ActionState sendTicket = (ActionState) flow.getState(actionStateId);
-        final List<Action> actions = StreamSupport.stream(sendTicket.getActionList().spliterator(), false)
+    protected Action createEvaluateActionForExistingActionState(final Flow flow, final String actionStateId,
+                                                                final String evaluateActionId) {
+        final ActionState action = (ActionState) flow.getState(actionStateId);
+        final List<Action> actions = StreamSupport.stream(action.getActionList().spliterator(), false)
                 .collect(Collectors.toList());
         final Action evaluateAction = createEvaluateAction(evaluateActionId);
         actions.add(0, evaluateAction);
-        sendTicket.getActionList().forEach(a -> sendTicket.getActionList().remove(a));
-        actions.forEach(sendTicket.getActionList()::add);
+        action.getActionList().forEach(a -> action.getActionList().remove(a));
+        actions.forEach(action.getActionList()::add);
         return evaluateAction;
     }
 

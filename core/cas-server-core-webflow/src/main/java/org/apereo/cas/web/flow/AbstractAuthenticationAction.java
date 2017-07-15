@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -12,7 +13,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
         if (!adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
             final String msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
-            final Map<String, Class<? extends Exception>> map = Collections.singletonMap(
+            final Map<String, Class<? extends Throwable>> map = CollectionUtils.wrap(
                     UnauthorizedAuthenticationException.class.getSimpleName(),
                     UnauthorizedAuthenticationException.class);
             final AuthenticationException error = new AuthenticationException(msg, map, new HashMap<>(0));

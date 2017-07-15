@@ -48,8 +48,8 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Matcher matcherInline = ScriptingUtils.getInlineGroovyScriptMatcher(script);
-        final Matcher matcherFile = ScriptingUtils.getGroovyFileScriptMatcher(script);
+        final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
+        final Matcher matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
 
         if (matcherInline.find()) {
             return filterInlinedGroovyAttributeValues(givenAttributes, matcherInline.group(1));

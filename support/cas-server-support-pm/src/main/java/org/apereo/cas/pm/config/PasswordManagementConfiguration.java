@@ -20,6 +20,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
@@ -35,6 +36,9 @@ import java.io.Serializable;
 public class PasswordManagementConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Autowired
     private CasConfigurationProperties casProperties;
