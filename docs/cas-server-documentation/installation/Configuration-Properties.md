@@ -1101,6 +1101,52 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 # cas.authn.policy.req.enabled=true
 ```
 
+### Groovy
+
+Execute a groovy script to detect authentication policy.
+
+```properties
+# cas.authn.policy.groovy[0].script=file:/etc/cas/config/account.groovy
+```
+
+The script may be designed as:
+
+```groovy
+import java.util.*
+import org.apereo.cas.authentication.exceptions.*
+import javax.security.auth.login.*
+
+def Exception run(final Object... args) {
+    def principal = args[0]
+    def logger = args[1]
+
+    if (conditionYouMayDesign() == true) {
+        return new AccountDisabledException()
+    }
+    return null;
+}
+```
+
+### REST
+
+Contact a REST endpoint via `POST` to detect authentication policy.
+The message body contains the CAS authenticated principal that can be used
+to examine account status and policy.
+
+```properties
+# cas.authn.policy.rest[0].endpoint=https://account.example.org/endpoint
+```
+
+| Code                   | Result
+|------------------------|---------------------------------------------
+| `200`          | Successful authentication.
+| `403`, `405`   | Produces a `AccountDisabledException`
+| `404`          | Produces a `AccountNotFoundException`
+| `423`          | Produces a `AccountLockedException`
+| `412`          | Produces a `AccountExpiredException`
+| `428`          | Produces a `AccountPasswordMustChangeException`
+| Other          | Produces a `FailedLoginException`
+
 ## Authentication Throttling
 
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
