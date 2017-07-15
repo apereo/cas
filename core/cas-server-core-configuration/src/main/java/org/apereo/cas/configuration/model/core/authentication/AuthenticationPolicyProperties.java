@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Configuration properties class for cas.authn.policy.
  *
@@ -12,13 +15,12 @@ public class AuthenticationPolicyProperties {
     private boolean requiredHandlerAuthenticationPolicyEnabled;
     
     private Any any = new Any();
-
     private Req req = new Req();
-
     private All all = new All();
-    
+    private List<Groovy> groovy = new ArrayList<>();
+    private List<Rest> rest = new ArrayList<>();
     private NotPrevented notPrevented = new NotPrevented();
-
+    
     public All getAll() {
         return all;
     }
@@ -123,6 +125,46 @@ public class AuthenticationPolicyProperties {
 
         public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    public List<Groovy> getGroovy() {
+        return groovy;
+    }
+
+    public void setGroovy(final List<Groovy> groovy) {
+        this.groovy = groovy;
+    }
+
+    public List<Rest> getRest() {
+        return rest;
+    }
+
+    public void setRest(final List<Rest> rest) {
+        this.rest = rest;
+    }
+
+    public static class Rest {
+        private String endpoint;
+
+        public String getEndpoint() {
+            return endpoint;
+        }
+
+        public void setEndpoint(final String endpoint) {
+            this.endpoint = endpoint;
+        }
+    }
+
+    public static class Groovy {
+        private String script;
+
+        public String getScript() {
+            return script;
+        }
+
+        public void setScript(final String script) {
+            this.script = script;
         }
     }
 }

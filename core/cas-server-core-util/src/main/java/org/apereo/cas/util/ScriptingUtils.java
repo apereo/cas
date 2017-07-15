@@ -39,12 +39,32 @@ public final class ScriptingUtils {
     }
 
     /**
+     * Is inline groovy script ?.
+     *
+     * @param script the script
+     * @return the boolean
+     */
+    public static boolean isInlineGroovyScript(final String script) {
+        return getMatcherForInlineGroovyScript(script).find();
+    }
+
+    /**
+     * Is external groovy script ?.
+     *
+     * @param script the script
+     * @return the boolean
+     */
+    public static boolean isExternalGroovyScript(final String script) {
+        return getMatcherForExternalGroovyScript(script).find();
+    }
+    
+    /**
      * Gets inline groovy script matcher.
      *
      * @param script the script
      * @return the inline groovy script matcher
      */
-    public static Matcher getInlineGroovyScriptMatcher(final String script) {
+    public static Matcher getMatcherForInlineGroovyScript(final String script) {
         return INLINE_GROOVY_PATTERN.matcher(script);
     }
 
@@ -54,7 +74,7 @@ public final class ScriptingUtils {
      * @param script the script
      * @return the groovy file script matcher
      */
-    public static Matcher getGroovyFileScriptMatcher(final String script) {
+    public static Matcher getMatcherForExternalGroovyScript(final String script) {
         return FILE_GROOVY_PATTERN.matcher(script);
     }
 

@@ -23,22 +23,12 @@ public class PasswordManagementProperties {
     // Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
-    private AccountStatus accountStatus = new AccountStatus();
-
     private Ldap ldap = new Ldap();
     private Jdbc jdbc = new Jdbc();
     private Rest rest = new Rest();
     private Json json = new Json();
     
     private Reset reset = new Reset();
-
-    public AccountStatus getAccountStatus() {
-        return accountStatus;
-    }
-
-    public void setAccountStatus(final AccountStatus accountStatus) {
-        this.accountStatus = accountStatus;
-    }
 
     public Json getJson() {
         return json;
@@ -287,48 +277,4 @@ public class PasswordManagementProperties {
         private static final long serialVersionUID = 1129426669588789974L;
     }
 
-    public static class AccountStatus {
-        private Rest rest = new Rest();
-        private Groovy groovy = new Groovy();
-
-        public Rest getRest() {
-            return rest;
-        }
-
-        public void setRest(final Rest rest) {
-            this.rest = rest;
-        }
-
-        public Groovy getGroovy() {
-            return groovy;
-        }
-
-        public void setGroovy(final Groovy groovy) {
-            this.groovy = groovy;
-        }
-
-        public static class Rest {
-            private String endpoint;
-
-            public String getEndpoint() {
-                return endpoint;
-            }
-
-            public void setEndpoint(final String endpoint) {
-                this.endpoint = endpoint;
-            }
-        }
-
-        public static class Groovy {
-            private String script;
-
-            public String getScript() {
-                return script;
-            }
-
-            public void setScript(final String script) {
-                this.script = script;
-            }
-        }
-    }
 }

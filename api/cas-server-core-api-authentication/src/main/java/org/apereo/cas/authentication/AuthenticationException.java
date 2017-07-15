@@ -18,7 +18,7 @@ public class AuthenticationException extends RuntimeException {
     private static final long serialVersionUID = -6032827784134751797L;
 
     /** Immutable map of handler names to the errors they raised. */
-    private final Map<String, Class<? extends Exception>> handlerErrors;
+    private final Map<String, Class<? extends Throwable>> handlerErrors;
 
     /** Immutable map of handler names to an authentication success metadata instance. */
     private final Map<String, HandlerResult> handlerSuccesses;
@@ -47,7 +47,7 @@ public class AuthenticationException extends RuntimeException {
      *
      * @param handlerErrors Map of handler names to errors.
      */
-    public AuthenticationException(final Map<String, Class<? extends Exception>> handlerErrors) {
+    public AuthenticationException(final Map<String, Class<? extends Throwable>> handlerErrors) {
         this(handlerErrors, new HashMap<>(0));
     }
 
@@ -58,7 +58,7 @@ public class AuthenticationException extends RuntimeException {
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
     public AuthenticationException(
-            final Map<String, Class<? extends Exception>> handlerErrors, final Map<String, HandlerResult> handlerSuccesses) {
+            final Map<String, Class<? extends Throwable>> handlerErrors, final Map<String, HandlerResult> handlerSuccesses) {
         this(
             String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()),
             handlerErrors,
@@ -75,7 +75,7 @@ public class AuthenticationException extends RuntimeException {
      */
     public AuthenticationException(
             final String message,
-            final Map<String, Class<? extends Exception>> handlerErrors,
+            final Map<String, Class<? extends Throwable>> handlerErrors,
             final Map<String, HandlerResult> handlerSuccesses) {
         super(message);
         this.handlerErrors = new HashMap<>(handlerErrors);
@@ -87,7 +87,7 @@ public class AuthenticationException extends RuntimeException {
      *
      * @return Immutable map of handler names to errors.
      */
-    public Map<String, Class<? extends Exception>> getHandlerErrors() {
+    public Map<String, Class<? extends Throwable>> getHandlerErrors() {
         return this.handlerErrors;
     }
 
