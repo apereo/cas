@@ -160,6 +160,12 @@ Is CN=$FULL_MACHINE_NAME, OU=Test, O=Test, L=Test, ST=Test, C=US correct?
   [no]:  yes
 ```
 
+In your `/etc/hosts` file (on Windows: `C:\Windows\System32\Drivers\etc\hosts`), you may also need to add the following entry:
+
+```bash
+127.0.0.1 mymachine.domain.edu
+```
+
 ### Deploy
 
 Execute the following command:
