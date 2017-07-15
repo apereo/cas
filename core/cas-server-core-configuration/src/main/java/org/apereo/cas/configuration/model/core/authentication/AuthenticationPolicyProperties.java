@@ -12,13 +12,44 @@ import java.util.List;
 
 public class AuthenticationPolicyProperties {
 
+    /**
+     * Global authentication policy that is applied when CAS attempts to vend and validate tickets.
+     * Checks to make sure a particular authentication handler has successfully executed and validated credentials.
+     * Required handlers are defined per registered service.
+     */
     private boolean requiredHandlerAuthenticationPolicyEnabled;
-    
+
+    /**
+     * Satisfied if any authentication handler succeeds.
+     * Allows options to avoid short circuiting and try every handler even if one prior succeeded.
+     */
     private Any any = new Any();
+
+    /**
+     * Satisfied if an only if a specified handler successfully authenticates its credential.
+     */
     private Req req = new Req();
+
+    /**
+     * Satisfied if and only if all given credentials are successfully authenticated.
+     * Support for multiple credentials is new in CAS and this handler would
+     * only be acceptable in a multi-factor authentication situation.
+     */
     private All all = new All();
+
+    /**
+     * Execute a groovy script to detect authentication policy.
+     */
     private List<Groovy> groovy = new ArrayList<>();
+
+    /**
+     * Execute a rest endpoint to detect authentication policy.
+     */
     private List<Rest> rest = new ArrayList<>();
+
+    /**
+     * Satisfied if an only if the authentication event is not blocked by a <code>PreventedException</code>.
+     */
     private NotPrevented notPrevented = new NotPrevented();
     
     public All getAll() {
@@ -62,6 +93,9 @@ public class AuthenticationPolicyProperties {
     }
     
     public static class NotPrevented {
+        /**
+         * Enables the policy.
+         */
         private boolean enabled;
 
         public boolean isEnabled() {
@@ -74,6 +108,10 @@ public class AuthenticationPolicyProperties {
     }
     
     public static class Any {
+        /**
+         * Avoid short circuiting and try every handler even if one prior succeeded.
+         * Ensure number of provided credentials does not match the sum of authentication successes and failures
+         */
         private boolean tryAll;
 
         public boolean isTryAll() {
@@ -86,6 +124,9 @@ public class AuthenticationPolicyProperties {
     }
 
     public static class All {
+        /**
+         * Enables the policy.
+         */
         private boolean enabled;
 
         public boolean isEnabled() {
@@ -98,9 +139,19 @@ public class AuthenticationPolicyProperties {
     }
     
     public static class Req {
+        /**
+         * Enables the policy.
+         */
         private boolean enabled;
-        
+
+        /**
+         * Ensure number of provided credentials does not match the sum of authentication successes and failures
+         */
         private boolean tryAll;
+
+        /**
+         * The handler name which must have successfully executed and validated credentials.
+         */
         private String handlerName = "handlerName";
 
         public boolean isTryAll() {
@@ -145,6 +196,9 @@ public class AuthenticationPolicyProperties {
     }
 
     public static class Rest {
+        /**
+         * Rest endpoint url to contact.
+         */
         private String endpoint;
 
         public String getEndpoint() {
@@ -157,6 +211,9 @@ public class AuthenticationPolicyProperties {
     }
 
     public static class Groovy {
+        /**
+         * Path to the groovy script to execute.
+         */
         private String script;
 
         public String getScript() {
