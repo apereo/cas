@@ -233,6 +233,20 @@ Let an external Groovy script decide how principal attributes should be released
 }
 ```
 
+The script itself may be designed in Groovy as:
+
+```groovy
+import java.util.*
+
+def Map<String, List<Object>> run(final Object... args) {
+    def currentAttributes = args[0]
+    def logger = args[1]
+
+    logger.debug("Current attributes received are {}", currentAttributes)
+    return[username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+}
+```
+
 ### Javascript/Python/Groovy Script
 
 Let an external javascript, groovy or python script decide how principal attributes should be released.
@@ -259,7 +273,7 @@ that receives a list of parameters. The collection of current attributes in proc
 as well as a logger object are passed to this function. The result must produce a
 map whose `key`s are attributes names and whose `value`s are a list of attribute values.
 
-The script itself may be designed in Groovy as:
+As an example, the script itself may be designed in Groovy as:
 
 ```groovy
 import java.util.*
