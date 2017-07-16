@@ -349,54 +349,6 @@ function generateDependencyLangFragments() {
 }
 
 
-function generateRegisteredServiceFragments() {
-  	
-  $.each( $("div.language-json.highlighter-rouge div.highlight pre"), function( i, val ) {
-
-      var text = $(val).text();
-      if (!text.trim().includes("@class")) {
-          return;
-      }
-
-      var json = $(val).text();
-      var yaml = json2yaml(json);
-
-      var yamlFragment = "<table style='border-spacing: 0'> \
-	      <tbody>\
-	      <tr>\
-	      	<td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td>\
-	      	<td class='code'><pre>" + yaml + "</pre></td>\
-	      </tr> \
-	      </tbody> \
-	      </table>";
-
-      var parentTable = $(val).parent().parent().parent().parent().parent();
-
-      var jsonId = Math.floor((Math.random() * 10000) + 1);
-      var yamlId = Math.floor((Math.random() * 10000) + 1);
-      
-      var tabs = "<ul class='nav nav-pills'> \
-  <li class='nav-item'><a class='nav-link active' data-toggle='tab' href='#json" + jsonId + "'>JSON</a></li> \
-  <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#yaml" + yamlId + "'>YAML</a></li> \
-  <li role='presentation' class='nav-item dropdown'> \
-      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More<span class='caret'></span></a> \
-      <div class='dropdown-menu'> \
-          <a class='dropdown-item' href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
-      </div> \
-  </li> \
-  </ul> \
-  <div class='tab-content clearfix'> \
-    <div class='tab-pane fade in active language-json highlighter-rouge highlight' id='json" + jsonId + "'>" + parentTable.html() + "</div> \
-    <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='yaml" + yamlId + "'>" + yamlFragment + "</div> \
-  </div>";
-
-      var divHighlight = parentTable.parent();
-      
-      divHighlight.empty();
-      divHighlight.prepend(tabs);
-  });
-}
-
 function responsiveImages() {
     $('img').each(function() {
         $(this).addClass('img-fluid');
