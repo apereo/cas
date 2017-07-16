@@ -358,7 +358,7 @@ function generateRegisteredServiceFragments() {
           return;
       }
 
-      var json = $(val).html();
+      var json = $(val).text();
       var yaml = json2yaml(json);
 
       var yamlFragment = "<table style='border-spacing: 0'> \
