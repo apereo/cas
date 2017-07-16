@@ -350,11 +350,7 @@ function generateDependencyLangFragments() {
 
 
 function generateRegisteredServiceFragments() {
-  $.post( "https://www.json2yaml.com/api/j2y", { q: "Test" } );  
-  $.getJSON("https://www.json2yaml.com/api/j2y?callback=?",function(json){
-    console.log(json);
-  });
-	
+  	
   $.each( $("div.language-json.highlighter-rouge div.highlight pre"), function( i, val ) {
 
       var text = $(val).text();
