@@ -9,6 +9,9 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipal
  * @since 5.0.0
  */
 public class TrustedAuthenticationProperties extends PersonDirPrincipalResolverProperties {
+    /**
+     * Indicates the name of the authentication handler.
+     */
     private String name;
 
     public String getName() {

@@ -13,6 +13,10 @@ import java.io.Serializable;
 public class AbstractConfigProperties implements Serializable {
 
     private static final long serialVersionUID = 2167387596301530104L;
+
+    /**
+     * The parent configuration object.
+     */
     private Config config = new Config();
 
     public Config getConfig() {
@@ -28,6 +32,12 @@ public class AbstractConfigProperties implements Serializable {
      */
     public static class Config implements Serializable {
         private static final long serialVersionUID = 7767391713429459243L;
+
+        /**
+         * The resource location. Resources can be URLS, or
+         * files found either on the classpath or outside somewhere
+         * in the file system.
+         */
         private Resource location;
 
         public Resource getLocation() {
