@@ -448,6 +448,7 @@ public class Pac4jProperties {
         private String clientName;
         private boolean forceAuth;
         private String authnContextClassRef;
+        private String authnContextComparisonType;
         private String keystoreAlias;
         private String nameIdPolicyFormat;
         private boolean wantsAssertionsSigned;
@@ -466,6 +467,14 @@ public class Pac4jProperties {
 
         public void setAuthnContextClassRef(final String authnContextClassRef) {
             this.authnContextClassRef = authnContextClassRef;
+        }
+
+        public String getAuthnContextComparisonType() {
+            return authnContextComparisonType;
+        }
+
+        public void setAuthnContextComparisonType(final String authnContextComparisonType) {
+            this.authnContextComparisonType = authnContextComparisonType;
         }
 
         public String getKeystoreAlias() {
