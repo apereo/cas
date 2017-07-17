@@ -1,11 +1,10 @@
 package org.apereo.cas.metadata.server;
 
-import org.apereo.cas.config.CasCoreMetadataServerConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
@@ -19,11 +18,10 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link CasConfigurationMetadataServerApplication}.
@@ -33,7 +31,6 @@ import java.nio.charset.StandardCharsets;
  */
 @SpringBootApplication(
         exclude = {
-                CasCoreMetadataServerConfiguration.class,
                 HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
@@ -59,11 +56,14 @@ public class CasConfigurationMetadataServerApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        SpringApplication.run(CasConfigurationMetadataServerApplication.class, args);
+        new SpringApplicationBuilder(CasConfigurationMetadataServerApplication.class)
+                .banner(new DefaultCasBanner())
+                .logStartupInfo(false)
+                .run(args);
     }
 
     /**
-     * Command line runner command line runner.
+     * Command line runner.
      *
      * @return the command line runner
      * @throws Exception the exception
@@ -72,7 +72,8 @@ public class CasConfigurationMetadataServerApplication {
     public CommandLineRunner commandLineRunner() throws Exception {
         return args -> {
             final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
-            System.out.println(repository.getRepository().getAllGroups().size());
+            LOGGER.info("Total groups found: [{}]", repository.getRepository().getAllGroups().size());
+            LOGGER.info("Total properties found: [{}]", repository.getRepository().getAllProperties().size());
         };
     }
 }
