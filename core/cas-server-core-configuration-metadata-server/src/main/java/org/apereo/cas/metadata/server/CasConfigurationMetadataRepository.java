@@ -14,11 +14,17 @@ import java.util.Arrays;
  * This is {@link CasConfigurationMetadataRepository}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 public class CasConfigurationMetadataRepository {
     private final ConfigurationMetadataRepository configMetadataRepo;
 
+    /**
+     * Instantiates a new Cas configuration metadata repository.
+     * Scans the context looking for spring configuration metadata
+     * resources and then loads them all into a repository instance.
+     */
     public CasConfigurationMetadataRepository() {
         try {
             final Resource[] resources = new PathMatchingResourcePatternResolver()

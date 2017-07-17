@@ -14,6 +14,7 @@ import java.util.Map;
 /**
  * This is {@link CasConfigurationMetadataServerController}.
  *
+ * @author Dmitriy Kopylenko
  * @author Misagh Moayyed
  * @since 5.2.0
  */
@@ -33,7 +34,7 @@ public class CasConfigurationMetadataServerController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = "/property", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/property")
     public ResponseEntity<ConfigurationMetadataProperty> findByPropertyName(@RequestParam("name") final String propertyName) throws Exception {
         final ConfigurationMetadataProperty configMetadataProp = repository.getRepository().getAllProperties().get(propertyName);
         return ResponseEntity.ok(configMetadataProp);
@@ -46,7 +47,7 @@ public class CasConfigurationMetadataServerController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = "/group", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/group")
     public ResponseEntity<ConfigurationMetadataGroup> findByGroupName(@RequestParam("name") final String name) throws Exception {
         final ConfigurationMetadataGroup grp = repository.getRepository().getAllGroups().get(name);
         return ResponseEntity.ok(grp);
@@ -58,7 +59,7 @@ public class CasConfigurationMetadataServerController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = "/groups", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/groups")
     public ResponseEntity<Map<String, ConfigurationMetadataGroup>> findAllGroups() throws Exception {
         return ResponseEntity.ok(repository.getRepository().getAllGroups());
     }
@@ -69,7 +70,7 @@ public class CasConfigurationMetadataServerController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = "/properties", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/properties")
     public ResponseEntity<Map<String, ConfigurationMetadataProperty>> findAllProperties() throws Exception {
         return ResponseEntity.ok(repository.getRepository().getAllProperties());
     }
