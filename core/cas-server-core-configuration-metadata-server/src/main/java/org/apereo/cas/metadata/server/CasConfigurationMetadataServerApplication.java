@@ -27,6 +27,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * This is {@link CasConfigurationMetadataServerApplication}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 @SpringBootApplication(
