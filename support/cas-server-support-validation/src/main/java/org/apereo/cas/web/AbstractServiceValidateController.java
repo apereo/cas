@@ -42,7 +42,7 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -379,7 +379,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return map of objects each keyed to a name
      */
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
-        return Collections.emptyMap();  
+        return new HashMap<>(0);
     }
 
     @Override

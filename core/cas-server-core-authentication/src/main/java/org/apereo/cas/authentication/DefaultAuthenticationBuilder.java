@@ -33,7 +33,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private final Map<String, HandlerResult> successes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication failures. */
-    private final Map<String, Class<? extends Exception>> failures = new LinkedHashMap<>();
+    private final Map<String, Class<? extends Throwable>> failures = new LinkedHashMap<>();
 
     /** Authentication date. */
     private ZonedDateTime authenticationDate;
@@ -251,7 +251,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return Non-null authentication failure map.
      */
     @Override
-    public Map<String, Class<? extends Exception>> getFailures() {
+    public Map<String, Class<? extends Throwable>> getFailures() {
         return this.failures;
     }
 
@@ -263,14 +263,14 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setFailures(final Map<String, Class<? extends Exception>> failures) {
+    public AuthenticationBuilder setFailures(final Map<String, Class<? extends Throwable>> failures) {
         Assert.notNull(failures, "Failures cannot be null");
         this.failures.clear();
         return addFailures(failures);
     }
 
     @Override
-    public AuthenticationBuilder addFailures(final Map<String, Class<? extends Exception>> failures) {
+    public AuthenticationBuilder addFailures(final Map<String, Class<? extends Throwable>> failures) {
         failures.entrySet().stream().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
         return this;
     }
@@ -284,7 +284,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder addFailure(final String key, final Class<? extends Exception> value) {
+    public AuthenticationBuilder addFailure(final String key, final Class<? extends Throwable> value) {
         this.failures.put(key, value);
         return this;
     }

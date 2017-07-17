@@ -12,6 +12,8 @@
     <suppress checks="DesignForExtension" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="InterfaceIsType"  files=".*Constants\.java"/>
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
+    <suppress id="collectionsUnmodifiable" files="(.*Tests*|Mock.*|Test.*)\.java" />
+    <suppress id="collectionsEmpty" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="sysOutConsoleLogs" files="\.xml" />
     <suppress id="namedAnnotations" files="(Base.*|Abstract.*|Root.*)\.java" />
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
