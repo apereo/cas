@@ -28,7 +28,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     private String healthQuery = StringUtils.EMPTY;
     private String idleTimeout = "PT10M";
     private String dataSourceName;
-    private Map<String, String> properties = new HashMap<String, String>();
+    private Map<String, String> properties = new HashMap<>();
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 

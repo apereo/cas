@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class ThreadLocalPrincipalResolverTests {
 
     private final ThreadLocalPrincipalResolver theResolver =
-            new ThreadLocalPrincipalResolver(new PrincipalIdProvider() {});
+            new ThreadLocalPrincipalResolver(new AuditPrincipalIdProvider() {});
 
     @After
     public void cleanup() {

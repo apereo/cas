@@ -7,9 +7,10 @@ import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Key-value ticket registry implementation that stores tickets in redis keyed on the ticket ID.
@@ -52,7 +53,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return false;
     }
 
-
     @Override
     public void addTicket(final Ticket ticket) {
         Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
@@ -88,18 +88,18 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Collection<Ticket> getTickets() {
         Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
 
-        final Set<Ticket> tickets = new HashSet<>();
-        final Set<String> redisKeys = this.client.keys(RedisTicketRegistry.getPatternTicketRedisKey());
-        redisKeys.forEach(redisKey -> {
-            final Ticket ticket = this.client.boundValueOps(redisKey).get();
-            if (ticket == null) {
-                this.client.delete(redisKey);
-            } else {
-                // Decoding add first
-                tickets.add(this.decodeTicket(ticket));
-            }
-        });
-        return tickets;
+        return this.client.keys(RedisTicketRegistry.getPatternTicketRedisKey()).stream()
+                .map(redisKey -> {
+                    final Ticket ticket = this.client.boundValueOps(redisKey).get();
+                    if (ticket == null) {
+                        this.client.delete(redisKey);
+                        return null;
+                    }
+                    return ticket;
+                })
+                .filter(Objects::nonNull)
+                .map(this::decodeTicket)
+                .collect(Collectors.toSet());
     }
 
     @Override

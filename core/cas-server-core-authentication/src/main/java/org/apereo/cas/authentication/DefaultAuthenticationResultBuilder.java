@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -60,8 +61,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         this.providedCredential = credential;
         return this;
     }
-
-
+    
     @Override
     public AuthenticationResult build() {
         return build(null);
@@ -105,7 +105,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         final Authentication auth = authenticationBuilder.build();
         LOGGER.debug("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;
-
     }
 
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,
@@ -158,6 +157,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * when composing the authentication chain for the caller.
      */
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
-        return this.principalElectionStrategy.nominate(Collections.unmodifiableSet(authentications), principalAttributes);
+        return this.principalElectionStrategy.nominate(new HashSet<>(authentications), principalAttributes);
     }
 }

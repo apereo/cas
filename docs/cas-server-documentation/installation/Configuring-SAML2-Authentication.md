@@ -287,6 +287,13 @@ from a Metadata query server, the metadata location must be configured to point 
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
 please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
 
+## Client Libraries
+
+For Java-based applications, the following frameworks may be used to integrate your application with CAS acting as a SAML2 identity provider:
+
+- [Spring Security SAML](http://projects.spring.io/spring-security-saml/)
+- [Pac4j](http://www.pac4j.org/docs/clients/saml.html)
+
 ## Troubleshooting
 
 To enable additional logging, modify the logging configuration file to add the following:

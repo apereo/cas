@@ -71,7 +71,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
-        attributes.put("testEmptyCollection", Collections.emptyList());
+        attributes.put("testEmptyCollection", new ArrayList<>(0));
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
