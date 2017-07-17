@@ -1953,7 +1953,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
 # cas.authn.spnego.jcifsDomain=
 # cas.authn.spnego.ipsToCheckPattern=127.+
-# cas.authn.spnego.kerberosDebug=
+# cas.authn.spnego.kerberosDebug=true
 # cas.authn.spnego.send401OnAuthenticationFailure=true
 # cas.authn.spnego.kerberosRealm=EXAMPLE.COM
 # cas.authn.spnego.ntlm=false
@@ -3383,6 +3383,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].keystorePassword=
 # cas.authn.pac4j.saml[0].privateKeyPassword=
 # cas.authn.pac4j.saml[0].keystorePath=
+# cas.authn.pac4j.saml[0].keystoreAlias=
 
 # The entityID assigned to CAS acting as the SP
 # cas.authn.pac4j.saml[0].serviceProviderEntityId=
@@ -3397,6 +3398,14 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # (Optional) Friendly name for IdP, e.g. "This Organization" or "That Organization"
 # cas.authn.pac4j.saml[0].clientName=
+
+# Control aspects of the authentication request sent to IdP
+# cas.authn.pac4j.saml[0].authnContextClassRef=
+# cas.authn.pac4j.saml[0].nameIdPolicyFormat=
+# cas.authn.pac4j.saml[0].forceAuth=false
+
+# Define whether metadata requires assertions signed
+# cas.authn.pac4j.saml[0].wantsAssertionsSigned=
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  
@@ -4799,6 +4808,59 @@ To learn more about this topic, [please review this guide](../integration/SCIM-I
 # cas.scim.oauthToken=
 # cas.scim.username=
 # cas.scim.password=
+```
+
+## Attribute Consent
+
+CAS provides the ability to enforce user-informed consent upon attribute release. 
+To learn more about this topic, [please review this guide](../integration/Attribute-Release-Consent.html).
+
+```properties
+# cas.consent.reminder=30
+# cas.consent.reminderTimeUnit=HOURS|DAYS|MONTHS
+
+# cas.consent.encryptionKey=
+# cas.consent.signingKey=
+# cas.consent.cipherEnabled=true
+```
+
+### JSON Attribute Consent
+
+```properties
+# cas.consent.json.config.location=file:/etc/cas/config/consent.json
+```
+
+### JPA Attribute Consent
+
+```properties
+# cas.consent.jpa.validationQuery=SELECT 1
+# cas.consent.jpa.maxWait=5000
+# cas.consent.jpa.healthQuery=
+# cas.consent.jpa.isolateInternalQueries=false
+# cas.consent.jpa.url=jpa:hsqldb:mem:cas-hsql-database
+# cas.consent.jpa.failFast=true
+# cas.consent.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.consent.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.consent.jpa.leakThreshold=10
+# cas.consent.jpa.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.consent.jpa.batchSize=1
+# cas.consent.jpa.user=sa
+# cas.consent.jpa.ddlAuto=create-drop
+# cas.consent.jpa.maxAgeDays=180
+# cas.consent.jpa.password=
+# cas.consent.jpa.autocommit=false
+# cas.consent.jpa.driverClass=org.hsqldb.jpaDriver
+# cas.consent.jpa.idleTimeout=5000
+# cas.consent.jpa.dataSourceName=
+# cas.consent.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.consent.jpa.properties.propertyName=propertyValue
+```
+
+### REST Attribute Consent
+
+```properties
+# cas.consent.rest.endpoint=https://api.example.org/trustedBrowser
 ```
 
 ## Password Management

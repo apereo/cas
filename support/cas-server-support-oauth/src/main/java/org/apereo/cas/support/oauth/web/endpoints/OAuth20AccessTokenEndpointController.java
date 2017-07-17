@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -130,6 +131,18 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
+    }
+
+    /**
+     * Handle request internal model and view.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws Exception the exception
+     */
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL)
+    public void handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        handleRequest(request, response);
     }
 
 

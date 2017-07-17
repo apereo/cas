@@ -23,9 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -153,7 +153,7 @@ public final class OAuth20Utils {
     public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
         final Map<String, Object> map = getRequestParameters(Arrays.asList(OAuth20Constants.SCOPE), context);
         if (map == null || map.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList<>(0);
         }
         return (Collection<String>) map.get(OAuth20Constants.SCOPE);
     }
