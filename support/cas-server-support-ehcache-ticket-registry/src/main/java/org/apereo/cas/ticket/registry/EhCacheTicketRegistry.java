@@ -13,8 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -101,16 +102,14 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final AtomicLong count = new AtomicLong();
-        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        metadata.forEach(r -> {
-            final Ehcache instance = getTicketCacheFor(r);
-            if (instance != null) {
-                count.addAndGet(instance.getSize());
-                instance.removeAll();
-            }
-        });
-        return count.get();
+        return ticketCatalog.findAll().stream()
+                .map(this::getTicketCacheFor)
+                .filter(Objects::nonNull)
+                .mapToLong(instance -> {
+                    final int size = instance.getSize();
+                    instance.removeAll();
+                    return size;
+                }).sum();
     }
 
     @Override
@@ -153,18 +152,12 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Element> tickets = new HashSet<>();
-        try {
-            final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-            metadata.forEach(t -> {
-                final Ehcache map = getTicketCacheFor(t);
-                final Collection<Element> cacheTickets = map.getAll(map.getKeysWithExpiryCheck()).values();
-                tickets.addAll(cacheTickets);
-            });
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return decodeTickets(tickets.stream().map(e -> (Ticket) e.getObjectValue()).collect(Collectors.toList()));
+        return this.ticketCatalog.findAll().stream()
+                .map(this::getTicketCacheFor)
+                .flatMap(map -> getAllExpired(map).values().stream())
+                .map(e -> (Ticket) e.getObjectValue())
+                .map(this::decodeTicket)
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -177,5 +170,14 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         final String mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
         return this.cacheManager.getCache(mapName);
+    }
+
+    private Map<Object, Element> getAllExpired(final Ehcache map) {
+        try {
+            return map.getAll(map.getKeysWithExpiryCheck());
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+            return new HashMap<>(0);
+        }
     }
 }

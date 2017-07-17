@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.audit;
 
-import org.apereo.cas.audit.spi.PrincipalIdProvider;
+import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
 
@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SurrogatePrincipalIdProvider implements PrincipalIdProvider {
+public class SurrogatePrincipalIdProvider implements AuditPrincipalIdProvider {
     @Override
     public String getPrincipalIdFrom(final Authentication authentication) {
         if (authentication == null) {

@@ -17,10 +17,10 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalPrincipalResolver.class);
 
-    private final PrincipalIdProvider principalIdProvider;
+    private final AuditPrincipalIdProvider auditPrincipalIdProvider;
 
-    public ThreadLocalPrincipalResolver(final PrincipalIdProvider principalIdProvider) {
-        this.principalIdProvider = principalIdProvider;
+    public ThreadLocalPrincipalResolver(final AuditPrincipalIdProvider auditPrincipalIdProvider) {
+        this.auditPrincipalIdProvider = auditPrincipalIdProvider;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
     }
 
     private String getCurrentPrincipal() {
-        String principal = this.principalIdProvider.getPrincipalIdFrom(AuthenticationCredentialsLocalBinder.getCurrentAuthentication());
+        String principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(AuthenticationCredentialsLocalBinder.getCurrentAuthentication());
         if (principal == null) {
             principal = AuthenticationCredentialsLocalBinder.getCurrentCredentialIdsAsString();
         }

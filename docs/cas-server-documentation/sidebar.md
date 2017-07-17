@@ -94,7 +94,13 @@ layout: null
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
 
 *   [Password Management](#pswmgmt)
-    *   [Overview](/$version/installation/Password-Management.html) 
+    *   [Overview](/$version/installation/Password-Management.html)
+    *   [Account Management](#pwmOptions)
+        *   [JSON](/$version/installation/Password-Management-JSON.html)
+        *   [LDAP](/$version/installation/Password-Management-LDAP.html)
+        *   [JDBC](/$version/installation/Password-Management-JDBC.html)
+        *   [REST](/$version/installation/Password-Management-REST.html)
+        *   [Custom](/$version/installation/Password-Management-Custom.html) 
 
 * [Ticketing](#ticketingconfig)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)

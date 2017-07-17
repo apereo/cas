@@ -48,7 +48,7 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
         assertNotNull(policy);
         assertEquals(policy.getAllowedAttributes().size(), 2);
     }
-    
+
     @Test
     public void verifyExistingDefinitionForCompatibility1() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");

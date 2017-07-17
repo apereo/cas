@@ -91,7 +91,7 @@ public final class ResourceUtils {
         if (res != null) {
             try {
                 IOUtils.read(res.getInputStream(), new byte[1]);
-                return true;
+                return res.contentLength() > 0;
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
                 return false;

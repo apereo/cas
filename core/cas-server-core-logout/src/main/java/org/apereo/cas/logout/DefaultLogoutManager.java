@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,7 +54,7 @@ public class DefaultLogoutManager implements LogoutManager {
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
         if (this.singleLogoutCallbacksDisabled) {
             LOGGER.info("Single logout callbacks are disabled");
-            return Collections.emptyList();
+            return new ArrayList<>(0);
         }
         final List<LogoutRequest> logoutRequests = new ArrayList<>();
         performLogoutForTicket(ticket, logoutRequests);

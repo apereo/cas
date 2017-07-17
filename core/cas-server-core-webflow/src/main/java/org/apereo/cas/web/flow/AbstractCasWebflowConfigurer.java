@@ -34,6 +34,7 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
@@ -603,6 +604,28 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final Field field = ReflectionUtils.findField(state.getViewFactory().getClass(), "binderConfiguration");
         ReflectionUtils.makeAccessible(field);
         return (BinderConfiguration) ReflectionUtils.getField(field, state.getViewFactory());
+    }
+
+    /**
+     * Clone action state.
+     *
+     * @param source the source
+     * @param target the target
+     */
+    protected void cloneActionState(final ActionState source, final ActionState target) {
+        source.getActionList().forEach(a -> target.getActionList().add(a));
+        source.getExitActionList().forEach(a -> target.getExitActionList().add(a));
+        source.getAttributes().asMap().forEach((k, v) -> target.getAttributes().put(k, v));
+        source.getTransitionSet().forEach(t -> target.getTransitionSet().addAll(t));
+
+        final Field field = ReflectionUtils.findField(target.getExceptionHandlerSet().getClass(), "exceptionHandlers");
+        ReflectionUtils.makeAccessible(field);
+        final List<FlowExecutionExceptionHandler> list = (List<FlowExecutionExceptionHandler>)
+                ReflectionUtils.getField(field, target.getExceptionHandlerSet());
+        list.forEach(h -> source.getExceptionHandlerSet().add(h));
+        
+        target.setDescription(source.getDescription());
+        target.setCaption(source.getCaption());
     }
 
     /**
