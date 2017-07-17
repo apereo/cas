@@ -1,7 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPublisher;
+import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -13,4 +16,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casServicesStreamingHazelcastConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasServicesStreamingHazelcastConfiguration {
+    @Bean
+    public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
+        return new CasRegisteredServiceHazelcastStreamPublisher();
+    }
 }

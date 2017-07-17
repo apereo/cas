@@ -1,20 +1,13 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import com.hazelcast.config.Config;
-import com.hazelcast.config.EvictionPolicy;
-import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
-import com.hazelcast.config.MaxSizeConfig;
-import com.hazelcast.config.MulticastConfig;
-import com.hazelcast.config.NetworkConfig;
-import com.hazelcast.config.TcpIpConfig;
-import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
@@ -28,13 +21,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Spring's Java configuration component for {@code HazelcastInstance} that is consumed and used by
@@ -82,98 +72,24 @@ public class HazelcastTicketRegistryConfiguration {
 
     private Config getConfig(final TicketCatalog ticketCatalog) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastProperties.Cluster cluster = hz.getCluster();
-
-        final Config config;
-        if (hz.getConfigLocation() != null && hz.getConfigLocation().exists()) {
-            try {
-                final URL configUrl = hz.getConfigLocation().getURL();
-                LOGGER.debug("Loading Hazelcast configuration from [{}]", configUrl);
-                config = new XmlConfigBuilder(hz.getConfigLocation().getInputStream()).build();
-                config.setConfigurationUrl(configUrl);
-            } catch (final Exception e) {
-                throw Throwables.propagate(e);
-            }
-        } else {
-            // No config location, so do a default config programmatically with handful of properties exposed by CAS
-            config = new Config();
-            config.setProperty("hazelcast.prefer.ipv4.stack", String.valueOf(cluster.isIpv4Enabled()));
-
-            // TCP config
-            final TcpIpConfig tcpIpConfig = new TcpIpConfig()
-                    .setEnabled(cluster.isTcpipEnabled())
-                    .setMembers(cluster.getMembers())
-                    .setConnectionTimeoutSeconds(cluster.getTimeout());
-            LOGGER.debug("Created Hazelcast TCP/IP configuration [{}]", tcpIpConfig);
-
-            // Multicast config
-            final MulticastConfig multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
-            if (cluster.isMulticastEnabled()) {
-                multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
-                multicastConfig.setMulticastPort(cluster.getMulticastPort());
-
-                final Set<String> trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
-                if (!trustedInterfaces.isEmpty()) {
-                    multicastConfig.setTrustedInterfaces(trustedInterfaces);
-                }
-                multicastConfig.setMulticastTimeoutSeconds(cluster.getMulticastTimeout());
-                multicastConfig.setMulticastTimeToLive(cluster.getMulticastTimeToLive());
-            }
-
-            LOGGER.debug("Created Hazelcast Multicast configuration [{}]", multicastConfig);
-
-            // Join config
-            final JoinConfig joinConfig = new JoinConfig()
-                    .setMulticastConfig(multicastConfig)
-                    .setTcpIpConfig(tcpIpConfig);
-
-            LOGGER.debug("Created Hazelcast join configuration [{}]", joinConfig);
-
-            // Network config
-            final NetworkConfig networkConfig = new NetworkConfig()
-                    .setPort(cluster.getPort())
-                    .setPortAutoIncrement(cluster.isPortAutoIncrement())
-                    .setJoin(joinConfig);
-
-            LOGGER.debug("Created Hazelcast network configuration [{}]", networkConfig);
-
-            // Finally aggregate all those config into the main Config
-            config.setMapConfigs(buildHazelcastMapConfigurations(ticketCatalog)).setNetworkConfig(networkConfig);
-        }
-        // Add additional default config properties regardless of the configuration source
-        return config.setInstanceName(cluster.getInstanceName())
-                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
-                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
+        final Map<String, MapConfig> configs = buildHazelcastMapConfigurations(ticketCatalog);
+        final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
+        return factory.build(hz, configs);
     }
 
     private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {
         final Map<String, MapConfig> mapConfigs = new HashMap<>();
 
+        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
+        
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            final MapConfig mapConfig = createMapConfig(t);
+            final MapConfig mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(),
+                    t.getProperties().getStorageTimeout());
             LOGGER.debug("Created Hazelcast map configuration for [{}]", t);
             mapConfigs.put(t.getProperties().getStorageName(), mapConfig);
         });
         return mapConfigs;
-    }
-
-    private MapConfig createMapConfig(final TicketDefinition definition) {
-        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastProperties.Cluster cluster = hz.getCluster();
-        final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
-
-        LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeout [{}] second(s)",
-                definition.getProperties().getStorageName(), definition.getProperties().getStorageTimeout());
-
-        return new MapConfig()
-                .setName(definition.getProperties().getStorageName())
-                .setMaxIdleSeconds((int) definition.getProperties().getStorageTimeout())
-                .setBackupCount(cluster.getBackupCount())
-                .setAsyncBackupCount(cluster.getAsyncBackupCount())
-                .setEvictionPolicy(evictionPolicy)
-                .setMaxSizeConfig(new MaxSizeConfig()
-                        .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
-                        .setSize(cluster.getMaxHeapSizePercentage()));
     }
 }
