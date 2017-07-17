@@ -10,7 +10,7 @@
         function showErrorDetails() {
             $("#errorMsg").remove();
             $("#errorDetails").empty();
-            $("#errorDetails").append("<p><pre>" + /*[[${trace}]]*/ + "</pre></p>");
+            $("#errorDetails").append("<p><pre style='white-space: pre-wrap;'>" + /*[[${#strings.escapeXml(trace)}]]*/ +"</pre></p>");
         }
         /*]]>*/
     </script>
