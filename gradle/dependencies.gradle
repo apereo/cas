@@ -1635,6 +1635,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
                     force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-configuration-metadata:$springBootVersion") {
+                    force = true
                 }
         ],
         springbootadminserver   : [

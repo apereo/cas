@@ -82,7 +82,8 @@ Password succesfully set!
 Key created.
 Output keytab to myspnaccount.keytab:
 Keytab version: 0x502
-keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x17 (RC4-HMAC) keylength 16 (0x00112233445566778899aabbccddeeff)
+keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x17 (RC4-HMAC) keylength 16
+(0x00112233445566778899aabbccddeeff)
 ```
 
 Using `ktpass` requires Active Directory admin permissions. If that is not an option, you may be able to use `ktab.exe` from `%JAVA_HOME%\bin\ktab.exe` that is provied by the JDK:
@@ -229,7 +230,8 @@ Caused by: GSSException: Failure unspecified at GSS-API level (Mechanism level: 
         at sun.security.jgss.GSSContextImpl.acceptSecContext(Unknown Source)
         at sun.security.jgss.GSSContextImpl.acceptSecContext(Unknown Source)
         ... 280 more
-Caused by: KrbException: Invalid argument (400) - Cannot find key of appropriate type to decrypt AP REP - AES256 CTS mode with HMAC SHA1-96
+Caused by: KrbException: Invalid argument (400) - Cannot find key of appropriate type to decrypt 
+AP REP - AES256 CTS mode with HMAC SHA1-96
         at sun.security.krb5.KrbApReq.authenticate(Unknown Source)
         at sun.security.krb5.KrbApReq.<init>(Unknown Source)
         at sun.security.jgss.krb5.InitSecContextToken.<init>(Unknown Source)

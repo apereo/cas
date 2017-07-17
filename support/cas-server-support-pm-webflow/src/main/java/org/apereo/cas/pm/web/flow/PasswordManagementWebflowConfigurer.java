@@ -50,27 +50,31 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
         if (flow != null) {
-            createViewState(flow, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
-            createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION);
-            createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS,
-                    CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS);
-            createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED, CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
-            createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
-            createEndState(flow, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
-
-            if (casProperties.getAuthn().getPm().isEnabled()) {
-                configure(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
-                configure(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
-                configurePasswordReset();
-            } else {
-                createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
-                createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
-                createViewState(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
-            }
+            createAccountStatusViewStates(flow);
         }
     }
 
-    private void configurePasswordReset() {
+    private void createAccountStatusViewStates(final Flow flow) {
+        createViewState(flow, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
+        createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION);
+        createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS,
+                CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS);
+        createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED, CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
+        createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
+        createEndState(flow, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
+
+        if (casProperties.getAuthn().getPm().isEnabled()) {
+            configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
+            configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
+            createPasswordResetFlow();
+        } else {
+            createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
+            createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
+            createViewState(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
+        }
+    }
+
+    private void createPasswordResetFlow() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
@@ -91,12 +95,12 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createViewState(pswdFlow, "passwordResetErrorView", CasWebflowConstants.VIEW_ID_PASSORD_RESET_ERROR);
             createEndState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS,
                     CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
-            configure(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
+            configurePasswordResetFlow(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
             loginFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
         }
     }
 
-    private void configure(final Flow flow, final String id) {
+    private void configurePasswordResetFlow(final Flow flow, final String id) {
         createFlowVariable(flow, FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
         final BinderConfiguration binder = createStateBinderConfiguration(Arrays.asList(FLOW_VAR_ID_PASSWORD, "confirmedPassword"));

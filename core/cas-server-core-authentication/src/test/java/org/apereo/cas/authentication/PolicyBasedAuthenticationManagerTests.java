@@ -58,7 +58,8 @@ public class PolicyBasedAuthenticationManagerTests {
         final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), 
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
+                getAuthenticationExecutionPlan(map),
                 mockServicesManager(), new AnyAuthenticationPolicy(true));
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
@@ -146,11 +147,8 @@ public class PolicyBasedAuthenticationManagerTests {
                 mockServicesManager(), new RequiredHandlerAuthenticationPolicy(HANDLER_B));
 
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("1 errors, 1 successes");
-
         manager.authenticate(transaction);
-
-        fail("Should have thrown AbstractAuthenticationException");
+        fail("Should have thrown AuthenticationException");
     }
 
     @Test

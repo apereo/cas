@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_1 = mock(MultifactorAuthenticationProvider.class);
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_2 = mock(MultifactorAuthenticationProvider.class);
     private static final Set<MultifactorAuthenticationProvider> VALID_PROVIDERS = Stream.of(MFA_PROVIDER_1, MFA_PROVIDER_2).collect(Collectors.toSet());
-    private static final Set<MultifactorAuthenticationProvider> NO_PROVIDERS = Collections.emptySet();
+    private static final Set<MultifactorAuthenticationProvider> NO_PROVIDERS = new HashSet<>(0);
 
     private static final String REQUEST_PARAM = "authn_method";
 

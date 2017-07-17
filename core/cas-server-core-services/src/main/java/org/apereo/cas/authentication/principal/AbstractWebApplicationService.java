@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -73,7 +73,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
-        return Collections.emptyMap();
+        return new HashMap<>(0);
     }
 
     /**
