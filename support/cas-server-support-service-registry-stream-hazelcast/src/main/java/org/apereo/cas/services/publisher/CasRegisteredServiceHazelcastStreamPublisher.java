@@ -12,6 +12,6 @@ import org.springframework.context.ApplicationEvent;
 public class CasRegisteredServiceHazelcastStreamPublisher implements CasRegisteredServiceStreamPublisher {
     @Override
     public void publish(final RegisteredService service, final ApplicationEvent event) {
-        
+             
     }
 }

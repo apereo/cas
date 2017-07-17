@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
-import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
@@ -31,7 +30,8 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceLoadedEvent(final CasRegisteredServiceLoadedEvent event) {
-            
+        LOGGER.debug("Received event [{}]", event);
+        this.publisher.publish(event.getRegisteredService(), event);
     }
 
     /**
@@ -41,7 +41,8 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceSavedEvent(final CasRegisteredServiceSavedEvent event) {
-
+        LOGGER.debug("Received event [{}]", event);
+        this.publisher.publish(event.getRegisteredService(), event);
     }
 
     /**
@@ -51,6 +52,7 @@ public class CasServicesRegistryStreamingEventListener {
      */
     @EventListener
     public void handleCasRegisteredServiceDeletedEvent(final CasRegisteredServiceDeletedEvent event) {
-
+        LOGGER.debug("Received event [{}]", event);
+        this.publisher.publish(event.getRegisteredService(), event);
     }
 }
