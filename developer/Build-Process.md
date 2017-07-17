@@ -28,6 +28,9 @@ git clone --depth=1 --single-branch --branch=master git@github.com:apereo/cas.gi
 # git fetch --unshallow
 ```
 
+For a successful clone, you will need to have [set up SSH keys](https://help.github.com/articles/working-with-ssh-key-passphrases/) for your account on Github.
+If that is not an option, you may clone the CAS repository under `https` via `https://github.com/apereo/cas.git`.
+
 ## Build
 
 The following shell commands may be used to build the source:
