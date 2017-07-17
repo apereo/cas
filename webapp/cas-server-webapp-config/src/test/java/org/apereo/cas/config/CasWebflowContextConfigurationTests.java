@@ -141,6 +141,7 @@ public class CasWebflowContextConfigurationTests {
 
         @Bean
         public Action testWebflowSerialization() {
+            //CHECKSTYLE:OFF
             return new AbstractAction() {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -155,9 +156,11 @@ public class CasWebflowContextConfigurationTests {
                     requestContext.getFlowScope().put("test8", Collections.emptyMap());
                     requestContext.getFlowScope().put("test9", new TreeMap<>());
                     requestContext.getFlowScope().put("test10", Collections.emptySet());
+                    requestContext.getFlowScope().put("test11", Collections.emptyList());
                     return success();
                 }
             };
+            //CHECKSTYLE:ON
         }
     }
 }

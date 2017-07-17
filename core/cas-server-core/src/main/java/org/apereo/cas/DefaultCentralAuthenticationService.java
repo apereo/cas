@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +124,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         } catch (final InvalidTicketException e) {
             LOGGER.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
         }
-        return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 
     @Audit(

@@ -144,7 +144,7 @@ public class KryoTranscoderTests {
         final List<String> values = new ArrayList<>();
         values.add(NICKNAME_VALUE);
         final Map<String, Object> newAttributes = new HashMap<>();
-        newAttributes.put(NICKNAME_KEY, Collections.unmodifiableList(values));
+        newAttributes.put(NICKNAME_KEY, new ArrayList<>(values));
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
@@ -174,7 +174,9 @@ public class KryoTranscoderTests {
         final Map<String, Object> newAttributes = new HashMap<>();
         final Set<String> values = new HashSet<>();
         values.add(NICKNAME_VALUE);
+        //CHECKSTYLE:OFF
         newAttributes.put(NICKNAME_KEY, Collections.unmodifiableSet(values));
+        //CHECKSTYLE:ON
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);

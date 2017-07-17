@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.spi.PrincipalIdProvider;
+import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.SurrogateAuthenticationAspect;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -136,7 +136,7 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @Bean
-    public PrincipalIdProvider principalIdProvider() {
+    public AuditPrincipalIdProvider principalIdProvider() {
         return new SurrogatePrincipalIdProvider();
     }
 }

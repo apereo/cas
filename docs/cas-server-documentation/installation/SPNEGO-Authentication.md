@@ -9,12 +9,12 @@ title: CAS - SPNEGO Authentication
 transparent CAS authentication to browsers running on Windows running under Active Directory domain credentials.
 There are three actors involved: the client, the CAS server, and the Active Directory Domain Controller/KDC.
 
-1. Client sends CAS:               HTTP GET to CAS for cas protected page
-2. CAS responds:                   HTTP 401 - Access Denied WWW-Authenticate: Negotiate
-3. Client sends ticket request:    Kerberos(KRB_TGS_REQ) Requesting ticket for HTTP/cas.example.com@REALM
-4. Kerberos KDC responds:          Kerberos(KRB_TGS_REP) Granting ticket for HTTP/cas.example.com@REALM
-5. Client sends CAS:               HTTP GET Authorization: Negotiate w/SPNEGO Token
-6. CAS responds:                   HTTP 200 - OK WWW-Authenticate w/SPNEGO response + requested page.
+1. Client sends CAS:               HTTP `GET` to CAS for cas protected page
+2. CAS responds:                   HTTP `401` - Access Denied `WWW-Authenticate: Negotiate`
+3. Client sends ticket request:    Kerberos(`KRB_TGS_REQ`) Requesting ticket for `HTTP/cas.example.com@REALM`
+4. Kerberos KDC responds:          Kerberos(`KRB_TGS_REP`) Granting ticket for `HTTP/cas.example.com@REALM`
+5. Client sends CAS:               HTTP `GET` Authorization: Negotiate w/SPNEGO Token
+6. CAS responds:                   HTTP `200` - OK `WWW-Authenticate` w/SPNEGO response + requested page.
 
 The above interaction occurs only for the first request, when there is no CAS SSO session.
 Once CAS grants a ticket-granting ticket, the SPNEGO process will not happen again until the CAS
@@ -25,6 +25,8 @@ ticket expires.
 * Client is logged in to a Windows Active Directory domain.
 * Supported browser.
 * CAS is running MIT kerberos against the AD domain controller.
+
+<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
 ## Components
 
@@ -80,8 +82,19 @@ Password succesfully set!
 Key created.
 Output keytab to myspnaccount.keytab:
 Keytab version: 0x502
-keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x17 (RC4-HMAC) keylength 16 (0x00112233445566778899aabbccddeeff)
+keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x17 (RC4-HMAC) keylength 16
+(0x00112233445566778899aabbccddeeff)
 ```
+
+Using `ktpass` requires Active Directory admin permissions. If that is not an option, you may be able to use `ktab.exe` from `%JAVA_HOME%\bin\ktab.exe` that is provied by the JDK:
+
+```bash
+%JAVA_HOME%\bin\ktab.exe -a service_xxx -n 0 -k cas.keytab
+``` 
+
+`-k` specifies key tab output file name and `-n 0` specifies the KNVO number if available and found for the user account. This value may match the `msDS-KeyVersionNumber` on the user account.
+
+Also note that the keytab file must be regenerated after password changes, if any.
 
 ### Test SPN Account
 
@@ -153,14 +166,14 @@ URL, e.g. `https://cas.example.com`.
 ### Authentication Configuration
 
 Make sure you have at least specified the JCIFS Service Principal in the CAS configuration.
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
 To see the relevant list of CAS properties that deal with NTLM authentication,
 please [review this guide](Configuration-Properties.html#ntlm-authentication).
 
-
 You may provide a JAAS `login.conf` file:
 
-```
+```bash
 jcifs.spnego.initiate {
    com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
 };
@@ -193,3 +206,42 @@ Checks an LDAP instance for the remote hostname, to locate a pre-defined attribu
 would allow the webflow to resume to SPNEGO.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
+
+## Logging
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<AsyncLogger name="jcifs.spnego" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```
+
+## Troubleshooting
+
+- Failure unspecified at GSS-API level
+
+```bash
+Caused by: GSSException: Failure unspecified at GSS-API level (Mechanism level: Invalid argument (400) - Cannot find key of appropriate type to decrypt AP REP - AES256 CTS mode with HMAC SHA1-96)
+        at sun.security.jgss.krb5.Krb5Context.acceptSecContext(Unknown Source)
+        at sun.security.jgss.GSSContextImpl.acceptSecContext(Unknown Source)
+        at sun.security.jgss.GSSContextImpl.acceptSecContext(Unknown Source)
+        ... 280 more
+Caused by: KrbException: Invalid argument (400) - Cannot find key of appropriate type to decrypt 
+AP REP - AES256 CTS mode with HMAC SHA1-96
+        at sun.security.krb5.KrbApReq.authenticate(Unknown Source)
+        at sun.security.krb5.KrbApReq.<init>(Unknown Source)
+        at sun.security.jgss.krb5.InitSecContextToken.<init>(Unknown Source)
+        ... 283 more
+```
+
+It's very likely that you have the wrong path to `.keytab` file. The KVNO in the keytab file must be identical with the KVNO stored in the Active Directory. Active Directory is raising the KVNO with every execution of ktpass, as part of its `msDS-KeyVersionNumber`.
+
+Other possible causes include:
+
+1. The service prinicpal in the in the CAS configuration is not identical with that from the keytab. (param `/princ` from ktpass)
+2. There is no key for the `enctype` sent with the ticket by Active Directory. (param `/crypto` from `ktpass` and set in the `krb5.conf/permitted_enctypes+default_tkt_enctypes`).
+3. The KVNO from the ticket is different than the KVNO in the keytab (param `/kvno` from `ktpass`).

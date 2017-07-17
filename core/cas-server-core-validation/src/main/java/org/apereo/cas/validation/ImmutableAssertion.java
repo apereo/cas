@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -68,7 +68,7 @@ public class ImmutableAssertion implements Assertion, Serializable {
 
     @Override
     public List<Authentication> getChainedAuthentications() {
-        return Collections.unmodifiableList(this.chainedAuthentications);
+        return new ArrayList<>(this.chainedAuthentications);
     }
 
     @Override

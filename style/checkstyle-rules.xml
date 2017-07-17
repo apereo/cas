@@ -347,6 +347,24 @@
 
         <!-- Custom checks based on regular expressions -->
         <module name="RegexpSinglelineJava">
+            <property name="id" value="collectionsEmpty"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="Collections\.empty(List|Map|Set)"/>
+            <property name="message"
+                      value="Returning an empty immutable collection is specially problematic for serialization tasks. To avoid future side effects try using an empty collection of size zero instead"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="collectionsUnmodifiable"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an unmodifiable immutable collection"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="Collections\.unmodifiable(List|Set|Map)"/>
+            <property name="message"
+                      value="Returning an unmodifiable collection is specially problematic for serialization tasks. To avoid future side effects try using an empty collection of size zero instead"/>
+        </module>
+        
+        <module name="RegexpSinglelineJava">
             <property name="id" value="namedAnnotations"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Component/Controller/Configuration annotations must be named"/>
             <property name="severity" value="error"/>

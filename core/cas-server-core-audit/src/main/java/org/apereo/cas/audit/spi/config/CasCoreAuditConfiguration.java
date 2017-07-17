@@ -3,11 +3,11 @@ package org.apereo.cas.audit.spi.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
-import org.apereo.cas.audit.spi.PrincipalIdProvider;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
 import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
@@ -164,6 +164,7 @@ public class CasCoreAuditConfiguration {
         final AuditActionResolver resolver = authenticationActionResolver();
         map.put("AUTHENTICATION_RESOLVER", resolver);
         map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
+        map.put("SAVE_CONSENT_ACTION_RESOLVER", resolver);
         map.put("CHANGE_PASSWORD_ACTION_RESOLVER", resolver);
 
         final AuditActionResolver defResolver = new DefaultAuditActionResolver();
@@ -202,6 +203,7 @@ public class CasCoreAuditConfiguration {
         map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
         final AuditResourceResolver returnValueResourceResolver = returnValueResourceResolver();
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver);
+        map.put("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
@@ -211,8 +213,8 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditablePrincipalResolver")
     @Bean
-    public PrincipalResolver auditablePrincipalResolver(@Qualifier("principalIdProvider") final PrincipalIdProvider principalIdProvider) {
-        return new ThreadLocalPrincipalResolver(principalIdProvider);
+    public PrincipalResolver auditablePrincipalResolver(@Qualifier("principalIdProvider") final AuditPrincipalIdProvider auditPrincipalIdProvider) {
+        return new ThreadLocalPrincipalResolver(auditPrincipalIdProvider);
     }
 
     @ConditionalOnMissingBean(name = "ticketResourceResolver")
@@ -229,8 +231,8 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "principalIdProvider")
     @Bean
-    public PrincipalIdProvider principalIdProvider() {
-        return new PrincipalIdProvider() {
+    public AuditPrincipalIdProvider principalIdProvider() {
+        return new AuditPrincipalIdProvider() {
         };
     }
 }

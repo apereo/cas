@@ -14,10 +14,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
+import javax.persistence.TypedQuery;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -59,15 +59,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Collection<TicketDefinition> tkts = this.ticketCatalog.findAll();
-        final AtomicLong count = new AtomicLong();
-        tkts.forEach(t -> {
-            final String entityName = getTicketEntityName(t);
-            final Query query = entityManager.createQuery("delete from " + entityName);
-            LOGGER.debug("Deleting ticket entity [{}]", entityName);
-            count.addAndGet(query.executeUpdate());
-        });
-        return count.get();
+        return this.ticketCatalog.findAll().stream()
+                .map(JpaTicketRegistry::getTicketEntityName)
+                .map(entityName -> entityManager.createQuery("delete from " + entityName))
+                .mapToLong(Query::executeUpdate)
+                .sum();
     }
     
     @Override
@@ -94,13 +90,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<TicketDefinition> tkts = this.ticketCatalog.findAll();
-        final List<Ticket> tickets = new ArrayList<>();
-        tkts.forEach(t -> {
-            final Query query = this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass());
-            tickets.addAll(query.getResultList());
-        });
-        return tickets;
+        return this.ticketCatalog.findAll().stream()
+                .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
+                .map(TypedQuery::getResultList)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     @Override

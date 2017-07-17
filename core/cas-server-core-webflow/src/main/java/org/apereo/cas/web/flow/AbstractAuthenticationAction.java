@@ -13,6 +13,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -45,7 +46,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
             final Map<String, Class<? extends Exception>> map = Collections.singletonMap(
                     UnauthorizedAuthenticationException.class.getSimpleName(),
                     UnauthorizedAuthenticationException.class);
-            final AuthenticationException error = new AuthenticationException(msg, map, Collections.emptyMap());
+            final AuthenticationException error = new AuthenticationException(msg, map, new HashMap<>(0));
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                     new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
         }

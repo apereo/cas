@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +37,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         list.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
-        svc.setRequiredHandlers(Collections.emptySet());
+        svc.setRequiredHandlers(new HashSet<>(0));
         list.add(svc);
 
         dao.setRegisteredServices(list);

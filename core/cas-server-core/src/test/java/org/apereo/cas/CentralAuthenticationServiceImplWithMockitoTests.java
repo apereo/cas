@@ -52,7 +52,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,8 +141,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final DefaultTicketFactory factory = new DefaultTicketFactory(
                 new DefaultProxyGrantingTicketFactory(null, null, null),
                 new DefaultTicketGrantingTicketFactory(null, null, null),
-                new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), Collections.emptyMap(), false, null),
-                new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, true));
+                new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null),
+                new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class),

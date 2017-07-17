@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -68,7 +69,7 @@ public class TicketGrantingTicketResourceTests {
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
                 new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
                         new DefaultPrincipalElectionStrategy()), new DefaultCredentialFactory(),
-                casMock);
+                casMock, new WebApplicationServiceFactory());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)
                 .defaultRequest(get("/")

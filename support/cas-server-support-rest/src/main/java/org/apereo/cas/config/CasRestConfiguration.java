@@ -88,7 +88,7 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public TicketGrantingTicketResource ticketResourceRestController() {
         return new TicketGrantingTicketResource(authenticationSystemSupport,
-                credentialFactory, centralAuthenticationService);
+                credentialFactory, centralAuthenticationService, webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")

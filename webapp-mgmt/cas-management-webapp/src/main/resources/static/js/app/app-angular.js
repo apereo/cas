@@ -300,82 +300,117 @@ if (array.length == 3) {
   }]);
 
     /**
+     * Required Attributes controller
+     */
+    app.controller("requiredAttributesController", requiredAttrController);
+    function requiredAttrController($scope, NgTableParams) {
+        console.log('requiredAttributesController');
+        var self = this;
+
+        self.tmpRowData;
+
+        var dataList = [];
+
+        var originalData = angular.copy(dataList);
+
+        self.tableParams = new NgTableParams({}, {
+            filterDelay: 0,
+            dataset: angular.copy(dataList),
+            counts: []
+        });
+
+        self.cancel = cancel;
+        self.del = del;
+        self.save = save;
+        self.editRow = editRow;
+        self.addRow = addRow;
+        self.cancelAdd = cancelAdd;
+        self.toggleAddRow = toggleAddRow;
+
+        function cancel(row, rowForm) {
+            self.tmpRowData = {};
+            row.isEditing = false;
+            rowForm.$setPristine();
+        }
+
+        function del(row) {
+            _.remove(self.tableParams.settings().dataset, function (item) {
+                return row === item;
+            });
+            self.tableParams.reload().then(function (data) {
+                if (data.length === 0 && self.tableParams.total() > 0) {
+                    self.tableParams.page(self.tableParams.page() - 1);
+                    self.tableParams.reload();
+                }
+            });
+        }
+
+        function resetRow(row, rowForm){
+            row.isEditing = false;
+            rowForm.$setPristine();
+            self.tableTracker.untrack(row);
+            return _.findWhere(originalData, function(r){
+                return r.id === row.id;
+            });
+        }
+
+
+        function save(row, tmpData, rowForm) {
+            // console.log('save');
+            angular.extend(row, tmpData);
+
+            row.isEditing = false;
+            rowForm.$setPristine();
+
+        }
+
+        function toggleAddRow( row ) {
+            // console.log('toggleAddRow', row);
+
+            // row.isAdding = true;
+            // $scope.showAdd = true;
+        }
+
+        function editRow( row, rowForm) {
+            self.tmpRowData = angular.copy( row );
+            row.isEditing = true;
+        }
+
+        function addRow(row, rowForm) {
+            self.tmpRowData = angular.copy( row );
+
+            self.tableParams.settings().dataset.push( self.tmpRowData );
+            var syncData = angular.copy(self.tableParams.settings().dataset).map(function(obj) {
+                delete obj.$$hashKey;
+                delete obj.isAdding;
+                obj.value = obj.value;
+                delete obj.value;
+                return obj;
+            });
+
+            $scope.$parent.serviceFormCtrl.serviceData.supportAccess.requiredAttr = syncData;
+            row.name = '';
+            row.value = '';
+            row.isAdding = false;
+
+            self.tableParams.reload();
+
+        }
+
+        function cancelAdd(row, rowForm) {
+            // Clean up?
+            // console.log('cancelAdd');
+            row.name = '';
+            row.value = '';
+            row.isAdding = false;
+        }
+
+    }
+
+    /**
      * Rejected Attributes controller
      */
     app.controller("rejectedAttributesController", rejAttrController);
-    // rejAttrController.$inject = ["NgTableParams"];
-    // function rejAttrController(NgTableParams) {
-    //     var self = this;
-    //
-    //     var dataList = [];
-    //
-    //     var originalData = angular.copy(dataList);
-    //
-    //     self.tableParams = new NgTableParams({}, {
-    //         filterDelay: 0,
-    //         dataset: angular.copy(dataList),
-    //         counts: []
-    //     });
-    //
-    //     self.cancel = cancel;
-    //     self.del = del;
-    //     self.save = save;
-    //
-    //     //////////
-    //
-    //     /**
-    //      * Todo: Refactor/cleanup the below code and wire things up
-    //      */
-    //
-    //     function cancel(row, rowForm) {
-    //         var originalRow = resetRow(row, rowForm);
-    //         angular.extend(row, originalRow);
-    //     }
-    //
-    //     function del(row) {
-    //         _.remove(self.tableParams.settings().dataset, function (item) {
-    //             return row === item;
-    //         });
-    //         self.tableParams.reload().then(function (data) {
-    //             if (data.length === 0 && self.tableParams.total() > 0) {
-    //                 self.tableParams.page(self.tableParams.page() - 1);
-    //                 self.tableParams.reload();
-    //             }
-    //         });
-    //     }
-    //
-    //     function resetRow(row, rowForm) {
-    //         row.isEditing = false;
-    //         // rowForm.$setPristine();
-    //         // self.tableTracker.untrack(row);
-    //         return _.findWhere(originalData, function (r) {
-    //             return r.id === row.id;
-    //         });
-    //     }
-    //
-    //     function save(row, rowForm) {
-    //         var originalRow = resetRow(row, rowForm);
-    //         angular.extend(originalRow, row);
-    //     }
-    //
-    //     function toggleAddRow(p) {
-    //         // $scope.showAdd = true;
-    //     }
-    //
-    //     function addRow(add) {
-    //
-    //         // add.id = $scope.nextid;
-    //         // $scope.nextid += 1;
-    //         // $scope.data.push(add);
-    //         // $scope.showAdd = false;
-    //         // $scope.add = {};
-    //
-    //     }
-    //
-    //     function cancelAdd() {
-    //
-    //     }
-    // };
     function rejAttrController($scope, NgTableParams) {
         var self = this;
 
@@ -767,10 +802,9 @@ if (array.length == 3) {
                 serviceTypeList: [
                     {name: 'CAS Client', value: 'cas'},
                     {name: 'OAuth2 Client', value: 'oauth'},
-                    {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
                     {name: 'SAML2 Service Provider', value: 'saml'},
                     {name: 'OpenID Connect Client', value: 'oidc'},
-                    {name: 'WS Federation', value: 'wsfed'}
+                    {name: 'WS Federation Client', value: 'wsfed'}
                 ],
                 oidcScopes: [
                     {name: 'Profile', value: 'profile'},
@@ -778,10 +812,7 @@ if (array.length == 3) {
                     {name: 'Address', value: 'address'},
                     {name: 'Phone', value: 'phone'},
                     {name: 'Offline Access', value: 'offline_access'},
-                    {name: 'User Defined', value: 'user_defined'},
-                    {name: 'OAuth2 Client', value: 'oauth'},
-                    {name: 'SAML2 Service Provider', value: 'saml'},
-                    {name: 'OpenID Connect Client', value: 'oidc'}
+                    {name: 'User Defined', value: 'user_defined'}
                 ],
                 logoutTypeList: [
                     {name: 'NONE', value: 'none'},

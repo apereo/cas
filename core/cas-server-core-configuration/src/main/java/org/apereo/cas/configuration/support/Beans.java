@@ -118,7 +118,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -871,7 +870,7 @@ public final class Beans {
      * @return Search filter with parameters applied.
      */
     public static SearchFilter newLdaptiveSearchFilter(final String filterQuery) {
-        return newLdaptiveSearchFilter(filterQuery, Collections.emptyList());
+        return newLdaptiveSearchFilter(filterQuery, new ArrayList<>(0));
     }
 
     /**
@@ -966,7 +965,7 @@ public final class Beans {
      * @return the search executor
      */
     public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery) {
-        return newLdaptiveSearchExecutor(baseDn, filterQuery, Collections.emptyList());
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, new ArrayList<>(0));
     }
 
     /**

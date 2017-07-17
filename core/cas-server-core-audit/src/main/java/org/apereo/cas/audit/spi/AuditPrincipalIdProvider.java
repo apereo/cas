@@ -12,7 +12,7 @@ import org.apereo.cas.authentication.Authentication;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-public interface PrincipalIdProvider {
+public interface AuditPrincipalIdProvider {
 
     /**
      * Return principal id from a given authentication event.

@@ -37,8 +37,8 @@ import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -154,7 +154,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * Default headers to be sent.
      **/
-    private Collection<? extends Header> defaultHeaders = Collections.emptyList();
+    private Collection<? extends Header> defaultHeaders = new ArrayList<>(0);
 
     /**
      * Default strategy implementation for proxy host authentication.
@@ -315,7 +315,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     public List<Integer> getAcceptableCodes() {
-        return Collections.unmodifiableList(this.acceptableCodes);
+        return new ArrayList<>(this.acceptableCodes);
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {

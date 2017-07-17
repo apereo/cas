@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,6 +68,6 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             return Stream.of(results).collect(Collectors.toSet());
         }
 
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 }
