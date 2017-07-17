@@ -19,7 +19,6 @@ dependencies {
     compile libraries.jackson
 
     testCompile libraries.tests
-    testCompile project(":core:cas-server-core-logout")
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(":core:cas-server-core-services")
     testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
