@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.joda.time.DateTime;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -11,13 +12,38 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class RiskBasedAuthenticationProperties {
 
+    /**
+     * Handle risky authentication attempts via an IP criteria.
+     */
     private IpAddress ip = new IpAddress();
+    /**
+     *  Handle risky authentication attempts via a user-agent criteria.
+     */
     private Agent agent = new Agent();
+    /**
+     * Handle risky authentication attempts via geolocation criteria.
+     */
     private GeoLocation geoLocation = new GeoLocation();
+    /**
+     * Handle risky authentication attempts via an date/time criteria.
+     */
     private DateTime dateTime = new DateTime();
+    /**
+     * Design how responses should be handled, in the event
+     * that an authentication event is deemed risky.
+     */
     private Response response = new Response();
-    
+
+    /**
+     * The risk threshold factor beyond which the authentication
+     * event may be considered risky.
+     */
     private double threshold = 0.6;
+
+    /**
+     * Indicates how far back the search in authentication history must go
+     * in order to locate authentication events.
+     */
     private long daysInRecentHistory = 30;
 
     public long getDaysInRecentHistory() {
@@ -77,6 +103,10 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class IpAddress {
+        /**
+         * Enable IP address checking and criteria
+         * to calculate risky authentication attempts.
+         */
         private boolean enabled;
 
         public boolean isEnabled() {
@@ -89,6 +119,10 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class Agent {
+        /**
+         * Enable user-agent checking and criteria
+         * to calculate risky authentication attempts.
+         */
         private boolean enabled;
 
         public boolean isEnabled() {
@@ -101,6 +135,10 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class GeoLocation {
+        /**
+         * Enable geolocation checking and criteria
+         * to calculate risky authentication attempts.
+         */
         private boolean enabled;
 
         public boolean isEnabled() {
@@ -113,7 +151,15 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class DateTime {
+        /**
+         * Enable date/time checking and criteria
+         * to calculate risky authentication attempts.
+         */
         private boolean enabled;
+        /**
+         * The hourly window used before and after each authentication event
+         * in calculation to establish a pattern that can then be compared against the threshold.
+         */
         private int windowInHours = 2;
 
         public int getWindowInHours() {
@@ -134,10 +180,29 @@ public class RiskBasedAuthenticationProperties {
     }
     
     public static class Response {
+        /**
+         * If an authentication attempt is deemed risky, block the response
+         * and do not allow further attempts.
+         */
         private boolean blockAttempt;
+
+        /**
+         * If an authentication attempt is deemed risky, force
+         * a multifactor authentication event noted by the provider id here.
+         */
         private String mfaProvider;
+
+        /**
+         * If an authentication attempt is deemed risky, communicate the nature of
+         * this attempt back to the application via a special attribute
+         * in the final CAS response indicated here.
+         */
         private String riskyAuthenticationAttribute = "triggeredRiskBasedAuthentication";
 
+        /**
+         * Email settings for notifications,
+         * If an authentication attempt is deemed risky.
+         */
         private Mail mail = new Mail();
 
         @NestedConfigurationProperty
@@ -184,11 +249,32 @@ public class RiskBasedAuthenticationProperties {
         }
 
         public static class Mail {
+
+            /**
+             * Principal attribute name that indicates the destination email address
+             * for this message. The attribute must already be resolved and available
+             * to the CAS principal.
+             */
             private String attributeName = "mail";
+            /**
+             * Email message body.
+             */
             private String text;
+            /**
+             * Email from address.
+             */
             private String from;
+            /**
+             * Email subject line.
+             */
             private String subject;
+            /**
+             * Email CC address, if any.
+             */
             private String cc;
+            /**
+             * Email BCC address, if any.
+             */
             private String bcc;
 
             public String getAttributeName() {
