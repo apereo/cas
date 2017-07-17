@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link NoOpCasEventRepository}.
@@ -17,6 +17,6 @@ public class NoOpCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> load() {
-        return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.rest;
 
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -46,13 +47,8 @@ public class RestAuthenticationApi {
      * @return the http headers
      */
     public static HttpHeaders createHeaders(final UsernamePasswordCredential c) {
-        final HttpHeaders acceptHeaders = new HttpHeaders() {
-            private static final long serialVersionUID = -3529759978950667758L;
-
-            {
-                set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
-            }
-        };
+        final HttpHeaders acceptHeaders = new HttpHeaders();
+        acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         final String authorization = c.getUsername() + ':' + c.getPassword();
         final String basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
         acceptHeaders.set("Authorization", "Basic " + basic);

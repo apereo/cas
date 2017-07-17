@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.exceptions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +37,7 @@ public class UnresolvedPrincipalException extends PrincipalException {
      * Instantiates a new Unresolved principal exception.
      */
     public UnresolvedPrincipalException() {
-        super(UNRESOLVED_PRINCIPAL, Collections.emptyMap(), Collections.emptyMap());
+        super(UNRESOLVED_PRINCIPAL, new HashMap<>(0), new HashMap<>(0));
     }
 
     /**
@@ -46,7 +46,7 @@ public class UnresolvedPrincipalException extends PrincipalException {
      * @param e the e
      */
     public UnresolvedPrincipalException(final Exception e) {
-        super(e.getMessage(), Collections.emptyMap(), Collections.emptyMap());
+        super(e.getMessage(), new HashMap<>(0), new HashMap<>(0));
     }
 
 
@@ -56,8 +56,8 @@ public class UnresolvedPrincipalException extends PrincipalException {
      *
      * @param handlerErrors the handler errors
      */
-    public UnresolvedPrincipalException(final Map<String, Class<? extends Exception>> handlerErrors) {
-        super(UNRESOLVED_PRINCIPAL, handlerErrors, Collections.emptyMap());
+    public UnresolvedPrincipalException(final Map<String, Class<? extends Throwable>> handlerErrors) {
+        super(UNRESOLVED_PRINCIPAL, handlerErrors, new HashMap<>(0));
     }
 
     /**

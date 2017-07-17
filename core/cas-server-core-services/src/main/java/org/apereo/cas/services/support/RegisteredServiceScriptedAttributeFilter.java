@@ -1,13 +1,12 @@
 package org.apereo.cas.services.support;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link RegisteredServiceScriptedAttributeFilter}.
@@ -27,9 +25,6 @@ import java.util.regex.Pattern;
  */
 public class RegisteredServiceScriptedAttributeFilter implements RegisteredServiceAttributeFilter {
     private static final long serialVersionUID = 122972056984610198L;
-
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
-    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceMappedRegexAttributeFilter.class);
 
@@ -53,8 +48,8 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(script);
-        final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(script);
+        final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
+        final Matcher matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
 
         if (matcherInline.find()) {
             return filterInlinedGroovyAttributeValues(givenAttributes, matcherInline.group(1));
@@ -69,17 +64,8 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     private static Map<String, Object> getGroovyAttributeValue(final String groovyScript,
                                                                final Map<String, Object> resolvedAttributes) {
-        try {
-            final Binding binding = new Binding();
-            final GroovyShell shell = new GroovyShell(binding);
-            binding.setVariable("attributes", resolvedAttributes);
-            binding.setVariable("logger", LOGGER);
-            final Map<String, Object> res = (Map<String, Object>) shell.evaluate(groovyScript);
-            return res;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return new HashMap<>();
+        return ScriptingUtils.executeGroovyShellScript(groovyScript,
+                CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER));
     }
 
     private static Map<String, Object> filterInlinedGroovyAttributeValues(final Map<String, Object> resolvedAttributes,

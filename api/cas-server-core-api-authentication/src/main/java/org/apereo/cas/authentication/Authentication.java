@@ -76,7 +76,7 @@ public interface Authentication extends Serializable {
      *
      * @return Map of authentication handler names to the authentication errors produced on attempted authentication.
      */
-    Map<String, Class<? extends Exception>> getFailures();
+    Map<String, Class<? extends Throwable>> getFailures();
 
     /**
      * Updates the authentication object with what's passed.

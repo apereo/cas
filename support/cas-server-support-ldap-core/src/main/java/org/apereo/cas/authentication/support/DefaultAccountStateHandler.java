@@ -33,7 +33,6 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +96,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         final AccountState state = response.getAccountState();
         if (state == null) {
             LOGGER.debug("Account state not defined. Returning empty list of messages.");
-            return Collections.emptyList();
+            return new ArrayList<>(0);
         }
         final List<MessageDescriptor> messages = new ArrayList<>();
         handleError(state.getError(), response, configuration, messages);

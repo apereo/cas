@@ -24,7 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -116,7 +116,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     .map(pattern::split)
                     .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
         }
-        return Collections.emptyMap();
+        return new HashMap<>(0);
     }
 
     @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")

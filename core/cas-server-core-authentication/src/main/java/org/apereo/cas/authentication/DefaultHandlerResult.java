@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -138,8 +138,8 @@ public class DefaultHandlerResult implements HandlerResult {
     @Override
     public List<MessageDescriptor> getWarnings() {
         return this.warnings == null
-                ? Collections.emptyList()
-                : Collections.unmodifiableList(this.warnings);
+                ? new ArrayList<>(0)
+                : new ArrayList<>(this.warnings);
     }
 
     @Override

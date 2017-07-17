@@ -22,7 +22,7 @@ public class PasswordManagementProperties {
     
     // Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
-    
+
     private Ldap ldap = new Ldap();
     private Jdbc jdbc = new Jdbc();
     private Rest rest = new Rest();
@@ -129,6 +129,7 @@ public class PasswordManagementProperties {
     }
 
     public static class Rest implements Serializable {
+        private static final long serialVersionUID = 5262948164099973872L;
         private String endpointUrlEmail;
         private String endpointUrlSecurityQuestions;
         private String endpointUrlChange;
@@ -275,4 +276,5 @@ public class PasswordManagementProperties {
 
         private static final long serialVersionUID = 1129426669588789974L;
     }
+
 }

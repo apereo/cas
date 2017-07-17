@@ -1,0 +1,6 @@
+description = "Apereo CAS Core Configuration Metadata Server"
+dependencies {
+    compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-util")
+    implementation libraries.springbootconfigmetadata
+}

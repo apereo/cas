@@ -23,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowExecutionKey;
 
-import java.util.Collections;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -73,7 +73,7 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutNoIndex() throws Exception {
-        WebUtils.putLogoutRequests(this.requestContext, Collections.emptyList());
+        WebUtils.putLogoutRequests(this.requestContext, new ArrayList<>(0));
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }    

@@ -8,9 +8,23 @@ package org.apereo.cas.configuration.model.core.authentication;
  */
 public class PersonDirPrincipalResolverProperties {
 
+    /**
+     * Attribute name to use to indicate the identifier of the principal constructed.
+     * If the attribute is blank or has no values, the default principal id will be used
+     * determined by the underlying authentication engine. The principal id attribute
+     * usually is removed from the collection of attributes collected, though this behavior
+     * depends on the schematics of the underlying authentication strategy.
+     */
     private String principalAttribute;
-
+    /**
+     * Return a null principal object if no attributes can be found for the principal.
+     */
     private boolean returnNull;
+    /**
+     * When true, throws an error back indicating that principal resolution
+     * has failed and no principal can be found based on the authentication requirements.
+     * Otherwise, simply logs the condition as an error without raising a catastrophic error.
+     */
     private boolean principalResolutionFailureFatal;
 
     public boolean isPrincipalResolutionFailureFatal() {

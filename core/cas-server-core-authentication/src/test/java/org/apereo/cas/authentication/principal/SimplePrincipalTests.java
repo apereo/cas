@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
@@ -36,12 +35,9 @@ public class SimplePrincipalTests {
 
     @Test
     public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws IOException {
-        final SimplePrincipal principalWritten = new SimplePrincipal("id", Collections.emptyMap());
-
+        final SimplePrincipal principalWritten = new SimplePrincipal("id", new HashMap<>(0));
         MAPPER.writeValue(JSON_FILE, principalWritten);
-
         final SimplePrincipal principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
-
         assertEquals(principalWritten, principalRead);
     }
 
