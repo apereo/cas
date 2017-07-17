@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -88,7 +88,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
             return resolveMultifactorEventViaRestResult(results, flattenedProviders);
         }
         LOGGER.debug("No providers are available to match rest endpoint results");
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 
     @Audit(action = "AUTHENTICATION_EVENT",
@@ -119,7 +119,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
             return CollectionUtils.wrapSet(new Event(this, restProvider.getId()));
         }
         LOGGER.debug("No multifactor authentication provider could be matched against [{}]", results);
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 
     /**

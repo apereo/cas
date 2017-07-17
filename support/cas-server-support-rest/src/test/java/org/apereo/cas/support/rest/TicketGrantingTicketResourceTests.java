@@ -144,7 +144,7 @@ public class TicketGrantingTicketResourceTests {
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() throws Exception {
-        final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>(1);
+        final Map<String, Class<? extends Throwable>> handlerErrors = new HashMap<>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class)))
                 .thenThrow(new AuthenticationException(handlerErrors));

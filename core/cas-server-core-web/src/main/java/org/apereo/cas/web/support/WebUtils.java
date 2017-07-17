@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -757,7 +756,7 @@ public final class WebUtils {
         } catch (final Exception e) {
             LOGGER.warn("Could not locate beans of type [{}]", MultifactorAuthenticationProvider.class);
         }
-        return Collections.emptyMap();
+        return new HashMap<>(0);
     }
 
     /**
