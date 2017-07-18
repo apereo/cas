@@ -32,6 +32,9 @@ public class HttpClientProperties {
      */
     private String hostNameVerifier = "default";
 
+    /**
+     * Configuration properties namespace for embedded Java SSL trust store.
+     */
     private Truststore truststore = new Truststore();
 
     public String getHostNameVerifier() {

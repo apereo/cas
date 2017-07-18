@@ -157,6 +157,9 @@ public class AdminPagesSecurityProperties {
         private String query;
 
         @NestedConfigurationProperty
+        /**
+         * Password encoder properties.
+         */
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
         public String getRolePrefix() {
