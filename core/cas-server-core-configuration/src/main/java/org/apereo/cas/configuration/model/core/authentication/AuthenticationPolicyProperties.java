@@ -145,7 +145,7 @@ public class AuthenticationPolicyProperties {
         private boolean enabled;
 
         /**
-         * Ensure number of provided credentials does not match the sum of authentication successes and failures
+         * Ensure number of provided credentials does not match the sum of authentication successes and failures.
          */
         private boolean tryAll;
 
