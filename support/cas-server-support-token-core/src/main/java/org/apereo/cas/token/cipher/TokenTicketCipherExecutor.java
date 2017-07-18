@@ -10,11 +10,17 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  */
 public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
     public TokenTicketCipherExecutor(final String secretKeyEncryption,
+                                     final String secretKeySigning,
+                                     final String alg) {
+        super(secretKeyEncryption, secretKeySigning, alg);
+    }
+
+    public TokenTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
+
     @Override
-    
     protected String getEncryptionKeySetting() {
         return "cas.authn.token.crypto.encryption.key";
     }

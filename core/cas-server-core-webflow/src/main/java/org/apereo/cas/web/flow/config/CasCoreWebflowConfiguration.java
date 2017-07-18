@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+import org.apereo.cas.configuration.model.webapp.WebflowPropertiesEncryptionRandomizedSigningJwt;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -268,7 +268,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
-        final WebflowProperties webflow = casProperties.getWebflow();
+        final WebflowPropertiesEncryptionRandomizedSigningJwt webflow = casProperties.getWebflow();
         return new WebflowConversationStateCipherExecutor(
                 webflow.getEncryption().getKey(),
                 webflow.getSigning().getKey(),

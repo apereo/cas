@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -12,7 +12,7 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class WebflowProperties extends CryptographyProperties {
+public class WebflowPropertiesEncryptionRandomizedSigningJwt extends EncryptionRandomizedSigningJwtCryptographyProperties {
 
     /**
      * Whether CAS should take control of all spring webflow modifications
@@ -76,6 +76,9 @@ public class WebflowProperties extends CryptographyProperties {
         this.session = session;
     }
 
+    /**
+     * The Webflow Session settings.
+     */
     public static class Session {
         private String lockTimeout = "PT30S";
         private int maxConversations = 5;

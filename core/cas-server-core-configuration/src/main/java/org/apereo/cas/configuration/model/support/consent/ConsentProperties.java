@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.consent;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
@@ -20,10 +21,18 @@ public class ConsentProperties {
     private Rest rest = new Rest();
     private Jpa jpa = new Jpa();
     private Json json = new Json();
-    
-    private String encryptionKey = StringUtils.EMPTY;
-    private String signingKey = StringUtils.EMPTY;
-    private boolean cipherEnabled = true;
+
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
 
     public Json getJson() {
         return json;
@@ -65,34 +74,10 @@ public class ConsentProperties {
         this.rest = rest;
     }
 
-    public String getEncryptionKey() {
-        return encryptionKey;
-    }
-
-    public void setEncryptionKey(final String encryptionKey) {
-        this.encryptionKey = encryptionKey;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(final String signingKey) {
-        this.signingKey = signingKey;
-    }
-
-    public boolean isCipherEnabled() {
-        return cipherEnabled;
-    }
-
-    public void setCipherEnabled(final boolean cipherEnabled) {
-        this.cipherEnabled = cipherEnabled;
-    }
-
     public static class Json extends AbstractConfigProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
-    
+
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 1646689616653363554L;
     }

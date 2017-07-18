@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link WsFederationProperties}.
  *
@@ -57,25 +60,17 @@ public class WsFederationProperties {
         private String encryptionKeystoreFile;
         private String encryptionKeystorePassword;
 
-        private String encryptionKey;
-        private String signingKey;
-        
+        @NestedConfigurationProperty
+        private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
         private RealmDefinition realm = new RealmDefinition();
 
-        public String getEncryptionKey() {
-            return encryptionKey;
+        public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+            return crypto;
         }
 
-        public void setEncryptionKey(final String encryptionKey) {
-            this.encryptionKey = encryptionKey;
-        }
-
-        public String getSigningKey() {
-            return signingKey;
-        }
-
-        public void setSigningKey(final String signingKey) {
-            this.signingKey = signingKey;
+        public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+            this.crypto = crypto;
         }
 
         public RealmDefinition getRealm() {

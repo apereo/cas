@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -888,25 +890,25 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = 1505013239016790473L;
         private String authenticationContextAttribute = "isFromTrustedMultifactorAuthentication";
 
-        private String encryptionKey = StringUtils.EMPTY;
-
-        private String signingKey = StringUtils.EMPTY;
-
-        private boolean cipherEnabled = true;
-
         private boolean deviceRegistrationEnabled = true;
-
         private long expiration = 30;
-
         private TimeUnit timeUnit = TimeUnit.DAYS;
-
         private Rest rest = new Rest();
-
         private Jpa jpa = new Jpa();
-
         private Cleaner cleaner = new Cleaner();
-
         private Mongodb mongodb = new Mongodb();
+
+        @NestedConfigurationProperty
+        private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+
+        public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+            return crypto;
+        }
+
+        public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+            this.crypto = crypto;
+        }
 
         public Rest getRest() {
             return rest;
@@ -954,30 +956,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
             this.authenticationContextAttribute = authenticationContextAttribute;
-        }
-
-        public String getEncryptionKey() {
-            return encryptionKey;
-        }
-
-        public void setEncryptionKey(final String encryptionKey) {
-            this.encryptionKey = encryptionKey;
-        }
-
-        public String getSigningKey() {
-            return signingKey;
-        }
-
-        public void setSigningKey(final String signingKey) {
-            this.signingKey = signingKey;
-        }
-
-        public boolean isCipherEnabled() {
-            return cipherEnabled;
-        }
-
-        public void setCipherEnabled(final boolean cipherEnabled) {
-            this.cipherEnabled = cipherEnabled;
         }
 
         public boolean isDeviceRegistrationEnabled() {

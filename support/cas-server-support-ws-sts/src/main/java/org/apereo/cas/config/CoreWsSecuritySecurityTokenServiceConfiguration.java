@@ -307,7 +307,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getEncryptionKey(), wsfed.getSigningKey());
+        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),
+                wsfed.getCrypto().getSigning().getKey(),
+                wsfed.getCrypto().getAlg());
     }
 
     @Bean

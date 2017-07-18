@@ -250,11 +250,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
 
                     if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
-                        /*
-                         * AuthContextClassRef element require comparison rule to be used to evaluate the specified 
-                         * authentication methods. If not explicitly specified "exact" rule will be used by default.
-                         */
-                        cfg.setComparisonType(saml.getAuthnContextComparisonType());
+                        cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
                         cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
                     }
                     if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {
