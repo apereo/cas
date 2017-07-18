@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -15,13 +15,13 @@ public class DynamoDbTicketRegistryProperties extends AbstractDynamoDbProperties
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
-    public CryptographyProperties getCrypto() {
+    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final CryptographyProperties crypto) {
+    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
 }
