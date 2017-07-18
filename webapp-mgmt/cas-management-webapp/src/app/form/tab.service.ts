@@ -12,85 +12,85 @@ export class TabService {
   serviceData: Data = new Data();
 
   roles = [
-    {id: 1, text: 'guest'},
-    {id: 2, text: 'user'},
-    {id: 3, text: 'customer'},
-    {id: 4, text: 'admin'}
+    {id: 1, text: "guest"},
+    {id: 2, text: "user"},
+    {id: 3, text: "customer"},
+    {id: 4, text: "admin"}
   ];
 
   selectOptions = {
     serviceTypeList: [
-      {name: 'CAS Client', value: 'cas'},
-      {name: 'OAuth2 Client', value: 'oauth'},
-      {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
-      {name: 'SAML2 Service Provider', value: 'saml'},
-      {name: 'OpenID Connect Client', value: 'oidc'},
-      {name: 'WS Federation', value: 'wsfed'}
+      {name: "CAS Client", value: "cas"},
+      {name: "OAuth2 Client", value: "oauth"},
+      {name: "OAuth Callback Authorize", value: "oauth_callback_authz"},
+      {name: "SAML2 Service Provider", value: "saml"},
+      {name: "OpenID Connect Client", value: "oidc"},
+      {name: "WS Federation", value: "wsfed"}
     ],
     oidcScopes: [
-      {name: 'Profile', value: 'profile'},
-      {name: 'Email', value: 'email'},
-      {name: 'Address', value: 'address'},
-      {name: 'Phone', value: 'phone'},
-      {name: 'Offline Access', value: 'offline_access'},
-      {name: 'User Defined', value: 'user_defined'},
-      {name: 'OAuth2 Client', value: 'oauth'},
-      {name: 'SAML2 Service Provider', value: 'saml'},
-      {name: 'OpenID Connect Client', value: 'oidc'}
+      {name: "Profile", value: "profile"},
+      {name: "Email", value: "email"},
+      {name: "Address", value: "address"},
+      {name: "Phone", value: "phone"},
+      {name: "Offline Access", value: "offline_access"},
+      {name: "User Defined", value: "user_defined"},
+      {name: "OAuth2 Client", value: "oauth"},
+      {name: "SAML2 Service Provider", value: "saml"},
+      {name: "OpenID Connect Client", value: "oidc"}
     ],
     logoutTypeList: [
-      {name: 'NONE', value: 'none'},
-      {name: 'BACK_CHANNEL', value: 'back'},
-      {name: 'FRONT_CHANNEL', value: 'front'}
+      {name: "NONE", value: "none"},
+      {name: "BACK_CHANNEL", value: "back"},
+      {name: "FRONT_CHANNEL", value: "front"}
     ],
     timeUnitsList: [
-      {name: 'MILLISECONDS', value: 'MILLISECONDS'},
-      {name: 'SECONDS', value: 'SECONDS'},
-      {name: 'MINUTES', value: 'MINUTES'},
-      {name: 'HOURS', value: 'HOURS'},
-      {name: 'DAYS', value: 'DAYS'}
+      {name: "MILLISECONDS", value: "MILLISECONDS"},
+      {name: "SECONDS", value: "SECONDS"},
+      {name: "MINUTES", value: "MINUTES"},
+      {name: "HOURS", value: "HOURS"},
+      {name: "DAYS", value: "DAYS"}
     ],
     mergeStrategyList: [
-      {name: 'DEFAULT', value: 'DEFAULT'},
-      {name: 'ADD', value: 'ADD'},
-      {name: 'MULTIVALUED', value: 'MULTIVALUED'},
-      {name: 'REPLACE', value: 'REPLACE'}
+      {name: "DEFAULT", value: "DEFAULT"},
+      {name: "ADD", value: "ADD"},
+      {name: "MULTIVALUED", value: "MULTIVALUED"},
+      {name: "REPLACE", value: "REPLACE"}
     ],
     selectType: [
-      {name: 'DEFAULT', value: 'DEFAULT'},
-      {name: 'TIME', value: 'TIME'},
-      {name: 'GROUPER', value: 'GROUPER'},
-      {name: 'REMOTE', value: 'REMOTE'}
+      {name: "DEFAULT", value: "DEFAULT"},
+      {name: "TIME", value: "TIME"},
+      {name: "GROUPER", value: "GROUPER"},
+      {name: "REMOTE", value: "REMOTE"}
     ],
     groupField: [
-      {name: 'NAME', value: 'NAME'},
-      {name: 'DISPLAY_NAME', value: 'DISPLAY_NAME'},
-      {name: 'EXTENSION', value: 'EXTENSION'},
-      {name: 'DISPLAY_EXTENSION', value: 'DISPLAY_EXTENSION'}
+      {name: "NAME", value: "NAME"},
+      {name: "DISPLAY_NAME", value: "DISPLAY_NAME"},
+      {name: "EXTENSION", value: "EXTENSION"},
+      {name: "DISPLAY_EXTENSION", value: "DISPLAY_EXTENSION"}
     ],
     failureMode: [
-      {name: 'NONE', value: 'NONE'},
-      {name: 'OPEN', value: 'OPEN'},
-      {name: 'CLOSED', value: 'CLOSED'},
-      {name: 'PHANTOM', value: 'PHANTOM'}
+      {name: "NONE", value: "NONE"},
+      {name: "OPEN", value: "OPEN"},
+      {name: "CLOSED", value: "CLOSED"},
+      {name: "PHANTOM", value: "PHANTOM"}
     ],
     samlRoleList: [
-      {name: 'SPSSODescriptor', value: 'SPSSODescriptor'},
-      {name: 'IDPSSODescriptor', value: 'IDPSSODescriptor'}
+      {name: "SPSSODescriptor", value: "SPSSODescriptor"},
+      {name: "IDPSSODescriptor", value: "IDPSSODescriptor"}
     ],
     samlDirectionList: [
-      {name: 'INCLUDE', value: 'INCLUDE'},
-      {name: 'EXCLUDE', value: 'EXCLUDE'}
+      {name: "INCLUDE", value: "INCLUDE"},
+      {name: "EXCLUDE", value: "EXCLUDE"}
     ],
     canonicalizationList : [
-      {name: 'NONE', value: 'NONE'},
-      {name: 'UPPER', value: 'UPPER'},
-      {name: 'LOWER', value: 'LOWER'}
+      {name: "NONE", value: "NONE"},
+      {name: "UPPER", value: "UPPER"},
+      {name: "LOWER", value: "LOWER"}
     ],
     nameIdList : [
-      {name: 'BASIC', value: 'Basic'},
-      {name: 'URI', value: 'URI'},
-      {name: 'UNSPECIFIED', value: 'UNSPECIFIED'}
+      {name: "BASIC", value: "Basic"},
+      {name: "URI", value: "URI"},
+      {name: "UNSPECIFIED", value: "UNSPECIFIED"}
     ],
     wsfedClaimList: [
       {name: "EMAIL_ADDRESS_2005", value: "EMAIL_ADDRESS_2006"},
