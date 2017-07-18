@@ -38,6 +38,9 @@ public class RedisTicketRegistryProperties {
 
     private Pool pool;
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
 

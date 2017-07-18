@@ -14,14 +14,26 @@ import org.springframework.core.io.Resource;
 
 public class WebflowProperties extends CryptographyProperties {
 
+    /**
+     * Whether CAS should take control of all spring webflow modifications
+     * and dynamically alter views, states and actions.
+     */
     private boolean autoconfigure = true;
-    
+
+    /**
+     * Whether webflow should remain in "live reload" mode, able to auto detect
+     * changes and react. This is useful if the location of the webflow is externalized
+     * and changes are done ad-hoc to the webflow to accommodate changes.
+     */
     private boolean refresh;
 
     private boolean alwaysPauseRedirect;
 
     private boolean redirectSameState;
 
+    /**
+     * Webflow session management settings.
+     */
     private Session session = new Session();
 
     public boolean isAutoconfigure() {

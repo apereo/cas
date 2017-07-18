@@ -423,7 +423,7 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
-    
+
     public static class Twitter {
         private String id;
         private String secret;
@@ -457,6 +457,11 @@ public class Pac4jProperties {
         private boolean forceAuth;
         private boolean passive;
         private String authnContextClassRef;
+        /**
+         * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
+         * For example, if “exact” is specified, the authentication method used must match one of the authentication
+         * methods specified by the AuthnContextClassRef elements.
+         */
         private String authnContextComparisonType = "exact";
         private String keystoreAlias;
         private String nameIdPolicyFormat;
@@ -490,13 +495,6 @@ public class Pac4jProperties {
             return authnContextComparisonType;
         }
 
-	/**
-         * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
-         * For example, if “exact” is specified, the authentication method used must match one of the authentication
-         * methods specified by the AuthnContextClassRef elements.
-         *
-         * @param authnContextComparisonType comparison rule (“better” | “exact” | “maximum” | “minimum”).
-         */
         public void setAuthnContextComparisonType(final String authnContextComparisonType) {
             this.authnContextComparisonType = authnContextComparisonType;
         }
@@ -799,7 +797,7 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
-    
+
     public static class WindowsLive {
         private String id;
         private String secret;

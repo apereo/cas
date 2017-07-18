@@ -55,6 +55,9 @@ public class EhcacheProperties {
 
     private String persistence = "NONE";
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
 

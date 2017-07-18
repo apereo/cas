@@ -11,11 +11,14 @@ import org.springframework.core.io.Resource;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-public class InfinispanProperties extends CryptographyProperties {
+public class InfinispanProperties {
     
     private Resource configLocation = new ClassPathResource("infinispan.xml");
     private String cacheName;
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
 

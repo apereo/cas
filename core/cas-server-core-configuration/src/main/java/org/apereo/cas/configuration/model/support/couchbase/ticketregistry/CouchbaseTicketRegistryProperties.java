@@ -23,6 +23,9 @@ public class CouchbaseTicketRegistryProperties {
     private String password;
     private String bucket = "default";
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
 
