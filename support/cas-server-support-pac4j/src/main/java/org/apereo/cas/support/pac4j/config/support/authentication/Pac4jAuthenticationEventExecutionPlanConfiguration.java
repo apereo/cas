@@ -56,8 +56,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
-
 /**
  * This is {@link Pac4jAuthenticationEventExecutionPlanConfiguration}.
  *
@@ -240,11 +238,11 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setForceAuth(saml.isForceAuth());
 
                     if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
-                        final String authContextComparisonType = StringUtils.isNotBlank(saml.
-                                getAuthnContextComparisonType())
-                                        ? AuthnContextComparisonTypeEnumeration.EXACT.toString()
-                                        : saml.getAuthnContextComparisonType();
-                        cfg.setComparisonType(authContextComparisonType);
+                        /*
+                         * AuthContextClassRef element require comparison rule to be used to evaluate the specified 
+                         * authentication methods. If not explicitly specified "exact" rule will be used by default.
+                         */
+                        cfg.setComparisonType(saml.getAuthnContextComparisonType());
                         cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
                     }
                     if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {

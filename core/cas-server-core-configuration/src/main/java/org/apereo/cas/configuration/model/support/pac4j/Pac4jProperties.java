@@ -448,7 +448,7 @@ public class Pac4jProperties {
         private String clientName;
         private boolean forceAuth;
         private String authnContextClassRef;
-        private String authnContextComparisonType;
+        private String authnContextComparisonType = "exact";
         private String keystoreAlias;
         private String nameIdPolicyFormat;
         private boolean wantsAssertionsSigned;
@@ -473,6 +473,13 @@ public class Pac4jProperties {
             return authnContextComparisonType;
         }
 
+	/**
+         * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
+         * For example, if “exact” is specified, the authentication method used must match one of the authentication
+         * methods specified by the AuthnContextClassRef elements.
+         *
+         * @param authnContextComparisonType comparison rule (“better” | “exact” | “maximum” | “minimum”).
+         */
         public void setAuthnContextComparisonType(final String authnContextComparisonType) {
             this.authnContextComparisonType = authnContextComparisonType;
         }
