@@ -3447,6 +3447,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # Control aspects of the authentication request sent to IdP
 # cas.authn.pac4j.saml[0].authnContextClassRef=
+# cas.authn.pac4j.saml[0].authnContextComparisonType=
 # cas.authn.pac4j.saml[0].nameIdPolicyFormat=
 # cas.authn.pac4j.saml[0].forceAuth=false
 # cas.authn.pac4j.saml[0].passive=false
