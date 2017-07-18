@@ -18,9 +18,17 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class PasswordManagementProperties {
+
+    /**
+     * Flag to indicate if password
+     */
     private boolean enabled;
 
-    // Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
+    /**
+     * A String value representing password policy regex pattarn.
+     *
+     * Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
+     */
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
     private Ldap ldap = new Ldap();
@@ -88,7 +96,11 @@ public class PasswordManagementProperties {
 
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 4746591112640513465L;
+
         @NestedConfigurationProperty
+        /**
+         * Password encoder properties.
+         */
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
         private String sqlChangePassword;
