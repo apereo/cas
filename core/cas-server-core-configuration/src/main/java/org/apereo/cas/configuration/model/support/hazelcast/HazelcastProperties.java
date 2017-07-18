@@ -30,6 +30,9 @@ public class HazelcastProperties {
 
     private Cluster cluster = new Cluster();
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
 

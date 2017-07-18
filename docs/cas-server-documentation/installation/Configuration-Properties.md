@@ -4518,8 +4518,8 @@ when shared with client applications on outgoing calls.
 
 ```properties
 # cas.ticket.security.cipherEnabled=true
-# cas.ticket.security.encryptionKey=
-# cas.ticket.security.signingKey=
+# cas.ticket.security.encryption.key=
+# cas.ticket.security.signing.key=
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -4939,8 +4939,8 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.securityQuestionsEnabled=true
 
 # Used to sign/encrypt the password-reset link
-# cas.authn.pm.reset.security.encryptionKey=
-# cas.authn.pm.reset.security.signingKey=
+# cas.authn.pm.reset.security.encryption.key=
+# cas.authn.pm.reset.security.signing.key=
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
