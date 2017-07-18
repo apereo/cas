@@ -148,7 +148,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private String validateTimeout = "PT5S";
     /**
-     * Period at which pool should be validated
+     * Period at which pool should be validated.
      */
     private String validatePeriod = "PT5M";
 
@@ -549,7 +549,7 @@ public abstract class AbstractLdapProperties implements Serializable {
          */
         private String type = "search";
         /**
-         * Base DN to use for the search request of the search validator
+         * Base DN to use for the search request of the search validator.
          */
         private String baseDn = StringUtils.EMPTY;
         /**
