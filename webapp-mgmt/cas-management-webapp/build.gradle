@@ -1,5 +1,6 @@
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
+apply plugin: "com.moowork.node"
 
 description = "Apereo CAS Management Web Application"
 
@@ -9,6 +10,32 @@ if (Boolean.getBoolean("enableJRebelAgent")) {
 
 javadoc {
     enabled false
+}
+
+node {
+  version = '7.10.0'
+  nodeModulesDir = file("./")
+  download = true
+}
+
+npm_install.dependsOn(npm_cache_clean)
+
+task buildClientDev(type: NpmTask, dependsOn: 'npm_install') {
+  group = 'build'
+  description = 'Compile client side folder for development'
+  args = ['run','buildDev']
+}
+
+task buildClient(type:NpmTask, dependsOn:'npm_install')   {
+  group = 'build'
+  description = "Compile client side folder for production"
+  args = ['run','build']
+}
+
+task buildClientWatch(type: NpmTask, dependsOn: 'npm_install')  {
+  group = 'application'
+  description = "Build and watches the client side assets for rebuilding"
+  args = ['run','buildWatch']
 }
 
 bootRun {
@@ -24,6 +51,7 @@ bootRun {
         list.add("-Drebel.remoting_plugin=true")
     }
     jvmArgs = list
+    dependsOn(buildClientDev)
 }
 
 springBoot {
@@ -47,7 +75,10 @@ war {
                 "Implementation-Version": project.version)
     }
     enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    dependsOn(buildClient)
 }
+
+
 
 dependencies {
     runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
