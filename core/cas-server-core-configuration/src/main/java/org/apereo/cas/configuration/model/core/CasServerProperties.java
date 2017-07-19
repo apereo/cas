@@ -15,17 +15,20 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class CasServerProperties {
+
     /**
      * Location of a rewrite valve specifically by Apache Tomcat
      * to activate URL rewriting.
      */
     private Resource rewriteValveConfigLocation = new ClassPathResource("container/tomcat/rewrite.config");
+
     /**
      * Full name of the CAS server. This is public-facing address
      * of the CAS deployment and not the individual node address,
      * in the event that CAS is clustered.
      */
     private String name = "https://cas.example.org:8443";
+
     /**
      * A concatenation of the server name plus the CAS context path.
      * Deployments at root likely need to blank out this value.
