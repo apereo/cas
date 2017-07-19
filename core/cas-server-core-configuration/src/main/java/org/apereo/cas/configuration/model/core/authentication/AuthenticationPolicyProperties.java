@@ -124,6 +124,7 @@ public class AuthenticationPolicyProperties {
     }
 
     public static class All {
+
         /**
          * Enables the policy.
          */

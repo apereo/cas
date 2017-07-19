@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.consent;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
@@ -14,16 +15,45 @@ import java.time.temporal.ChronoUnit;
  * @since 5.1.0
  */
 public class ConsentProperties {
+    /**
+     * Global reminder time unit, to reconfirm consent
+     * in cases no changes are detected.
+     */
     private int reminder = 30;
+    /**
+     * Global reminder time unit of measure, to reconfirm consent
+     * in cases no changes are detected.
+     */
     private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
+    /**
+     * Keep consent decisions stored via REST.
+     */
     private Rest rest = new Rest();
+
+    /**
+     * Keep consent decisions stored via JDBC resources.
+     */
     private Jpa jpa = new Jpa();
+
+    /**
+     * Keep consent decisions stored via a static JSON resource.
+     */
     private Json json = new Json();
     
-    private String encryptionKey = StringUtils.EMPTY;
-    private String signingKey = StringUtils.EMPTY;
-    private boolean cipherEnabled = true;
+    /**
+     * Signing/encryption settings.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+    
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
 
     public Json getJson() {
         return json;
@@ -65,34 +95,10 @@ public class ConsentProperties {
         this.rest = rest;
     }
 
-    public String getEncryptionKey() {
-        return encryptionKey;
-    }
-
-    public void setEncryptionKey(final String encryptionKey) {
-        this.encryptionKey = encryptionKey;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(final String signingKey) {
-        this.signingKey = signingKey;
-    }
-
-    public boolean isCipherEnabled() {
-        return cipherEnabled;
-    }
-
-    public void setCipherEnabled(final boolean cipherEnabled) {
-        this.cipherEnabled = cipherEnabled;
-    }
-
     public static class Json extends AbstractConfigProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
-    
+
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 1646689616653363554L;
     }
@@ -100,6 +106,9 @@ public class ConsentProperties {
     public static class Rest implements Serializable {
         private static final long serialVersionUID = -6909617495470495341L;
 
+        /**
+         * REST endpoint to use to which consent decision records will be submitted.
+         */
         private String endpoint;
 
         public String getEndpoint() {
