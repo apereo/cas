@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.token;
 
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -15,15 +15,15 @@ public class TokenAuthenticationProperties {
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     private String name;
 
-    public CryptographyProperties getCrypto() {
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final CryptographyProperties crypto) {
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
 

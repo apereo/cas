@@ -23,6 +23,9 @@ public class ShiroAuthenticationProperties extends AbstractConfigProperties {
     private Set<String> requiredPermissions = new HashSet<>();
 
     @NestedConfigurationProperty
+    /**
+     * Password encoder properties.
+     */
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty

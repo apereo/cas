@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.clearpass;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link ClearpassProperties}.
@@ -12,35 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 public class ClearpassProperties {
     private boolean cacheCredential;
 
-    private String encryptionKey = StringUtils.EMPTY;
-
-    private String signingKey = StringUtils.EMPTY;
-
-    private boolean cipherEnabled = true;
-
-    public String getEncryptionKey() {
-        return encryptionKey;
-    }
-
-    public void setEncryptionKey(final String encryptionKey) {
-        this.encryptionKey = encryptionKey;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(final String signingKey) {
-        this.signingKey = signingKey;
-    }
-
-    public boolean isCipherEnabled() {
-        return cipherEnabled;
-    }
-
-    public void setCipherEnabled(final boolean cipherEnabled) {
-        this.cipherEnabled = cipherEnabled;
-    }
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public boolean isCacheCredential() {
         return cacheCredential;
@@ -48,5 +22,13 @@ public class ClearpassProperties {
 
     public void setCacheCredential(final boolean cacheCredential) {
         this.cacheCredential = cacheCredential;
+    }
+
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
     }
 }

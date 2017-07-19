@@ -19,7 +19,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -171,7 +171,7 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final MultifactorAuthenticationProperties.U2F u2f = casProperties.getAuthn().getMfa().getU2f();
+        final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
 
         final LoadingCache<String, String> requestStorage =
                 CacheBuilder.newBuilder()

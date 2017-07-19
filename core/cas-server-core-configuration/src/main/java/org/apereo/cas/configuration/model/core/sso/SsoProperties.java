@@ -9,8 +9,14 @@ package org.apereo.cas.configuration.model.core.sso;
 
 public class SsoProperties {
 
+    /**
+     * Flag that indicates whether to create SSO session on re-newed authentication event.
+     */
     private boolean renewedAuthn = true;
 
+    /**
+     * Flag that indicates whether to allow SSO session with a missing target service.
+     */
     private boolean missingService = true;
 
     public boolean isRenewedAuthn() {
