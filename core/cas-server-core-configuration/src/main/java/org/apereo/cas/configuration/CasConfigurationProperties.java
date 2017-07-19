@@ -40,7 +40,7 @@ import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
 import org.apereo.cas.configuration.model.support.sms.TwillioProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
-import org.apereo.cas.configuration.model.webapp.WebflowPropertiesEncryptionRandomizedSigningJwt;
+import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -178,7 +178,7 @@ public class CasConfigurationProperties {
     private ManagementWebappProperties mgmt = new ManagementWebappProperties();
 
     @NestedConfigurationProperty
-    private WebflowPropertiesEncryptionRandomizedSigningJwt webflow = new WebflowPropertiesEncryptionRandomizedSigningJwt();
+    private WebflowProperties webflow = new WebflowProperties();
 
     public ConsentProperties getConsent() {
         return consent;
@@ -444,11 +444,11 @@ public class CasConfigurationProperties {
         this.mgmt = mgmt;
     }
 
-    public WebflowPropertiesEncryptionRandomizedSigningJwt getWebflow() {
+    public WebflowProperties getWebflow() {
         return webflow;
     }
 
-    public void setWebflow(final WebflowPropertiesEncryptionRandomizedSigningJwt webflow) {
+    public void setWebflow(final WebflowProperties webflow) {
         this.webflow = webflow;
     }
 

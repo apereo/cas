@@ -4711,11 +4711,11 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # spring.redis.password=secret
 # spring.redis.port=6379
 
-# cas.webflow.signing.key=
-# cas.webflow.signing.keySize=512
-# cas.webflow.encryption.keySize=16
-# cas.webflow.encryption.key=
-# cas.webflow.alg=AES
+# cas.webflow.crypto.signing.key=
+# cas.webflow.crypto.signing.keySize=512
+# cas.webflow.crypto.encryption.keySize=16
+# cas.webflow.crypto.encryption.key=
+# cas.webflow.crypto.alg=AES
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.

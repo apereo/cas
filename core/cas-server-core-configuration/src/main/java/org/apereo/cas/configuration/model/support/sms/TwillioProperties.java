@@ -7,7 +7,14 @@ package org.apereo.cas.configuration.model.support.sms;
  * @since 5.1.0
  */
 public class TwillioProperties {
+    /**
+     * Twillio account identifier used for authentication.
+     */
     private String accountId;
+
+    /**
+     * Twillio secret token used for authentication.
+     */
     private String token;
 
     public String getAccountId() {

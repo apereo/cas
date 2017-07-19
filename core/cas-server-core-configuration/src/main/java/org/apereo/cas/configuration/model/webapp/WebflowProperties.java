@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.webapp;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -12,7 +14,13 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class WebflowPropertiesEncryptionRandomizedSigningJwt extends EncryptionRandomizedSigningJwtCryptographyProperties {
+public class WebflowProperties {
+
+    /**
+     * Encryption/signing setting for webflow.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     /**
      * Whether CAS should take control of all spring webflow modifications
@@ -27,14 +35,28 @@ public class WebflowPropertiesEncryptionRandomizedSigningJwt extends EncryptionR
      */
     private boolean refresh;
 
+    /**
+     * Whether flow executions should redirect after they pause before rendering.
+     */
     private boolean alwaysPauseRedirect;
 
+    /**
+     * Whether flow executions redirect after they pause for transitions that remain in the same view state.
+     */
     private boolean redirectSameState;
 
     /**
      * Webflow session management settings.
      */
     private Session session = new Session();
+
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
 
     public boolean isAutoconfigure() {
         return autoconfigure;
@@ -80,10 +102,39 @@ public class WebflowPropertiesEncryptionRandomizedSigningJwt extends EncryptionR
      * The Webflow Session settings.
      */
     public static class Session {
+        /**
+         * Sets the time period that can elapse before a
+         * timeout occurs on an attempt to acquire a conversation lock. The default is 30 seconds.
+         * Only relevant if session storage is done on the server.
+         */
         private String lockTimeout = "PT30S";
+        /**
+         * Using the maxConversations property, you can limit the number of concurrently
+         * active conversations allowed in a single session. If the maximum is exceeded,
+         * the conversation manager will automatically end the oldest conversation.
+         * The default is 5, which should be fine for most situations.
+         * Set it to -1 for no limit. Setting maxConversations
+         * to 1 allows easy resource cleanup in situations where there
+         * should only be one active conversation per session.
+         * Only relevant if session storage is done on the server.
+         */
         private int maxConversations = 5;
+        /**
+         * Whether or not the snapshots should be compressed.
+         */
         private boolean compress;
+
+        /**
+         * Controls whether spring webflow sessions are to be stored server-side or client side.
+         * By default state is managed on the client side, that is also signed and encrypted.
+         */
         private boolean storage;
+
+        /**
+         * If sessions are to be replicated via Hazelcast, defines the location of a <code>hazelcast.xml</code>
+         * file that defines how state should be replicated.
+         * Only relevant if session storage is done on the server.
+         */
         private Resource hzLocation = new ClassPathResource("hazelcast.xml");
 
         public long getLockTimeout() {
