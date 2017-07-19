@@ -15,17 +15,38 @@ import java.time.temporal.ChronoUnit;
  * @since 5.1.0
  */
 public class ConsentProperties {
+    /**
+     * Global reminder time unit, to reconfirm consent
+     * in cases no changes are detected.
+     */
     private int reminder = 30;
+    /**
+     * Global reminder time unit of measure, to reconfirm consent
+     * in cases no changes are detected.
+     */
     private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
+    /**
+     * Keep consent decisions stored via REST.
+     */
     private Rest rest = new Rest();
-    private Jpa jpa = new Jpa();
-    private Json json = new Json();
 
+    /**
+     * Keep consent decisions stored via JDBC resources.
+     */
+    private Jpa jpa = new Jpa();
+
+    /**
+     * Keep consent decisions stored via a static JSON resource.
+     */
+    private Json json = new Json();
+    
+    /**
+     * Signing/encryption settings.
+     */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
-
-
+    
     public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
@@ -85,6 +106,9 @@ public class ConsentProperties {
     public static class Rest implements Serializable {
         private static final long serialVersionUID = -6909617495470495341L;
 
+        /**
+         * REST endpoint to use to which consent decision records will be submitted.
+         */
         private String endpoint;
 
         public String getEndpoint() {
