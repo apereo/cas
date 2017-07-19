@@ -423,7 +423,7 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
-    
+
     public static class Twitter {
         private String id;
         private String secret;
@@ -490,7 +490,7 @@ public class Pac4jProperties {
             return authnContextComparisonType;
         }
 
-	/**
+        /**
          * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
          * For example, if “exact” is specified, the authentication method used must match one of the authentication
          * methods specified by the AuthnContextClassRef elements.
@@ -799,7 +799,7 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
-    
+
     public static class WindowsLive {
         private String id;
         private String secret;
