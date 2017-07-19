@@ -57,7 +57,10 @@ public class AuditProperties {
      * takes up a full line. This is a more compact version.
      */
     private boolean useSingleLine;
-    
+
+    /**
+     * Family of sub-properties pertaining to Jdbc-based audit destinations.
+     */
     private Jdbc jdbc = new Jdbc();
 
     /**
