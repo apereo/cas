@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
@@ -24,10 +25,10 @@ public class MultifactorAuthenticationTrustStorageCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationTrustStorageCleaner.class);
 
-    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
+    private final TrustedDevicesProperties trustedProperties;
     private final MultifactorAuthenticationTrustStorage storage;
 
-    public MultifactorAuthenticationTrustStorageCleaner(final MultifactorAuthenticationProperties.Trusted trustedProperties,
+    public MultifactorAuthenticationTrustStorageCleaner(final TrustedDevicesProperties trustedProperties,
                                                         final MultifactorAuthenticationTrustStorage storage) {
         this.trustedProperties = trustedProperties;
         this.storage = storage;

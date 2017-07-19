@@ -4,7 +4,7 @@ import net.phonefactor.pfsdk.PFAuthParams;
 import net.phonefactor.pfsdk.PlainTextPinInfo;
 import net.phonefactor.pfsdk.StandardPinInfo;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties;
 
 /**
  * This is {@link AzureAuthenticatorAuthenticationRequestBuilder}.
@@ -14,10 +14,10 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
  */
 public class AzureAuthenticatorAuthenticationRequestBuilder {
     private final String phoneAttributeName;
-    private final MultifactorAuthenticationProperties.Azure.AuthenticationModes mode;
+    private final AzureMultifactorProperties.AuthenticationModes mode;
 
     public AzureAuthenticatorAuthenticationRequestBuilder(final String phoneAttributeName,
-                                                          final MultifactorAuthenticationProperties.Azure.AuthenticationModes mode) {
+                                                          final AzureMultifactorProperties.AuthenticationModes mode) {
         this.phoneAttributeName = phoneAttributeName;
         this.mode = mode;
     }
