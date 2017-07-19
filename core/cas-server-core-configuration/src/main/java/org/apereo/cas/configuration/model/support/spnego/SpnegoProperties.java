@@ -49,8 +49,10 @@ public class SpnegoProperties {
     private String supportedBrowsers = "MSIE,Trident,Firefox,AppleWebKit";
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    /**
+     * This is principal transformation properties
+     */
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
