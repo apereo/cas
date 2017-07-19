@@ -11,6 +11,16 @@ import java.util.List;
  */
 
 public class AuthenticationExceptionsProperties {
+    /**
+     * Define custom exceptions that can then be mapped to message bundles for custom error handling.
+     *
+     * By default CAS is configured to recognize and handle a number
+     * of exceptions for during authentication. Each exception has the specific message bundle
+     * mapping so that a specific message could be presented to end users on the login form.
+     * Any un-recognized or un-mapped exceptions results in a generic message.
+     * To map custom exceptions, one would need map the exception, they can be defined here
+     * and then linked to custom messages.
+     */
     private List<Class<? extends Exception>> exceptions = new ArrayList<>();
 
     public List<Class<? extends Exception>> getExceptions() {

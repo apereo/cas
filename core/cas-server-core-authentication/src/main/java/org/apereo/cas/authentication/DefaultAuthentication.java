@@ -55,7 +55,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication failure cause.
      */
-    private Map<String, Class<? extends Exception>> failures;
+    private Map<String, Class<? extends Throwable>> failures;
 
     /**
      * No-arg constructor for serialization support.
@@ -112,7 +112,7 @@ public class DefaultAuthentication implements Authentication {
             final Principal principal,
             final Map<String, Object> attributes,
             final Map<String, HandlerResult> successes,
-            final Map<String, Class<? extends Exception>> failures) {
+            final Map<String, Class<? extends Throwable>> failures) {
 
         this(date, principal, attributes, successes);
 
@@ -149,7 +149,7 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public Map<String, Class<? extends Exception>> getFailures() {
+    public Map<String, Class<? extends Throwable>> getFailures() {
         return CollectionUtils.wrap(this.failures);
     }
 
