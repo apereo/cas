@@ -36,6 +36,10 @@ public class CasServerProperties {
     private Http http = new Http();
     private HttpProxy httpProxy = new HttpProxy();
     private SslValve sslValve = new SslValve();
+
+    /**
+     * Configuration properties for access logging beyond defaults.
+     */
     private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
 
     public HttpProxy getHttpProxy() {
@@ -111,10 +115,12 @@ public class CasServerProperties {
     }
 
     public static class Ajp {
+
         /**
          * Sets the protocol to handle incoming traffic.
          */
         private String protocol = "AJP/1.3";
+
         /**
          * The TCP port number on which this Connector will create a server socket and await incoming connections.
          * Your operating system will allow only one server application to listen to a
@@ -123,21 +129,25 @@ public class CasServerProperties {
          * This is typically only useful in embedded and testing applications.
          */
         private int port = 8009;
+
         /**
          * Set this attribute to true if you wish to have calls to request.isSecure() to return true for requests received
          * by this Connector (you would want this on an SSL Connector). The default value is false.
          */
         private boolean secure;
+
         /**
          * A boolean value which can be used to enable or disable
          * the TRACE HTTP method. If not specified, this attribute is set to false.
          */
         private boolean allowTrace;
+
         /**
          * Set this attribute to the name of the protocol you wish to have returned by calls to request.getScheme(). For example,
          * you would set this attribute to "https" for an SSL Connector.
          */
         private String scheme = "http";
+
         /**
          * Enable AJP support in CAS for the embedded Apache Tomcat container.
          */
