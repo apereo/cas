@@ -16,6 +16,9 @@ public class RejectAuthenticationProperties {
     private String users;
 
     @NestedConfigurationProperty
+    /**
+     * Password encoder properties.
+     */
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
