@@ -1,0 +1,13 @@
+description = "Apereo CAS Service Registry Streaming Support with AMQP"
+
+dependencies {
+    implementation libraries.springintegrationamqp
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-util")
+    compile project(":support:cas-server-support-service-registry-stream")
+    
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

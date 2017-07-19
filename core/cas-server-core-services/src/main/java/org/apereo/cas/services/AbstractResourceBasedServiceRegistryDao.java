@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -237,7 +238,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                 .filter(Objects::nonNull)
                 .sorted()
                 .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
-                .collect(Collectors.toMap(RegisteredService::getId, e -> e, LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
+                .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
+                        LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
 
         return new ArrayList<>(this.serviceMap.values());
     }
