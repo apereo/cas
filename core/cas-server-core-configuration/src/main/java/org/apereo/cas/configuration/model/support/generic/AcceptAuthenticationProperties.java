@@ -20,8 +20,10 @@ public class AcceptAuthenticationProperties {
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    /**
+     * This is principal transformation properties
+     */
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;
