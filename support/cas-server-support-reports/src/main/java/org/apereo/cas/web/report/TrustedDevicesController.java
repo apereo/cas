@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
@@ -67,7 +68,7 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
                                                                 final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        final MultifactorAuthenticationProperties.Trusted trusted = casProperties.getAuthn().getMfa().getTrusted();
+        final TrustedDevicesProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
         final LocalDate onOrAfter = LocalDate.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
 
         this.mfaTrustEngine.expire(onOrAfter);

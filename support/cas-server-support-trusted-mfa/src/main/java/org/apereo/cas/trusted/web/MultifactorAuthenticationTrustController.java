@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.web;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
@@ -25,10 +26,10 @@ import java.util.Set;
 public class MultifactorAuthenticationTrustController {
 
     private final MultifactorAuthenticationTrustStorage storage;
-    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
+    private final TrustedDevicesProperties trustedProperties;
 
     public MultifactorAuthenticationTrustController(final MultifactorAuthenticationTrustStorage storage,
-                                                    final MultifactorAuthenticationProperties.Trusted trustedProperties) {
+                                                    final TrustedDevicesProperties trustedProperties) {
         this.storage = storage;
         this.trustedProperties = trustedProperties;
     }
