@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -48,7 +48,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthyClientInstance authyClientInstance() {
-        final MultifactorAuthenticationProperties.Authy authy = casProperties.getAuthn().getMfa().getAuthy();
+        final AuthyMultifactorProperties authy = casProperties.getAuthn().getMfa().getAuthy();
         if (StringUtils.isBlank(authy.getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
         }
@@ -61,7 +61,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler authyAuthenticationHandler() {
         try {
-            final MultifactorAuthenticationProperties.Authy authy = casProperties.getAuthn().getMfa().getAuthy();
+            final AuthyMultifactorProperties authy = casProperties.getAuthn().getMfa().getAuthy();
             final boolean forceVerification = authy.isForceVerification();
             return new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyPrincipalFactory(), authyClientInstance(), forceVerification);
         } catch (final Exception e) {
