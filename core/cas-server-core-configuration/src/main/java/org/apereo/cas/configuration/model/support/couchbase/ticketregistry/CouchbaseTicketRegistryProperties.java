@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.couchbase.ticketregistry;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -23,14 +23,17 @@ public class CouchbaseTicketRegistryProperties {
     private String password;
     private String bucket = "default";
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
-    public CryptographyProperties getCrypto() {
+    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final CryptographyProperties crypto) {
+    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
 

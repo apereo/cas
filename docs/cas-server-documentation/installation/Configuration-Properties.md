@@ -2125,7 +2125,7 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.location=file:/path/to/image.jpg
+# cas.authn.gua.resource.config.location=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
@@ -2517,9 +2517,9 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.expiration=30
 # cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
 
-# cas.authn.mfa.trusted.encryptionKey=
-# cas.authn.mfa.trusted.signingKey=
-# cas.authn.mfa.trusted.cipherEnabled=true
+# cas.authn.mfa.trusted.crypto.encryption.key=
+# cas.authn.mfa.trusted.crypto.signing.key=
+# cas.authn.mfa.trusted.crypto.enabled=true
 ```
 
 ### Signing & Encryption
@@ -3621,9 +3621,9 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 # cas.tgc.httpOnly=true
 # cas.tgc.rememberMeMaxAge=1209600
 
-# cas.tgc.encryptionKey=
-# cas.tgc.signingKey=
-# cas.tgc.cipherEnabled=true
+# cas.tgc.crypto.encryption.key=
+# cas.tgc.crypto.signing.key=
+# cas.tgc.crypto.enabled=true
 ```
 
 ### Signing & Encryption
@@ -3663,9 +3663,9 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 
 ```properties
 # cas.clearpass.cacheCredential=false
-# cas.clearpass.encryptionKey=
-# cas.clearpass.signingKey=
-# cas.clearpass.cipherEnabled=true;
+# cas.clearpass.crypto.encryption.key=
+# cas.clearpass.crypto.signing.key=
+# cas.clearpass.crypto.enabled=true
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -4517,9 +4517,9 @@ Controls whether tickets issued by the CAS server should be secured via signing 
 when shared with client applications on outgoing calls.
 
 ```properties
-# cas.ticket.security.cipherEnabled=true
-# cas.ticket.security.encryptionKey=
-# cas.ticket.security.signingKey=
+# cas.ticket.crypto.enabled=true
+# cas.ticket.crypto.encryption.key=
+# cas.ticket.crypto.signing.key=
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -4711,11 +4711,11 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # spring.redis.password=secret
 # spring.redis.port=6379
 
-# cas.webflow.signing.key=
-# cas.webflow.signing.keySize=512
-# cas.webflow.encryption.keySize=16
-# cas.webflow.encryption.key=
-# cas.webflow.alg=AES
+# cas.webflow.crypto.signing.key=
+# cas.webflow.crypto.signing.keySize=512
+# cas.webflow.crypto.encryption.keySize=16
+# cas.webflow.crypto.encryption.key=
+# cas.webflow.crypto.alg=AES
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
@@ -4876,9 +4876,9 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.reminder=30
 # cas.consent.reminderTimeUnit=HOURS|DAYS|MONTHS
 
-# cas.consent.encryptionKey=
-# cas.consent.signingKey=
-# cas.consent.cipherEnabled=true
+# cas.consent.crypto.encryption.key=
+# cas.consent.crypto.signing.key=
+# cas.consent.crypto.enabled=true
 ```
 
 ### JSON Attribute Consent
@@ -4939,8 +4939,8 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.securityQuestionsEnabled=true
 
 # Used to sign/encrypt the password-reset link
-# cas.authn.pm.reset.security.encryptionKey=
-# cas.authn.pm.reset.security.signingKey=
+# cas.authn.pm.reset.crypto.encryption.key=
+# cas.authn.pm.reset.crypto.signing.key=
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.

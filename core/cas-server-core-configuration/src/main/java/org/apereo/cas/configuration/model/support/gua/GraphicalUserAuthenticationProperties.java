@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.gua;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.AbstractConfigProperties;
 
 /**
  * This is {@link GraphicalUserAuthenticationProperties}
@@ -11,7 +12,13 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
  * @since 5.1.0
  */
 public class GraphicalUserAuthenticationProperties {
+    /**
+     * Locate GUA settings and images from LDAP.
+     */
     private Ldap ldap = new Ldap();
+    /**
+     * Locate GUA settings and images from a static image.
+     */
     private Resource resource = new Resource();
 
     public Ldap getLdap() {
@@ -30,22 +37,22 @@ public class GraphicalUserAuthenticationProperties {
         this.resource = resource;
     }
 
-    public static class Resource {
-        private String location;
-
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(final String location) {
-            this.location = location;
-        }
+    public static class Resource extends AbstractConfigProperties {
     }
     
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = 4666838063728336692L;
+        /**
+         * Base DN to use for the user search.
+         */
         private String baseDn;
+        /**
+         * Search filter to locate the account in LDAP.
+         */
         private String userFilter;
+        /**
+         * Entry attribute that holds the user image.
+         */
         private String imageAttribute;
 
         public String getBaseDn() {
