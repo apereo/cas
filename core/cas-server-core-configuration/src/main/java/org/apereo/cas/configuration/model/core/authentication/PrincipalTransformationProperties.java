@@ -27,6 +27,7 @@ public class PrincipalTransformationProperties implements Serializable {
      * Prefix to add to the principal id prior to authentication.
      */
     private String prefix;
+
     /**
      * Suffix to add to the principal id prior to authentication.
      */
