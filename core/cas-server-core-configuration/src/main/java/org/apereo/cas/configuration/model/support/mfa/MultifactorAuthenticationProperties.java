@@ -136,7 +136,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * Activate and configure a multifactor authentication provider via U2F FIDO.
      */
     @NestedConfigurationProperty
-    private U2FProperties u2f = new U2FProperties();
+    private U2FMultifactorProperties u2f = new U2FMultifactorProperties();
 
     /**
      * Activate and configure a multifactor authentication provider via Microsoft Azure.
@@ -147,7 +147,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * Activate and configure a multifactor authentication with the capability to trust and remember devices.
      */
     @NestedConfigurationProperty
-    private TrustedDevicesProperties trusted = new TrustedDevicesProperties();
+    private TrustedDevicesMultifactorProperties trusted = new TrustedDevicesMultifactorProperties();
     /**
      * Activate and configure a multifactor authentication provider via YubiKey.
      */
@@ -211,11 +211,11 @@ public class MultifactorAuthenticationProperties implements Serializable {
         this.swivel = swivel;
     }
 
-    public U2FProperties getU2f() {
+    public U2FMultifactorProperties getU2f() {
         return u2f;
     }
 
-    public void setU2f(final U2FProperties u2f) {
+    public void setU2f(final U2FMultifactorProperties u2f) {
         this.u2f = u2f;
     }
 
@@ -227,11 +227,11 @@ public class MultifactorAuthenticationProperties implements Serializable {
         this.azure = azure;
     }
 
-    public TrustedDevicesProperties getTrusted() {
+    public TrustedDevicesMultifactorProperties getTrusted() {
         return trusted;
     }
 
-    public void setTrusted(final TrustedDevicesProperties trusted) {
+    public void setTrusted(final TrustedDevicesMultifactorProperties trusted) {
         this.trusted = trusted;
     }
 
