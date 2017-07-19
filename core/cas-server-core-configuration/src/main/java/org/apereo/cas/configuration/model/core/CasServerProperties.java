@@ -452,14 +452,17 @@ public class CasServerProperties {
     }
 
     public static class Http {
+
         /**
          * Enable a separate port for the embedded container for HTTP access.
          */
         private boolean enabled;
+
         /**
          * The HTTP port to use.
          */
         private int port = 8080;
+
         /**
          * HTTP protocol to use.
          */
