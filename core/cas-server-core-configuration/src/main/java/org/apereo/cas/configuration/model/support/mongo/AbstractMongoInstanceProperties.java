@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractMongoInstanceProperties implements Serializable {
     private static final long serialVersionUID = -2471243083598934186L;
+
     /**
      * core connection-related settings.
      */
@@ -22,31 +23,37 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
      * MongoDb database port.
      */
     private int port = 27017;
+
     /**
      * MongoDb database user for authentication.
      */
     private String userId = StringUtils.EMPTY;
+
     /**
      * MongoDb database password for authentication.
      */
     private String password = StringUtils.EMPTY;
+
     /**
      * MongoDb database host for authentication.
      */
     private String host = "localhost";
+
     /**
      * MongoDb database connection timeout.
      */
     private String timeout = "PT5S";
+
     /**
      * MongoDb database connection idle timeout.
      */
     private String idleTimeout = "PT30S";
+
     /**
      * Write concern describes the level of acknowledgement requested from
      * MongoDB for write operations to a standalone
-     * mongod or to replica sets or to sharded clusters. In sharded clusters,
-     * mongos instances will pass the write concern on to the shards.
+     * mongo db or to replica sets or to sharded clusters. In sharded clusters,
+     * mongo db instances will pass the write concern on to the shards.
      */
     private String writeConcern = "NORMAL";
 
@@ -54,14 +61,17 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
      * MongoDb database collection name to fetch and/or create.
      */
     private String collectionName;
+
     /**
      * MongoDb database instance name.
      */
     private String databaseName = StringUtils.EMPTY;
+
     /**
      * Whether the database socket connection should be tagged with keep-alive.
      */
     private boolean socketKeepAlive;
+
     /**
      * Whether collections should be dropped on startup and re-created.
      */
@@ -164,10 +174,12 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
     }
 
     public static class Conns {
+
         /**
          * Maximum number of connections to keep around.
          */
         private int lifetime = 60_000;
+
         /**
          * Total number of connections allowed per host.
          */

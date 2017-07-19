@@ -124,6 +124,7 @@ public class MonitorProperties {
     }
 
     public static class Tgt {
+
         /**
          * Warning options for monitoring TGT production.
          */
@@ -140,10 +141,12 @@ public class MonitorProperties {
     }
 
     public static class Warn {
+
         /**
          * The monitor threshold where if reached, CAS might generate a warning status for health checks.
          */
         private int threshold = 10;
+
         /**
          * The monitor eviction threshold where if reached, CAS might generate a warning status for health checks.
          * The underlying data source and monitor (i.e. cache) must support the concept of evictions.
@@ -177,6 +180,7 @@ public class MonitorProperties {
 
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = 4722929378440179113L;
+
         /**
          * When monitoring the LDAP connection pool, indicates the amount of time the operation must wait
          * before it times outs and considers the pool in bad shape.
