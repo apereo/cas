@@ -198,7 +198,9 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         final String handlerErrorName = this.errors
                 .stream()
                 .filter(e.getHandlerErrors().values()::contains)
-                .map(Class::getSimpleName).findFirst().orElseGet(() -> {
+                .map(Class::getSimpleName)
+                .findFirst()
+                .orElseGet(() -> {
                     LOGGER.error("Unable to translate handler errors of the authentication exception [{}]"
                             + "Returning [{}]", e, UNKNOWN);
                     return UNKNOWN;

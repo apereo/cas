@@ -66,7 +66,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         if (casProperties.getAuthn().getPm().isEnabled()) {
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
-            configurePasswordResetFlow();
+            createPasswordResetFlow();
         } else {
             createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
             createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
@@ -74,7 +74,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         }
     }
 
-    private void configurePasswordResetFlow() {
+    private void createPasswordResetFlow() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);

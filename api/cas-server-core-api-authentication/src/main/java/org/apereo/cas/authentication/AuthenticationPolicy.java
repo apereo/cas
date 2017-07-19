@@ -15,8 +15,9 @@ public interface AuthenticationPolicy extends Ordered {
      *
      * @param authentication Authentication event to examine for compliance with security policy.
      * @return True if authentication isSatisfiedBy security policy, false otherwise.
+     * @throws Exception the exception
      */
-    boolean isSatisfiedBy(Authentication authentication);
+    boolean isSatisfiedBy(Authentication authentication) throws Exception;
 
     @Override
     default int getOrder() {
