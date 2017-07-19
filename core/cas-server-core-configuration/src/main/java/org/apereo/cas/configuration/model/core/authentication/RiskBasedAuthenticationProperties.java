@@ -122,6 +122,7 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class Agent {
+
         /**
          * Enable user-agent checking and criteria
          * to calculate risky authentication attempts.
@@ -138,6 +139,7 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class GeoLocation {
+
         /**
          * Enable geolocation checking and criteria
          * to calculate risky authentication attempts.
@@ -154,11 +156,13 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class DateTime {
+
         /**
          * Enable date/time checking and criteria
          * to calculate risky authentication attempts.
          */
         private boolean enabled;
+
         /**
          * The hourly window used before and after each authentication event
          * in calculation to establish a pattern that can then be compared against the threshold.
@@ -260,22 +264,27 @@ public class RiskBasedAuthenticationProperties {
              * to the CAS principal.
              */
             private String attributeName = "mail";
+
             /**
              * Email message body.
              */
             private String text;
+
             /**
              * Email from address.
              */
             private String from;
+
             /**
              * Email subject line.
              */
             private String subject;
+
             /**
              * Email CC address, if any.
              */
             private String cc;
+
             /**
              * Email BCC address, if any.
              */
