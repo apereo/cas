@@ -8,6 +8,9 @@ package org.apereo.cas.configuration.model.core.ticket;
  */
 
 public class ProxyGrantingTicketProperties {
+    /**
+     * Maximum length of the proxy granting ticket, when generating one.
+     */
     private int maxLength = 50;
 
     public int getMaxLength() {
