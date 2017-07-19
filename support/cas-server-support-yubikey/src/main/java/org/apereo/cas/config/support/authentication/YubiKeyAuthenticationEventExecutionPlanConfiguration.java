@@ -20,6 +20,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -84,7 +85,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "yubicoClient")
     public YubicoClient yubicoClient() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties yubi = this.casProperties.getAuthn().getMfa().getYubikey();
 
         if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
@@ -105,7 +106,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
     public AuthenticationHandler yubikeyAuthenticationHandler() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties yubi = this.casProperties.getAuthn().getMfa().getYubikey();
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getName(),
                 servicesManager, yubikeyPrincipalFactory(),
                 yubicoClient(), yubiKeyAccountRegistry());
@@ -135,7 +136,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistry")
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
 
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
@@ -170,7 +171,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+            final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
             if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
                 plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
                 plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
