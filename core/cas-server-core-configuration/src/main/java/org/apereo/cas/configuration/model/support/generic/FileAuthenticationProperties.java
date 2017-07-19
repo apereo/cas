@@ -14,16 +14,27 @@ import org.springframework.core.io.Resource;
 
 public class FileAuthenticationProperties {
 
+    /**
+     * File resource where user accounts are kept.
+     */
     private Resource filename;
+    /**
+     * Separator character that dinstinguishes between usernames and passwords in the file.
+     */
     private String separator = "::";
 
+    /**
+     * Password encoder properties.
+     */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+    /**
+     * Authentication hanler name used to verify credentials in the file.
+     */
     private String name;
 
     public String getName() {

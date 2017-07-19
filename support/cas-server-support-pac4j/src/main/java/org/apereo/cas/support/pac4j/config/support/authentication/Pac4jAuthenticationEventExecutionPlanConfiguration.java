@@ -250,7 +250,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
 
                     if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
-                        cfg.setComparisonType(saml.getAuthnContextComparisonType());
+                        cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
                         cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
                     }
                     if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {

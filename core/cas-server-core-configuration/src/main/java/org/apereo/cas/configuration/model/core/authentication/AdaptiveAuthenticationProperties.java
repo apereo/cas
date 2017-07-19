@@ -12,14 +12,34 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class AdaptiveAuthenticationProperties {
-    
+
+    /**
+     * Comma-separated list of strings representing countries to be rejected from participating in authentication transactions.
+     */
     private String rejectCountries;
+
+    /**
+     * Comma-separated list of strings representing browser user agents to be rejected from participating in authentication transactions.
+     */
     private String rejectBrowsers;
+
+    /**
+     * Comma-separated list of strings representing IP addresses to be rejected from participating in authentication transactions.
+     */
     private String rejectIpAddresses;
 
     @NestedConfigurationProperty
     private RiskBasedAuthenticationProperties risk = new RiskBasedAuthenticationProperties();
 
+    /**
+     * A map of (mfaProviderId -> adaptiveRegexPattern) that tells CAS when to trigger an MFA authentication transaction.
+     *
+     * This property binds a valid mfa provider to an adaptive regex pattern representing either IP address, user-agent or geolocation.
+     * When either of those collected pieces of adaptive data matches configured regex pattern during authentication event,
+     * an MFA authentication transaction is triggered for an MFA provider represented by the map's key.
+     *
+     * Default value is EMPTY Map.
+     */
     private Map requireMultifactor = new HashMap<>();
 
     public RiskBasedAuthenticationProperties getRisk() {

@@ -91,10 +91,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             try {
                 server.authenticate(uidPsw, uidPsw);
             } catch (final TimeoutException | SocketTimeoutException e) {
-
                 LOGGER.debug("Server [{}] is not available", server);
                 continue;
-
             } catch (final Exception e) {
                 LOGGER.debug("Pinging RADIUS server was successful. Response [{}]", e.getMessage());
             }

@@ -2,6 +2,7 @@ package org.apereo.cas.pm.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
@@ -52,10 +53,12 @@ public class PasswordManagementConfiguration {
     @Bean
     public CipherExecutor<Serializable, String> passwordManagementCipherExecutor() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        if (pm.isEnabled()) {
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = pm.getReset().getCrypto();
+        if (pm.isEnabled() && crypto.isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
-                    pm.getReset().getSecurity().getEncryptionKey(),
-                    pm.getReset().getSecurity().getSigningKey());
+                    crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg());
         }
         return NoOpCipherExecutor.getInstance();
     }

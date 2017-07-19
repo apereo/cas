@@ -7,8 +7,21 @@ package org.apereo.cas.configuration.model.support.sms;
  * @since 5.1.0
  */
 public class SmsProperties {
+
+    /**
+     * The body of the SMS message.
+     */
     private String text;
+    /**
+     * The from address for the message.
+     */
     private String from;
+
+    /**
+     * Principal attribute name that indicates the destination phone number
+     * for this SMS message. The attribute must already be resolved and available
+     * to the CAS principal.
+     */
     private String attributeName = "phone";
 
     public String getAttributeName() {

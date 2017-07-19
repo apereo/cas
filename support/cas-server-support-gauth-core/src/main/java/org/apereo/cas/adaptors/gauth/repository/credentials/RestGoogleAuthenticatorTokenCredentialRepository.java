@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.slf4j.Logger;
@@ -30,11 +30,11 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     private final IGoogleAuthenticator googleAuthenticator;
 
     private final RestTemplate restTemplate;
-    private final MultifactorAuthenticationProperties.GAuth gauth;
+    private final GAuthMultifactorProperties gauth;
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                             final RestTemplate restTemplate,
-                                                            final MultifactorAuthenticationProperties.GAuth gauth) {
+                                                            final GAuthMultifactorProperties gauth) {
         this.googleAuthenticator = googleAuthenticator;
         this.restTemplate = restTemplate;
         this.gauth = gauth;
@@ -42,7 +42,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
 
     @Override
     public String getSecret(final String username) {
-        final MultifactorAuthenticationProperties.GAuth.Rest rest = gauth.getRest();
+        final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.put("username", Arrays.asList(username));
@@ -57,7 +57,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
 
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        final MultifactorAuthenticationProperties.GAuth.Rest rest = gauth.getRest();
+        final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.put("username", Arrays.asList(userName));

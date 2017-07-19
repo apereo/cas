@@ -7,8 +7,20 @@ package org.apereo.cas.configuration.model.core.logout;
  * @since 5.0.0
  */
 public class LogoutProperties {
+    /**
+     * The target destination to which CAS should redirect after logout
+     * is indicated and extracted by a parameter name of your choosing here. If none specified,
+     * the default will be used as <code>service</code>.
+     */
     private String redirectParameter;
+    /**
+     * Whether CAS should be allowed to redirect to an alternative location after logout.
+     */
     private boolean followServiceRedirects;
+
+    /**
+     * Before logout, allow the option to confirm on the web interface.
+     */
     private boolean confirmLogout;
 
     public boolean isConfirmLogout() {
