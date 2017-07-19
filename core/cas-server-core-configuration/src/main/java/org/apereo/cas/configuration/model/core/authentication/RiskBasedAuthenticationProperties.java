@@ -183,6 +183,7 @@ public class RiskBasedAuthenticationProperties {
     }
     
     public static class Response {
+
         /**
          * If an authentication attempt is deemed risky, block the response
          * and do not allow further attempts.
@@ -191,7 +192,7 @@ public class RiskBasedAuthenticationProperties {
 
         /**
          * If an authentication attempt is deemed risky, force
-         * a multifactor authentication event noted by the provider id here.
+         * a multi-factor authentication event noted by the provider id here.
          */
         private String mfaProvider;
 
