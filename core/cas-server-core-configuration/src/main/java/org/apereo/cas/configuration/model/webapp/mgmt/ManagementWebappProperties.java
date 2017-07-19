@@ -18,10 +18,33 @@ import java.util.List;
  */
 public class ManagementWebappProperties {
     private List<String> adminRoles = Arrays.asList("ROLE_ADMIN");
+
+    /**
+     * The server name/address of the management web application.
+     */
     private String serverName = "https://localhost:8443";
+    /**
+     * Default locale to use when displaying UI components and views.
+     */
     private String defaultLocale = "en";
+
+    /**
+     * Collection of attributes the authorized user must have in order to authenticate into the app.
+     * Th attribute value(s) must match the expected role. To permit everything, you may use <code>*</code>.
+     */
     private List<String> authzAttributes = new ArrayList<>();
+
+    /**
+     * Control authorization and access into the app via LDAP directly.
+     */
     private Ldap ldap = new Ldap();
+
+    /**
+     * Location of the resource that contains the authorized accounts.
+     * This file lists the set of users that are allowed access to the CAS sensitive/admin endpoints.
+     * The syntax of each entry should be in the form of:
+     * <code>username=notused,grantedAuthority[,grantedAuthority][,enabled|disabled]</code>
+     */
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
 
     public Ldap getLdap() {
@@ -74,6 +97,9 @@ public class ManagementWebappProperties {
 
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -8129280052479631538L;
+        /**
+         * Defines authorization settings that allow access to the app via LDAP.
+         */
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 

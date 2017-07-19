@@ -2125,7 +2125,7 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.location=file:/path/to/image.jpg
+# cas.authn.gua.resource.config.location=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
