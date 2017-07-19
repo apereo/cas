@@ -8,8 +8,16 @@ package org.apereo.cas.configuration.model.core.slo;
  */
 
 public class SloProperties {
-    
+
+    /**
+     * Whether SLO callbacks should be done in an asynchronous manner via the HTTP client.
+     * When true, CAS will not wait for the operation to fully complete and will resume control to carry on.
+     */
     private boolean asynchronous = true;
+
+    /**
+     * Whether SLO should be entirely disabled globally for the CAS deployment.
+     */
     private boolean disabled;
 
     public boolean isAsynchronous() {

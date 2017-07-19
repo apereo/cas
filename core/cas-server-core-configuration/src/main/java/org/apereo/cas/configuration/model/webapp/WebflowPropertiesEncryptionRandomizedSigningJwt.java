@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -12,16 +12,28 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class WebflowProperties extends CryptographyProperties {
+public class WebflowPropertiesEncryptionRandomizedSigningJwt extends EncryptionRandomizedSigningJwtCryptographyProperties {
 
+    /**
+     * Whether CAS should take control of all spring webflow modifications
+     * and dynamically alter views, states and actions.
+     */
     private boolean autoconfigure = true;
-    
+
+    /**
+     * Whether webflow should remain in "live reload" mode, able to auto detect
+     * changes and react. This is useful if the location of the webflow is externalized
+     * and changes are done ad-hoc to the webflow to accommodate changes.
+     */
     private boolean refresh;
 
     private boolean alwaysPauseRedirect;
 
     private boolean redirectSameState;
 
+    /**
+     * Webflow session management settings.
+     */
     private Session session = new Session();
 
     public boolean isAutoconfigure() {
@@ -64,6 +76,9 @@ public class WebflowProperties extends CryptographyProperties {
         this.session = session;
     }
 
+    /**
+     * The Webflow Session settings.
+     */
     public static class Session {
         private String lockTimeout = "PT30S";
         private int maxConversations = 5;

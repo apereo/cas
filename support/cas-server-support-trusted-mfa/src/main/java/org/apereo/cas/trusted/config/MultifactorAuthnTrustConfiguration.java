@@ -7,6 +7,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -100,10 +101,12 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor<Serializable, String> mfaTrustCipherExecutor() {
-        if (casProperties.getAuthn().getMfa().getTrusted().isCipherEnabled()) {
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
+        if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
-                    casProperties.getAuthn().getMfa().getTrusted().getEncryptionKey(),
-                    casProperties.getAuthn().getMfa().getTrusted().getSigningKey());
+                    crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg());
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
                 + "MAY NOT be safe in a production environment. "

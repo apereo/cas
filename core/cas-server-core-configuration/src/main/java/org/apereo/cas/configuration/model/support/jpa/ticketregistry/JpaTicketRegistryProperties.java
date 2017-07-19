@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -26,17 +26,17 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
     private String jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
 
     @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
     }
 
-    public CryptographyProperties getCrypto() {
+    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final CryptographyProperties crypto) {
+    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
 

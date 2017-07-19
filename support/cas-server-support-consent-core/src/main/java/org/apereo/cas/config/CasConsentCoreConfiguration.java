@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.consent.ConsentCipherExecutor;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
@@ -47,8 +48,11 @@ public class CasConsentCoreConfiguration {
     @RefreshScope
     public CipherExecutor consentCipherExecutor() {
         final ConsentProperties consent = casProperties.getConsent();
-        if (consent.isCipherEnabled()) {
-            return new ConsentCipherExecutor(consent.getEncryptionKey(), consent.getSigningKey());
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = consent.getCrypto();
+        if (crypto.isEnabled()) {
+            return new ConsentCipherExecutor(crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg());
         }
         LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
         return NoOpCipherExecutor.getInstance();

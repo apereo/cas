@@ -20,7 +20,7 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
@@ -801,7 +801,7 @@ public final class Beans {
      * @param registry the registry
      * @return the cipher executor
      */
-    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry) {
+    public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry) {
         return newTicketRegistryCipherExecutor(registry, false);
     }
 
@@ -812,7 +812,8 @@ public final class Beans {
      * @param forceIfBlankKeys the force if blank keys
      * @return the cipher executor
      */
-    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
+    public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
+                                                                 final boolean forceIfBlankKeys) {
         if (StringUtils.isNotBlank(registry.getEncryption().getKey())
                 && StringUtils.isNotBlank(registry.getEncryption().getKey())
                 || forceIfBlankKeys) {

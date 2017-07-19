@@ -18,6 +18,9 @@ public class FileAuthenticationProperties {
     private String separator = "::";
 
     @NestedConfigurationProperty
+    /**
+     * Password encoder properties.
+     */
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
