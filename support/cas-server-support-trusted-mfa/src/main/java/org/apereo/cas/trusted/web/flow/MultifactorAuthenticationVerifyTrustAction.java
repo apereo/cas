@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesProperties;
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
@@ -27,10 +27,10 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationVerifyTrustAction.class);
 
     private final MultifactorAuthenticationTrustStorage storage;
-    private final TrustedDevicesProperties trustedProperties;
+    private final TrustedDevicesMultifactorProperties trustedProperties;
 
     public MultifactorAuthenticationVerifyTrustAction(final MultifactorAuthenticationTrustStorage storage,
-                                                      final TrustedDevicesProperties trustedProperties) {
+                                                      final TrustedDevicesMultifactorProperties trustedProperties) {
         this.storage = storage;
         this.trustedProperties = trustedProperties;
     }
