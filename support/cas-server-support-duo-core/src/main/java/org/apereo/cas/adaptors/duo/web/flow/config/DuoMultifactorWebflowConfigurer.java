@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
@@ -60,7 +60,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         casProperties.getAuthn().getMfa().getDuo()
                 .stream()
-                .filter(MultifactorAuthenticationProperties.Duo::isTrustedDeviceEnabled)
+                .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
                 .forEach(duo -> {
                     final String id = duo.getId();
                     try {

@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -36,11 +36,11 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     private static final String SWIVEL_ERR_CODE_AUTHN_FAIL = "swivel.server.error";
     private static final Map<String, String> ERROR_MAP = createErrorCodeMap();
 
-    private final MultifactorAuthenticationProperties.Swivel swivelProperties;
+    private final SwivelMultifactorProperties swivelProperties;
 
     public SwivelAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
-                                       final MultifactorAuthenticationProperties.Swivel swivelProperties) {
+                                       final SwivelMultifactorProperties swivelProperties) {
         super(name, servicesManager, principalFactory, null);
         this.swivelProperties = swivelProperties;
     }

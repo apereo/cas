@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.MongoDbYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,7 +52,7 @@ public class MongoDbYubiKeyConfiguration {
     @Bean
     public MongoDbFactory mongoYubiKeyDbFactory() {
         try {
-            final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+            final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
             return new SimpleMongoDbFactory(new MongoClientURI(yubi.getMongodb().getClientUri()));
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
@@ -61,7 +62,7 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
         return new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
                 mongoYubiKeyTemplate(),
                 yubi.getMongodb().getCollection(),
