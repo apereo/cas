@@ -1,0 +1,14 @@
+description = "Apereo CAS Service Registry Streaming Support"
+
+dependencies {
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-util")
+    provided project(":core:cas-server-core-events")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}
+
+
+
