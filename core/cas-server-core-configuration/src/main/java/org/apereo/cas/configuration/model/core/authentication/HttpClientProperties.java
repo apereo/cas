@@ -78,6 +78,7 @@ public class HttpClientProperties {
     }
 
     public static class Truststore {
+
         /**
          * The CAS local truststore resource to contain certificates to the CAS deployment.
          * In the event that local certificates are to be imported into the CAS running environment,
