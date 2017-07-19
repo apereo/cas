@@ -22,6 +22,9 @@ public class RejectAuthenticationProperties {
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
+    /**
+     * This is principal transformation properties
+     */
     private PrincipalTransformationProperties principalTransformation =
             new PrincipalTransformationProperties();
 
