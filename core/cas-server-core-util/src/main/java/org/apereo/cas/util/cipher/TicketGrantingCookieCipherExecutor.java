@@ -16,10 +16,15 @@ public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor
      * @param secretKeySigning    the secret key signing
      */
     public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
+                                              final String secretKeySigning,
+                                              final String alg) {
+        super(secretKeyEncryption, secretKeySigning, alg);
+    }
+
+    public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
                                               final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
-
 
     @Override
     public String getName() {
@@ -28,11 +33,11 @@ public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.tgc.encryptionKey";
+        return "cas.tgc.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.tgc.signingKey";
+        return "cas.tgc.crypto.signing.key";
     }
 }
