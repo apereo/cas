@@ -33,8 +33,14 @@ public class CasServerProperties {
     private String prefix = name.concat("/cas");
 
     private Ajp ajp = new Ajp();
+
     private Http http = new Http();
+
+    /**
+     * Http proxy configuration properties.
+     */
     private HttpProxy httpProxy = new HttpProxy();
+
     private SslValve sslValve = new SslValve();
 
     /**
