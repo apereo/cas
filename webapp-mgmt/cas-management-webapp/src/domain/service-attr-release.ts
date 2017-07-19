@@ -3,6 +3,6 @@
  */
 export default class ServiceAttrRelease {
   releasePassword: boolean;
-  releaseTicket:boolean;
+  releaseTicket: boolean;
   attrPolicy: String;
 }

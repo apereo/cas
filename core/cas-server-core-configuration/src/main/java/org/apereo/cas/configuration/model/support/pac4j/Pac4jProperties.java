@@ -490,7 +490,7 @@ public class Pac4jProperties {
             return authnContextComparisonType;
         }
 
-	/**
+        /**
          * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
          * For example, if “exact” is specified, the authentication method used must match one of the authentication
          * methods specified by the AuthnContextClassRef elements.
