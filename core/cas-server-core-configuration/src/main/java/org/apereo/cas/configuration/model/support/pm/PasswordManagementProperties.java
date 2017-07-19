@@ -20,7 +20,7 @@ import java.util.Map;
 public class PasswordManagementProperties {
 
     /**
-     * Flag to indicate if password
+     * Flag to indicate if password management facility is enabled.
      */
     private boolean enabled;
 
