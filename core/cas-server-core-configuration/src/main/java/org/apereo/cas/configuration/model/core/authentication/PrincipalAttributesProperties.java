@@ -247,6 +247,7 @@ public class PrincipalAttributesProperties {
     }
 
     public static class Stub {
+
         /**
          * Static attributes that need to be mapped to a hardcoded value belong here.
          * The structure follows a key-value pair where key is the attribute name

@@ -318,10 +318,30 @@ public class CasServerProperties {
     }
 
     public static class ExtendedAccessLog {
+
+        /**
+         * Flag to indicate whether extended log facility is enabled.
+         */
         private boolean enabled;
+
+        /**
+         * String representing extended log pattern.
+         */
         private String pattern = "c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)";
+
+        /**
+         * File name suffix for extended log.
+         */
         private String suffix = ".log";
+
+        /**
+         * File name prefix for extended log.
+         */
         private String prefix = "localhost_access_extended";
+
+        /**
+         * Directory name for extended log.
+         */
         private String directory;
 
         public String getDirectory() {
