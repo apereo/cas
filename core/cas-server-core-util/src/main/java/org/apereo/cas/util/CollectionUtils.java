@@ -105,6 +105,69 @@ public final class CollectionUtils {
     }
 
     /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2) {
+        final Map m = wrap(key, value);
+        m.put(key2, value2);
+        return m;
+    }
+
+    /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3) {
+        final Map m = wrap(key, value, key2, value2);
+        m.put(key3, value3);
+        return m;
+    }
+
+    /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @param key4   the key 4
+     * @param value4 the value 4
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3,
+                                        final String key4, final Object value4) {
+        final Map m = wrap(key, value, key2, value2, key3, value3);
+        m.put(key4, value4);
+        return m;
+    }
+
+    /**
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter

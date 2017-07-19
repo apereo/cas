@@ -46,7 +46,7 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn) {
+    public boolean isSatisfiedBy(final Authentication authn) throws Exception {
         if (this.tryAll) {
             if (authn.getCredentials().size() != authn.getSuccesses().size() + authn.getFailures().size()) {
                 LOGGER.warn("Number of provided credentials does not match the sum of authentication successes and failures");
