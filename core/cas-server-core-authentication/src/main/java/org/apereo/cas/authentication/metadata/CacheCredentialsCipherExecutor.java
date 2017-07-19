@@ -17,7 +17,8 @@ public class CacheCredentialsCipherExecutor extends BaseStringCipherExecutor {
      * @param secretKeySigning    the secret key signing
      */
     public CacheCredentialsCipherExecutor(final String secretKeyEncryption,
-                                          final String secretKeySigning) {
+                                          final String secretKeySigning,
+                                          final String alg) {
         super(secretKeyEncryption, secretKeySigning);
     }
 
@@ -29,11 +30,11 @@ public class CacheCredentialsCipherExecutor extends BaseStringCipherExecutor {
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.clearpass.encryptionKey";
+        return "cas.clearpass.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.clearpass.signingKey";
+        return "cas.clearpass.crypto.signing.key";
     }
 }

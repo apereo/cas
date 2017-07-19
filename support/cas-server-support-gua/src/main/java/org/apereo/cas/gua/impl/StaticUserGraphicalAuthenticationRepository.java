@@ -33,7 +33,7 @@ public class StaticUserGraphicalAuthenticationRepository implements UserGraphica
     public ByteSource getGraphics(final String username) {
         try {
             final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-            final Resource resource = resourceLoader.getResource(gua.getResource().getLocation());
+            final Resource resource = gua.getResource().getConfig().getLocation();
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copy(resource.getInputStream(), bos);
             return ByteSource.wrap(bos.toByteArray());

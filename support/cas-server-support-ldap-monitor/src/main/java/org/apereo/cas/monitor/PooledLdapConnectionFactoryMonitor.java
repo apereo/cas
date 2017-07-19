@@ -15,10 +15,10 @@ import java.util.concurrent.ExecutorService;
 public class PooledLdapConnectionFactoryMonitor extends AbstractPoolMonitor {
 
     /** Source of connections to validate. */
-    private PooledConnectionFactory connectionFactory;
+    private final PooledConnectionFactory connectionFactory;
 
     /** Connection validator. */
-    private Validator<Connection> validator;
+    private final Validator<Connection> validator;
 
     /**
      * Creates a new instance that monitors the given pooled connection factory.

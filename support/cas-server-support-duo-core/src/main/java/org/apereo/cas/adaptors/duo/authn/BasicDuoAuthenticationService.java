@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
      * @param duoProperties Duo authentication properties
      * @param httpClient http client used to run the requests
      */
-    public BasicDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties, final HttpClient httpClient) {
+    public BasicDuoAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
         super(duoProperties, httpClient);
     }
 

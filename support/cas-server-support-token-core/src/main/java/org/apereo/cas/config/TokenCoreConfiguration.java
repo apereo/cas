@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.token.JWTTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
@@ -44,8 +44,10 @@ public class TokenCoreConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "tokenCipherExecutor")
     public CipherExecutor tokenCipherExecutor() {
-        final CryptographyProperties crypto = casProperties.getAuthn().getToken().getCrypto();
-        return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey());
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getToken().getCrypto();
+        return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg());
     }
 
     @RefreshScope

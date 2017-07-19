@@ -11,7 +11,14 @@ import org.apereo.cas.configuration.support.Beans;
 
 public class MetricsProperties {
 
+    /**
+     * String representation of refresh interval for metrics collection.
+     */
     private String refreshInterval = "PT30S";
+
+    /**
+     * Log destination name of the logging system in use for metrics output.
+     */
     private String loggerName = "perfStatsLogger";
 
     public long getRefreshInterval() {

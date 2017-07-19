@@ -11,18 +11,19 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 public class ConsentCipherExecutor extends BaseStringCipherExecutor {
 
     public ConsentCipherExecutor(final String secretKeyEncryption,
-                                 final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning);
+                                 final String secretKeySigning,
+                                 final String alg) {
+        super(secretKeyEncryption, secretKeySigning, alg);
     }
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.consent.encryptionKey";
+        return "cas.consent.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.consent.signingKey";
+        return "cas.consent.crypto.signing.key";
     }
 
     @Override

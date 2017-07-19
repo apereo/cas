@@ -7,10 +7,26 @@ package org.apereo.cas.configuration.model.support.scim;
  * @since 5.1.0
  */
 public class ScimProperties {
+    /**
+     * Indicate what version of the scim protocol is and should be used.
+     */
     private long version = 2;
+    /**
+     * The SCIM provisioning target URI.
+     */
     private String target;
+
+    /**
+     * Authenticate into the SCIM server/service via a pre-generated OAuth token.
+     */
     private String oauthToken;
+    /**
+     *  Authenticate into the SCIM server with a pre-defined username.
+     */
     private String username;
+    /**
+     * Authenticate into the SCIM server with a pre-defined password.
+     */
     private String password;
 
     public String getPassword() {

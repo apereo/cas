@@ -16,10 +16,12 @@ public class PersonDirPrincipalResolverProperties {
      * depends on the schematics of the underlying authentication strategy.
      */
     private String principalAttribute;
+
     /**
      * Return a null principal object if no attributes can be found for the principal.
      */
     private boolean returnNull;
+
     /**
      * When true, throws an error back indicating that principal resolution
      * has failed and no principal can be found based on the authentication requirements.

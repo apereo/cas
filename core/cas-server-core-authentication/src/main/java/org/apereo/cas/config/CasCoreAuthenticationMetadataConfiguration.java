@@ -47,8 +47,10 @@ public class CasCoreAuthenticationMetadataConfiguration {
     @Bean
     public CipherExecutor cacheCredentialsCipherExecutor() {
         final ClearpassProperties cp = casProperties.getClearpass();
-        if (cp.isCipherEnabled() && cp.isCacheCredential()) {
-            return new CacheCredentialsCipherExecutor(cp.getEncryptionKey(), cp.getSigningKey());
+        if (cp.getCrypto().isEnabled() && cp.isCacheCredential()) {
+            return new CacheCredentialsCipherExecutor(cp.getCrypto().getEncryption().getKey(),
+                    cp.getCrypto().getSigning().getKey(),
+                    cp.getCrypto().getAlg());
         }
         return NoOpCipherExecutor.getInstance();
     }
