@@ -124,6 +124,7 @@ public class MonitorProperties {
     }
 
     public static class Tgt {
+
         /**
          * Warning options for monitoring TGT production.
          */
@@ -140,10 +141,12 @@ public class MonitorProperties {
     }
 
     public static class Warn {
+
         /**
          * The monitor threshold where if reached, CAS might generate a warning status for health checks.
          */
         private int threshold = 10;
+
         /**
          * The monitor eviction threshold where if reached, CAS might generate a warning status for health checks.
          * The underlying data source and monitor (i.e. cache) must support the concept of evictions.
@@ -177,6 +180,7 @@ public class MonitorProperties {
 
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = 4722929378440179113L;
+
         /**
          * When monitoring the LDAP connection pool, indicates the amount of time the operation must wait
          * before it times outs and considers the pool in bad shape.
@@ -245,6 +249,7 @@ public class MonitorProperties {
      * Endpoints may go through multiple levels and layers of security.
      */
     public abstract static class BaseEndpoint {
+
         /**
          * Disable access to the endpoint completely. 
          */
@@ -292,14 +297,17 @@ public class MonitorProperties {
          * Dashboard related settings.
          */
         private Dashboard dashboard = new Dashboard();
+
         /**
          * Audit events related settings.
          */
         private AuditEvents auditEvents = new AuditEvents();
+
         /**
          * Authentication events related settings.
          */
         private AuthenticationEvents authenticationEvents = new AuthenticationEvents();
+
         /**
          * Configuration State related settings.
          */
@@ -309,6 +317,7 @@ public class MonitorProperties {
          * Health check related settings.
          */
         private HealthCheck healthCheck = new HealthCheck();
+
         /**
          * Logging configuration related settings.
          */
@@ -318,18 +327,22 @@ public class MonitorProperties {
          * Metrics related settings.
          */
         private Metrics metrics = new Metrics();
+
         /**
          * Attribute resolution related settings.
          */
         private AttributeResolution attributeResolution = new AttributeResolution();
+
         /**
          * Single Sign on sessions report related settings.
          */
         private SingleSignOnReport singleSignOnReport = new SingleSignOnReport();
+
         /**
          * Statistics related settings.
          */
         private Statistics statistics = new Statistics();
+
         /**
          * Trusted devices related settings.
          */

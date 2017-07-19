@@ -18,10 +18,12 @@ public abstract class AbstractMongoClientProperties implements Serializable {
      * This typically takes on the form of <code>mongodb://user:psw@ds135522.somewhere.com:35522/db</code>
      */
     private String clientUri = StringUtils.EMPTY;
+
     /**
      * The collection name to use and create statically.
      */
     private String collection = StringUtils.EMPTY;
+
     /**
      * When pre-existing collections should be dropped on startup,
      * rebooting the current data before doing anything else.
