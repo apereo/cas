@@ -74,22 +74,27 @@ public class PrincipalAttributesProperties {
      * Retrieve attributes from multiple JDBC repositories.
      */
     private List<Jdbc> jdbc = new ArrayList<>();
+
     /**
      * Retrieve attributes from multiple REST endpoints.
      */
     private List<Rest> rest = new ArrayList<>();
+
     /**
      * Retrieve attributes from multiple Groovy scripts.
      */
     private List<Groovy> groovy = new ArrayList();
+
     /**
      * Retrieve attributes from multiple LDAP servers.
      */
     private List<Ldap> ldap = new ArrayList();
+
     /**
      * Retrieve attributes from multiple JSON file repositories.
      */
     private List<Json> json = new ArrayList();
+
     /**
      * Retrieve attributes from multiple scripted repositories.
      */
