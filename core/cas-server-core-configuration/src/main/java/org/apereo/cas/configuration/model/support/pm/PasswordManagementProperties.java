@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.pm;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
@@ -18,16 +18,24 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class PasswordManagementProperties {
+
+    /**
+     * Flag to indicate if password management facility is enabled.
+     */
     private boolean enabled;
-    
-    // Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
+
+    /**
+     * A String value representing password policy regex pattarn.
+     *
+     * Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
+     */
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
     private Ldap ldap = new Ldap();
     private Jdbc jdbc = new Jdbc();
     private Rest rest = new Rest();
     private Json json = new Json();
-    
+
     private Reset reset = new Reset();
 
     public Json getJson() {
@@ -88,7 +96,11 @@ public class PasswordManagementProperties {
 
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 4746591112640513465L;
+
         @NestedConfigurationProperty
+        /**
+         * Password encoder properties.
+         */
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
         private String sqlChangePassword;
@@ -165,7 +177,7 @@ public class PasswordManagementProperties {
         private String baseDn;
         private String userFilter;
         private LdapType type = LdapType.AD;
-        
+
         public Map<String, String> getSecurityQuestionsAttributes() {
             return securityQuestionsAttributes;
         }
@@ -173,7 +185,7 @@ public class PasswordManagementProperties {
         public void setSecurityQuestionsAttributes(final Map<String, String> s) {
             this.securityQuestionsAttributes = s;
         }
-        
+
         public String getBaseDn() {
             return baseDn;
         }
@@ -198,25 +210,28 @@ public class PasswordManagementProperties {
             this.type = type;
         }
     }
-    
+
     public static class Reset {
         @NestedConfigurationProperty
-        private SigningEncryptionProperties security = new SigningEncryptionProperties();
-        
+        private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
         private String text = "Reset your password via this link: %s";
         private String subject = "Password Reset";
         private String from;
         private String emailAttribute = "mail";
         private boolean securityQuestionsEnabled = true;
-        
+
         private float expirationMinutes = 1;
 
         public Reset() {
-            security.setCipherEnabled(true);
         }
 
-        public SigningEncryptionProperties getSecurity() {
-            return security;
+        public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+            return crypto;
+        }
+
+        public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+            this.crypto = crypto;
         }
 
         public String getEmailAttribute() {
@@ -225,10 +240,6 @@ public class PasswordManagementProperties {
 
         public void setEmailAttribute(final String emailAttribute) {
             this.emailAttribute = emailAttribute;
-        }
-
-        public void setSecurity(final SigningEncryptionProperties security) {
-            this.security = security;
         }
 
         public String getText() {

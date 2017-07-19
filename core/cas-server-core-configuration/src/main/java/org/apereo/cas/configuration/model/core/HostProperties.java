@@ -9,6 +9,9 @@ package org.apereo.cas.configuration.model.core;
 
 public class HostProperties {
 
+    /**
+     * Name of the networking host configured to run CAS server.
+     */
     private String name;
     
     public String getName() {
