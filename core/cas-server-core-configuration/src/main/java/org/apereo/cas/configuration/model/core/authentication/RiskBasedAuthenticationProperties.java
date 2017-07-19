@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
-import org.joda.time.DateTime;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
