@@ -251,7 +251,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
                     if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
                         /*
-                         * AuthContextClassRef element require comparison rule to be used to evaluate the specified 
+                         * AuthContextClassRef element require comparison rule to be used to evaluate the specified
                          * authentication methods. If not explicitly specified "exact" rule will be used by default.
                          */
                         cfg.setComparisonType(saml.getAuthnContextComparisonType());
