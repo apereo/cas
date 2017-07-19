@@ -47,10 +47,6 @@ public class DefaultCasEventListener {
         AsciiArtUtils.printAsciiArtInfo(LOGGER, "READY", StringUtils.EMPTY);
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
-
-    
-
-    
     
     /**
      * Handle TGT creation event.
