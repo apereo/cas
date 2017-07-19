@@ -28,6 +28,7 @@ import org.pac4j.oauth.client.GenericOAuth20Client;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.oauth.client.LinkedIn2Client;
+import org.pac4j.oauth.client.OrcidClient;
 import org.pac4j.oauth.client.PayPalClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.client.WindowsLiveClient;
@@ -92,6 +93,15 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         final Pac4jProperties.Dropbox db = casProperties.getAuthn().getPac4j().getDropbox();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             final DropBoxClient client = new DropBoxClient(db.getId(), db.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
+            properties.add(client);
+        }
+    }
+
+    private void configureOrcidClient(final Collection<BaseClient> properties) {
+        final Pac4jProperties.Orcid db = casProperties.getAuthn().getPac4j().getOrcid();
+        if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
+            final OrcidClient client = new OrcidClient(db.getId(), db.getSecret());
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -236,8 +246,15 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                     cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
                     cfg.setForceAuth(saml.isForceAuth());
+                    cfg.setPassive(saml.isPassive());
+                    cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
 
                     if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
+                        /*
+                         * AuthContextClassRef element require comparison rule to be used to evaluate the specified 
+                         * authentication methods. If not explicitly specified "exact" rule will be used by default.
+                         */
+                        cfg.setComparisonType(saml.getAuthnContextComparisonType());
                         cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
                     }
                     if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {
@@ -246,12 +263,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
                         cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
                     }
-                    cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
-
                     final SAML2Client client = new SAML2Client(cfg);
 
                     final int count = index.intValue();
-
                     if (saml.getClientName() != null) {
                         client.setName(saml.getClientName());
                     } else if (count > 0) {
@@ -356,6 +370,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         configurePaypalClient(clients);
         configureWordpressClient(clients);
         configureBitbucketClient(clients);
+        configureOrcidClient(clients);
 
         LOGGER.debug("The following clients are built: [{}]", clients);
         if (clients.isEmpty()) {

@@ -26,6 +26,7 @@ public class Pac4jProperties {
 
     private LinkedIn linkedIn = new LinkedIn();
     private Dropbox dropbox = new Dropbox();
+    private Orcid orcid = new Orcid();
     private Github github = new Github();
     private Google google = new Google();
     private Yahoo yahoo = new Yahoo();
@@ -187,6 +188,14 @@ public class Pac4jProperties {
 
     public Twitter getTwitter() {
         return this.twitter;
+    }
+
+    public Orcid getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(final Orcid orcid) {
+        this.orcid = orcid;
     }
 
     public static class LinkedIn {
@@ -414,8 +423,7 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
-
-
+    
     public static class Twitter {
         private String id;
         private String secret;
@@ -447,10 +455,20 @@ public class Pac4jProperties {
         private String serviceProviderMetadataPath;
         private String clientName;
         private boolean forceAuth;
+        private boolean passive;
         private String authnContextClassRef;
+        private String authnContextComparisonType = "exact";
         private String keystoreAlias;
         private String nameIdPolicyFormat;
         private boolean wantsAssertionsSigned;
+
+        public boolean isPassive() {
+            return passive;
+        }
+
+        public void setPassive(final boolean passive) {
+            this.passive = passive;
+        }
 
         public boolean isForceAuth() {
             return forceAuth;
@@ -466,6 +484,21 @@ public class Pac4jProperties {
 
         public void setAuthnContextClassRef(final String authnContextClassRef) {
             this.authnContextClassRef = authnContextClassRef;
+        }
+
+        public String getAuthnContextComparisonType() {
+            return authnContextComparisonType;
+        }
+
+	/**
+         * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
+         * For example, if “exact” is specified, the authentication method used must match one of the authentication
+         * methods specified by the AuthnContextClassRef elements.
+         *
+         * @param authnContextComparisonType comparison rule (“better” | “exact” | “maximum” | “minimum”).
+         */
+        public void setAuthnContextComparisonType(final String authnContextComparisonType) {
+            this.authnContextComparisonType = authnContextComparisonType;
         }
 
         public String getKeystoreAlias() {
@@ -746,6 +779,27 @@ public class Pac4jProperties {
         }
     }
 
+    public static class Orcid {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+    
     public static class WindowsLive {
         private String id;
         private String secret;

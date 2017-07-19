@@ -102,6 +102,47 @@ is not available, the default principal id will be used.
 }
 ```
 
+## Javascript/Python/Groovy Script
+
+Let an external javascript, groovy or python script decide how the principal id attribute should be determined.
+This approach takes advantage of scripting functionality built into the Java platform.
+While Javascript and Groovy should be natively supported by CAS, Python scripts may need
+to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+
+Scripts will receive and have access to the following variable bindings:
+
+- `id`: The existing identifier for the authenticated principal.
+- `attributes`: A map of attributes currently resolved for the principal.
+- `logger`: A logger object, able to provide `logger.info()` operations, etc.
+
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 500,
+  "description" : "sample",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
+    "script" : "file:/etc/cas/sampleService.[groovy|js|.py]",
+    "canonicalizationMode" : "UPPER"
+  }
+}
+```
+
+Sample Groovy script follows:
+
+```groovy
+def run(Object[] args) {
+    def attributes = args[0]
+    def id = args[1]
+    def logger = args[2]
+    logger.info("Testing username attribute")
+    return "test"
+}
+```
+
 ## Groovy
 
 Returns a username attribute value as the final result of a groovy script's execution.
@@ -109,7 +150,8 @@ Groovy scripts whether inlined or external will receive and have access to the f
 
 - `id`: The existing identifier for the authenticated principal.
 - `attributes`: A map of attributes currently resolved for the principal.
-- `logger`: A logger object, able to provide `logger.info()` operations, etc.
+- `logger`: A logger object, able to provide `logger.info(...)` operations, etc.
+
 
 ### Inline
 
@@ -148,6 +190,13 @@ The script must return a single `String` value.
     "canonicalizationMode" : "UPPER"
   }
 }
+```
+
+Sample Groovy script follows:
+
+```groovy
+logger.info("Choosing username attribute out of attributes $attributes")
+return "newPrincipalId"
 ```
 
 ## Anonymous

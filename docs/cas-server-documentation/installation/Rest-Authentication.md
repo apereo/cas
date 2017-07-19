@@ -40,7 +40,8 @@ Expected responses from the REST endpoint are mapped to CAS as such:
 | `403`          | Produces a `AccountDisabledException`
 | `404`          | Produces a `AccountNotFoundException`
 | `423`          | Produces a `AccountLockedException`
-| `428`          | Produces a `AccountExpiredException`
+| `412`          | Produces a `AccountExpiredException`
+| `428`          | Produces a `AccountPasswordMustChangeException`
 | Other          | Produces a `FailedLoginException`
 
 ## Configuration

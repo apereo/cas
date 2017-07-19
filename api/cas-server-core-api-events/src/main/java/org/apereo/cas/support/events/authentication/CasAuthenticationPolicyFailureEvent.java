@@ -16,7 +16,7 @@ public class CasAuthenticationPolicyFailureEvent extends CasAuthenticationTransa
     private final Authentication authentication;
 
     public CasAuthenticationPolicyFailureEvent(final Object source,
-                                               final Map<String, Class<? extends Exception>> failures,
+                                               final Map<String, Class<? extends Throwable>> failures,
                                                final AuthenticationTransaction transaction,
                                                final Authentication authentication) {
         super(source, failures, transaction.getCredentials());

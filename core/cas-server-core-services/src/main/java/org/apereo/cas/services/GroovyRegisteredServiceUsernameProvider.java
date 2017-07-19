@@ -1,21 +1,20 @@
 package org.apereo.cas.services;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.AbstractResource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Resolves the username for the service to be the default principal id.
@@ -29,9 +28,6 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroovyRegisteredServiceUsernameProvider.class);
 
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
-    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
-
     private String groovyScript;
 
     public GroovyRegisteredServiceUsernameProvider() {
@@ -43,15 +39,15 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service) {
-        final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(this.groovyScript);
-        final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(this.groovyScript);
+        final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.groovyScript);
+        final Matcher matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(this.groovyScript);
 
         if (matcherInline.find()) {
             return resolveUsernameFromInlineGroovyScript(principal, service, matcherInline.group(1));
         }
 
         if (matcherFile.find()) {
-            return resolveUsernameFromExternalGroovyScript(principal, service);
+            return resolveUsernameFromExternalGroovyScript(principal, service, matcherFile.group(1));
         }
 
         LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]",
@@ -59,14 +55,16 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
         return principal.getId();
     }
 
-    private String resolveUsernameFromExternalGroovyScript(final Principal principal, final Service service) {
+    private String resolveUsernameFromExternalGroovyScript(final Principal principal, final Service service,
+                                                           final String scriptFile) {
         try {
-            LOGGER.debug("Found inline groovy script to execute");
-            final String script = IOUtils.toString(ResourceUtils.getResourceFrom(this.groovyScript).getInputStream(), StandardCharsets.UTF_8);
+            LOGGER.debug("Found groovy script to execute");
+            final AbstractResource resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
+            final String script = IOUtils.toString(resourceFrom.getInputStream(), StandardCharsets.UTF_8);
 
             final Object result = getGroovyAttributeValue(principal, script);
             if (result != null) {
-                LOGGER.debug("Found username [{}] from script [{}]", result, this.groovyScript);
+                LOGGER.debug("Found username [{}] from script [{}]", result, scriptFile);
                 return result.toString();
             }
         } catch (final IOException e) {
@@ -96,18 +94,10 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static Object getGroovyAttributeValue(final Principal principal, final String script) {
-        try {
-            final Binding binding = new Binding();
-            final GroovyShell shell = new GroovyShell(binding);
-            binding.setVariable("attributes", principal.getAttributes());
-            binding.setVariable("id", principal.getId());
-            binding.setVariable("logger", LOGGER);
-            final Object res = shell.evaluate(script);
-            return res;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
+        return ScriptingUtils.executeGroovyShellScript(script,
+                CollectionUtils.wrap("attributes", principal.getAttributes(),
+                        "id", principal.getId(),
+                        "logger", LOGGER));
     }
 
     @Override

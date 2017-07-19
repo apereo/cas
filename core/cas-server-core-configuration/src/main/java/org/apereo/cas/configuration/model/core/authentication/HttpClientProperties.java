@@ -11,9 +11,25 @@ import org.springframework.core.io.Resource;
  */
 
 public class HttpClientProperties {
+    /**
+     * Connection timeout for all operations that reach out to URL endpoints.
+     */
     private String connectionTimeout = "PT5S";
+    
+    /**
+     * Read timeout for all operations that reach out to URL endpoints.
+     */
     private String readTimeout = "PT5S";
+    
+    /**
+     * Indicates timeout for async operations.
+     */
     private String asyncTimeout = "PT5S";
+
+    /**
+     * Enable hostname verification when attempting to contact URL endpoints.
+     * May also be set to <code>none</code> to disable verification.
+     */
     private String hostNameVerifier = "default";
 
     private Truststore truststore = new Truststore();
@@ -59,8 +75,16 @@ public class HttpClientProperties {
     }
 
     public static class Truststore {
+        /**
+         * The CAS local truststore resource to contain certificates to the CAS deployment.
+         * In the event that local certificates are to be imported into the CAS running environment,
+         * a local truststore is provided by CAS to improve portability of configuration across environments.
+         */
         private Resource file;
 
+        /**
+         * The truststore password.
+         */
         private String psw = "changeit";
 
         public Resource getFile() {
@@ -79,5 +103,4 @@ public class HttpClientProperties {
             this.psw = psw;
         }
     }
-
 }

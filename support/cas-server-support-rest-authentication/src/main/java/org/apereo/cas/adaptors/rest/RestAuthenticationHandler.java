@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.springframework.http.HttpStatus;
@@ -64,10 +65,12 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             if (e.getStatusCode() == HttpStatus.LOCKED) {
                 throw new AccountLockedException("Could not authenticate locked account for " + c.getUsername());
             }
-            if (e.getStatusCode() == HttpStatus.PRECONDITION_REQUIRED) {
+            if (e.getStatusCode() == HttpStatus.PRECONDITION_FAILED) {
                 throw new AccountExpiredException("Could not authenticate expired account for " + c.getUsername());
             }
-
+            if (e.getStatusCode() == HttpStatus.PRECONDITION_REQUIRED) {
+                throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
+            }
             throw new FailedLoginException("Rest endpoint returned an unknown status code "
                     + e.getStatusCode() + " for " + c.getUsername());
         }

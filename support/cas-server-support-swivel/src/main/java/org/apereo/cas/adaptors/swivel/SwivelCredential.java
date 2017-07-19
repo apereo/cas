@@ -15,6 +15,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class SwivelCredential implements Credential, Serializable {
+    private static final long serialVersionUID = 361318678073819595L;
     private String token;
 
     public SwivelCredential() {

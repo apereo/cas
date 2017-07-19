@@ -277,6 +277,7 @@ public class WsFederationAction extends AbstractAction {
      * The Wsfed client passed to the webflow view layer.
      */
     public static class WsFedClient implements Serializable {
+        private static final long serialVersionUID = 2733280849157146990L;
         private String redirectUrl;
         private String name;
         private String replyingPartyId;

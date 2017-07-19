@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.joining;
  * components that are not tightly coupled with core CAS APIs, for example audit principal resolver component, etc.
  * <p>
  * The thread local state carried by this class should be set by core CAS components processing core authentication and
- * CAS protocol events e.g. {@code AbstractAuthenticationManager}, {@code CentralAuthenticationServiceImpl}, etc.
+ * CAS protocol events e.g. {@code AuthenticationManager}, {@code CentralAuthenticationService}, etc.
  * <p>
  * The clearing of this state at the end of a thread execution path is the responsibility
  * of {@code AuthenticationCredentialsLocalBinderClearingFilter}

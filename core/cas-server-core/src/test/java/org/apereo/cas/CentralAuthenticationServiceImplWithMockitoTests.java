@@ -1,16 +1,16 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -121,8 +121,9 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         final List<Authentication> authnListMock = mock(List.class);
-        //Size is required to be 2, so that we can simulate proxying capabilities
+        // Size is required to be 2, so that we can simulate proxying capabilities
         when(authnListMock.size()).thenReturn(2);
+        when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});
         when(authnListMock.get(anyInt())).thenReturn(this.authentication);
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
         when(stMock.getGrantingTicket()).thenReturn(tgtMock);
@@ -146,7 +147,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class),
-                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(), 
+                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(),
                 new DefaultPrincipalFactory(), null);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }

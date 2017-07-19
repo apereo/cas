@@ -56,7 +56,7 @@ public class UnresolvedPrincipalException extends PrincipalException {
      *
      * @param handlerErrors the handler errors
      */
-    public UnresolvedPrincipalException(final Map<String, Class<? extends Exception>> handlerErrors) {
+    public UnresolvedPrincipalException(final Map<String, Class<? extends Throwable>> handlerErrors) {
         super(UNRESOLVED_PRINCIPAL, handlerErrors, new HashMap<>(0));
     }
 

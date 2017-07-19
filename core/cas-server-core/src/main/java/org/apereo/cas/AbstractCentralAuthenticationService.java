@@ -116,7 +116,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param cipherExecutor      Cipher executor to handle ticket validation.
      */
     public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry,
-                                                final TicketFactory ticketFactory, final ServicesManager servicesManager,
+                                                final TicketFactory ticketFactory,
+                                                final ServicesManager servicesManager,
                                                 final LogoutManager logoutManager,
                                                 final AuthenticationServiceSelectionPlan selectionStrategies,
                                                 final ContextualAuthenticationPolicyFactory<ServiceContext> policy,
@@ -209,8 +210,12 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
-        if (policy.isSatisfiedBy(authentication)) {
-            return authentication;
+        try {
+            if (policy.isSatisfiedBy(authentication)) {
+                return authentication;
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
