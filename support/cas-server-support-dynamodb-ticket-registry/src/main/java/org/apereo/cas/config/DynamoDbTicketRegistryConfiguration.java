@@ -11,7 +11,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -44,7 +44,7 @@ public class DynamoDbTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final DynamoDbTicketRegistryProperties db = casProperties.getTicket().getRegistry().getDynamoDb();
-        final CryptographyProperties crypto = db.getCrypto();
+        final EncryptionRandomizedSigningJwtCryptographyProperties crypto = db.getCrypto();
         return new DynamoDbTicketRegistry(Beans.newTicketRegistryCipherExecutor(crypto),
                 dynamoDbTicketRegistryFacilitator(ticketCatalog));
     }

@@ -9,10 +9,25 @@ import org.apereo.cas.configuration.support.Beans;
  * @since 5.0.0
  */
 public class GoogleMapsProperties {
+    /**
+     * Authenticate into google maps via an API key.
+     */
     private String apiKey;
+    /**
+     * Authenticate into google maps via a client id.
+     */
     private String clientId;
+    /**
+     * Authenticate into google maps via a client secret.
+     */
     private String clientSecret;
+    /**
+     * The connection timeout when reaching out to google maps.
+     */
     private String connectTimeout = "PT3S";
+    /**
+     * When true, a strategy for handling URL requests using Google App Engine's URL Fetch API.
+     */
     private boolean googleAppsEngine;
 
     public boolean isGoogleAppsEngine() {
