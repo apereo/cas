@@ -16,9 +16,15 @@ public class RejectAuthenticationProperties {
     private String users;
 
     @NestedConfigurationProperty
+    /**
+     * Password encoder properties.
+     */
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
+    /**
+     * This is principal transformation properties
+     */
     private PrincipalTransformationProperties principalTransformation =
             new PrincipalTransformationProperties();
 

@@ -10,7 +10,7 @@ import net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -128,7 +128,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("cacheManager") final CacheManager manager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final CryptographyProperties crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
+        final EncryptionRandomizedSigningJwtCryptographyProperties crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
 
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {

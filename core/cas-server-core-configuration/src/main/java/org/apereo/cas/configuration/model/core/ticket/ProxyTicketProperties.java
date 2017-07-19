@@ -8,7 +8,15 @@ package org.apereo.cas.configuration.model.core.ticket;
  */
 
 public class ProxyTicketProperties {
+
+    /**
+     * Number of uses allowed.
+     */
     private int numberOfUses = 1;
+
+    /**
+     * Number of seconds after which this ticket becomes invalid.
+     */
     private int timeToKillInSeconds = 10;
     
     public int getNumberOfUses() {

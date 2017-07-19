@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.ldaptive.ConnectionFactory;
@@ -14,7 +15,6 @@ import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
@@ -39,13 +39,13 @@ public class SurrogateLdapAuthenticationService implements SurrogateAuthenticati
     }
 
     @Override
-    public boolean canAuthenticateAs(final String username, final Principal surrogate) {
+    public boolean canAuthenticateAs(final String surrogate, final Principal principal) {
         try {
-            if (username.equalsIgnoreCase(surrogate.getId())) {
+            if (surrogate.equalsIgnoreCase(principal.getId())) {
                 return true;
             }
 
-            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), Arrays.asList(username));
+            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(surrogate));
             LOGGER.debug("Using search filter: [{}]", filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
@@ -62,7 +62,7 @@ public class SurrogateLdapAuthenticationService implements SurrogateAuthenticati
     public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         final Collection<String> eligible = new LinkedHashSet<>();
         try {
-            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), Arrays.asList(username));
+            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter: [{}]", filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,

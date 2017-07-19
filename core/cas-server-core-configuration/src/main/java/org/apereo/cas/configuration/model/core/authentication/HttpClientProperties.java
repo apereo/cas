@@ -32,6 +32,9 @@ public class HttpClientProperties {
      */
     private String hostNameVerifier = "default";
 
+    /**
+     * Configuration properties namespace for embedded Java SSL trust store.
+     */
     private Truststore truststore = new Truststore();
 
     public String getHostNameVerifier() {
@@ -75,6 +78,7 @@ public class HttpClientProperties {
     }
 
     public static class Truststore {
+
         /**
          * The CAS local truststore resource to contain certificates to the CAS deployment.
          * In the event that local certificates are to be imported into the CAS running environment,

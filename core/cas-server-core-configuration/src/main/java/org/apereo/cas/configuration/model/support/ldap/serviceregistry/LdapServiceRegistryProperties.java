@@ -12,10 +12,27 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 public class LdapServiceRegistryProperties extends AbstractLdapProperties {
 
     private static final long serialVersionUID = 2372867394066286022L;
+
+    /**
+     * Object class used for the registered service entry in LDAP.
+     */
     private String objectClass = "casRegisteredService";
+
+    /**
+     * ID attribute used for the registered service entry in LDAP
+     * to keep track of the service numeric identifier.
+     */
     private String idAttribute = "uid";
+
+    /**
+     * Service definintion attribute used for the registered service entry in LDAP
+     * to keep a representation of the service body.
+     */
     private String serviceDefinitionAttribute = "description";
-    
+
+    /**
+     * LDAP baseDn used for stored and retrieval of records from LDAP.
+     */
     private String baseDn;
 
     public String getBaseDn() {
@@ -25,7 +42,7 @@ public class LdapServiceRegistryProperties extends AbstractLdapProperties {
     public void setBaseDn(final String baseDn) {
         this.baseDn = baseDn;
     }
-        
+
     public String getObjectClass() {
         return objectClass;
     }
