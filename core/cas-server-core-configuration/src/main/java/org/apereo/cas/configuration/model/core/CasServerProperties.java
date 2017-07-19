@@ -15,17 +15,20 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class CasServerProperties {
+
     /**
      * Location of a rewrite valve specifically by Apache Tomcat
      * to activate URL rewriting.
      */
     private Resource rewriteValveConfigLocation = new ClassPathResource("container/tomcat/rewrite.config");
+
     /**
      * Full name of the CAS server. This is public-facing address
      * of the CAS deployment and not the individual node address,
      * in the event that CAS is clustered.
      */
     private String name = "https://cas.example.org:8443";
+
     /**
      * A concatenation of the server name plus the CAS context path.
      * Deployments at root likely need to blank out this value.
@@ -33,9 +36,19 @@ public class CasServerProperties {
     private String prefix = name.concat("/cas");
 
     private Ajp ajp = new Ajp();
+
     private Http http = new Http();
+
+    /**
+     * Http proxy configuration properties.
+     */
     private HttpProxy httpProxy = new HttpProxy();
+
     private SslValve sslValve = new SslValve();
+
+    /**
+     * Configuration properties for access logging beyond defaults.
+     */
     private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
 
     public HttpProxy getHttpProxy() {
@@ -111,10 +124,12 @@ public class CasServerProperties {
     }
 
     public static class Ajp {
+
         /**
          * Sets the protocol to handle incoming traffic.
          */
         private String protocol = "AJP/1.3";
+
         /**
          * The TCP port number on which this Connector will create a server socket and await incoming connections.
          * Your operating system will allow only one server application to listen to a
@@ -123,21 +138,25 @@ public class CasServerProperties {
          * This is typically only useful in embedded and testing applications.
          */
         private int port = 8009;
+
         /**
          * Set this attribute to true if you wish to have calls to request.isSecure() to return true for requests received
          * by this Connector (you would want this on an SSL Connector). The default value is false.
          */
         private boolean secure;
+
         /**
          * A boolean value which can be used to enable or disable
          * the TRACE HTTP method. If not specified, this attribute is set to false.
          */
         private boolean allowTrace;
+
         /**
          * Set this attribute to the name of the protocol you wish to have returned by calls to request.getScheme(). For example,
          * you would set this attribute to "https" for an SSL Connector.
          */
         private String scheme = "http";
+
         /**
          * Enable AJP support in CAS for the embedded Apache Tomcat container.
          */
@@ -299,10 +318,30 @@ public class CasServerProperties {
     }
 
     public static class ExtendedAccessLog {
+
+        /**
+         * Flag to indicate whether extended log facility is enabled.
+         */
         private boolean enabled;
+
+        /**
+         * String representing extended log pattern.
+         */
         private String pattern = "c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)";
+
+        /**
+         * File name suffix for extended log.
+         */
         private String suffix = ".log";
+
+        /**
+         * File name prefix for extended log.
+         */
         private String prefix = "localhost_access_extended";
+
+        /**
+         * Directory name for extended log.
+         */
         private String directory;
 
         public String getDirectory() {
@@ -413,14 +452,17 @@ public class CasServerProperties {
     }
 
     public static class Http {
+
         /**
          * Enable a separate port for the embedded container for HTTP access.
          */
         private boolean enabled;
+
         /**
          * The HTTP port to use.
          */
         private int port = 8080;
+
         /**
          * HTTP protocol to use.
          */

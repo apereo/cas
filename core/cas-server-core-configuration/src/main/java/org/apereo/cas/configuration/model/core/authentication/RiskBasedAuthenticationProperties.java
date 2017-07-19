@@ -15,18 +15,22 @@ public class RiskBasedAuthenticationProperties {
      * Handle risky authentication attempts via an IP criteria.
      */
     private IpAddress ip = new IpAddress();
+
     /**
      *  Handle risky authentication attempts via a user-agent criteria.
      */
     private Agent agent = new Agent();
+
     /**
      * Handle risky authentication attempts via geolocation criteria.
      */
     private GeoLocation geoLocation = new GeoLocation();
+
     /**
      * Handle risky authentication attempts via an date/time criteria.
      */
     private DateTime dateTime = new DateTime();
+
     /**
      * Design how responses should be handled, in the event
      * that an authentication event is deemed risky.
@@ -118,6 +122,7 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class Agent {
+
         /**
          * Enable user-agent checking and criteria
          * to calculate risky authentication attempts.
@@ -134,6 +139,7 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class GeoLocation {
+
         /**
          * Enable geolocation checking and criteria
          * to calculate risky authentication attempts.
@@ -150,11 +156,13 @@ public class RiskBasedAuthenticationProperties {
     }
 
     public static class DateTime {
+
         /**
          * Enable date/time checking and criteria
          * to calculate risky authentication attempts.
          */
         private boolean enabled;
+
         /**
          * The hourly window used before and after each authentication event
          * in calculation to establish a pattern that can then be compared against the threshold.
@@ -179,6 +187,7 @@ public class RiskBasedAuthenticationProperties {
     }
     
     public static class Response {
+
         /**
          * If an authentication attempt is deemed risky, block the response
          * and do not allow further attempts.
@@ -187,7 +196,7 @@ public class RiskBasedAuthenticationProperties {
 
         /**
          * If an authentication attempt is deemed risky, force
-         * a multifactor authentication event noted by the provider id here.
+         * a multi-factor authentication event noted by the provider id here.
          */
         private String mfaProvider;
 
@@ -255,22 +264,27 @@ public class RiskBasedAuthenticationProperties {
              * to the CAS principal.
              */
             private String attributeName = "mail";
+
             /**
              * Email message body.
              */
             private String text;
+
             /**
              * Email from address.
              */
             private String from;
+
             /**
              * Email subject line.
              */
             private String subject;
+
             /**
              * Email CC address, if any.
              */
             private String cc;
+
             /**
              * Email BCC address, if any.
              */
