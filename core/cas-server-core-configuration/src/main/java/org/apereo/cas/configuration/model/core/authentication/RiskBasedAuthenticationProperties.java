@@ -15,18 +15,22 @@ public class RiskBasedAuthenticationProperties {
      * Handle risky authentication attempts via an IP criteria.
      */
     private IpAddress ip = new IpAddress();
+
     /**
      *  Handle risky authentication attempts via a user-agent criteria.
      */
     private Agent agent = new Agent();
+
     /**
      * Handle risky authentication attempts via geolocation criteria.
      */
     private GeoLocation geoLocation = new GeoLocation();
+
     /**
      * Handle risky authentication attempts via an date/time criteria.
      */
     private DateTime dateTime = new DateTime();
+
     /**
      * Design how responses should be handled, in the event
      * that an authentication event is deemed risky.
