@@ -11,11 +11,13 @@ import java.io.Serializable;
 public class RadiusMultifactorProperties extends BaseMultifactorProvider {
     private static final long serialVersionUID = 7021301814775348087L;
     /**
-     *
+     * In the event that radius authentication fails due to a catastraphic event,
+     * fail over to the next server in the list.
      */
     private boolean failoverOnException;
     /**
-     *
+     * In the event that radius authentication fails,
+     * fail over to the next server in the list.
      */
     private boolean failoverOnAuthenticationFailure;
 
@@ -32,7 +34,7 @@ public class RadiusMultifactorProperties extends BaseMultifactorProvider {
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
-    
+
     public RadiusMultifactorProperties() {
         setId("mfa-radius");
     }
@@ -79,14 +81,41 @@ public class RadiusMultifactorProperties extends BaseMultifactorProvider {
 
     public static class Server implements Serializable {
         private static final long serialVersionUID = -3911282132573730184L;
+        /**
+         * Radius protocol to use when communicating with the server.
+         */
         private String protocol = "EAP_MSCHAPv2";
+        /**
+         * Number of re-try attempts when dealing with connection and authentication failures.
+         */
         private int retries = 3;
+        /**
+         * The NAS identifier.
+         */
         private String nasIdentifier;
+        /**
+         * The NAS port.
+         */
         private long nasPort = -1;
+        /**
+         * The NAS port id.
+         */
         private long nasPortId = -1;
+        /**
+         * The NAS real port.
+         */
         private long nasRealPort = -1;
+        /**
+         * The NAS port type.
+         */
         private int nasPortType = -1;
+        /**
+         * The NAS IP address.
+         */
         private String nasIpAddress;
+        /**
+         * The NAS IPv6 address.
+         */
         private String nasIpv6Address;
 
         public String getProtocol() {
@@ -160,16 +189,29 @@ public class RadiusMultifactorProperties extends BaseMultifactorProvider {
         public void setNasIpv6Address(final String nasIpv6Address) {
             this.nasIpv6Address = nasIpv6Address;
         }
-
-
     }
 
     public static class Client implements Serializable {
         private static final long serialVersionUID = -7961769318651312854L;
+        /**
+         * Server address to connect and establish a session.
+         */
         private String inetAddress = "localhost";
+        /**
+         * Secret/password to use for the initial bind.
+         */
         private String sharedSecret = "N0Sh@ar3d$ecReT";
+        /**
+         * Socket connection timeout in milliseconds.
+         */
         private int socketTimeout;
+        /**
+         * The authentication port.
+         */
         private int authenticationPort = 1812;
+        /**
+         * The accounting port.
+         */
         private int accountingPort = 1813;
 
         public String getSharedSecret() {

@@ -4,16 +4,16 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link U2FProperties}.
+ * This is {@link U2FMultifactorProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
-public class U2FProperties extends BaseMultifactorProvider {
+public class U2FMultifactorProperties extends BaseMultifactorProvider {
     private static final long serialVersionUID = 6151350313777066398L;
 
     /**
@@ -48,7 +48,7 @@ public class U2FProperties extends BaseMultifactorProvider {
      */
     private Cleaner cleaner = new Cleaner();
 
-    public U2FProperties() {
+    public U2FMultifactorProperties() {
         setId("mfa-u2f");
     }
 
@@ -116,9 +116,18 @@ public class U2FProperties extends BaseMultifactorProvider {
         private static final long serialVersionUID = -4334840263678287815L;
     }
 
-    public static class Cleaner {
+    public static class Cleaner implements Serializable {
+        /**
+         * Whether cleaner should be enabled as a background process to remove expired records.
+         */
         private boolean enabled = true;
+        /**
+         * Cleaner startup delay.
+         */
         private String startDelay = "PT10S";
+        /**
+         * Cleaner repeat interval. Indicates how often should the cleaner run again.
+         */
         private String repeatInterval = "PT1M";
 
         public boolean isEnabled() {

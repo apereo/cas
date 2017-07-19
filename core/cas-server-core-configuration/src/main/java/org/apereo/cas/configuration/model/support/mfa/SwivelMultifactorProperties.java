@@ -9,9 +9,21 @@ package org.apereo.cas.configuration.model.support.mfa;
 public class SwivelMultifactorProperties extends BaseMultifactorProvider {
     private static final long serialVersionUID = -7409451053833491119L;
 
+    /**
+     * URL endpoint response to generate a turing image.
+     */
     private String swivelTuringImageUrl;
+    /**
+     * Swivel endpoint url for verification of credentials.
+     */
     private String swivelUrl;
+    /**
+     * Shared secret to authenticate against the swivel server.
+     */
     private String sharedSecret;
+    /**
+     * Control whether SSL errors should be ignored by the swivel server.
+     */
     private boolean ignoreSslErrors;
 
     public SwivelMultifactorProperties() {

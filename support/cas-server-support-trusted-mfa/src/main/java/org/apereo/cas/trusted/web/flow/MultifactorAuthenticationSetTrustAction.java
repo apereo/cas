@@ -3,7 +3,7 @@ package org.apereo.cas.trusted.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
-import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesProperties;
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
@@ -26,10 +26,10 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
     private final MultifactorAuthenticationTrustStorage storage;
-    private final TrustedDevicesProperties trustedProperties;
+    private final TrustedDevicesMultifactorProperties trustedProperties;
 
     public MultifactorAuthenticationSetTrustAction(final MultifactorAuthenticationTrustStorage storage,
-                                                   final TrustedDevicesProperties trustedProperties) {
+                                                   final TrustedDevicesMultifactorProperties trustedProperties) {
         this.storage = storage;
         this.trustedProperties = trustedProperties;
     }

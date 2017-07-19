@@ -14,14 +14,32 @@ import java.io.Serializable;
  */
 public class GAuthMultifactorProperties extends BaseMultifactorProvider {
     private static final long serialVersionUID = -7401748853833491119L;
+    /**
+     * Issuer used in the barcode when dealing with device registration events.
+     * Used in the registration URL to identify CAS.
+     */
     private String issuer = "CASIssuer";
+    /**
+     * Label used in the barcode when dealing with device registration events.
+     * Used in the registration URL to identify CAS.
+     */
     private String label = "CASLabel";
-
+    /**
+     * Length of the generated code.
+     */
     private int codeDigits = 6;
+    /**
+     * The expiration time of the generated code in seconds.
+     */
     private long timeStepSize = 30;
+    /**
+     * Since TOTP passwords are time-based, it is essential that the clock of both the server and
+     * the client are synchronised within
+     * the tolerance defined here as the window size.
+     */
     private int windowSize = 3;
 
-    private Mongodb mongodb = new Mongodb();
+    private MongoDb mongodb = new MongoDb();
     private Jpa jpa = new Jpa();
     private Json json = new Json();
     private Rest rest = new Rest();
@@ -56,11 +74,11 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         this.json = json;
     }
 
-    public Mongodb getMongodb() {
+    public MongoDb getMongodb() {
         return mongodb;
     }
 
-    public void setMongodb(final Mongodb mongodb) {
+    public void setMongodb(final MongoDb mongodb) {
         this.mongodb = mongodb;
     }
 
@@ -118,6 +136,9 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
 
     public static class Rest implements Serializable {
         private static final long serialVersionUID = 4518622579150572559L;
+        /**
+         * Endpoint url of the REST resource used for tokens that are kept to prevent replay attacks.
+         */
         private String endpointUrl;
 
         public String getEndpointUrl() {
@@ -129,11 +150,14 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         }
     }
 
-    public static class Mongodb extends AbstractMongoClientProperties {
+    public static class MongoDb extends AbstractMongoClientProperties {
         private static final long serialVersionUID = -200556119517414696L;
+        /**
+         * Collection name where tokens are kept to prevent replay attacks.
+         */
         private String tokenCollection;
 
-        public Mongodb() {
+        public MongoDb() {
             setCollection("MongoDbGoogleAuthenticatorRepository");
             setTokenCollection("MongoDbGoogleAuthenticatorTokenRepository");
         }
@@ -149,6 +173,9 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
 
     public static class Jpa implements Serializable {
         private static final long serialVersionUID = -2689797889546802618L;
+        /**
+         * Database instance where tokens are kept to prevent replay attacks.
+         */
         private Database database = new Database();
 
         public Database getDatabase() {
@@ -170,8 +197,17 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
 
     public static class Cleaner implements Serializable {
         private static final long serialVersionUID = -6036042153454544990L;
+        /**
+         * Enable the cleaner to run as a background process to remove expired records.
+         */
         private boolean enabled = true;
+        /**
+         * Background job's startup delay.
+         */
         private String startDelay = "PT1M";
+        /**
+         * Repeat interval of the background job. Defines recurrence.
+         */
         private String repeatInterval = "PT1M";
 
         public boolean isEnabled() {
