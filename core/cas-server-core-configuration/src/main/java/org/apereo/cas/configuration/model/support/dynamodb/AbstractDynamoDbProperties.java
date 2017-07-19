@@ -24,7 +24,7 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
     private String credentialAccessKey;
 
     /**
-     * Credentials secret key
+     * Credentials secret key.
      */
     private String credentialSecretKey;
 
