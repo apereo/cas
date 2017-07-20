@@ -12,7 +12,10 @@ export class UidattrsComponent implements OnInit {
   serviceData: Data;
 
   @Input()
-  formData: FormData
+  formData: FormData;
+
+  @Input()
+  selectOptions;
 
   constructor(public messages: Messages) { }
 

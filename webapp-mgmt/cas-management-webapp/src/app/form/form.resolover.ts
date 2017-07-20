@@ -16,8 +16,6 @@ export class FormResolve implements Resolve<Form> {
     let param: string = route.params['id'];
     let dup: boolean = route.params['duplicate'];
 
-    console.log("param = "+param+" - duplicate = " + dup);
-
     if(!param || param === '-1') {
       return new Promise((resolve,reject) => resolve(null));
     } else {
