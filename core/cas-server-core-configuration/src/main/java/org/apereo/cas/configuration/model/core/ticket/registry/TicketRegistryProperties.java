@@ -188,16 +188,19 @@ public class TicketRegistryProperties {
     }
 
     public static class InMemory {
+
         /**
          * The initial capacity of the underlying memory store.
          * The implementation performs internal sizing to accommodate this many elements.
          */
         private int initialCapacity = 1000;
+
         /**
          *  The load factor threshold, used to control resizing.
          *  Resizing may be performed when the average number of elements per bin exceeds this threshold.
          */
         private int loadFactor = 1;
+
         /**
          * The estimated number of concurrently updating threads.
          * The implementation performs internal sizing to try to accommodate this many threads.
