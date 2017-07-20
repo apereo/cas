@@ -12,7 +12,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
+import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
@@ -65,15 +67,16 @@ public class RadiusConfiguration {
     @RefreshScope
     @Bean
     public JRadiusServerImpl radiusServer() {
-        final RadiusProperties.Client client = casProperties.getAuthn().getRadius().getClient();
-        final RadiusProperties.Server server = casProperties.getAuthn().getRadius().getServer();
+        final RadiusClientProperties client = casProperties.getAuthn().getRadius().getClient();
+        final RadiusServerProperties server = casProperties.getAuthn().getRadius().getServer();
 
         final RadiusClientFactory factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
                 client.getInetAddress(), client.getSharedSecret());
 
         final RadiusProtocol protocol = RadiusProtocol.valueOf(server.getProtocol());
 
-        return new JRadiusServerImpl(protocol, factory, server.getRetries(), server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
+        return new JRadiusServerImpl(protocol, factory, server.getRetries(),
+                server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
                 server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
     }
 
