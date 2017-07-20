@@ -10,8 +10,14 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class RemoteAddressAuthenticationProperties {
 
+    /**
+     * The authorized network address to allow for authentication.
+     */
     private String ipAddressRange = StringUtils.EMPTY;
 
+    /**
+     * The name of the authentication handler.
+     */
     private String name;
 
     public String getName() {
