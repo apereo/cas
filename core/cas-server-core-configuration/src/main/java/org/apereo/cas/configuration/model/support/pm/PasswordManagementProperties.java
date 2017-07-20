@@ -259,7 +259,7 @@ public class PasswordManagementProperties {
         }
     }
 
-    public static class Reset {
+    public static class Reset implements Serializable {
         /**
          * Crypto settings on how to reset the password.
          */
@@ -354,8 +354,6 @@ public class PasswordManagementProperties {
     }
 
     public static class Json extends AbstractConfigProperties {
-
         private static final long serialVersionUID = 1129426669588789974L;
     }
-
 }
