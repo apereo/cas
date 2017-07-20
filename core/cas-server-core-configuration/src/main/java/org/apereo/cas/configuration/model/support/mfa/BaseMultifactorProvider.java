@@ -83,6 +83,9 @@ public abstract class BaseMultifactorProvider implements Serializable {
         this.id = id;
     }
 
+    /**
+     * The bypass options for multifactor authentication.
+     */
     public static class Bypass implements Serializable {
         private static final long serialVersionUID = -9181362378365850397L;
         /**
