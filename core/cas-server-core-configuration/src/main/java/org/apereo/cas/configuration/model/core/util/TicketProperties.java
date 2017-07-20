@@ -15,21 +15,39 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class TicketProperties {
 
+    /**
+     * Properties and settings related to proxy-granting tickets.
+     */
     @NestedConfigurationProperty
     private ProxyGrantingTicketProperties pgt = new ProxyGrantingTicketProperties();
 
+    /**
+     * Properties and settings related to ticket encryption.
+     */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
+    /**
+     * Properties and settings related to proxy tickets.
+     */
     @NestedConfigurationProperty
     private ProxyTicketProperties pt = new ProxyTicketProperties();
 
+    /**
+     * Properties and settings related to ticket registry.
+     */
     @NestedConfigurationProperty
     private TicketRegistryProperties registry = new TicketRegistryProperties();
 
+    /**
+     * Properties and settings related to service tickets.
+     */
     @NestedConfigurationProperty
     private ServiceTicketProperties st = new ServiceTicketProperties();
 
+    /**
+     * Properties and settings related to ticket-granting tickets.
+     */
     @NestedConfigurationProperty
     private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
 

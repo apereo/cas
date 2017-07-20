@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.clouddirectory;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 /**
@@ -11,27 +12,79 @@ import org.springframework.core.io.Resource;
  * @since 5.2.0
  */
 public class CloudDirectoryProperties {
+    /**
+     * Authenticate and bind into the instance via a credentials properties file.
+     */
     private Resource credentialsPropertiesFile;
 
+    /**
+     * Use access-key provided by AWS to authenticate.
+     */
     private String credentialAccessKey;
+    /**
+     * Use secret key provided by AWS to authenticate.
+     */
     private String credentialSecretKey;
 
+    /**
+     * AWS region used.
+     */
     private String region;
 
+    /**
+     * Profile name to use.
+     */
     private String profileName;
+    /**
+     * Profile path.
+     */
     private String profilePath;
-
+    /**
+     * Directory ARN.
+     */
     private String directoryArn;
+    /**
+     * Schema ARN.
+     */
     private String schemaArn;
+    /**
+     * Facet name.
+     */
     private String facetName;
 
+    /**
+     * Username attribute to choose when locating accounts.
+     */
     private String usernameAttributeName;
+    /**
+     * Password attribute to choose on the entry to compare.
+     */
     private String passwordAttributeName;
+    /**
+     * Username index path.
+     */
     private String usernameIndexPath;
 
+    /**
+     * The name of the authentication handler.
+     */
     private String name;
+
+    /**
+     * Password encoding properties.
+     */
+    @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder;
+
+    /**
+     * Principal transformation properties.
+     */
+    @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation;
+
+    /**
+     * The order of this authentication handler in the chain.
+     */
     private int order = Integer.MAX_VALUE;
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
@@ -41,7 +94,6 @@ public class CloudDirectoryProperties {
     public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
         this.principalTransformation = principalTransformation;
     }
-
     
     public int getOrder() {
         return order;
@@ -66,7 +118,6 @@ public class CloudDirectoryProperties {
     public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-
     
     public String getPasswordAttributeName() {
         return passwordAttributeName;

@@ -25,6 +25,9 @@ public class TicketGrantingTicketProperties {
 
     /**
      * Flag to control whether to track most recent SSO sessions.
+     * As multiple tickets may be issued for the same application, this impacts
+     * how session information is tracked for every ticket which then
+     * has a subsequent impact on logout.
      */
     private boolean onlyTrackMostRecentSession = true;
 
@@ -113,6 +116,9 @@ public class TicketGrantingTicketProperties {
     }
 
     public static class HardTimeout {
+        /**
+         * Timeout in seconds to kill the session and consider tickets expired.
+         */
         private long timeToKillInSeconds;
 
         public long getTimeToKillInSeconds() {

@@ -21,10 +21,10 @@ public class MongoAuthenticationProperties {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
-    @NestedConfigurationProperty
     /**
      * This is principal transformation properties.
      */
+    @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     private String name;
