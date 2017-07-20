@@ -86,6 +86,7 @@ public class TicketRegistryProperties {
      * Settings relevant for the default in-memory ticket registry.
      */
     private InMemory inMemory = new InMemory();
+
     /**
      * Ticket registry cleaner settings.
      */
