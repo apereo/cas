@@ -17,12 +17,9 @@
         <tr *ngFor="let row of rows">
           <td i18n-title="services.form.header.nameId.name"
               [title]="messages.services_form_header_nameId_name"
-              [ngSwitch]="row.isEditing"
-              [ngClass]="name.$dirty ? 'bg-warning' : ''">
+              [ngSwitch]="row.isEditing">
             <span *ngSwitchDefault class="editable-text">{{row.property.name}}</span>
-            <div class="controls"
-                 [ngClass]="name.$invalid && name.$dirty ? 'has-error' : ''"
-                 *ngSwitchCase="true">
+            <div class="controls" *ngSwitchCase="true">
               <input class="form-control noresize editable-text"
                      [(ngModel)]="row.tmpName"/>
             </div>
@@ -31,8 +28,7 @@
               [title]="messages.services_form_header_nameId_value"
               [ngSwitch]="row.isEditing">
             <span *ngSwitchDefault class="editable-text">{{row.property.value}}</span>
-            <div class="controls"
-                 *ngSwitchCase="true">
+            <div class="controls" *ngSwitchCase="true">
               <div class="input-group">
                 <input type="text" class="form-control noresize editable-text"
                        placeholder=""
@@ -83,7 +79,7 @@
 
           </td>
         </tr>
-        <tr *ngIf="row.isAdding">
+        <tr *ngIf="isAdding">
           <td><input name="addPropertyName" class="form-control noresize editable-text" rows="2"
                      i18n-placeholder
                      placeholder="New property name"
@@ -91,7 +87,7 @@
           <td>
             <div class="input-group">
               <input type="text" class="form-control"
-                     placeholder="" [(ngModel)]=addValue">
+                     placeholder="" [(ngModel)]="addValue">
               <span class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">                   <span class="caret"></span>
@@ -109,7 +105,7 @@
             <!-- Add Row toggle -->
             <button class="btn btn-success btn-sm"
                     (click)="addRow()"
-                    *ngIf="row.isAdding">
+                    *ngIf="isAdding">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <!-- cancel add row -->
@@ -119,7 +115,7 @@
             </button>
           </td>
         </tr>
-        <tr class="addRow" *ngIf="!row.isAdding">
+        <tr class="addRow" *ngIf="!isAdding">
           <td>
             <button class="btn btn-default btn-sm" (click)="isAdding = true">
               <span class="glyphicon glyphicon-plus text-success"></span>
