@@ -48,6 +48,7 @@ public class GraphicalUserAuthenticationProperties {
         private String baseDn;
         /**
          * Search filter to locate the account in LDAP.
+         * Syntax is <code>cn={user}</code> or <code>cn={0}</code>
          */
         private String userFilter;
         /**
