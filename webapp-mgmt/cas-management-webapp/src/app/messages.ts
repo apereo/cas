@@ -318,5 +318,6 @@ export class Messages {
   readonly services_form_tooltip_wsfed_realm = "The realm identifier of the application, identified via the wtrealm parameter. This needs to match the realm defined for the identity provider. By default it’s set to the realm defined for the CAS identity provider.";
   readonly services_form_tooltip_wsfed_appliesTo = "Controls to whom security tokens apply. Defaults to the realm";
 
+  readonly services_form_label_uap_canonicalizationMode = "Canonicalization Mode";
 
 }
