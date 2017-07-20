@@ -19,12 +19,16 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
      * Default lock timeout is 1 hour.
      */
     public static final String DEFAULT_LOCK_TIMEOUT = "PT1H";
+
     private static final long serialVersionUID = -8053839523783801072L;
 
     private LockModeType ticketLockType = LockModeType.NONE;
 
     private String jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 

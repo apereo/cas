@@ -16,6 +16,9 @@ public class MemcachedTicketRegistryProperties {
     private String locatorType = "ARRAY_MOD";
     private String hashAlgorithm = "FNV1_64_HASH";
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 

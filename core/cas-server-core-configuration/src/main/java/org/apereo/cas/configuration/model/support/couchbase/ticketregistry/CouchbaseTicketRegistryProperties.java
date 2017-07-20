@@ -21,6 +21,7 @@ public class CouchbaseTicketRegistryProperties {
     private String timeout = "PT10S";
 
     private String password;
+
     private String bucket = "default";
 
     /**

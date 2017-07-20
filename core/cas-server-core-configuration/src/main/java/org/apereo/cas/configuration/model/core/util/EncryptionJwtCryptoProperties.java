@@ -9,10 +9,12 @@ import org.apache.commons.lang3.StringUtils;
  * @since 5.2.0
  */
 public class EncryptionJwtCryptoProperties {
+
     /**
      * The encryption key is a JWT whose length is defined by the signing key size setting.
      */
     private String key = StringUtils.EMPTY;
+
     /**
      * The encryption key size.
      */

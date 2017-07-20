@@ -14,27 +14,47 @@ import java.time.Duration;
  */
 
 public class IgniteProperties {
+
     private String igniteAddresses = "localhost:47500";
+
     private TicketsCache ticketsCache = new TicketsCache();
-    
+
     private String keyStoreType;
+
     private String keyStoreFilePath;
+
     private String keyStorePassword;
+
     private String trustStoreType;
+
     private String protocol;
+
     private String keyAlgorithm;
+
     private String trustStoreFilePath;
+
     private String trustStorePassword;
     
+
     private String ackTimeout = "PT2S";
+
     private String joinTimeout = "PT1S";
+
     private String localAddress;
+
     private int localPort = -1;
+
     private String networkTimeout = "PT5S";
+
     private String socketTimeout = "PT5S";
+
     private int threadPriority = 10;
+
     private boolean forceServerMode;
-    
+
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
