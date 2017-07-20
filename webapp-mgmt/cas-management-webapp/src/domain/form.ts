@@ -40,6 +40,7 @@ export class Data {
   proxyPolicy: ServiceProxyPolicy = new ServiceProxyPolicy();
   attrRelease: AttributeRelease = new AttributeRelease();
   properties: PropertyBean[] = [];
+  wsfed: WSFed = new WSFed();
 }
 
 export class Contact {
@@ -70,7 +71,8 @@ export class OidcType {
   encryptEnc: String;
   dynamicDate: String;
   dynamic: boolean;
-  scopes: String;
+  scopes: String = "";
+  type: String;
 }
 
 export class SamlType {
@@ -156,4 +158,9 @@ export class AttributeReleasePolicy {
   allowed;
   value;
   wsfed_only;
+}
+
+export class WSFed {
+  realm: String;
+  appliesTo: String;
 }

@@ -51,7 +51,7 @@
                   [(ngModel)]="serviceData.oidc.scopes">
             <option *ngFor="let opt of selectOptions.oidcScopes"
                     [value]="opt.value"
-                    [selected]="opt.value === oidcScopes.type">{{ opt.name }}</option>
+                    [selected]="opt.value === selectOptions.oidcScopes.type">{{ opt.name }}</option>
           </select>
         </div>
         <div class="col-md-8 col-md-offset-4" *ngIf="serviceData.oidc.scopes.indexOf('user_defined') > -1">
@@ -72,7 +72,7 @@
       <!-- OAuth Client ID -->
       <div class="form-group">
         <label class="col-sm-4" for="oauthClientId">
-          <span style="flaot:right">
+          <span style="float:right">
             <ng-container i18n="services.form.label.oauthClientId">
               {{ messages.services_form_label_oauthClientId }}
             </ng-container>
