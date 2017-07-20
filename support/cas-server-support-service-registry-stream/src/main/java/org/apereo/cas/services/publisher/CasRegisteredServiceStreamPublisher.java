@@ -1,7 +1,6 @@
 package org.apereo.cas.services.publisher;
 
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.AbstractCasEvent;
 import org.springframework.context.ApplicationEvent;
 
 /**
