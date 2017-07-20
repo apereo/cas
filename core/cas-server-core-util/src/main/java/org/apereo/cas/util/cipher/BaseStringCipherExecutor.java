@@ -64,9 +64,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
                                     final String contentEncryptionAlgorithmIdentifier) {
-
         super();
-
         if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
             LOGGER.warn("Content encryption algorithm identifier is not defined");
             return;

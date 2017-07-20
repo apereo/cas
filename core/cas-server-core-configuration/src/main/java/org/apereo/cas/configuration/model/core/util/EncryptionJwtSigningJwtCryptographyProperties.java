@@ -31,7 +31,7 @@ public class EncryptionJwtSigningJwtCryptographyProperties {
     /**
      * The signing/encryption algorithm to use.
      */
-    private String alg = "AES_128_CBC_HMAC_SHA_256";
+    private String alg = "A128CBC-HS256";
 
     public EncryptionJwtCryptoProperties getEncryption() {
         return encryption;
