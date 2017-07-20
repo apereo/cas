@@ -11,6 +11,9 @@ export class OauthclientComponent implements OnInit {
   @Input()
   serviceData: Data;
 
+  @Input()
+  selectOptions;
+
   constructor(public messages: Messages) { }
 
   ngOnInit() {

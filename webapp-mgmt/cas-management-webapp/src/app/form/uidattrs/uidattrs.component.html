@@ -96,15 +96,15 @@
       </div>
       <div class="form-group" *ngIf="serviceData.userAttrProvider.type == 'attr'">
         <div class="col-sm-4">
-          <div class="checkbox">
+          <div class="checkbox" style="float:right">
             <label for="canonicalizationMode">
               <input type="checkbox" id="canonicalizationMode"
                      [(ngModel)]="serviceData.userAttrProvider.canonicalization" />
               <ng-container i18n="services.form.label.uap.canonicalizationMode">
-                {{ messages.services_form_label_uap_cononicalizationMode }}
+                {{ messages.services_form_label_uap_canonicalizationMode }}
               </ng-container>
               <i i18n-myTooltip="services.form.tooltip.uap.canonicalizationMode"
-                 [myTooltip="messages.services_form_tooltip_uap_canonicalizationMode"></i>
+                 [myTooltip]="messages.services_form_tooltip_uap_canonicalizationMode"></i>
             </label>
           </div>
         </div>
