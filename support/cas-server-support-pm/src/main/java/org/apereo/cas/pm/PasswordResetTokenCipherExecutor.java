@@ -28,11 +28,11 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.pm.reset.security.crypto.encryption.key";
+        return "cas.authn.pm.reset.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.pm.reset.security.crypto.signing.key";
+        return "cas.authn.pm.reset.crypto.signing.key";
     }
 }
