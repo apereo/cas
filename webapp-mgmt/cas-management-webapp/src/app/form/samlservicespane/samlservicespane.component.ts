@@ -12,6 +12,9 @@ export class SamlservicespaneComponent implements OnInit {
   @Input()
   serviceData: Data;
 
+  @Input()
+  selectOptions;
+
   rows: Row[];
   addName: String;
   addValue: String;
