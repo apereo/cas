@@ -32,7 +32,11 @@ public class TicketProperties {
 
     @NestedConfigurationProperty
     private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
-    
+
+    public TicketProperties() {
+        this.crypto.setEnabled(false);
+    }
+
     public ProxyGrantingTicketProperties getPgt() {
         return pgt;
     }
