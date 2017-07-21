@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -19,7 +19,7 @@ public class WebflowProperties {
      * Encryption/signing setting for webflow.
      */
     @NestedConfigurationProperty
-    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
     /**
      * Whether CAS should take control of all spring webflow modifications
@@ -49,11 +49,11 @@ public class WebflowProperties {
      */
     private Session session = new Session();
 
-    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
 
