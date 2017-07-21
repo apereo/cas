@@ -11,7 +11,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class Pac4jProperties {
 
     /**
@@ -24,7 +23,6 @@ public class Pac4jProperties {
      * Whether CAS should auto-redirect to the provider.
      */
     private boolean autoRedirect;
-
     /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
      */
@@ -299,7 +297,6 @@ public class Pac4jProperties {
          */
         private String fields;
 
-
         public String getScope() {
             return this.scope;
         }
@@ -474,7 +471,7 @@ public class Pac4jProperties {
         private String authnContextClassRef;
         /**
          * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
-         * For example, if “exact” is specified, the authentication method used must match one of the authentication
+         * For example, if exact is specified, the authentication method used must match one of the authentication
          * methods specified by the AuthnContextClassRef elements.
          * AuthContextClassRef element require comparison rule to be used to evaluate the specified
          * authentication methods. If not explicitly specified "exact" rule will be used by default.
