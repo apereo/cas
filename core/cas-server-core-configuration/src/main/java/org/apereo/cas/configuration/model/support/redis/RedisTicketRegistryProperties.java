@@ -36,6 +36,9 @@ public class RedisTicketRegistryProperties {
      */
     private int timeout;
 
+    /**
+     * Radius connection pool settings.
+     */
     private Pool pool;
 
     /**
