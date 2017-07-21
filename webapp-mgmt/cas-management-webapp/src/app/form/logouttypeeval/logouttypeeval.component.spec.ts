@@ -8,6 +8,7 @@ import { LogouttypeevalComponent } from './logouttypeeval.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
 import {TabService} from "../tab.service";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('LogouttypeevalComponent', () => {
   let component: LogouttypeevalComponent;
@@ -15,7 +16,7 @@ describe('LogouttypeevalComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ LogouttypeevalComponent ],
       providers: [ Messages ]
     })

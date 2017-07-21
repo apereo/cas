@@ -1,6 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttributeReleasePrincipalRepoComponent } from './attribute-release-principal-repo.component';
+import {SharedModule} from "../../shared/shared.module";
+import {FormModule} from "../form.module";
+import {FormsModule} from "@angular/forms";
+import {Messages} from "../../messages";
+import {Data, FormData} from "../../../domain/form";
+import {TabService} from "../tab.service";
 
 describe('AttributeReleasePrincipalRepoComponent', () => {
   let component: AttributeReleasePrincipalRepoComponent;
@@ -8,7 +14,9 @@ describe('AttributeReleasePrincipalRepoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttributeReleasePrincipalRepoComponent ]
+      imports: [FormsModule, SharedModule],
+      declarations: [ AttributeReleasePrincipalRepoComponent ],
+      providers: [Messages]
     })
     .compileComponents();
   }));
@@ -16,6 +24,9 @@ describe('AttributeReleasePrincipalRepoComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleasePrincipalRepoComponent);
     component = fixture.componentInstance;
+    component.formData = new FormData;
+    component.serviceData = new Data();
+    component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });
 

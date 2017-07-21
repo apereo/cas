@@ -8,6 +8,12 @@ import { TabAttrreleaseComponent } from './tab-attrrelease.component';
 import {AttributeReleaseComponent} from "../attribute-release/attribute-release.component";
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
+import {SharedModule} from "../../shared/shared.module";
+import {AttributeReleaseChecksComponent} from "../attribute-release-checks/attribute-release-checks.component";
+import {AttributeReleaseFiltersComponent} from "../attribute-release-filters/attribute-release-filters.component";
+import {AttributeReleasePoliciesComponent} from "../attribute-release-policies/attribute-release-policies.component";
+import {AttributeReleasePrincipalRepoComponent} from "../attribute-release-principal-repo/attribute-release-principal-repo.component";
+import {WsfedattrrelpoliciesComponent} from "../wsfedattrrelpolocies/wsfedattrrelpolicies.component";
 
 describe('TabAttrreleaseComponent', () => {
   let component: TabAttrreleaseComponent;
@@ -15,8 +21,8 @@ describe('TabAttrreleaseComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
-      declarations: [ TabAttrreleaseComponent, AttributeReleaseComponent ],
+      imports: [ FormsModule, SharedModule ],
+      declarations: [ TabAttrreleaseComponent, AttributeReleaseComponent, AttributeReleaseChecksComponent, AttributeReleaseFiltersComponent, AttributeReleasePoliciesComponent, AttributeReleasePrincipalRepoComponent, WsfedattrrelpoliciesComponent ],
       providers: [ Messages, TabService ]
     })
     .compileComponents();

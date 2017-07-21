@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { ReqhandlersComponent } from './reqhandlers.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('ReqhandlersComponent', () => {
   let component: ReqhandlersComponent;
@@ -14,7 +15,7 @@ describe('ReqhandlersComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ ReqhandlersComponent ],
       providers: [ Messages ]
     })

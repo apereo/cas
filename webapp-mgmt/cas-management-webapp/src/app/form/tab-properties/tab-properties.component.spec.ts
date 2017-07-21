@@ -8,6 +8,7 @@ import { TabPropertiesComponent } from './tab-properties.component';
 import {PropertiespaneComponent} from "../propertiespane/propertiespane.component";
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('TabPropertiesComponent', () => {
   let component: TabPropertiesComponent;
@@ -15,7 +16,7 @@ describe('TabPropertiesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ TabPropertiesComponent, PropertiespaneComponent ],
       providers: [ Messages, TabService ]
     })

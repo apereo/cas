@@ -10,6 +10,10 @@ import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
 import {SamlclientComponent} from "../samlclient/samlclient.component";
 import {OauthclientComponent} from "../oauthclient/oauthclient.component";
+import {SharedModule} from "../../shared/shared.module";
+import {WsfedclientComponent} from "../wsfedclient/wsfedclient.component";
+import {WsfedattrrelpoliciesComponent} from "../wsfedattrrelpolocies/wsfedattrrelpolicies.component";
+import {SamlservicespaneComponent} from "../samlservicespane/samlservicespane.component";
 
 describe('TabServicetypeComponent', () => {
   let component: TabServicetypeComponent;
@@ -17,8 +21,8 @@ describe('TabServicetypeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
-      declarations: [ TabServicetypeComponent, ServicetypeComponent, SamlclientComponent, OauthclientComponent ],
+      imports: [ FormsModule, SharedModule ],
+      declarations: [ TabServicetypeComponent, ServicetypeComponent, SamlclientComponent, OauthclientComponent, WsfedclientComponent, WsfedattrrelpoliciesComponent, SamlservicespaneComponent ],
       providers: [ Messages, TabService ]
     })
     .compileComponents();
