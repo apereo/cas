@@ -54,7 +54,6 @@ public class HazelcastConfigurationFactory {
                 .setMaxSizeConfig(new MaxSizeConfig()
                         .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
                         .setSize(cluster.getMaxHeapSizePercentage()));
-
     }
 
     /**
@@ -66,7 +65,9 @@ public class HazelcastConfigurationFactory {
      */
     public Config build(final HazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
         final Config cfg = build(hz);
-        cfg.setMapConfigs(mapConfigs);
+        if (hz.getConfigLocation() == null) {
+            cfg.setMapConfigs(mapConfigs);
+        }
         return cfg;
     }
 
