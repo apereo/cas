@@ -11,11 +11,22 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 
 public class OpenIdProperties {
+
+    /**
+     * Principal construction settings.
+     */
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
-    
+
+    /**
+     * Whether relying party identifies should be enforced.
+     * This is used during the realm verification process.
+     */
     private boolean enforceRpId;
 
+    /**
+     * Name of the underlying authentication handler.
+     */
     private String name;
 
     public String getName() {
@@ -33,7 +44,6 @@ public class OpenIdProperties {
     public void setEnforceRpId(final boolean enforceRpId) {
         this.enforceRpId = enforceRpId;
     }
-
 
     public PersonDirPrincipalResolverProperties getPrincipal() {
         return principal;
