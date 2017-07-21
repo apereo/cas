@@ -78,7 +78,11 @@ war {
     dependsOn(buildClient)
 }
 
-
+task angularTest(type: NpmTask, dependsOn: 'npm_install')  {
+  group = 'test'
+  description = "Run Angular unit tests"
+  args = ['run','testSingleRun']
+}
 
 dependencies {
     runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
