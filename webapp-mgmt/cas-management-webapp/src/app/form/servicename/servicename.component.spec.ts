@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { ServicenameComponent } from './servicename.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('ServicenameComponent', () => {
   let component: ServicenameComponent;
@@ -14,7 +15,7 @@ describe('ServicenameComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ ServicenameComponent ],
       providers: [ Messages ]
     })

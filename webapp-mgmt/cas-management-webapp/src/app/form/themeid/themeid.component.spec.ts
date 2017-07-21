@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { ThemeidComponent } from './themeid.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('ThemeidComponent', () => {
   let component: ThemeidComponent;
@@ -14,7 +15,7 @@ describe('ThemeidComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ ThemeidComponent ],
       providers: [ Messages ]
     })

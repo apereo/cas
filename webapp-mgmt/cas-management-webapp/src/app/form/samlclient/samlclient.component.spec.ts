@@ -7,6 +7,8 @@ import { DebugElement } from '@angular/core';
 import { SamlclientComponent } from './samlclient.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
+import {SamlservicespaneComponent} from "../samlservicespane/samlservicespane.component";
 
 describe('SamlclientComponent', () => {
   let component: SamlclientComponent;
@@ -14,8 +16,8 @@ describe('SamlclientComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
-      declarations: [ SamlclientComponent ],
+      imports: [ FormsModule, SharedModule ],
+      declarations: [ SamlclientComponent, SamlservicespaneComponent ],
       providers: [ Messages ]
     })
     .compileComponents();

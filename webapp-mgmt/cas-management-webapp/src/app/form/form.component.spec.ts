@@ -2,8 +2,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRoute } from "@angular/router";
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { Location } from "@angular/common";
 
 import { FormComponent } from './form.component';
 import {AlertComponent} from "../alert/alert.component";
@@ -35,6 +34,12 @@ let userServiceStub = {
 
 let activatedRoute: ActivatedRouteStub = new ActivatedRouteStub();
 
+let stubLocation = {
+  path() {
+    return "";
+  }
+}
+
 describe('FormComponent', () => {
   let component: FormComponent;
   let fixture: ComponentFixture<FormComponent>;
@@ -49,7 +54,8 @@ describe('FormComponent', () => {
         Messages,
         TabService,
         {provide: FormService, useValue: formServicesStub},
-        {provide: ActivatedRoute, useValue: activatedRoute}
+        {provide: ActivatedRoute, useValue: activatedRoute},
+        {provide: Location, useValue: stubLocation}
       ]
     })
     .compileComponents();
@@ -58,9 +64,11 @@ describe('FormComponent', () => {
   beforeEach(() => {
     activatedRoute.testData = new Data();
     activatedRoute.testParams = {id: -1};
-    activatedRoute.testUrl = "";
+    activatedRoute.testUrl = { path() { return "";}};
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
+    component.path = "";
+    component.ngOnInit = function() { };
     fixture.detectChanges();
   });
 

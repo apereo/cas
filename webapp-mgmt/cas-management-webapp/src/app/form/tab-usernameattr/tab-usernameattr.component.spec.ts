@@ -8,6 +8,7 @@ import { TabUsernameattrComponent } from './tab-usernameattr.component';
 import {TabService} from "../tab.service";
 import {Messages} from "../../messages";
 import {UidattrsComponent} from "../uidattrs/uidattrs.component";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('TabUsernameattrComponent', () => {
   let component: TabUsernameattrComponent;
@@ -15,7 +16,7 @@ describe('TabUsernameattrComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ TabUsernameattrComponent, UidattrsComponent ],
       providers: [ Messages, TabService]
     })

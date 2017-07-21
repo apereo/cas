@@ -10,6 +10,7 @@ import {Messages} from "../../messages";
 import {PubkeyComponent} from "../pubkey/pubkey.component";
 import {EvalorderComponent} from "../evalorder/evalorder.component";
 import {ReqhandlersComponent} from "../reqhandlers/reqhandlers.component";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('TabAdvancedComponent', () => {
   let component: TabAdvancedComponent;
@@ -17,7 +18,7 @@ describe('TabAdvancedComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ TabAdvancedComponent, PubkeyComponent, EvalorderComponent, ReqhandlersComponent ],
       providers: [ TabService, Messages]
     })

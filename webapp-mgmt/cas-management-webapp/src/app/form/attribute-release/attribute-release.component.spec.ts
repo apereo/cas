@@ -7,6 +7,12 @@ import { DebugElement } from '@angular/core';
 import { AttributeReleaseComponent } from './attribute-release.component';
 import {Messages} from "../../messages";
 import {FormData, Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
+import {AttributeReleaseChecksComponent} from "../attribute-release-checks/attribute-release-checks.component";
+import {AttributeReleasePrincipalRepoComponent} from "../attribute-release-principal-repo/attribute-release-principal-repo.component";
+import {AttributeReleaseFiltersComponent} from "../attribute-release-filters/attribute-release-filters.component";
+import {AttributeReleasePoliciesComponent} from "../attribute-release-policies/attribute-release-policies.component";
+import {WsfedattrrelpoliciesComponent} from "../wsfedattrrelpolocies/wsfedattrrelpolicies.component";
 
 describe('AttributeReleaseComponent', () => {
   let component: AttributeReleaseComponent;
@@ -16,8 +22,9 @@ describe('AttributeReleaseComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
+        SharedModule
       ],
-      declarations: [ AttributeReleaseComponent ],
+      declarations: [ AttributeReleaseComponent, AttributeReleaseChecksComponent, AttributeReleasePrincipalRepoComponent, AttributeReleaseFiltersComponent, AttributeReleasePoliciesComponent, WsfedattrrelpoliciesComponent ],
       providers: [
         Messages
       ]
@@ -30,6 +37,7 @@ describe('AttributeReleaseComponent', () => {
     component = fixture.componentInstance;
     component.formData = new FormData();
     component.serviceData = new Data();
+    component.selectOptions = "";
     fixture.detectChanges();
   });
 

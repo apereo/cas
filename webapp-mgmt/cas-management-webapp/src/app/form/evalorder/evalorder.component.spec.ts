@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { EvalorderComponent } from './evalorder.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('EvalorderComponent', () => {
   let component: EvalorderComponent;
@@ -14,7 +15,7 @@ describe('EvalorderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ EvalorderComponent ],
       providers: [ Messages ]
     })

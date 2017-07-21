@@ -30,7 +30,7 @@ export class ActivatedRouteStub {
     this.dataSubject.next(data);
   }
 
-  private _testUrl: {};
+  private _testUrl: {} = { path() { return "";}};
   get testUrl() { return this._testUrl; }
   set testUrl(url: {}) {
     this._testUrl = url;

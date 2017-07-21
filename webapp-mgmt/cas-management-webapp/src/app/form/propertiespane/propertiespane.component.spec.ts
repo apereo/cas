@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { PropertiespaneComponent } from './propertiespane.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('PropertiespaneComponent', () => {
   let component: PropertiespaneComponent;
@@ -14,7 +15,7 @@ describe('PropertiespaneComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ PropertiespaneComponent ],
       providers: [ Messages ]
     })

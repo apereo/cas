@@ -1,6 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WsfedclientComponent } from './wsfedclient.component';
+import {SharedModule} from "../../shared/shared.module";
+import {FormModule} from "../form.module";
+import {FormsModule} from "@angular/forms";
+import {Messages} from "../../messages";
+import {Data} from "../../../domain/form";
+import {TabService} from "../tab.service";
 
 describe('WsfedclientComponent', () => {
   let component: WsfedclientComponent;
@@ -8,7 +14,9 @@ describe('WsfedclientComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WsfedclientComponent ]
+      imports: [ FormsModule, SharedModule ],
+      declarations: [ WsfedclientComponent ],
+      providers: [Messages]
     })
     .compileComponents();
   }));
@@ -16,6 +24,8 @@ describe('WsfedclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WsfedclientComponent);
     component = fixture.componentInstance;
+    component.serviceData = new Data();
+    component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });
 

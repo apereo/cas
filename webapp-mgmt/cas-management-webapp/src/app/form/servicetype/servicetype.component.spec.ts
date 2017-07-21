@@ -8,6 +8,7 @@ import { ServicetypeComponent } from './servicetype.component';
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('ServicetypeComponent', () => {
   let component: ServicetypeComponent;
@@ -15,7 +16,7 @@ describe('ServicetypeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ ServicetypeComponent ],
       providers: [ Messages ]
     })

@@ -14,6 +14,7 @@ import {ThemeidComponent} from "../themeid/themeid.component";
 import {LinkrefsComponent} from "../linkrefs/linkrefs.component";
 import {EnabledComponent} from "../enabled/enabled.component";
 import {ServiceidComponent} from "../serviceid/serviceid.component";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('TabBasicsComponent', () => {
   let component: TabBasicsComponent;
@@ -21,7 +22,7 @@ describe('TabBasicsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [
         TabBasicsComponent,
         ServiceidComponent,

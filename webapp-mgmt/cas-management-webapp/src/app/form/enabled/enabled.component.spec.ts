@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { EnabledComponent } from './enabled.component';
 import {Data} from "../../../domain/form";
 import {Messages} from "../../messages";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('EnabledComponent', () => {
   let component: EnabledComponent;
@@ -14,7 +15,7 @@ describe('EnabledComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ EnabledComponent ],
       providers: [ Messages ]
     })
