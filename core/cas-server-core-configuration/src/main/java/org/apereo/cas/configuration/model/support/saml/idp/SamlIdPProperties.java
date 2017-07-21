@@ -21,13 +21,39 @@ import java.util.concurrent.TimeUnit;
 
 public class SamlIdPProperties {
 
+    /**
+     * The SAML entity id for the deployment.
+     */
     private String entityId = "https://cas.example.org/idp";
+    /**
+     * The scope used in generation of metadata.
+     */
     private String scope = "example.org";
+    /**
+     * A mapping of authentication context class refs.
+     * This is where specific authentication context classes
+     * are references and mapped one ones that CAS may support
+     * mainly for MFA purposes.
+     * <p>
+     * Example might be <code>urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo</code>.
+     */
     private Set<String> authenticationContextClassMappings;
 
+    /**
+     * Settings related to SAML2 responses.
+     */
     private Response response = new Response();
+    /**
+     * SAML2 metadata related settings.
+     */
     private Metadata metadata = new Metadata();
+    /**
+     * SAML2 logout related settings.
+     */
     private Logout logout = new Logout();
+    /**
+     * Settings related to algorithms used for signing, etc.
+     */
     private Algorithms algs = new Algorithms();
 
     public Set<String> getAuthenticationContextClassMappings() {
@@ -128,22 +154,10 @@ public class SamlIdPProperties {
             this.location = location;
         }
 
-        /**
-         * Gets signing cert file.
-         *
-         * @return the signing cert file
-         * @throws Exception the exception
-         */
         public Resource getSigningCertFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.crt"));
         }
 
-        /**
-         * Gets signing key file.
-         *
-         * @return the signing key file
-         * @throws Exception the exception
-         */
         public Resource getSigningKeyFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.key"));
         }
@@ -156,32 +170,14 @@ public class SamlIdPProperties {
             this.privateKeyAlgName = privateKeyAlgName;
         }
 
-        /**
-         * Gets encryption cert file.
-         *
-         * @return the encryption cert file
-         * @throws Exception the exception
-         */
         public Resource getEncryptionCertFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.crt"));
         }
 
-        /**
-         * Gets encryption key file.
-         *
-         * @return the encryption key file
-         * @throws Exception the exception
-         */
         public Resource getEncryptionKeyFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.key"));
         }
 
-        /**
-         * Gets metadata file.
-         *
-         * @return the metadata file
-         * @throws Exception the exception
-         */
         public File getMetadataFile() throws Exception {
             return new File(this.location.getFile(), "idp-metadata.xml");
         }
