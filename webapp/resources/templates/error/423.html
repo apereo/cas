@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title>Error - Permission Denied</title>
+    <link rel="stylesheet" th:href="@{#{webjars.fontawesome.css}}" />
+    <style>
+        .prompt {
+            font-family: Verdana, sans-serif;
+        }
+    </style>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 class="prompt" th:utext="#{screen.blocked.header}"/>
+        <div class="prompt">
+            <span th:utext="#{screen.blocked.message}">
+        </div>
+    </div>
+</div>
+</body>
+</html>
