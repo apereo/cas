@@ -27,11 +27,11 @@ public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.ticket.security.crypto.encryption.key";
+        return "cas.ticket.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.ticket.security.crypto.signing.key";
+        return "cas.ticket.crypto.signing.key";
     }
 }

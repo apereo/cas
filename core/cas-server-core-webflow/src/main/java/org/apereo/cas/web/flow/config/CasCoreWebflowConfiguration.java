@@ -274,7 +274,7 @@ public class CasCoreWebflowConfiguration {
                 webflow.getCrypto().getSigning().getKey(),
                 webflow.getCrypto().getAlg(),
                 webflow.getCrypto().getSigning().getKeySize(),
-                webflow.getCrypto().getSigning().getKeySize());
+                webflow.getCrypto().getEncryption().getKeySize());
     }
 
     @Bean
