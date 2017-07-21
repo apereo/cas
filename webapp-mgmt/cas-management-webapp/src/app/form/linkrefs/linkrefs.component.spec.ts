@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { LinkrefsComponent } from './linkrefs.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('LinkrefsComponent', () => {
   let component: LinkrefsComponent;
@@ -14,7 +15,7 @@ describe('LinkrefsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ LinkrefsComponent ],
       providers: [ Messages ]
     })

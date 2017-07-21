@@ -8,6 +8,7 @@ import { TabProxyComponent } from './tab-proxy.component';
 import {ProxyComponent} from "../proxy/proxy.component";
 import {TabService} from "../tab.service";
 import {Messages} from "../../messages";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('TabProxyComponent', () => {
   let component: TabProxyComponent;
@@ -15,7 +16,7 @@ describe('TabProxyComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ TabProxyComponent, ProxyComponent ],
       providers: [ Messages, TabService]
     })

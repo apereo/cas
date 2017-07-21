@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { PubkeyComponent } from './pubkey.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('PubkeyComponent', () => {
   let component: PubkeyComponent;
@@ -14,7 +15,7 @@ describe('PubkeyComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ PubkeyComponent ],
       providers: [ Messages ]
     })

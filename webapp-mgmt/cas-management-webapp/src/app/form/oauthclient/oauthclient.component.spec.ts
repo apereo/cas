@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { OauthclientComponent } from './oauthclient.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('OauthclientComponent', () => {
   let component: OauthclientComponent;
@@ -14,7 +15,7 @@ describe('OauthclientComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ OauthclientComponent ],
       providers: [ Messages ]
     })

@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { LogoComponent } from './logo.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('LogoComponent', () => {
   let component: LogoComponent;
@@ -14,7 +15,7 @@ describe('LogoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ LogoComponent ],
       providers: [ Messages ]
     })

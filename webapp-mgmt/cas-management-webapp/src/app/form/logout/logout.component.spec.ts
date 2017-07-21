@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { LogoutComponent } from './logout.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('LogoutComponent', () => {
   let component: LogoutComponent;
@@ -14,7 +15,7 @@ describe('LogoutComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ LogoutComponent ],
       providers: [ Messages ]
     })

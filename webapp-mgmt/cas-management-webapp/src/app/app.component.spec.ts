@@ -22,7 +22,7 @@ describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule,
-        RouterTestingModule.withRoutes([{path:"domains",component:AppComponent}])
+        RouterTestingModule.withRoutes([{path:"services",component:AppComponent}])
       ],
       declarations: [
         AppComponent,

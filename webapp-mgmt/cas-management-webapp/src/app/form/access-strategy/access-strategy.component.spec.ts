@@ -9,6 +9,7 @@ import {RejectedattributesComponent} from "../rejectedattributes/rejectedattribu
 import {Messages} from "../../messages";
 import {FormData, Data} from "../../../domain/form";
 import {TabService} from "../tab.service";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('AccessStrategyComponent', () => {
   let component: AccessStrategyComponent;
@@ -16,7 +17,7 @@ describe('AccessStrategyComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ AccessStrategyComponent, RejectedattributesComponent ],
       providers: [
         Messages

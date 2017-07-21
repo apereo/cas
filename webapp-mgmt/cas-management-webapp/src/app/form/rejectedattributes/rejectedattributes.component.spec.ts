@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { RejectedattributesComponent } from './rejectedattributes.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('RejectedattributesComponent', () => {
   let component: RejectedattributesComponent;
@@ -14,7 +15,7 @@ describe('RejectedattributesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ RejectedattributesComponent ],
       providers: [ Messages ]
     })
