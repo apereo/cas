@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { ProxyComponent } from './proxy.component';
 import {Messages} from "../../messages";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('ProxyComponent', () => {
   let component: ProxyComponent;
@@ -14,7 +15,7 @@ describe('ProxyComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ ProxyComponent ],
       providers: [ Messages ]
     })

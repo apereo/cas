@@ -8,6 +8,7 @@ import { MultiauthpaneComponent } from './multiauthpane.component';
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
 import {Data} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('MultiauthpaneComponent', () => {
   let component: MultiauthpaneComponent;
@@ -15,7 +16,7 @@ describe('MultiauthpaneComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [ FormsModule, SharedModule ],
       declarations: [ MultiauthpaneComponent ],
       providers: [ Messages ]
     })

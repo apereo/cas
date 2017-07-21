@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttributeReleaseFiltersComponent } from './attribute-release-filters.component';
+import {SharedModule} from "../../shared/shared.module";
+import {FormsModule} from "@angular/forms";
+import {Messages} from "../../messages";
+import {TabService} from "../tab.service";
+import {FormData, Data} from "../../../domain/form";
 
 describe('AttributeReleaseFiltersComponent', () => {
   let component: AttributeReleaseFiltersComponent;
@@ -8,7 +13,9 @@ describe('AttributeReleaseFiltersComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttributeReleaseFiltersComponent ]
+      imports: [FormsModule, SharedModule],
+      declarations: [ AttributeReleaseFiltersComponent ],
+      providers: [ Messages ]
     })
     .compileComponents();
   }));
@@ -16,6 +23,9 @@ describe('AttributeReleaseFiltersComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleaseFiltersComponent);
     component = fixture.componentInstance;
+    component.selectOptions = new TabService().selectOptions;
+    component.formData = new FormData();
+    component.serviceData = new Data();
     fixture.detectChanges();
   });
 

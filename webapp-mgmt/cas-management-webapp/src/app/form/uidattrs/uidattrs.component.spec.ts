@@ -7,6 +7,7 @@ import { DebugElement } from '@angular/core';
 import { UidattrsComponent } from './uidattrs.component';
 import {Messages} from "../../messages";
 import {FormData, Data,} from "../../../domain/form";
+import {SharedModule} from "../../shared/shared.module";
 
 describe('UidattrsComponent', () => {
   let component: UidattrsComponent;
@@ -14,7 +15,7 @@ describe('UidattrsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule],
+      imports: [ FormsModule, SharedModule],
       declarations: [ UidattrsComponent ],
       providers: [ Messages]
     })
