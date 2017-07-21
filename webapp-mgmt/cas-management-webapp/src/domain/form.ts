@@ -24,9 +24,6 @@ export class Data {
   evalOrder: number;
   requiredHandlers: String[] = [];
   reqHandlersStr: String[] = [];
-  renewalDate: String;
-  casClients: String;
-  contacts: Contact[] = [new Contact()];
   logoutUrl: String;
   multiAuth: MultiAuth = new MultiAuth();
   supportAccess: SupportAccess = new SupportAccess();
@@ -46,8 +43,6 @@ export class Data {
 export class Contact {
   name: String;
   phone: String;
-  email: String;
-  department: String;
 }
 
 export class MultiAuth {
