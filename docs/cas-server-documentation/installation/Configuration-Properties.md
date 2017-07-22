@@ -3553,8 +3553,8 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 
 ```properties
 # Used to secure authentication requests between the IdP and STS
-# cas.authn.wsfedIdP.sts.encryptionKey=
-# cas.authn.wsfedIdP.sts.signingKey=
+# cas.authn.wsfedIdP.sts.crypto.encryption.key=
+# cas.authn.wsfedIdP.sts.crypto.signing.key=
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
