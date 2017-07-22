@@ -37,6 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -71,6 +72,7 @@ import static org.junit.Assert.*;
         CasPersonDirectoryConfiguration.class,
         HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreTicketCatalogConfiguration.class})
+@DirtiesContext
 public class HazelcastTicketRegistryReplicationTests {
     private static final String TGT_ID = "TGT";
     private static final String ST_ID_1 = "ST1";
