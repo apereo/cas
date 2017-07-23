@@ -37,6 +37,7 @@ public class FortressAuthenticationHandlerTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(FortressAuthenticationHandlerTests.class);
     private static final String FORTRESS_SESSION_KEY = "fortressSession";
     private static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
 
     @Mock
     private AccessMgr accessManager;
@@ -54,7 +55,7 @@ public class FortressAuthenticationHandlerTests {
     public void testForUnauthorizeUserLoginIncorrect() throws SecurityException, GeneralSecurityException, PreventedException {
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenThrow(new PasswordException(GlobalErrIds.USER_PW_INVLD, "error message"));
         try {
-            fortressAuthenticationHandler.authenticateUsernamePasswordInternal(new UsernamePasswordCredential("username", "password"), null);
+            fortressAuthenticationHandler.authenticateUsernamePasswordInternal(new UsernamePasswordCredential(USERNAME, PASSWORD), null);
         } catch (Exception e) {
             throw e;
         }
@@ -67,8 +68,8 @@ public class FortressAuthenticationHandlerTests {
         session.setAuthenticated(true);
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(session);
         try {
-            HandlerResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(new UsernamePasswordCredential("username", "password"), null);
-            Assert.assertEquals(handlerResult.getPrincipal().getId(),"username");
+            HandlerResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(new UsernamePasswordCredential(USERNAME, PASSWORD), null);
+            Assert.assertEquals(handlerResult.getPrincipal().getId(),USERNAME);
             final JAXBContext jaxbContext = JAXBContext.newInstance(Session.class);
             Marshaller marshaller = jaxbContext.createMarshaller();
             final StringWriter writer = new StringWriter();
