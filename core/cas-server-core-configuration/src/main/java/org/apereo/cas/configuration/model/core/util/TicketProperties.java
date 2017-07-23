@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.ticket.ProxyGrantingTicketPropert
 import org.apereo.cas.configuration.model.core.ticket.ProxyTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ServiceTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
-import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -20,8 +19,8 @@ public class TicketProperties {
     private ProxyGrantingTicketProperties pgt = new ProxyGrantingTicketProperties();
 
     @NestedConfigurationProperty
-    private SigningEncryptionProperties security = new SigningEncryptionProperties();
-    
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
     @NestedConfigurationProperty
     private ProxyTicketProperties pt = new ProxyTicketProperties();
 
@@ -33,7 +32,11 @@ public class TicketProperties {
 
     @NestedConfigurationProperty
     private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
-    
+
+    public TicketProperties() {
+        this.crypto.setEnabled(false);
+    }
+
     public ProxyGrantingTicketProperties getPgt() {
         return pgt;
     }
@@ -74,11 +77,11 @@ public class TicketProperties {
         this.tgt = tgt;
     }
 
-    public SigningEncryptionProperties getSecurity() {
-        return security;
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
     }
 
-    public void setSecurity(final SigningEncryptionProperties security) {
-        this.security = security;
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.opensaml.core.xml.schema.XSString;
@@ -12,6 +13,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.opensaml.saml.saml2.metadata.LocalizedName;
+
+import java.util.regex.Pattern;
+
 /**
  * This is {@link SamlMetadataUIInfo}.
  *
@@ -21,8 +29,10 @@ import java.util.stream.Collectors;
 public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInfo {
 
     private static final long serialVersionUID = -1434801982864628179L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataUIInfo.class);
 
     private transient UIInfo uiInfo;
+    private String locale;
 
     /**
      * Instantiates a new Simple metadata uI info.
@@ -31,6 +41,17 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public SamlMetadataUIInfo(final RegisteredService registeredService) {
         this(null, registeredService);
+    }
+
+    /**
+     * Instantiates a new Simple metadata uI info.
+     *
+     * @param registeredService the registered service
+     * @param locale browser preferred language
+     */
+    public SamlMetadataUIInfo(final RegisteredService registeredService, final String locale) {
+        this(null, registeredService);
+        this.locale = locale;
     }
 
     /**
@@ -113,5 +134,119 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
 
     public void setUIInfo(final UIInfo uiInfo) {
         this.uiInfo = uiInfo;
+    }
+
+    /**
+     * Gets localized description.
+     *
+     * @param locale browser preferred language
+     * @return the description
+     */
+    public String getDescription(final String locale) {
+        final String description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
+        return (description != null) ? description : super.getDescription();
+    }
+
+    @Override
+    public String getDescription() {
+        return getDescription(this.locale);
+    }
+
+    /**
+     * Gets localized displayName.
+     *
+     * @param locale browser preferred language
+     * @return the displayName
+     */
+    public String getDisplayName(final String locale) {
+        final String displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
+        return (displayName != null) ? displayName : super.getDisplayName();
+    }
+
+    @Override
+    public String getDisplayName() {
+        return getDisplayName(this.locale);
+    }
+
+    /**
+     * Gets localized informationURL.
+     *
+     * @param locale browser preferred language
+     * @return the informationURL
+     */
+    public String getInformationURL(final String locale) {
+        final String informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
+        return (informationUrl != null) ? informationUrl : super.getInformationURL();
+    }
+
+    @Override
+    public String getInformationURL() {
+        return getInformationURL(this.locale);
+    }
+
+    /**
+     * Gets localized privacyStatementURL.
+     *
+     * @param locale browser preferred language
+     * @return the privacyStatementURL
+     */
+    public String getPrivacyStatementURL(final String locale) {
+        final String privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
+        return (privacyStatementURL != null) ? privacyStatementURL : super.getPrivacyStatementURL();
+    }
+
+    @Override
+    public String getPrivacyStatementURL() {
+        return getPrivacyStatementURL(this.locale);
+    }
+
+    /**
+     * Gets localized values.
+     *
+     * @param locale browser preferred language
+     * @param items the items
+     * @return the string value
+     */
+    private String getLocalizedValues(final String locale, final List<?> items) {
+        if (locale != null) {
+            LOGGER.debug("Looking for locale [{}]", locale);
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i) instanceof LocalizedName) {
+                    final Pattern p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+
+                    if (p.matcher(((LocalizedName) items.get(i)).getXMLLang()).matches()) {
+                        return ((LocalizedName) items.get(i)).getValue();
+                    }
+                }
+            }
+            LOGGER.debug("Locale [{}] not found.", locale);
+        }
+
+        LOGGER.debug("Looking for locale [en]");
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i) instanceof LocalizedName) {
+                final Pattern p = Pattern.compile("en", Pattern.CASE_INSENSITIVE);
+
+                if (p.matcher(((LocalizedName) items.get(i)).getXMLLang()).matches()) {
+                    return ((LocalizedName) items.get(i)).getValue();
+                }
+            }
+        }
+        LOGGER.debug("Locale [en] not found.");
+
+        if (!items.isEmpty()) {
+            LOGGER.debug("Loading first available locale [{}]", ((LocalizedName) items.get(0)).getValue());
+            return ((XSString) items.get(0)).getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("displayName", getDisplayName())
+                .append("description", getDescription())
+                .toString();
     }
 }

@@ -7,15 +7,6 @@ package org.apereo.cas.util.cipher;
  * @since 5.0.0
  */
 public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
-    /**
-     * Instantiates a new Protocol ticket cipher executor.
-     *
-     * @param secretKeyEncryption the secret key encryption
-     * @param secretKeySigning    the secret key signing
-     */
-    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning);
-    }
 
     /**
      * Instantiates a new Protocol ticket cipher executor.
@@ -32,5 +23,15 @@ public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
     @Override
     public String getName() {
         return "CAS Protocol Tickets";
+    }
+
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.ticket.crypto.encryption.key";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.ticket.crypto.signing.key";
     }
 }

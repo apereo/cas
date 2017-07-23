@@ -144,7 +144,7 @@ public class CasWebflowContextConfiguration {
 
                 @Override
                 public void encrypt(final InputStream inputStream, final OutputStream outputStream) {
-                    throw new RuntimeException(
+                    throw new IllegalArgumentException(
                             new OperationNotSupportedException("Encrypting input stream is not supported"));
                 }
 
@@ -155,7 +155,7 @@ public class CasWebflowContextConfiguration {
 
                 @Override
                 public void decrypt(final InputStream inputStream, final OutputStream outputStream) {
-                    throw new RuntimeException(
+                    throw new IllegalArgumentException(
                             new OperationNotSupportedException("Decrypting input stream is not supported"));
                 }
             };

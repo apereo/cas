@@ -20,7 +20,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -133,7 +133,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     }
 
     public Set<Class<? extends Exception>> getErrors() {
-        return Collections.unmodifiableSet(this.errors);
+        return new HashSet<>(this.errors);
     }
 
     /**
@@ -198,7 +198,9 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         final String handlerErrorName = this.errors
                 .stream()
                 .filter(e.getHandlerErrors().values()::contains)
-                .map(Class::getSimpleName).findFirst().orElseGet(() -> {
+                .map(Class::getSimpleName)
+                .findFirst()
+                .orElseGet(() -> {
                     LOGGER.error("Unable to translate handler errors of the authentication exception [{}]"
                             + "Returning [{}]", e, UNKNOWN);
                     return UNKNOWN;
@@ -236,7 +238,8 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         LOGGER.debug("Located current event [{}]", currentEvent);
 
         final Exception error = currentEvent.getAttributes().get("error", Exception.class);
-        LOGGER.debug("Located error attribute [{}] from the current event", error);
+        LOGGER.debug("Located error attribute [{}] with message [{}] from the current event",
+                error.getClass(), error.getMessage());
 
         final String event = handle(error, requestContext.getMessageContext());
         LOGGER.debug("Final event id resolved from the error is [{}]", event);

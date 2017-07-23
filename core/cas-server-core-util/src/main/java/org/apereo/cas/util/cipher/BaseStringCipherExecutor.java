@@ -64,11 +64,9 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
                                     final String contentEncryptionAlgorithmIdentifier) {
-
         super();
-
         if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
-            LOGGER.debug("contentEncryptionAlgorithmIdentifier is not defined");
+            LOGGER.warn("Content encryption algorithm identifier is not defined");
             return;
         }
 
@@ -76,8 +74,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(secretKeyToUse)) {
             LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
             secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
-            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
-                    secretKeyToUse, ENCRYPTION_KEY_SIZE, getName());
+            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
+                    secretKeyToUse, ENCRYPTION_KEY_SIZE, getName(), getEncryptionKeySetting());
         } else {
             LOGGER.debug("Located encryption key to use for [{}]", getName());
         }
@@ -86,8 +84,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
             signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
-            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
-                    signingKeyToUse, SIGNING_KEY_SIZE, getName());
+            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
+                    signingKeyToUse, SIGNING_KEY_SIZE, getName(), getSigningKeySetting());
         } else {
             LOGGER.debug("Located signing key to use for [{}]", getName());
         }
@@ -155,7 +153,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
-            throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
+            throw new IllegalArgumentException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
                     + e.getMessage(), e);
         }
     }
@@ -187,4 +185,18 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             throw Throwables.propagate(e);
         }
     }
+
+    /**
+     * Gets encryption key setting.
+     *
+     * @return the encryption key setting
+     */
+    protected abstract String getEncryptionKeySetting();
+
+    /**
+     * Gets signing key setting.
+     *
+     * @return the signing key setting
+     */
+    protected abstract String getSigningKeySetting();
 }

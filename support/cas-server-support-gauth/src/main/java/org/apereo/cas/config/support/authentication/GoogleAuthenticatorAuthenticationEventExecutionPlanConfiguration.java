@@ -10,7 +10,6 @@ import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticatio
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.RestGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -18,7 +17,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
@@ -47,11 +46,12 @@ import java.util.concurrent.TimeUnit;
  * This is {@link GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("googleAuthenticatorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Lazy
     @Autowired
@@ -72,7 +72,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     
     @Bean
     public IGoogleAuthenticator googleAuthenticatorInstance() {
-        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
+        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
         final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
         bldr.setCodeDigits(gauth.getCodeDigits());
@@ -99,7 +99,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
-        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
+        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
         final GoogleAuthenticatorMultifactorAuthenticationProvider p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
@@ -121,7 +121,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
-        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
+        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
         return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry,
                 gauth.getLabel(),
                 gauth.getIssuer());
@@ -139,7 +139,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Bean
     @RefreshScope
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
-        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
+        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
         if (gauth.getJson().getConfig().getLocation() != null) {
             return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getConfig().getLocation(), googleAuthenticatorInstance());
         }
@@ -162,13 +162,15 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
         return new DefaultPrincipalFactory();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
-            plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
-            plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
-        }
-
+    @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer googleAuthenticatorAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
+                plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
+                plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
+            }
+        };
     }
 
     /**

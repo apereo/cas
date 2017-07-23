@@ -1,7 +1,6 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -30,11 +29,12 @@ import java.util.HashSet;
  * This is {@link WsFedAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("wsfedAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class WsFedAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -100,9 +100,10 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration implements Authe
         return new DefaultPrincipalFactory();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        casProperties.getAuthn().getWsfed()
+    @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> casProperties.getAuthn().getWsfed()
                 .stream()
                 .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                         && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))

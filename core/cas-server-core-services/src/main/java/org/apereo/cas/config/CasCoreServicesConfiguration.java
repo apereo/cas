@@ -16,7 +16,7 @@ import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
-import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -116,7 +116,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DefaultServicesManager(serviceRegistryDao);
+        return new DomainServicesManager(serviceRegistryDao);
     }
 
     @Bean

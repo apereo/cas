@@ -6,8 +6,8 @@ import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,7 +59,7 @@ public class GrouperFacade {
 
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
-                return Collections.emptyList();
+                return new ArrayList<>();
             }
             LOGGER.debug("Found [{}] groups for [{}]", results.length, subjectId);
             return Arrays.asList(results);
@@ -68,6 +68,6 @@ public class GrouperFacade {
                     + ", the url endpoint for Grouper WS is correctly configured and the subject [{}]"
                     + "  exists in Grouper.", subjectId, e);
         }
-        return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 }

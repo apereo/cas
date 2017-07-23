@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.PathWatcher;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.ComposableSupplier;
 import org.apereo.cas.util.io.LockedOutputStream;
@@ -34,6 +35,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -46,10 +49,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
     private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE =
-            service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+        service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
                     + "This will overwrite previous service definitions and is likely a configuration problem. "
                     + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
-    
+
     private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
         LOG_SERVICE_DUPLICATE.accept(s2);
         return s1;
@@ -76,6 +79,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private PathWatcher serviceRegistryConfigWatcher;
 
+    private Pattern serviceFileNamePattern;
+    
     /**
      * Instantiates a new service registry dao.
      *
@@ -117,7 +122,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                                     final boolean enableWatcher,
                                     final ApplicationEventPublisher eventPublisher) {
         setEventPublisher(eventPublisher);
-
+        this.serviceFileNamePattern = RegexUtils.createPattern("\\w+-\\d+\\." + getExtension());
+        
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
@@ -232,7 +238,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                 .filter(Objects::nonNull)
                 .sorted()
                 .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
-                .collect(Collectors.toMap(RegisteredService::getId, e -> e, LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
+                .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
+                        LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
 
         return new ArrayList<>(this.serviceMap.values());
     }
@@ -258,6 +265,13 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         if (file.length() == 0) {
             LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", file.getName());
             return null;
+        }
+
+        if (!RegexUtils.matches(this.serviceFileNamePattern, file.getName())) {
+            LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
+                        + "While CAS tries to be forgiving as much as possible, it's recommended "
+                        + "that you rename the file to match the request pattern to avoid issues with duplicate service loading.",
+                    file.getName(), this.serviceFileNamePattern.pattern());
         }
 
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
@@ -298,16 +312,21 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @throws IllegalArgumentException if file name is invalid
      */
     protected File makeFile(final RegisteredService service) {
-        final String fileName = StringUtils.remove(service.getName() + '-' + service.getId() + '.' + getExtension(), " ");
+        final String fileName = StringUtils.remove(getServiceDefinitionFileName(service), " ");
         try {
             final File svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
             return svcFile;
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             LOGGER.warn("Service file name [{}] is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
     }
+
+    private String getServiceDefinitionFileName(final RegisteredService service) {
+        return service.getName() + '-' + service.getId() + '.' + getExtension();
+    }
+    
 
     /**
      * Gets extension associated with files in the given resource directory.

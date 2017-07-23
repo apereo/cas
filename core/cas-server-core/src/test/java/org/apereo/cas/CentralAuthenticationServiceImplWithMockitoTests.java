@@ -1,16 +1,16 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -52,7 +52,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,8 +121,9 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         final List<Authentication> authnListMock = mock(List.class);
-        //Size is required to be 2, so that we can simulate proxying capabilities
+        // Size is required to be 2, so that we can simulate proxying capabilities
         when(authnListMock.size()).thenReturn(2);
+        when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});
         when(authnListMock.get(anyInt())).thenReturn(this.authentication);
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
         when(stMock.getGrantingTicket()).thenReturn(tgtMock);
@@ -142,12 +142,12 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final DefaultTicketFactory factory = new DefaultTicketFactory(
                 new DefaultProxyGrantingTicketFactory(null, null, null),
                 new DefaultTicketGrantingTicketFactory(null, null, null),
-                new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), Collections.emptyMap(), false, null),
-                new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, true));
+                new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null),
+                new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class),
-                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(), 
+                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(),
                 new DefaultPrincipalFactory(), null);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }

@@ -10,7 +10,7 @@ import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,8 +42,8 @@ public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
                     .entrySet()
                     .stream()
                     .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            p -> p.getValue().getValues().stream().map(IdPAttributeValue::getValue).collect(Collectors.toList()))
+                        Map.Entry::getKey,
+                        p -> p.getValue().getValues().stream().map(IdPAttributeValue::getValue).collect(Collectors.toList()))
                     );
 
             return new NamedPersonImpl(uid, attributes);
@@ -54,21 +54,21 @@ public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     public Set<IPersonAttributes> getPeople(final Map<String, Object> query) {
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 
     @Override
     public Set<String> getPossibleUserAttributeNames() {
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 
     @Override
     public Set<String> getAvailableQueryAttributes() {
-        return Collections.emptySet();
+        return new HashSet<>(0);
     }
 }

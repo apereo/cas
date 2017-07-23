@@ -49,8 +49,10 @@ public class SpnegoProperties {
     private String supportedBrowsers = "MSIE,Trident,Firefox,AppleWebKit";
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    /**
+     * This is principal transformation properties
+     */
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
@@ -306,6 +308,7 @@ public class SpnegoProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = -8835216200501334936L;
         private String baseDn;
         private String searchFilter;
 

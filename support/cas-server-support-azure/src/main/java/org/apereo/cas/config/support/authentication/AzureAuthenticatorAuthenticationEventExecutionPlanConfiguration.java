@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationRequestBuilder;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorGenerateTokenAction;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -14,7 +13,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -36,11 +35,12 @@ import java.io.FileNotFoundException;
  * This is {@link AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("azureAuthenticatorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -52,7 +52,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @Bean
     public PFAuth azureAuthenticatorInstance() {
         try {
-            final MultifactorAuthenticationProperties.Azure azure = casProperties.getAuthn().getMfa().getAzure();
+            final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
             final File cfg = new File(azure.getConfigDir());
             if (!cfg.exists() || !cfg.isDirectory()) {
                 throw new FileNotFoundException(cfg.getAbsolutePath() + " does not exist or is not a directory");
@@ -71,7 +71,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
 
     @Bean
     public AzureAuthenticatorAuthenticationRequestBuilder azureAuthenticationRequestBuilder() {
-        final MultifactorAuthenticationProperties.Azure azure = casProperties.getAuthn().getMfa().getAzure();
+        final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
         return new AzureAuthenticatorAuthenticationRequestBuilder(
                 azure.getPhoneAttributeName(),
                 azure.getMode());
@@ -93,7 +93,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider azureAuthenticatorAuthenticationProvider() {
-        final MultifactorAuthenticationProperties.Azure azure = casProperties.getAuthn().getMfa().getAzure();
+        final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
         final AzureAuthenticatorMultifactorAuthenticationProvider p = new AzureAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(azureBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
@@ -115,7 +115,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @Bean
     @RefreshScope
     public Action azureGenerateTokenAction() {
-        final MultifactorAuthenticationProperties.Azure azure = casProperties.getAuthn().getMfa().getAzure();
+        final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
         return new AzureAuthenticatorGenerateTokenAction(azure.getMode());
     }
 
@@ -125,11 +125,14 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
         return new DefaultPrincipalFactory();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getAzure().getConfigDir())) {
-            plan.registerAuthenticationHandler(azureAuthenticatorAuthenticationHandler());
-            plan.registerMetadataPopulator(azureAuthenticatorAuthenticationMetaDataPopulator());
-        }
+    @ConditionalOnMissingBean(name = "azureAuthenticatorAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer azureAuthenticatorAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getAzure().getConfigDir())) {
+                plan.registerAuthenticationHandler(azureAuthenticatorAuthenticationHandler());
+                plan.registerMetadataPopulator(azureAuthenticatorAuthenticationMetaDataPopulator());
+            }
+        };
     }
 }

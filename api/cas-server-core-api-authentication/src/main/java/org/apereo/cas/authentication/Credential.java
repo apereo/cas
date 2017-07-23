@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @see CredentialMetaData
  * @since 3.0.0
  */
+@FunctionalInterface
 public interface Credential extends Serializable {
     /** Credential type, collected as metadata for authentication. */
     String CREDENTIAL_TYPE_ATTRIBUTE = "credentialType";

@@ -1,9 +1,13 @@
 package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -181,14 +185,13 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setName("testSaveAttributeReleasePolicyMappingRules");
         r.setServiceId(SERVICE_ID);
 
-        final Map<String, String> map = new HashMap<>();
+        final Multimap<String, String> map = ArrayListMultimap.create();
         map.put("attr1", "newattr1");
         map.put("attr2", "newattr2");
         map.put("attr2", "newattr3");
 
-
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        policy.setAllowedAttributes(map);
+        policy.setAllowedAttributes(CollectionUtils.wrap(map));
         r.setAttributeReleasePolicy(policy);
 
         final RegisteredService r2 = this.dao.save(r);
@@ -382,6 +385,24 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         assertNotNull(s.getAccessStrategy());
     }
 
+    @Test
+    public void verifyMappedRegexAttributeFilter() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("something");
+        r.setName("verifyMappedRegexAttributeFilter");
+        r.setId(4245);
+
+        final ReturnAllowedAttributeReleasePolicy p = new ReturnAllowedAttributeReleasePolicy();
+        final RegisteredServiceMappedRegexAttributeFilter filter = new RegisteredServiceMappedRegexAttributeFilter();
+        filter.setCompleteMatch(true);
+        filter.setPatterns(CollectionUtils.wrap("one", "two"));
+        p.setAttributeFilter(filter);
+
+        r.setAttributeReleasePolicy(p);
+        this.dao.save(r);
+        this.dao.load();
+    }
+    
     @Test
     public void persistCustomServiceProperties() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();

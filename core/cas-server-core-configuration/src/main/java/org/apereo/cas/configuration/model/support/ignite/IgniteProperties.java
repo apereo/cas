@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -36,7 +36,7 @@ public class IgniteProperties {
     private boolean forceServerMode;
     
     @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
     public long getAckTimeout() {
         return Duration.parse(ackTimeout).toMillis();
@@ -102,11 +102,11 @@ public class IgniteProperties {
         this.forceServerMode = forceServerMode;
     }
 
-    public CryptographyProperties getCrypto() {
+    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final CryptographyProperties crypto) {
+    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
     
@@ -191,18 +191,9 @@ public class IgniteProperties {
     }
         
     public static class TicketsCache {
-        private String cacheName = "TicketsCache";
         private String cacheMode = "REPLICATED";
         private String atomicityMode = "TRANSACTIONAL";
         private String writeSynchronizationMode = "FULL_SYNC";
-
-        public String getCacheName() {
-            return cacheName;
-        }
-
-        public void setCacheName(final String cacheName) {
-            this.cacheName = cacheName;
-        }
 
         public String getCacheMode() {
             return cacheMode;

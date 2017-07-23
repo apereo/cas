@@ -270,11 +270,11 @@ public class CasCoreWebflowConfiguration {
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
         final WebflowProperties webflow = casProperties.getWebflow();
         return new WebflowConversationStateCipherExecutor(
-                webflow.getEncryption().getKey(),
-                webflow.getSigning().getKey(),
-                webflow.getAlg(),
-                webflow.getSigning().getKeySize(),
-                webflow.getEncryption().getKeySize());
+                webflow.getCrypto().getEncryption().getKey(),
+                webflow.getCrypto().getSigning().getKey(),
+                webflow.getCrypto().getAlg(),
+                webflow.getCrypto().getSigning().getKeySize(),
+                webflow.getCrypto().getEncryption().getKeySize());
     }
 
     @Bean

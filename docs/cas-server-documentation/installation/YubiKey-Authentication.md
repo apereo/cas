@@ -95,3 +95,6 @@ public class MyYubiKeyConfiguration {
   }
 }
 ```
+
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.

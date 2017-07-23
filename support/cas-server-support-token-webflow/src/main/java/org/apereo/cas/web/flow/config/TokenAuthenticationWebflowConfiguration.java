@@ -3,6 +3,8 @@ package org.apereo.cas.web.flow.config;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.DefaultTokenRequestExtractor;
+import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.TokenWebflowConfigurer;
@@ -57,11 +59,18 @@ public class TokenAuthenticationWebflowConfiguration {
         return new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "tokenRequestExtractor")
+    public TokenRequestExtractor tokenRequestExtractor() {
+        return new DefaultTokenRequestExtractor();
+    }
 
     @Bean
+    @ConditionalOnMissingBean(name = "tokenAuthenticationAction")
     public Action tokenAuthenticationAction() {
         return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, servicesManager);
+                adaptiveAuthenticationPolicy,
+                tokenRequestExtractor(), servicesManager);
     }
 }

@@ -18,8 +18,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -29,8 +29,10 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbTicketRegistry.class);
     private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
+    private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
     private final boolean dropCollection;
     private final TicketCatalog ticketCatalog;
@@ -156,22 +158,12 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Ticket> tickets = new HashSet<>();
-        try {
-            final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-            metadata.forEach(t -> {
-                final String map = getTicketCollectionInstanceByMetadata(t);
-                final Collection<TicketHolder> ticketHolders = this.mongoTemplate.findAll(TicketHolder.class, map);
-                final Collection<Ticket> colTickets = ticketHolders
-                        .stream()
-                        .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
-                        .collect(Collectors.toList());
-                tickets.addAll(colTickets);
-            });
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return decodeTickets(tickets);
+        return this.ticketCatalog.findAll().stream()
+                .map(this::getTicketCollectionInstanceByMetadata)
+                .map(map -> mongoTemplate.findAll(TicketHolder.class, map))
+                .flatMap(List::stream)
+                .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -193,22 +185,30 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        final AtomicLong count = new AtomicLong();
-        metadata.forEach(r -> {
-            final String collectionName = getTicketCollectionInstanceByMetadata(r);
-            if (StringUtils.isNotBlank(collectionName)) {
-                final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
-                final long countTickets = this.mongoTemplate.count(query, collectionName);
-                count.addAndGet(countTickets);
-                mongoTemplate.remove(query, collectionName);
-            }
-        });
-        return count.get();
+        return this.ticketCatalog.findAll().stream()
+                .map(this::getTicketCollectionInstanceByMetadata)
+                .filter(StringUtils::isNotBlank)
+                .mapToLong(collectionName -> {
+                    final long countTickets = this.mongoTemplate.count(SELECT_ALL_NAMES_QUERY, collectionName);
+                    mongoTemplate.remove(SELECT_ALL_NAMES_QUERY, collectionName);
+                    return countTickets;
+                })
+                .sum();
     }
 
-    private static int getTimeToLive(final Ticket ticket) {
-        return ticket.getExpirationPolicy().getTimeToLive().intValue();
+    /**
+     * Calculate the time at which the ticket is eligible for automatic deletion by MongoDb.
+     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
+     */
+    private static Date getExpireAt(final Ticket ticket) {
+        final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+
+        // expiration policy can specify not to delete automatically
+        if (ttl < 1) {
+            return null;
+        }
+
+        return new Date(System.currentTimeMillis() + (ttl * 1000));
     }
 
     private static String serializeTicketForMongoDocument(final Ticket ticket) {
@@ -229,8 +229,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         final String json = serializeTicketForMongoDocument(encTicket);
         if (StringUtils.isNotBlank(json)) {
             LOGGER.trace("Serialized ticket into a JSON document as \n [{}]", JsonValue.readJSON(json).toString(Stringify.FORMATTED));
-            final int timeToLive = getTimeToLive(ticket);
-            return new TicketHolder(json, encTicket.getId(), encTicket.getClass().getName(), timeToLive);
+            final Date expireAt = getExpireAt(ticket);
+            return new TicketHolder(json, encTicket.getId(), encTicket.getClass().getName(), expireAt);
         }
         throw new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON");
     }

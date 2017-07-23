@@ -34,7 +34,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
     private final String encryptionSecretKey;
 
-
     /**
      * Instantiates a new cryptic ticket cipher executor.
      *
@@ -50,18 +49,20 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
         String signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
-            LOGGER.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
+            LOGGER.warn("Secret key for signing is not defined under [{}]. CAS will attempt to auto-generate the signing key",
+                    getSigningKeySetting());
             signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
-            LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
-                    signingKeyToUse, signingKeySize);
+            LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
+                    signingKeyToUse, signingKeySize, getSigningKeySetting());
         }
         setSigningKey(signingKeyToUse);
 
         if (StringUtils.isBlank(encryptionSecretKey)) {
-            LOGGER.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
+            LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
+                    getEncryptionKeySetting());
             this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
-            LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
-                    this.encryptionSecretKey, encryptionKeySize);
+            LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
+                    this.encryptionSecretKey, encryptionKeySize, getEncryptionKeySetting());
         } else {
             this.encryptionSecretKey = encryptionSecretKey;
         }
@@ -114,4 +115,18 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     public String getName() {
         return null;
     }
+
+    /**
+     * Gets encryption key setting.
+     *
+     * @return the encryption key setting
+     */
+    protected abstract String getEncryptionKeySetting();
+
+    /**
+     * Gets signing key setting.
+     *
+     * @return the signing key setting
+     */
+    protected abstract String getSigningKeySetting();
 }

@@ -11,8 +11,8 @@ import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.event.EventListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link CasConfigurationEventListener}.
@@ -64,12 +64,12 @@ public class CasConfigurationEventListener {
             try {
                 keys = this.contextRefresher.refresh();
                 LOGGER.debug("Refreshed the following settings: [{}].", keys);
-            } catch (final Throwable e) {
+            } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
             } finally {
                 rebind();
                 LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
-                        ObjectUtils.defaultIfNull(keys, Collections.emptyList()));
+                        ObjectUtils.defaultIfNull(keys, new ArrayList<>(0)));
             }
         }
     }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -42,18 +43,6 @@ public final class RegexUtils {
     }
 
     /**
-     * Creates the pattern. Matching is by default
-     * case insensitive.
-     *
-     * @param pattern the pattern, may not be null.
-     * @return the pattern or or {@link RegexUtils#MATCH_NOTHING_PATTERN}
-     * if pattern is null or invalid.
-     */
-    public static Pattern createPattern(final String pattern) {
-        return createPattern(pattern, Pattern.CASE_INSENSITIVE);
-    }
-    
-    /**
      * Concatenate all elements in the given collection to form a regex pattern.
      *
      * @param requiredValues  the required values
@@ -63,6 +52,18 @@ public final class RegexUtils {
     public static Pattern concatenate(final Collection<String> requiredValues, final boolean caseInsensitive) {
         final String pattern = requiredValues.stream().collect(Collectors.joining("|", "(", ")"));
         return createPattern(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+    }
+
+    /**
+     * Creates the pattern. Matching is by default
+     * case insensitive.
+     *
+     * @param pattern the pattern, may not be null.
+     * @return the pattern or or {@link RegexUtils#MATCH_NOTHING_PATTERN}
+     * if pattern is null or invalid.
+     */
+    public static Pattern createPattern(final String pattern) {
+        return createPattern(pattern, Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -83,5 +84,29 @@ public final class RegexUtils {
             LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
             return MATCH_NOTHING_PATTERN;
         }
+    }
+
+    /**
+     * Matches the entire region for the string.
+     *
+     * @param pattern the pattern
+     * @param string  the string
+     * @return true/false
+     * @see Matcher#matches()
+     */
+    public static boolean matches(final Pattern pattern, final String string) {
+        return pattern.matcher(string).matches();
+    }
+
+    /**
+     * Attempts to find the next subsequence of the input sequence that matches the pattern.
+     *
+     * @param pattern the pattern
+     * @param string  the string
+     * @return true/false
+     * @see Matcher#find()
+     */
+    public static boolean find(final Pattern pattern, final String string) {
+        return pattern.matcher(string).find();
     }
 }

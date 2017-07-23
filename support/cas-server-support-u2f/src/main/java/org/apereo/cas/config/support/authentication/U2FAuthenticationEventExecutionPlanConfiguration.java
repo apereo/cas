@@ -3,14 +3,13 @@ package org.apereo.cas.config.support.authentication;
 import org.apereo.cas.adaptors.u2f.U2FAuthenticationHandler;
 import org.apereo.cas.adaptors.u2f.U2FMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -18,6 +17,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +27,12 @@ import org.springframework.context.annotation.Lazy;
  * This is {@link U2FAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("u2fAuthenticationEventExecutionPlanConfiguration")
-public class U2FAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -67,7 +69,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration implements Authent
     @Bean
     @RefreshScope
     public U2FAuthenticationHandler u2fAuthenticationHandler() {
-        final MultifactorAuthenticationProperties.U2F u2f = this.casProperties.getAuthn().getMfa().getU2f();
+        final U2FMultifactorProperties u2f = this.casProperties.getAuthn().getMfa().getU2f();
         return new U2FAuthenticationHandler(u2f.getName(), servicesManager, u2fPrincipalFactory(), u2fDeviceRepository);
     }
 
@@ -82,9 +84,12 @@ public class U2FAuthenticationEventExecutionPlanConfiguration implements Authent
         return p;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandler(u2fAuthenticationHandler());
-        plan.registerMetadataPopulator(u2fAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "u2fAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer u2fAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(u2fAuthenticationHandler());
+            plan.registerMetadataPopulator(u2fAuthenticationMetaDataPopulator());
+        };
     }
 }

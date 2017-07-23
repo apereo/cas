@@ -7,6 +7,7 @@ package org.apereo.cas.authentication.handler;
  * @author Howard Gilbert
  * @since 3.3.6
  */
+@FunctionalInterface
 public interface PrincipalNameTransformer {
 
     /**

@@ -41,6 +41,26 @@ public final class DateTimeUtils {
     }
 
     /**
+     * Local date time of local date time.
+     *
+     * @param time the time
+     * @return the local date time
+     */
+    public static LocalDateTime localDateTimeOf(final long time) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.systemDefault());
+    }
+
+    /**
+     * Local date time of local date time.
+     *
+     * @param time the time
+     * @return the local date time
+     */
+    public static LocalDateTime localDateTimeOf(final Date time) {
+        return localDateTimeOf(time.getTime());
+    }
+
+    /**
      * Parse the given value as a zoned datetime.
      *
      * @param value the value
@@ -66,6 +86,16 @@ public final class DateTimeUtils {
     }
 
     /**
+     * Gets ZonedDateTime for ReadableInstant.
+     *
+     * @param time Time object to be converted.
+     * @return ZonedDateTime representing time
+     */
+    public static ZonedDateTime zonedDateTimeOf(final ReadableInstant time) {
+        return zonedDateTimeOf(time.getMillis());
+    }
+
+    /**
      * Utility for creating a ZonedDateTime object from a millisecond timestamp.
      *
      * @param time Milliseconds since Epoch UTC
@@ -85,37 +115,7 @@ public final class DateTimeUtils {
     public static ZonedDateTime zonedDateTimeOf(final long time, final ZoneId zoneId) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(time), zoneId);
     }
-
-    /**
-     * Local date time of local date time.
-     *
-     * @param time the time
-     * @return the local date time
-     */
-    public static LocalDateTime localDateTimeOf(final long time) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.systemDefault());
-    }
-
-    /**
-     * Local date time of local date time.
-     *
-     * @param time the time
-     * @return the local date time
-     */
-    public static LocalDateTime localDateTimeOf(final Date time) {
-        return localDateTimeOf(time.getTime());
-    }
-
-    /**
-     * Gets ZonedDateTime for ReadableInstant.
-     *
-     * @param time Time object to be converted.
-     * @return ZonedDateTime representing time
-     */
-    public static ZonedDateTime zonedDateTimeOf(final ReadableInstant time) {
-        return zonedDateTimeOf(time.getMillis());
-    }
-
+    
     /**
      * Gets ZonedDateTime for Date.
      *

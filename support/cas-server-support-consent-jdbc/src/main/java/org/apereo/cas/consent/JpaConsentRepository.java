@@ -46,7 +46,25 @@ public class JpaConsentRepository implements ConsentRepository {
                     .setParameter("service", service.getId())
                     .getSingleResult();
         } catch (final NoResultException e) {
-            return null;
+            LOGGER.debug(e.getMessage());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
         }
+        return null;
+    }
+
+    @Override
+    public boolean storeConsentDecision(final ConsentDecision decision) {
+        try {
+            final boolean isNew = decision.getId() < 0;
+            final ConsentDecision mergedDecision = this.entityManager.merge(decision);
+            if (!isNew) {
+                this.entityManager.persist(mergedDecision);
+            }
+            return true;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 }

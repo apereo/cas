@@ -12,7 +12,6 @@ import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAction;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -20,7 +19,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,10 +40,12 @@ import org.springframework.webflow.execution.Action;
  * This is {@link YubiKeyAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("yubikeyAuthenticationEventExecutionPlanConfiguration")
-public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired
@@ -82,7 +84,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @Bean
     @ConditionalOnMissingBean(name = "yubicoClient")
     public YubicoClient yubicoClient() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties yubi = this.casProperties.getAuthn().getMfa().getYubikey();
 
         if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
@@ -103,7 +105,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
     public AuthenticationHandler yubikeyAuthenticationHandler() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties yubi = this.casProperties.getAuthn().getMfa().getYubikey();
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getName(),
                 servicesManager, yubikeyPrincipalFactory(),
                 yubicoClient(), yubiKeyAccountRegistry());
@@ -133,7 +135,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistry")
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
 
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
@@ -164,12 +166,15 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         return p;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
-        if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
-            plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
-            plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
-        }
+    @ConditionalOnMissingBean(name = "yubikeyAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
+            if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
+                plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
+                plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
+            }
+        };
     }
 }

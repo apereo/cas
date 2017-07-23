@@ -85,6 +85,7 @@ dependencies {
     compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-events-configuration")
     compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-configuration-metadata-server")
 
     compile project(":support:cas-server-support-throttle")
     compile project(":support:cas-server-support-configuration")
@@ -94,7 +95,7 @@ dependencies {
     compile project(":support:cas-server-support-reports")
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
-    compile project(":support:cas-server-support-pm")
+    compile project(":support:cas-server-support-pm-webflow")
 
     compile project(":webapp:cas-server-webapp-config")
     compile project(":webapp:cas-server-webapp-init")

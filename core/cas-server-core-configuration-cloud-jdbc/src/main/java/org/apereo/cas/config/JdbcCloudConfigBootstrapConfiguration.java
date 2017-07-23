@@ -47,6 +47,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
 
     private static class JdbcCloudConnection extends AbstractJpaProperties {
         private static final String SQL = "SELECT id, name, value FROM CAS_SETTINGS_TABLE";
+        private static final long serialVersionUID = 3141915452108685020L;
 
         private final Environment environment;
 

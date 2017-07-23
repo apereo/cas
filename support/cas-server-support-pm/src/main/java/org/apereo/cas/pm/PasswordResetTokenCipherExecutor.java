@@ -12,16 +12,6 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     /**
      * Instantiates a new pm cipher executor.
      *
-     * @param secretKeyEncryption the secret key encryption
-     * @param secretKeySigning    the secret key signing
-     */
-    public PasswordResetTokenCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning);
-    }
-
-    /**
-     * Instantiates a new pm cipher executor.
-     *
      * @param secretKeyEncryption                  the secret key encryption
      * @param secretKeySigning                     the secret key signing
      * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
@@ -34,5 +24,15 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     @Override
     public String getName() {
         return "Password Reset Token";
+    }
+    
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.authn.pm.reset.crypto.encryption.key";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.authn.pm.reset.crypto.signing.key";
     }
 }

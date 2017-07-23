@@ -20,7 +20,7 @@ public class HealthCheckMonitorTests {
 
     @Test
     public void verifyObserveUnknown() throws Exception {
-        final HealthCheckMonitor monitor = new HealthCheckMonitor(Collections.emptySet());
+        final HealthCheckMonitor monitor = new HealthCheckMonitor(new HashSet<>(0));
 
         assertEquals(StatusCode.UNKNOWN, monitor.observe().getCode());
     }

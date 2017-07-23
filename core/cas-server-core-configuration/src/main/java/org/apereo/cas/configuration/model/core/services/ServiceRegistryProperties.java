@@ -19,27 +19,58 @@ import org.springframework.core.io.ClassPathResource;
 
 public class ServiceRegistryProperties extends AbstractConfigProperties {
 
+    private static final long serialVersionUID = -368826011744304210L;
+
     @NestedConfigurationProperty
+    /**
+     * Properties pertaining to jpa service registry.
+     */
     private JpaServiceRegistryProperties jpa = new JpaServiceRegistryProperties();
 
     @NestedConfigurationProperty
+    /**
+     * Properties pertaining to ldap service registry.
+     */
     private LdapServiceRegistryProperties ldap = new LdapServiceRegistryProperties();
 
     @NestedConfigurationProperty
+    /**
+     * Properties pertaining to mongo db service registry.
+     */
     private MongoServiceRegistryProperties mongo = new MongoServiceRegistryProperties();
 
     @NestedConfigurationProperty
+    /**
+     * Properties pertaining to couchbase service registry.
+     */
     private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
 
     @NestedConfigurationProperty
+    /**
+     * Properties pertaining to dynamo db service registry.
+     */
     private DynamoDbServiceRegistryProperties dynamoDb = new DynamoDbServiceRegistryProperties();
-    
+
+    /**
+     * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
+     * with CAS in JSON format.
+     */
     private boolean initFromJson;
 
+    /**
+     * String representation of a start delay of loading service definitions data for an active service registry implementation.
+     */
     private String startDelay = "PT15S";
 
+    /**
+     * String representation of a repeat interval of re-loading service definitions data for an active service registry implementation.
+     */
     private String repeatInterval = "PT2M";
 
+    /**
+     * Flag indicating whether a background watcher thread is enabled for the purposes of ;ive reloading of service registry data changes
+     * from persistent data store.
+     */
     private boolean watcherEnabled = true;
 
     /**

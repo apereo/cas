@@ -51,15 +51,15 @@ public final class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getRawResourceFrom(final String location) throws IOException {
-        final AbstractResource metadataLocationResource;
+        final AbstractResource res;
         if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
-            metadataLocationResource = new UrlResource(location);
+            res = new UrlResource(location);
         } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
-            metadataLocationResource = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
+            res = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         } else {
-            metadataLocationResource = new FileSystemResource(location);
+            res = new FileSystemResource(StringUtils.remove(location, "file:"));
         }
-        return metadataLocationResource;
+        return res;
     }
 
     /**
@@ -91,7 +91,7 @@ public final class ResourceUtils {
         if (res != null) {
             try {
                 IOUtils.read(res.getInputStream(), new byte[1]);
-                return true;
+                return res.contentLength() > 0;
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
                 return false;

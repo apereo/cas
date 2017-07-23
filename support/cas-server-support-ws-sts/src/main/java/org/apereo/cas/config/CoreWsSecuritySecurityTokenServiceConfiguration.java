@@ -25,7 +25,6 @@ import org.apache.cxf.ws.security.sts.provider.operation.IssueOperation;
 import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apache.wss4j.dom.validate.Validator;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -72,12 +71,13 @@ import java.util.Properties;
  * This is {@link CoreWsSecuritySecurityTokenServiceConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("coreWsSecuritySecurityTokenServiceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = {"classpath:jaxws-realms.xml", "classpath:META-INF/cxf/cxf.xml"})
-public class CoreWsSecuritySecurityTokenServiceConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
@@ -307,7 +307,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getEncryptionKey(), wsfed.getSigningKey());
+        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),
+                wsfed.getCrypto().getSigning().getKey(),
+                wsfed.getCrypto().getAlg());
     }
 
     @Bean
@@ -323,8 +325,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return new DefaultUniqueTicketIdGenerator();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
     }
 }

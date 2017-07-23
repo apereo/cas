@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,24 @@ public final class CollectionUtils {
     }
 
     /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param source the source
+     * @return the map
+     */
+    public static <K, V> Map<K, Collection<V>> wrap(final Multimap<K, V> source) {
+        if (source != null && !source.isEmpty()) {
+            final Map inner = source.asMap();
+            final Map map = new HashMap<>();
+            inner.forEach((k, v) -> map.put(k, wrap(v)));
+            return map;
+        }
+        return new HashMap<>();
+    }
+
+    /**
      * Wraps a possibly null map in an immutable wrapper.
      *
      * @param <K>    the key type
@@ -61,7 +81,7 @@ public final class CollectionUtils {
      * @return the map
      */
     public static <K, V> Map<K, V> wrap(final Map<K, V> source) {
-        if (source != null) {
+        if (source != null && !source.isEmpty()) {
             return new HashMap<>(source);
         }
         return new HashMap<>();
@@ -85,6 +105,69 @@ public final class CollectionUtils {
     }
 
     /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2) {
+        final Map m = wrap(key, value);
+        m.put(key2, value2);
+        return m;
+    }
+
+    /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3) {
+        final Map m = wrap(key, value, key2, value2);
+        m.put(key3, value3);
+        return m;
+    }
+
+    /**
+     * Wrap map.
+     *
+     * @param <K>    the type parameter
+     * @param <V>    the type parameter
+     * @param key    the key
+     * @param value  the value
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @param key3   the key 3
+     * @param value3 the value 3
+     * @param key4   the key 4
+     * @param value4 the value 4
+     * @return the map
+     */
+    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+                                        final String key2, final Object value2,
+                                        final String key3, final Object value3,
+                                        final String key4, final Object value4) {
+        final Map m = wrap(key, value, key2, value2, key3, value3);
+        m.put(key4, value4);
+        return m;
+    }
+
+    /**
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
@@ -94,7 +177,14 @@ public final class CollectionUtils {
     public static <T> List<T> wrap(final T source) {
         final List<T> list = new ArrayList<>();
         if (source != null) {
-            list.add(source);
+            if (source instanceof Collection) {
+                final Iterator it = ((Collection) source).iterator();
+                while (it.hasNext()) {
+                    list.add((T) it.next());
+                }
+            } else {
+                list.add(source);
+            }
         }
         return list;
     }
@@ -108,7 +198,7 @@ public final class CollectionUtils {
      */
     public static <T> List<T> wrap(final List<T> source) {
         final List<T> list = new ArrayList<>();
-        if (source != null) {
+        if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
         return list;
@@ -123,7 +213,7 @@ public final class CollectionUtils {
      */
     public static <T> Set<T> wrap(final Set<T> source) {
         final Set<T> list = new LinkedHashSet<>();
-        if (source != null) {
+        if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
         return list;

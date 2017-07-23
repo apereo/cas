@@ -131,6 +131,7 @@ public class AdminPagesSecurityProperties {
     }
     
     public static class Ldap extends AbstractLdapAuthenticationProperties {
+        private static final long serialVersionUID = -7333244539096172557L;
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 
@@ -151,10 +152,14 @@ public class AdminPagesSecurityProperties {
     }
 
     public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = 2625666117528467867L;
         private String rolePrefix;
         private String query;
 
         @NestedConfigurationProperty
+        /**
+         * Password encoder properties.
+         */
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
         public String getRolePrefix() {

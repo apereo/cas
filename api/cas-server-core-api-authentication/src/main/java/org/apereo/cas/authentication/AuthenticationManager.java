@@ -8,6 +8,7 @@ package org.apereo.cas.authentication;
  *
  * @since 3.0.0
  */
+@FunctionalInterface
 public interface AuthenticationManager {
 
     /** Authentication method attribute name. **/

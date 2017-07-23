@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -18,7 +20,7 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
@@ -115,7 +117,7 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +160,10 @@ public final class Beans {
      * for this is to use the {@link AbstractJpaProperties#isDataSourceProxy()} setting and then the dataSource will be
      * wrapped in an application level class. If that is an issue, don't do it.
      *
+     * If user wants to do lookup as resource, they may include <code>java:/comp/env</code>
+     * in <code>dataSourceName</code> and put resource reference in web.xml
+     * otherwise <code>dataSourceName</code> is used as JNDI name.
+     *
      * @param jpaProperties the jpa properties
      * @return the data source
      */
@@ -168,11 +174,6 @@ public final class Beans {
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
                 final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-                /*
-                 if user wants to do lookup as resource, they may include java:/comp/env
-                 in dataSourceName and put resource reference in web.xml
-                 otherwise dataSourceName is used as JNDI name
-                  */
                 dsLookup.setResourceRef(false);
                 final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
                 if (!proxyDataSource) {
@@ -271,6 +272,7 @@ public final class Beans {
         }
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
         
         return bean;
@@ -469,7 +471,18 @@ public final class Beans {
         return entryResolver;
     }
 
+    /**
+     * Transform principal attributes list into map map.
+     *
+     * @param list the list
+     * @return the map
+     */
+    public static Map<String, Collection<String>> transformPrincipalAttributesListIntoMap(final List<String> list) {
+        final Multimap<String, String> map = transformPrincipalAttributesListIntoMultiMap(list);
+        return CollectionUtils.wrap(map);
+    }
 
+    
     /**
      * Transform principal attributes into map.
      * Items in the list are defined in the syntax of "cn", or "cn:commonName" for virtual renaming and maps.
@@ -477,9 +490,9 @@ public final class Beans {
      * @param list the list
      * @return the map
      */
-    public static Map<String, String> transformPrincipalAttributesListIntoMap(final List<String> list) {
-        final Map<String, String> attributes = new HashMap<>();
+    public static Multimap<String, String> transformPrincipalAttributesListIntoMultiMap(final List<String> list) {
 
+        final Multimap<String, String> multimap = ArrayListMultimap.create();
         if (list.isEmpty()) {
             LOGGER.debug("No principal attributes are defined");
         } else {
@@ -490,14 +503,14 @@ public final class Beans {
                     final String name = attrCombo[0].trim();
                     final String value = attrCombo[1].trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
-                    attributes.put(name, value);
+                    multimap.put(name, value);
                 } else {
                     LOGGER.debug("Mapped principal attribute name [{}]", attributeName);
-                    attributes.put(attributeName, attributeName);
+                    multimap.put(attributeName, attributeName);
                 }
             });
         }
-        return attributes;
+        return multimap;
     }
 
     /**
@@ -788,7 +801,7 @@ public final class Beans {
      * @param registry the registry
      * @return the cipher executor
      */
-    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry) {
+    public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry) {
         return newTicketRegistryCipherExecutor(registry, false);
     }
 
@@ -799,7 +812,8 @@ public final class Beans {
      * @param forceIfBlankKeys the force if blank keys
      * @return the cipher executor
      */
-    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
+    public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
+                                                                 final boolean forceIfBlankKeys) {
         if (StringUtils.isNotBlank(registry.getEncryption().getKey())
                 && StringUtils.isNotBlank(registry.getEncryption().getKey())
                 || forceIfBlankKeys) {
@@ -857,7 +871,7 @@ public final class Beans {
      * @return Search filter with parameters applied.
      */
     public static SearchFilter newLdaptiveSearchFilter(final String filterQuery) {
-        return newLdaptiveSearchFilter(filterQuery, Collections.emptyList());
+        return newLdaptiveSearchFilter(filterQuery, new ArrayList<>(0));
     }
 
     /**
@@ -952,7 +966,7 @@ public final class Beans {
      * @return the search executor
      */
     public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery) {
-        return newLdaptiveSearchExecutor(baseDn, filterQuery, Collections.emptyList());
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, new ArrayList<>(0));
     }
 
     /**

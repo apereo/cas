@@ -12,13 +12,31 @@ import java.io.Serializable;
  */
 
 public class CouchbaseServiceRegistryProperties implements Serializable {
+    private static final long serialVersionUID = -4975171412161962007L;
+
+    /**
+     * Flag to indicate if query is enabled.
+     */
     private boolean queryEnabled = true;
 
+    /**
+     * Nodeset name.
+     */
     private String nodeSet = "localhost:8091";
 
+    /**
+     * String representation of connection timeout.
+     */
     private String timeout = "PT10S";
 
+    /**
+     * Password.
+     */
     private String password;
+
+    /**
+     * Bucket name.
+     */
     private String bucket = "default";
 
     public boolean isQueryEnabled() {

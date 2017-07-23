@@ -1,22 +1,13 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.OAuthToken;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.Logger;
@@ -109,53 +100,6 @@ public abstract class BaseOAuth20Controller {
     }
 
 
-    /**
-     * Generate an access token from a service and authentication.
-     *
-     * @param responseHolder the response holder
-     * @return an access token
-     */
-    protected AccessToken generateAccessToken(final AccessTokenRequestDataHolder responseHolder) {
-        LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
-        final Authentication authn = DefaultAuthenticationBuilder
-                .newInstance(responseHolder.getAuthentication())
-                .addAttribute(OAuth20Constants.GRANT_TYPE, responseHolder.getGrantType().toString())
-                .build();
-
-        final AccessToken accessToken = this.accessTokenFactory.create(responseHolder.getService(),
-                authn, responseHolder.getTicketGrantingTicket());
 
 
-        LOGGER.debug("Creating access token [{}]", accessToken);
-        addTicketToRegistry(accessToken, responseHolder.getTicketGrantingTicket());
-        LOGGER.debug("Added access token [{}] to registry", accessToken);
-
-        if (responseHolder.getToken() instanceof OAuthCode) {
-            final TicketState codeState = TicketState.class.cast(responseHolder.getToken());
-            codeState.update();
-
-            if (responseHolder.getToken().isExpired()) {
-                this.ticketRegistry.deleteTicket(responseHolder.getToken().getId());
-            } else {
-                this.ticketRegistry.updateTicket(responseHolder.getToken());
-            }
-            this.ticketRegistry.updateTicket(responseHolder.getTicketGrantingTicket());
-        }
-        return accessToken;
-    }
-
-    /**
-     * Add ticket to registry.
-     *
-     * @param ticket               the ticket
-     * @param ticketGrantingTicket the ticket granting ticket
-     */
-    protected void addTicketToRegistry(final OAuthToken ticket, final TicketGrantingTicket ticketGrantingTicket) {
-        LOGGER.debug("Adding OAuth ticket [{}] to registry", ticket);
-        this.ticketRegistry.addTicket(ticket);
-        if (ticketGrantingTicket != null) {
-            LOGGER.debug("Updating ticket-granting ticket [{}]", ticketGrantingTicket);
-            this.ticketRegistry.updateTicket(ticketGrantingTicket);
-        }
-    }
 }

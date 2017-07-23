@@ -29,6 +29,16 @@ public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExec
 
     @Override
     public String getName() {
-        return "Spring Webflow";
+        return "Spring Webflow Session State Management";
+    }
+
+    @Override
+    protected String getEncryptionKeySetting() {
+        return "cas.webflow.encryption.key";
+    }
+
+    @Override
+    protected String getSigningKeySetting() {
+        return "cas.webflow.signing.key";
     }
 }

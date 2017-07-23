@@ -48,9 +48,9 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:7.8.0"
+        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.1"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
-        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+        classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
         classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.7.2"
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
@@ -126,6 +126,7 @@ subprojects {
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
+
 
     repositories {
         mavenLocal()
@@ -286,9 +287,6 @@ subprojects {
 
         provided libraries.javax
 
-        if (Boolean.getBoolean("genConfigMetadata")) {
-            optional libraries.springbootconfigmetadata
-        }
 
         if (!Boolean.getBoolean("skipFindbugs")) {
             findbugs libraries.findbugs
@@ -298,12 +296,8 @@ subprojects {
         }
 
         testImplementation libraries.tests
-        runtimeOnly libraries.javaximpl
     }
 
-    if (Boolean.getBoolean("genConfigMetadata")) {
-        compileJava.dependsOn(processResources)
-    }
 
     generateRebel.enabled = Boolean.getBoolean("enableJRebelAgent")
     if (Boolean.getBoolean("enableJRebelAgent")) {

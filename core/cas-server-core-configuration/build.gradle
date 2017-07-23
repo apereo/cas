@@ -7,8 +7,12 @@ dependencies {
     implementation libraries.jasypt
     implementation libraries.groovy
     implementation libraries.bouncycastle
+    optional libraries.springbootconfigmetadata
 
     compileOnly project(":api:cas-server-core-api-authentication")
     compileOnly project(":core:cas-server-core-util")
     compileOnly project(":api:cas-server-core-api-webflow")
+    testImplementation project(":core:cas-server-core-util")
 }
+
+compileJava.dependsOn(processResources)

@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.io.Closeable;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -154,9 +154,12 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(
             final Map<String, List<Object>> attributes) {
-        return attributes.entrySet().stream()
+        return attributes.entrySet()
+                .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
+                    entry -> entry.getValue().size() == 1
+                                ? entry.getValue().get(0) : entry.getValue(),
+                    (e, f) -> f == null ? e : f));
     }
 
     /***
@@ -193,13 +196,13 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
         if (attrs == null) {
             LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
-            return Collections.emptyMap();
+            return new HashMap<>(0);
         }
 
         final Map<String, List<Object>> attributes = attrs.getAttributes();
         if (attributes == null) {
             LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
-            return Collections.emptyMap();
+            return new HashMap<>(0);
         }
         return attributes;
     }

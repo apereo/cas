@@ -15,8 +15,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * This is {@link CasManagementLdapAuthorizationConfiguration}.
@@ -55,12 +55,12 @@ public class CasManagementLdapAuthorizationConfiguration {
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdap().getLdapAuthz();
         return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
-                Collections.emptyList(), Arrays.asList(ldapAuthz.getRoleAttribute()));
+                new ArrayList<>(0), Arrays.asList(ldapAuthz.getRoleAttribute()));
     }
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdap().getLdapAuthz();
         return Beans.newLdaptiveSearchExecutor(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
-                Collections.emptyList(), Arrays.asList(ldapAuthz.getGroupAttribute()));
+                new ArrayList<>(0), Arrays.asList(ldapAuthz.getGroupAttribute()));
     }
 }
