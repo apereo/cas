@@ -169,8 +169,8 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     /**
      * Load services that are provided by the DAO.
      */
-    @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:20000}",
-            fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
+    @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
+            fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
     @PostConstruct
     public void load() {

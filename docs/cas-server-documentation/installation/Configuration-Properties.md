@@ -1155,8 +1155,8 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.startDelay=10000
-# cas.authn.throttle.repeatInterval=20000
+# cas.authn.throttle.schedule.startDelay=10000
+# cas.authn.throttle.schedule.repeatInterval=20000
 # cas.authn.throttle.appcode=CAS
 
 # cas.authn.throttle.failure.threshold=100
@@ -2577,8 +2577,8 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave.
 
 ```properties
-# cas.authn.mfa.trusted.cleaner.startDelay=10000
-# cas.authn.mfa.trusted.cleaner.repeatInterval=60000
+# cas.authn.mfa.trusted.cleaner.schedule.startDelay=10000
+# cas.authn.mfa.trusted.cleaner.schedule.repeatInterval=60000
 # cas.authn.mfa.trusted.cleaner.enabled=true
 ```
 
@@ -2597,8 +2597,8 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.name=
 
 # cas.authn.mfa.gauth.cleaner.enabled=true
-# cas.authn.mfa.gauth.cleaner.startDelay=20000
-# cas.authn.mfa.gauth.cleaner.repeatInterval=60000
+# cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
+# cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
@@ -2826,9 +2826,9 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 ### FIDO U2F Cleaner
 
 ```properties
-# cas.authn.mfa.u2f.cleaner.enabled=true
-# cas.authn.mfa.u2f.cleaner.startDelay=PT10S
-# cas.authn.mfa.u2f.cleaner.repeatInterval=PT60S
+# cas.authn.mfa.u2f.cleaner.schedule.enabled=true
+# cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
+# cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
 ```
 
 #### FIDO U2F JPA
@@ -3997,8 +3997,8 @@ The default options are avaiable for hostname verification:
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
-# cas.serviceRegistry.repeatInterval=120000
-# cas.serviceRegistry.startDelay=15000
+# cas.serviceRegistry.schedule.repeatInterval=120000
+# cas.serviceRegistry.schedule.startDelay=15000
 # cas.serviceRegistry.initFromJson=false
 ```
 
@@ -4181,9 +4181,9 @@ This section controls how that process should behave.
 
 ```properties
 # cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
-# cas.ticket.registry.cleaner.startDelay=10000
-# cas.ticket.registry.cleaner.repeatInterval=60000
-# cas.ticket.registry.cleaner.enabled=true
+# cas.ticket.registry.cleaner.schedule.startDelay=10000
+# cas.ticket.registry.cleaner.schedule.repeatInterval=60000
+# cas.ticket.registry.cleaner.schedule.enabled=true
 ```
 
 ### JPA Ticket Registry
@@ -4828,8 +4828,8 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 
 ```properties
 # cas.samlMetadataUi.requireValidMetadata=true
-# cas.samlMetadataUi.repeatInterval=120000
-# cas.samlMetadataUi.startDelay=30000
+# cas.samlMetadataUi.schedule.repeatInterval=120000
+# cas.samlMetadataUi.schedule.startDelay=30000
 # cas.samlMetadataUi.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
 # cas.samlMetadataUi.maxValidity=0
 # cas.samlMetadataUi.requireSignedRoot=false

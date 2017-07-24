@@ -1,7 +1,11 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for cas.throttle.
@@ -21,10 +25,24 @@ public class ThrottleProperties {
     
     private String usernameParameter;
     private String appcode = DEFAULT_APPLICATION_CODE;
-    
-    private String repeatInterval = "PT20S";
-    private String startDelay = "PT10S";
 
+    @NestedConfigurationProperty
+    private SchedulingProperties schedule = new SchedulingProperties();
+
+    public ThrottleProperties() {
+        schedule.setEnabled(true);
+        schedule.setStartDelay("PT10S");
+        schedule.setRepeatInterval("PT30S");
+    }
+
+    public SchedulingProperties getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(final SchedulingProperties schedule) {
+        this.schedule = schedule;
+    }
+    
     public void setJdbc(final Jdbc jdbc) {
         this.jdbc = jdbc;
     }
@@ -56,27 +74,13 @@ public class ThrottleProperties {
     public void setAppcode(final String appcode) {
         this.appcode = appcode;
     }
-    
-    public long getRepeatInterval() {
-        return Beans.newDuration(repeatInterval).toMillis();
-    }
-
-    public void setRepeatInterval(final String repeatInterval) {
-        this.repeatInterval = repeatInterval;
-    }
-
-    public long getStartDelay() {
-        return Beans.newDuration(startDelay).toMillis();
-    }
-
-    public void setStartDelay(final String startDelay) {
-        this.startDelay = startDelay;
-    }
 
     /**
      * Failure.
      */
-    public static class Failure {
+    public static class Failure implements Serializable {
+        private static final long serialVersionUID = 1246256695801461610L;
+        
         private String code = DEFAULT_AUTHN_FAILED_ACTION;
         private int threshold = -1;
         private int rangeSeconds = -1;
