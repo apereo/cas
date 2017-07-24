@@ -4,6 +4,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -112,14 +113,43 @@ public class SamlIdPProperties {
         this.metadata = metadata;
     }
 
-    public static class Metadata {
+    public static class Metadata implements Serializable {
+        private static final long serialVersionUID = -1020542741768471305L;
+        /**
+         * Whether invalid metadata should eagerly fail quickly on startup
+         * once the resource is parsed.
+         */
         private boolean failFast = true;
+        /**
+         * Whether valid metadata is required
+         */
         private boolean requireValidMetadata = true;
+        /**
+         * How long should metadata be cached in minutes.
+         */
         private long cacheExpirationMinutes = TimeUnit.DAYS.toMinutes(1);
+        /**
+         * Directory location of SAML metadata and signing/encryption keys.
+         * This directory will be used to hold the configuration files.
+         */
         private Resource location = new FileSystemResource("/etc/cas/saml");
+
+        /**
+         * Algorithm name to use when generating private key.
+         */
         private String privateKeyAlgName = "RSA";
+
+        /**
+         * Basic auth username in case the metadata instance is connecting to an MDQ server.
+         */
         private String basicAuthnUsername;
+        /**
+         * Basic auth password in case the metadata instance is connecting to an MDQ server.
+         */
         private String basicAuthnPassword;
+        /**
+         * Supported content types in case the metadata instance is connecting to an MDQ server.
+         */
         private List<String> supportedContentTypes = new ArrayList<>();
 
         public boolean isFailFast() {
@@ -154,10 +184,22 @@ public class SamlIdPProperties {
             this.location = location;
         }
 
+        /**
+         * Gets full location of signing cert file.
+         *
+         * @return the signing cert file
+         * @throws Exception the exception
+         */
         public Resource getSigningCertFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.crt"));
         }
 
+        /**
+         * Gets signing key file.
+         *
+         * @return the signing key file
+         * @throws Exception the exception
+         */
         public Resource getSigningKeyFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.key"));
         }
@@ -170,14 +212,32 @@ public class SamlIdPProperties {
             this.privateKeyAlgName = privateKeyAlgName;
         }
 
+        /**
+         * Gets encryption cert file.
+         *
+         * @return the encryption cert file
+         * @throws Exception the exception
+         */
         public Resource getEncryptionCertFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.crt"));
         }
 
+        /**
+         * Gets encryption key file.
+         *
+         * @return the encryption key file
+         * @throws Exception the exception
+         */
         public Resource getEncryptionKeyFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.key"));
         }
 
+        /**
+         * Gets idp metadata file.
+         *
+         * @return the metadata file
+         * @throws Exception the exception
+         */
         public File getMetadataFile() throws Exception {
             return new File(this.location.getFile(), "idp-metadata.xml");
         }
@@ -207,12 +267,37 @@ public class SamlIdPProperties {
         }
     }
 
-    public static class Response {
+    public static class Response implements Serializable {
+        private static final long serialVersionUID = 7200477683583467619L;
+        /**
+         * Time unit in seconds used to skew authentication dates such
+         * as valid-from and valid-until elements.
+         */
         private int skewAllowance = 5;
+        /**
+         * Whether error responses should be signed.
+         */
         private boolean signError;
+        /**
+         * The default authentication context class to include in the response
+         * if none is specified via the service.
+         */
         private String defaultAuthenticationContextClass = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
+        /**
+         * Indicates the default name-format for all attributes
+         * in case the individual attribute is not individually mapped.
+         */
         private String defaultAttributeNameFormat = "uri";
+        /**
+         * When creating attribute definitions, will ensure
+         * the attribute's friendly name is set to the actual attribute name
+         * in the event that the service provider wishes to use the friendly name.
+         */
         private boolean useAttributeFriendlyName = true;
+        /**
+         * Each individual attribute can be mapped to a particular name-format.
+         * Example: <code>attributeName->basic|uri|unspecified|custom-format-etc,...</code>.
+         */
         private List<String> attributeNameFormats = new ArrayList<>();
 
         public String getDefaultAuthenticationContextClass() {
@@ -283,8 +368,16 @@ public class SamlIdPProperties {
         }
     }
 
-    public static class Logout {
+    public static class Logout implements Serializable {
+        private static final long serialVersionUID = -4608824149569614549L;
+
+        /**
+         * Whether SLO logout requests are required to be signed.
+         */
         private boolean forceSignedLogoutRequests = true;
+        /**
+         * Whether SAML SLO is enabled and processed.
+         */
         private boolean singleLogoutCallbacksDisabled;
 
         public boolean isForceSignedLogoutRequests() {
@@ -304,15 +397,43 @@ public class SamlIdPProperties {
         }
     }
 
-    public static class Algorithms {
+    public static class Algorithms implements Serializable {
+        private static final long serialVersionUID = 6547093517788229284L;
+        /**
+         * The Override data encryption algorithms.
+         */
         private List overrideDataEncryptionAlgorithms;
+        /**
+         * The Override key encryption algorithms.
+         */
         private List overrideKeyEncryptionAlgorithms;
+        /**
+         * The Override black listed encryption algorithms.
+         */
         private List overrideBlackListedEncryptionAlgorithms;
+        /**
+         * The Override white listed algorithms.
+         */
         private List overrideWhiteListedAlgorithms;
+        /**
+         * The Override signature reference digest methods.
+         */
         private List overrideSignatureReferenceDigestMethods;
+        /**
+         * The Override signature algorithms.
+         */
         private List overrideSignatureAlgorithms;
+        /**
+         * The Override black listed signature signing algorithms.
+         */
         private List overrideBlackListedSignatureSigningAlgorithms;
+        /**
+         * The Override white listed signature signing algorithms.
+         */
         private List overrideWhiteListedSignatureSigningAlgorithms;
+        /**
+         * The Override signature canonicalization algorithm.
+         */
         private String overrideSignatureCanonicalizationAlgorithm;
 
         public String getOverrideSignatureCanonicalizationAlgorithm() {
