@@ -143,8 +143,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     /**
      * Load services that are provided by the DAO.
      */
-    @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:PT20S}",
-            fixedDelayString = "${cas.serviceRegistry.repeatInterval:PT60S}")
+    @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:PT20S}",
+            fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:PT60S}")
     @Override
     @PostConstruct
     public void load() {

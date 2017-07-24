@@ -49,7 +49,7 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
     public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("lockingStrategy") final LockingStrategy lockingStrategy,
                                                        @Qualifier("logoutManager") final LogoutManager logoutManager,
                                                        @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) throws Exception {
-        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().isEnabled();
+        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
             return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
