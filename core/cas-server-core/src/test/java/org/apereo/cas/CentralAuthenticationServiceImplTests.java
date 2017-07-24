@@ -80,18 +80,14 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void disallowNullCredentialsWhenCreatingTicketGrantingTicket() throws Exception {
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), new Credential[] {null});
-
         this.thrown.expect(RuntimeException.class);
-
         getCentralAuthenticationService().createTicketGrantingTicket(ctx);
     }
 
     @Test
     public void disallowNullCredentialsArrayWhenCreatingTicketGrantingTicket() throws Exception {
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), new Credential[] {null, null});
-
         this.thrown.expect(RuntimeException.class);
-
         getCentralAuthenticationService().createTicketGrantingTicket(ctx);
     }
 
@@ -102,7 +98,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
 
         this.thrown.expect(ClassCastException.class);
-
         getCentralAuthenticationService().destroyTicketGrantingTicket(serviceTicketId.getId());
     }
 
