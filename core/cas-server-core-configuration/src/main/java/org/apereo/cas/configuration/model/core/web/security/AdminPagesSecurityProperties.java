@@ -17,15 +17,50 @@ import java.util.List;
  * @since 5.0.0
  */
 public class AdminPagesSecurityProperties {
+
+    /**
+     * IP address pattern.
+     */
     private String ip = "a^";
+
+    /**
+     * List of admin roles.
+     */
     private List<String> adminRoles = Arrays.asList("ROLE_ADMIN", "ROLE_ACTUATOR");
+
+    /**
+     * CAS login url.
+     */
     private String loginUrl;
+
+    /**
+     * Service endpoint url.
+     */
     private String service;
+
+    /**
+     * List of users allowed to use admin pages.
+     */
     private Resource users;
+
+    /**
+     * Flag that indicates whether Spring Boot's actuator endpoints are enabled.
+     */
     private boolean actuatorEndpointsEnabled;
 
+    /**
+     * Jdbc related settings.
+     */
     private Jdbc jdbc = new Jdbc();
+
+    /**
+     * Ldap related settings.
+     */
     private Ldap ldap = new Ldap();
+
+    /**
+     * Jaas related settings.
+     */
     private Jaas jaas = new Jaas();
 
     public Jaas getJaas() {
@@ -101,8 +136,11 @@ public class AdminPagesSecurityProperties {
     }
 
     public static class Jaas {
+
         private Resource loginConfig;
+
         private boolean refreshConfigurationOnStartup = true;
+
         private String loginContextName;
 
         public Resource getLoginConfig() {
@@ -152,11 +190,21 @@ public class AdminPagesSecurityProperties {
     }
 
     public static class Jdbc extends AbstractJpaProperties {
+
         private static final long serialVersionUID = 2625666117528467867L;
+
+        /**
+         * Prefix for the authorization role to be searched in database.
+         */
         private String rolePrefix;
+
+        /**
+         * Search SQL query string to fetch authorization role.
+         */
         private String query;
 
         @NestedConfigurationProperty
+
         /**
          * Password encoder properties.
          */
