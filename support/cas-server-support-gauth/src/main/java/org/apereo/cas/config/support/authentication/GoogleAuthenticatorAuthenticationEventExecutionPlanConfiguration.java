@@ -181,8 +181,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             super(tokenRepository);
         }
 
-        @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.startDelay:PT30S}",
-                fixedDelayString = "${cas.authn.mfa.gauth.cleaner.repeatInterval:PT35S}")
+        @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.startDelay:PT30S}",
+                fixedDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.repeatInterval:PT35S}")
         @Override
         public void clean() {
             super.clean();

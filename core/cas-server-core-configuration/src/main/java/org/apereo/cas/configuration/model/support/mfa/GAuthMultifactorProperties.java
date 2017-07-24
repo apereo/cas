@@ -2,7 +2,9 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -197,41 +199,22 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
 
     public static class Cleaner implements Serializable {
         private static final long serialVersionUID = -6036042153454544990L;
-        /**
-         * Enable the cleaner to run as a background process to remove expired records.
-         */
-        private boolean enabled = true;
-        /**
-         * Background job's startup delay.
-         */
-        private String startDelay = "PT1M";
-        /**
-         * Repeat interval of the background job. Defines recurrence.
-         */
-        private String repeatInterval = "PT1M";
+        
+        @NestedConfigurationProperty
+        private SchedulingProperties schedule = new SchedulingProperties();
 
-        public boolean isEnabled() {
-            return enabled;
+        public Cleaner() {
+            schedule.setEnabled(true);
+            schedule.setStartDelay("PT1M");
+            schedule.setRepeatInterval("PT1M");
         }
 
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
+        public SchedulingProperties getSchedule() {
+            return schedule;
         }
 
-        public String getStartDelay() {
-            return startDelay;
-        }
-
-        public void setStartDelay(final String startDelay) {
-            this.startDelay = startDelay;
-        }
-
-        public String getRepeatInterval() {
-            return repeatInterval;
-        }
-
-        public void setRepeatInterval(final String repeatInterval) {
-            this.repeatInterval = repeatInterval;
+        public void setSchedule(final SchedulingProperties schedule) {
+            this.schedule = schedule;
         }
     }
 }
