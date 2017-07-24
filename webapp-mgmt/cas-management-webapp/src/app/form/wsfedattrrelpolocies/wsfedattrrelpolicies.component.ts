@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Data, FormData } from "../../../domain/form";
+import {ServiceData, FormData } from "../../../domain/service-edit-bean";
 import {Messages} from "../../messages";
 
 @Component({
@@ -10,7 +10,7 @@ import {Messages} from "../../messages";
 export class WsfedattrrelpoliciesComponent implements OnInit {
 
   @Input()
-  serviceData: Data;
+  serviceData: ServiceData;
 
   @Input()
   formData: FormData;

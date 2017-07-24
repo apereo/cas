@@ -5,7 +5,7 @@ import {SharedModule} from "../../shared/shared.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
-import {FormData, Data} from "../../../domain/form";
+import {FormData, ServiceData} from "../../../domain/service-edit-bean";
 
 describe('AttributeReleaseChecksComponent', () => {
   let component: AttributeReleaseChecksComponent;
@@ -24,7 +24,7 @@ describe('AttributeReleaseChecksComponent', () => {
     fixture = TestBed.createComponent(AttributeReleaseChecksComponent);
     component = fixture.componentInstance;
     component.formData = new FormData();
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });

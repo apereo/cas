@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { ServicenameComponent } from './servicename.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('ServicenameComponent', () => {
@@ -25,7 +25,7 @@ describe('ServicenameComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ServicenameComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

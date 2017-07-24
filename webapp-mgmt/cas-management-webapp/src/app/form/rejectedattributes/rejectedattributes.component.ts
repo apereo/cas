@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {Data, PropertyBean} from "../../../domain/form";
+import {ServiceData, PropertyBean} from "../../../domain/service-edit-bean";
 
 @Component({
   selector: 'app-rejectedattributes',
@@ -9,7 +9,7 @@ import {Data, PropertyBean} from "../../../domain/form";
 export class RejectedattributesComponent implements OnInit {
 
   @Input()
-  serviceData: Data;
+  serviceData: ServiceData;
 
   rows: Row[];
   addName: String;

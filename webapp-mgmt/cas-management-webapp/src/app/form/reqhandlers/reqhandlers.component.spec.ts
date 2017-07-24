@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { ReqhandlersComponent } from './reqhandlers.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('ReqhandlersComponent', () => {
@@ -25,7 +25,7 @@ describe('ReqhandlersComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReqhandlersComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

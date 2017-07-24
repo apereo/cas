@@ -8,18 +8,18 @@ import { FormComponent } from './form.component';
 import {AlertComponent} from "../alert/alert.component";
 import {SaveformtopComponent} from "./saveformtop/saveformtop.component";
 import {Messages} from "../messages";
-import {Form, Data} from "../../domain/form";
+import {ServiceEditBean, ServiceData} from "../../domain/service-edit-bean";
 import {FormService} from "./form.service";
 import {TabService} from "./tab.service";
 import {ActivatedRouteStub} from "../../testing/router-stub";
 
 let formServicesStub = {
-  getService(id: number): Promise<Form> {
-    return Promise.resolve(new Form());
+  getService(id: number): Promise<ServiceEditBean> {
+    return Promise.resolve(new ServiceEditBean());
   },
 
-  saveService(serviceData: Data): Promise<Data> {
-    return Promise.resolve(new Data());
+  saveService(serviceData: ServiceData): Promise<ServiceData> {
+    return Promise.resolve(new ServiceData());
   }
 };
 
@@ -62,7 +62,7 @@ describe('FormComponent', () => {
   }));
 
   beforeEach(() => {
-    activatedRoute.testData = new Data();
+    activatedRoute.testData = new ServiceData();
     activatedRoute.testParams = {id: -1};
     activatedRoute.testUrl = { path() { return "";}};
     fixture = TestBed.createComponent(FormComponent);

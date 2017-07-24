@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { ThemeidComponent } from './themeid.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('ThemeidComponent', () => {
@@ -25,7 +25,7 @@ describe('ThemeidComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ThemeidComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 
