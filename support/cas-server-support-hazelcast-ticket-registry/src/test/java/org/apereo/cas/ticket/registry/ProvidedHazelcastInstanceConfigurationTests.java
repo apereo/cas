@@ -46,7 +46,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        HazelcastTicketRegistryReplicationTests.HazelcastTestConfiguration.class,
         HazelcastTicketRegistryConfiguration.class,
         HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
