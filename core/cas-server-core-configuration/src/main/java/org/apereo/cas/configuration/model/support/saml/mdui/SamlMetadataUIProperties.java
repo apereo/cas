@@ -14,17 +14,40 @@ import java.util.List;
  * @since 5.0.0
  */
 public class SamlMetadataUIProperties {
-    
+
+    /**
+     * The parameter name that indicates the entity id of the service provider
+     * submitted to CAS.
+     */
     private String parameter = "entityId";
-   
+
+    /**
+     * If specified, creates a validity filter on the metadata to check for 
+     * metadata freshness based on the max validity. Value is specified in seconds.
+     */
     private long maxValidity;
-   
+
+    /**
+     * When parsing metadata, whether the root element is required to be signed.
+     */
     private boolean requireSignedRoot;
+    /**
+     * Whether valid metadata is required when parsing metadata.
+     */
     private boolean requireValidMetadata = true;
-   
+
+    /**
+     * Metadata resources to load and parse through based on the incoming entity id
+     * in order to locate MDUI. Resources can be classpath/file/http resources.
+     * If each metadata resource has a signing certificate, they can be added onto the resource with a <code>::</code>
+     * separator. Example: <code>classpath:/sp-metadata.xml::classpath:/pub.key</code>.
+     */
     private List<String> resources = Arrays.asList("classpath:/sp-metadata::classpath:/pub.key,"
         + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");
 
+    /**
+     * Scheduler settings to indicate how often is metadata reloaded.
+     */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
 
