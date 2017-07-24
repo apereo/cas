@@ -1,7 +1,10 @@
 description = "Apereo CAS Couchbase Support Core"
-dependencies {
 
-    api libraries.couchbase
+repositories {
+    maven { url "https://files.couchbase.com/maven2" }
+    jcenter()
 }
 
-
+dependencies {
+    api libraries.couchbase
+}

@@ -126,22 +126,12 @@ subprojects {
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
-
-
+    
     repositories {
         mavenLocal()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
-        maven { url "https://repo.maven.apache.org/maven2" }
-        maven { url "https://jitpack.io" }
-        maven { url "https://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "https://files.couchbase.com/maven2" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/libs-snapshot" }
-        maven { url "https://dl.bintray.com/uniconiam/maven" }
         jcenter()
     }
 
