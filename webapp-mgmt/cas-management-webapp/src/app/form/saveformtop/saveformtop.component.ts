@@ -1,6 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
 import {Location} from "@angular/common";
 import {TabService} from "../tab.service";
 

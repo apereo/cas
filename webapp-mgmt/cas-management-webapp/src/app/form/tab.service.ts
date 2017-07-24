@@ -3,13 +3,13 @@
  */
 
 import {Injectable} from "@angular/core";
-import {Data, FormData } from "../../domain/form";
+import {ServiceData, FormData } from "../../domain/service-edit-bean";
 
 @Injectable()
 export class TabService {
   isAdmin: boolean;
   formData: FormData = new FormData();
-  serviceData: Data = new Data();
+  serviceData: ServiceData = new ServiceData();
 
   roles = [
     {id: 1, text: "guest"},

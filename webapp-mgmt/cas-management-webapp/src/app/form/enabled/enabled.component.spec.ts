@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { EnabledComponent } from './enabled.component';
-import {Data} from "../../../domain/form";
+import { ServiceData } from "../../../domain/service-edit-bean";
 import {Messages} from "../../messages";
 import {SharedModule} from "../../shared/shared.module";
 
@@ -25,7 +25,7 @@ describe('EnabledComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EnabledComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

@@ -4,15 +4,15 @@
 
 import {Injectable} from "@angular/core";
 import {Resolve, Router, ActivatedRouteSnapshot} from "@angular/router";
-import {Form} from "../../domain/form";
+import {ServiceEditBean} from "../../domain/service-edit-bean";
 import {FormService} from "./form.service";
 
 @Injectable()
-export class FormResolve implements Resolve<Form> {
+export class FormResolve implements Resolve<ServiceEditBean> {
 
   constructor(private service: FormService, private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot): Promise<Form> {
+  resolve(route: ActivatedRouteSnapshot): Promise<ServiceEditBean> {
     let param: string = route.params['id'];
     let dup: boolean = route.params['duplicate'];
 

@@ -1,18 +1,18 @@
-import ServiceProxyPolicy from "./service-proxy-policy";
 /**
  * Created by tschmidt on 2/14/17.
  */
-export class Form {
+export class ServiceEditBean {
   formData: FormData = new FormData();
-  serviceData: Data = new Data();
+  serviceData: ServiceData = new ServiceData();
   status: number;
 }
 
 export class FormData {
   availableAttributes: String[] = [];
+  customComponent: Map<String, Map<String,any>>
 }
 
-export class Data {
+export class ServiceData {
   assignedId: String;
   serviceId: String;
   name: String;
@@ -34,15 +34,11 @@ export class Data {
   logoutType: String;
   userAttrProvider: UsernameAttributeProvider = new UsernameAttributeProvider();
   publicKey: PublicKey = new PublicKey();
-  proxyPolicy: ServiceProxyPolicy = new ServiceProxyPolicy();
+  proxyPolicy: ProxyPolicy = new ProxyPolicy();
   attrRelease: AttributeRelease = new AttributeRelease();
+  customComponent: Map<String, Map<String,any>>
   properties: PropertyBean[] = [];
   wsfed: WSFed = new WSFed();
-}
-
-export class Contact {
-  name: String;
-  phone: String;
 }
 
 export class MultiAuth {
@@ -57,7 +53,15 @@ export class PrincipalAttribute {
   nameTrigger: String;
 }
 
-export class OidcType {
+export class OAuthType {
+  clientSecret: String;
+  clientId: String;
+  bypass: boolean;
+  refreshToken: boolean;
+  jsonFormat: boolean;
+}
+
+export class OidcType extends OAuthType {
   signToken: boolean;
   jwks: String;
   implicit: boolean;
@@ -67,7 +71,6 @@ export class OidcType {
   dynamicDate: String;
   dynamic: boolean;
   scopes: String = "";
-  type: String;
 }
 
 export class SamlType {
@@ -88,9 +91,9 @@ export class SamlType {
 export class SupportAccess {
   startingTime: String;
   endingTime: String;
-  casEnabled: String;
-  ssoEnabled: String;
-  requireAll: String;
+  casEnabled: boolean;
+  ssoEnabled: boolean;
+  requireAll: boolean;
   unauthorizedRedirectUrl: String;
   type: String;
   groupField: String;
@@ -99,7 +102,7 @@ export class SupportAccess {
   requiredAttr: Map<String, Array<String>> = new Map<String, Array<String>>();
   requiredAttrStr: Map<String,Array<String>> = new Map<String, Array<String>>();
   rejectedAttr: PropertyBean[] = [];
-  caseInsensitive: boolean
+  caseSensitive: boolean
 }
 
 export class PropertyBean {
@@ -113,13 +116,7 @@ export class PropertyBean {
   value: String;
 }
 
-export class OAuthType {
-  clientSecret: String;
-  clientId: String;
-  bypass: boolean;
-  refreshToken: boolean;
-  jsonFormat: boolean;
-}
+
 
 export class UsernameAttributeProvider {
   value: String;
@@ -158,4 +155,9 @@ export class AttributeReleasePolicy {
 export class WSFed {
   realm: String;
   appliesTo: String;
+}
+
+export class ProxyPolicy {
+  type: String;
+  value: String;
 }

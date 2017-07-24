@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { PubkeyComponent } from './pubkey.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('PubkeyComponent', () => {
@@ -25,7 +25,7 @@ describe('PubkeyComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PubkeyComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

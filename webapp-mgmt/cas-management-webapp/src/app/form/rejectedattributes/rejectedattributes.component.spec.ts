@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { RejectedattributesComponent } from './rejectedattributes.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('RejectedattributesComponent', () => {
@@ -25,7 +25,7 @@ describe('RejectedattributesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RejectedattributesComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

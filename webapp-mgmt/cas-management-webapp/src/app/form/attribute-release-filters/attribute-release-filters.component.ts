@@ -1,5 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {FormData, Data} from "../../../domain/form";
+import {FormData, ServiceData} from "../../../domain/service-edit-bean";
 import {Messages} from "../../messages";
 
 @Component({
@@ -9,7 +9,7 @@ import {Messages} from "../../messages";
 })
 export class AttributeReleaseFiltersComponent implements OnInit {
   @Input()
-  serviceData: Data;
+  serviceData: ServiceData;
 
   @Input()
   formData: FormData;

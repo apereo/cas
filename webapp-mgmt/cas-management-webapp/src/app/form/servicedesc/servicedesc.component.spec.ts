@@ -1,12 +1,10 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from "@angular/forms";
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
 
 import { ServicedescComponent } from './servicedesc.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('ServicedescComponent', () => {
@@ -25,7 +23,7 @@ describe('ServicedescComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ServicedescComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

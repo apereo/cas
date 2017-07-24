@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import ServiceView from "../../domain/service-view";
+import {ServiceViewBean} from "../../domain/service-view-bean";
 import {Messages} from "../messages";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ServiceViewService} from "./service.service";
@@ -15,9 +15,9 @@ export class ServicesComponent implements OnInit {
 
   @ViewChild('alert')
   alert: AlertComponent;
-  dataTable: ServiceView[];
+  dataTable: ServiceViewBean[];
   detailRow: String;
-  deleteItem: ServiceView;
+  deleteItem: ServiceViewBean;
   domain: String;
 
   constructor(public messages: Messages,
@@ -30,7 +30,7 @@ export class ServicesComponent implements OnInit {
 
   ngOnInit() {
     this.route.data
-      .subscribe((data: { resp: ServiceView[]}) => {
+      .subscribe((data: { resp: ServiceViewBean[]}) => {
         this.dataTable = data.resp;
         if (!this.dataTable) {
           this.alert.show(this.messages.management_services_status_listfail,'danger');
@@ -39,7 +39,6 @@ export class ServicesComponent implements OnInit {
   }
 
   serviceEdit(selectedItem: String) {
-    console.log("selecteditem = " + selectedItem);
     this.router.navigate(['/form',selectedItem]);
   }
 
@@ -51,7 +50,7 @@ export class ServicesComponent implements OnInit {
     this.detailRow = id;
   }
 
-  openModalDelete(selectedItem: ServiceView) {
+  openModalDelete(selectedItem: ServiceViewBean) {
     this.deleteItem = selectedItem;
   };
 
@@ -63,13 +62,13 @@ export class ServicesComponent implements OnInit {
     let myData = {id: this.deleteItem.assignedId};
 
     this.service.delete(Number.parseInt(this.deleteItem.assignedId as string))
-      .then(resp => this.handleDelete())
+      .then(resp => this.handleDelete(resp))
       .catch((e: any) => this.alert.show(this.messages.management_services_status_notdeleted, 'danger'));
     this.closeModalDelete();
   };
 
-  handleDelete() {
-    this.alert.show(this.messages.management_services_status_deleted,'info');
+  handleDelete(name: String) {
+    this.alert.show(name+" "+this.messages.management_services_status_deleted,'info');
     this.refresh();
   }
 
@@ -89,10 +88,10 @@ export class ServicesComponent implements OnInit {
     this.location.back();
   }
 
-  moveUp(a: ServiceView) {
+  moveUp(a: ServiceViewBean) {
     let index: number = this.dataTable.indexOf(a);
     if(index > 0) {
-      let b: ServiceView = this.dataTable[index-1];
+      let b: ServiceViewBean = this.dataTable[index-1];
       a.evalOrder = index-1;
       b.evalOrder = index;
       this.dataTable[index] = b;
@@ -101,10 +100,10 @@ export class ServicesComponent implements OnInit {
     }
   }
 
-  moveDown(a: ServiceView) {
+  moveDown(a: ServiceViewBean) {
     let index: number = this.dataTable.indexOf(a);
     if(index < this.dataTable.length -1) {
-      let b: ServiceView = this.dataTable[index+1];
+      let b: ServiceViewBean = this.dataTable[index+1];
       a.evalOrder = index+1;
       b.evalOrder = index;
       this.dataTable[index] = b;

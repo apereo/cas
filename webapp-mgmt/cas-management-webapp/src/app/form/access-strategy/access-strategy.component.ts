@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {Data,FormData} from "../../../domain/form";
+import {ServiceData,FormData} from "../../../domain/service-edit-bean";
 
 @Component({
   selector: 'app-access-strategy',
@@ -12,7 +12,7 @@ export class AccessStrategyComponent implements OnInit {
   formData: FormData;
 
   @Input()
-  serviceData: Data;
+  serviceData: ServiceData;
 
   @Input()
   selectOptions;

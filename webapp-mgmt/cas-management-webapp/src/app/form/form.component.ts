@@ -1,13 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
-  Data, Form, FormData, AttributeRelease, AttributeReleasePolicy, SupportAccess,
-  UsernameAttributeProvider, PublicKey, Contact, MultiAuth, PrincipalAttribute
-} from "../../domain/form";
+  ServiceData, ServiceEditBean, FormData, AttributeRelease, AttributeReleasePolicy, SupportAccess,
+  UsernameAttributeProvider, PublicKey, MultiAuth, PrincipalAttribute, ProxyPolicy
+} from "../../domain/service-edit-bean";
 import {Messages} from "../messages";
 import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
 import {Location} from "@angular/common";
 import {FormService} from "./form.service";
-import ServiceProxyPolicy from "../../domain/service-proxy-policy";
 import {TabService} from "./tab.service";
 import {AlertComponent} from "../alert/alert.component";
 
@@ -18,7 +17,7 @@ import {AlertComponent} from "../alert/alert.component";
 })
 export class FormComponent implements OnInit {
 
-  serviceData: Data = new Data();
+  serviceData: ServiceData = new ServiceData();
   formData: FormData = new FormData();
   radioWatchBypass: boolean = true;
   showOAuthSecret: boolean = false;
@@ -45,7 +44,7 @@ export class FormComponent implements OnInit {
 
   ngOnInit() {
     this.route.data
-      .subscribe((data: { resp: Form}) => {
+      .subscribe((data: { resp: ServiceEditBean}) => {
         if (!data.resp || !data.resp.serviceData) {
           this.newService()
         } else {
@@ -90,13 +89,13 @@ export class FormComponent implements OnInit {
     this.serviceData.attrRelease.mergingStrategy = this.tabService.selectOptions.mergeStrategyList[0].value;
 
     this.serviceData.supportAccess = new SupportAccess();
-    this.serviceData.supportAccess.casEnabled = "true";
-    this.serviceData.supportAccess.ssoEnabled = "true";
-    this.serviceData.supportAccess.caseInsensitive = true;
+    this.serviceData.supportAccess.casEnabled = true;
+    this.serviceData.supportAccess.ssoEnabled = true;
+    this.serviceData.supportAccess.caseSensitive = true;
     this.serviceData.supportAccess.type = this.tabService.selectOptions.selectType[0].value;
     this.serviceData.publicKey = new PublicKey();
     this.serviceData.userAttrProvider = new UsernameAttributeProvider();
-    this.serviceData.proxyPolicy = new ServiceProxyPolicy();
+    this.serviceData.proxyPolicy = new ProxyPolicy();
     this.serviceData.proxyPolicy.type = 'REFUSE';
     this.serviceData.multiAuth = new MultiAuth();
     this.serviceData.multiAuth.failureMode = this.tabService.selectOptions.failureMode[1].value;
@@ -112,7 +111,7 @@ export class FormComponent implements OnInit {
 
   };
 
-  loadService(form: Form, duplicate) {
+  loadService(form: ServiceEditBean, duplicate) {
     this.radioWatchBypass = true;
     this.showOAuthSecret = false;
     if (this.formData != form.formData) {
@@ -229,9 +228,7 @@ export class FormComponent implements OnInit {
     let missing = document.getElementsByClassName('required-missing');
     let i = 0;
     let j = missing.length;
-    console.log("j = "+j);
     for(i = 0; i < j; i++) {
-      console.log("j = "+j);
       missing.item(0).classList.remove('required-missing');
     }
   }

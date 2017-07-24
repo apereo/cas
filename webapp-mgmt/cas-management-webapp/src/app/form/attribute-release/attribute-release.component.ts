@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {Data, FormData } from "../../../domain/form";
+import {ServiceData, FormData } from "../../../domain/service-edit-bean";
 
 @Component({
   selector: 'app-attribute-release',
@@ -9,7 +9,7 @@ import {Data, FormData } from "../../../domain/form";
 export class AttributeReleaseComponent implements OnInit {
 
   @Input()
-  serviceData: Data;
+  serviceData: ServiceData;
 
   @Input()
   formData: FormData;

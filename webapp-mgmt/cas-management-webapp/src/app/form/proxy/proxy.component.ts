@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 
 @Component({
   selector: 'app-proxy',
@@ -9,7 +9,7 @@ import {Data} from "../../../domain/form";
 export class ProxyComponent implements OnInit {
 
   @Input()
-  serviceData: Data;
+  serviceData: ServiceData;
 
   constructor(public messages: Messages) { }
 

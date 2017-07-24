@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { EvalorderComponent } from './evalorder.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('EvalorderComponent', () => {
@@ -25,7 +25,7 @@ describe('EvalorderComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EvalorderComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

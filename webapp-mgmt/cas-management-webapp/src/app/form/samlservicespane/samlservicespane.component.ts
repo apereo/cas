@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Data, PropertyBean} from "../../../domain/form";
+import {ServiceData, PropertyBean} from "../../../domain/service-edit-bean";
 import {Messages} from "../../messages";
 
 @Component({
@@ -10,7 +10,7 @@ import {Messages} from "../../messages";
 export class SamlservicespaneComponent implements OnInit {
 
   @Input()
-  serviceData: Data;
+  serviceData: ServiceData;
 
   @Input()
   selectOptions;

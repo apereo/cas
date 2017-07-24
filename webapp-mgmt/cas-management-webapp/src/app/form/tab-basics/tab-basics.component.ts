@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {Route, ActivatedRoute, Params} from "@angular/router";
-import {Form, Data} from "../../../domain/form";
 import 'rxjs/add/operator/switchMap';
 import {TabService} from "../tab.service";
 

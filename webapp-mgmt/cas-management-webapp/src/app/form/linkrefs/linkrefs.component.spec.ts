@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { LinkrefsComponent } from './linkrefs.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('LinkrefsComponent', () => {
@@ -25,7 +25,7 @@ describe('LinkrefsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LinkrefsComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

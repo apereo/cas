@@ -5,7 +5,7 @@ import {SharedModule} from "../../shared/shared.module";
 import {FormModule} from "../form.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
-import {Data, FormData} from "../../../domain/form";
+import {ServiceData, FormData} from "../../../domain/service-edit-bean";
 import {TabService} from "../tab.service";
 
 describe('AttributeReleasePrincipalRepoComponent', () => {
@@ -25,7 +25,7 @@ describe('AttributeReleasePrincipalRepoComponent', () => {
     fixture = TestBed.createComponent(AttributeReleasePrincipalRepoComponent);
     component = fixture.componentInstance;
     component.formData = new FormData;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });
