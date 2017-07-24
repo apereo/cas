@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,17 +13,35 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class SamlMetadataUIProperties {
-    private String startDelay = "PT30S";
-    private String repeatInterval = "PT2M";
+    
     private String parameter = "entityId";
+   
     private long maxValidity;
+   
     private boolean requireSignedRoot;
     private boolean requireValidMetadata = true;
+   
     private List<String> resources = Arrays.asList("classpath:/sp-metadata::classpath:/pub.key,"
         + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");
 
+    @NestedConfigurationProperty
+    private SchedulingProperties schedule = new SchedulingProperties();
+
+    public SamlMetadataUIProperties() {
+        schedule.setEnabled(true);
+        schedule.setStartDelay("PT30S");
+        schedule.setRepeatInterval("PT2M");
+    }
+
+    public SchedulingProperties getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(final SchedulingProperties schedule) {
+        this.schedule = schedule;
+    }
+    
     public List<String> getResources() {
         return resources;
     }
@@ -45,23 +65,7 @@ public class SamlMetadataUIProperties {
     public void setParameter(final String parameter) {
         this.parameter = parameter;
     }
-
-    public long getStartDelay() {
-        return Beans.newDuration(startDelay).toMillis();
-    }
-
-    public void setStartDelay(final String startDelay) {
-        this.startDelay = startDelay;
-    }
-
-    public long getRepeatInterval() {
-        return Beans.newDuration(repeatInterval).toMillis();
-    }
-
-    public void setRepeatInterval(final String repeatInterval) {
-        this.repeatInterval = repeatInterval;
-    }
-
+    
     public long getMaxValidity() {
         return maxValidity;
     }

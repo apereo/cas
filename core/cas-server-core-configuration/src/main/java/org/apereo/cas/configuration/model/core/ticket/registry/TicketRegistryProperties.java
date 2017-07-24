@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.infinispan.InfinispanPropertie
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -248,20 +249,25 @@ public class TicketRegistryProperties {
     }
 
     public static class Cleaner {
-        /**
-         * Whether the ticket registry cleaner should be enabled.
-         */
-        private boolean enabled = true;
-        /**
-         * Initial delay before the cleaner background job is scheduled to run.
-         */
-        private String startDelay = "PT10S";
-        /**
-         * The periodic internal at which the cleaner will wake up to resume.
-         */
-        private String repeatInterval = "PT1M";
-
+        
         private String appId = "cas-ticket-registry-cleaner";
+
+        @NestedConfigurationProperty
+        private SchedulingProperties schedule = new SchedulingProperties();
+
+        public Cleaner() {
+            schedule.setEnabled(true);
+            schedule.setStartDelay("PT10S");
+            schedule.setRepeatInterval("PT1M");
+        }
+
+        public SchedulingProperties getSchedule() {
+            return schedule;
+        }
+
+        public void setSchedule(final SchedulingProperties schedule) {
+            this.schedule = schedule;
+        }
 
         public String getAppId() {
             return appId;
@@ -269,30 +275,6 @@ public class TicketRegistryProperties {
 
         public void setAppId(final String appId) {
             this.appId = appId;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public long getStartDelay() {
-            return Beans.newDuration(startDelay).toMillis();
-        }
-
-        public void setStartDelay(final String startDelay) {
-            this.startDelay = startDelay;
-        }
-
-        public long getRepeatInterval() {
-            return Beans.newDuration(repeatInterval).toMillis();
-        }
-
-        public void setRepeatInterval(final String repeatInterval) {
-            this.repeatInterval = repeatInterval;
         }
     }
 }
