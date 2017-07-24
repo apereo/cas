@@ -165,8 +165,17 @@ subprojects {
             preferProjectModules()
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
-        }
 
+            /**
+             * Required for all JRadius modules
+             */
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == "gnu-getopt") {
+                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
+                }
+            }
+        }
+        
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
