@@ -17,15 +17,56 @@ import java.util.List;
  * @since 5.0.0
  */
 public class AdminPagesSecurityProperties {
+    /**
+     * The IP address pattern that can control access to the admin status endpoints.
+     */
     private String ip = "a^";
+
+    /**
+     * Roles that are required for access to the admin status endpoint
+     * in the event that access is controlled via external authentication
+     * means such as Spring Security's authentication providers.
+     */
     private List<String> adminRoles = Arrays.asList("ROLE_ADMIN", "ROLE_ACTUATOR");
+
+    /**
+     * CAS server login URL to use. 
+     * When defined, will begin to protect the access status endpoints via CAS itself.
+     */
     private String loginUrl;
+    /**
+     * The service parameter for the admin status endpoint. 
+     * This is typically set to the dashboard url as the initial starting point
+     * for the redirect.
+     */
     private String service;
+
+    /**
+     * List of users allowed access to the admin status endpoint
+     * provided CAS is controlling access to the status endpoint.
+     */
     private Resource users;
+
+    /**
+     * Whether Spring Boot's actuator endpoints should show up on the dashboard.
+     */
     private boolean actuatorEndpointsEnabled;
 
+    /**
+     * Enable Spring Security's JDBC authentication provider
+     * for admin status authorization and access control.
+     */
     private Jdbc jdbc = new Jdbc();
+    /**
+     * Enable Spring Security's LDAP authentication provider
+     * for admin status authorization and access control.
+     */
     private Ldap ldap = new Ldap();
+
+    /**
+     * Enable Spring Security's JAAS authentication provider
+     * for admin status authorization and access control.
+     */
     private Jaas jaas = new Jaas();
 
     public Jaas getJaas() {
@@ -101,8 +142,28 @@ public class AdminPagesSecurityProperties {
     }
 
     public static class Jaas {
+
+        /**
+         * JAAS login resource file.
+         */
         private Resource loginConfig;
+        /**
+         * If set, a call to <code>Configuration#refresh()</code> 
+         * will be made by <code>#configureJaas(Resource)</code> method.
+         */
         private boolean refreshConfigurationOnStartup = true;
+
+        /**
+         * The login context name should coincide with a given index in the login config specified.
+         * This name is used as the index to the configuration specified in the login config property.
+         * 
+<pre>
+JAASTest {
+    org.springframework.security.authentication.jaas.TestLoginModule required;
+};
+</pre>
+         In the above example, <code>JAASTest</code> should be set as the context name.
+         */
         private String loginContextName;
 
         public Resource getLoginConfig() {
@@ -132,6 +193,11 @@ public class AdminPagesSecurityProperties {
     
     public static class Ldap extends AbstractLdapAuthenticationProperties {
         private static final long serialVersionUID = -7333244539096172557L;
+
+        /**
+         * Control authorization settings via LDAP
+         * after ldap authentication.
+         */
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 
@@ -153,7 +219,17 @@ public class AdminPagesSecurityProperties {
 
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 2625666117528467867L;
+
+        /**
+         * Prefix to add to the role.
+         */
         private String rolePrefix;
+
+        /**
+         * Query to execute in order to authenticate users via JDBC.
+         * Example:
+         * <code>SELECT username,password,enabled FROM users WHERE username=?</code>
+         */
         private String query;
 
         @NestedConfigurationProperty
