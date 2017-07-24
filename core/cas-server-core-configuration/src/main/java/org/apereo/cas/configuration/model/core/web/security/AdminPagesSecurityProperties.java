@@ -20,6 +20,7 @@ public class AdminPagesSecurityProperties {
     /**
      * The IP address pattern that can control access to the admin status endpoints.
      */
+     */
     private String ip = "a^";
 
     /**
@@ -218,6 +219,7 @@ JAASTest {
     }
 
     public static class Jdbc extends AbstractJpaProperties {
+
         private static final long serialVersionUID = 2625666117528467867L;
 
         /**
@@ -233,6 +235,7 @@ JAASTest {
         private String query;
 
         @NestedConfigurationProperty
+
         /**
          * Password encoder properties.
          */
