@@ -66,7 +66,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 
         // Ensure that repeated logins ABOVE threshold rate are throttled
-        failLoop(3, 200, HttpStatus.SC_FORBIDDEN);
+        failLoop(3, 200, HttpStatus.SC_LOCKED);
 
         // Ensure that slowing down relieves throttle
         throttle.decrement();
