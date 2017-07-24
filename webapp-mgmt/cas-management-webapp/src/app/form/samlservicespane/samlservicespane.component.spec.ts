@@ -5,7 +5,7 @@ import {FormModule} from "../form.module";
 import {SharedModule} from "../../shared/shared.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 
 describe('SamlservicespaneComponent', () => {
   let component: SamlservicespaneComponent;
@@ -23,7 +23,7 @@ describe('SamlservicespaneComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SamlservicespaneComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

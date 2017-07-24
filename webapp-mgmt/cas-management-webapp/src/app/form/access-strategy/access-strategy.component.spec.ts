@@ -7,7 +7,7 @@ import { DebugElement } from '@angular/core';
 import { AccessStrategyComponent } from './access-strategy.component';
 import {RejectedattributesComponent} from "../rejectedattributes/rejectedattributes.component";
 import {Messages} from "../../messages";
-import {FormData, Data} from "../../../domain/form";
+import {FormData, ServiceData} from "../../../domain/service-edit-bean";
 import {TabService} from "../tab.service";
 import {SharedModule} from "../../shared/shared.module";
 
@@ -30,7 +30,7 @@ describe('AccessStrategyComponent', () => {
     fixture = TestBed.createComponent(AccessStrategyComponent);
     component = fixture.componentInstance;
     component.formData = new FormData();
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });

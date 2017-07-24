@@ -5,7 +5,7 @@ import {FormModule} from "../form.module";
 import {SharedModule} from "../../shared/shared.module";
 import {Messages} from "../../messages";
 import {FormsModule} from "@angular/forms";
-import {FormData, Data} from "../../../domain/form";
+import {FormData, ServiceData} from "../../../domain/service-edit-bean";
 
 describe('WsfedattrrelpoliciesComponent', () => {
   let component: WsfedattrrelpoliciesComponent;
@@ -24,7 +24,7 @@ describe('WsfedattrrelpoliciesComponent', () => {
     fixture = TestBed.createComponent(WsfedattrrelpoliciesComponent);
     component = fixture.componentInstance;
     component.formData = new FormData();
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

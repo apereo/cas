@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { AttributeReleaseComponent } from './attribute-release.component';
 import {Messages} from "../../messages";
-import {FormData, Data} from "../../../domain/form";
+import {FormData, ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 import {AttributeReleaseChecksComponent} from "../attribute-release-checks/attribute-release-checks.component";
 import {AttributeReleasePrincipalRepoComponent} from "../attribute-release-principal-repo/attribute-release-principal-repo.component";
@@ -36,7 +36,7 @@ describe('AttributeReleaseComponent', () => {
     fixture = TestBed.createComponent(AttributeReleaseComponent);
     component = fixture.componentInstance;
     component.formData = new FormData();
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     component.selectOptions = "";
     fixture.detectChanges();
   });

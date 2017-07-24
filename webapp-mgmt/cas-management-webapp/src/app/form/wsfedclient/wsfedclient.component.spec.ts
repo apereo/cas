@@ -5,7 +5,7 @@ import {SharedModule} from "../../shared/shared.module";
 import {FormModule} from "../form.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {TabService} from "../tab.service";
 
 describe('WsfedclientComponent', () => {
@@ -24,7 +24,7 @@ describe('WsfedclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WsfedclientComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });

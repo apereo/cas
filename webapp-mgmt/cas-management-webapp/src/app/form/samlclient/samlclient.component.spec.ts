@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { SamlclientComponent } from './samlclient.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 import {SamlservicespaneComponent} from "../samlservicespane/samlservicespane.component";
 
@@ -26,7 +26,7 @@ describe('SamlclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SamlclientComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

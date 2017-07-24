@@ -7,7 +7,7 @@ import { DebugElement } from '@angular/core';
 import { ServicetypeComponent } from './servicetype.component';
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('ServicetypeComponent', () => {
@@ -26,7 +26,7 @@ describe('ServicetypeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ServicetypeComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });
