@@ -85,8 +85,7 @@ public class HazelcastTicketRegistryConfiguration {
         
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            final MapConfig mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(),
-                    t.getProperties().getStorageTimeout());
+            final MapConfig mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(), t.getProperties().getStorageTimeout());
             LOGGER.debug("Created Hazelcast map configuration for [{}]", t);
             mapConfigs.put(t.getProperties().getStorageName(), mapConfig);
         });

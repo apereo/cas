@@ -69,8 +69,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class})
-@ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml",
-        initializers = EnvironmentConversionServiceInitializer.class)
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.configLocation="})
 @DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
@@ -94,7 +93,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
     @Test
     public void correctHazelcastInstanceIsCreated() throws Exception {
         assertNotNull(this.hzInstance);
