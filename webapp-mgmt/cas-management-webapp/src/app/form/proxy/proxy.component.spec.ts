@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { ProxyComponent } from './proxy.component';
 import {Messages} from "../../messages";
-import {Data} from "../../../domain/form";
+import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('ProxyComponent', () => {
@@ -25,7 +25,7 @@ describe('ProxyComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ProxyComponent);
     component = fixture.componentInstance;
-    component.serviceData = new Data();
+    component.serviceData = new ServiceData();
     fixture.detectChanges();
   });
 

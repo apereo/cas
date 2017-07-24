@@ -8,11 +8,11 @@ import { DebugElement } from '@angular/core';
 import { ServicesComponent } from './services.component';
 import {AlertComponent} from "../alert/alert.component";
 import {Messages} from "../messages";
-import ServiceView from "../../domain/service-view";
+import {ServiceViewBean} from "../../domain/service-view-bean";
 import {ServiceViewService} from "./service.service";
 
 let serviceViewServiceStub = {
-  getServices(domain: String): Promise<ServiceView[]> {
+  getServices(domain: String): Promise<ServiceViewBean[]> {
     return Promise.resolve([]);
   },
 
@@ -20,7 +20,7 @@ let serviceViewServiceStub = {
      return Promise.resolve();
   },
 
-  updateOrder(a: ServiceView, b: ServiceView): Promise<String> {
+  updateOrder(a: ServiceViewBean, b: ServiceViewBean): Promise<String> {
     return Promise.resolve("200");
   }
 };
