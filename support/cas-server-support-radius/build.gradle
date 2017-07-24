@@ -1,18 +1,11 @@
 description = "Apereo CAS RADIUS Support"
-dependencies {
+repositories {
+    maven { url "https://jitpack.io" }
+    jcenter()
+}
 
+dependencies {
     compile project(":support:cas-server-support-radius-core")
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-web")
-    implementation libraries.jradius
-    
-}
-
-
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == "gnu-getopt") {
-            details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
-        }
-    }
 }

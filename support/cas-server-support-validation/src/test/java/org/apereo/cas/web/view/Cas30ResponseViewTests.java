@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @DirtiesContext
-@TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.cipherEnabled=false"})
+@TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(Cas30ResponseViewTests.class);
 

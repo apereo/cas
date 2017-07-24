@@ -46,7 +46,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        HazelcastTicketRegistryReplicationTests.HazelcastTestConfiguration.class,
         HazelcastTicketRegistryConfiguration.class,
         HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
@@ -66,8 +65,7 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreLogoutConfiguration.class})
-@ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml",
-        initializers = EnvironmentConversionServiceInitializer.class)
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(locations = {"classpath:/hazelcast.properties"})
 @DirtiesContext
 public class ProvidedHazelcastInstanceConfigurationTests {
