@@ -13,6 +13,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 public class TicketGrantingCookieProperties extends CookieProperties {
 
+    /**
+     * If remember-me is enabled, specifies the maximum age of the cookie.
+     */
     private String rememberMeMaxAge = "P14D";
 
     @NestedConfigurationProperty
