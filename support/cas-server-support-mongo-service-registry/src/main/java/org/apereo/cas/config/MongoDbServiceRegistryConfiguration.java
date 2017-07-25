@@ -1,19 +1,17 @@
 package org.apereo.cas.config;
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoClientOptions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.mongo.MongoDbObjectFactory;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 
 import java.util.Arrays;
@@ -26,32 +24,20 @@ import java.util.Arrays;
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfiguration {
+public class MongoDbServiceRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    @Override
-    protected String getDatabaseName() {
-        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
-        return mongo.getDatabaseName();
-    }
 
-    @Override
-    public Mongo mongo() throws Exception {
-        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
-        return Beans.newMongoDbClient(mongo);
-    }
-    
-    @RefreshScope
+    @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
-    public MongoClientOptions mongoClientOptions() throws Exception {
-        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
-        return Beans.newMongoDbClientOptions(mongo);
+    public MongoTemplate mongoDbServiceRegistryTemplate() {
+        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        factory.setCustomConversions(customConversions());
+        return factory.buildMongoTemplate(casProperties.getServiceRegistry().getMongo());
     }
-
-    @Override
-    public CustomConversions customConversions() {
+    
+    private CustomConversions customConversions() {
         return new CustomConversions(Arrays.asList(
                 new BaseConverters.LoggerConverter(),
                 new BaseConverters.ClassConverter(),
@@ -70,7 +56,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     public ServiceRegistryDao serviceRegistryDao() throws Exception {
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistryDao(
-                mongoTemplate(),
+                mongoDbServiceRegistryTemplate(),
                 mongo.getCollectionName(),
                 mongo.isDropCollection());
     }
