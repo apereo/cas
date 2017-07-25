@@ -44,6 +44,8 @@ public class AdminPagesSecurityProperties {
     /**
      * List of users allowed access to the admin status endpoint
      * provided CAS is controlling access to the status endpoint.
+     * If you decide to protect other administrative endpoints via CAS itself, 
+     * you will need to provide a reference to the list of authorized users in the CAS configuration. 
      */
     private Resource users;
 
@@ -142,7 +144,6 @@ public class AdminPagesSecurityProperties {
     }
 
     public static class Jaas {
-
         /**
          * JAAS login resource file.
          */
@@ -218,7 +219,6 @@ JAASTest {
     }
 
     public static class Jdbc extends AbstractJpaProperties {
-
         private static final long serialVersionUID = 2625666117528467867L;
 
         /**
@@ -232,12 +232,11 @@ JAASTest {
          * <code>SELECT username,password,enabled FROM users WHERE username=?</code>
          */
         private String query;
-
-        @NestedConfigurationProperty
-
+        
         /**
          * Password encoder properties.
          */
+        @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
         public String getRolePrefix() {
