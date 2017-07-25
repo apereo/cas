@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;

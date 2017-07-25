@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
@@ -85,7 +86,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Bind b) {
         final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
-                jdbcPrincipalFactory(), b.getOrder(), Beans.newDataSource(b));
+                jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
@@ -105,7 +106,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
         final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager,
-                jdbcPrincipalFactory(), b.getOrder(), Beans.newDataSource(b), b.getAlgorithmName(), b.getSql(), b.getPasswordFieldName(),
+                jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getAlgorithmName(), b.getSql(), b.getPasswordFieldName(),
                 b.getSaltFieldName(), b.getExpiredFieldName(), b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
                 b.getStaticSalt());
 
@@ -132,7 +133,7 @@ public class CasJdbcAuthenticationConfiguration {
 
         final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(),
-                Beans.newDataSource(b), b.getSql(), b.getFieldPassword(),
+                JpaBeans.newDataSource(b), b.getSql(), b.getFieldPassword(),
                 b.getFieldExpired(), b.getFieldDisabled(),
                 CollectionUtils.wrap(attributes));
 
@@ -155,7 +156,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
-                jdbcPrincipalFactory(), b.getOrder(), Beans.newDataSource(b), b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
+                jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
