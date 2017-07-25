@@ -6,7 +6,6 @@ import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
@@ -56,11 +55,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
         } catch (final Exception e) {
             throw new IllegalStateException("Exception generating digest of source ID.", e);
         }
-        try {
-            this.random = SecureRandom.getInstance("SHA1PRNG");
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Cannot get SHA1PRNG secure random instance.", e);
-        }
+        this.random = new SecureRandom();
     }
 
     /**

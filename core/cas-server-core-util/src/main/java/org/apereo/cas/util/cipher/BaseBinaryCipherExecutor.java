@@ -1,19 +1,20 @@
 package org.apereo.cas.util.cipher;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
+import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Map;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * A implementation that is based on algorithms
@@ -59,9 +60,9 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
                     getEncryptionKeySetting());
-            this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
+            this.encryptionSecretKey = (new Base64RandomStringGenerator(encryptionKeySize)).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                    this.encryptionSecretKey, encryptionKeySize, getEncryptionKeySetting());
+              this.encryptionSecretKey, encryptionKeySize, getEncryptionKeySetting());
         } else {
             this.encryptionSecretKey = encryptionSecretKey;
         }
@@ -75,7 +76,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @Override
     public byte[] encode(final byte[] value) {
         try {
-            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(StandardCharsets.UTF_8),
+            final Key key = new SecretKeySpec(Base64.decodeBase64(this.encryptionSecretKey),
                     this.secretKeyAlgorithm);
             final CipherService cipher = new AesCipherService();
             final byte[] result = cipher.encrypt(value, key.getEncoded()).getBytes();
