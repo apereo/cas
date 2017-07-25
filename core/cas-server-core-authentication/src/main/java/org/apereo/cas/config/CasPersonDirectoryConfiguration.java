@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
@@ -211,7 +212,7 @@ public class CasPersonDirectoryConfiguration {
                 final LdaptivePersonAttributeDao ldapDao = new LdaptivePersonAttributeDao();
 
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                ldapDao.setConnectionFactory(Beans.newLdaptivePooledConnectionFactory(ldap));
+                ldapDao.setConnectionFactory(LdapBeans.newLdaptivePooledConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
 
                 LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getUserFilter());
