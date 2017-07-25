@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
@@ -15,6 +16,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuil
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -38,6 +40,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,19 +147,35 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO) final ServiceRegistryDao serviceRegistryDao) {
-        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryDao,
+        final ServiceRegistryProperties serviceRegistry = casProperties.getServiceRegistry();
+        final ServiceRegistryInitializer initializer = 
+                new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryDao,
                 servicesManager(serviceRegistryDao),
-                casProperties.getServiceRegistry().isInitFromJson());
+                serviceRegistry.isInitFromJson());
+
+        if (serviceRegistry.isInitFromJson()) {
+            LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
+                    serviceRegistryDao.toString(),
+                    getServiceRegistryInitializerServicesDirectoryResource());
+        }
+        initializer.initServiceRegistryIfNecessary();
+        return initializer;
     }
 
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
     public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
-            return new EmbeddedServiceRegistryDao(eventPublisher);
+            final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
+            return new EmbeddedServiceRegistryDao(eventPublisher, location);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    private Resource getServiceRegistryInitializerServicesDirectoryResource() {
+        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+        return ObjectUtils.defaultIfNull(registry.getConfig().getLocation(), new ClassPathResource("services"));
     }
 
     /**
@@ -164,8 +183,8 @@ public class CasCoreServicesConfiguration {
      * on the classpath.
      */
     public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-        EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher) throws Exception {
-            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false, publisher);
+        EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
+            super(location, new RegisteredServiceJsonSerializer(), false, publisher);
         }
 
         @Override
