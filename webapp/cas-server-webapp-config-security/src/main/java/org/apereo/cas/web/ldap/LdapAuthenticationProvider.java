@@ -1,7 +1,7 @@
 package org.apereo.cas.web.ldap;
 
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.web.support.WebUtils;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ReturnAttributes;
@@ -56,12 +56,12 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
             LOGGER.debug("Preparing LDAP authentication request for user [{}]", username);
 
             final AuthenticationRequest request = new AuthenticationRequest(username, new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
-            final Authenticator authenticator = Beans.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
+            final Authenticator authenticator = LdapBeans.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
-            
+
             final AuthenticationResponse response = authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
-            
+
             if (response.getResult()) {
                 final LdapEntry entry = response.getLdapEntry();
 
