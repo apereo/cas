@@ -31,9 +31,14 @@ jar.dependsOn 'deleteJar'
 
 task deleteJar(type: Delete) {
     def jarFile = file("build/libs/${project.name}-${project.version}.jar")
-    if (gradlePropFile.lastModified() > jarFile.lastModified()) { 
+    def propModified = gradlePropFile.lastModified()
+    def jarModified = jarFile.lastModified()
+    if (propModified > jarModified) { 
         doLast {
-            println("Deleting files due to gradle.properties update")
+            log.info("""
+Deleting JAR files [$jarFile] due to [gradle.properties] update because it was updated last at [$propModified]
+which is the greater than the last time the JAR files were updates at [$jarModified].
+""")
         }
         delete jarFile
     }
