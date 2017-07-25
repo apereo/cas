@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
@@ -169,13 +170,13 @@ public class CasPersonDirectoryConfiguration {
                 if (jdbc.isSingleRow()) {
                     LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new SingleRowJdbcPersonAttributeDao(
-                            Beans.newDataSource(jdbc),
+                            JpaBeans.newDataSource(jdbc),
                             jdbc.getSql()
                     );
                 } else {
                     LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                            Beans.newDataSource(jdbc),
+                            JpaBeans.newDataSource(jdbc),
                             jdbc.getSql()
                     );
                     LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());

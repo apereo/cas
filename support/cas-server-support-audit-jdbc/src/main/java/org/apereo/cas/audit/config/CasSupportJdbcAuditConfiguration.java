@@ -7,7 +7,7 @@ import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
@@ -66,9 +66,9 @@ public class CasSupportJdbcAuditConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
-        return Beans.newHibernateEntityManagerFactoryBean(
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
-                        Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                        JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaInspektrAuditContext",
                         new String[]{"org.apereo.cas.audit.entity"},
                         inspektrAuditTrailDataSource()),
@@ -89,7 +89,7 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     @RefreshScope
     public DataSource inspektrAuditTrailDataSource() {
-        return Beans.newDataSource(casProperties.getAudit().getJdbc());
+        return JpaBeans.newDataSource(casProperties.getAudit().getJdbc());
     }
 
     @Bean

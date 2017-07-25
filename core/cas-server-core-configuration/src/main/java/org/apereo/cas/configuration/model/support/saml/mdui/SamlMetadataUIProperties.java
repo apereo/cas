@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.Arrays;

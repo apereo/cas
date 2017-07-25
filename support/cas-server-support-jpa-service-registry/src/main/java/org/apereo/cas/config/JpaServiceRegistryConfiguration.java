@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.JpaServiceRegistryDaoImpl;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
-import static org.apereo.cas.configuration.support.Beans.newHibernateEntityManagerFactoryBean;
-import static org.apereo.cas.configuration.support.Beans.newHibernateJpaVendorAdapter;
-import static org.apereo.cas.configuration.support.Beans.newDataSource;
 
 /**
  * This this {@link JpaServiceRegistryConfiguration}.
@@ -42,7 +39,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
-        return newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
@@ -57,7 +54,7 @@ public class JpaServiceRegistryConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
-        return newHibernateEntityManagerFactoryBean(
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                         jpaServiceVendorAdapter(),
                         "jpaServiceRegistryContext",
@@ -78,7 +75,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceService() {
-        return newDataSource(casProperties.getServiceRegistry().getJpa());
+        return JpaBeans.newDataSource(casProperties.getServiceRegistry().getJpa());
     }
 
     @Bean

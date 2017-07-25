@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.throttle;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
