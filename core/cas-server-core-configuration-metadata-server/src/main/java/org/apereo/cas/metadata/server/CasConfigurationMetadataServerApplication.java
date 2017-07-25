@@ -49,8 +49,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class CasConfigurationMetadataServerApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationMetadataServerApplication.class);
 
-    protected CasConfigurationMetadataServerApplication() {}
-    
+    protected CasConfigurationMetadataServerApplication() {
+    }
+
     /**
      * Main entry point of the CAS web application.
      *
@@ -60,6 +61,7 @@ public class CasConfigurationMetadataServerApplication {
         new SpringApplicationBuilder(CasConfigurationMetadataServerApplication.class)
                 .banner(new DefaultCasBanner())
                 .logStartupInfo(false)
+                .web(false)
                 .run(args);
     }
 
@@ -72,9 +74,8 @@ public class CasConfigurationMetadataServerApplication {
     @Bean
     public CommandLineRunner commandLineRunner() throws Exception {
         return args -> {
-            final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
-            LOGGER.info("Total groups found: [{}]", repository.getRepository().getAllGroups().size());
-            LOGGER.info("Total properties found: [{}]", repository.getRepository().getAllProperties().size());
+            final ConfigurationMetadataServerCommandEngine engine = new ConfigurationMetadataServerCommandEngine();
+            engine.execute(args);
         };
     }
 }
