@@ -3,12 +3,6 @@ package org.apereo.cas.configuration.support;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.WriteConcern;
 import com.zaxxer.hikari.HikariDataSource;
 import groovy.lang.GroovyClassLoader;
 import org.apache.commons.io.IOUtils;
@@ -27,7 +21,6 @@ import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -94,11 +87,9 @@ import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -967,63 +958,6 @@ public final class Beans {
      */
     public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery) {
         return newLdaptiveSearchExecutor(baseDn, filterQuery, new ArrayList<>(0));
-    }
-
-    /**
-     * New mongo db client options factory bean.
-     *
-     * @param mongo the mongo properties.
-     * @return the mongo client options factory bean
-     */
-    public static MongoClientOptionsFactoryBean newMongoDbClientOptionsFactoryBean(final AbstractMongoInstanceProperties mongo) {
-        try {
-            final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
-            bean.setHeartbeatConnectTimeout((int) mongo.getTimeout());
-            bean.setHeartbeatSocketTimeout((int) mongo.getTimeout());
-            bean.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
-            bean.setSocketKeepAlive(mongo.isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime((int) mongo.getIdleTimeout());
-            bean.setConnectionsPerHost(mongo.getConns().getPerHost());
-            bean.setSocketTimeout((int) mongo.getTimeout());
-            bean.setConnectTimeout((int) mongo.getTimeout());
-            bean.afterPropertiesSet();
-            return bean;
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * New mongo db client options.
-     *
-     * @param mongo the mongo
-     * @return the mongo client options
-     */
-    public static MongoClientOptions newMongoDbClientOptions(final AbstractMongoInstanceProperties mongo) {
-        try {
-            return newMongoDbClientOptionsFactoryBean(mongo).getObject();
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * New mongo db client.
-     *
-     * @param mongo the mongo
-     * @return the mongo
-     */
-    public static Mongo newMongoDbClient(final AbstractMongoInstanceProperties mongo) {
-        return new MongoClient(new ServerAddress(
-                mongo.getHost(),
-                mongo.getPort()),
-                CollectionUtils.wrap(
-                        MongoCredential.createCredential(
-                                mongo.getUserId(),
-                                mongo.getDatabaseName(),
-                                mongo.getPassword().toCharArray())),
-                newMongoDbClientOptions(mongo));
     }
 
     /**
