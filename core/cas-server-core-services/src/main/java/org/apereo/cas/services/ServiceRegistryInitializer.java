@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 
@@ -43,21 +42,20 @@ public class ServiceRegistryInitializer {
     /**
      * Init service registry if necessary.
      */
-    @PostConstruct
     public void initServiceRegistryIfNecessary() {
         final long size = this.serviceRegistryDao.size();
         LOGGER.debug("Service registry contains [{}] service definitions", size);
 
         if (!this.initFromJson) {
-            LOGGER.info("The service registry database will not be initialized from default JSON services. "
+            LOGGER.info("The service registry database will not be initialized from JSON services. "
                     + "If the service registry database ends up empty, CAS will refuse to authenticate services "
                     + "until service definitions are added to the registry. To auto-initialize the service registry, "
                     + "set 'cas.serviceRegistry.initFromJson=true' in your CAS settings.");
             return;
         }
 
-        LOGGER.warn("Service registry will be auto-initialized from service definitions that ship with CAS by default. "
-                + "This behavior is only useful for demo purposes and MAY NOT be appropriate for production. "
+        LOGGER.warn("Service registry will be auto-initialized from JSON service definitions. "
+                + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
                 + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
                 + "and explicitly register definitions in the services registry.");
         
