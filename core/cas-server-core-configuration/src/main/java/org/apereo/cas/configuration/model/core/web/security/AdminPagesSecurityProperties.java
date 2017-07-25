@@ -20,7 +20,6 @@ public class AdminPagesSecurityProperties {
     /**
      * The IP address pattern that can control access to the admin status endpoints.
      */
-     */
     private String ip = "a^";
 
     /**
