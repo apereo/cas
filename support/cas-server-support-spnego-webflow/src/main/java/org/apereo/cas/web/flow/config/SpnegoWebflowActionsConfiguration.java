@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.config;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
 import org.apereo.cas.web.flow.SpnegoNegociateCredentialsAction;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
@@ -95,11 +95,11 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action ldapSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
-        final SearchFilter filter = Beans.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
+        final ConnectionFactory connectionFactory = LdapBeans.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
+        final SearchFilter filter = LdapBeans.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
                 "host", new ArrayList<>(0));
 
-        final SearchRequest searchRequest = Beans.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
+        final SearchRequest searchRequest = LdapBeans.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         return new LdapSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(), 
                 spnegoProperties.getAlternativeRemoteHostAttribute(),
                 spnegoProperties.getDnsTimeout(), 

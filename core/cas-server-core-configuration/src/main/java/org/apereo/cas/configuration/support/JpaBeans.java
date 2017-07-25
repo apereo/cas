@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class JpaBeans {
+public final class JpaBeans {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaBeans.class);
     
     protected JpaBeans() {

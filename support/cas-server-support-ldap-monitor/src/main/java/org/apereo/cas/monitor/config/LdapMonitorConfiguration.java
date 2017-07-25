@@ -3,6 +3,7 @@ package org.apereo.cas.monitor.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryMonitor;
 import org.ldaptive.pool.PooledConnectionFactory;
@@ -40,7 +41,7 @@ public class LdapMonitorConfiguration {
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ExecutorService executor) {
         final MonitorProperties.Ldap ldap = casProperties.getMonitor().getLdap();
-        final PooledConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
+        final PooledConnectionFactory connectionFactory = LdapBeans.newLdaptivePooledConnectionFactory(ldap);
         return new PooledLdapConnectionFactoryMonitor(executor, (int) ldap.getMaxWait(),
                 connectionFactory, new SearchValidator());
     }

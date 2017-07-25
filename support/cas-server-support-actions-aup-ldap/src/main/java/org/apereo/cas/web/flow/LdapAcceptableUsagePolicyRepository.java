@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -73,8 +73,8 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      */
     private Response<SearchResult> searchForId(final String id) throws LdapException {
 
-        final SearchFilter filter = Beans.newLdaptiveSearchFilter(this.searchFilter,
-                Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+        final SearchFilter filter = LdapBeans.newLdaptiveSearchFilter(this.searchFilter,
+                LdapBeans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }

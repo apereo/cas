@@ -2,7 +2,7 @@ package org.apereo.cas.web.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyRepository;
 import org.apereo.cas.web.flow.LdapAcceptableUsagePolicyRepository;
@@ -35,7 +35,7 @@ public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         final AcceptableUsagePolicyProperties.Ldap ldap = casProperties.getAcceptableUsagePolicy().getLdap();
-        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
+        final ConnectionFactory connectionFactory = LdapBeans.newLdaptivePooledConnectionFactory(ldap);
         final LdapAcceptableUsagePolicyRepository r = new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport, 
                 connectionFactory, ldap.getUserFilter(), ldap.getBaseDn());
         r.setAupAttributeName(casProperties.getAcceptableUsagePolicy().getAupAttributeName());

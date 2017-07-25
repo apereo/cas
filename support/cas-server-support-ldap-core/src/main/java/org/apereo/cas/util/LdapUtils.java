@@ -3,7 +3,7 @@ package org.apereo.cas.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -179,7 +179,7 @@ public final class LdapUtils {
                                                                 final String[] returnAttributes) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
-            final SearchRequest request = Beans.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
+            final SearchRequest request = LdapBeans.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
             return searchOperation.execute(request);
         }
