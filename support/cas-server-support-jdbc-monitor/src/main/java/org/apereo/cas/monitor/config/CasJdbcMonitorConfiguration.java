@@ -3,6 +3,7 @@ package org.apereo.cas.monitor.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.monitor.JdbcDataSourceMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,6 @@ public class CasJdbcMonitorConfiguration {
     @Bean
     @RefreshScope
     public DataSource monitorDataSource() {
-        return Beans.newDataSource(casProperties.getMonitor().getJdbc());
+        return JpaBeans.newDataSource(casProperties.getMonitor().getJdbc());
     }
 }

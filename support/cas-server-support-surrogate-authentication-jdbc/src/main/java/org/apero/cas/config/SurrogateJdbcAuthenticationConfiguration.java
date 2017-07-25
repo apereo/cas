@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateJdbcAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class SurrogateJdbcAuthenticationConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
-                Beans.newDataSource(su.getJdbc()),
+                JpaBeans.newDataSource(su.getJdbc()),
                 su.getJdbc().getSurrogateAccountQuery());
     }
 }
