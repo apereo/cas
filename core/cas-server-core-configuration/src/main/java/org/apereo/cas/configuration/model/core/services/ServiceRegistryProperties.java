@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaService
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 
