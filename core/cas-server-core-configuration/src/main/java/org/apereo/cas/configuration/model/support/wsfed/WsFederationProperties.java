@@ -3,13 +3,17 @@ package org.apereo.cas.configuration.model.support.wsfed;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link WsFederationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class WsFederationProperties {
+public class WsFederationProperties implements Serializable {
+    private static final long serialVersionUID = -8679379856243224647L;
+    
     private IdentityProvider idp = new IdentityProvider();
     private SecurityTokenService sts = new SecurityTokenService();
 
