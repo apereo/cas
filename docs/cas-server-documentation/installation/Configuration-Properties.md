@@ -2162,6 +2162,8 @@ To learn more about this topic, [please review this guide](Couchbase-Authenticat
 # cas.authn.couchbase.nodeSet=localhost:8091
 # cas.authn.couchbase.password=
 # cas.authn.couchbase.bucket=default
+# cas.authn.couchbase.timeout=5000
+# cas.authn.couchbase.queryEnabled=true
 # cas.authn.couchbase.usernameAttribute=username
 # cas.authn.couchbase.passwordAttribute=psw
 
