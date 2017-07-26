@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
+import java.io.Serializable;
+
 /**
  * This is {@link BaseCassandraProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public abstract class BaseCassandraProperties {
+public abstract class BaseCassandraProperties implements Serializable {
+    private static final long serialVersionUID = 3708645268337674572L;
     /**
      * Username to bind and establish a connection to cassandra.
      */
