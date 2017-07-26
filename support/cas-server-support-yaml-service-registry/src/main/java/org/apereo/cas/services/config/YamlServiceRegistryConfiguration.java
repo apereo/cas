@@ -34,7 +34,7 @@ public class YamlServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao yamlServiceRegistryDao() {
+    public ServiceRegistryDao serviceRegistryDao() {
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
         if (registry.getConfig().getLocation() == null) {
             LOGGER.warn("The location of service definitions is undefined for the service registry");
