@@ -14,7 +14,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-public class HazelcastProperties {
+public class HazelcastProperties implements Serializable {
 
     /**
      * Logging type property name.
@@ -29,6 +29,8 @@ public class HazelcastProperties {
      * Ipv4 protocol stack.
      */
     public static final String IPV4_STACK_PROP = "hazelcast.prefer.ipv4.stack";
+    
+    private static final long serialVersionUID = -1095208036374406772L;
 
     /**
      * Page size is used by a special Predicate which helps to get a page-by-page result of a query.
