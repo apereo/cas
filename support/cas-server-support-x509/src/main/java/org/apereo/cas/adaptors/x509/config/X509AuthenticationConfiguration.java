@@ -196,7 +196,7 @@ public class X509AuthenticationConfiguration {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         return new LdaptiveResourceCRLFetcher(LdapBeans.newLdaptiveConnectionConfig(x509.getLdap()),
                 LdapBeans.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
-                x509.getCertificateAttribute());
+                x509.getLdap().getCertificateAttribute());
     }
 
     @Bean

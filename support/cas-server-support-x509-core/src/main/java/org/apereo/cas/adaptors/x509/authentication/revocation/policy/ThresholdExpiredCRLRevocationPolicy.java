@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
 public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
 

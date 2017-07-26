@@ -2337,7 +2337,6 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.regExSubjectDnPattern=.+
 # cas.authn.x509.regExTrustedIssuerDnPattern=.+
-# cas.authn.x509.trustedIssuerDnPattern=.+
 
 # cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
@@ -2351,7 +2350,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
-# cas.authn.x509.certificateAttribute=certificateRevocationList
+
 
 # cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.x509.ldap.connectionStrategy=
@@ -2379,6 +2378,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.prunePeriod=600
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.x509.ldap.certificateAttribute=certificateRevocationList
 
 # cas.authn.x509.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.x509.ldap.validator.baseDn=
