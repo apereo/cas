@@ -21,7 +21,7 @@ public class ConfigurationMetadataServerCommandEngine {
     public void execute(final String[] args) {
         final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
         final CommandLine line = parser.parse(args);
-        if (line == null || args.length == 0 || line.hasOption(ConfigurationMetadataServerCommandLineParser.OPTION_HELP.getOpt())) {
+        if (args.length == 0 || parser.isHelp(line)) {
             parser.printHelp();
             return;
         }

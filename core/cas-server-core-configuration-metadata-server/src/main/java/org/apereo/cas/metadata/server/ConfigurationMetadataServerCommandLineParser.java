@@ -7,7 +7,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,7 @@ public class ConfigurationMetadataServerCommandLineParser {
         GROUPS,
         PROPERTIES
     }
+
     /**
      * Command line option that indicates a property.
      */
@@ -34,10 +34,10 @@ public class ConfigurationMetadataServerCommandLineParser {
             .withLongOpt("command")
             .hasArg()
             .withType(QueryCommands.class)
-            .withDescription("Command to execute via the query engine. Accepted commands are: [" 
+            .withDescription("Command to execute via the query engine. Accepted commands are: ["
                     + Arrays.stream(QueryCommands.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(",")) + "]")
             .create("c");
-    
+
     /**
      * Command line option that indicates a property.
      */
@@ -72,6 +72,8 @@ public class ConfigurationMetadataServerCommandLineParser {
     private final Options options;
 
     public ConfigurationMetadataServerCommandLineParser() {
+        OPTION_COMMAND.setRequired(true);
+
         options = new Options();
         options.addOption(OPTION_GROUP);
         options.addOption(OPTION_PROPERTY);
@@ -90,7 +92,11 @@ public class ConfigurationMetadataServerCommandLineParser {
         try {
             return parser.parse(options, args);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(e.getMessage(), e);
+            } else {
+                LOGGER.error(e.getMessage());
+            }
         }
         return null;
     }
@@ -106,7 +112,7 @@ public class ConfigurationMetadataServerCommandLineParser {
                         + "for help on available settings and modules. The query engine "
                         + "is presented as a CLI utility that is able to accept parameters on groups/settings "
                         + "and report back results.\n\nExample use cases include: \n"
-                        + "1) Information on a particular setting, such as description, defaults, hints and deprecation.\n"
+                        + "1) Information on a property, such as description, defaults, hints and deprecation.\n"
                         + "2) Retrieving list of available settings for a given module/group.\n",
                 true);
     }
@@ -129,6 +135,16 @@ public class ConfigurationMetadataServerCommandLineParser {
      */
     public Pattern getGroup(final CommandLine line) {
         return RegexUtils.createPattern(getOptionValue(line, OPTION_GROUP, ".+"));
+    }
+
+    /**
+     * Is help boolean.
+     *
+     * @param line the line
+     * @return the boolean
+     */
+    public boolean isHelp(final CommandLine line) {
+        return line == null || line.getArgList().isEmpty() || line.hasOption(OPTION_HELP.getOpt());
     }
 
     /**
