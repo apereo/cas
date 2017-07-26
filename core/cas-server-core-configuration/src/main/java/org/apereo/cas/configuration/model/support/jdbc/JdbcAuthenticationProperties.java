@@ -16,9 +16,32 @@ import java.util.List;
  * @since 5.0.0
  */
 public class JdbcAuthenticationProperties {
+    /**
+     * Settings related to search-mode jdbc authentication.
+     * Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
+     */
     private List<Search> search = new ArrayList();
+    /**
+     * Settings related to query-encode-mode jdbc authentication.
+     * A JDBC querying handler that will pull back the password and the private salt value for a user and validate
+     * the encoded password using the public salt value. Assumes everything is inside the same database table.
+     * Supports settings for number of iterations as well as private salt.
+     * This password encoding method combines the private Salt and the public salt which it prepends to the password
+     * before hashing. If multiple iterations
+     * are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
+     * is converted to hex before comparing it to the database value.
+     */
     private List<Encode> encode = new ArrayList();
+    /**
+     * Settings related to query-mode jdbc authentication.
+     * Authenticates a user by comparing the user password
+     * (which can be encoded with a password encoder) against the password on record determined by a configurable database query.
+     */
     private List<Query> query = new ArrayList();
+    /**
+     * Settings related to bind-mode jdbc authentication.
+     * Authenticates a user by attempting to create a database connection using the username and (hashed) password.
+     */
     private List<Bind> bind = new ArrayList();
 
     public List<Search> getSearch() {
@@ -55,22 +78,57 @@ public class JdbcAuthenticationProperties {
 
     public static class Query extends AbstractJpaProperties {
         private static final long serialVersionUID = 7806132208223986680L;
+        /**
+         * SQL query to execute. Example: <code>SELECT * FROM table WHERE name=?</code>.
+         */
         private String sql;
+        /**
+         * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+         * and as such lend themselves to be tried and tested during the authentication handler selection phase.
+         * The credential criteria may be one of the following options:<ul>
+         * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
+         * <li>2) A fully qualified class name of your own design that implements <code>Predicate&lt;Credential&gt;</code>.</li>
+         * <li>3) Path to an external Groovy script that implements the same interface.</li>
+         * </ul>
+         */
         private String credentialCriteria;
+        /**
+         * Password field/column name to retrieve.
+         */
         private String fieldPassword;
+        /**
+         * Boolean field that should indicate whether the account is expired.
+         */
         private String fieldExpired;
+        /**
+         * Boolean field that should indicate whether the account is disabled.
+         */
         private String fieldDisabled;
+        /**
+         * List of column names to fetch as user attributes.
+         */
         private List principalAttributeList = new ArrayList();
 
+        /**
+         * Principal transformation settings for this authentication.
+         */
         @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation =
-                new PrincipalTransformationProperties();
+        private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+        /**
+         * Password encoding strategies for this authentication.
+         */
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+        /**
+         * Name of the authentication handler.
+         */
         private String name;
 
+        /**
+         * Order of the authentication handler in the chain.
+         */
         private int order = Integer.MAX_VALUE;
 
         public List getPrincipalAttributeList() {
@@ -156,16 +214,38 @@ public class JdbcAuthenticationProperties {
 
     public static class Bind extends AbstractJpaProperties {
         private static final long serialVersionUID = 4268982716707687796L;
+        /**
+         * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+         * and as such lend themselves to be tried and tested during the authentication handler selection phase.
+         * The credential criteria may be one of the following options:<ul>
+         * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
+         * <li>2) A fully qualified class name of your own design that implements <code>Predicate&lt;Credential&gt;</code>.</li>
+         * <li>3) Path to an external Groovy script that implements the same interface.</li>
+         * </ul>
+         */
         private String credentialCriteria;
 
-        @NestedConfigurationProperty
-        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
-
+        /**
+         * Principal transformation settings for this authentication.
+         */
         @NestedConfigurationProperty
         private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+        /**
+         * Password encoding strategies for this authentication.
+         */
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        /**
+         * Name of the authentication handler.
+         */
         private String name;
-        private Integer order;
+
+        /**
+         * Order of the authentication handler in the chain.
+         */
+        private int order = Integer.MAX_VALUE;
 
         public Integer getOrder() {
             return order;
@@ -210,20 +290,50 @@ public class JdbcAuthenticationProperties {
 
     public static class Search extends AbstractJpaProperties {
         private static final long serialVersionUID = 6912107600297453730L;
+        /**
+         * Username column name.
+         */
         private String fieldUser;
+        /**
+         * Password column name.
+         */
         private String fieldPassword;
+        /**
+         * Table name where accounts are held.
+         */
         private String tableUsers;
+
+        /**
+         * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+         * and as such lend themselves to be tried and tested during the authentication handler selection phase.
+         * The credential criteria may be one of the following options:<ul>
+         * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
+         * <li>2) A fully qualified class name of your own design that implements <code>Predicate&lt;Credential&gt;</code>.</li>
+         * <li>3) Path to an external Groovy script that implements the same interface.</li>
+         * </ul>
+         */
         private String credentialCriteria;
 
+        /**
+         * Principal transformation settings for this authentication.
+         */
         @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation =
-                new PrincipalTransformationProperties();
+        private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+        /**
+         * Password encoding strategies for this authentication.
+         */
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+        /**
+         * Name of the authentication handler.
+         */
         private String name;
 
+        /**
+         * Order of the authentication handler in the chain.
+         */
         private int order = Integer.MAX_VALUE;
 
         public int getOrder() {
@@ -293,26 +403,79 @@ public class JdbcAuthenticationProperties {
 
     public static class Encode extends AbstractJpaProperties {
         private static final long serialVersionUID = -6647373426301411768L;
+        /**
+         * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+         * and as such lend themselves to be tried and tested during the authentication handler selection phase.
+         * The credential criteria may be one of the following options:<ul>
+         * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
+         * <li>2) A fully qualified class name of your own design that implements <code>Predicate&lt;Credential&gt;</code>.</li>
+         * <li>3) Path to an external Groovy script that implements the same interface.</li>
+         * </ul>
+         */
         private String credentialCriteria;
+
+        /**
+         * Algorithm used for hashing.
+         */
         private String algorithmName;
+        /**
+         * SQL query to execute and look up accounts.
+         * Example: <code>SELECT * FROM table WHERE username=?</code>.
+         */
         private String sql;
+
+        /**
+         * Password column name.
+         */
         private String passwordFieldName = "password";
+        /**
+         * Field/column name that indicates the salt used for password hashing.
+         */
         private String saltFieldName = "salt";
+        /**
+         * Column name that indicates whether account is expired.
+         */
         private String expiredFieldName;
+        /**
+         * Column name that indicates whether account is disabled.
+         */
         private String disabledFieldName;
+
+        /**
+         * Field/column name that indicates the number of iterations used for password hashing.
+         */
         private String numberOfIterationsFieldName = "numIterations";
+        /**
+         * Default number of iterations for hashing.
+         */
         private long numberOfIterations;
+        /**
+         * Static salt to be used for hashing.
+         */
         private String staticSalt;
+
+        /**
+         * Name of the authentication handler.
+         */
         private String name;
 
-        @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation =
-                new PrincipalTransformationProperties();
+        /**
+         * Order of the authentication handler in the chain.
+         */
+        private int order = Integer.MAX_VALUE;
 
+        /**
+         * Principal transformation settings for this authentication.
+         */
+        @NestedConfigurationProperty
+        private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+        /**
+         * Password encoding strategies for this authentication.
+         */
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
-        private int order = Integer.MAX_VALUE;
 
         public int getOrder() {
             return order;
