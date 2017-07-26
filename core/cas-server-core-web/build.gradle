@@ -1,5 +1,3 @@
-import org.apache.tools.ant.filters.*
-
 description = "Apereo CAS Core Web"
 dependencies {
     compile project(":api:cas-server-core-api-web")
@@ -25,8 +23,10 @@ processResources {
     }
 }
 
-// Manually deleting jar if we gradle.properties newer than jar
-// Probably a better way, but watch out for "tasks.jar.onlyIf" elsewhere in build scripts
+/* 
+Manually deleting jar if we gradle.properties newer than jar
+Probably a better way, but watch out for "tasks.jar.onlyIf" elsewhere in build scripts
+ */
 jar.dependsOn 'deleteJar'
 
 task deleteJar(type: Delete) {
@@ -35,7 +35,7 @@ task deleteJar(type: Delete) {
     def jarModified = jarFile.lastModified()
     if (propModified > jarModified) { 
         doLast {
-            log.info("""
+            println("""
 Deleting JAR files [$jarFile] due to [gradle.properties] update because it was updated last at [$propModified]
 which is the greater than the last time the JAR files were updates at [$jarModified].
 """)
