@@ -1,5 +1,6 @@
-package org.apereo.cas.metadata.server;
+package org.apereo.cas.metadata.server.rest;
 
+import org.apereo.cas.metadata.server.CasConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.http.MediaType;
