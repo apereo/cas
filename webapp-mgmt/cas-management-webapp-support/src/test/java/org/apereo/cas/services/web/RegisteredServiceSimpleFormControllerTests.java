@@ -95,7 +95,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         assertTrue(this.manager.getAllServices().isEmpty());
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
+        this.controller.saveService(data);
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
@@ -120,7 +120,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
+        this.controller.saveService(data);
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
@@ -138,7 +138,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
+        this.controller.saveService(data);
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
@@ -155,7 +155,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
+        this.controller.saveService(data);
 
         svc = new RegexRegisteredService();
         svc.setDescription(DESCRIPTION);
@@ -165,7 +165,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(100);
 
         final RegisteredServiceEditBean.ServiceData data2 = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data2, mock(BindingResult.class));
+        this.controller.saveService(data2);
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(2, services.size());
@@ -187,7 +187,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
+        this.controller.saveService(data);
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
@@ -212,7 +212,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         r.setServiceId("serviceId1");
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(r);
-        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
+        this.controller.saveService(data);
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
