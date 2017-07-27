@@ -104,13 +104,19 @@ public class TicketsResource {
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
-            headers.setContentType(MediaType.TEXT_HTML);
-            final String tgtUrl = ticketReference.toString();
-            final String response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
-                    .append(DOCTYPE_AND_OPENING_FORM)
-                    .append(tgtUrl)
-                    .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
-                    .toString();
+            final String response;
+            final String accept = request.getHeader(HttpHeaders.ACCEPT).trim();
+            if (accept == null || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE)) {
+                headers.setContentType(MediaType.TEXT_HTML);
+                final String tgtUrl = ticketReference.toString();
+                response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
+                        .append(DOCTYPE_AND_OPENING_FORM)
+                        .append(tgtUrl)
+                        .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
+                        .toString();
+            } else {
+                response = tgtId.getId();
+            }
             return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
 
         } catch (final AuthenticationException e) {
@@ -123,14 +129,14 @@ public class TicketsResource {
             try {
                 return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
             } catch (final JsonProcessingException exception) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("JSON error", e);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (final BadRequestException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Request error", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Throwable e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Unexpected error", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -149,7 +155,7 @@ public class TicketsResource {
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("Ticket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Unexpected error", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -180,7 +186,7 @@ public class TicketsResource {
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Unexpected error", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
