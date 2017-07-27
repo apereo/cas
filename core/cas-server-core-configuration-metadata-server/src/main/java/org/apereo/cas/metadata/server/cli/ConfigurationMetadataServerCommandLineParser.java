@@ -1,4 +1,4 @@
-package org.apereo.cas.metadata.server;
+package org.apereo.cas.metadata.server.cli;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -11,9 +11,7 @@ import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ConfigurationMetadataServerCommandLineParser}.
@@ -22,22 +20,6 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public class ConfigurationMetadataServerCommandLineParser {
-    private enum QueryCommands {
-        GROUPS,
-        PROPERTIES
-    }
-
-    /**
-     * Command line option that indicates a property.
-     */
-    public static final Option OPTION_COMMAND = OptionBuilder
-            .withLongOpt("command")
-            .hasArg()
-            .withType(QueryCommands.class)
-            .withDescription("Command to execute via the query engine. Accepted commands are: ["
-                    + Arrays.stream(QueryCommands.values()).map(s -> s.toString().toLowerCase()).collect(Collectors.joining(",")) + "]")
-            .create("c");
-
     /**
      * Command line option that indicates a property.
      */
@@ -56,7 +38,23 @@ public class ConfigurationMetadataServerCommandLineParser {
             .withDescription("A regular expression filter to indicate the group name (i.e. cas.authn).")
             .create("g");
 
+    /**
+     * Command line option that indicates a summary.
+     */
+    public static final Option OPTION_SUMMARY = OptionBuilder
+            .withLongOpt("summary")
+            .withDescription("Display a compact version of the query results; Summarize output.")
+            .create("su");
 
+    /**
+     * Command line option that indicates a strict-mode matching.
+     */
+    public static final Option OPTION_STRICT_MATCH = OptionBuilder
+            .withLongOpt("strict-match")
+            .withDescription("Control whether pattern matching should be done in strict mode which means "
+                    + "the matching engine tries to match the entire region for the query.")
+            .create("sm");
+    
     /**
      * Command line option that indicates help information should be displayed.
      */
@@ -72,13 +70,12 @@ public class ConfigurationMetadataServerCommandLineParser {
     private final Options options;
 
     public ConfigurationMetadataServerCommandLineParser() {
-        OPTION_COMMAND.setRequired(true);
-
         options = new Options();
         options.addOption(OPTION_GROUP);
         options.addOption(OPTION_PROPERTY);
         options.addOption(OPTION_HELP);
-        options.addOption(OPTION_COMMAND);
+        options.addOption(OPTION_SUMMARY);
+        options.addOption(OPTION_STRICT_MATCH);
         parser = new DefaultParser();
     }
 
@@ -116,7 +113,8 @@ public class ConfigurationMetadataServerCommandLineParser {
                         + "2) Retrieving list of available settings for a given module/group.\n",
                 true);
     }
-
+    
+    
     /**
      * Gets property.
      *
@@ -144,9 +142,30 @@ public class ConfigurationMetadataServerCommandLineParser {
      * @return the boolean
      */
     public boolean isHelp(final CommandLine line) {
-        return line == null || line.getArgList().isEmpty() || line.hasOption(OPTION_HELP.getOpt());
+        return getOptionValue(line, OPTION_HELP, false);
     }
 
+    /**
+     * Is summary boolean.
+     *
+     * @param line the line
+     * @return the boolean
+     */
+    public boolean isSummary(final CommandLine line) {
+        return getOptionValue(line, OPTION_SUMMARY, false);
+    }
+
+    /**
+     * Is strict match boolean.
+     *
+     * @param line the line
+     * @return the boolean
+     */
+    public boolean isStrictMatch(final CommandLine line) {
+        return getOptionValue(line, OPTION_STRICT_MATCH, false);
+    }
+
+    
     /**
      * Gets option value.
      *
@@ -157,5 +176,17 @@ public class ConfigurationMetadataServerCommandLineParser {
      */
     public String getOptionValue(final CommandLine line, final Option opt, final String defaultValue) {
         return line.hasOption(opt.getOpt()) ? line.getOptionValue(opt.getOpt()) : defaultValue;
+    }
+
+    /**
+     * Gets option value.
+     *
+     * @param line         the line
+     * @param opt          the opt
+     * @param defaultValue the default value
+     * @return the option value
+     */
+    public boolean getOptionValue(final CommandLine line, final Option opt, final boolean defaultValue) {
+        return line.hasOption(opt.getOpt()) ? Boolean.valueOf(line.getOptionValue(opt.getOpt())) : defaultValue;
     }
 }

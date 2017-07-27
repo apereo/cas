@@ -1,6 +1,7 @@
 package org.apereo.cas.metadata.server;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.metadata.server.cli.ConfigurationMetadataServerCommandEngine;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.shell.Bootstrap;
 
 /**
  * This is {@link CasConfigurationMetadataServerApplication}.
@@ -74,6 +76,10 @@ public class CasConfigurationMetadataServerApplication {
     @Bean
     public CommandLineRunner commandLineRunner() throws Exception {
         return args -> {
+            if (args.length > 0 && args[0].matches("--shell|-shell|-s")) {
+                Bootstrap.main(args);
+                return;
+            }
             final ConfigurationMetadataServerCommandEngine engine = new ConfigurationMetadataServerCommandEngine();
             engine.execute(args);
         };
