@@ -2493,7 +2493,7 @@ Control core SAML functionality within CAS.
 # cas.samlCore.skewAllowance=0
 # cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
 # cas.samlCore.issuer=localhost
-# cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
+# cas.samlCore.securityManager=com.sun.org.apache.xerces.internal.util.SecurityManager
 ```
 
 
