@@ -2418,6 +2418,17 @@ ext.libraries = [
                 }
         ],
         spring                  : [
+                dependencies.create("org.springframework.shell:spring-shell:$springShellVersion") {
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "jline", module: "jline")
+                    exclude(group: "commons-io", module: "commons-io")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                },  
                 dependencies.create("org.springframework:spring-aop:$springVersion") {
                     force = true
                 },
