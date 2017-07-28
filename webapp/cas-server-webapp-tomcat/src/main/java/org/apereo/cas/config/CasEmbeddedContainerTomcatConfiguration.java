@@ -161,6 +161,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
                     LOGGER.debug("Setting HTTP proxying proxy port to [{}]", proxy.getProxyPort());
                     connector.setProxyPort(proxy.getProxyPort());
                 }
+                connector.addUpgradeProtocol(new Http2Protocol());
 
                 proxy.getAttributes().forEach(connector::setAttribute);
                 LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());

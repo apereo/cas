@@ -14,14 +14,17 @@ import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link TicketRegistryProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class TicketRegistryProperties {
+public class TicketRegistryProperties implements Serializable {
 
+    private static final long serialVersionUID = -4735458476452635679L;
     /**
      * DyanmoDb registry settings.
      */
@@ -188,8 +191,9 @@ public class TicketRegistryProperties {
         this.dynamoDb = dynamoDb;
     }
 
-    public static class InMemory {
+    public static class InMemory implements Serializable {
 
+        private static final long serialVersionUID = -2600525447128979994L;
         /**
          * The initial capacity of the underlying memory store.
          * The implementation performs internal sizing to accommodate this many elements.
@@ -247,10 +251,17 @@ public class TicketRegistryProperties {
         }
     }
 
-    public static class Cleaner {
-        
+    public static class Cleaner implements Serializable {
+
+        private static final long serialVersionUID = 6726908583118452494L;
+        /**
+         * Cleaner id used to control locking strategies.
+         */
         private String appId = "cas-ticket-registry-cleaner";
 
+        /**
+         * Schedule that determines how often should the cleaner run.
+         */
         @NestedConfigurationProperty
         private SchedulingProperties schedule = new SchedulingProperties();
 
