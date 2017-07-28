@@ -20,8 +20,9 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 
-public class SamlIdPProperties {
+public class SamlIdPProperties implements Serializable {
 
+    private static final long serialVersionUID = -5848075783676789852L;
     /**
      * The SAML entity id for the deployment.
      */

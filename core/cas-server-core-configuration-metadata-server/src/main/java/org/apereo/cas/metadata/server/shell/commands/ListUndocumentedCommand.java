@@ -4,10 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -32,6 +34,7 @@ public class ListUndocumentedCommand implements CommandMarker {
                 .filter(p -> p.getKey().startsWith("cas.")
                         && (StringUtils.isBlank(p.getValue().getShortDescription()) || StringUtils.isBlank(p.getValue().getDescription())))
                 .map(Map.Entry::getValue)
+                .sorted(Comparator.comparing(ConfigurationMetadataProperty::getId))
                 .forEach(p -> {
                     LOGGER.info("Property: {}", p.getId());
                 });
