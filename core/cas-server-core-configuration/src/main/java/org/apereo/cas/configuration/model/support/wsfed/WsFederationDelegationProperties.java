@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipal
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link WsFederationDelegationProperties}.
  *
@@ -11,8 +13,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 
-public class WsFederationDelegationProperties {
+public class WsFederationDelegationProperties implements Serializable {
 
+    private static final long serialVersionUID = 5743971334977239938L;
     private String identityAttribute = "upn";
     private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
     private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
@@ -30,6 +33,9 @@ public class WsFederationDelegationProperties {
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
 
+    /**
+     * Name of the authentication handler.
+     */
     private String name;
 
     public String getName() {

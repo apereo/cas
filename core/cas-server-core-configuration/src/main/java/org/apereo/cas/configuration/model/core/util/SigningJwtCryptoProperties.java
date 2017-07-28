@@ -2,13 +2,16 @@ package org.apereo.cas.configuration.model.core.util;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * This is {@link SigningJwtCryptoProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SigningJwtCryptoProperties {
+public class SigningJwtCryptoProperties implements Serializable {
+    private static final long serialVersionUID = -552544781333015532L;
     /**
      * The signing key is a JWT whose length is defined by the signing key size setting.
      */

@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.core.util;
 
 
+import java.io.Serializable;
+
 /**
  * Common properties for all cryptography related configs.
  * A number of components in CAS accept signing and encryption keys.
@@ -11,8 +13,9 @@ package org.apereo.cas.configuration.model.core.util;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class EncryptionJwtSigningJwtCryptographyProperties {
+public class EncryptionJwtSigningJwtCryptographyProperties implements Serializable {
 
+    private static final long serialVersionUID = -3015641631298039059L;
     /**
      * Whether crypto operations are enabled.
      */
