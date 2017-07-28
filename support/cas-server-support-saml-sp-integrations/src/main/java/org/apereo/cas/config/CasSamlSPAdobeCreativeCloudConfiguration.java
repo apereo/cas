@@ -17,6 +17,6 @@ public class CasSamlSPAdobeCreativeCloudConfiguration extends BaseCasSamlSPConfi
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getAdobeCloud();
+        return casProperties.getSamlSp().getAdobeCloud();
     }
 }

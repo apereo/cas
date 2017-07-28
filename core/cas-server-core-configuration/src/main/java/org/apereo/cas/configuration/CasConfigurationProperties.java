@@ -145,7 +145,7 @@ public class CasConfigurationProperties {
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
     @NestedConfigurationProperty
-    private SamlServiceProviderProperties samlSP = new SamlServiceProviderProperties();
+    private SamlServiceProviderProperties samlSp = new SamlServiceProviderProperties();
 
     @NestedConfigurationProperty
     private MaxmindProperties maxmind = new MaxmindProperties();
@@ -476,12 +476,12 @@ public class CasConfigurationProperties {
         this.googleRecaptcha = googleRecaptcha;
     }
 
-    public SamlServiceProviderProperties getSamlSP() {
-        return samlSP;
+    public SamlServiceProviderProperties getSamlSp() {
+        return samlSp;
     }
 
-    public void setSamlSP(final SamlServiceProviderProperties samlSP) {
-        this.samlSP = samlSP;
+    public void setSamlSp(final SamlServiceProviderProperties samlSp) {
+        this.samlSp = samlSp;
     }
 
     public TwillioProperties getTwillio() {
