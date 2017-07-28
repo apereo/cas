@@ -187,7 +187,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public RealmProperties casRealm() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
 
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
