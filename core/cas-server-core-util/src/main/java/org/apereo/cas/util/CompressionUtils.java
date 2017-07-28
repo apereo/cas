@@ -156,7 +156,7 @@ public final class CompressionUtils {
             zos.write(srcTxt.getBytes());
             IOUtils.closeQuietly(zos);
             final byte[] bytes = rstBao.toByteArray();
-            final String base64 = StringUtils.remove(Base64.encodeBase64String(bytes), '\0');
+            final String base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
             return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);

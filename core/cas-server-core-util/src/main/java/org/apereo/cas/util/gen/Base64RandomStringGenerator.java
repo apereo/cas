@@ -1,6 +1,6 @@
 package org.apereo.cas.util.gen;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apereo.cas.util.EncodingUtils;
 
 /**
  * URL safe base64 encoding implementation of the RandomStringGenerator that allows you to define the
@@ -27,7 +27,7 @@ public class Base64RandomStringGenerator extends AbstractRandomStringGenerator {
      * @return a converted String
      */
     protected String convertBytesToString(final byte[] random) {
-        return Base64.encodeBase64URLSafeString(random);
+        return EncodingUtils.encodeUrlSafeBase64(random);
     }
 
 }
