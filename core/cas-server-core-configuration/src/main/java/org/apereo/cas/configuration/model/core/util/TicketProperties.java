@@ -7,14 +7,17 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for {@code ticket}.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class TicketProperties {
+public class TicketProperties implements Serializable {
 
+    private static final long serialVersionUID = 5586947805593202037L;
     /**
      * Properties and settings related to proxy-granting tickets.
      */

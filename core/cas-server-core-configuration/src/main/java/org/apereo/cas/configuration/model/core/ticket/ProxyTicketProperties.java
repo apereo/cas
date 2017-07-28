@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import java.io.Serializable;
+
 /**
  * This is {@link ProxyTicketProperties}.
  *
@@ -7,8 +9,9 @@ package org.apereo.cas.configuration.model.core.ticket;
  * @since 5.0.0
  */
 
-public class ProxyTicketProperties {
+public class ProxyTicketProperties implements Serializable {
 
+    private static final long serialVersionUID = -3690545027059561010L;
     /**
      * Number of uses allowed.
      */
