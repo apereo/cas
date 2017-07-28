@@ -1,4 +1,4 @@
-package org.apereo.cas.metadata.server;
+package org.apereo.cas.metadata;
 
 import com.google.common.base.Throwables;
 import org.jooq.lambda.Unchecked;

@@ -2,7 +2,7 @@ package org.apereo.cas.metadata.server.cli;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.metadata.server.CasConfigurationMetadataRepository;
+import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
