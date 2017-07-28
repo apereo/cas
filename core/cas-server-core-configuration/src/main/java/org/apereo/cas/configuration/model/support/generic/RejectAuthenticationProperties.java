@@ -16,6 +16,9 @@ import java.io.Serializable;
 public class RejectAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -3228601837221178711L;
+    /**
+     * Comma-separated list of users to reject for authentication.
+     */
     private String users;
 
     @NestedConfigurationProperty
