@@ -4,14 +4,20 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link TokenAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class TokenAuthenticationProperties {
+public class TokenAuthenticationProperties implements Serializable {
 
+    private static final long serialVersionUID = 6016124091895278265L;
+    /**
+     * Principal transformation settings.
+     */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
@@ -21,6 +27,9 @@ public class TokenAuthenticationProperties {
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
+    /**
+     * Name of the authentication handler.
+     */
     private String name;
 
     public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
