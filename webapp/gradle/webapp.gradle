@@ -89,7 +89,7 @@ dependencies {
     compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-events-configuration")
     compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-configuration-metadata-server")
+    compile project(":core:cas-server-core-configuration-metadata-repository")
 
     compile project(":support:cas-server-support-throttle")
     compile project(":support:cas-server-support-configuration")

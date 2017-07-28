@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 apply plugin: "application"
 apply plugin: "org.springframework.boot"
 
@@ -11,7 +9,8 @@ description = "Apereo CAS Core Configuration Metadata Server"
 dependencies {
     compile project(":core:cas-server-core-configuration")
     compile project(":core:cas-server-core-util")
-    implementation libraries.springbootconfigmetadata
+    compile project(":core:cas-server-core-configuration-metadata-repository")
+    compile libraries.springbootconfigmetadata
 }
 
 springBoot  {

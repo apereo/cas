@@ -7,9 +7,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.Banner;
+import org.springframework.core.env.Environment;
 
 import java.util.regex.Pattern;
 
@@ -20,6 +23,15 @@ import java.util.regex.Pattern;
  * @since 5.2.0
  */
 public class ConfigurationMetadataServerCommandLineParser {
+    /**
+     * Command line option that indicates a shell should be launched.
+     */
+    public static final Option OPTION_SHELL = OptionBuilder
+            .withLongOpt("shell")
+            .withDescription("Launch into a CAS interactive shell to execute commands. Activating this option will disable "
+                    + "basic CLI capabilities and allows you to interactively query the CAS configuration metadata server.")
+            .create("sh");
+
     /**
      * Command line option that indicates a property.
      */
@@ -54,7 +66,15 @@ public class ConfigurationMetadataServerCommandLineParser {
             .withDescription("Control whether pattern matching should be done in strict mode which means "
                     + "the matching engine tries to match the entire region for the query.")
             .create("sm");
-    
+
+    /**
+     * Command line option that indicates banner should be skipped.
+     */
+    public static final Option OPTION_SKIP_BANNER = OptionBuilder
+            .withDescription("Skip printing the CAS banner.")
+            .withLongOpt("skip-banner")
+            .create("skb");
+
     /**
      * Command line option that indicates help information should be displayed.
      */
@@ -76,6 +96,8 @@ public class ConfigurationMetadataServerCommandLineParser {
         options.addOption(OPTION_HELP);
         options.addOption(OPTION_SUMMARY);
         options.addOption(OPTION_STRICT_MATCH);
+        options.addOption(OPTION_SKIP_BANNER);
+        options.addOption(OPTION_SHELL);
         parser = new DefaultParser();
     }
 
@@ -92,7 +114,7 @@ public class ConfigurationMetadataServerCommandLineParser {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace(e.getMessage(), e);
             } else {
-                LOGGER.error(e.getMessage());
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return null;
@@ -113,8 +135,8 @@ public class ConfigurationMetadataServerCommandLineParser {
                         + "2) Retrieving list of available settings for a given module/group.\n",
                 true);
     }
-    
-    
+
+
     /**
      * Gets property.
      *
@@ -142,7 +164,7 @@ public class ConfigurationMetadataServerCommandLineParser {
      * @return the boolean
      */
     public boolean isHelp(final CommandLine line) {
-        return getOptionValue(line, OPTION_HELP, false);
+        return line == null || hasOption(line, OPTION_HELP);
     }
 
     /**
@@ -152,7 +174,7 @@ public class ConfigurationMetadataServerCommandLineParser {
      * @return the boolean
      */
     public boolean isSummary(final CommandLine line) {
-        return getOptionValue(line, OPTION_SUMMARY, false);
+        return hasOption(line, OPTION_SUMMARY);
     }
 
     /**
@@ -162,9 +184,29 @@ public class ConfigurationMetadataServerCommandLineParser {
      * @return the boolean
      */
     public boolean isStrictMatch(final CommandLine line) {
-        return getOptionValue(line, OPTION_STRICT_MATCH, false);
+        return hasOption(line, OPTION_STRICT_MATCH);
     }
 
+    /**
+     * Is skipping banner boolean.
+     *
+     * @param line the line
+     * @return the boolean
+     */
+    public boolean isSkippingBanner(final CommandLine line) {
+        return hasOption(line, OPTION_SKIP_BANNER);
+    }
+
+
+    /**
+     * Is skipping banner boolean.
+     *
+     * @param env the env
+     * @return the boolean
+     */
+    public static boolean isSkippingBanner(final Environment env) {
+        return env.containsProperty(OPTION_SKIP_BANNER.getOpt());
+    }
     
     /**
      * Gets option value.
@@ -189,4 +231,60 @@ public class ConfigurationMetadataServerCommandLineParser {
     public boolean getOptionValue(final CommandLine line, final Option opt, final boolean defaultValue) {
         return line.hasOption(opt.getOpt()) ? Boolean.valueOf(line.getOptionValue(opt.getOpt())) : defaultValue;
     }
+
+    /**
+     * Has option boolean.
+     *
+     * @param line the line
+     * @param opt  the opt
+     * @return the boolean
+     */
+    public boolean hasOption(final CommandLine line, final Option opt) {
+        return line.hasOption(opt.getOpt());
+    }
+
+    public Options getOptions() {
+        return this.options;
+    }
+
+    /**
+     * Gets banner mode.
+     *
+     * @param args the args
+     * @return the banner mode
+     */
+    public static Banner.Mode getBannerMode(final String[] args) {
+        final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
+        final CommandLine line = parser.parse(args);
+        return (line != null && parser.isSkippingBanner(line) || isShell(args)) ? Banner.Mode.OFF : Banner.Mode.CONSOLE;
+    }
+
+    /**
+     * Is shell boolean.
+     *
+     * @param args the args
+     * @return the boolean
+     */
+    public static boolean isShell(final String[] args) {
+        final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
+        final CommandLine line = parser.parse(args);
+        return line != null && parser.hasOption(line, OPTION_SHELL);
+    }
+
+    /**
+     * To system.
+     *
+     * @param args the args
+     */
+    public static void convertToSystemProperties(final String[] args) {
+        final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
+        final CommandLine line = parser.parse(args);
+        parser.getOptions().getOptions().forEach(o -> {
+            if (parser.hasOption(line, o)) {
+                final String optionValue = parser.getOptionValue(line, o, null);
+                System.setProperty(o.getOpt(), StringUtils.defaultIfBlank(optionValue, StringUtils.EMPTY));
+            }
+        });
+    }
+
 }
