@@ -1655,7 +1655,14 @@ ext.libraries = [
                 dependencies.create("org.springframework.boot:spring-boot-configuration-metadata:$springBootVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                     force = true
+                },
+                dependencies.create("com.github.javaparser:javaparser-core:$javaParserVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
                 }
+                
         ],
         springbootadminserver   : [
                 dependencies.create("de.codecentric:spring-boot-admin-server:$springBootAdminVersion") {

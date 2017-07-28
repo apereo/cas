@@ -79,8 +79,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
-
-    @NestedConfigurationProperty
+    
     private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
 
     @NestedConfigurationProperty
@@ -115,8 +114,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
-
-    @NestedConfigurationProperty
+    
     private List<JaasAuthenticationProperties> jaas = new ArrayList<>();
 
     @NestedConfigurationProperty
@@ -149,7 +147,6 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private SpnegoProperties spnego = new SpnegoProperties();
     
-    @NestedConfigurationProperty
     private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
     @NestedConfigurationProperty
