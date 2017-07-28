@@ -153,7 +153,7 @@ public class AuthenticationProperties {
     private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
     @NestedConfigurationProperty
-    private WsFederationProperties wsfedIdP = new WsFederationProperties();
+    private WsFederationProperties wsfedIdp = new WsFederationProperties();
     
     @NestedConfigurationProperty
     private X509Properties x509 = new X509Properties();
@@ -191,12 +191,12 @@ public class AuthenticationProperties {
         this.releaseProtocolAttributes = releaseProtocolAttributes;
     }
 
-    public WsFederationProperties getWsfedIdP() {
-        return wsfedIdP;
+    public WsFederationProperties getWsfedIdp() {
+        return wsfedIdp;
     }
 
-    public void setWsfedIdP(final WsFederationProperties wsfedIdP) {
-        this.wsfedIdP = wsfedIdP;
+    public void setWsfedIdp(final WsFederationProperties wsfedIdp) {
+        this.wsfedIdp = wsfedIdp;
     }
 
     public TokenAuthenticationProperties getToken() {

@@ -17,6 +17,6 @@ public class CasSamlSPEasyIepConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getEasyIep();
+        return casProperties.getSamlSp().getEasyIep();
     }
 }
