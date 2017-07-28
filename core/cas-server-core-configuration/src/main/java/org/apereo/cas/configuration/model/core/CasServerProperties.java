@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -14,8 +15,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CasServerProperties {
+public class CasServerProperties implements Serializable {
 
+    private static final long serialVersionUID = 7876382696803430817L;
     /**
      * Location of a rewrite valve specifically by Apache Tomcat
      * to activate URL rewriting.
@@ -35,15 +37,26 @@ public class CasServerProperties {
      */
     private String prefix = name.concat("/cas");
 
+    /**
+     * Embedded container AJP settings.
+     */
     private Ajp ajp = new Ajp();
 
+    /**
+     * Embedded container HTTP port settings as an additional option.
+     */
     private Http http = new Http();
 
     /**
      * Http proxy configuration properties.
+     * In the event that you decide to run CAS without any SSL configuration in the embedded Tomcat container and on a non-secure
+     * port yet wish to customize the connector configuration that is linked to the running port (i.e. 8080), this setting may apply.
      */
     private HttpProxy httpProxy = new HttpProxy();
 
+    /**
+     * Embedded container's SSL valve setting.
+     */
     private SslValve sslValve = new SslValve();
 
     /**
@@ -161,7 +174,15 @@ public class CasServerProperties {
          * Enable AJP support in CAS for the embedded Apache Tomcat container.
          */
         private boolean enabled;
+        /**
+         * The default timeout for asynchronous requests in milliseconds. If not specified, this attribute is set to 10000 (10 seconds).
+         */
         private String asyncTimeout = "PT5S";
+        /**
+         * Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.
+         * Set to false to skip the DNS lookup and return the IP address in String form instead (thereby improving performance).
+         * By default, DNS lookups are disabled.
+         */
         private boolean enableLookups;
         /**
          * The maximum size in bytes of the POST which will be handled by the container
@@ -215,7 +236,7 @@ public class CasServerProperties {
          * the specified port. By default, this port will be used on all IP addresses associated with the server.
          * A value of 127.0.0.1 indicates that the Connector will only listen on the loopback interface.</li>
          * </ul>
-         *
+         * <p>
          * See the Apache Tomcat documentation for a full list.
          */
         private Map<String, Object> attributes = new LinkedHashMap<>();
@@ -386,12 +407,33 @@ public class CasServerProperties {
     }
 
     public static class HttpProxy {
+        /**
+         * Enable the container running in proxy mode.
+         */
         private boolean enabled;
+        /**
+         * Scheme used for the proxy.
+         */
         private String scheme = "https";
+        /**
+         * Whether proxy should run in secure mode.
+         */
         private boolean secure = true;
+        /**
+         * Redirect port for the proxy.
+         */
         private int redirectPort;
+        /**
+         * Proxy port for the proxy.
+         */
         private int proxyPort;
+        /**
+         * Proxy protocol to use.
+         */
         private String protocol = "AJP/1.3";
+        /**
+         * Custom attributes to set on the proxy connector.
+         */
         private Map<String, Object> attributes = new LinkedHashMap<>();
 
         public Map<String, Object> getAttributes() {
