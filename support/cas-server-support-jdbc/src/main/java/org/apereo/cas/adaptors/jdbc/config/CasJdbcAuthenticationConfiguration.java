@@ -6,14 +6,18 @@ import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.BindJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.QueryEncodeJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.QueryJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
@@ -69,8 +73,7 @@ public class CasJdbcAuthenticationConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-
-
+    
     @ConditionalOnMissingBean(name = "jdbcAuthenticationHandlers")
     @Bean
     @RefreshScope
@@ -84,7 +87,7 @@ public class CasJdbcAuthenticationConfiguration {
         return handlers;
     }
 
-    private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Bind b) {
+    private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b) {
         final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
@@ -104,7 +107,7 @@ public class CasJdbcAuthenticationConfiguration {
         return h;
     }
 
-    private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
+    private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties b) {
         final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getAlgorithmName(), b.getSql(), b.getPasswordFieldName(),
                 b.getSaltFieldName(), b.getExpiredFieldName(), b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
@@ -127,7 +130,7 @@ public class CasJdbcAuthenticationConfiguration {
         return h;
     }
 
-    private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
+    private AuthenticationHandler queryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties b) {
         final Multimap<String, String> attributes = Beans.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
         LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
 
@@ -154,7 +157,7 @@ public class CasJdbcAuthenticationConfiguration {
         return h;
     }
 
-    private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
+    private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties b) {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
 
