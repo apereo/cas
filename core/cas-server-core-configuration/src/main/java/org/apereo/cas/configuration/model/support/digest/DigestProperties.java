@@ -14,10 +14,20 @@ import java.util.Map;
 public class DigestProperties implements Serializable {
 
     private static final long serialVersionUID = -7920128284733546444L;
+    /**
+     * The digest realm to use.
+     */
     private String realm = "CAS";
 
+    /**
+     * Authentication method used when creating digest header.
+     */
     private String authenticationMethod = "auth";
 
+    /**
+     * Static/stub list of username and passwords to accept
+     * if no other account store is defined.
+     */
     private Map<String, String> users = new HashMap<>();
 
     /**

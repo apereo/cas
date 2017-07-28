@@ -108,7 +108,7 @@ public class AuthenticationProperties {
     private RemoteAddressAuthenticationProperties remoteAddress = new RemoteAddressAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private ShibbolethIdPProperties shibIdP = new ShibbolethIdPProperties();
+    private ShibbolethIdPProperties shibIdp = new ShibbolethIdPProperties();
     
     @NestedConfigurationProperty
     private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
@@ -161,14 +161,18 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
 
+    /**
+     * Whether CAS authentication/protocol attributes
+     * should be released as part of ticket validation.
+     */
     private boolean releaseProtocolAttributes = true;
 
-    public ShibbolethIdPProperties getShibIdP() {
-        return shibIdP;
+    public ShibbolethIdPProperties getShibIdp() {
+        return shibIdp;
     }
 
-    public void setShibIdP(final ShibbolethIdPProperties shibIdP) {
-        this.shibIdP = shibIdP;
+    public void setShibIdp(final ShibbolethIdPProperties shibIdp) {
+        this.shibIdp = shibIdp;
     }
 
     public SurrogateAuthenticationProperties getSurrogate() {

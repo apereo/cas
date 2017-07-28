@@ -1019,7 +1019,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
 
 ```properties
-# cas.authn.shibIdP.serverUrl=https://idp.example.org
+# cas.authn.shibIdp.serverUrl=https://idp.example.org
 ```
 
 ### Default Bundle
