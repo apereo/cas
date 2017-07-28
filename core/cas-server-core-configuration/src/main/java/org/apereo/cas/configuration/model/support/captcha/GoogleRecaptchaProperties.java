@@ -7,8 +7,17 @@ package org.apereo.cas.configuration.model.support.captcha;
  * @since 5.0.0
  */
 public class GoogleRecaptchaProperties {
+    /**
+     * The google reCAPTCHA site key.
+     */
     private String siteKey;
+    /**
+     * The google reCAPTCHA endpoint for verification of tokens and input.
+     */
     private String verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
+    /**
+     * The google reCAPTCHA site secret.
+     */
     private String secret;
 
     public String getSecret() {

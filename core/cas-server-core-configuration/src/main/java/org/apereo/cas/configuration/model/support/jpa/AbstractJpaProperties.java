@@ -87,6 +87,9 @@ public abstract class AbstractJpaProperties implements Serializable {
      */
     private Map<String, String> properties = new HashMap<>();
 
+    /**
+     * Database connection pooling settings.
+     */
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
     /**

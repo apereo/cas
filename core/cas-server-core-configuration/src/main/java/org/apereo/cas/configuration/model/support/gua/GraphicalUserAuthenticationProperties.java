@@ -38,6 +38,7 @@ public class GraphicalUserAuthenticationProperties {
     }
 
     public static class Resource extends AbstractConfigProperties {
+        private static final long serialVersionUID = 5254023402527794969L;
     }
     
     public static class Ldap extends AbstractLdapProperties {
