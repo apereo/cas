@@ -6,7 +6,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
-import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
@@ -35,7 +34,6 @@ public class FindCommand implements CommandMarker {
      * @param group   the group
      * @param strict  the strict match
      * @param summary the summary
-     * @return the string
      */
     @CliCommand(value = "find", help = "Look up properties associated with a CAS group/module.")
     public void find(
@@ -83,32 +81,29 @@ public class FindCommand implements CommandMarker {
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
 
-        groups
-                .stream()
-                .filter(g -> g.getProperties()
-                        .entrySet()
-                        .stream()
-                        .filter(k -> strict ? RegexUtils.matches(propertyPattern, k.getKey()) : RegexUtils.find(propertyPattern, k.getKey()))
-                        .findAny()
-                        .isPresent()
-                )
-                .forEach(g -> {
-                    final Map<String, ConfigurationMetadataProperty> p = g.getProperties();
-                    p.entrySet().forEach(s -> {
-                        if (summary) {
-                            LOGGER.info("{}={}", s.getKey(), s.getValue().getDefaultValue());
-                            LOGGER.info("{}", StringUtils.normalizeSpace(s.getValue().getShortDescription()));
-                        } else {
-                            LOGGER.info("Property: {}", s.getKey());
-                            LOGGER.info("Group: {}", g.getId());
-                            LOGGER.info("Default Value: {}", s.getValue().getDefaultValue());
-                            LOGGER.info("Type: {}", s.getValue().getType());
-                            LOGGER.info("Summary: {}", StringUtils.normalizeSpace(s.getValue().getShortDescription()));
-                            LOGGER.info("Description: {}", StringUtils.normalizeSpace(s.getValue().getDescription()));
-                            LOGGER.info("Deprecated: {}", Boolean.toString(s.getValue().isDeprecated()));
-                        }
-                        LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
-                    });
-                });
+        if (groups.isEmpty()) {
+            LOGGER.info("Could not find any groups matching the criteria [{}]", groupPattern.pattern());
+            return;
+        }
+        LOGGER.info("Found [{}] groups matching the criteria [{}]", groups.size(), groupPattern.pattern());
+        
+        groups.forEach(g -> g.getProperties().forEach((k, v) -> {
+            final boolean matched = strict ? RegexUtils.matches(propertyPattern, k) : RegexUtils.find(propertyPattern, k);
+            if (matched) {
+                if (summary) {
+                    LOGGER.info("{}={}", k, v.getDefaultValue());
+                    LOGGER.info("{}", StringUtils.normalizeSpace(v.getShortDescription()));
+                } else {
+                    LOGGER.info("Property: {}", k);
+                    LOGGER.info("Group: {}", g.getId());
+                    LOGGER.info("Default Value: {}", v.getDefaultValue());
+                    LOGGER.info("Type: {}", v.getType());
+                    LOGGER.info("Summary: {}", StringUtils.normalizeSpace(v.getShortDescription()));
+                    LOGGER.info("Description: {}", StringUtils.normalizeSpace(v.getDescription()));
+                    LOGGER.info("Deprecated: {}", Boolean.toString(v.isDeprecated()));
+                }
+                LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
+            }
+        }));
     }
 }

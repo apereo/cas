@@ -15,7 +15,7 @@
         
     <jaxws:endpoint id="transportSTSRealmAUT"
                     implementor="#transportSTSProviderBean"
-                    address="/${cas.authn.wsfedIdP.idp.realmName:CAS}/STSServiceTransportUT"
+                    address="/${cas.authn.wsfedIdp.idp.realmName:CAS}/STSServiceTransportUT"
                     wsdlLocation="classpath:/wsdl/ws-trust-1.4-service.wsdl"
                     xmlns:ns1="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
                     serviceName="ns1:SecurityTokenService" 

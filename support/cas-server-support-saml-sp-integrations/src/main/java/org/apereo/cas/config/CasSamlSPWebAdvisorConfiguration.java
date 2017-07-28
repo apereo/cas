@@ -17,6 +17,6 @@ public class CasSamlSPWebAdvisorConfiguration extends BaseCasSamlSPConfiguration
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getWebAdvisor();
+        return casProperties.getSamlSp().getWebAdvisor();
     }
 }

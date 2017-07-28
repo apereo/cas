@@ -17,6 +17,6 @@ public class CasSamlSPArcGISConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getArcGIS();
+        return casProperties.getSamlSp().getArcGIS();
     }
 }

@@ -17,6 +17,6 @@ public class CasSamlSPEvernoteConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getEvernote();
+        return casProperties.getSamlSp().getEvernote();
     }
 }
