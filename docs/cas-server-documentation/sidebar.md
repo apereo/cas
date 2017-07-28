@@ -22,6 +22,7 @@ layout: null
     *   [Configuration Server](/$version/installation/Configuration-Server-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Configuration Security](/$version/installation/Configuration-Properties-Security.html)
+    *   [Configuration Metadata Repository](/$version/installation/Configuration-Metadata-Repository.html)
     *   [Configuration Extensions](/$version/installation/Configuration-Management-Extensions.html)
     *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
     *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
