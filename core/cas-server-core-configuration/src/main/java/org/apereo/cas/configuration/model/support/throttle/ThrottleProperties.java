@@ -55,7 +55,7 @@ public class ThrottleProperties implements Serializable {
     public void setSchedule(final SchedulingProperties schedule) {
         this.schedule = schedule;
     }
-    
+
     public void setJdbc(final Jdbc jdbc) {
         this.jdbc = jdbc;
     }
@@ -101,8 +101,8 @@ public class ThrottleProperties implements Serializable {
         private String code = DEFAULT_AUTHN_FAILED_ACTION;
         /**
          * Number of failed login attempts permitted in the above period.
-         * All login throttling components that ship with CAS limit successive failed 
-         * login attempts that exceed a threshold rate in failures per second. 
+         * All login throttling components that ship with CAS limit successive failed
+         * login attempts that exceed a threshold rate in failures per second.
          */
         private int threshold = -1;
         /**
@@ -155,6 +155,6 @@ public class ThrottleProperties implements Serializable {
             this.auditQuery = auditQuery;
         }
     }
-    
-    
+
+
 }

@@ -21,7 +21,7 @@ public class SamlMetadataUIProperties {
     private String parameter = "entityId";
 
     /**
-     * If specified, creates a validity filter on the metadata to check for 
+     * If specified, creates a validity filter on the metadata to check for
      * metadata freshness based on the max validity. Value is specified in seconds.
      */
     private long maxValidity;
@@ -42,7 +42,7 @@ public class SamlMetadataUIProperties {
      * separator. Example: <code>classpath:/sp-metadata.xml::classpath:/pub.key</code>.
      */
     private List<String> resources = Arrays.asList("classpath:/sp-metadata::classpath:/pub.key,"
-        + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");
+            + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");
 
     /**
      * Scheduler settings to indicate how often is metadata reloaded.
@@ -63,7 +63,7 @@ public class SamlMetadataUIProperties {
     public void setSchedule(final SchedulingProperties schedule) {
         this.schedule = schedule;
     }
-    
+
     public List<String> getResources() {
         return resources;
     }
@@ -79,7 +79,7 @@ public class SamlMetadataUIProperties {
     public void setRequireValidMetadata(final boolean requireValidMetadata) {
         this.requireValidMetadata = requireValidMetadata;
     }
-    
+
     public String getParameter() {
         return parameter;
     }
@@ -87,7 +87,7 @@ public class SamlMetadataUIProperties {
     public void setParameter(final String parameter) {
         this.parameter = parameter;
     }
-    
+
     public long getMaxValidity() {
         return maxValidity;
     }
@@ -103,5 +103,5 @@ public class SamlMetadataUIProperties {
     public void setRequireSignedRoot(final boolean requireSignedRoot) {
         this.requireSignedRoot = requireSignedRoot;
     }
-    
+
 }

@@ -99,7 +99,7 @@ public class HttpWebRequestProperties {
         private String encoding = StandardCharsets.UTF_8.name();
         /**
          * Whether specified encoding should be forced for every request.
-         * Whether the specified encoding is supposed to 
+         * Whether the specified encoding is supposed to
          * override existing request and response encodings
          */
         private boolean forceEncoding = true;
@@ -128,14 +128,14 @@ public class HttpWebRequestProperties {
         private boolean enabled;
 
         /**
-         * The Access-Control-Allow-Credentials header Indicates 
-         * whether or not the response to the request can be exposed 
-         * when the credentials flag is true.  When used as part of a 
-         * response to a preflight request, this indicates whether 
-         * or not the actual request can be made using credentials. 
-         * Note that simple GET requests are not preflighted, and so 
-         * if a request is made for a resource with credentials, if this 
-         * header is not returned with the resource, the response is ignored 
+         * The Access-Control-Allow-Credentials header Indicates
+         * whether or not the response to the request can be exposed
+         * when the credentials flag is true.  When used as part of a
+         * response to a preflight request, this indicates whether
+         * or not the actual request can be made using credentials.
+         * Note that simple GET requests are not preflighted, and so
+         * if a request is made for a resource with credentials, if this
+         * header is not returned with the resource, the response is ignored
          * by the browser and not returned to web content.
          */
         private boolean allowCredentials = true;
@@ -146,24 +146,24 @@ public class HttpWebRequestProperties {
          */
         private List<String> allowOrigins = new ArrayList<>();
         /**
-         * The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource. 
-         * This is used in response to a preflight request. 
+         * The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource.
+         * This is used in response to a preflight request.
          * The conditions under which a request is preflighted are discussed above.
          * Default is everything.
          */
         private List<String> allowMethods = new ArrayList<>();
         /**
-         * The Access-Control-Allow-Headers header is used in response to a preflight 
+         * The Access-Control-Allow-Headers header is used in response to a preflight
          * request to indicate which HTTP headers can be used when making the actual request.
          * Default is everything.
          */
         private List<String> allowHeaders = new ArrayList<>();
         /**
-         * The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached. 
+         * The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached.
          */
         private long maxAge = 3_600;
         /**
-         * The Access-Control-Expose-Headers header lets a server whitelist headers that browsers are allowed to access. 
+         * The Access-Control-Expose-Headers header lets a server whitelist headers that browsers are allowed to access.
          */
         private List<String> exposedHeaders = new ArrayList<>();
 
@@ -231,12 +231,12 @@ public class HttpWebRequestProperties {
 
     public static class Header {
         /**
-         * When true, will inject the following headers into the response for non-static resources:
-<pre>
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
- </pre> 
+         * When true, will inject the following headers into the response for non-static resources.
+         * <pre>
+         * Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+         * Pragma: no-cache
+         * Expires: 0
+         * </pre>
          */
         private boolean cache = true;
         /**
@@ -245,11 +245,11 @@ Expires: 0
          */
         private boolean hsts = true;
         /**
-         When true, will inject the following headers into the response: <code>X-Frame-Options: DENY</code>.
+         * When true, will inject the following headers into the response: <code>X-Frame-Options: DENY</code>.
          */
         private boolean xframe = true;
         /**
-         When true, will inject the following headers into the response: <code>X-Content-Type-Options: nosniff</code>.
+         * When true, will inject the following headers into the response: <code>X-Content-Type-Options: nosniff</code>.
          */
         private boolean xcontent = true;
         /**
