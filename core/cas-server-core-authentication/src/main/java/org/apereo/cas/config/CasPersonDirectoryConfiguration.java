@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.GrouperPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -134,7 +135,7 @@ public class CasPersonDirectoryConfiguration {
     @RefreshScope
     public List<IPersonAttributeDao> grouperAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
-        final PrincipalAttributesProperties.Grouper gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
+        final GrouperPrincipalAttributesProperties gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
 
         if (gp.isEnabled()) {
             final GrouperPersonAttributeDao dao = new GrouperPersonAttributeDao();

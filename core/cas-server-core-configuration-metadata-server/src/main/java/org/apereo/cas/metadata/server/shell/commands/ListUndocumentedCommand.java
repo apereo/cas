@@ -25,7 +25,7 @@ public class ListUndocumentedCommand implements CommandMarker {
     /**
      * List undocumented settings.
      */
-    @CliCommand(value = "list", help = "List all CAS undocumented properties.")
+    @CliCommand(value = "list-undocumented", help = "List all CAS undocumented properties.")
     public void list() {
         final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
         repository.getRepository().getAllProperties()
