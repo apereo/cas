@@ -1,7 +1,6 @@
 package org.apereo.cas.metadata.server.shell;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.cli.CommandLine;
 import org.apereo.cas.metadata.server.cli.ConfigurationMetadataServerCommandLineParser;
 import org.springframework.shell.Bootstrap;
 

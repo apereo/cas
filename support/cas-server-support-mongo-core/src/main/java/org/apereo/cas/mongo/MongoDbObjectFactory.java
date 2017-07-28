@@ -116,7 +116,7 @@ public class MongoDbObjectFactory {
 
     private Set<Class<?>> scanForEntities(final String basePackage) {
         if (!StringUtils.hasText(basePackage)) {
-            return Collections.emptySet();
+            return new HashSet<>();
         }
 
         final Set<Class<?>> initialEntitySet = new HashSet<>();
@@ -188,6 +188,20 @@ public class MongoDbObjectFactory {
         }
     }
 
+
+    private Mongo buildMongoDbClient(final AbstractMongoInstanceProperties mongo) {
+        final ServerAddress addr = new ServerAddress(
+                mongo.getHost(),
+                mongo.getPort());
+        return new MongoClient(addr,
+                CollectionUtils.wrap(
+                        MongoCredential.createCredential(
+                                mongo.getUserId(),
+                                mongo.getDatabaseName(),
+                                mongo.getPassword().toCharArray())),
+                buildMongoDbClientOptions(mongo));
+    }
+    
     private Mongo buildMongoDbClient(final String clientUri) {
         final MongoClientURI mongoClientUri = buildMongoClientURI(clientUri);
         final MongoCredential credential = MongoCredential.createCredential(
@@ -209,16 +223,4 @@ public class MongoDbObjectFactory {
         return new MongoClientURI(clientUri);
     }
 
-    private Mongo buildMongoDbClient(final AbstractMongoInstanceProperties mongo) {
-        final ServerAddress addr = new ServerAddress(
-                mongo.getHost(),
-                mongo.getPort());
-        return new MongoClient(addr,
-                CollectionUtils.wrap(
-                        MongoCredential.createCredential(
-                                mongo.getUserId(),
-                                mongo.getDatabaseName(),
-                                mongo.getPassword().toCharArray())),
-                buildMongoDbClientOptions(mongo));
-    }
 }

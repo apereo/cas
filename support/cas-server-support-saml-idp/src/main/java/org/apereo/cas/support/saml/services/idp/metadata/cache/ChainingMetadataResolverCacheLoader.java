@@ -17,7 +17,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpClientMultithreadedDownloader;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
