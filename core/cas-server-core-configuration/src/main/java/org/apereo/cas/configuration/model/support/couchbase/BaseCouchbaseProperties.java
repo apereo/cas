@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public abstract class BaseCouchbaseProperties implements Serializable {
+    private static final long serialVersionUID = 6550895842866988551L;
     /**
      * Flag to indicate if query is enabled.
      */
