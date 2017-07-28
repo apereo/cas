@@ -17,7 +17,7 @@ public class HexRandomStringGenerator extends AbstractRandomStringGenerator {
     }
 
     @Override
-    protected String convertBytesToString(byte[] random) {
+    protected String convertBytesToString(final byte[] random) {
         return EncodingUtils.hexEncode(random);
     }
 }

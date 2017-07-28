@@ -40,5 +40,5 @@ public interface RandomStringGenerator {
      * @param size the size of return
      * @return the new random string as bytes
      */
-    byte[] getNewStringAsBytes(final int size);
+    byte[] getNewStringAsBytes(int size);
 }

@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 
  * @since 5.2.0
  */
-abstract public class AbstractRandomStringGenerator implements RandomStringGenerator{
+public abstract class AbstractRandomStringGenerator implements RandomStringGenerator{
     /** An instance of secure random to ensure randomness is secure. */
     protected final SecureRandom randomizer = new SecureRandom();
     protected final int defaultLength;
@@ -38,7 +38,7 @@ abstract public class AbstractRandomStringGenerator implements RandomStringGener
     }
 
     @Override
-    public String getNewString(int size) {
+    public String getNewString(final int size) {
         final byte[] random = getNewStringAsBytes(size);
         return this.convertBytesToString(random);
     }

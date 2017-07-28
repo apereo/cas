@@ -16,7 +16,7 @@ public class Base64RandomStringGeneratorTests {
     private static final int LENGTH = 36;
 
     private final RandomStringGenerator randomStringGenerator = new Base64RandomStringGenerator(
-      LENGTH);
+        LENGTH);
 
     @Test
     public void verifyDefaultLength() {
@@ -27,6 +27,6 @@ public class Base64RandomStringGeneratorTests {
     @Test
     public void verifyRandomString() {
         assertNotSame(this.randomStringGenerator.getNewString(),
-          this.randomStringGenerator.getNewString());
+            this.randomStringGenerator.getNewString());
     }
 }

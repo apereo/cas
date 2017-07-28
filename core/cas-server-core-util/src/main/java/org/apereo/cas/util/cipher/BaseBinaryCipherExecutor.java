@@ -62,7 +62,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                     getEncryptionKeySetting());
             this.encryptionSecretKey = (new Base64RandomStringGenerator(encryptionKeySize)).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-              this.encryptionSecretKey, encryptionKeySize, getEncryptionKeySetting());
+                this.encryptionSecretKey, encryptionKeySize, getEncryptionKeySetting());
         } else {
             this.encryptionSecretKey = encryptionSecretKey;
         }
