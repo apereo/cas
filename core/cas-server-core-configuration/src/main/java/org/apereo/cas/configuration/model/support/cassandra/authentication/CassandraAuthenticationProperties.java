@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 public class CassandraAuthenticationProperties extends BaseCassandraProperties {
+    private static final long serialVersionUID = 1369405266376125234L;
     /**
      * Name of the authentication handler.
      */

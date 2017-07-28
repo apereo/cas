@@ -260,6 +260,7 @@ public class PasswordManagementProperties {
     }
 
     public static class Reset implements Serializable {
+        private static final long serialVersionUID = 3453970349530670459L;
         /**
          * Crypto settings on how to reset the password.
          */

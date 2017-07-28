@@ -18,20 +18,30 @@ import java.util.Set;
 public class ShiroAuthenticationProperties extends AbstractConfigProperties {
 
     private static final long serialVersionUID = 8997401036330472417L;
+    /**
+     * Required roles that should be authorized by Shiro.
+     */
     private Set<String> requiredRoles = new HashSet<>();
-
+    /**
+     * Required permissions that should be authorized by Shiro.
+     */
     private Set<String> requiredPermissions = new HashSet<>();
 
-    @NestedConfigurationProperty
     /**
      * Password encoder properties.
      */
+    @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    /**
+     * Principal transformation properties.
+     */
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+    /**
+     * Name of the authentication handler.
+     */
     private String name;
 
     public ShiroAuthenticationProperties() {

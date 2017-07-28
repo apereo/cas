@@ -5,15 +5,24 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link AcceptAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AcceptAuthenticationProperties {
+public class AcceptAuthenticationProperties implements Serializable {
 
+    private static final long serialVersionUID = 2448007503183227617L;
+    /**
+     * Accepted users for authentication, in the syntax of <code>uid::password</code>.
+     */
     private String users = StringUtils.EMPTY;
+    /**
+     * Name of the authentication handler.
+     */
     private String name;
 
     @NestedConfigurationProperty

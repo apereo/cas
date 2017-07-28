@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class JdbcAuthenticationProperties {
+public class JdbcAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7199786191466526110L;
     /**
      * Settings related to search-mode jdbc authentication.
      * Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
