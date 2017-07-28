@@ -105,7 +105,7 @@ public class TicketsResource {
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             final String response;
-            final String accept = request.getHeader(HttpHeaders.ACCEPT).trim();
+            final String accept = request.getHeader(HttpHeaders.ACCEPT) == null ? null : request.getHeader(HttpHeaders.ACCEPT).trim();
             if (accept == null || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE)) {
                 headers.setContentType(MediaType.TEXT_HTML);
                 final String tgtUrl = ticketReference.toString();
