@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class Pac4jProperties {
+public class Pac4jProperties implements Serializable {
 
     /**
      * When constructing the final user profile from
@@ -34,20 +35,20 @@ public class Pac4jProperties {
     /**
      * Settings that deal with having SAML2 IdPs as an external delegated-to authentication provider.
      */
-    private List<Saml> saml = new ArrayList<>();
+    private List<Pac4jSamlProperties> saml = new ArrayList<>();
     /**
      * Settings that deal with having OpenID Connect Providers as an external delegated-to authentication provider.
      */
-    private List<Oidc> oidc = new ArrayList<>();
+    private List<Pac4jOidcProperties> oidc = new ArrayList<>();
     /**
      * Settings that deal with having OAuth2-capable providers as an external delegated-to authentication provider.
      */
-    private List<OAuth20> oauth2 = new ArrayList<>();
+    private List<Pac4jOAuth20Properties> oauth2 = new ArrayList<>();
 
     /**
      * Settings that deal with having CAS Servers as an external delegated-to authentication provider.
      */
-    private List<Cas> cas = new ArrayList<>();
+    private List<Pac4jCasProperties> cas = new ArrayList<>();
 
     /**
      * Settings that deal with having LinkedIn as an external delegated-to authentication provider.
@@ -99,11 +100,11 @@ public class Pac4jProperties {
      */
     private String name;
 
-    public List<OAuth20> getOauth2() {
+    public List<Pac4jOAuth20Properties> getOauth2() {
         return oauth2;
     }
 
-    public void setOauth2(final List<OAuth20> oauth2) {
+    public void setOauth2(final List<Pac4jOAuth20Properties> oauth2) {
         this.oauth2 = oauth2;
     }
 
@@ -219,27 +220,27 @@ public class Pac4jProperties {
         this.twitter = twitter;
     }
 
-    public void setSaml(final List<Saml> saml) {
+    public void setSaml(final List<Pac4jSamlProperties> saml) {
         this.saml = saml;
     }
 
-    public void setOidc(final List<Oidc> oidc) {
+    public void setOidc(final List<Pac4jOidcProperties> oidc) {
         this.oidc = oidc;
     }
 
-    public void setCas(final List<Cas> cas) {
+    public void setCas(final List<Pac4jCasProperties> cas) {
         this.cas = cas;
     }
 
-    public List<Cas> getCas() {
+    public List<Pac4jCasProperties> getCas() {
         return this.cas;
     }
 
-    public List<Saml> getSaml() {
+    public List<Pac4jSamlProperties> getSaml() {
         return this.saml;
     }
 
-    public List<Oidc> getOidc() {
+    public List<Pac4jOidcProperties> getOidc() {
         return this.oidc;
     }
 
@@ -321,419 +322,11 @@ public class Pac4jProperties {
     }
 
     public static class Paypal extends Pac4jGenericClientProperties {
-
-    }
-
-    public static class OAuth20 extends Pac4jGenericClientProperties {
-        /**
-         * Authorization endpoint of the provider.
-         */
-        private String authUrl;
-        /**
-         * Token endpoint of the provider.
-         */
-        private String tokenUrl;
-        /**
-         * Profile endpoint of the provider.
-         */
-        private String profileUrl;
-        /**
-         * Profile path portion of the profile endpoint of the provider.
-         */
-        private String profilePath;
-        /**
-         * Http method to use when asking for profile.
-         */
-        private String profileVerb = "POST";
-
-        /**
-         * Profile attributes to request and collect in form of key-value pairs.
-         */
-        private Map<String, String> profileAttrs;
-
-        /**
-         * Custsom parameters in form of key-value pairs sent along in authZ requests, etc.
-         */
-        private Map<String, String> customParams;
-
-        public String getAuthUrl() {
-            return authUrl;
-        }
-
-        public void setAuthUrl(final String authUrl) {
-            this.authUrl = authUrl;
-        }
-
-        public String getTokenUrl() {
-            return tokenUrl;
-        }
-
-        public void setTokenUrl(final String tokenUrl) {
-            this.tokenUrl = tokenUrl;
-        }
-
-        public String getProfileUrl() {
-            return profileUrl;
-        }
-
-        public void setProfileUrl(final String profileUrl) {
-            this.profileUrl = profileUrl;
-        }
-
-        public String getProfilePath() {
-            return profilePath;
-        }
-
-        public void setProfilePath(final String profilePath) {
-            this.profilePath = profilePath;
-        }
-
-        public String getProfileVerb() {
-            return profileVerb;
-        }
-
-        public void setProfileVerb(final String profileVerb) {
-            this.profileVerb = profileVerb;
-        }
-
-        public Map<String, String> getProfileAttrs() {
-            return profileAttrs;
-        }
-
-        public void setProfileAttrs(final Map<String, String> profileAttrs) {
-            this.profileAttrs = profileAttrs;
-        }
-
-        public Map<String, String> getCustomParams() {
-            return customParams;
-        }
-
-        public void setCustomParams(final Map<String, String> customParams) {
-            this.customParams = customParams;
-        }
-
     }
 
     public static class Twitter extends Pac4jGenericClientProperties {
     }
-
-    public static class Saml {
-        /**
-         * The password to use when generating the SP/CAS keystore.
-         */
-        private String keystorePassword;
-        /**
-         * The password to use when generating the private key for the SP/CAS keystore.
-         */
-        private String privateKeyPassword;
-        /**
-         * Location of the keystore to use and generate the SP/CAS keystore.
-         */
-        private String keystorePath;
-        /**
-         * The metadata location of the identity provider that is to handle authentications.
-         */
-        private String identityProviderMetadataPath;
-        /**
-         * Once you have an authenticated session on the identity provider, usually it won't prompt you again to enter your
-         * credentials and it will automatically generate a new assertion for you. By default, the SAML client
-         * will accept assertions based on a previous authentication for one hour.
-         * You can adjust this behavior by modifying this setting. The unit of time here is seconds.
-         */
-        private int maximumAuthenticationLifetime = 600;
-
-        /**
-         * The entity id of the SP/CAS that is used in the SP metadata generation process.
-         */
-        private String serviceProviderEntityId;
-        /**
-         * Location of the SP metadata to use and generate.
-         */
-        private String serviceProviderMetadataPath;
-
-        /**
-         * Name of the SAML client mostly for UI purposes and uniqueness.
-         */
-        private String clientName;
-
-        /**
-         * Whether authentication requests should be tagged as forced auth.
-         */
-        private boolean forceAuth;
-        /**
-         * Whether authentication requests should be tagged as passive.
-         */
-        private boolean passive;
-
-        /**
-         * Requested authentication context class in authn requests.
-         */
-        private String authnContextClassRef;
-        /**
-         * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
-         * For example, if exact is specified, the authentication method used must match one of the authentication
-         * methods specified by the AuthnContextClassRef elements.
-         * AuthContextClassRef element require comparison rule to be used to evaluate the specified
-         * authentication methods. If not explicitly specified "exact" rule will be used by default.
-         * Other acceptable values are minimum, maximum, better.
-         */
-        private String authnContextComparisonType = "exact";
-
-        /**
-         * The key alias used in the keystore.
-         */
-        private String keystoreAlias;
-        /**
-         * NameID policy to request in the authentication requests.
-         */
-        private String nameIdPolicyFormat;
-        /**
-         * Whether metadata should be marked to request sign assertions.
-         */
-        private boolean wantsAssertionsSigned;
-
-        public boolean isPassive() {
-            return passive;
-        }
-
-        public void setPassive(final boolean passive) {
-            this.passive = passive;
-        }
-
-        public boolean isForceAuth() {
-            return forceAuth;
-        }
-
-        public void setForceAuth(final boolean forceAuth) {
-            this.forceAuth = forceAuth;
-        }
-
-        public String getAuthnContextClassRef() {
-            return authnContextClassRef;
-        }
-
-        public void setAuthnContextClassRef(final String authnContextClassRef) {
-            this.authnContextClassRef = authnContextClassRef;
-        }
-
-        public String getAuthnContextComparisonType() {
-            return authnContextComparisonType;
-        }
-
-        public void setAuthnContextComparisonType(final String authnContextComparisonType) {
-            this.authnContextComparisonType = authnContextComparisonType;
-        }
-
-        public String getKeystoreAlias() {
-            return keystoreAlias;
-        }
-
-        public void setKeystoreAlias(final String keystoreAlias) {
-            this.keystoreAlias = keystoreAlias;
-        }
-
-        public String getNameIdPolicyFormat() {
-            return nameIdPolicyFormat;
-        }
-
-        public void setNameIdPolicyFormat(final String nameIdPolicyFormat) {
-            this.nameIdPolicyFormat = nameIdPolicyFormat;
-        }
-
-        public boolean isWantsAssertionsSigned() {
-            return wantsAssertionsSigned;
-        }
-
-        public void setWantsAssertionsSigned(final boolean wantsAssertionsSigned) {
-            this.wantsAssertionsSigned = wantsAssertionsSigned;
-        }
-
-        public String getKeystorePassword() {
-            return this.keystorePassword;
-        }
-
-        public void setKeystorePassword(final String keystorePassword) {
-            this.keystorePassword = keystorePassword;
-        }
-
-        public String getPrivateKeyPassword() {
-            return this.privateKeyPassword;
-        }
-
-        public void setPrivateKeyPassword(final String privateKeyPassword) {
-            this.privateKeyPassword = privateKeyPassword;
-        }
-
-        public String getKeystorePath() {
-            return this.keystorePath;
-        }
-
-        public void setKeystorePath(final String keystorePath) {
-            this.keystorePath = keystorePath;
-        }
-
-        public String getIdentityProviderMetadataPath() {
-            return this.identityProviderMetadataPath;
-        }
-
-        public void setIdentityProviderMetadataPath(final String identityProviderMetadataPath) {
-            this.identityProviderMetadataPath = identityProviderMetadataPath;
-        }
-
-        public int getMaximumAuthenticationLifetime() {
-            return this.maximumAuthenticationLifetime;
-        }
-
-        public void setMaximumAuthenticationLifetime(final int maximumAuthenticationLifetime) {
-            this.maximumAuthenticationLifetime = maximumAuthenticationLifetime;
-        }
-
-        public String getServiceProviderEntityId() {
-            return this.serviceProviderEntityId;
-        }
-
-        public void setServiceProviderEntityId(final String serviceProviderEntityId) {
-            this.serviceProviderEntityId = serviceProviderEntityId;
-        }
-
-        public String getServiceProviderMetadataPath() {
-            return serviceProviderMetadataPath;
-        }
-
-        public void setServiceProviderMetadataPath(final String serviceProviderMetadataPath) {
-            this.serviceProviderMetadataPath = serviceProviderMetadataPath;
-        }
-
-        public String getClientName() {
-            return clientName;
-        }
-
-        public void setClientName(final String clientName) {
-            this.clientName = clientName;
-        }
-    }
-
-    public static class Cas {
-        /**
-         * The CAS server login url.
-         */
-        private String loginUrl;
-        /**
-         * CAS protocol to use.
-         * Acceptable values are <code>CAS10, CAS20, CAS20_PROXY, CAS30, CAS30_PROXY, SAML</code>.
-         */
-        private String protocol;
-
-        public String getLoginUrl() {
-            return this.loginUrl;
-        }
-
-        public void setLoginUrl(final String loginUrl) {
-            this.loginUrl = loginUrl;
-        }
-
-        public String getProtocol() {
-            return this.protocol;
-        }
-
-        public void setProtocol(final String protocol) {
-            this.protocol = protocol;
-        }
-    }
-
-    public static class Oidc extends Pac4jGenericClientProperties {
-        /**
-         * The type of the provider. "google" and "azure" are also acceptable values.
-         */
-        private String type = "generic";
-        /**
-         * The discovery endpoint to locate the provide metadata.
-         */
-        private String discoveryUri;
-
-        /**
-         * Whether an initial nonce should be to used
-         * initially for replay attack mitigation.
-         */
-        private boolean useNonce;
-
-        /**
-         * Requested scope(s).
-         */
-        private String scope;
-        /**
-         * The JWS algorithm to use forcefully when validating ID tokens.
-         * If none is defined, the first algorithm from metadata will be used.
-         */
-        private String preferredJwsAlgorithm;
-
-        /**
-         * Clock skew in order to account for drift, when validating id tokens.
-         */
-        private int maxClockSkew;
-
-        /**
-         * Custom parameters to send along in authZ requests, etc.
-         */
-        private Map<String, String> customParams = new HashMap<>();
-
-        public Map<String, String> getCustomParams() {
-            return customParams;
-        }
-
-        public void setCustomParams(final Map<String, String> customParams) {
-            this.customParams = customParams;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(final String type) {
-            this.type = type;
-        }
-
-        public String getScope() {
-            return scope;
-        }
-
-        public void setScope(final String scope) {
-            this.scope = scope;
-        }
-
-        public String getDiscoveryUri() {
-            return this.discoveryUri;
-        }
-
-        public void setDiscoveryUri(final String discoveryUri) {
-            this.discoveryUri = discoveryUri;
-        }
-
-        public boolean isUseNonce() {
-            return useNonce;
-        }
-
-        public void setUseNonce(final boolean useNonce) {
-            this.useNonce = useNonce;
-        }
-
-        public String getPreferredJwsAlgorithm() {
-            return this.preferredJwsAlgorithm;
-        }
-
-        public void setPreferredJwsAlgorithm(final String preferredJwsAlgorithm) {
-            this.preferredJwsAlgorithm = preferredJwsAlgorithm;
-        }
-
-        public int getMaxClockSkew() {
-            return this.maxClockSkew;
-        }
-
-        public void setMaxClockSkew(final int maxClockSkew) {
-            this.maxClockSkew = maxClockSkew;
-        }
-    }
-
+    
     public static class Github extends Pac4jGenericClientProperties {
     }
 
