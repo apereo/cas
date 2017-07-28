@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +17,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ManagementWebappProperties {
+public class ManagementWebappProperties implements Serializable {
+    private static final long serialVersionUID = -7686426966125636166L;
+    /**
+     * List of roles required to accept the web application.
+     */
     private List<String> adminRoles = Arrays.asList("ROLE_ADMIN");
 
     /**

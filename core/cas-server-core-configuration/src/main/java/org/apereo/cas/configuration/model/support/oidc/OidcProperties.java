@@ -39,17 +39,33 @@ public class OidcProperties implements Serializable {
      */
     private String dynamicClientRegistrationMode;
     /**
-     *
+     * List of supported scopes.
      */
     private List<String> scopes = Arrays.asList("openid", "profile", "email", "address", "phone", "offline_access");
+    /**
+     * List of supported claims.
+     */
     private List<String> claims = Arrays.asList("sub", "name", "preferred_username",
             "family_name", "given_name", "middle_name", "given_name", "profile",
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",
             "phone_number_verified", "address");
+
+    /**
+     * List of supported subject types.
+     */
     private List<String> subjectTypes = Arrays.asList("public");
 
+    /**
+     * Mapping of user-defined scopes. Key is the new scope name
+     * and value is a comma-separated list of claims mapped to the scope.
+     */
     private Map<String, String> userDefinedScopes = new HashMap<>();
+    /**
+     * Map fixed claims to CAS attributes.
+     * Key is the existing claim name for a scope and value is the new attribute
+     * that should take its place and value.
+     */
     private Map<String, String> claimsMap = new HashMap<>();
 
     public Map<String, String> getClaimsMap() {

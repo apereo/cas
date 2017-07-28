@@ -12,9 +12,10 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class ThrottleProperties {
+public class ThrottleProperties implements Serializable {
     private static final String DEFAULT_APPLICATION_CODE = "CAS";
     private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
+    private static final long serialVersionUID = 6813165633105563813L;
 
     /**
      * Throttling failure events.

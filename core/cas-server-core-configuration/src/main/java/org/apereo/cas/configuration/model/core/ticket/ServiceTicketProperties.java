@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import java.io.Serializable;
+
 /**
  * This is {@link ServiceTicketProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ServiceTicketProperties {
+public class ServiceTicketProperties implements Serializable {
 
+    private static final long serialVersionUID = -7445209580598499921L;
     /**
      * Controls number of times a service ticket can be used within CAS server. Usage in CAS context means service ticket validation
      * transaction.

@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import java.io.Serializable;
+
 /**
  * This is {@link TicketGrantingTicketProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class TicketGrantingTicketProperties {
+public class TicketGrantingTicketProperties implements Serializable {
 
+    private static final long serialVersionUID = 2349079252583399336L;
     /**
      * Maximum length of TGTs.
      */
@@ -115,7 +118,8 @@ public class TicketGrantingTicketProperties {
         this.maxLength = maxLength;
     }
 
-    public static class HardTimeout {
+    public static class HardTimeout implements Serializable {
+        private static final long serialVersionUID = 4160963910346416908L;
         /**
          * Timeout in seconds to kill the session and consider tickets expired.
          */
@@ -130,8 +134,9 @@ public class TicketGrantingTicketProperties {
         }
     }
 
-    public static class Timeout {
+    public static class Timeout implements Serializable {
 
+        private static final long serialVersionUID = 8635419913795245907L;
         /**
          * Maximum time in seconds. for TGTs to be live in CAS server.
          */
@@ -146,8 +151,15 @@ public class TicketGrantingTicketProperties {
         }
     }
     
-    public static class ThrottledTimeout {
+    public static class ThrottledTimeout implements Serializable {
+        private static final long serialVersionUID = -2370751379747804646L;
+        /**
+         * Timeout in seconds to kill the session and consider tickets expired.
+         */
         private long timeToKillInSeconds;
+        /**
+         * Timeout in between each attempt.
+         */
         private long timeInBetweenUsesInSeconds;
 
         public long getTimeToKillInSeconds() {
@@ -167,8 +179,9 @@ public class TicketGrantingTicketProperties {
         }
     }
     
-    public static class RememberMe {
+    public static class RememberMe implements Serializable {
 
+        private static final long serialVersionUID = 1899959269597512610L;
         /**
          * Flag to indicate whether remember-me facility is enabled.
          */
