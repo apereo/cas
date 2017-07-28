@@ -1,19 +1,33 @@
 package org.apereo.cas.configuration.model.support.saml;
 
+import java.io.Serializable;
+
 /**
- * This is {@link SamlCore}.
+ * This is {@link SamlCoreProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
-public class SamlCore {
+public class SamlCoreProperties implements Serializable {
+    private static final long serialVersionUID = -8505851926931247878L;
+    /**
+     * Skew allowance that controls the issue instance of the authentication.
+     */
     private int skewAllowance = 5;
 
+    /**
+     * Attribute namespace to use when generating SAML1 responses.
+     */
     private String attributeNamespace = "http://www.ja-sig.org/products/cas/";
 
+    /**
+     * Issuer of the assertion when generating SAML1 responses.
+     */
     private String issuer = "localhost";
 
+    /**
+     * Whether ticket ids generated should be saml2 compliant when generating SAML1 responses.
+     */
     private boolean ticketidSaml2;
     
     private String securityManager = "com.sun.org.apache.xerces.internal.util.SecurityManager";

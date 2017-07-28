@@ -217,7 +217,8 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private String providerClass;
     /**
-     *
+     * Whether search/query results are allowed to match on multiple DNs,
+     * or whether a single unique DN is expected for the result.
      */
     private boolean allowMultipleDns;
 
