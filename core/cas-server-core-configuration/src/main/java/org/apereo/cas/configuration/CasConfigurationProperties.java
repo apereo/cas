@@ -29,7 +29,7 @@ import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.saml.SamlCore;
+import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
@@ -163,7 +163,7 @@ public class CasConfigurationProperties {
     private SamlMetadataUIProperties samlMetadataUi = new SamlMetadataUIProperties();
 
     @NestedConfigurationProperty
-    private SamlCore samlCore = new SamlCore();
+    private SamlCoreProperties samlCore = new SamlCoreProperties();
 
     @NestedConfigurationProperty
     private ShibbolethAttributeResolverProperties shibAttributeResolver = new ShibbolethAttributeResolverProperties();
@@ -404,11 +404,11 @@ public class CasConfigurationProperties {
         this.samlMetadataUi = samlMetadataUi;
     }
 
-    public SamlCore getSamlCore() {
+    public SamlCoreProperties getSamlCore() {
         return samlCore;
     }
 
-    public void setSamlCore(final SamlCore samlCore) {
+    public void setSamlCore(final SamlCoreProperties samlCore) {
         this.samlCore = samlCore;
     }
 
