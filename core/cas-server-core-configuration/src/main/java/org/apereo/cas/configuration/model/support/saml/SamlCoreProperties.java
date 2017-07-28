@@ -29,7 +29,10 @@ public class SamlCoreProperties implements Serializable {
      * Whether ticket ids generated should be saml2 compliant when generating SAML1 responses.
      */
     private boolean ticketidSaml2;
-    
+
+    /**
+     * Qualified name of the security manager class used for creating a SAML parser pool.
+     */
     private String securityManager = "com.sun.org.apache.xerces.internal.util.SecurityManager";
 
     public String getSecurityManager() {
