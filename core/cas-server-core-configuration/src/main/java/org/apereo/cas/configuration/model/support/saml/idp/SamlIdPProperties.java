@@ -122,7 +122,7 @@ public class SamlIdPProperties implements Serializable {
          */
         private boolean failFast = true;
         /**
-         * Whether valid metadata is required
+         * Whether valid metadata is required.
          */
         private boolean requireValidMetadata = true;
         /**
