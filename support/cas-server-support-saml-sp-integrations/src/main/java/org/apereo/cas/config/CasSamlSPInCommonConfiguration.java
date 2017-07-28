@@ -40,7 +40,7 @@ public class CasSamlSPInCommonConfiguration {
     @PostConstruct
     public void init() {
         final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                casProperties.getSamlSP().getInCommon(),
+                casProperties.getSamlSp().getInCommon(),
                 samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             SamlSPUtils.saveService(service, servicesManager);

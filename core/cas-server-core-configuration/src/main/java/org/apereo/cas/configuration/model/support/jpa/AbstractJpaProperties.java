@@ -25,7 +25,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     private String dialect = "org.hibernate.dialect.HSQLDialect";
 
     /**
-     * Hibernate feature to automatically validates and exports DDL to the schema.
+     * Hibernate feature to automatically validate and exports DDL to the schema.
      * By default, creates and drops the schema automatically when a session is starts and ends
      */
     private String ddlAuto = "create-drop";

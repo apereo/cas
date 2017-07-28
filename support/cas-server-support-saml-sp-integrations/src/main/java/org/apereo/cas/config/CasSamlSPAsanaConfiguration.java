@@ -17,6 +17,6 @@ public class CasSamlSPAsanaConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getAsana();
+        return casProperties.getSamlSp().getAsana();
     }
 }

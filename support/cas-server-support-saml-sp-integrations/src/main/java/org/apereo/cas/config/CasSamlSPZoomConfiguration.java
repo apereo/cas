@@ -17,6 +17,6 @@ public class CasSamlSPZoomConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getZoom();
+        return casProperties.getSamlSp().getZoom();
     }
 }

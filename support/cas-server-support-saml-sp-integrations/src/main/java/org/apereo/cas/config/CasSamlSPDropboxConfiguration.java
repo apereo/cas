@@ -17,6 +17,6 @@ public class CasSamlSPDropboxConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getDropbox();
+        return casProperties.getSamlSp().getDropbox();
     }
 }

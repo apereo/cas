@@ -12,7 +12,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class WsFederationDelegationProperties implements Serializable {
 
     private static final long serialVersionUID = 5743971334977239938L;

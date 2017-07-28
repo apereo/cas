@@ -51,7 +51,7 @@ public class WSFederationMetadataWriter {
      */
     public static Document produceMetadataDocument(final CasConfigurationProperties config) {
         try {
-            final WsFederationProperties.SecurityTokenService sts = config.getAuthn().getWsfedIdP().getSts();
+            final WsFederationProperties.SecurityTokenService sts = config.getAuthn().getWsfedIdp().getSts();
             final Properties prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(), sts.getRealm().getKeystorePassword(),
                     sts.getRealm().getKeystoreAlias());
             final Crypto crypto = CryptoFactory.getInstance(prop);
@@ -72,7 +72,7 @@ public class WSFederationMetadataWriter {
             writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
 
             final String stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS)
-                    .concat(config.getAuthn().getWsfedIdP().getIdp().getRealmName());
+                    .concat(config.getAuthn().getWsfedIdp().getIdp().getRealmName());
             writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
 
             writer.writeEndElement();
@@ -84,7 +84,7 @@ public class WSFederationMetadataWriter {
             LOGGER.debug(out);
 
             final Document result = SignatureUtils.signMetaInfo(crypto, null,
-                    config.getAuthn().getWsfedIdP().getSts().getRealm().getKeyPassword(),
+                    config.getAuthn().getWsfedIdp().getSts().getRealm().getKeyPassword(),
                     writer.getDocument(), referenceID);
             if (result != null) {
                 return result;
