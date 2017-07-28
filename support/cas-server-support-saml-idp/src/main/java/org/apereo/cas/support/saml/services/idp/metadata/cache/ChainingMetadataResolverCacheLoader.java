@@ -217,10 +217,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final String canonicalPath = backupFile.getCanonicalPath();
         LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
         FileUtils.forceMkdirParent(backupFile);
-
-        final HttpClientMultithreadedDownloader downloader =
-                new HttpClientMultithreadedDownloader(metadataResource, backupFile);
-
+        
         final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
                 this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
                 canonicalPath);
