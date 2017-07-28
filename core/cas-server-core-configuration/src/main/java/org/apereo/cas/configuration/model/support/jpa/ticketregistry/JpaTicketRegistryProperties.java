@@ -22,8 +22,16 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     private static final long serialVersionUID = -8053839523783801072L;
 
+    /**
+     * Ticket locking type. Acceptable values are
+     * <code>READ,WRITE,OPTIMISTIC,OPTIMISTIC_FORCE_INCREMENT,PESSIMISTIC_READ,
+     * PESSIMISTIC_WRITE,PESSIMISTIC_FORCE_INCREMENT,NONE</code>.
+     */
     private LockModeType ticketLockType = LockModeType.NONE;
 
+    /**
+     * Indicates the lock duration when one is about to be acquired by the cleaner.
+     */
     private String jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
 
     /**
