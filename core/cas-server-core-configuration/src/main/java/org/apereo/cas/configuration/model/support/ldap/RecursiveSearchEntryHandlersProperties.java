@@ -10,7 +10,13 @@ import java.io.Serializable;
  */
 public class RecursiveSearchEntryHandlersProperties implements Serializable {
     private static final long serialVersionUID = 7038108925310792763L;
+    /**
+     * The Search attribute.
+     */
     private String searchAttribute;
+    /**
+     * The Merge attributes.
+     */
     private String[] mergeAttributes;
 
     public String getSearchAttribute() {

@@ -10,7 +10,13 @@ import java.io.Serializable;
  */
 public class DnAttributeSearchEntryHandlersProperties implements Serializable {
     private static final long serialVersionUID = -1174594647679213858L;
+    /**
+     * The Dn attribute name.
+     */
     private String dnAttributeName = "entryDN";
+    /**
+     * The Add if exists.
+     */
     private boolean addIfExists;
 
     public String getDnAttributeName() {

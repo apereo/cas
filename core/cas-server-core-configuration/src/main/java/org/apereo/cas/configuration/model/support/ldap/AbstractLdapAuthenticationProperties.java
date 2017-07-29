@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import org.ldaptive.handler.CaseChangeEntryHandler;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -10,7 +10,13 @@ import java.io.Serializable;
  */
 public class PrimaryGroupIdSearchEntryHandlersProperties implements Serializable {
     private static final long serialVersionUID = 539574118704476712L;
+    /**
+     * The Group filter.
+     */
     private String groupFilter = "(&(objectClass=group)(objectSid={0}))";
+    /**
+     * The Base dn.
+     */
     private String baseDn;
 
     public String getGroupFilter() {

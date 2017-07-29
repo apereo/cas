@@ -14,12 +14,20 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.services.persondir.support.QueryType;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
+import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
@@ -52,12 +60,13 @@ import java.util.stream.StreamSupport;
  * @since 5.2.0
  */
 public class ConfigurationMetadataGenerator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataGenerator.class);
     private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
 
     private final String buildDir;
     private final String sourcePath;
     private final Map<String, Class> cachedPropertiesClasses = new HashMap<>();
-    
+
     public ConfigurationMetadataGenerator(final String buildDir, final String sourcePath) {
         this.buildDir = buildDir;
         this.sourcePath = sourcePath;
@@ -92,14 +101,13 @@ public class ConfigurationMetadataGenerator {
                 .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
                 .forEach(Unchecked.consumer(p -> {
                     final Matcher matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
-                    // matcher always creates a new matcher, so you'd need to call matches() again.
                     final boolean indexBrackets = matcher.matches();
                     final String typePath = buildTypeSourcePath(matcher.group(1));
                     parseCompilationUnit(collectedProps, p, typePath, indexBrackets);
                 }));
         properties.addAll(collectedProps);
         jsonMap.put("properties", properties);
-        //mapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, jsonMap);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, jsonMap);
     }
 
     private String buildTypeSourcePath(final String type) {
@@ -108,7 +116,7 @@ public class ConfigurationMetadataGenerator {
     }
 
     private void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
-                                      final ConfigurationMetadataProperty p, 
+                                      final ConfigurationMetadataProperty p,
                                       final String typePath,
                                       final boolean indexNameWithBrackets) {
 
@@ -123,7 +131,7 @@ public class ConfigurationMetadataGenerator {
     private class FieldVisitor extends VoidVisitorAdapter<ConfigurationMetadataProperty> {
         private final Set<ConfigurationMetadataProperty> properties;
         private final boolean indexNameWithBrackets;
-        
+
         FieldVisitor(final Set<ConfigurationMetadataProperty> properties, final boolean indexNameWithBrackets) {
             this.properties = properties;
             this.indexNameWithBrackets = indexNameWithBrackets;
@@ -131,14 +139,22 @@ public class ConfigurationMetadataGenerator {
 
         @Override
         public void visit(final FieldDeclaration n, final ConfigurationMetadataProperty arg) {
-            if (n.getJavadoc().isPresent() && !n.getVariables().isEmpty()) {
-                final ConfigurationMetadataProperty prop = createConfigurationProperty(n, arg);
-                processNestedClassOrInterfaceTypeIfNeeded(n, prop);
+            if (n.getVariables().isEmpty()) {
+                throw new IllegalArgumentException("Field " + n + " has no variable definitions");
             }
 
+            if (n.getJavadoc().isPresent()) {
+                final ConfigurationMetadataProperty prop = createConfigurationProperty(n, arg);
+                processNestedClassOrInterfaceTypeIfNeeded(n, prop);
+            } else {
+                final VariableDeclarator var = n.getVariable(0);
+                if (!var.getNameAsString().matches("serialVersionUID")) {
+                    LOGGER.error("Field " + n + " has no Javadoc defined");
+                }
+            }
         }
 
-        private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration n, 
+        private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration n,
                                                                           final ConfigurationMetadataProperty arg) {
             final VariableDeclarator variable = n.getVariables().get(0);
             final String name = StreamSupport.stream(RelaxedNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
@@ -177,6 +193,24 @@ public class ConfigurationMetadataGenerator {
                     final Class clz = locatePropertiesClassForType(type);
                     final String typePath = buildTypeSourcePath(clz.getName());
                     parseCompilationUnit(properties, prop, typePath, false);
+                } else {
+
+                    if (!type.getNameAsString().matches(String.class.getSimpleName() + "|"
+                            + Integer.class.getSimpleName() + "|"
+                            + Double.class.getSimpleName() + "|"
+                            + Long.class.getSimpleName() + "|"
+                            + Float.class.getSimpleName() + "|"
+                            + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + "|"
+                            + QueryType.class.getSimpleName() + "|"
+                            + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
+                            + CaseCanonicalizationMode.class.getSimpleName() + "|"
+                            + CaseChangeEntryHandler.CaseChange.class.getSimpleName() + "|"
+                            + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
+                            + "Map|List|Set")) {
+                        LOGGER.error("Field " + n
+                                + " has a type of class/interface " + type.getNameAsString()
+                                + " yet its name does not end with 'Properties': ");
+                    }
                 }
             }
         }
@@ -185,7 +219,7 @@ public class ConfigurationMetadataGenerator {
     private Class locatePropertiesClassForType(final ClassOrInterfaceType type) {
         if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
             return cachedPropertiesClasses.get(type.getNameAsString());
-            
+
         }
         final Predicate<String> filterInputs = s -> s.contains(type.getNameAsString());
         final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
