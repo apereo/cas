@@ -45,6 +45,8 @@ import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link CasConfigurationProperties}.
  *
@@ -52,8 +54,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 @ConfigurationProperties(value = "cas")
-public class CasConfigurationProperties {
+public class CasConfigurationProperties implements Serializable {
 
+    private static final long serialVersionUID = -8620267783496071683L;
     @NestedConfigurationProperty
     private ConsentProperties consent = new ConsentProperties();
 

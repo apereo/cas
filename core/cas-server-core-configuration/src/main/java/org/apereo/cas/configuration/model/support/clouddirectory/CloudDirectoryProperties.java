@@ -5,13 +5,16 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
+
 /**
  * This is {@link CloudDirectoryProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class CloudDirectoryProperties {
+public class CloudDirectoryProperties implements Serializable {
+    private static final long serialVersionUID = 6725526133973304269L;
     /**
      * Authenticate and bind into the instance via a credentials properties file.
      */
