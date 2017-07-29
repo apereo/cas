@@ -13,7 +13,7 @@ dependencies {
     compile libraries.springbootconfigmetadata
 }
 
-springBoot  {
+springBoot {
     mainClass = MAIN_CLASS
 }
 
@@ -29,4 +29,11 @@ bootRun {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
     }
     jvmArgs = list
+}
+
+run {
+    def execArgs = System.getProperty('args')
+    if (execArgs != null) {
+        args execArgs.split()
+    }
 }
