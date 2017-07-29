@@ -36,7 +36,7 @@ public class ListUndocumentedCommand implements CommandMarker {
                 .map(Map.Entry::getValue)
                 .sorted(Comparator.comparing(ConfigurationMetadataProperty::getId))
                 .forEach(p -> {
-                    LOGGER.info("Property: {}", p.getId());
+                    LOGGER.info("Property: {} @ {}", p.getId(), p.getType());
                 });
     }
 }

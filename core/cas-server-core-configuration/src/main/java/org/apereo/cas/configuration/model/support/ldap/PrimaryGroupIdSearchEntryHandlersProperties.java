@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class PrimaryGroupIdSearchEntryHandlersProperties implements Serializable {
+    private static final long serialVersionUID = 539574118704476712L;
     private String groupFilter = "(&(objectClass=group)(objectSid={0}))";
     private String baseDn;
 

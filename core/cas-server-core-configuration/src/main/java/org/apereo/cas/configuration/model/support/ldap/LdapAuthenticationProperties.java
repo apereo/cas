@@ -17,26 +17,69 @@ import java.util.List;
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
     private static final long serialVersionUID = -5357843463521189892L;
+    /**
+     * Password policy settings.
+     */
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
+    /**
+     * Principal transformation settings.
+     */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+    /**
+     * Password encoder settings for REST authentication.
+     */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    /**
+     * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+     * and as such lend themselves to be tried and tested during the authentication handler selection phase.
+     * The credential criteria may be one of the following options:<ul>
+     * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
+     * <li>2) A fully qualified class name of your own design that implements <code>Predicate&lt;Credential&gt;</code>.</li>
+     * <li>3) Path to an external Groovy script that implements the same interface.</li>
+     * </ul>
+     */
     private String credentialCriteria;
 
+    /**
+     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     */
     private String principalAttributeId;
 
+    /**
+     * List of attributes to retrieve from LDAP.
+     * Attributes can be virtually remapped to multiple names.
+     * Example <code>cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER</code>
+     */
     private List principalAttributeList = new ArrayList();
+    /**
+     * Sets a flag that determines whether multiple values are allowed for the {@link #principalAttributeId}.
+     * This flag only has an effect if {@link #principalAttributeId} is configured. If multiple values are detected
+     * when the flag is false, the first value is used and a warning is logged. If multiple values are detected
+     * when the flag is true, an exception is raised.
+     *
+     */
     private boolean allowMultiplePrincipalAttributeValues;
+    /**
+     * List of additional attributes to retrieve, if any.
+     */
     private List additionalAttributes = new ArrayList();
 
     private boolean allowMissingPrincipalAttributeValue = true;
+    
+    /**
+     * When entry DN should be called as an attribute and stored into the principal.
+     */
     private boolean collectDnAttribute;
 
+    /**
+     * Order of the authentication handler in the chain.
+     */
     private Integer order;
 
     public boolean isCollectDnAttribute() {

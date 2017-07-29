@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class MergeAttributesSearchEntryHandlersProperties implements Serializable {
+    private static final long serialVersionUID = -3988972992084584349L;
     private String mergeAttributeName;
     private String[] attributeNames;
 
