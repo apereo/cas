@@ -1,5 +1,7 @@
 package org.apereo.cas.metadata.server.shell.commands;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
@@ -85,8 +87,6 @@ public class FindCommand implements CommandMarker {
             LOGGER.info("Could not find any groups matching the criteria [{}]", groupPattern.pattern());
             return;
         }
-        LOGGER.info("Found [{}] groups matching the criteria [{}]", groups.size(), groupPattern.pattern());
-        
         groups.forEach(g -> g.getProperties().forEach((k, v) -> {
             final boolean matched = strict ? RegexUtils.matches(propertyPattern, k) : RegexUtils.find(propertyPattern, k);
             if (matched) {
@@ -95,12 +95,18 @@ public class FindCommand implements CommandMarker {
                     LOGGER.info("{}", StringUtils.normalizeSpace(v.getShortDescription()));
                 } else {
                     LOGGER.info("Property: {}", k);
-                    LOGGER.info("Group: {}", g.getId());
-                    LOGGER.info("Default Value: {}", v.getDefaultValue());
+                    /*
+                    final String relaxedName = StreamSupport.stream(RelaxedNames.forCamelCase(k).spliterator(), false)
+                            .map(Object::toString)
+                            .collect(Collectors.joining(","));
+                    LOGGER.info("Synonyms: {}", relaxedName);
+                    */
+                    LOGGER.info("Group: {}", StringUtils.substringBeforeLast(k, "."));
+                    LOGGER.info("Default Value: {}", ObjectUtils.defaultIfNull(v.getDefaultValue(), "[blank]"));
                     LOGGER.info("Type: {}", v.getType());
                     LOGGER.info("Summary: {}", StringUtils.normalizeSpace(v.getShortDescription()));
                     LOGGER.info("Description: {}", StringUtils.normalizeSpace(v.getDescription()));
-                    LOGGER.info("Deprecated: {}", Boolean.toString(v.isDeprecated()));
+                    LOGGER.info("Deprecated: {}", BooleanUtils.toStringYesNo(v.isDeprecated()));
                 }
                 LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
             }
