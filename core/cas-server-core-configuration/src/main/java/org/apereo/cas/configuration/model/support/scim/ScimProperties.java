@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.support.scim;
 
+import java.io.Serializable;
+
 /**
  * This is {@link ScimProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class ScimProperties {
+public class ScimProperties implements Serializable {
+    private static final long serialVersionUID = 7943229230342691009L;
     /**
      * Indicate what version of the scim protocol is and should be used.
      */

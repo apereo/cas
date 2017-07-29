@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
+import java.io.Serializable;
+
 /**
  * This is {@link GoogleRecaptchaProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GoogleRecaptchaProperties {
+public class GoogleRecaptchaProperties implements Serializable {
+    private static final long serialVersionUID = -8955074129123813915L;
     /**
      * The google reCAPTCHA site key.
      */

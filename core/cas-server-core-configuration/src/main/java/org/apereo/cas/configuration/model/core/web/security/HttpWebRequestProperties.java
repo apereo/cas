@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +11,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class HttpWebRequestProperties {
+public class HttpWebRequestProperties implements Serializable {
 
+    private static final long serialVersionUID = -5175966163542099866L;
     /**
      * Whether CAS should accept multi-valued parameters
      * in incoming requests. Example block would to prevent

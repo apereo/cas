@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipal
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,10 +15,10 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
-public class X509Properties {
+public class X509Properties implements Serializable {
 
     private static final String DENY = "DENY";
+    private static final long serialVersionUID = -9032744084671270366L;
 
     /**
      * The  Principal types.

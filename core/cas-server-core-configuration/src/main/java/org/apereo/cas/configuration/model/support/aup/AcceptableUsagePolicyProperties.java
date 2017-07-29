@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.aup;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 
+import java.io.Serializable;
+
 /**
  * This is {@link AcceptableUsagePolicyProperties}.
  *
@@ -9,7 +11,8 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
  * @since 5.0.0
  */
 
-public class AcceptableUsagePolicyProperties {
+public class AcceptableUsagePolicyProperties implements Serializable {
+    private static final long serialVersionUID = -7703477581675908899L;
     /**
      * Control AUP via LDAP.
      */

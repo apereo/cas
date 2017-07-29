@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperti
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +17,8 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AdminPagesSecurityProperties {
+public class AdminPagesSecurityProperties implements Serializable {
+    private static final long serialVersionUID = 9129787932447507179L;
     /**
      * The IP address pattern that can control access to the admin status endpoints.
      */

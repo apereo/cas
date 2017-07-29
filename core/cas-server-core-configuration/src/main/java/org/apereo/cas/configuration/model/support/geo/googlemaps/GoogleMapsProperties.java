@@ -2,13 +2,16 @@ package org.apereo.cas.configuration.model.support.geo.googlemaps;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link GoogleMapsProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GoogleMapsProperties {
+public class GoogleMapsProperties implements Serializable {
+    private static final long serialVersionUID = 4661113818711911462L;
     /**
      * Authenticate into google maps via an API key.
      */

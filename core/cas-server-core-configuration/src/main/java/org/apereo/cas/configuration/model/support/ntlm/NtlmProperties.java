@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.ntlm;
 
+import java.io.Serializable;
+
 /**
  * This is {@link NtlmProperties}.
  *
@@ -7,7 +9,8 @@ package org.apereo.cas.configuration.model.support.ntlm;
  * @since 5.0.0
  */
 
-public class NtlmProperties {
+public class NtlmProperties implements Serializable {
+    private static final long serialVersionUID = 1479912148936123469L;
     /**
      * The domain controller to retrieve if load balanced.
      * Otherwise retrieve the domain controller as a possible NT or workgroup.

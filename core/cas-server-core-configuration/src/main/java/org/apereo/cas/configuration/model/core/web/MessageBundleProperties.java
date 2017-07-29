@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -9,8 +10,9 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 
-public class MessageBundleProperties {
+public class MessageBundleProperties implements Serializable {
 
+    private static final long serialVersionUID = 3769733438559663237L;
     /**
      * Message bundle character encoding.
      */

@@ -2,13 +2,16 @@ package org.apereo.cas.configuration.model.support.oauth;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link OAuthProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OAuthProperties {
+public class OAuthProperties implements Serializable {
+    private static final long serialVersionUID = 2677128037234123907L;
     /**
      * Settings related to oauth grants.
      */

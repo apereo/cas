@@ -6,14 +6,17 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link SpnegoProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SpnegoProperties {
+public class SpnegoProperties implements Serializable {
 
+    private static final long serialVersionUID = 8084143496524446970L;
     /**
      * If specified, will create the principal by ths name on successful authentication.
      */

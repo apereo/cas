@@ -3,6 +3,8 @@ package org.apereo.cas.configuration.model.support.openid;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link OpenIdProperties}.
  *
@@ -10,8 +12,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 
-public class OpenIdProperties {
+public class OpenIdProperties implements Serializable {
 
+    private static final long serialVersionUID = -2935759289483632610L;
     /**
      * Principal construction settings.
      */

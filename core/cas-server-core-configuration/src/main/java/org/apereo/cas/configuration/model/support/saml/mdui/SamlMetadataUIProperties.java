@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.saml.mdui;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,8 +13,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlMetadataUIProperties {
+public class SamlMetadataUIProperties implements Serializable {
 
+    private static final long serialVersionUID = 2113479681245996975L;
     /**
      * The parameter name that indicates the entity id of the service provider
      * submitted to CAS.
