@@ -12,9 +12,21 @@ import java.io.Serializable;
  */
 public class CaseChangeSearchEntryHandlersProperties implements Serializable {
     private static final long serialVersionUID = 2420895955116725666L;
+    /**
+     * The Dn case change.
+     */
     private CaseChangeEntryHandler.CaseChange dnCaseChange;
+    /**
+     * The Attribute name case change.
+     */
     private CaseChangeEntryHandler.CaseChange attributeNameCaseChange;
+    /**
+     * The Attribute value case change.
+     */
     private CaseChangeEntryHandler.CaseChange attributeValueCaseChange;
+    /**
+     * The Attribute names.
+     */
     private String[] attributeNames;
 
     public CaseChangeEntryHandler.CaseChange getDnCaseChange() {
