@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class GrouperPrincipalAttributesProperties implements Serializable {
+    private static final long serialVersionUID = 7139471665871712818L;
     /**
      * The order of this attribute repository in the chain of repositories.
      * Can be used to explicitly position this source in chain and affects

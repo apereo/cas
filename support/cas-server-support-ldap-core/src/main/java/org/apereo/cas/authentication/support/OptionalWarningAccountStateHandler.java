@@ -64,16 +64,13 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             return;
         }
         
-        final LdapAttribute attribute = response.getLdapEntry().getAttribute(
-                this.warnAttributeName);
+        final LdapAttribute attribute = response.getLdapEntry().getAttribute(this.warnAttributeName);
         boolean matches = false;
         if (attribute != null) {
-            LOGGER.debug("Found warning attribute [{}] with value [{}]",
-                    attribute.getName(), attribute.getStringValue());
+            LOGGER.debug("Found warning attribute [{}] with value [{}]", attribute.getName(), attribute.getStringValue());
             matches = this.warningAttributeValue.equals(attribute.getStringValue());
         }
-        LOGGER.debug("matches=[{}], displayWarningOnMatch=[{}]", matches,
-                this.displayWarningOnMatch);
+        LOGGER.debug("matches=[{}], displayWarningOnMatch=[{}]", matches, this.displayWarningOnMatch);
         if (this.displayWarningOnMatch == matches) {
             super.handleWarning(warning, response, configuration, messages);
         }

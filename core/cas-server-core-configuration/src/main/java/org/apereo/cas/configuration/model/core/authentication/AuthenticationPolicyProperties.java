@@ -13,6 +13,7 @@ import java.util.List;
 
 public class AuthenticationPolicyProperties implements Serializable {
 
+    private static final long serialVersionUID = 2039700004862120066L;
     /**
      * Global authentication policy that is applied when CAS attempts to vend and validate tickets.
      * Checks to make sure a particular authentication handler has successfully executed and validated credentials.
@@ -94,6 +95,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     }
 
     public static class NotPrevented implements Serializable {
+        private static final long serialVersionUID = -4930217018850738715L;
         /**
          * Enables the policy.
          */
@@ -109,6 +111,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     }
 
     public static class Any implements Serializable {
+        private static final long serialVersionUID = 4600357071276768175L;
         /**
          * Avoid short circuiting and try every handler even if one prior succeeded.
          * Ensure number of provided credentials does not match the sum of authentication successes and failures
@@ -126,6 +129,7 @@ public class AuthenticationPolicyProperties implements Serializable {
 
     public static class All implements Serializable {
 
+        private static final long serialVersionUID = 928409456096460793L;
         /**
          * Enables the policy.
          */

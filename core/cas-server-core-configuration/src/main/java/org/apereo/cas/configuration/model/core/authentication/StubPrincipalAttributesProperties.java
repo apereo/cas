@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class StubPrincipalAttributesProperties implements Serializable {
 
+    private static final long serialVersionUID = 7017508256487553063L;
     /**
      * Static attributes that need to be mapped to a hardcoded value belong here.
      * The structure follows a key-value pair where key is the attribute name

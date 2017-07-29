@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class RestAuthenticationPolicyProperties implements Serializable {
+    private static final long serialVersionUID = -8979188862774758908L;
     /**
      * Rest endpoint url to contact.
      */
