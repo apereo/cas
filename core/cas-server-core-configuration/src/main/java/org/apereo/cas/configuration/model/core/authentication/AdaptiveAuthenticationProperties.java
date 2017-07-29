@@ -34,7 +34,7 @@ public class AdaptiveAuthenticationProperties implements Serializable {
     private RiskBasedAuthenticationProperties risk = new RiskBasedAuthenticationProperties();
 
     /**
-     * A map of (mfaProviderId -> adaptiveRegexPattern) that tells CAS when to trigger an MFA authentication transaction.
+     * A map of (mfaProviderId -&gt; adaptiveRegexPattern) that tells CAS when to trigger an MFA authentication transaction.
      *
      * This property binds a valid mfa provider to an adaptive regex pattern representing either IP address, user-agent or geolocation.
      * When either of those collected pieces of adaptive data matches configured regex pattern during authentication event,
