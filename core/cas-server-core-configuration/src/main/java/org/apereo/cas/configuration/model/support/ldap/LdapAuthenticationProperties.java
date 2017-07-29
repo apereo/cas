@@ -70,6 +70,10 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      */
     private List additionalAttributes = new ArrayList();
 
+    /**
+     * Flag to indicate whether CAS should block authentication
+     * if a specific/configured principal id attribute is not found.
+     */
     private boolean allowMissingPrincipalAttributeValue = true;
     
     /**

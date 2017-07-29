@@ -16,11 +16,11 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
 }
 
-task execute(type:JavaExec) {
+task generateConfigurationMetadata(type:JavaExec) {
     main = "org.apereo.cas.configuration.ConfigurationMetadataGenerator"
     classpath = sourceSets.main.runtimeClasspath
     args buildDir, projectDir.canonicalPath
 }
 
 compileJava.dependsOn(processResources)
-compileJava.finalizedBy(execute)
+compileJava.finalizedBy(generateConfigurationMetadata)
