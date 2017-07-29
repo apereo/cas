@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,18 +96,27 @@ public class ConfigurationMetadataGenerator {
         };
         final Map<String, Set<ConfigurationMetadataProperty>> jsonMap = mapper.readValue(jsonFile, values);
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
+        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 
         final Set<ConfigurationMetadataProperty> collectedProps = new HashSet<>();
+        final Set<ConfigurationMetadataProperty> collectedGroups = new HashSet<>();
+
         properties.stream()
                 .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
                 .forEach(Unchecked.consumer(p -> {
                     final Matcher matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
                     final boolean indexBrackets = matcher.matches();
                     final String typePath = buildTypeSourcePath(matcher.group(1));
-                    parseCompilationUnit(collectedProps, p, typePath, indexBrackets);
+                    parseCompilationUnit(collectedProps, collectedGroups, p, typePath, indexBrackets);
                 }));
         properties.addAll(collectedProps);
+        groups.addAll(collectedGroups);
+        
         jsonMap.put("properties", properties);
+        jsonMap.put("groups", groups);
+
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        //mapper.writer(new MinimalPrettyPrinter()).writeValue(jsonFile, jsonMap);
         mapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, jsonMap);
     }
 
@@ -116,13 +126,14 @@ public class ConfigurationMetadataGenerator {
     }
 
     private void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
+                                      final Set<ConfigurationMetadataProperty> collectedGroups,
                                       final ConfigurationMetadataProperty p,
                                       final String typePath,
                                       final boolean indexNameWithBrackets) {
 
         try (InputStream is = new FileInputStream(typePath)) {
             final CompilationUnit cu = JavaParser.parse(is);
-            new FieldVisitor(collectedProps, indexNameWithBrackets).visit(cu, p);
+            new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets).visit(cu, p);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -130,10 +141,14 @@ public class ConfigurationMetadataGenerator {
 
     private class FieldVisitor extends VoidVisitorAdapter<ConfigurationMetadataProperty> {
         private final Set<ConfigurationMetadataProperty> properties;
+        private final Set<ConfigurationMetadataProperty> groups;
+        
         private final boolean indexNameWithBrackets;
 
-        FieldVisitor(final Set<ConfigurationMetadataProperty> properties, final boolean indexNameWithBrackets) {
+        FieldVisitor(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups, 
+                     final boolean indexNameWithBrackets) {
             this.properties = properties;
+            this.groups = groups;
             this.indexNameWithBrackets = indexNameWithBrackets;
         }
 
@@ -162,18 +177,28 @@ public class ConfigurationMetadataGenerator {
                     .findFirst()
                     .orElse(variable.getNameAsString());
 
-            final String indexedName = arg.getName()
-                    .concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY)
-                    .concat(".")
-                    .concat(name);
+            final String indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
+            final String indexedName = indexedGroup.concat(".").concat(name);
+            
             final ConfigurationMetadataProperty prop = new ConfigurationMetadataProperty();
             final String description = n.getJavadoc().get().getDescription().toText();
             prop.setDescription(description);
             prop.setShortDescription(StringUtils.substringBefore(description, "."));
             prop.setName(indexedName);
             prop.setId(indexedName);
-            prop.setType(n.getElementType().asString());
-
+            
+            switch (n.getElementType().asString()) {
+                case "String":
+                case "Integer":
+                case "Double":
+                case "Long":
+                case "Float":
+                    prop.setType("java.lang." + n.getElementType().asString());
+                    break;
+                default:
+                    prop.setType(n.getElementType().asString());
+            }
+            
             if (variable.getInitializer().isPresent()) {
                 final Expression exp = variable.getInitializer().get();
                 if (exp instanceof LiteralStringValueExpr) {
@@ -183,6 +208,13 @@ public class ConfigurationMetadataGenerator {
                 }
             }
             properties.add(prop);
+            
+            final ConfigurationMetadataProperty grp = new ConfigurationMetadataProperty();
+            grp.setId(indexedGroup);
+            grp.setName(indexedGroup);
+            grp.setType(arg.getType());
+            groups.add(grp);
+            
             return prop;
         }
 
@@ -192,7 +224,7 @@ public class ConfigurationMetadataGenerator {
                 if (type.getNameAsString().endsWith("Properties")) {
                     final Class clz = locatePropertiesClassForType(type);
                     final String typePath = buildTypeSourcePath(clz.getName());
-                    parseCompilationUnit(properties, prop, typePath, false);
+                    parseCompilationUnit(properties, groups, prop, typePath, false);
                 } else {
 
                     if (!type.getNameAsString().matches(String.class.getSimpleName() + "|"
@@ -219,9 +251,8 @@ public class ConfigurationMetadataGenerator {
     private Class locatePropertiesClassForType(final ClassOrInterfaceType type) {
         if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
             return cachedPropertiesClasses.get(type.getNameAsString());
-
         }
-        
+
         final Predicate<String> filterInputs = s -> s.contains(type.getNameAsString());
         final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
         final String packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
