@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class RecursiveSearchEntryHandlersProperties implements Serializable {
+    private static final long serialVersionUID = 7038108925310792763L;
     private String searchAttribute;
     private String[] mergeAttributes;
 

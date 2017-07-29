@@ -9,6 +9,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 public class Pac4jOAuth20Properties extends Pac4jGenericClientProperties {
+    private static final long serialVersionUID = -1240711580664148382L;
     /**
      * Authorization endpoint of the provider.
      */
