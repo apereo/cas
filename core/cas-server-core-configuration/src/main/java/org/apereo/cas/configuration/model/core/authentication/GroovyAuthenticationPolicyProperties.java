@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class GroovyAuthenticationPolicyProperties implements Serializable {
+    private static final long serialVersionUID = 8713917167124116270L;
     /**
      * Path to the groovy script to execute.
      */

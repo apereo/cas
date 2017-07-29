@@ -1,6 +1,3 @@
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
-
 description = "Apereo CAS central configuration module providing type-safe configuration domain model to the rest of CAS server"
 
 dependencies {
@@ -22,7 +19,7 @@ dependencies {
 task execute(type:JavaExec) {
     main = "org.apereo.cas.configuration.ConfigurationMetadataGenerator"
     classpath = sourceSets.main.runtimeClasspath
-    args buildDir
+    args buildDir, projectDir.canonicalPath
 }
 
 compileJava.dependsOn(processResources)

@@ -79,7 +79,11 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
-    
+
+    /**
+     * Collection of settings related to LDAP authentication.
+     * These settings are required to be indexed (i.e. ldap[0].xyz).
+     */
     private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
 
     @NestedConfigurationProperty
@@ -114,7 +118,11 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
-    
+
+    /**
+     * Collection of settings related to JAAS authentication.
+     * These settings are required to be indexed (i.e. jaas[0].xyz).
+     */
     private List<JaasAuthenticationProperties> jaas = new ArrayList<>();
 
     @NestedConfigurationProperty
@@ -146,7 +154,11 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private SpnegoProperties spnego = new SpnegoProperties();
-    
+
+    /**
+     * Collection of settings related to WsFed delegated authentication.
+     * These settings are required to be indexed (i.e. wsfed[0].xyz).
+     */
     private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
     @NestedConfigurationProperty

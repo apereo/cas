@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.springframework.jdbc.datasource.init.ScriptParseException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,6 +27,7 @@ import java.util.Set;
  */
 public class PrincipalAttributesProperties implements Serializable {
 
+    private static final long serialVersionUID = -4515569588579072890L;
     /**
      * Indicates the global cache expiration period, once attributes
      * are fetched from the underlying attribute repository.

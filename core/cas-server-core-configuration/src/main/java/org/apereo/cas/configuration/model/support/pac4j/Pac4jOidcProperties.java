@@ -10,6 +10,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 public class Pac4jOidcProperties extends Pac4jGenericClientProperties {
+    private static final long serialVersionUID = 3359382317533639638L;
     /**
      * The type of the provider. "google" and "azure" are also acceptable values.
      */

@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import java.io.Serializable;
+
 /**
  * This is {@link Pac4jCasProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class Pac4jCasProperties {
+public class Pac4jCasProperties implements Serializable {
+    private static final long serialVersionUID = -2738631545437677447L;
     /**
      * The CAS server login url.
      */

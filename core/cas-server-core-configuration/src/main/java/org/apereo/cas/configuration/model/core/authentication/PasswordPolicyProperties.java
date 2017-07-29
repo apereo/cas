@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -12,20 +13,61 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class PasswordPolicyProperties {
+public class PasswordPolicyProperties implements Serializable {
 
+    private static final long serialVersionUID = -3878237508646993100L;
+    /**
+     * Key-value structure (Map) that indicates a list of boolean attributes as keys.
+     * If either attribute value is true, indicating an account state is flagged,
+     * the corresponding error can be thrown.
+     * Example <code>accountLocked=javax.security.auth.login.AccountLockedException</code>
+     */
     private Map<String, Class<LoginException>> policyAttributes = new LinkedCaseInsensitiveMap<>();
 
+    /**
+     * Whether password policy should be enabled.
+     */
     private boolean enabled = true;
+
+    /**
+     * An implementation of a policy class that knows how to handle LDAP responses.
+     * The class must be an implementation of <code>org.ldaptive.auth.AuthenticationResponseHandler</code>.
+     */
     private String customPolicyClass;
+    /**
+     * When dealing with FreeIPA, indicates the number of allows login failures.
+     */
     private int loginFailures = 5;
-    
+
+    /**
+     * Used by an account state handling policy that only calculates account warnings
+     * in case the LDAP entry carries an attribute {@link #warningAttributeName} 
+     * whose value matches this field.
+     */
     private String warningAttributeValue;
+    /**
+     * Used by an account state handling policy that only calculates account warnings
+     * in case the LDAP entry carries this attribute.
+     */
     private String warningAttributeName;
+    /**
+     * Indicates if warning should be displayed, when the ldap attribute value
+     * matches the {@link #warningAttributeValue}.
+     */
     private boolean displayWarningOnMatch = true;
 
+    /**
+     * Always display the password expiration warning regardless.
+     */
     private boolean warnAll;
+    /**
+     * In the event that AD is chosen as the type, this is used to calculate
+     * a warning period to see if account expiry is within the calculated window.
+     */
     private int warningDays = 30;
+    /**
+     * LDAP type. Accepted values are <code>GENERIC,AD,FreeIPA,EDirectory</code>
+     */
     private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
 
     public AbstractLdapProperties.LdapType getType() {

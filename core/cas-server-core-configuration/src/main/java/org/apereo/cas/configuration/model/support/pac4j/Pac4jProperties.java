@@ -2,9 +2,7 @@ package org.apereo.cas.configuration.model.support.pac4j;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link Pac4jProperties}.
@@ -14,6 +12,7 @@ import java.util.Map;
  */
 public class Pac4jProperties implements Serializable {
 
+    private static final long serialVersionUID = 4388567744591488495L;
     /**
      * When constructing the final user profile from
      * the delegated provider, determines if the provider id
@@ -262,6 +261,7 @@ public class Pac4jProperties implements Serializable {
 
     public static class LinkedIn extends Pac4jGenericClientProperties {
 
+        private static final long serialVersionUID = 4633395854143281872L;
         /**
          * The requested scope.
          */
@@ -289,6 +289,7 @@ public class Pac4jProperties implements Serializable {
     }
 
     public static class Facebook extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -2737594266552466076L;
         /**
          * The requested scope.
          */
@@ -316,36 +317,47 @@ public class Pac4jProperties implements Serializable {
     }
 
     public static class Bitbucket extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -6189494666598669078L;
     }
 
     public static class Wordpress extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 4636855941699435914L;
     }
 
     public static class Paypal extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -5663033494303169583L;
     }
 
     public static class Twitter extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 6906343970517008092L;
     }
     
     public static class Github extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 9217581995885784515L;
     }
 
     public static class Yahoo extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 8011580257047982361L;
     }
 
     public static class Foursquare extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -1784820695301605307L;
     }
 
     public static class Dropbox extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -1508055128010569953L;
     }
 
     public static class Orcid extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 1337923364401817796L;
     }
 
     public static class WindowsLive extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -1816309711278174847L;
     }
 
     public static class Google extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -3023053058552426312L;
         /**
          * The requested scope from the provider.
          */

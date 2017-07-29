@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import java.io.Serializable;
+
 /**
  * This is {@link Pac4jSamlProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class Pac4jSamlProperties {
+public class Pac4jSamlProperties implements Serializable {
+    private static final long serialVersionUID = -862819796533384951L;
     /**
      * The password to use when generating the SP/CAS keystore.
      */
