@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,7 +14,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SurrogateAuthenticationProperties {
+public class SurrogateAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = -2088813217398883623L;
     /**
      * The separator character used to distinguish between the surrogate account and the admin account.
      */

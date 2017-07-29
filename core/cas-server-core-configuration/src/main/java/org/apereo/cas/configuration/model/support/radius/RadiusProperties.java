@@ -4,14 +4,17 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link RadiusProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RadiusProperties {
+public class RadiusProperties implements Serializable {
 
+    private static final long serialVersionUID = 5244307919878753714L;
     /**
      * Whether catastrophic errors should be skipped
      * and fail over to the next server.

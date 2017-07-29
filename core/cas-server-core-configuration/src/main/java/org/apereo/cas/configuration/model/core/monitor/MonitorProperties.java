@@ -6,14 +6,17 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for cas.monitor.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class MonitorProperties {
+public class MonitorProperties implements Serializable {
 
+    private static final long serialVersionUID = -7047060071480971606L;
     /**
      * The free memory threshold for the memory monitor.
      * If the amount of free memory available reaches this point

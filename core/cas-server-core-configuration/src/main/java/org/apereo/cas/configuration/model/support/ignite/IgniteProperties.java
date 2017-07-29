@@ -13,8 +13,9 @@ import java.time.Duration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class IgniteProperties {
+public class IgniteProperties implements Serializable {
 
+    private static final long serialVersionUID = -5259465262649559156L;
     /**
      * Used by <code>TcpDiscoveryVmIpFinder</code> which is an
      * IP Finder which works only with pre-configured list of IP addresses specified via this setting.

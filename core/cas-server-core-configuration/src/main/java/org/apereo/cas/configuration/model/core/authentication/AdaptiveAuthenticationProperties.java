@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,8 +12,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AdaptiveAuthenticationProperties {
+public class AdaptiveAuthenticationProperties implements Serializable {
 
+    private static final long serialVersionUID = -1840174229142982880L;
     /**
      * Comma-separated list of strings representing countries to be rejected from participating in authentication transactions.
      */
