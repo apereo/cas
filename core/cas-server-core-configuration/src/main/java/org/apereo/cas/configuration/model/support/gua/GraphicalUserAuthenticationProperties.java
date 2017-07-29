@@ -3,6 +3,8 @@ package org.apereo.cas.configuration.model.support.gua;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 
+import java.io.Serializable;
+
 /**
  * This is {@link GraphicalUserAuthenticationProperties}
  * that contains settings needed for identification
@@ -11,7 +13,8 @@ import org.apereo.cas.configuration.support.AbstractConfigProperties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class GraphicalUserAuthenticationProperties {
+public class GraphicalUserAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7527953699378415460L;
     /**
      * Locate GUA settings and images from LDAP.
      */

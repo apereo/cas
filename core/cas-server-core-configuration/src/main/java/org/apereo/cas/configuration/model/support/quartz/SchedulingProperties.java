@@ -2,14 +2,17 @@ package org.apereo.cas.configuration.model.support.quartz;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link SchedulingProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SchedulingProperties {
+public class SchedulingProperties implements Serializable {
 
+    private static final long serialVersionUID = -1522227059439367394L;
     /**
      * Whether scheduler is should schedule the job to run.
      */

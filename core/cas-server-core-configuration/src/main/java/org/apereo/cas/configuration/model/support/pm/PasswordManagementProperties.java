@@ -17,8 +17,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class PasswordManagementProperties {
+public class PasswordManagementProperties implements Serializable {
 
+    private static final long serialVersionUID = -260644582798411176L;
     /**
      * Flag to indicate if password management facility is enabled.
      */

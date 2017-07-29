@@ -3,6 +3,8 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for http.client.truststore.
  *
@@ -10,17 +12,18 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class HttpClientProperties {
+public class HttpClientProperties implements Serializable {
+    private static final long serialVersionUID = -7494946569869245770L;
     /**
      * Connection timeout for all operations that reach out to URL endpoints.
      */
     private String connectionTimeout = "PT5S";
-    
+
     /**
      * Read timeout for all operations that reach out to URL endpoints.
      */
     private String readTimeout = "PT5S";
-    
+
     /**
      * Indicates timeout for async operations.
      */
@@ -52,7 +55,7 @@ public class HttpClientProperties {
     public void setAsyncTimeout(final String asyncTimeout) {
         this.asyncTimeout = asyncTimeout;
     }
-    
+
     public Truststore getTruststore() {
         return truststore;
     }

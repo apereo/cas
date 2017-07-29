@@ -36,6 +36,7 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +46,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AuthenticationProperties {
+public class AuthenticationProperties implements Serializable {
 
+    private static final long serialVersionUID = -1233126985007049516L;
     @NestedConfigurationProperty
     private SqrlAuthenticationProperties sqrl = new SqrlAuthenticationProperties();
     

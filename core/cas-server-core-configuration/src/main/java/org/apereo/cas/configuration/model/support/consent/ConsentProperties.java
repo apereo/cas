@@ -12,9 +12,10 @@ import java.time.temporal.ChronoUnit;
  * This is {@link ConsentProperties}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.2.0
  */
-public class ConsentProperties {
+public class ConsentProperties implements Serializable {
+    private static final long serialVersionUID = 5201308051524438384L;
     /**
      * Global reminder time unit, to reconfirm consent
      * in cases no changes are detected.
