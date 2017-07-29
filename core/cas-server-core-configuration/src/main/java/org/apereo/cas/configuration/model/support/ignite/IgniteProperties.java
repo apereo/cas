@@ -21,7 +21,6 @@ public class IgniteProperties implements Serializable {
      * IP Finder which works only with pre-configured list of IP addresses specified via this setting.
      * By default, this IP finder is not shared, which means that all grid nodes have
      * to be configured with the same list of IP addresses when this IP finder is used.
-     * <p>
      * Parses provided values and initializes the internal collection of addresses.
      * Addresses may be represented as follows:
      * <ul>
@@ -35,7 +34,7 @@ public class IgniteProperties implements Serializable {
      * If port is 0 or not provided then default port will be used (depends on discovery SPI configuration).
      * If port range is provided (e.g. host:port1..port2) the following should be considered:
      * <ul>
-     * <li>port1 < port2 should be true;</li>
+     * <li>port1 &lt; port2 should be true;</li>
      * <li>Both port1 and port2 should be greater than 0.</li>
      * </ul>
      */
@@ -336,11 +335,11 @@ public class IgniteProperties implements Serializable {
          * Mode indicating how Ignite should wait for write replies from other nodes.
          * Default value is FULL_ASYNC}, which means that Ignite will not wait for responses from participating nodes. This means that by default remote
          * nodes may get their state updated slightly after any of the cache write methods complete, or after Transaction.commit() method completes.
-         * <p>
          * <ul>
          * <li>
          * <code>FULL_ASYNC</code>: Flag indicating that Ignite will not wait for write or commit responses from participating nodes, which means that
-         * remote nodes may get their state updated a bit after any of the cache write methods complete, or after Transaction.commit() method completes.
+         * remote nodes may get their state updated a bit after any of the cache write methods complete, 
+         * or after <code>Transaction.commit()</code> method completes.
          * </li>
          * <li>
          * <code>FULL_SYNC</code>: Flag indicating that Ignite should wait for write or commit replies from all nodes. This behavior guarantees
@@ -380,5 +379,3 @@ public class IgniteProperties implements Serializable {
         }
     }
 }
-
-
