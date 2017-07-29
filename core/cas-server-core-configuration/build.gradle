@@ -23,4 +23,4 @@ task generateConfigurationMetadata(type:JavaExec) {
 }
 
 compileJava.dependsOn(processResources)
-compileJava.finalizedBy(generateConfigurationMetadata)
+jar.dependsOn(generateConfigurationMetadata)

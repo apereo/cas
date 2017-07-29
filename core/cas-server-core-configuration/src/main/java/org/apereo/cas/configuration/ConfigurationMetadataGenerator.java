@@ -221,6 +221,7 @@ public class ConfigurationMetadataGenerator {
             return cachedPropertiesClasses.get(type.getNameAsString());
 
         }
+        
         final Predicate<String> filterInputs = s -> s.contains(type.getNameAsString());
         final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
         final String packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
