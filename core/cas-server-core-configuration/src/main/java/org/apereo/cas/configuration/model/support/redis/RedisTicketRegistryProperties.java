@@ -3,14 +3,17 @@ package org.apereo.cas.configuration.model.support.redis;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties for Redis.
  *
  * @author serv
  * @since 5.1.0
  */
-public class RedisTicketRegistryProperties {
+public class RedisTicketRegistryProperties implements Serializable {
 
+    private static final long serialVersionUID = -2600996050439638782L;
     /**
      * Database index used by the connection factory.
      */
