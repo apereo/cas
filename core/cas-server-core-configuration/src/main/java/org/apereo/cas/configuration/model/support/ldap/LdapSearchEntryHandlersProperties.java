@@ -2,13 +2,17 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link LdapSearchEntryHandlersProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class LdapSearchEntryHandlersProperties {
+public class LdapSearchEntryHandlersProperties implements Serializable {
+    private static final long serialVersionUID = -5198990160347131821L;
+
     /**
      * The enum Search entry handler types.
      */

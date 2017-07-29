@@ -3,14 +3,17 @@ package org.apereo.cas.configuration.model.core.audit;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 
+import java.io.Serializable;
+
 /**
  * This is {@link AuditProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AuditProperties {
+public class AuditProperties implements Serializable {
 
+    private static final long serialVersionUID = 3946106584608417663L;
     /**
      * Application code to use in the audit logs.
      *

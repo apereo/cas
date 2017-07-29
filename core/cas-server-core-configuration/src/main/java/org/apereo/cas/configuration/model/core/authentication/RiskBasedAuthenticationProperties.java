@@ -3,14 +3,17 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link RiskBasedAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class RiskBasedAuthenticationProperties {
+public class RiskBasedAuthenticationProperties implements Serializable {
 
+    private static final long serialVersionUID = 3826749727400569308L;
     /**
      * Handle risky authentication attempts via an IP criteria.
      */
