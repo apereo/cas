@@ -51,12 +51,13 @@ public abstract class BaseCassandraProperties implements Serializable {
      * Such policy allows to centralize the handling of query retries, allowing to minimize the need for exception catching/handling in business code.
      * Accepted options are <code>DEFAULT_RETRY_POLICY, DOWNGRADING_CONSISTENCY_RETRY_POLICY, FALLTHROUGH_RETRY_POLICY</code>.
      * <p>
-     * The default policy retries queries in only two cases:<ul>
+     * The default policy retries queries in only two cases:
+     * <ul>
      * <li>On a read timeout, if enough replicas replied but data was not retrieved.</li>
-     * <li>On a write timeout, if we timeout while writing the distributed log used by batch statements.</li>
+     * <li>On a write timeout, if we timeout while writing the distributed log used by batch statements.
      * This retry policy is conservative in that it will never retry with a different consistency level than the one of the initial operation.
+     * </li>
      * </ul>
-     * </p>
      */
     private String retryPolicy = "DEFAULT_RETRY_POLICY";
     /**

@@ -185,7 +185,7 @@ public class HazelcastProperties implements Serializable {
          * (or deleted from backup members in case of remove) and acknowledgements are received. Therefore, backups are updated before a put operation
          * is completed, provided that the cluster is stable.
          * Asynchronous backups, on the other hand, do not block operations. They are
-         * fire & forget and do not require acknowledgements; the backup operations are performed at some point in time.
+         * fire and forget and do not require acknowledgements; the backup operations are performed at some point in time.
          */
         private int asyncBackupCount;
 
