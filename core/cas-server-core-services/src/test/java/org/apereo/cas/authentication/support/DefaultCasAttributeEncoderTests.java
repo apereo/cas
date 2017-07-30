@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -47,6 +48,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class})
