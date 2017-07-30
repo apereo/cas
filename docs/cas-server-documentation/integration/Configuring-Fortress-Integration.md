@@ -5,7 +5,7 @@ title: CAS - Apache Fortress Integration
 
 # Apache Fortress Integration
 
-Services connected to CAS can use Apache Fortress to handle the authentication and authorization with Apache Fortress. 
+Services connected to CAS can use [Apache Fortress](http://directory.apache.org/fortress/) to handle the authentication and authorization with Apache Fortress. 
 The Idea of this is because Apache Fortress does not have any SSO mechanism. However, Apache Fortress is complied for `ANSI INCITS 359 RBAC`.  
 [See this link](http://directory.apache.org/fortress/testimonials.html) for background and history.
 
@@ -18,10 +18,10 @@ In the above diagram, CAS will delegate the authentication to Fortress on behalf
 configured in the `fortress.properties` file. CAS automatically search for this file (assuming classpath) 
 and constructs an access manager component with the admin user as the default communication user to fortress.
 
-To enable this feature, make sure Apache Fortress is  
+To enable this feature, ensure Apache Fortress is  
 [installed](http://directory.apache.org/fortress/installation.html "apache fortress installation") .
 
-Next include this dependency in the war overlay project:  
+Next include the following module in the war overlay:  
 
 ```xml
 <dependency>
