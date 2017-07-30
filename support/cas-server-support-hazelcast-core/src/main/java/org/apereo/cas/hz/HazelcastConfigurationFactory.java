@@ -92,7 +92,7 @@ public class HazelcastConfigurationFactory {
             }
         } else {
             config = new Config();
-            config.setProperty("hazelcast.prefer.ipv4.stack", String.valueOf(cluster.isIpv4Enabled()));
+            config.setProperty(HazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.isIpv4Enabled()));
 
             // TCP config
             final TcpIpConfig tcpIpConfig = new TcpIpConfig()

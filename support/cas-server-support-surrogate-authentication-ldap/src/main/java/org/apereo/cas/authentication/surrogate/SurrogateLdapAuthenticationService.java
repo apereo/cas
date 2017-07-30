@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -45,7 +45,7 @@ public class SurrogateLdapAuthenticationService implements SurrogateAuthenticati
                 return true;
             }
 
-            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(surrogate));
+            final SearchFilter filter = LdapBeans.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(surrogate));
             LOGGER.debug("Using search filter: [{}]", filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
@@ -62,7 +62,7 @@ public class SurrogateLdapAuthenticationService implements SurrogateAuthenticati
     public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         final Collection<String> eligible = new LinkedHashSet<>();
         try {
-            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
+            final SearchFilter filter = LdapBeans.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter: [{}]", filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,

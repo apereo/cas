@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -117,41 +118,23 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
     }
 
     public static class Cleaner implements Serializable {
-        /**
-         * Whether cleaner should be enabled as a background process to remove expired records.
-         */
-        private boolean enabled = true;
-        /**
-         * Cleaner startup delay.
-         */
-        private String startDelay = "PT10S";
-        /**
-         * Cleaner repeat interval. Indicates how often should the cleaner run again.
-         */
-        private String repeatInterval = "PT1M";
+        private static final long serialVersionUID = 8459671958275130605L;
 
-        public boolean isEnabled() {
-            return enabled;
+        @NestedConfigurationProperty
+        private SchedulingProperties schedule = new SchedulingProperties();
+
+        public Cleaner() {
+            schedule.setEnabled(true);
+            schedule.setStartDelay("PT10S");
+            schedule.setRepeatInterval("PT1M");
         }
 
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
+        public SchedulingProperties getSchedule() {
+            return schedule;
         }
 
-        public long getStartDelay() {
-            return Beans.newDuration(startDelay).toMillis();
-        }
-
-        public void setStartDelay(final String startDelay) {
-            this.startDelay = startDelay;
-        }
-
-        public long getRepeatInterval() {
-            return Beans.newDuration(repeatInterval).toMillis();
-        }
-
-        public void setRepeatInterval(final String repeatInterval) {
-            this.repeatInterval = repeatInterval;
+        public void setSchedule(final SchedulingProperties schedule) {
+            this.schedule = schedule;
         }
     }
 }

@@ -2,8 +2,12 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
+apply plugin: "application"
+
+def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 
 description = "Apereo CAS Web Application"
+mainClassName = MAIN_CLASS
 
 sourceSets {
     main {
@@ -23,11 +27,11 @@ if (Boolean.getBoolean("enableJRebelAgent")) {
 }
 
 springBoot  {
-    mainClass = "org.apereo.cas.web.CasWebApplication"
+    mainClass = MAIN_CLASS
 }
 
 bootRepackage {
-    mainClass = "org.apereo.cas.web.CasWebApplication"
+    mainClass = MAIN_CLASS
     enabled = !rootProject.publishReleases
 }
 
@@ -85,7 +89,7 @@ dependencies {
     compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-events-configuration")
     compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-configuration-metadata-server")
+    compile project(":core:cas-server-core-configuration-metadata-repository")
 
     compile project(":support:cas-server-support-throttle")
     compile project(":support:cas-server-support-configuration")

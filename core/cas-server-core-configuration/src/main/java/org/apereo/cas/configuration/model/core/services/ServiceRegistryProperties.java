@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaService
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 
@@ -58,16 +57,6 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
     private boolean initFromJson;
 
     /**
-     * String representation of a start delay of loading service definitions data for an active service registry implementation.
-     */
-    private String startDelay = "PT15S";
-
-    /**
-     * String representation of a repeat interval of re-loading service definitions data for an active service registry implementation.
-     */
-    private String repeatInterval = "PT2M";
-
-    /**
      * Flag indicating whether a background watcher thread is enabled for the purposes of ;ive reloading of service registry data changes
      * from persistent data store.
      */
@@ -94,22 +83,6 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
 
     public void setWatcherEnabled(final boolean watcherEnabled) {
         this.watcherEnabled = watcherEnabled;
-    }
-
-    public long getStartDelay() {
-        return Beans.newDuration(startDelay).toMillis();
-    }
-
-    public void setStartDelay(final String startDelay) {
-        this.startDelay = startDelay;
-    }
-
-    public long getRepeatInterval() {
-        return Beans.newDuration(repeatInterval).toMillis();
-    }
-
-    public void setRepeatInterval(final String repeatInterval) {
-        this.repeatInterval = repeatInterval;
     }
 
     public JpaServiceRegistryProperties getJpa() {

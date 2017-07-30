@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.webapp;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for locale.
  *
@@ -7,10 +9,17 @@ package org.apereo.cas.configuration.model.webapp;
  * @since 5.0.0
  */
 
-public class LocaleProperties {
+public class LocaleProperties implements Serializable {
 
+    private static final long serialVersionUID = -1644471820900213781L;
+    /**
+     * Parameter name to use when switching locales.
+     */
     private String paramName = "locale";
 
+    /**
+     * Default locale.
+     */
     private String defaultValue = "en";
 
     public String getParamName() {

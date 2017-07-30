@@ -17,6 +17,6 @@ public class CasSamlSPTestShibConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getTestShib();
+        return casProperties.getSamlSp().getTestShib();
     }
 }

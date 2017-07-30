@@ -69,6 +69,10 @@ JDBC support for surrogate authentication is enabled by including the following 
 </dependency>
 ```
 
+Aside from the usual database settings, this mode requires the specification of two SQL queries; one that determines eligibility and one that is able to retrieve
+the list of accounts that can be impersonated for a given admin user. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-surrogate-accounts).
+
+
 ### Surrogate Account Selection
 
 The surrogate user selection can happen via the following ways.

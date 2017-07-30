@@ -10,9 +10,11 @@ import org.apereo.cas.configuration.model.support.infinispan.InfinispanPropertie
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link TicketRegistryProperties}.
@@ -20,8 +22,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class TicketRegistryProperties {
+public class TicketRegistryProperties implements Serializable {
 
+    private static final long serialVersionUID = -4735458476452635679L;
     /**
      * DyanmoDb registry settings.
      */
@@ -86,6 +89,7 @@ public class TicketRegistryProperties {
      * Settings relevant for the default in-memory ticket registry.
      */
     private InMemory inMemory = new InMemory();
+
     /**
      * Ticket registry cleaner settings.
      */
@@ -187,17 +191,21 @@ public class TicketRegistryProperties {
         this.dynamoDb = dynamoDb;
     }
 
-    public static class InMemory {
+    public static class InMemory implements Serializable {
+
+        private static final long serialVersionUID = -2600525447128979994L;
         /**
          * The initial capacity of the underlying memory store.
          * The implementation performs internal sizing to accommodate this many elements.
          */
         private int initialCapacity = 1000;
+
         /**
          *  The load factor threshold, used to control resizing.
          *  Resizing may be performed when the average number of elements per bin exceeds this threshold.
          */
         private int loadFactor = 1;
+
         /**
          * The estimated number of concurrently updating threads.
          * The implementation performs internal sizing to try to accommodate this many threads.
@@ -243,21 +251,33 @@ public class TicketRegistryProperties {
         }
     }
 
-    public static class Cleaner {
-        /**
-         * Whether the ticket registry cleaner should be enabled.
-         */
-        private boolean enabled = true;
-        /**
-         * Initial delay before the cleaner background job is scheduled to run.
-         */
-        private String startDelay = "PT10S";
-        /**
-         * The periodic internal at which the cleaner will wake up to resume.
-         */
-        private String repeatInterval = "PT1M";
+    public static class Cleaner implements Serializable {
 
+        private static final long serialVersionUID = 6726908583118452494L;
+        /**
+         * Cleaner id used to control locking strategies.
+         */
         private String appId = "cas-ticket-registry-cleaner";
+
+        /**
+         * Schedule that determines how often should the cleaner run.
+         */
+        @NestedConfigurationProperty
+        private SchedulingProperties schedule = new SchedulingProperties();
+
+        public Cleaner() {
+            schedule.setEnabled(true);
+            schedule.setStartDelay("PT10S");
+            schedule.setRepeatInterval("PT1M");
+        }
+
+        public SchedulingProperties getSchedule() {
+            return schedule;
+        }
+
+        public void setSchedule(final SchedulingProperties schedule) {
+            this.schedule = schedule;
+        }
 
         public String getAppId() {
             return appId;
@@ -265,30 +285,6 @@ public class TicketRegistryProperties {
 
         public void setAppId(final String appId) {
             this.appId = appId;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public long getStartDelay() {
-            return Beans.newDuration(startDelay).toMillis();
-        }
-
-        public void setStartDelay(final String startDelay) {
-            this.startDelay = startDelay;
-        }
-
-        public long getRepeatInterval() {
-            return Beans.newDuration(repeatInterval).toMillis();
-        }
-
-        public void setRepeatInterval(final String repeatInterval) {
-            this.repeatInterval = repeatInterval;
         }
     }
 }

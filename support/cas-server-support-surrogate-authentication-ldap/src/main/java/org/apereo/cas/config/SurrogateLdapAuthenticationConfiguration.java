@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateLdapAuthenticationServic
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.ldaptive.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class SurrogateLdapAuthenticationConfiguration {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
                 su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
-        final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(su.getLdap());
+        final ConnectionFactory factory = LdapBeans.newLdaptivePooledConnectionFactory(su.getLdap());
         return new SurrogateLdapAuthenticationService(factory, su.getLdap());
     }
 }

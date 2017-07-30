@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for cas.principal.resolver.persondir.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class PersonDirPrincipalResolverProperties {
+public class PersonDirPrincipalResolverProperties implements Serializable {
 
+    private static final long serialVersionUID = 8929912041234879300L;
     /**
      * Attribute name to use to indicate the identifier of the principal constructed.
      * If the attribute is blank or has no values, the default principal id will be used

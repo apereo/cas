@@ -37,6 +37,7 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +47,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AuthenticationProperties {
+public class AuthenticationProperties implements Serializable {
 
+    private static final long serialVersionUID = -1233126985007049516L;
     @NestedConfigurationProperty
     private SqrlAuthenticationProperties sqrl = new SqrlAuthenticationProperties();
     
@@ -81,7 +83,10 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
 
-    @NestedConfigurationProperty
+    /**
+     * Collection of settings related to LDAP authentication.
+     * These settings are required to be indexed (i.e. ldap[0].xyz).
+     */
     private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
 
     @NestedConfigurationProperty
@@ -109,7 +114,7 @@ public class AuthenticationProperties {
     private RemoteAddressAuthenticationProperties remoteAddress = new RemoteAddressAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private ShibbolethIdPProperties shibIdP = new ShibbolethIdPProperties();
+    private ShibbolethIdPProperties shibIdp = new ShibbolethIdPProperties();
     
     @NestedConfigurationProperty
     private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
@@ -117,7 +122,10 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
 
-    @NestedConfigurationProperty
+    /**
+     * Collection of settings related to JAAS authentication.
+     * These settings are required to be indexed (i.e. jaas[0].xyz).
+     */
     private List<JaasAuthenticationProperties> jaas = new ArrayList<>();
 
     @NestedConfigurationProperty
@@ -149,12 +157,15 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private SpnegoProperties spnego = new SpnegoProperties();
-    
-    @NestedConfigurationProperty
+
+    /**
+     * Collection of settings related to WsFed delegated authentication.
+     * These settings are required to be indexed (i.e. wsfed[0].xyz).
+     */
     private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
     @NestedConfigurationProperty
-    private WsFederationProperties wsfedIdP = new WsFederationProperties();
+    private WsFederationProperties wsfedIdp = new WsFederationProperties();
     
     @NestedConfigurationProperty
     private X509Properties x509 = new X509Properties();
@@ -165,14 +176,18 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private FortressAuthenticationProperties fortress = new FortressAuthenticationProperties();
 
+    /**
+     * Whether CAS authentication/protocol attributes
+     * should be released as part of ticket validation.
+     */
     private boolean releaseProtocolAttributes = true;
 
-    public ShibbolethIdPProperties getShibIdP() {
-        return shibIdP;
+    public ShibbolethIdPProperties getShibIdp() {
+        return shibIdp;
     }
 
-    public void setShibIdP(final ShibbolethIdPProperties shibIdP) {
-        this.shibIdP = shibIdP;
+    public void setShibIdp(final ShibbolethIdPProperties shibIdp) {
+        this.shibIdp = shibIdp;
     }
 
     public SurrogateAuthenticationProperties getSurrogate() {
@@ -191,12 +206,12 @@ public class AuthenticationProperties {
         this.releaseProtocolAttributes = releaseProtocolAttributes;
     }
 
-    public WsFederationProperties getWsfedIdP() {
-        return wsfedIdP;
+    public WsFederationProperties getWsfedIdp() {
+        return wsfedIdp;
     }
 
-    public void setWsfedIdP(final WsFederationProperties wsfedIdP) {
-        this.wsfedIdP = wsfedIdP;
+    public void setWsfedIdp(final WsFederationProperties wsfedIdp) {
+        this.wsfedIdp = wsfedIdp;
     }
 
     public TokenAuthenticationProperties getToken() {

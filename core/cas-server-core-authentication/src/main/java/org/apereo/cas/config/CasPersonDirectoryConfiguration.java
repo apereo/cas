@@ -6,8 +6,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.GrouperPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
@@ -132,7 +135,7 @@ public class CasPersonDirectoryConfiguration {
     @RefreshScope
     public List<IPersonAttributeDao> grouperAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
-        final PrincipalAttributesProperties.Grouper gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
+        final GrouperPrincipalAttributesProperties gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
 
         if (gp.isEnabled()) {
             final GrouperPersonAttributeDao dao = new GrouperPersonAttributeDao();
@@ -169,13 +172,13 @@ public class CasPersonDirectoryConfiguration {
                 if (jdbc.isSingleRow()) {
                     LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new SingleRowJdbcPersonAttributeDao(
-                            Beans.newDataSource(jdbc),
+                            JpaBeans.newDataSource(jdbc),
                             jdbc.getSql()
                     );
                 } else {
                     LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                            Beans.newDataSource(jdbc),
+                            JpaBeans.newDataSource(jdbc),
                             jdbc.getSql()
                     );
                     LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
@@ -210,7 +213,7 @@ public class CasPersonDirectoryConfiguration {
                 final LdaptivePersonAttributeDao ldapDao = new LdaptivePersonAttributeDao();
 
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                ldapDao.setConnectionFactory(Beans.newLdaptivePooledConnectionFactory(ldap));
+                ldapDao.setConnectionFactory(LdapBeans.newLdaptivePooledConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
 
                 LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getUserFilter());

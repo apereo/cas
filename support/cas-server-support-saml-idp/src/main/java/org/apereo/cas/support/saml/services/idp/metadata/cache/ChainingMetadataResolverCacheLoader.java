@@ -17,7 +17,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpClientMultithreadedDownloader;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -217,10 +216,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final String canonicalPath = backupFile.getCanonicalPath();
         LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
         FileUtils.forceMkdirParent(backupFile);
-
-        final HttpClientMultithreadedDownloader downloader =
-                new HttpClientMultithreadedDownloader(metadataResource, backupFile);
-
+        
         final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
                 this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
                 canonicalPath);

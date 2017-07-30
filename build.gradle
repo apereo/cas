@@ -48,7 +48,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.1"
+        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.4"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
         classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
         classpath "com.gradle:build-scan-plugin:1.0"
@@ -126,22 +126,12 @@ subprojects {
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
-
-
+    
     repositories {
         mavenLocal()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
-        maven { url "https://repo.maven.apache.org/maven2" }
-        maven { url "https://jitpack.io" }
-        maven { url "https://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "https://files.couchbase.com/maven2" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/libs-snapshot" }
-        maven { url "https://dl.bintray.com/uniconiam/maven" }
         jcenter()
     }
 
@@ -175,8 +165,17 @@ subprojects {
             preferProjectModules()
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
-        }
 
+            /**
+             * Required for all JRadius modules
+             */
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == "gnu-getopt") {
+                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
+                }
+            }
+        }
+        
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")

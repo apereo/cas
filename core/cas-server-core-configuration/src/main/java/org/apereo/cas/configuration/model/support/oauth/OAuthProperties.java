@@ -2,16 +2,31 @@ package org.apereo.cas.configuration.model.support.oauth;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link OAuthProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OAuthProperties {
+public class OAuthProperties implements Serializable {
+    private static final long serialVersionUID = 2677128037234123907L;
+    /**
+     * Settings related to oauth grants.
+     */
     private Grants grants = new Grants();
+    /**
+     * Settings related to oauth codes.
+     */
     private Code code = new Code();
+    /**
+     * Settings related to oauth access tokens.
+     */
     private AccessToken accessToken = new AccessToken();
+    /**
+     * Settings related to oauth refresh tokens.
+     */
     private RefreshToken refreshToken = new RefreshToken();
 
     public Grants getGrants() {
@@ -47,7 +62,13 @@ public class OAuthProperties {
     }
 
     public static class Code {
+        /**
+         * Number of times this code is valid and can be used.
+         */
         private int numberOfUses = 1;
+        /**
+         * Duration in seconds where the code is valid.
+         */
         private long timeToKillInSeconds = 30;
 
         public int getNumberOfUses() {
@@ -68,8 +89,19 @@ public class OAuthProperties {
     }
 
     public static class AccessToken {
+        /**
+         * Hard timeout to kill the access token and expire it.
+         */
         private String maxTimeToLiveInSeconds = "PT28800S";
+        /**
+         * Sliding window for the access token expiration policy.
+         * Essentially, this is an idle time out.
+         */
         private String timeToKillInSeconds = "PT7200S";
+        /**
+         * Whether CAS authentication/protocol attributes
+         * should be released as part of this access token's validation.
+         */
         private boolean releaseProtocolAttributes = true;
 
         public boolean isReleaseProtocolAttributes() {
@@ -98,6 +130,9 @@ public class OAuthProperties {
     }
 
     public static class RefreshToken {
+        /**
+         * Hard timeout beyond which the refresh token is considered expired.
+         */
         private String timeToKillInSeconds = "P14D";
 
         public long getTimeToKillInSeconds() {
@@ -110,6 +145,9 @@ public class OAuthProperties {
     }
     
     public static class Grants {
+        /**
+         * Resource owner grant settings.
+         */
         private ResourceOwner resourceOwner = new ResourceOwner();
 
         public ResourceOwner getResourceOwner() {
@@ -121,6 +159,12 @@ public class OAuthProperties {
         }
 
         public static class ResourceOwner {
+            /**
+             * Whether using the resource-owner grant should
+             * enforce authorization rules and per-service policies
+             * based on a service parameter is provided as a header
+             * outside the normal semantics of the grant and protocol.
+             */
             private boolean requireServiceHeader;
 
             public boolean isRequireServiceHeader() {

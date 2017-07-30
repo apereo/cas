@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link CassandraAuthenticationProperties}.
@@ -10,16 +11,40 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
  * @since 5.2.0
  */
 public class CassandraAuthenticationProperties extends BaseCassandraProperties {
+    private static final long serialVersionUID = 1369405266376125234L;
+    /**
+     * Name of the authentication handler.
+     */
     private String name;
+    /**
+     * The authentication handler order in the chain.
+     */
     private Integer order;
+    /**
+     * Username attribute to fetch and compare.
+     */
     private String usernameAttribute;
+    /**
+     * Password attribute to fetch and compare.
+     */
     private String passwordAttribute;
+    /**
+     * Table name to fetch credentials.
+     */
     private String tableName;
 
-    private PasswordEncoderProperties passwordEncoder;
-    private PrincipalTransformationProperties principalTransformation;
+    /**
+     * Password encoding settings for this authentication.
+     */
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
-
+    /**
+     * Principal transformation settings for this authentication.
+     */
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+    
     public PasswordEncoderProperties getPasswordEncoder() {
         return passwordEncoder;
     }

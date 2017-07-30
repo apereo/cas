@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.slo;
 
+import java.io.Serializable;
+
 /**
  * This is {@link SloProperties}.
  *
@@ -7,8 +9,9 @@ package org.apereo.cas.configuration.model.core.slo;
  * @since 5.0.0
  */
 
-public class SloProperties {
+public class SloProperties implements Serializable {
 
+    private static final long serialVersionUID = 3676710533477055700L;
     /**
      * Whether SLO callbacks should be done in an asynchronous manner via the HTTP client.
      * When true, CAS will not wait for the operation to fully complete and will resume control to carry on.

@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.jpa;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.sql.DataSource;
+import java.io.Serializable;
 
 /**
  * Simple structure to collect and pass around pieces of JPA config data reusable across
@@ -11,8 +12,9 @@ import javax.sql.DataSource;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class JpaConfigDataHolder {
+public class JpaConfigDataHolder implements Serializable {
 
+    private static final long serialVersionUID = -3940423575751579622L;
     private final JpaVendorAdapter jpaVendorAdapter;
 
     private final String persistenceUnitName;

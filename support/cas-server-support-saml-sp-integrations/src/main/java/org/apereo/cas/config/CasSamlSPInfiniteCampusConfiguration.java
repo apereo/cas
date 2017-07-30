@@ -17,6 +17,6 @@ public class CasSamlSPInfiniteCampusConfiguration extends BaseCasSamlSPConfigura
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getInfiniteCampus();
+        return casProperties.getSamlSp().getInfiniteCampus();
     }
 }
