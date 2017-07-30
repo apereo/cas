@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry.support;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -248,7 +247,7 @@ public class JpaLockingStrategyTests {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
@@ -260,7 +259,7 @@ public class JpaLockingStrategyTests {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
         assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);

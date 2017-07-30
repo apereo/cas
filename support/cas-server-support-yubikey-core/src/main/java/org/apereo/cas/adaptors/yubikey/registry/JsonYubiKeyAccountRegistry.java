@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import com.yubico.client.v2.YubicoClient;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.util.ResourceUtils;
@@ -40,7 +39,7 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
                 return true;
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return false;
     }
@@ -62,7 +61,7 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
                 LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return new HashMap<>();
     }

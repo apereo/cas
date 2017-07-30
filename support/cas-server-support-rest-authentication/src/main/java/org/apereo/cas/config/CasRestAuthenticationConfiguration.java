@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
@@ -65,7 +64,7 @@ public class CasRestAuthenticationConfiguration {
             final ClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactoryBasicAuth(host);
             return new RestTemplate(factory);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
     

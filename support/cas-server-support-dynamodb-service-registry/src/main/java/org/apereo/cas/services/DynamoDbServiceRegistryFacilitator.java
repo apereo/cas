@@ -19,7 +19,6 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
-import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -218,7 +217,7 @@ public class DynamoDbServiceRegistryFacilitator {
             final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
             LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

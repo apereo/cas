@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
@@ -50,7 +49,7 @@ public class MemcachedTicketRegistryConfiguration {
             bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getTicket().getRegistry().getMemcached().getHashAlgorithm()));
             return bean;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

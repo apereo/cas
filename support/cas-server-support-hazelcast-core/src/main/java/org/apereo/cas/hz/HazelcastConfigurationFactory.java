@@ -1,6 +1,5 @@
 package org.apereo.cas.hz;
 
-import com.google.common.base.Throwables;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.JoinConfig;
@@ -88,7 +87,7 @@ public class HazelcastConfigurationFactory {
                 config = new XmlConfigBuilder(hz.getConfigLocation().getInputStream()).build();
                 config.setConfigurationUrl(configUrl);
             } catch (final Exception e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         } else {
             config = new Config();

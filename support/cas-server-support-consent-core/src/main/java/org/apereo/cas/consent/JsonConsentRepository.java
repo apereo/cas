@@ -2,7 +2,6 @@ package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -70,7 +69,7 @@ public class JsonConsentRepository implements ConsentRepository {
                 };
                 this.consentDecisions = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             } catch (final Exception e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
     }
@@ -80,7 +79,7 @@ public class JsonConsentRepository implements ConsentRepository {
             MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.consentDecisions);
             readDecisionsFromJsonResource();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return true;
     }

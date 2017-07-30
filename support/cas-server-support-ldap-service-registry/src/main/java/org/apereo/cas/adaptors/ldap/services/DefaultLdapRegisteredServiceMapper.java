@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -57,7 +56,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
             return new LdapEntry(newDn, attrs);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -71,7 +70,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
             return null;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

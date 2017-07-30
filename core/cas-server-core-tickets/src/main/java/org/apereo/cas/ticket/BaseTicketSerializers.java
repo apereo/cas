@@ -2,7 +2,6 @@ package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
@@ -146,7 +145,7 @@ public abstract class BaseTicketSerializers {
             }
             return deserializeTicket(ticketContent, clazz);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

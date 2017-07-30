@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
-import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -59,7 +58,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
 
             performGenerationSteps();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
     
@@ -73,7 +72,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
             final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
             return !idp.getMetadata().getMetadataFile().exists();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -100,7 +99,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
             return idp.getMetadata().getMetadataFile();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -113,7 +112,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
             final URL url = new URL(casProperties.getServer().getPrefix());
             return url.getHost();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

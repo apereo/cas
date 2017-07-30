@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -88,7 +87,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
             return factory.getObject();
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

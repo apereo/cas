@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.VfsResource;
@@ -73,7 +72,7 @@ public class CasVersion {
             return ZonedDateTime.now();
             
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

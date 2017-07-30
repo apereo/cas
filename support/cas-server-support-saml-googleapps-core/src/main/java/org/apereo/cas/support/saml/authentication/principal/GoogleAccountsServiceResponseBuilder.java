@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -129,7 +128,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             createGoogleAppsPrivateKey();
             createGoogleAppsPublicKey();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

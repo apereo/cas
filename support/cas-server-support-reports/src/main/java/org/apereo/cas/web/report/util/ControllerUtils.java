@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report.util;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -59,7 +58,7 @@ public final class ControllerUtils {
             }
             LOGGER.warn("Logging configuration cannot be found in the environment settings");
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return null;
     }

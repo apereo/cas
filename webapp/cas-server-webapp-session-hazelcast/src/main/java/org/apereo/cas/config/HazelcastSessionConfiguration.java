@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
@@ -25,7 +24,7 @@ import java.net.URL;
 @EnableHazelcastHttpSession
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastSessionConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -48,7 +47,7 @@ public class HazelcastSessionConfiguration {
                     .setProperty("hazelcast.max.no.heartbeat.seconds", "300");
             return Hazelcast.newHazelcastInstance(config);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

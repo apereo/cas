@@ -19,7 +19,6 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -150,7 +149,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
             final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
             LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

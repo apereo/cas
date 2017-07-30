@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
@@ -169,7 +168,7 @@ public class CasCoreServicesConfiguration {
             final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
             return new EmbeddedServiceRegistryDao(eventPublisher, location);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

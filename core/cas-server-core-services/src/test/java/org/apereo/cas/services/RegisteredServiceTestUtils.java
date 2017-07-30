@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -136,7 +134,7 @@ public final class RegisteredServiceTestUtils {
 
             return s;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

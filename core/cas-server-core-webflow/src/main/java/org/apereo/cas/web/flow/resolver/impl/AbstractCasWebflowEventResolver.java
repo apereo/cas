@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -294,7 +293,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                     def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
             return event;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -382,7 +381,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 }
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         LOGGER.debug("Attribute value [{}] is not a single-valued attribute", attributeValue);
         return null;

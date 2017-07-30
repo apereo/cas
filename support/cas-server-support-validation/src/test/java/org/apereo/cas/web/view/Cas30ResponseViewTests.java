@@ -1,6 +1,5 @@
 package org.apereo.cas.web.view;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -147,7 +146,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             final byte[] cipherData = cipher.doFinal(cred64);
             return new String(cipherData);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

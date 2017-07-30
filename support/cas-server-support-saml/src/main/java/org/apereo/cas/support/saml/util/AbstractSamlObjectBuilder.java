@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
@@ -108,7 +107,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             }
             return objectType.cast(builder.buildObject(qName));
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -128,7 +127,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             }
             return objectType.cast(builder.buildObject(qName));
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

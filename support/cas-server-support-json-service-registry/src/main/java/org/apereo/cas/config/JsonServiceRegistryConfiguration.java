@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.JsonServiceRegistryDao;
@@ -50,7 +49,7 @@ public class JsonServiceRegistryConfiguration {
 
             return new JsonServiceRegistryDao(registry.getConfig().getLocation(), registry.isWatcherEnabled(), eventPublisher);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

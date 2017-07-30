@@ -1,6 +1,5 @@
 package org.apereo.cas.util.services;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -63,7 +62,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
                 return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return null;
     }

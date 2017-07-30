@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
@@ -84,7 +83,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
                          BufferedReader buffer = new BufferedReader(isr)) {
                         parse(buffer);
                     } catch (final Exception e) {
-                        throw Throwables.propagate(e);
+                        throw new RuntimeException(e.getMessage(), e);
                     }
                 }
             };
