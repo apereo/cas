@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -21,12 +21,13 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorTestAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -79,6 +80,7 @@ import static org.junit.Assert.*;
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreTicketsConfiguration.class,
+                CasPersonDirectoryTestConfiguration.class,
                 CasCoreTicketIdGeneratorsConfiguration.class,
                 CasCoreValidationConfiguration.class})
 @ContextConfiguration(locations = {"/mfa-test-context.xml"})
@@ -92,7 +94,7 @@ public class MultifactorAuthenticationTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    
+
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -100,7 +102,7 @@ public class MultifactorAuthenticationTests {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
-    
+
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
@@ -190,4 +192,6 @@ public class MultifactorAuthenticationTests {
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {
         return this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
     }
+
+    
 }
