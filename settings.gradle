@@ -45,6 +45,7 @@ include "docs:cas-server-documentation"
 include "docs:cas-server-documentation-swagger"
 
 include "support:cas-server-support-bom"
+include "support:cas-server-support-person-directory"
 include "support:cas-server-support-bootadmin-client"
 include "support:cas-server-support-jdbc-drivers"
 include "support:cas-server-support-audit-jdbc"

@@ -92,6 +92,7 @@ dependencies {
     compile project(":core:cas-server-core-configuration-metadata-repository")
 
     compile project(":support:cas-server-support-throttle")
+    compile project(":support:cas-server-support-person-directory")
     compile project(":support:cas-server-support-configuration")
     compile project(":support:cas-server-support-geolocation")
     compile project(":support:cas-server-support-actions")
