@@ -97,6 +97,21 @@ ext.libraries = [
                     force = true
                 }
         ],
+        apachefortress : [
+                dependencies.create("org.apache.directory.fortress:fortress-core:$apacheFortressVersion") {
+                    exclude group: "org.apache.httpcomponents", module: "httpclient"
+                    exclude group: "org.slf4j", module: "slf4j-api"
+                    exclude group: "com.sun.mail", module: "javax.mail"
+                    exclude group: "org.apache.httpcomponents", module: "httpcore"
+                    exclude group: "org.apache.directory.api", module: "api-all"
+                    exclude group: "commons-io", module: "commons-io"
+                    exclude group: "commons-logging", module: "commons-logging"
+                    exclude group: "org.openldap", module: "accelerator"
+                    exclude group: "org.openldap", module: "accelerator-impl"
+                    exclude group: "org.openldap", module: "accelerator-api"
+                    exclude group: "commons-lang", module: "commons-lang"
+                }
+        ],
         cassandra               : [
                 dependencies.create("com.datastax.cassandra:cassandra-driver-core:$cassandraDriverVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
