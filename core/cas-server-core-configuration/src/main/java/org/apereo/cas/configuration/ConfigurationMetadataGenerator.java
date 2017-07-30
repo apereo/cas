@@ -21,7 +21,6 @@ import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersPr
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
-import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeElementsScanner;
@@ -236,7 +235,6 @@ public class ConfigurationMetadataGenerator {
                             + QueryType.class.getSimpleName() + "|"
                             + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
                             + CaseCanonicalizationMode.class.getSimpleName() + "|"
-                            + CaseChangeEntryHandler.CaseChange.class.getSimpleName() + "|"
                             + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
                             + "Map|List|Set")) {
                         LOGGER.error("Field " + n
