@@ -26,7 +26,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
     private String location;
 
-    private String algorithm;
+    private String algorithm = "RSA";
 
     private Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass = PublicKeyFactoryBean.class;
 

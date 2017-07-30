@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CollectionUtils}.
@@ -257,6 +259,21 @@ public final class CollectionUtils {
         final Set<T> list = new LinkedHashSet<>();
         if (source != null) {
             list.add(source);
+        }
+        return list;
+    }
+
+    /**
+     * Wrap set set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> Set<T> wrapSet(final T... source) {
+        final Set<T> list = new LinkedHashSet<>();
+        if (source != null) {
+            list.addAll(Arrays.stream(source).collect(Collectors.toSet()));
         }
         return list;
     }

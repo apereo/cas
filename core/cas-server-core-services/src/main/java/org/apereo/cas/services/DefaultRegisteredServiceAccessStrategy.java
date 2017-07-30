@@ -91,6 +91,29 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.ssoEnabled = ssoEnabled;
     }
 
+    /**
+     * Instantiates a new Default registered service access strategy.
+     *
+     * @param requiredAttributes the required attributes
+     * @param rejectedAttributes the rejected attributes
+     */
+    public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes, 
+                                                  final Map<String, Set<String>> rejectedAttributes) {
+        this();
+        this.requiredAttributes = requiredAttributes;
+        this.rejectedAttributes = rejectedAttributes;
+    }
+
+    /**
+     * Instantiates a new Default registered service access strategy.
+     *
+     * @param requiredAttributes the required attributes
+     */
+    public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes) {
+        this();
+        this.requiredAttributes = requiredAttributes;
+    }
+
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }

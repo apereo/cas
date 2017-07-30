@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -103,7 +104,7 @@ public final class RegisteredServiceTestUtils {
             final RegexRegisteredService s = new RegexRegisteredService();
             s.setServiceId(id);
             s.setEvaluationOrder(1);
-            s.setName("Test registered service");
+            s.setName("Test registered service " + id);
             s.setDescription("Registered service description");
             s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
             s.setId(new SecureRandom().nextInt(Math.abs(s.hashCode())));
@@ -119,7 +120,7 @@ public final class RegisteredServiceTestUtils {
             s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
             s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
-            s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:pub.key", "RSA"));
+            s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
             final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAuthorizedToReleaseCredentialPassword(true);
