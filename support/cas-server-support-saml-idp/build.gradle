@@ -7,7 +7,7 @@ dependencies {
     compile project(":support:cas-server-support-saml-idp-core")
     implementation libraries.casclient
     implementation libraries.shibidp
-    implementation libraries.httpclient
+    
     implementation libraries.pac4j
 
     runtimeOnly libraries.groovy

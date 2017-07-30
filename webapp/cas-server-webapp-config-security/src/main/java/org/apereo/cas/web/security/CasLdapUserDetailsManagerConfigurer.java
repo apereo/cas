@@ -5,7 +5,7 @@ import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenera
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
-import org.apereo.cas.configuration.support.LdapBeans;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.ldap.LdapAuthenticationProvider;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchExecutor;
@@ -43,7 +43,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
 
     private AuthorizationGenerator<CommonProfile> build() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        final ConnectionFactory connectionFactory = LdapBeans.newLdaptivePooledConnectionFactory(adminPagesSecurityProperties.getLdap());
+        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(adminPagesSecurityProperties.getLdap());
 
         if (isGroupBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on groups");
@@ -69,13 +69,13 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
 
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        return LdapBeans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
+        return LdapUtils.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
                 new ArrayList<>(0), Arrays.asList(ldapAuthz.getRoleAttribute()));
     }
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        return LdapBeans.newLdaptiveSearchExecutor(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
+        return LdapUtils.newLdaptiveSearchExecutor(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
                 new ArrayList<>(0), Arrays.asList(ldapAuthz.getGroupAttribute()));
     }
 

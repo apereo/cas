@@ -5,7 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-authentication")
 
-    implementation libraries.persondirectory
+    
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")

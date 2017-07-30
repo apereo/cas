@@ -2,7 +2,7 @@ description = "Apereo CAS JDBC Audit Support"
 dependencies {
 	compile project(":api:cas-server-core-api")
     implementation libraries.pac4j
-    implementation libraries.persondirectory
+    
     compile project(":core:cas-server-core-util")
     provided project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-services")

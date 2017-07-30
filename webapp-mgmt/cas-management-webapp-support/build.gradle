@@ -4,7 +4,7 @@ dependencies {
     implementation libraries.pac4j
     implementation libraries.casclient
     implementation libraries.groovy
-    implementation libraries.persondirectory
+    
     compile libraries.springcloudconfigclient
     compile project(":core:cas-server-core-configuration")
     compile project(":core:cas-server-core-services")

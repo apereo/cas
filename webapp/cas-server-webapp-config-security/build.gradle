@@ -4,7 +4,6 @@ dependencies {
     implementation libraries.groovy
 
     implementation libraries.springsecurity
-    implementation libraries.ldaptive
     implementation libraries.springsecuritywebconfig
     compile project(":support:cas-server-support-ldap-core")
     compile project(":core:cas-server-core-configuration")

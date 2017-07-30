@@ -2,8 +2,7 @@ description = "Apereo CAS central configuration module providing type-safe confi
 
 dependencies {
     implementation libraries.springsecurity
-    implementation libraries.persondirectory
-    implementation libraries.ldaptive
+    
     implementation libraries.mongo
     implementation libraries.jasypt
     implementation libraries.groovy

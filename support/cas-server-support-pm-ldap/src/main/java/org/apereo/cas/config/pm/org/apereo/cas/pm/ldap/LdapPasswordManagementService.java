@@ -6,7 +6,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
-import org.apereo.cas.configuration.support.LdapBeans;
+
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.util.LdapUtils;
@@ -45,12 +45,12 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     public String findEmail(final String username) {
         try {
             final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
-            final SearchFilter filter = LdapBeans.newLdaptiveSearchFilter(ldap.getUserFilter(),
-                    LdapBeans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
+                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
 
-            final ConnectionFactory factory = LdapBeans.newLdaptivePooledConnectionFactory(ldap);
+            final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response to locate account email is [{}]", response);
 
@@ -93,12 +93,12 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
 
-            final SearchFilter filter = LdapBeans.newLdaptiveSearchFilter(ldap.getUserFilter(),
-                    LdapBeans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
+                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
 
-            final ConnectionFactory factory = LdapBeans.newLdaptivePooledConnectionFactory(ldap);
+            final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response to update password is [{}]", response);
 
@@ -125,12 +125,12 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         final Map<String, String> set = new LinkedHashMap<>();
         try {
             final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
-            final SearchFilter filter = LdapBeans.newLdaptiveSearchFilter(ldap.getUserFilter(),
-                    LdapBeans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
+                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
 
-            final ConnectionFactory factory = LdapBeans.newLdaptivePooledConnectionFactory(ldap);
+            final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response for security questions [{}]", response);
 

@@ -25,8 +25,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
-import org.apereo.cas.configuration.support.LdapBeans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,8 +194,8 @@ public class X509AuthenticationConfiguration {
     @Bean
     public CRLFetcher ldaptiveResourceCRLFetcher() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        return new LdaptiveResourceCRLFetcher(LdapBeans.newLdaptiveConnectionConfig(x509.getLdap()),
-                LdapBeans.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
+        return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
+                LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
                 x509.getLdap().getCertificateAttribute());
     }
 
