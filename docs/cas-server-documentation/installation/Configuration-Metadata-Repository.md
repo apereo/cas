@@ -42,4 +42,5 @@ The interface that is next presented will guide you through with available param
 Using the same approach, you will also learn how to launch into the interactive shell and query the metadata
 engine dynamically.
 
-Note that the [WAR Overlay strategy]() should already be equipped
+Note that the [WAR Overlay deployment strategy](Maven-Overlay-Installation.html) should already be equipped with the metadata server.
+You should not have to do anything special and extra to interact with the metadata repository. 
