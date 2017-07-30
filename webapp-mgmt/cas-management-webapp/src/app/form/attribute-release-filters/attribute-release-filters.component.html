@@ -1,0 +1,16 @@
+<div class="form-group">
+  <label class="col-sm-4" for="attFilter">
+    <span style="float:right">
+      <ng-container i18n="services.form.label.attrRelease.attrFilter">
+        {{ messages.services_form_label_attrRelease_attrFilter }}
+      </ng-container>
+      <i i18n="services.form.tooltip.attrRelease.attrFilter"
+         [myTooltip]="messages.services_form_tooltip_attrRelease_attrFilter"></i>
+    </span>
+  </label>
+  <div class="col-sm-8">
+    <div class="input-group">
+      <input type="text" class="form-control" id="attFilter" [(ngModel)]="serviceData.attrRelease.attrFilter"/>
+    </div>
+  </div>
+</div>

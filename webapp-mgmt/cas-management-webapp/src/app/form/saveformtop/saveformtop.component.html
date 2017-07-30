@@ -1,0 +1,36 @@
+<div class="services-button-group-top">
+  <button *ngIf="!isView()" href="javascript://" (click)="save.emit();" class="btn btn-primary">
+    <i class="fa fa-floppy-o"></i>
+    <ng-container i18n="services.form.button.save">
+      {{ messages.services_form_button_save }}
+    </ng-container>
+  </button>
+  <a *ngIf="!isView()" href="javascript://" (click)="goBack()" class="btn btn-default">
+    <i class="fa fa-times"></i>
+    <ng-container i18n="services.form.button.cancel">
+      {{ messages.services_form_button_cancel }}
+    </ng-container>
+  </a>
+  <a *ngIf="isView()" style="display:inline;" href="javascript://" (click)="goBack()" class="btn btn-default">
+    <i class="fa fa-arrow-left"></i>
+    <ng-container i18n>Back</ng-container>
+  </a>
+</div>
+<h1>
+  <i *ngIf="!isView()" class="fa fa-plus-circle"></i>
+  <span *ngIf="!isNew() && !isView()">
+    <ng-container i18n="services.form.header.page.editService">
+    {{ messages.services_form_header_page_editService }}
+    </ng-container>
+  </span>
+  <span *ngIf="isNew() && !isView()">
+    <ng-container i18n="services.form.header.page.addService">
+      {{ messages.services_form_header_page_addService }}
+    </ng-container>
+  </span>
+  <span *ngIf="isView()">
+    <ng-container i18n>
+      View Change
+    </ng-container>
+  </span>
+</h1>

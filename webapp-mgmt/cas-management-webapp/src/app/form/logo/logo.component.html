@@ -1,0 +1,14 @@
+<div class="form-group">
+  <label class="col-sm-3" for="logoUrl">
+    <span style="float:right">
+      <ng-container i18n="services.form.label.logoUrl">
+        {{ messages.services_form_label_logoUrl }}
+      </ng-container>
+      <i i18n-myTooltip="services.form.tooltip.logoUrl"
+        [myTooltip]="messages.services_form_tooltip_logoUrl"></i>
+    </span>
+  </label>
+  <div class="col-sm-9">
+    <input type="text" class="form-control" id="logoUrl" [(ngModel)]="serviceData.logoUrl">
+  </div>
+</div>

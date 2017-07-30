@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -106,7 +107,14 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.thrown.expectMessage("Service id 5000 cannot be found.");
 
         this.servicesManager.save(r);
-        this.controller.updateRegisteredServiceEvaluationOrder(new MockHttpServletResponse(), 5000, 1000);
+        final RegisteredServiceViewBean[] svcs = new RegisteredServiceViewBean[2];
+        RegisteredServiceViewBean rsb = new RegisteredServiceViewBean();
+        rsb.setAssignedId("5000");
+        svcs[0] = rsb;
+        rsb = new RegisteredServiceViewBean();
+        rsb.setAssignedId("1200");
+        svcs[1] = rsb;
+        this.controller.updateOrder(new MockHttpServletRequest(), new MockHttpServletResponse(), svcs);
     }
 
     @Test

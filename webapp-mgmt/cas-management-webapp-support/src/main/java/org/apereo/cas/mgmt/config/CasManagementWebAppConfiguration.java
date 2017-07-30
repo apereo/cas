@@ -50,11 +50,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -63,9 +65,11 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,6 +94,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators = new ArrayList<>();
+
+    @Autowired
+    private ApplicationContext context;
 
     @Autowired
     private ServerProperties serverProperties;
@@ -320,5 +327,24 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
             return commonProfile;
         }
+    }
+
+    @Bean
+    public SpringResourceTemplateResolver staticTemplateResolver() {
+        final SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+        resolver.setApplicationContext(this.context);
+        resolver.setPrefix("classpath:/dist/");
+        resolver.setSuffix(".html");
+        resolver.setTemplateMode("HTML");
+        resolver.setCharacterEncoding(Charset.forName("UTF-8").name());
+        resolver.setCacheable(false);
+        resolver.setOrder(0);
+        resolver.setCheckExistence(true);
+        return resolver;
+    }
+
+    @Override
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/dist/", "classpath:/static/");
     }
 }

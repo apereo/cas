@@ -1,0 +1,130 @@
+<div *ngIf="serviceData.type=='saml'" id="nameid-container">
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <ng-container i18n="services.form.header.nameId">
+          {{ messages.services_form_header_nameId }}
+        </ng-container>
+      </h3>
+    </div> <!-- end .panel-header div -->
+    <div class="panel-body">
+      <table class="table table-striped table-responsive table-condensed editable-table">
+        <colgroup>
+          <col width="45%"/>
+          <col width="45%"/>
+          <col width="10%"/>
+        </colgroup>
+        <tr *ngFor="let row of rows">
+          <td i18n-title="services.form.header.nameId.name"
+              [title]="messages.services_form_header_nameId_name"
+              [ngSwitch]="row.isEditing">
+            <span *ngSwitchDefault class="editable-text">{{row.property.name}}</span>
+            <div class="controls" *ngSwitchCase="true">
+              <input class="form-control noresize editable-text"
+                     [(ngModel)]="row.tmpName"/>
+            </div>
+          </td>
+          <td i18n-title="services.form.header.nameId.value"
+              [title]="messages.services_form_header_nameId_value"
+              [ngSwitch]="row.isEditing">
+            <span *ngSwitchDefault class="editable-text">{{row.property.value}}</span>
+            <div class="controls" *ngSwitchCase="true">
+              <div class="input-group">
+                <input type="text" class="form-control noresize editable-text"
+                       placeholder=""
+                       [(ngModel)]="row.tmpValue">
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default dropdown-toggle"
+                          data-toggle="dropdown"
+                          aria-haspopup="true"
+                          aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li *ngFor="let item of selectOptions.nameIdList">
+                      <a href="" (click)="populateInputField(row, item.value)">{{item.name}}</a>
+                    </li>
+                  </ul>
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <!-- Save button -->
+            <button class="btn btn-primary btn-sm"
+                    (click)="save(row)"
+                    *ngIf="row.isEditing">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+
+            <!--Cancel Button-->
+            <button class="btn btn-default btn-sm"
+                    (click)="cancel(row)"
+                    *ngIf="row.isEditing">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+
+            <!--Edit button-->
+            <button class="btn btn-default btn-sm" (click)="row.isEditing = true"
+                    *ngIf="!row.isEditing">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </button>
+
+            <!--Delete button-->
+            <button class="btn btn-danger btn-sm" (click)="delete(row)" *ngIf="!row.isEditing">
+              <span class="glyphicon glyphicon-trash"></span>
+            </button>
+
+          </td>
+        </tr>
+        <tr *ngIf="isAdding">
+          <td><input name="addPropertyName" class="form-control noresize editable-text" rows="2"
+                     i18n-placeholder
+                     placeholder="New property name"
+                     [(ngModel)]="addName" required="required"/></td>
+          <td>
+            <div class="input-group">
+              <input type="text" class="form-control"
+                     placeholder="" [(ngModel)]="addValue">
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">                   <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li *ngFor="let item of selectOptions.nameIdList">
+                    <a href="" (click)="populateInputField(row,item.value)">{{item.name}}</a>
+                  </li>
+                </ul>
+              </span>
+            </div>
+          </td>
+          <td>
+            <!-- Add Row toggle -->
+            <button class="btn btn-success btn-sm"
+                    (click)="addRow()"
+                    *ngIf="isAdding">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <!-- cancel add row -->
+            <button class="btn btn-default btn-sm"
+                    (click)="cancelAdd()">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+          </td>
+        </tr>
+        <tr class="addRow" *ngIf="!isAdding">
+          <td>
+            <button class="btn btn-default btn-sm" (click)="isAdding = true">
+              <span class="glyphicon glyphicon-plus text-success"></span>
+            </button>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
