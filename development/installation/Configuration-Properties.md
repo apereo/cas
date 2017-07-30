@@ -991,7 +991,8 @@ the following settings are then relevant:
 ### Grouper
 
 This option reads all the groups from [a Grouper instance](www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
-as CAS attributes under a `grouperGroups` multi-valued attribute. To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
+as CAS attributes under a `grouperGroups` multi-valued attribute. 
+To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
 ```properties
 # cas.authn.attributeRepository.grouper[0].enabled=true
@@ -4920,6 +4921,14 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ```properties
 # cas.consent.rest.endpoint=https://api.example.org/trustedBrowser
+```
+
+## Apache Fortress Authentication
+
+To learn more about this topic, [please review this guide](../integration/Configuring-Fortress-Integration.html).
+
+```properties
+# cas.authn.fortress.rbaccontext=HOME
 ```
 
 ## Password Management
