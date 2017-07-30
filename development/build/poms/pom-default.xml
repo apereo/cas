@@ -595,6 +595,42 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.4</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>ognl</artifactId>
+          <groupId>ognl</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>servlet-api</artifactId>
+          <groupId>javax.servlet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
       <version>1.9.3</version>
@@ -1219,9 +1255,77 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.springframework.shell</groupId>
+      <artifactId>spring-shell</artifactId>
+      <version>1.1.0.RELEASE</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>ognl</artifactId>
+          <groupId>ognl</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>servlet-api</artifactId>
+          <groupId>javax.servlet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-io</artifactId>
+          <groupId>commons-io</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-beans</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jline</artifactId>
+          <groupId>jline</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context-support</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1257,7 +1361,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1361,7 +1465,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1397,7 +1501,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1433,7 +1537,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1557,7 +1661,7 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-commons</artifactId>
-      <version>1.13.4.RELEASE</version>
+      <version>1.13.5.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1637,7 +1741,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jms</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1677,7 +1781,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-messaging</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1713,7 +1817,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1749,7 +1853,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1785,7 +1889,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1821,7 +1925,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1857,7 +1961,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2037,7 +2141,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2705,7 +2809,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-commons</artifactId>
-      <version>1.2.2.RELEASE</version>
+      <version>1.2.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2829,7 +2933,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-context</artifactId>
-      <version>1.2.2.RELEASE</version>
+      <version>1.2.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2937,7 +3041,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-websocket</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2974,6 +3078,10 @@
         </exclusion>
         <exclusion>
           <artifactId>spring-context</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-messaging</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
@@ -3045,28 +3153,20 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>ognl</artifactId>
           <groupId>ognl</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
+          <artifactId>spring-web</artifactId>
+          <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib</artifactId>
-          <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
           <artifactId>servlet-api</artifactId>
@@ -3081,6 +3181,30 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-beans</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -3089,15 +3213,23 @@
           <groupId>org.springframework.boot</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jul-to-slf4j</artifactId>
-          <groupId>org.slf4j</groupId>
+          <artifactId>spring-webmvc</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context-support</artifactId>
+          <groupId>org.springframework</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3217,7 +3349,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3293,7 +3425,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3365,7 +3497,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3437,7 +3569,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3525,7 +3657,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-actuator</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3905,7 +4037,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>1.5.4.RELEASE</version>
+      <version>1.5.6.RELEASE</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -4049,7 +4181,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>4.3.9.RELEASE</version>
+      <version>4.3.10.RELEASE</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

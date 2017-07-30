@@ -1019,7 +1019,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
 
 ```properties
-# cas.authn.shibIdP.serverUrl=https://idp.example.org
+# cas.authn.shibIdp.serverUrl=https://idp.example.org
 ```
 
 ### Default Bundle
@@ -1155,8 +1155,8 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.startDelay=10000
-# cas.authn.throttle.repeatInterval=20000
+# cas.authn.throttle.schedule.startDelay=10000
+# cas.authn.throttle.schedule.repeatInterval=20000
 # cas.authn.throttle.appcode=CAS
 
 # cas.authn.throttle.failure.threshold=100
@@ -2162,6 +2162,8 @@ To learn more about this topic, [please review this guide](Couchbase-Authenticat
 # cas.authn.couchbase.nodeSet=localhost:8091
 # cas.authn.couchbase.password=
 # cas.authn.couchbase.bucket=default
+# cas.authn.couchbase.timeout=5000
+# cas.authn.couchbase.queryEnabled=true
 # cas.authn.couchbase.usernameAttribute=username
 # cas.authn.couchbase.passwordAttribute=psw
 
@@ -2335,7 +2337,6 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.regExSubjectDnPattern=.+
 # cas.authn.x509.regExTrustedIssuerDnPattern=.+
-# cas.authn.x509.trustedIssuerDnPattern=.+
 
 # cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
@@ -2349,7 +2350,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
-# cas.authn.x509.certificateAttribute=certificateRevocationList
+
 
 # cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.x509.ldap.connectionStrategy=
@@ -2377,6 +2378,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.prunePeriod=600
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.x509.ldap.certificateAttribute=certificateRevocationList
 
 # cas.authn.x509.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.x509.ldap.validator.baseDn=
@@ -2577,8 +2579,8 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave.
 
 ```properties
-# cas.authn.mfa.trusted.cleaner.startDelay=10000
-# cas.authn.mfa.trusted.cleaner.repeatInterval=60000
+# cas.authn.mfa.trusted.cleaner.schedule.startDelay=10000
+# cas.authn.mfa.trusted.cleaner.schedule.repeatInterval=60000
 # cas.authn.mfa.trusted.cleaner.enabled=true
 ```
 
@@ -2597,8 +2599,8 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.name=
 
 # cas.authn.mfa.gauth.cleaner.enabled=true
-# cas.authn.mfa.gauth.cleaner.startDelay=20000
-# cas.authn.mfa.gauth.cleaner.repeatInterval=60000
+# cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
+# cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
@@ -2826,9 +2828,9 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 ### FIDO U2F Cleaner
 
 ```properties
-# cas.authn.mfa.u2f.cleaner.enabled=true
-# cas.authn.mfa.u2f.cleaner.startDelay=PT10S
-# cas.authn.mfa.u2f.cleaner.repeatInterval=PT60S
+# cas.authn.mfa.u2f.cleaner.schedule.enabled=true
+# cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
+# cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
 ```
 
 #### FIDO U2F JPA
@@ -3001,256 +3003,256 @@ To learn more about this topic, [please review this guide](../integration/Config
 ### Dropbox
 
 ```properties
-# cas.samlSP.dropbox.metadata=/etc/cas/saml/dropbox.xml
-# cas.samlSP.dropbox.name=Dropbox
-# cas.samlSP.dropbox.description=Dropbox Integration
-# cas.samlSP.dropbox.nameIdAttribute=mail
-# cas.samlSP.dropbox.signatureLocation=
+# cas.samlSp.dropbox.metadata=/etc/cas/saml/dropbox.xml
+# cas.samlSp.dropbox.name=Dropbox
+# cas.samlSp.dropbox.description=Dropbox Integration
+# cas.samlSp.dropbox.nameIdAttribute=mail
+# cas.samlSp.dropbox.signatureLocation=
 ```
 
 ### TestShib
 
 ```properties
-# cas.samlSP.testShib.metadata=http://www.testshib.org/metadata/testshib-providers.xml
-# cas.samlSP.testShib.name=TestShib
-# cas.samlSP.testShib.description=TestShib Integration
-# cas.samlSP.testShib.attributes=eduPersonPrincipalName
-# cas.samlSP.testShib.signatureLocation=
+# cas.samlSp.testShib.metadata=http://www.testshib.org/metadata/testshib-providers.xml
+# cas.samlSp.testShib.name=TestShib
+# cas.samlSp.testShib.description=TestShib Integration
+# cas.samlSp.testShib.attributes=eduPersonPrincipalName
+# cas.samlSp.testShib.signatureLocation=
 ```
 
 ### OpenAthens
 
 ```properties
-# cas.samlSP.openAthens.metadata=/path/to/openAthens-metadata.xml
-# cas.samlSP.openAthens.name=openAthens
-# cas.samlSP.openAthens.description=openAthens Integration
-# cas.samlSP.openAthens.attributes=eduPersonPrincipalName,email
+# cas.samlSp.openAthens.metadata=/path/to/openAthens-metadata.xml
+# cas.samlSp.openAthens.name=openAthens
+# cas.samlSp.openAthens.description=openAthens Integration
+# cas.samlSp.openAthens.attributes=eduPersonPrincipalName,email
 ```
 
 ### Web Advisor
 
 ```properties
-# cas.samlSP.webAdvisor.metadata=/path/to/webadvisor-metadata.xml
-# cas.samlSP.webAdvisor.name=Web Advisor
-# cas.samlSP.webAdvisor.description=Web Advisor Integration
-# cas.samlSP.webAdvisor.attributes=uid
+# cas.samlSp.webAdvisor.metadata=/path/to/webadvisor-metadata.xml
+# cas.samlSp.webAdvisor.name=Web Advisor
+# cas.samlSp.webAdvisor.description=Web Advisor Integration
+# cas.samlSp.webAdvisor.attributes=uid
 ```
 
 ### Adobe Creative Cloud
 
 ```properties
-# cas.samlSP.adobeCloud.metadata=/path/to/adobe-metadata.xml
-# cas.samlSP.adobeCloud.name=Adobe Creative Cloud
-# cas.samlSP.adobeCloud.description=Adobe Creative Cloud Integration
-# cas.samlSP.adobeCloud.attributes=Email,FirstName,LastName
+# cas.samlSp.adobeCloud.metadata=/path/to/adobe-metadata.xml
+# cas.samlSp.adobeCloud.name=Adobe Creative Cloud
+# cas.samlSp.adobeCloud.description=Adobe Creative Cloud Integration
+# cas.samlSp.adobeCloud.attributes=Email,FirstName,LastName
 ```
 
 ### Securing The Human
 
 ```properties
-# cas.samlSP.sansSth.metadata=/path/to/sth-metadata.xml
-# cas.samlSP.sansSth.name=Securing The Human
-# cas.samlSP.sansSth.description=Securing The Human Integration
-# cas.samlSP.sansSth.attributes=email,firstName,lastName,scopedUserId,department,reference
+# cas.samlSp.sansSth.metadata=/path/to/sth-metadata.xml
+# cas.samlSp.sansSth.name=Securing The Human
+# cas.samlSp.sansSth.description=Securing The Human Integration
+# cas.samlSp.sansSth.attributes=email,firstName,lastName,scopedUserId,department,reference
 ```
 
 ### Easy IEP
 
 ```properties
-# cas.samlSP.easyIep.metadata=/path/to/easyiep-metadata.xml
-# cas.samlSP.easyIep.name=Easy IEP
-# cas.samlSP.easyIep.description=Easy IEP Integration
-# cas.samlSP.easyIep.attributes=employeeId
+# cas.samlSp.easyIep.metadata=/path/to/easyiep-metadata.xml
+# cas.samlSp.easyIep.name=Easy IEP
+# cas.samlSp.easyIep.description=Easy IEP Integration
+# cas.samlSp.easyIep.attributes=employeeId
 ```
 
 ### Infinite Campus
 
 ```properties
-# cas.samlSP.infiniteCampus.metadata=/path/to/infinitecampus-metadata.xml
-# cas.samlSP.infiniteCampus.name=Infinite Campus
-# cas.samlSP.infiniteCampus.description=Infinite Campus Integration
-# cas.samlSP.infiniteCampus.attributes=employeeId
+# cas.samlSp.infiniteCampus.metadata=/path/to/infinitecampus-metadata.xml
+# cas.samlSp.infiniteCampus.name=Infinite Campus
+# cas.samlSp.infiniteCampus.description=Infinite Campus Integration
+# cas.samlSp.infiniteCampus.attributes=employeeId
 ```
 
 ### Slack
 
 ```properties
-# cas.samlSP.slack.metadata=/path/to/slack-metadata.xml
-# cas.samlSP.slack.name=Slack
-# cas.samlSP.slack.description=Slack Integration
-# cas.samlSP.slack.attributes=User.Email,User.Username,first_name,last_name
-# cas.samlSP.slack.nameIdFormat=persistent
-# cas.samlSP.slack.nameIdAttribute=employeeId
+# cas.samlSp.slack.metadata=/path/to/slack-metadata.xml
+# cas.samlSp.slack.name=Slack
+# cas.samlSp.slack.description=Slack Integration
+# cas.samlSp.slack.attributes=User.Email,User.Username,first_name,last_name
+# cas.samlSp.slack.nameIdFormat=persistent
+# cas.samlSp.slack.nameIdAttribute=employeeId
 ```
 
 ### Zendesk
 
 ```properties
-# cas.samlSP.zendesk.metadata=/path/to/zendesk-metadata.xml
-# cas.samlSP.zendesk.name=Zendesk
-# cas.samlSP.zendesk.description=Zendesk Integration
-# cas.samlSP.zendesk.attributes=organization,tags,phone,role
-# cas.samlSP.zendesk.nameIdFormat=emailAddress
-# cas.samlSP.zendesk.nameIdAttribute=email
+# cas.samlSp.zendesk.metadata=/path/to/zendesk-metadata.xml
+# cas.samlSp.zendesk.name=Zendesk
+# cas.samlSp.zendesk.description=Zendesk Integration
+# cas.samlSp.zendesk.attributes=organization,tags,phone,role
+# cas.samlSp.zendesk.nameIdFormat=emailAddress
+# cas.samlSp.zendesk.nameIdAttribute=email
 ```
 
 ### Gartner
 
 ```properties
-# cas.samlSP.gartner.metadata=/path/to/gartner-metadata.xml
-# cas.samlSP.gartner.name=Gartner
-# cas.samlSP.gartner.description=Gartner Integration
-# cas.samlSP.gartner.attributes=urn:oid:2.5.4.42,urn:oid:2.5.4.4,urn:oid:0.9.2342.19200300.100.1.3
+# cas.samlSp.gartner.metadata=/path/to/gartner-metadata.xml
+# cas.samlSp.gartner.name=Gartner
+# cas.samlSp.gartner.description=Gartner Integration
+# cas.samlSp.gartner.attributes=urn:oid:2.5.4.42,urn:oid:2.5.4.4,urn:oid:0.9.2342.19200300.100.1.3
 ```
 
 ### Arc GIS
 
 ```properties
-# cas.samlSP.arcGIS.metadata=/path/to/arc-metadata.xml
-# cas.samlSP.arcGIS.name=ArcGIS
-# cas.samlSP.arcGIS.description=ArcGIS Integration
-# cas.samlSP.arcGIS.nameIdAttribute=arcNameId
-# cas.samlSP.arcGIS.attributes=mail,givenName,arcNameId
-# cas.samlSP.arcGIS.nameIdFormat=unspecified
+# cas.samlSp.arcGIS.metadata=/path/to/arc-metadata.xml
+# cas.samlSp.arcGIS.name=ArcGIS
+# cas.samlSp.arcGIS.description=ArcGIS Integration
+# cas.samlSp.arcGIS.nameIdAttribute=arcNameId
+# cas.samlSp.arcGIS.attributes=mail,givenName,arcNameId
+# cas.samlSp.arcGIS.nameIdFormat=unspecified
 ```
 
 ### Benefit Focus
 
 ```properties
-# cas.samlSP.benefitFocus.metadata=/path/to/benefitFocus-metadata.xml
-# cas.samlSP.benefitFocus.name=Benefit Focus
-# cas.samlSP.benefitFocus.description=Benefit Focus Integration
-# cas.samlSP.benefitFocus.nameIdAttribute=benefitFocusUniqueId
-# cas.samlSP.benefitFocus.nameIdFormat=unspecified
+# cas.samlSp.benefitFocus.metadata=/path/to/benefitFocus-metadata.xml
+# cas.samlSp.benefitFocus.name=Benefit Focus
+# cas.samlSp.benefitFocus.description=Benefit Focus Integration
+# cas.samlSp.benefitFocus.nameIdAttribute=benefitFocusUniqueId
+# cas.samlSp.benefitFocus.nameIdFormat=unspecified
 ```
 
 ### Office365
 
 ```properties
-# cas.samlSP.office365.metadata=/etc/cas/saml/azure.xml
-# cas.samlSP.office365.name=O365
-# cas.samlSP.office365.description=Office365 Integration
-# cas.samlSP.office365.nameIdAttribute=scopedImmutableID
-# cas.samlSP.office365.attributes=IDPEmail,ImmutableID
-# cas.samlSP.office365.signatureLocation=
+# cas.samlSp.office365.metadata=/etc/cas/saml/azure.xml
+# cas.samlSp.office365.name=O365
+# cas.samlSp.office365.description=Office365 Integration
+# cas.samlSp.office365.nameIdAttribute=scopedImmutableID
+# cas.samlSp.office365.attributes=IDPEmail,ImmutableID
+# cas.samlSp.office365.signatureLocation=
 ```
 
 ### SAManage
 
 ```properties
-# cas.samlSP.saManage.metadata=/etc/cas/saml/samanage.xml
-# cas.samlSP.saManage.name=SAManage
-# cas.samlSP.saManage.description=SAManage Integration
-# cas.samlSP.saManage.nameIdAttribute=mail
-# cas.samlSP.saManage.signatureLocation=
+# cas.samlSp.saManage.metadata=/etc/cas/saml/samanage.xml
+# cas.samlSp.saManage.name=SAManage
+# cas.samlSp.saManage.description=SAManage Integration
+# cas.samlSp.saManage.nameIdAttribute=mail
+# cas.samlSp.saManage.signatureLocation=
 ```
 
 ### Workday
 
 ```properties
-# cas.samlSP.workday.metadata=/etc/cas/saml/workday.xml
-# cas.samlSP.workday.name=Workday
-# cas.samlSP.workday.description=Workday Integration
-# cas.samlSP.workday.signatureLocation=
+# cas.samlSp.workday.metadata=/etc/cas/saml/workday.xml
+# cas.samlSp.workday.name=Workday
+# cas.samlSp.workday.description=Workday Integration
+# cas.samlSp.workday.signatureLocation=
 ```
 
 ### Salesforce
 
 ```properties
-# cas.samlSP.salesforce.metadata=/etc/cas/saml/salesforce.xml
-# cas.samlSP.salesforce.name=Salesforce
-# cas.samlSP.salesforce.description=Salesforce Integration
-# cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
-# cas.samlSP.salesforce.signatureLocation=
+# cas.samlSp.salesforce.metadata=/etc/cas/saml/salesforce.xml
+# cas.samlSp.salesforce.name=Salesforce
+# cas.samlSp.salesforce.description=Salesforce Integration
+# cas.samlSp.salesforce.attributes=mail,eduPersonPrincipalName
+# cas.samlSp.salesforce.signatureLocation=
 ```
 
 ### Academic Works
 
 ```properties
-# cas.samlSP.academicWorks.metadata=/etc/cas/saml/aw.xml
-# cas.samlSP.academicWorks.name=AcademicWorks
-# cas.samlSP.academicWorks.description=AcademicWorks Integration
-# cas.samlSP.academicWorks.attributes=mail,displayName
+# cas.samlSp.academicWorks.metadata=/etc/cas/saml/aw.xml
+# cas.samlSp.academicWorks.name=AcademicWorks
+# cas.samlSp.academicWorks.description=AcademicWorks Integration
+# cas.samlSp.academicWorks.attributes=mail,displayName
 ```
 
 ### Zoom
 
 ```properties
-# cas.samlSP.zoom.metadata=/etc/cas/saml/zoom.xml
-# cas.samlSP.zoom.name=Zoom
-# cas.samlSP.zoom.description=Zoom Integration
-# cas.samlSP.zoom.attributes=mail,sn,givenName
-# cas.samlSP.zoom.nameIdAttribute=mail
+# cas.samlSp.zoom.metadata=/etc/cas/saml/zoom.xml
+# cas.samlSp.zoom.name=Zoom
+# cas.samlSp.zoom.description=Zoom Integration
+# cas.samlSp.zoom.attributes=mail,sn,givenName
+# cas.samlSp.zoom.nameIdAttribute=mail
 ```
 
 ### Evernote
 
 ```properties
-# cas.samlSP.evernote.metadata=/etc/cas/saml/evernote.xml
-# cas.samlSP.evernote.name=Evernote
-# cas.samlSP.evernote.description=Evernote Integration
-# cas.samlSP.evernote.nameIdAttribute=mail
-# cas.samlSP.evernote.nameIdFormat=emailAddress
+# cas.samlSp.evernote.metadata=/etc/cas/saml/evernote.xml
+# cas.samlSp.evernote.name=Evernote
+# cas.samlSp.evernote.description=Evernote Integration
+# cas.samlSp.evernote.nameIdAttribute=mail
+# cas.samlSp.evernote.nameIdFormat=emailAddress
 ```
 
 ### Tableau
 
 ```properties
-# cas.samlSP.tableau.metadata=/etc/cas/saml/tableau.xml
-# cas.samlSP.tableau.name=Tableau
-# cas.samlSP.tableau.description=Tableau Integration
-# cas.samlSP.tableau.attributes=username
+# cas.samlSp.tableau.metadata=/etc/cas/saml/tableau.xml
+# cas.samlSp.tableau.name=Tableau
+# cas.samlSp.tableau.description=Tableau Integration
+# cas.samlSp.tableau.attributes=username
 ```
 
 ### Asana
 
 ```properties
-# cas.samlSP.asana.metadata=/etc/cas/saml/asana.xml
-# cas.samlSP.asana.name=Asana
-# cas.samlSP.asana.description=Asana Integration
-# cas.samlSP.asana.nameIdAttribute=mail
-# cas.samlSP.asana.nameIdFormat=emailAddress
+# cas.samlSp.asana.metadata=/etc/cas/saml/asana.xml
+# cas.samlSp.asana.name=Asana
+# cas.samlSp.asana.description=Asana Integration
+# cas.samlSp.asana.nameIdAttribute=mail
+# cas.samlSp.asana.nameIdFormat=emailAddress
 ```
 
 ### Box
 
 ```properties
-# cas.samlSP.box.metadata=/etc/cas/saml/box.xml
-# cas.samlSP.box.name=Box
-# cas.samlSP.box.description=Box Integration
-# cas.samlSP.box.attributes=email,firstName,lastName
-# cas.samlSP.box.signatureLocation=
+# cas.samlSp.box.metadata=/etc/cas/saml/box.xml
+# cas.samlSp.box.name=Box
+# cas.samlSp.box.description=Box Integration
+# cas.samlSp.box.attributes=email,firstName,lastName
+# cas.samlSp.box.signatureLocation=
 ```
 
 ### Service Now
 
 ```properties
-# cas.samlSP.serviceNow.metadata=/etc/cas/saml/serviceNow.xml
-# cas.samlSP.serviceNow.name=ServiceNow
-# cas.samlSP.serviceNow.description=serviceNow Integration
-# cas.samlSP.serviceNow.attributes=eduPersonPrincipalName
-# cas.samlSP.serviceNow.signatureLocation=
+# cas.samlSp.serviceNow.metadata=/etc/cas/saml/serviceNow.xml
+# cas.samlSp.serviceNow.name=ServiceNow
+# cas.samlSp.serviceNow.description=serviceNow Integration
+# cas.samlSp.serviceNow.attributes=eduPersonPrincipalName
+# cas.samlSp.serviceNow.signatureLocation=
 ```
 
 ### Net Partner
 
 ```properties
-# cas.samlSP.netPartner.metadata=/etc/cas/saml/netPartner.xml
-# cas.samlSP.netPartner.name=Net Partner
-# cas.samlSP.netPartner.description=Net Partner Integration
-# cas.samlSP.netPartner.nameIdAttribute=studentId
-# cas.samlSP.netPartner.attributes=
-# cas.samlSP.netPartner.signatureLocation=
+# cas.samlSp.netPartner.metadata=/etc/cas/saml/netPartner.xml
+# cas.samlSp.netPartner.name=Net Partner
+# cas.samlSp.netPartner.description=Net Partner Integration
+# cas.samlSp.netPartner.nameIdAttribute=studentId
+# cas.samlSp.netPartner.attributes=
+# cas.samlSp.netPartner.signatureLocation=
 ```
 
 ### Webex
 
 ```properties
-# cas.samlSP.webex.metadata=/etc/cas/saml/webex.xml
-# cas.samlSP.webex.name=Webex
-# cas.samlSP.webex.description=Webex Integration
-# cas.samlSP.webex.nameIdAttribute=email
-# cas.samlSP.webex.attributes=firstName,lastName
+# cas.samlSp.webex.metadata=/etc/cas/saml/webex.xml
+# cas.samlSp.webex.name=Webex
+# cas.samlSp.webex.description=Webex Integration
+# cas.samlSp.webex.nameIdAttribute=email
+# cas.samlSp.webex.attributes=firstName,lastName
 ```
 
 ### InCommon
@@ -3260,12 +3262,12 @@ EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` 
 The signature location MUST BE the public key used to sign the metadata.
 
 ```properties
-# cas.samlSP.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
-# cas.samlSP.inCommon.name=InCommon Aggregate
-# cas.samlSP.inCommon.description=InCommon Metadata Aggregate
-# cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
-# cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
-# cas.samlSP.inCommon.entityIds[0]=sampleSPEntityId
+# cas.samlSp.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
+# cas.samlSp.inCommon.name=InCommon Aggregate
+# cas.samlSp.inCommon.description=InCommon Metadata Aggregate
+# cas.samlSp.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
+# cas.samlSp.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
+# cas.samlSp.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
 ## SQRL
@@ -3531,30 +3533,30 @@ to support the WS-Federation protocol.
 To learn more about this topic, [please review this guide](WS-Federation-Protocol.html)
 
 ```properties
-# cas.authn.wsfedIdP.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
-# cas.authn.wsfedIdP.idp.realmName=CAS
+# cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
+# cas.authn.wsfedIdp.idp.realmName=CAS
 
-# cas.authn.wsfedIdP.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
-# cas.authn.wsfedIdP.sts.signingKeystorePassword=storepass
-# cas.authn.wsfedIdP.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
-# cas.authn.wsfedIdP.sts.encryptionKeystorePassword=storepass
+# cas.authn.wsfedIdp.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
+# cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass
+# cas.authn.wsfedIdp.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
+# cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass
 
-# cas.authn.wsfedIdP.sts.subjectNameIdFormat=unspecified
-# cas.authn.wsfedIdP.sts.encryptTokens=true
+# cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified
+# cas.authn.wsfedIdp.sts.encryptTokens=true
 
-# cas.authn.wsfedIdP.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
-# cas.authn.wsfedIdP.sts.realm.keystorePassword=storepass
-# cas.authn.wsfedIdP.sts.realm.keystoreAlias=realmcas
-# cas.authn.wsfedIdP.sts.realm.keyPassword=cas
-# cas.authn.wsfedIdP.sts.realm.issuer=CAS
+# cas.authn.wsfedIdp.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
+# cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass
+# cas.authn.wsfedIdp.sts.realm.keystoreAlias=realmcas
+# cas.authn.wsfedIdp.sts.realm.keyPassword=cas
+# cas.authn.wsfedIdp.sts.realm.issuer=CAS
 ```
 
 ### Signing & Encryption
 
 ```properties
 # Used to secure authentication requests between the IdP and STS
-# cas.authn.wsfedIdP.sts.crypto.encryption.key=
-# cas.authn.wsfedIdP.sts.crypto.signing.key=
+# cas.authn.wsfedIdp.sts.crypto.encryption.key=
+# cas.authn.wsfedIdp.sts.crypto.signing.key=
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -3997,8 +3999,8 @@ The default options are avaiable for hostname verification:
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
-# cas.serviceRegistry.repeatInterval=120000
-# cas.serviceRegistry.startDelay=15000
+# cas.serviceRegistry.schedule.repeatInterval=120000
+# cas.serviceRegistry.schedule.startDelay=15000
 # cas.serviceRegistry.initFromJson=false
 ```
 
@@ -4181,9 +4183,9 @@ This section controls how that process should behave.
 
 ```properties
 # cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
-# cas.ticket.registry.cleaner.startDelay=10000
-# cas.ticket.registry.cleaner.repeatInterval=60000
-# cas.ticket.registry.cleaner.enabled=true
+# cas.ticket.registry.cleaner.schedule.startDelay=10000
+# cas.ticket.registry.cleaner.schedule.repeatInterval=60000
+# cas.ticket.registry.cleaner.schedule.enabled=true
 ```
 
 ### JPA Ticket Registry
@@ -4828,8 +4830,8 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 
 ```properties
 # cas.samlMetadataUi.requireValidMetadata=true
-# cas.samlMetadataUi.repeatInterval=120000
-# cas.samlMetadataUi.startDelay=30000
+# cas.samlMetadataUi.schedule.repeatInterval=120000
+# cas.samlMetadataUi.schedule.startDelay=30000
 # cas.samlMetadataUi.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
 # cas.samlMetadataUi.maxValidity=0
 # cas.samlMetadataUi.requireSignedRoot=false
