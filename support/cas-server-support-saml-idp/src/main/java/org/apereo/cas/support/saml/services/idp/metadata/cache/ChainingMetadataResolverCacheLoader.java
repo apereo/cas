@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apache.commons.io.FileUtils;
@@ -198,7 +197,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             buildSingleMetadataResolver(metadataProvider, service);
             metadataResolvers.add(metadataProvider);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

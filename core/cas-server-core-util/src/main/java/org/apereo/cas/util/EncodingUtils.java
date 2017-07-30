@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
@@ -159,7 +158,7 @@ public final class EncodingUtils {
         try {
             return URLEncoder.encode(value, encoding);
         } catch (final UnsupportedEncodingException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -173,7 +172,7 @@ public final class EncodingUtils {
         try {
             return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
         } catch (final UnsupportedEncodingException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -200,7 +199,7 @@ public final class EncodingUtils {
             }
             return null;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -233,7 +232,7 @@ public final class EncodingUtils {
             jws.setKey(key);
             return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

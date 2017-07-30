@@ -1,7 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import com.vdurmont.semver4j.Semver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -135,7 +134,7 @@ public abstract class AbstractCasBanner implements Banner {
             }
 
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
     }

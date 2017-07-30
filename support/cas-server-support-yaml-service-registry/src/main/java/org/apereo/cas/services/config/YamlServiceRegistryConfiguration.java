@@ -1,6 +1,5 @@
 package org.apereo.cas.services.config;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.ServiceRegistryDao;
@@ -50,7 +49,7 @@ public class YamlServiceRegistryConfiguration {
             }
             return new YamlServiceRegistryDao(registry.getConfig().getLocation(), registry.isWatcherEnabled(), eventPublisher);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.config;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -165,7 +164,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             p.load(casProperties.getMgmt().getUserPropertiesFile().getInputStream());
             return p;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
