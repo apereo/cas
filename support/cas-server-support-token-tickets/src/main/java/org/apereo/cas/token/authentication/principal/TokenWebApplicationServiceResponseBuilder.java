@@ -1,6 +1,5 @@
 package org.apereo.cas.token.authentication.principal;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
@@ -72,7 +71,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
             final String ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
             return this.tokenTicketBuilder.build(ticketId, service);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

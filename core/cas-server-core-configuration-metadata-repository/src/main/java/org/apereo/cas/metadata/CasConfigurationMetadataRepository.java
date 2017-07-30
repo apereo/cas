@@ -1,6 +1,5 @@
 package org.apereo.cas.metadata;
 
-import com.google.common.base.Throwables;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ public class CasConfigurationMetadataRepository {
             }));
             configMetadataRepo = builder.build();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

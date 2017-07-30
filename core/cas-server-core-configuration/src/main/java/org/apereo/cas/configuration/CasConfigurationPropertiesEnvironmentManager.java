@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -74,7 +73,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
             config.setProperty(pair.getKey(), pair.getValue());
             builder.save();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

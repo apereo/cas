@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -110,7 +109,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             }
             return samlResponse;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

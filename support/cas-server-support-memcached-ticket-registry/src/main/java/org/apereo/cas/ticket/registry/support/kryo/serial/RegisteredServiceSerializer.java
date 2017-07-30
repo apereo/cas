@@ -4,7 +4,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -36,7 +35,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         try {
             return new URL("https://");
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -116,7 +115,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
             final Class<T> clazz = (Class<T>) Class.forName(className);
             return kryo.readObject(input, clazz);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

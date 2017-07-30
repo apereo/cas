@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
@@ -124,7 +123,7 @@ public final class SamlSPUtils {
             
             return service;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

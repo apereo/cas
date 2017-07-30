@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.radius;
 
-import com.google.common.base.Throwables;
 import net.jradius.client.RadiusClient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -49,7 +48,7 @@ public class RadiusClientFactory {
         try {
             this.inetAddress = InetAddress.getByName(inetAddress);
         } catch (final UnknownHostException e) {
-            Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         this.sharedSecret = sharedSecret;
     }

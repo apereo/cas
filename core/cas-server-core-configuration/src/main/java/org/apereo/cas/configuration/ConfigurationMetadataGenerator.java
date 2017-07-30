@@ -134,7 +134,7 @@ public class ConfigurationMetadataGenerator {
             final CompilationUnit cu = JavaParser.parse(is);
             new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets).visit(cu, p);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

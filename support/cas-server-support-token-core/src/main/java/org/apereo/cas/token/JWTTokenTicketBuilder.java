@@ -1,6 +1,5 @@
 package org.apereo.cas.token;
 
-import com.google.common.base.Throwables;
 import com.nimbusds.jwt.JWTClaimsSet;
 import net.minidev.json.JSONObject;
 import org.apereo.cas.CipherExecutor;
@@ -66,7 +65,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
             LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
             return tokenCipherExecutor.encode(jwtJson);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

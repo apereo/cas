@@ -1,6 +1,5 @@
 package org.apereo.cas.util.cipher;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.AesCipherService;
@@ -83,7 +82,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             return sign(result);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -96,7 +95,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             final CipherService cipher = new AesCipherService();
             return cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -107,7 +106,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             return params.get("k").toString();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

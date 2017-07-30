@@ -1,6 +1,5 @@
 package org.apereo.cas.metadata.server.shell;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.metadata.server.cli.ConfigurationMetadataServerCommandLineParser;
 import org.springframework.shell.Bootstrap;
 
@@ -22,7 +21,7 @@ public class CasConfigurationMetadataServerShell {
             ConfigurationMetadataServerCommandLineParser.convertToSystemProperties(args);
             Bootstrap.main(new String[]{});
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }
