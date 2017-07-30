@@ -31,7 +31,8 @@ Next include the following module in the war overlay:
 </dependency>
 ```  
 
-At this time, Apache Fortress will only support using tomcat as the web container. 
+At this time, Apache Fortress support is limited to Apache Tomcat as the web container. 
+Support for additional containers such as Jetty will be worked out in future releases.
 
 ## CAS Configuration
 
