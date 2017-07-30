@@ -50,7 +50,7 @@ public class AuthenticationPolicyProperties implements Serializable {
     private List<RestAuthenticationPolicyProperties> rest = new ArrayList<>();
 
     /**
-     * Satisfied if an only if the authentication event is not blocked by a <code>PreventedException</code>.
+     * Satisfied if an only if the authentication event is not blocked by a {@code PreventedException}.
      */
     private NotPrevented notPrevented = new NotPrevented();
 

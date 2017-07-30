@@ -44,9 +44,9 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * <li>Direct Bind: Direct Bind - Compute user DN from format string and perform simple bind.
      * This is relevant when no search is required to compute the DN needed for a bind operation.
      * Use cases for this type are:
-     * 1) All users are under a single branch in the directory, <code>e.g. ou=Users,dc=example,dc=org.</code>
+     * 1) All users are under a single branch in the directory, {@code e.g. ou=Users,dc=example,dc=org.}
      * 2) The username provided on the CAS login form is part of the DN, e.g.
-     * <code>uid=%s,ou=Users,dc=example,dc=org</code>.</li>
+     * {@code uid=%s,ou=Users,dc=example,dc=org}.</li>
      * </ul>
      */
     private AuthenticationTypes type;
@@ -65,7 +65,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
     private String principalAttributePassword;
     /**
      * Specify the dn format accepted by the AD authenticator, etc.
-     * Example format might be <code>uid=%s,ou=people,dc=example,dc=org</code>.
+     * Example format might be {@code uid=%s,ou=people,dc=example,dc=org}.
      */
     private String dnFormat;
     /**
@@ -84,7 +84,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
     private String baseDn;
     /**
      * User filter to use for searching.
-     * Syntax is <code>cn={user}</code> or <code>cn={0}</code>.
+     * Syntax is {@code cn={user}} or {@code cn={0}}.
      */
     private String userFilter;
 

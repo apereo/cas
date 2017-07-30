@@ -42,7 +42,7 @@ public class WsFederationDelegationProperties implements Serializable {
     /**
      * Indicates how attributes should be recorded into the principal object. 
      * Useful if you wish to additionally resolve attributes on top of what wsfed provides.
-     * Accepted values are <code>CAS,WSFED,BOTH</code>.
+     * Accepted values are {@code CAS,WSFED,BOTH}.
      */
     private String attributesType = "WSFED";
 

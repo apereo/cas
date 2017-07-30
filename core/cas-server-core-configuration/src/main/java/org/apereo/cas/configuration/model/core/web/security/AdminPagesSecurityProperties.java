@@ -151,8 +151,8 @@ public class AdminPagesSecurityProperties implements Serializable {
          */
         private Resource loginConfig;
         /**
-         * If set, a call to <code>Configuration#refresh()</code> 
-         * will be made by <code>#configureJaas(Resource)</code> method.
+         * If set, a call to {@code Configuration#refresh()} 
+         * will be made by {@code #configureJaas(Resource)} method.
          */
         private boolean refreshConfigurationOnStartup = true;
 
@@ -165,7 +165,7 @@ JAASTest {
     org.springframework.security.authentication.jaas.TestLoginModule required;
 };
 </pre>
-         In the above example, <code>JAASTest</code> should be set as the context name.
+         In the above example, {@code JAASTest} should be set as the context name.
          */
         private String loginContextName;
 
@@ -231,7 +231,7 @@ JAASTest {
         /**
          * Query to execute in order to authenticate users via JDBC.
          * Example:
-         * <code>SELECT username,password,enabled FROM users WHERE username=?</code>
+         * {@code SELECT username,password,enabled FROM users WHERE username=?}
          */
         private String query;
         

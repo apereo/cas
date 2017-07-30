@@ -16,7 +16,7 @@ public class Pac4jCasProperties implements Serializable {
     private String loginUrl;
     /**
      * CAS protocol to use.
-     * Acceptable values are <code>CAS10, CAS20, CAS20_PROXY, CAS30, CAS30_PROXY, SAML</code>.
+     * Acceptable values are {@code CAS10, CAS20, CAS20_PROXY, CAS30, CAS30_PROXY, SAML}.
      */
     private String protocol;
 

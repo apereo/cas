@@ -8,6 +8,7 @@ import org.springframework.core.io.Resource;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * This is {@link CasServerProperties}.
@@ -206,32 +207,32 @@ public class CasServerProperties implements Serializable {
          * Examples include:
          * <p>
          * <ul>
-         * <li><code>tomcatAuthentication</code>: If set to true, the authentication will be done in Tomcat.
+         * <li>{@code tomcatAuthentication}: If set to true, the authentication will be done in Tomcat.
          * Otherwise, the authenticated principal will be propagated from the native webserver
          * and used for authorization in Tomcat.
          * Note that this principal will have no roles associated with it. The default value is true.</li>
-         * <li><code>maxThreads</code>: The maximum number of request processing threads to be created
+         * <li>{@code maxThreads}: The maximum number of request processing threads to be created
          * by this Connector, which therefore determines the maximum number of simultaneous
          * requests that can be handled. If not specified, this attribute is set to 200.
          * If an executor is associated with this connector, this attribute is
          * ignored as the connector will execute tasks using the executor rather than an internal thread pool.</li>
-         * <li><code>keepAliveTimeout</code>: The number of milliseconds this Connector
+         * <li>{@code keepAliveTimeout}: The number of milliseconds this Connector
          * will wait for another AJP request before closing the connection.
          * The default value is to use the value that has been set for the connectionTimeout attribute.</li>
-         * <li><code>maxCookieCount</code>: The maximum number of cookies that are permitted for a request.
+         * <li>{@code maxCookieCount}: The maximum number of cookies that are permitted for a request.
          * A value of less than zero means no limit. If not specified, a default value of 200 will be used.</li>
-         * <li><code>bufferSize</code>: The size of the output buffer to use. If less than or equal to zero,
+         * <li>{@code bufferSize}: The size of the output buffer to use. If less than or equal to zero,
          * then output buffering is disabled. The default value is -1 (i.e. buffering disabled)</li>
-         * <li><code>clientCertProvider</code>: When client certificate information is presented in a
+         * <li>{@code clientCertProvider}: When client certificate information is presented in a
          * form other than instances of java.security.cert.X509Certificate it needs to be converted
          * before it can be used and this property controls which JSSE provider is used to perform
          * the conversion. For example it is used with the AJP connectors,
          * the HTTP APR connector and with the org.apache.catalina.valves.SSLValve.If not specified,
          * the default provider will be used.</li>
-         * <li><code>connectionTimeout</code>: The number of milliseconds this Connector
+         * <li>{@code connectionTimeout}: The number of milliseconds this Connector
          * will wait, after accepting a connection,
          * for the request URI line to be presented. The default value is infinite (i.e. no timeout).</li>
-         * <li><code>address</code>: For servers with more than one IP address,
+         * <li>{@code address}: For servers with more than one IP address,
          * this attribute specifies which address will be used for listening on
          * the specified port. By default, this port will be used on all IP addresses associated with the server.
          * A value of 127.0.0.1 indicates that the Connector will only listen on the loopback interface.</li>
@@ -306,6 +307,7 @@ public class CasServerProperties implements Serializable {
         }
 
         public boolean isEnableLookups() {
+
             return enableLookups;
         }
 

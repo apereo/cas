@@ -18,7 +18,7 @@ import java.util.List;
 public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 7806132208223986680L;
     /**
-     * SQL query to execute. Example: <code>SELECT * FROM table WHERE name=?</code>.
+     * SQL query to execute. Example: {@code SELECT * FROM table WHERE name=?}.
      */
     private String sql;
     /**
@@ -26,7 +26,7 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
      * and as such lend themselves to be tried and tested during the authentication handler selection phase.
      * The credential criteria may be one of the following options:<ul>
      * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
-     * <li>2) A fully qualified class name of your own design that implements <code>Predicate&lt;Credential&gt;</code>.</li>
+     * <li>2) A fully qualified class name of your own design that implements {@code Predicate<Credential>}.</li>
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */

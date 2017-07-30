@@ -20,34 +20,35 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
 
     private static final long serialVersionUID = -368826011744304210L;
 
-    @NestedConfigurationProperty
+    
     /**
      * Properties pertaining to jpa service registry.
      */
+    @NestedConfigurationProperty
     private JpaServiceRegistryProperties jpa = new JpaServiceRegistryProperties();
 
-    @NestedConfigurationProperty
     /**
      * Properties pertaining to ldap service registry.
      */
+    @NestedConfigurationProperty
     private LdapServiceRegistryProperties ldap = new LdapServiceRegistryProperties();
 
-    @NestedConfigurationProperty
     /**
      * Properties pertaining to mongo db service registry.
      */
+    @NestedConfigurationProperty
     private MongoServiceRegistryProperties mongo = new MongoServiceRegistryProperties();
 
-    @NestedConfigurationProperty
     /**
      * Properties pertaining to couchbase service registry.
      */
+    @NestedConfigurationProperty
     private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
 
-    @NestedConfigurationProperty
     /**
      * Properties pertaining to dynamo db service registry.
      */
+    @NestedConfigurationProperty
     private DynamoDbServiceRegistryProperties dynamoDb = new DynamoDbServiceRegistryProperties();
 
     /**

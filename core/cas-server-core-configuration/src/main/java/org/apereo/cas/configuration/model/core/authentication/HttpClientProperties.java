@@ -31,7 +31,7 @@ public class HttpClientProperties implements Serializable {
 
     /**
      * Enable hostname verification when attempting to contact URL endpoints.
-     * May also be set to <code>none</code> to disable verification.
+     * May also be set to {@code none} to disable verification.
      */
     private String hostNameVerifier = "default";
 
