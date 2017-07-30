@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.support;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import groovy.lang.GroovyClassLoader;
@@ -94,7 +93,7 @@ public final class Beans {
             dao.setBackingMap(pdirMap);
             return dao;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -283,7 +282,7 @@ public final class Beans {
             }
             return Duration.parse(length);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

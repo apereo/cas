@@ -2,7 +2,6 @@ package org.apereo.cas.pm.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
@@ -52,7 +51,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
                     new TypeReference<Map<String, JsonBackedAccount>>() {};
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -92,7 +91,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
             readAccountsFromJsonResource();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return true;
     }

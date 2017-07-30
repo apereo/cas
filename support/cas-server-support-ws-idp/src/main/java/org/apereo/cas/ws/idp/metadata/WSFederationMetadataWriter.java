@@ -1,6 +1,5 @@
 package org.apereo.cas.ws.idp.metadata;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.fediz.core.util.CertsUtils;
 import org.apache.cxf.fediz.core.util.SignatureUtils;
@@ -114,7 +113,7 @@ public class WSFederationMetadataWriter {
             writer.writeCharacters(Base64.encode(cert.getEncoded()));
         } catch (final Exception ex) {
             LOGGER.error("Failed to add certificate information to metadata. Metadata incomplete", ex);
-            throw Throwables.propagate(ex);
+            throw new RuntimeException(ex.getMessage(), ex);
         }
 
         writer.writeEndElement();

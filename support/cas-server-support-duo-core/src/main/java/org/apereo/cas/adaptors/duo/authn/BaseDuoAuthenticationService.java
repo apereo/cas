@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
@@ -185,7 +184,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                     duoProperties.getDuoSecretKey());
             return request;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -202,7 +201,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                     duoProperties.getDuoSecretKey());
             return request;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

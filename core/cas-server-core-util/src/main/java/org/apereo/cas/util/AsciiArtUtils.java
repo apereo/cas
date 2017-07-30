@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import com.github.lalyos.jfiglet.FigletFont;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -48,7 +47,7 @@ public final class AsciiArtUtils {
             }
             out.println(ANSI_RESET);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
     
@@ -65,7 +64,7 @@ public final class AsciiArtUtils {
             out.warn("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
             out.warn(ANSI_RESET);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -82,7 +81,7 @@ public final class AsciiArtUtils {
             out.info("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
             out.info(ANSI_RESET);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

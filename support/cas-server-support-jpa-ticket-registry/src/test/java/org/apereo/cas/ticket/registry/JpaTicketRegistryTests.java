@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -256,7 +255,7 @@ public class JpaTicketRegistryTests {
                     CoreAuthenticationTestUtils.getAuthentication(),
                     EXP_POLICY_PGT);
         } catch (final AbstractTicketException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

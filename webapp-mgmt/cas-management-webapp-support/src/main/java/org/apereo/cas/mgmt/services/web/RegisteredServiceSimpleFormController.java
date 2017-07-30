@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegisteredService;
@@ -68,7 +67,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             model.put("status", HttpServletResponse.SC_OK);
             JsonUtils.render(model, response);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -100,7 +99,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             bean.setStatus(HttpServletResponse.SC_OK);
             JsonUtils.render(bean, response);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

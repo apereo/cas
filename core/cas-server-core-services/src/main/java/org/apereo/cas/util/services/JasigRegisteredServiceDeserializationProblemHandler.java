@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.type.SimpleType;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.ClassUtils;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.slf4j.Logger;
@@ -46,7 +45,7 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
             }
             return null;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.generic;
 
-import com.google.common.base.Throwables;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.DisabledAccountException;
@@ -152,7 +151,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
                 LOGGER.debug("Shiro configuration is not defined");
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.core.io.Resource;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * This is {@link CasServerProperties}.

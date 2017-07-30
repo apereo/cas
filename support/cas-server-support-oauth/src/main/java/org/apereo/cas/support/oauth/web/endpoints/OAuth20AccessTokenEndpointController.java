@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -129,7 +128,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

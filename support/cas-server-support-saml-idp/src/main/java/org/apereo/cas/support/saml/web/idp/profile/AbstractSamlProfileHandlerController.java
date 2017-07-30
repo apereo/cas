@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
@@ -363,7 +362,7 @@ public abstract class AbstractSamlProfileHandlerController {
             LOGGER.debug("Decoded SAML object [{}] from http request", object.getElementQName());
             return Pair.of(object, messageContext);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
