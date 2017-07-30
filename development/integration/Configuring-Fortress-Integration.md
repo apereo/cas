@@ -18,10 +18,9 @@ In the above diagram, CAS will delegate the authentication to Fortress on behalf
 configured in the `fortress.properties` file. CAS automatically search for this file (assuming classpath) 
 and constructs an access manager component with the admin user as the default communication user to fortress.
 
-To enable this feature, ensure Apache Fortress is  
-[installed](http://directory.apache.org/fortress/installation.html "apache fortress installation") .
+To enable this feature, ensure Apache Fortress is [installed](http://directory.apache.org/fortress/installation.html "apache fortress installation").
 
-Next include the following module in the war overlay:  
+Next include the following module in the WAR overlay:  
 
 ```xml
 <dependency>
