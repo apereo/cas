@@ -1,8 +1,8 @@
-package org.apereo.cas.authentication.support;
+package org.apereo.cas;
 
-import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -13,8 +13,9 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
@@ -43,6 +43,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasCoreServicesConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -52,7 +53,6 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class})
-@ContextConfiguration(locations= {"/services-context.xml"})
 @EnableScheduling
 public class DefaultCasAttributeEncoderTests {
 
@@ -78,7 +78,7 @@ public class DefaultCasAttributeEncoderTests {
         final Service service = RegisteredServiceTestUtils.getService("testDefault");
         final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, NoOpCipherExecutor.getInstance());
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
-        assertEquals(encoded.size(), this.attributes.size() - 2);
+        assertEquals(this.attributes.size() - 2, encoded.size());
     }
 
     @Test
