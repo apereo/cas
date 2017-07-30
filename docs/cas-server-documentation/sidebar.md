@@ -55,6 +55,7 @@ layout: null
         *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
         *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
         *   [Custom](/$version/installation/Configuring-Custom-Authentication.html)
+        *   [Apache Fortress](/$version/installation/Configuring-Fortress-Authentication.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
@@ -188,6 +189,7 @@ layout: null
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
+    *   [Apache Fortress](/$version/integration/Configuring-Fortress-Integration.html)
 
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.cassandra.authentication.Cassa
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
+import org.apereo.cas.configuration.model.support.fortress.FortressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
@@ -171,6 +172,9 @@ public class AuthenticationProperties implements Serializable {
 
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
+
+    @NestedConfigurationProperty
+    private FortressAuthenticationProperties fortress = new FortressAuthenticationProperties();
 
     /**
      * Whether CAS authentication/protocol attributes
@@ -482,11 +486,20 @@ public class AuthenticationProperties implements Serializable {
         this.couchbase = couchbase;
     }
 
+    public FortressAuthenticationProperties getFortress() {
+        return fortress;
+    }
+
+    public void setFortress(final FortressAuthenticationProperties fortress) {
+        this.fortress = fortress;
+    }
+
     public SqrlAuthenticationProperties getSqrl() {
         return sqrl;
     }
 
     public void setSqrl(final SqrlAuthenticationProperties sqrl) {
         this.sqrl = sqrl;
+
     }
 }
