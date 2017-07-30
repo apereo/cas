@@ -6,6 +6,7 @@ dependencies {
     testCompileOnly libraries.log4j
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-cookie")

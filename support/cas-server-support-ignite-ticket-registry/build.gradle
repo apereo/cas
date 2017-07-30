@@ -1,9 +1,10 @@
 description = "Apereo CAS Ignite Integration"
 dependencies {
     implementation libraries.ignite
-    
     compile project(":api:cas-server-core-api")
     compile project(":core:cas-server-core-tickets")
+
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

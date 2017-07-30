@@ -12,7 +12,6 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -42,7 +41,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasCoreServicesConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,

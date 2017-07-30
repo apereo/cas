@@ -18,7 +18,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -74,7 +73,6 @@ import javax.annotation.PostConstruct;
                 CasCookieConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 AopAutoConfiguration.class,
