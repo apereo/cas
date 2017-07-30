@@ -86,7 +86,8 @@ public class CasRestAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler restAuthenticationHandler() {
         final RestAuthenticationProperties rest = casProperties.getAuthn().getRest();
-        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(), servicesManager, restAuthenticationPrincipalFactory());
+        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(), 
+                servicesManager, restAuthenticationPrincipalFactory());
         r.setPasswordEncoder(Beans.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;
     }
