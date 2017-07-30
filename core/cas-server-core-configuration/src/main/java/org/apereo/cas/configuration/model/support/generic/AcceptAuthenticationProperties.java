@@ -30,7 +30,7 @@ public class AcceptAuthenticationProperties implements Serializable {
 
     
     /**
-     * This is principal transformation properties
+     * This is principal transformation properties.
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
