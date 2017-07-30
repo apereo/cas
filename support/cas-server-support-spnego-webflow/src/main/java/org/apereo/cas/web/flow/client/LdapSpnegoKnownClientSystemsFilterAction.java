@@ -44,7 +44,9 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
     public LdapSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute,
-                                                    final long dnsTimeout, final ConnectionFactory connectionFactory, final SearchRequest searchRequest,
+                                                    final long dnsTimeout, 
+                                                    final ConnectionFactory connectionFactory, 
+                                                    final SearchRequest searchRequest,
                                                     final String spnegoAttributeName) {
         super(ipsToCheckPattern, alternativeRemoteHostAttribute, dnsTimeout);
         this.connectionFactory = connectionFactory;

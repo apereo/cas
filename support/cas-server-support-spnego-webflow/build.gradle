@@ -8,6 +8,9 @@ repositories {
 dependencies {
     compile project(":core:cas-server-core-webflow")
     compile project(":support:cas-server-support-spnego")
+    compile project(":support:cas-server-support-ldap-core")
+
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
