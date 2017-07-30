@@ -35,7 +35,7 @@ task deleteJar(type: Delete) {
     def jarModified = jarFile.lastModified()
     if (propModified > jarModified) { 
         doLast {
-            println("""
+            logger.info("""
 Deleting JAR files [$jarFile] due to [gradle.properties] update because it was updated last at [$propModified]
 which is the greater than the last time the JAR files were updates at [$jarModified].
 """)
