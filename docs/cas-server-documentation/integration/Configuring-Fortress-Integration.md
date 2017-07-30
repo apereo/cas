@@ -1,14 +1,28 @@
 ---
 layout: default
-title: CAS - Fortress Authentication
+title: CAS - Apache Fortress Integration
 ---
 
-# Apache Fortress Authentication
+# Apache Fortress Integration
 
-Services connected to CAS can also use Apache Fortress to handle the authentication and authorization with fortress. The Idea of this is because Apache Fortress doesn't have any SSO mechanism. However, Apache Fortress is complied for ANSI INCITS 359 RBAC.  
-[Here](http://directory.apache.org/fortress/testimonials.html) is the link how it was worked before i submit this feature for cas.
+Services connected to CAS can use Apache Fortress to handle the authentication and authorization with Apache Fortress. 
+The Idea of this is because Apache Fortress does not have any SSO mechanism. However, Apache Fortress is complied for `ANSI INCITS 359 RBAC`.  
+[See this link](http://directory.apache.org/fortress/testimonials.html) for background and history.
 
-To enable this support's feature, make sure Apache Fortress have been  [installed](http://directory.apache.org/fortress/installation.html "apache fortress installation") and include this dependency in your war overlay project:  
+## Overview
+
+The following diagram is a typical CAS deployment integrated with Apache Fortress:
+![](https://cloud.githubusercontent.com/assets/493782/26521160/f9987de0-430b-11e7-833d-a0e6257a9ebd.PNG)
+
+In the above diagram, CAS will delegate the authentication to Fortress on behalf the Fortress admin user, which is 
+configured in the `fortress.properties` file. CAS automatically search for this file (assuming classpath) 
+and constructs an access manager component with the admin user as the default communication user to fortress.
+
+To enable this feature, make sure Apache Fortress is  
+[installed](http://directory.apache.org/fortress/installation.html "apache fortress installation") .
+
+Next include this dependency in the war overlay project:  
+
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
@@ -17,39 +31,26 @@ To enable this support's feature, make sure Apache Fortress have been  [installe
 </dependency>
 ```  
 
-For this current version, Fortress will only support using tomcat as the web container. However, we will try to support other web container as well in the future.
+At this time, Apache Fortress will only support using tomcat as the web container. 
 
-## Server side configuration
+## CAS Configuration
 
-### Configure Apache Fortress Properties
-Configure `fortress.properties` file and put it under your $TOMCAT_HOME/lib or you can append your own classpath configuration.  
+- Configure `fortress.properties` file and put it under your `$TOMCAT_HOME/lib` or you can append your own classpath configuration. An example configuration
+file follows:
 
-### Fortress Realm Proxy
-Put Fortress Realm Proxy under your $TOMCAT_HOME/lib
-
-### Fortress Version
-Add `-Dversion=<your.fortress.version>` to `JAVA_OPTS` or `CATALINA_OPTS.  
-It is also possible if you would like to add it to your overlay spring definition :
-```xml
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject">
-      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass" value="java.lang.System" />
-        <property name="targetMethod" value="getProperties" />
-      </bean>
-    </property>
-    <property name="targetMethod" value="putAll" />
-    <property name="arguments">
-      <util:properties>
-        <prop key="version">1.1.0</prop>
-      </util:properties>
-    </property>
-  </bean>
+```properties
+http.user=fortress-super-user
+http.pw=verysecretpassword
+http.host=localhost
+http.port=8080
+http.protocol=http
 ```
+ 
+- Put Fortress Realm Proxy under your `$TOMCAT_HOME/lib`.
+- Add `-Dversion=<your.fortress.version>` to `JAVA_OPTS` or `CATALINA_OPTS`.  
 
-## Client side configuration
+## Client Configuration
 
-### Fortress Session Attribute
-This plugin will append new attribute with key `fortressSession` and as the client you need to extract this key in order to get [org.apache.directory.fortress.core.model.Session](http://directory.apache.org/fortress/gen-docs/latest/apidocs/org/apache/directory/fortress/core/model/Session.html) in xml form.
-With Fortress session later you can get the roles or get the permission 
-dynamically by calling fortress rest.
+The fortress session is stored as a principal attribute `fortressSession`. As the client you need to extract 
+this key in order to get [Session](http://directory.apache.org/fortress/gen-docs/latest/apidocs/org/apache/directory/fortress/core/model/Session.html) 
+in xml form. With Fortress session later you can get the roles or get the permission dynamically by calling fortress rest.

@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.fortress.config;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.rest.AccessMgrRestImpl;
 import org.apereo.cas.adaptors.fortress.FortressAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -29,8 +28,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("fortressAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class FortressAuthenticationConfiguration {
-
-    private static final String FORTRESS_HANDLER_NAME = "fortressHandler";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(FortressAuthenticationConfiguration.class);
 
     @Autowired
@@ -50,7 +48,7 @@ public class FortressAuthenticationConfiguration {
     @Bean
     public AccessMgr fortressAccessManager() {
         final String rbacContext = casProperties.getAuthn().getFortress().getRbaccontext();
-        LOGGER.trace("registering fortress access manager with context : {}", rbacContext);
+        LOGGER.trace("Registering fortress access manager with context: [{}]", rbacContext);
         final AccessMgrRestImpl accessMgrRestImpl = new AccessMgrRestImpl();
         accessMgrRestImpl.setContextId(casProperties.getAuthn().getFortress().getRbaccontext());
         return accessMgrRestImpl;
@@ -60,23 +58,16 @@ public class FortressAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler fortressAuthenticationHandler() {
-        LOGGER.info("registering fortress authentication handler");
-        return new FortressAuthenticationHandler(FORTRESS_HANDLER_NAME, servicesManager,
-                fortressPrincipalFactory(), null);
+        return new FortressAuthenticationHandler(fortressAccessManager(), null,
+                servicesManager, fortressPrincipalFactory(), null);
     }
 
-    /**
-     * Fortress Authentication event execution plan configuration.
-     */
-    @Configuration("fortressAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class FortressAuthenticationEventExecutionPlanConfiguration
-            implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            LOGGER.info("registering fortress authentication event execution plan");
+    @ConditionalOnMissingBean(name = "fortressAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer fortressAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            LOGGER.info("Registering fortress authentication event execution plan");
             plan.registerAuthenticationHandler(fortressAuthenticationHandler());
-        }
+        };
     }
-
 }

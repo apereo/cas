@@ -3,19 +3,7 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-configuration")
-    compile ("org.apache.directory.fortress:fortress-core:1.0.1") {
-        exclude group: "org.apache.httpcomponents", module: "httpclient"
-        exclude group: "org.slf4j", module: "slf4j-api"
-        exclude group: "com.sun.mail", module: "javax.mail"
-        exclude group: "org.apache.httpcomponents", module: "httpcore"
-        exclude group: "org.apache.directory.api", module: "api-all"
-        exclude group: "commons-io", module: "commons-io"
-        exclude group: "commons-logging", module: "commons-logging"
-        exclude group: "org.openldap", module: "accelerator"
-        exclude group: "org.openldap", module: "accelerator-impl"
-        exclude group: "org.openldap", module: "accelerator-api"
-        exclude group: "commons-lang", module: "commons-lang"
-    }
+    implementation libraries.apachefortress
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }
