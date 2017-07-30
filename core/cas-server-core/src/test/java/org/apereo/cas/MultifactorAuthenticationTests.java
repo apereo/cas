@@ -28,6 +28,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -44,7 +45,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -76,6 +76,7 @@ import static org.junit.Assert.*;
                 AopAutoConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreConfiguration.class,
+                CasRegisteredServicesTestConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,
@@ -83,7 +84,6 @@ import static org.junit.Assert.*;
                 CasPersonDirectoryTestConfiguration.class,
                 CasCoreTicketIdGeneratorsConfiguration.class,
                 CasCoreValidationConfiguration.class})
-@ContextConfiguration(locations = {"/mfa-test-context.xml"})
 @TestPropertySource(locations = {"classpath:/core.properties"}, properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 public class MultifactorAuthenticationTests {
 
