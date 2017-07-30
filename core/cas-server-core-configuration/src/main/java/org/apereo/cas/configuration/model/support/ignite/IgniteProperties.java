@@ -17,7 +17,7 @@ public class IgniteProperties implements Serializable {
 
     private static final long serialVersionUID = -5259465262649559156L;
     /**
-     * Used by <code>TcpDiscoveryVmIpFinder</code> which is an
+     * Used by {@code TcpDiscoveryVmIpFinder} which is an
      * IP Finder which works only with pre-configured list of IP addresses specified via this setting.
      * By default, this IP finder is not shared, which means that all grid nodes have
      * to be configured with the same list of IP addresses when this IP finder is used.
@@ -101,7 +101,7 @@ public class IgniteProperties implements Serializable {
     /**
      * Sets local host IP address that discovery SPI uses.
      * If not provided, by default a first found non-loopback address will be used. If there is
-     * no non-loopback address available, then <code>InetAddress.getLocalHost()</code> will be used.
+     * no non-loopback address available, then {@code InetAddress.getLocalHost()} will be used.
      */
     private String localAddress;
 
@@ -128,7 +128,7 @@ public class IgniteProperties implements Serializable {
 
     /**
      * Sets force server mode flag.
-     * If true <code>TcpDiscoverySpi</code> is started in server mode regardless of <code>IgniteConfiguration.isClientMode()</code>.
+     * If true {@code TcpDiscoverySpi} is started in server mode regardless of {@code IgniteConfiguration.isClientMode()}.
      */
     private boolean forceServerMode;
 
@@ -296,16 +296,16 @@ public class IgniteProperties implements Serializable {
         /**
          * Specified the caching mode.
          * <ul>
-         * <li><code>LOCAL</code>: Specifies local-only cache behaviour. In this mode caches residing on different grid nodes will not know about each other.
+         * <li>{@code LOCAL}: Specifies local-only cache behaviour. In this mode caches residing on different grid nodes will not know about each other.
          * Other than distribution, local caches still have all the caching features, such as eviction, expiration, swapping, querying, etc...
          * This mode is very useful when caching read-only data or data that automatically expires at a certain interval and
          * then automatically reloaded from persistence store.</li>
          * <li>
-         * <code>REPLICATED</code>: Specifies fully replicated cache behavior. In this mode all the keys are distributed to all participating nodes.
+         * {@code REPLICATED}: Specifies fully replicated cache behavior. In this mode all the keys are distributed to all participating nodes.
          * User still has affinity control over subset of nodes for any given key via AffinityFunction configuration.
          * </li>
          * <li>
-         * <code>PARTITIONED</code>: Specifies partitioned cache behaviour. In this mode the overall key set will be divided into
+         * {@code PARTITIONED}: Specifies partitioned cache behaviour. In this mode the overall key set will be divided into
          * partitions and all partitions will be split equally between participating nodes. User has affinity control over key
          * assignment via AffinityFunction configuration.
          * Note that partitioned cache is always fronted by local 'near' cache which stores most recent data. You can configure the
@@ -317,7 +317,7 @@ public class IgniteProperties implements Serializable {
         /**
          * Specifies the atomicity mode.
          * <ul>
-         * <li><code>ATOMIC</code>: Specifies atomic-only cache behaviour. In this mode distributed transactions and distributed locking
+         * <li>{@code ATOMIC}: Specifies atomic-only cache behaviour. In this mode distributed transactions and distributed locking
          * are not supported. Disabling transactions and locking allows to achieve much higher performance and throughput ratios.
          * In addition to transactions and locking, one of the main differences in ATOMIC mode is that bulk writes, such as putAll(...),
          * removeAll(...), and transformAll(...) methods, become simple batch operations which can partially fail. In case of
@@ -327,7 +327,7 @@ public class IgniteProperties implements Serializable {
          * Note that even without locking and transactions, ATOMIC mode still provides full consistency guarantees across all cache nodes.
          * Also note that all data modifications in ATOMIC mode are guaranteed to be atomic and consistent with writes
          * to the underlying persistent store, if one is configured.</li>
-         * <li><code>TRANSACTIONAL</code>: Specifies fully ACID-compliant transactional cache behavior.</li>
+         * <li>{@code TRANSACTIONAL}: Specifies fully ACID-compliant transactional cache behavior.</li>
          * </ul>
          */
         private String atomicityMode = "TRANSACTIONAL";
@@ -337,17 +337,17 @@ public class IgniteProperties implements Serializable {
          * nodes may get their state updated slightly after any of the cache write methods complete, or after Transaction.commit() method completes.
          * <ul>
          * <li>
-         * <code>FULL_ASYNC</code>: Flag indicating that Ignite will not wait for write or commit responses from participating nodes, which means that
+         * {@code FULL_ASYNC}: Flag indicating that Ignite will not wait for write or commit responses from participating nodes, which means that
          * remote nodes may get their state updated a bit after any of the cache write methods complete, 
-         * or after <code>Transaction.commit()</code> method completes.
+         * or after {@code Transaction.commit()} method completes.
          * </li>
          * <li>
-         * <code>FULL_SYNC</code>: Flag indicating that Ignite should wait for write or commit replies from all nodes. This behavior guarantees
+         * {@code FULL_SYNC}: Flag indicating that Ignite should wait for write or commit replies from all nodes. This behavior guarantees
          * that whenever any of the atomic or transactional writes complete, all other participating nodes which
          * cache the written data have been updated.
          * </li>
          * <li>
-         * <code>PRIMARY_SYNC</code>: This flag only makes sense for CacheMode.PARTITIONED mode. When enabled, Ignite will wait for write or
+         * {@code PRIMARY_SYNC}: This flag only makes sense for CacheMode.PARTITIONED mode. When enabled, Ignite will wait for write or
          * commit to complete on primary node, but will not wait for backups to be updated.
          * </li>
          * </ul>

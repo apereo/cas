@@ -44,10 +44,10 @@ public class PrincipalAttributesProperties implements Serializable {
      * Merging strategies can be used to resolve conflicts when the same attribute are found from multiple sources.
      * Accepted values are the following:
      * <ul>
-     * <li><code>REPLACE</code>: Overwrites existing attribute values, if any.</li>
-     * <li><code>ADD</code>: Retains existing attribute values if any, and ignores
+     * <li>{@code REPLACE}: Overwrites existing attribute values, if any.</li>
+     * <li>{@code ADD}: Retains existing attribute values if any, and ignores
      * values from subsequent sources in the resolution chain.</li>
-     * <li><code>MERGE</code>: Combines all values into a single attribute, essentially creating a multi-valued attribute. </li>
+     * <li>{@code MERGE}: Combines all values into a single attribute, essentially creating a multi-valued attribute. </li>
      * </ul>
      */
     private String merger = "REPLACE";
@@ -56,7 +56,7 @@ public class PrincipalAttributesProperties implements Serializable {
      * CAS provides the ability to release a bundle of principal attributes to all services by default.
      * This bundle is not defined on a per-service basis and is always combined with attributes
      * produced by the specific release policy of the service, such that for instance,
-     * you can devise rules to always release <code>givenName</code> and <code>cn</code> to every application,
+     * you can devise rules to always release {@code givenName} and {@code cn} to every application,
      * and additionally allow other specific principal attributes for only some applications
      * per their attribute release policy.
      */
@@ -100,8 +100,8 @@ public class PrincipalAttributesProperties implements Serializable {
 
     /**
      * Use Grouper to fetch principal attributes.
-     * You will also need to ensure <code>grouper.client.properties</code>
-     * is available on the classpath (i.e. <code>src/main/resources</code>)
+     * You will also need to ensure {@code grouper.client.properties}
+     * is available on the classpath (i.e. {@code src/main/resources})
      * and it contains the following:
      * <pre>
      * grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest

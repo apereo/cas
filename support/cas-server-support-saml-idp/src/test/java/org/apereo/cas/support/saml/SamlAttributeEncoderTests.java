@@ -1,12 +1,5 @@
 package org.apereo.cas.support.saml;
 
-/**
- * This is {@link SamlAttributeEncoderTests}.
- *
- * @author Misagh Moayyed
- * @since 5.1.0
- */
-
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
 import org.apereo.cas.util.EncodingUtils;
@@ -19,6 +12,12 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+/**
+ * This is {@link SamlAttributeEncoderTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.1.0
+ */
 @RunWith(SpringRunner.class)
 public class SamlAttributeEncoderTests {
 

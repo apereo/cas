@@ -20,7 +20,7 @@ public class PasswordPolicyProperties implements Serializable {
      * Key-value structure (Map) that indicates a list of boolean attributes as keys.
      * If either attribute value is true, indicating an account state is flagged,
      * the corresponding error can be thrown.
-     * Example <code>accountLocked=javax.security.auth.login.AccountLockedException</code>
+     * Example {@code accountLocked=javax.security.auth.login.AccountLockedException}
      */
     private Map<String, Class<LoginException>> policyAttributes = new LinkedCaseInsensitiveMap<>();
 
@@ -31,7 +31,7 @@ public class PasswordPolicyProperties implements Serializable {
 
     /**
      * An implementation of a policy class that knows how to handle LDAP responses.
-     * The class must be an implementation of <code>org.ldaptive.auth.AuthenticationResponseHandler</code>.
+     * The class must be an implementation of {@code org.ldaptive.auth.AuthenticationResponseHandler}.
      */
     private String customPolicyClass;
     /**
@@ -66,7 +66,7 @@ public class PasswordPolicyProperties implements Serializable {
      */
     private int warningDays = 30;
     /**
-     * LDAP type. Accepted values are <code>GENERIC,AD,FreeIPA,EDirectory</code>
+     * LDAP type. Accepted values are {@code GENERIC,AD,FreeIPA,EDirectory}
      */
     private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
 
