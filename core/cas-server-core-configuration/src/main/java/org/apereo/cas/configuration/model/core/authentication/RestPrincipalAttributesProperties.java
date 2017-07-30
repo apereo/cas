@@ -24,7 +24,7 @@ public class RestPrincipalAttributesProperties implements Serializable {
 
     /**
      * HTTP method to use when contacting the rest endpoint.
-     * Examples include <code>GET, POST</code>, etc.
+     * Examples include {@code GET, POST}, etc.
      */
     private String method;
 

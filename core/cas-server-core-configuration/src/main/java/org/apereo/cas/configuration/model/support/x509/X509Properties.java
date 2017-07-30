@@ -102,31 +102,31 @@ public class X509Properties implements Serializable {
     /**
      * Indicates the type of principal resolution for X509.
      * <ul>
-     * <li><code>SERIAL_NO</code>: Resolve the principal by the serial number with a configurable radix,
+     * <li>{@code SERIAL_NO}: Resolve the principal by the serial number with a configurable radix,
      * ranging from 2 to 36. If radix is 16, then the serial number could be filled with leading zeros to even the number of digits.</li>
-     * <li><code>SERIAL_NO_DN</code>: Resolve the principal by serial number and issuer dn.</li>
-     * <li><code>SUBJECT</code>: Resolve the principal by extracting one or more attribute values from the
+     * <li>{@code SERIAL_NO_DN}: Resolve the principal by serial number and issuer dn.</li>
+     * <li>{@code SUBJECT}: Resolve the principal by extracting one or more attribute values from the
      * certificate subject DN and combining them with intervening delimiters.</li>
-     * <li><code>SUBJECT_ALT_NAME</code>: Resolve the principal by the subject alternative name extension.</li>
-     * <li><code>SUBJECT_DN</code>: The default type; Resolve the principal by the certificate’s subject dn.</li>
+     * <li>{@code SUBJECT_ALT_NAME}: Resolve the principal by the subject alternative name extension.</li>
+     * <li>{@code SUBJECT_DN}: The default type; Resolve the principal by the certificate’s subject dn.</li>
      * </ul>
      */
     private PrincipalTypes principalType;
     /**
      * Revocation certificate checking can be carried out in one of the following ways:
      * <ul>
-     * <li><code>NONE</code>: No revocation is performed.</li>
-     * <li><code>CRL</code>: The CRL URI(s) mentioned in the certificate cRLDistributionPoints extension field.
+     * <li>{@code NONE}: No revocation is performed.</li>
+     * <li>{@code CRL}: The CRL URI(s) mentioned in the certificate cRLDistributionPoints extension field.
      * Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.</li>
-     * <li><code>RESOURCE</code>: A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.</li>
+     * <li>{@code RESOURCE}: A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.</li>
      * </ul>
      */
     private String revocationChecker = "NONE";
     /**
      * To fetch CRLs, the following options are available:
      * <ul>
-     * <li><code>RESOURCE</code>: By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.</li>
-     * <li><code>LDAP</code>: A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.</li>
+     * <li>{@code RESOURCE}: By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.</li>
+     * <li>{@code LDAP}: A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.</li>
      * </ul>
      */
     private String crlFetcher = "RESOURCE";
@@ -156,48 +156,48 @@ public class X509Properties implements Serializable {
     private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
     /**
      * If the CRL resource is unavailable, activate the this policy.
-     * Activated if {@link #revocationChecker} is <code>RESOURCE</code>.
+     * Activated if {@link #revocationChecker} is {@code RESOURCE}.
      * Accepted values are:
      * <ul>
-     * <li><code>ALLOW</code>: Allow authentication to proceed.</li>
-     * <li><code>DENY</code>: Deny authentication and block.</li>
-     * <li><code>THRESHOLD</code>: Applicable to CRL expiration, throttle the request whereby expired
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
     private String crlResourceUnavailablePolicy = DENY;
     /**
      * If the CRL resource has expired, activate the this policy.
-     * Activated if {@link #revocationChecker} is <code>RESOURCE</code>.
+     * Activated if {@link #revocationChecker} is {@code RESOURCE}.
      * Accepted values are:
      * <ul>
-     * <li><code>ALLOW</code>: Allow authentication to proceed.</li>
-     * <li><code>DENY</code>: Deny authentication and block.</li>
-     * <li><code>THRESHOLD</code>: Applicable to CRL expiration, throttle the request whereby expired
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
     private String crlResourceExpiredPolicy = DENY;
     /**
      * If the CRL is unavailable, activate the this policy.
-     * Activated if {@link #revocationChecker} is <code>CRL</code>.
+     * Activated if {@link #revocationChecker} is {@code CRL}.
      * Accepted values are:
      * <ul>
-     * <li><code>ALLOW</code>: Allow authentication to proceed.</li>
-     * <li><code>DENY</code>: Deny authentication and block.</li>
-     * <li><code>THRESHOLD</code>: Applicable to CRL expiration, throttle the request whereby expired
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
     private String crlUnavailablePolicy = DENY;
     /**
      * If the CRL has expired, activate the this policy.
-     * Activated if {@link #revocationChecker} is <code>CRL</code>.
+     * Activated if {@link #revocationChecker} is {@code CRL}.
      * Accepted values are:
      * <ul>
-     * <li><code>ALLOW</code>: Allow authentication to proceed.</li>
-     * <li><code>DENY</code>: Deny authentication and block.</li>
-     * <li><code>THRESHOLD</code>: Applicable to CRL expiration, throttle the request whereby expired
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
@@ -517,7 +517,7 @@ public class X509Properties implements Serializable {
          */
         private String baseDn;
         /**
-         * The search filter. Example: <code>cn={user}</code>.
+         * The search filter. Example: {@code cn={user}}.
          */
         private String searchFilter;
 

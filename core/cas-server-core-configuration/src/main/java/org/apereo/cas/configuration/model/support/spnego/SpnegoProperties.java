@@ -34,9 +34,9 @@ public class SpnegoProperties implements Serializable {
     /**
      * The bean id of a webflow action whose job is to evaluate the client host
      * to see if the request is authorized for spnego.
-     * Supported strategies include <code>hostnameSpnegoClientAction</code> where
+     * Supported strategies include {@code hostnameSpnegoClientAction} where
      * CAS checks to see if the request’s remote hostname matches a predefine pattern.
-     * and <code>ldapSpnegoClientAction</code> where
+     * and {@code ldapSpnegoClientAction} where
      * CAS checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose
      * mere existence would allow the webflow to resume to SPNEGO.
      */
@@ -415,7 +415,7 @@ public class SpnegoProperties implements Serializable {
          */
         private String baseDn;
         /**
-         * LDAP search filter to look up hosts. Example: <code>host={host}</code>.
+         * LDAP search filter to look up hosts. Example: {@code host={host}}.
          */
         private String searchFilter;
 

@@ -17,7 +17,7 @@ public class HttpWebRequestProperties implements Serializable {
     /**
      * Whether CAS should accept multi-valued parameters
      * in incoming requests. Example block would to prevent
-     * requests where more than one <code>service</code> parameter is specified.
+     * requests where more than one {@code service} parameter is specified.
      */
     private boolean allowMultiValueParameters;
     /**
@@ -243,19 +243,19 @@ public class HttpWebRequestProperties implements Serializable {
         private boolean cache = true;
         /**
          * When true, will inject the following headers into the response:
-         * <code>Strict-Transport-Security: max-age=15768000 ; includeSubDomains</code>.
+         * {@code Strict-Transport-Security: max-age=15768000 ; includeSubDomains}.
          */
         private boolean hsts = true;
         /**
-         * When true, will inject the following headers into the response: <code>X-Frame-Options: DENY</code>.
+         * When true, will inject the following headers into the response: {@code X-Frame-Options: DENY}.
          */
         private boolean xframe = true;
         /**
-         * When true, will inject the following headers into the response: <code>X-Content-Type-Options: nosniff</code>.
+         * When true, will inject the following headers into the response: {@code X-Content-Type-Options: nosniff}.
          */
         private boolean xcontent = true;
         /**
-         * When true, will inject the following headers into the response: <code>X-XSS-Protection: 1; mode=block</code>.
+         * When true, will inject the following headers into the response: {@code X-XSS-Protection: 1; mode=block}.
          */
         private boolean xss = true;
 

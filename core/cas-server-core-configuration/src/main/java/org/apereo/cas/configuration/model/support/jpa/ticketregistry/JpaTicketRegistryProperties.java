@@ -24,8 +24,8 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /**
      * Ticket locking type. Acceptable values are
-     * <code>READ,WRITE,OPTIMISTIC,OPTIMISTIC_FORCE_INCREMENT,PESSIMISTIC_READ,
-     * PESSIMISTIC_WRITE,PESSIMISTIC_FORCE_INCREMENT,NONE</code>.
+     * {@code READ,WRITE,OPTIMISTIC,OPTIMISTIC_FORCE_INCREMENT,PESSIMISTIC_READ,
+     * PESSIMISTIC_WRITE,PESSIMISTIC_FORCE_INCREMENT,NONE}.
      */
     private LockModeType ticketLockType = LockModeType.NONE;
 

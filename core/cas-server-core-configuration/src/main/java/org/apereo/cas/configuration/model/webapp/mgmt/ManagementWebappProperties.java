@@ -35,7 +35,7 @@ public class ManagementWebappProperties implements Serializable {
 
     /**
      * Collection of attributes the authorized user must have in order to authenticate into the app.
-     * Th attribute value(s) must match the expected role. To permit everything, you may use <code>*</code>.
+     * Th attribute value(s) must match the expected role. To permit everything, you may use {@code *}.
      */
     private List<String> authzAttributes = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class ManagementWebappProperties implements Serializable {
      * Location of the resource that contains the authorized accounts.
      * This file lists the set of users that are allowed access to the CAS sensitive/admin endpoints.
      * The syntax of each entry should be in the form of:
-     * <code>username=notused,grantedAuthority[,grantedAuthority][,enabled|disabled]</code>
+     * {@code username=notused,grantedAuthority[,grantedAuthority][,enabled|disabled]}
      */
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
 

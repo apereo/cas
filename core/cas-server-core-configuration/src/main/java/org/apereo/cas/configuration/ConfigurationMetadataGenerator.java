@@ -52,9 +52,9 @@ import java.util.stream.StreamSupport;
  * externalized class.
  * <p>
  * Example:
- * <code>
- * private List&lt;SomeClassProperties&gt; list = new ArrayList&lt;&gt;()
- * </code>
+ * {@code
+ * private List<SomeClassProperties> list = new ArrayList<>()
+ * }
  *
  * @author Misagh Moayyed
  * @since 5.2.0
