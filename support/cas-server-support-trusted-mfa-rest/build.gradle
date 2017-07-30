@@ -1,5 +1,5 @@
 description = "Apereo CAS Trusted MFA Browser/Device REST Support"
 dependencies {
     compile project(":support:cas-server-support-trusted-mfa")
-    implementation libraries.httpclient
+    
 }

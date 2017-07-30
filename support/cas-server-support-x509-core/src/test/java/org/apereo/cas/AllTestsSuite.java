@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * The {@link AllTestsSuite} is responsible for
+ * The {@link AllLdapTestsSuite} is responsible for
  * running all cas test cases.
  *
  * @author Misagh Moayyed

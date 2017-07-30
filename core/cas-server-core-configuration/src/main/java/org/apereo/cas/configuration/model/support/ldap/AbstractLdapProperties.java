@@ -1,10 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ldaptive.SearchScope;
-import org.ldaptive.sasl.Mechanism;
-import org.ldaptive.sasl.QualityOfProtection;
-import org.ldaptive.sasl.SecurityStrength;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -245,7 +241,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The SASL mechanism.
      */
-    private Mechanism saslMechanism;
+    private String saslMechanism;
     /**
      * SASL authorization id.
      */
@@ -253,7 +249,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * SASL security strength.
      */
-    private SecurityStrength saslSecurityStrength;
+    private String saslSecurityStrength;
     /**
      * SASL mutual auth is enabled?
      */
@@ -261,7 +257,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * SASL quality of protected.
      */
-    private QualityOfProtection saslQualityOfProtection;
+    private String saslQualityOfProtection;
 
     /**
      * LDAP connection validator settings.
@@ -489,11 +485,11 @@ public abstract class AbstractLdapProperties implements Serializable {
         this.saslRealm = saslRealm;
     }
 
-    public Mechanism getSaslMechanism() {
+    public String getSaslMechanism() {
         return saslMechanism;
     }
 
-    public void setSaslMechanism(final Mechanism saslMechanism) {
+    public void setSaslMechanism(final String saslMechanism) {
         this.saslMechanism = saslMechanism;
     }
 
@@ -505,19 +501,19 @@ public abstract class AbstractLdapProperties implements Serializable {
         this.saslAuthorizationId = saslAuthorizationId;
     }
 
-    public SecurityStrength getSaslSecurityStrength() {
+    public String getSaslSecurityStrength() {
         return saslSecurityStrength;
     }
 
-    public void setSaslSecurityStrength(final SecurityStrength saslSecurityStrength) {
+    public void setSaslSecurityStrength(final String saslSecurityStrength) {
         this.saslSecurityStrength = saslSecurityStrength;
     }
 
-    public QualityOfProtection getSaslQualityOfProtection() {
+    public String getSaslQualityOfProtection() {
         return saslQualityOfProtection;
     }
 
-    public void setSaslQualityOfProtection(final QualityOfProtection saslQualityOfProtection) {
+    public void setSaslQualityOfProtection(final String saslQualityOfProtection) {
         this.saslQualityOfProtection = saslQualityOfProtection;
     }
 
@@ -560,7 +556,7 @@ public abstract class AbstractLdapProperties implements Serializable {
         /**
          * Search scope to use for the search request of the search validator.
          */
-        private SearchScope scope = SearchScope.OBJECT;
+        private String scope = "OBJECT";
         /**
          * Attribute name to use for the compare validator.
          */
@@ -622,11 +618,11 @@ public abstract class AbstractLdapProperties implements Serializable {
             this.searchFilter = searchFilter;
         }
 
-        public SearchScope getScope() {
+        public String getScope() {
             return scope;
         }
 
-        public void setScope(final SearchScope scope) {
+        public void setScope(final String scope) {
             this.scope = scope;
         }
     }

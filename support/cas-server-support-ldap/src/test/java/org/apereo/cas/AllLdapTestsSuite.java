@@ -13,5 +13,5 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({LdapAuthenticationHandlerTests.class, 
         PersonDirectoryPrincipalResolverLdaptiveTests.class})
-public class AllTestsSuite {
+public class AllLdapTestsSuite {
 }

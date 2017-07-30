@@ -278,8 +278,11 @@ subprojects {
         api libraries.commons
         api libraries.jodatime
         api libraries.inspektr
+        api libraries.persondirectory
         api libraries.spring
         api libraries.jackson
+        api libraries.httpclient
+        api libraries.quartz
         api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
