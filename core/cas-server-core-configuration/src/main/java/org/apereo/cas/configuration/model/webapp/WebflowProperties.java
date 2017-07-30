@@ -134,7 +134,7 @@ public class WebflowProperties implements Serializable {
         private boolean storage;
 
         /**
-         * If sessions are to be replicated via Hazelcast, defines the location of a <code>hazelcast.xml</code>
+         * If sessions are to be replicated via Hazelcast, defines the location of a {@code hazelcast.xml}
          * file that defines how state should be replicated.
          * Only relevant if session storage is done on the server.
          */

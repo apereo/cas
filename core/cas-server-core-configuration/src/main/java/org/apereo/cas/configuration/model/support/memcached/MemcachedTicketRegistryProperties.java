@@ -19,15 +19,15 @@ public class MemcachedTicketRegistryProperties implements Serializable {
      */
     private String servers = "localhost:11211";
     /**
-     * Failure mode. Acceptable values are <code>Redistribute,Retry,Cancel</code>.
+     * Failure mode. Acceptable values are {@code Redistribute,Retry,Cancel}.
      */
     private String failureMode = "Redistribute";
     /**
-     * Locator mode. Acceptable values are <code>ARRAY_MOD,CONSISTENT,VBUCKET</code>.
+     * Locator mode. Acceptable values are {@code ARRAY_MOD,CONSISTENT,VBUCKET}.
      */
     private String locatorType = "ARRAY_MOD";
     /**
-     * Hash algorithm. Acceptable values are <code>NATIVE_HASH,CRC_HASH,FNV1_64_HASH,FNV1A_64_HASH,FNV1_32_HASH,FNV1A_32_HASH,KETAMA_HASH</code>.
+     * Hash algorithm. Acceptable values are {@code NATIVE_HASH,CRC_HASH,FNV1_64_HASH,FNV1A_64_HASH,FNV1_32_HASH,FNV1A_32_HASH,KETAMA_HASH}.
      */
     private String hashAlgorithm = "FNV1_64_HASH";
 

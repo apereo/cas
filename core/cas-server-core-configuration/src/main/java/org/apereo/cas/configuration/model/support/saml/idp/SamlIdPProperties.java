@@ -37,7 +37,7 @@ public class SamlIdPProperties implements Serializable {
      * are references and mapped one ones that CAS may support
      * mainly for MFA purposes.
      * <p>
-     * Example might be <code>urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName-&gt;mfa-duo</code>.
+     * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
      */
     private Set<String> authenticationContextClassMappings;
 
@@ -297,7 +297,7 @@ public class SamlIdPProperties implements Serializable {
         private boolean useAttributeFriendlyName = true;
         /**
          * Each individual attribute can be mapped to a particular name-format.
-         * Example: <code>attributeName-&gt;basic|uri|unspecified|custom-format-etc,...</code>.
+         * Example: {@code attributeName->basic|uri|unspecified|custom-format-etc,...}.
          */
         private List<String> attributeNameFormats = new ArrayList<>();
 

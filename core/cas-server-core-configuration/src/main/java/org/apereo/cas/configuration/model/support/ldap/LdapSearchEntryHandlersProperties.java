@@ -53,7 +53,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
 
     /**
      * The type of search entry handler to choose.
-     * Accepted values are <code>OBJECT_GUID,OBJECT_SID,CASE_CHANGE,DN_ATTRIBUTE_ENTRY,MERGE,PRIMARY_GROUP,RANGE_ENTRY,RECURSIVE_ENTRY</code>
+     * Accepted values are {@code OBJECT_GUID,OBJECT_SID,CASE_CHANGE,DN_ATTRIBUTE_ENTRY,MERGE,PRIMARY_GROUP,RANGE_ENTRY,RECURSIVE_ENTRY}
      */
     private SearchEntryHandlerTypes type;
     
@@ -80,7 +80,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      * Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the
      * original search entry. This handler requires that entries contain both the 'objectSid' and 'primaryGroupID'
      * attributes. If those attributes are not found this handler is a no-op. This handler should be used in conjunction
-     * with the <code> ObjectSidHandler</code> to ensure the 'objectSid' attribute is in the proper form. See
+     * with the {@code ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form. See
      * http://support2.microsoft.com/kb/297951
      */
     @NestedConfigurationProperty

@@ -35,7 +35,7 @@ public class OidcProperties implements Serializable {
      */
     private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
     /**
-     * Whether dynamic registration operates in <code>OPEN</code> or <code>PROTECTED</code> mode.
+     * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.
      */
     private String dynamicClientRegistrationMode;
     /**

@@ -17,7 +17,7 @@ public class AcceptAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 2448007503183227617L;
     /**
-     * Accepted users for authentication, in the syntax of <code>uid::password</code>.
+     * Accepted users for authentication, in the syntax of {@code uid::password}.
      */
     private String users = StringUtils.EMPTY;
     /**
@@ -28,10 +28,11 @@ public class AcceptAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
-    @NestedConfigurationProperty
+    
     /**
      * This is principal transformation properties
      */
+    @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     public PrincipalTransformationProperties getPrincipalTransformation() {

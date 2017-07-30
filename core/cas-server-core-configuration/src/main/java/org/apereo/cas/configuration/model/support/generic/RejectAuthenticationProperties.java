@@ -21,16 +21,16 @@ public class RejectAuthenticationProperties implements Serializable {
      */
     private String users;
 
-    @NestedConfigurationProperty
     /**
      * Password encoder properties.
      */
+    @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
-    @NestedConfigurationProperty
     /**
      * This is principal transformation properties
      */
+    @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation =
             new PrincipalTransformationProperties();
 

@@ -26,7 +26,7 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapProperties {
 
     /**
      * Filter to query for user accounts.
-     * Format must match <code>attributeName={user}</code>.
+     * Format must match {@code attributeName={user}}.
      */
     private String userFilter;
 

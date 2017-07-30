@@ -39,7 +39,7 @@ public class AuditProperties implements Serializable {
      * If the application is sitting behind a load balancer,
      * the client address typically ends up being the load balancer
      * address itself. A common example for a header here would be
-     * <code>X-Forwarded-For</code> to glean the client address
+     * {@code X-Forwarded-For} to glean the client address
      * from the request, assuming the load balancer is configured correctly
      * to pass that header along.
      */

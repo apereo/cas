@@ -49,7 +49,7 @@ public abstract class BaseCassandraProperties implements Serializable {
     /**
      * A policy that defines a default behavior to adopt when a request fails.
      * Such policy allows to centralize the handling of query retries, allowing to minimize the need for exception catching/handling in business code.
-     * Accepted options are <code>DEFAULT_RETRY_POLICY, DOWNGRADING_CONSISTENCY_RETRY_POLICY, FALLTHROUGH_RETRY_POLICY</code>.
+     * Accepted options are {@code DEFAULT_RETRY_POLICY, DOWNGRADING_CONSISTENCY_RETRY_POLICY, FALLTHROUGH_RETRY_POLICY}.
      * <p>
      * The default policy retries queries in only two cases:
      * <ul>
@@ -62,19 +62,19 @@ public abstract class BaseCassandraProperties implements Serializable {
     private String retryPolicy = "DEFAULT_RETRY_POLICY";
     /**
      * Protocol compression options.
-     * Accepted options are <code>NONE, SNAPPY, LZ4</code>.
+     * Accepted options are {@code NONE, SNAPPY, LZ4}.
      */
     private String compression = "LZ4";
     /**
      * Query option consistency level.
      * The consistency level set through this method will be use for queries that don't explicitly have a consistency level.
-     * Accepted values are:<code>ALL, ANY, EACH_QUORUM, LOCAL_ONE, LOCAL_QUORUM, LOCAL_SERIAL, ONE, QUORUM, SERIAL, THREE, TWO</code>.
+     * Accepted values are:{@code ALL, ANY, EACH_QUORUM, LOCAL_ONE, LOCAL_QUORUM, LOCAL_SERIAL, ONE, QUORUM, SERIAL, THREE, TWO}.
      */
     private String consistencyLevel = "LOCAL_QUORUM";
     /**
      * Query option serial consistency level.
      * The serial consistency level set through this method will be use for queries that don't explicitly have a serial consistency level.
-     * Accepted values are:<code>ALL, ANY, EACH_QUORUM, LOCAL_ONE, LOCAL_QUORUM, LOCAL_SERIAL, ONE, QUORUM, SERIAL, THREE, TWO</code>.
+     * Accepted values are:{@code ALL, ANY, EACH_QUORUM, LOCAL_ONE, LOCAL_QUORUM, LOCAL_SERIAL, ONE, QUORUM, SERIAL, THREE, TWO}.
      */
     private String serialConsistencyLevel = "LOCAL_SERIAL";
 

@@ -97,7 +97,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private String keystorePassword;
     /**
-     * The type of keystore. <code>PKCS12</code> or <code>JKS</code>.
+     * The type of keystore. {@code PKCS12} or {@code JKS}.
      * If left blank, defaults to the default keystore type indicated
      * by the underlying Java platform.
      */
@@ -176,11 +176,11 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
      * <ul>
-     * <li><code>DEFAULT</code> The default JNDI provider behavior will be used. </li>
-     * <li><code>ACTIVE_PASSIVE</code> First LDAP will be used for every request unless it fails and then the next shall be used.</li>
-     * <li><code>ROUND_ROBIN</code> For each new connection the next url in the list will be used.</li>
-     * <li><code>RANDOM</code> For each new connection a random LDAP url will be selected.</li>
-     * <li><code>DNS_SRV</code> LDAP urls based on DNS SRV records of the configured/given LDAP url will be used. </li>
+     * <li>{@code DEFAULT} The default JNDI provider behavior will be used. </li>
+     * <li>{@code ACTIVE_PASSIVE} First LDAP will be used for every request unless it fails and then the next shall be used.</li>
+     * <li>{@code ROUND_ROBIN} For each new connection the next url in the list will be used.</li>
+     * <li>{@code RANDOM} For each new connection a random LDAP url will be selected.</li>
+     * <li>{@code DNS_SRV} LDAP urls based on DNS SRV records of the configured/given LDAP url will be used. </li>
      * </ul>
      */
     private String connectionStrategy;
@@ -209,7 +209,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * LDAP operations are delegated to what we call a provider. This allows developers and deployers to change the underlying library
      * that provides the LDAP implementation without modifying any code. By default the JNDI provider is used, though
-     * it may be swapped out for <code>org.ldaptive.provider.unboundid.UnboundIDProvider</code>.
+     * it may be swapped out for {@code org.ldaptive.provider.unboundid.UnboundIDProvider}.
      */
     private String providerClass;
     /**
@@ -222,9 +222,9 @@ public abstract class AbstractLdapProperties implements Serializable {
      * The bind DN to use when connecting to LDAP.
      * LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
      * <ul>
-     * <li><code>bindDn/bindCredential</code> provided - Use the provided credentials to bind when initializing connections.</li>
-     * <li><code>bindDn/bindCredential</code>  set to <code>*</code> - Use a fast-bind strategy to initialize the pool.</li>
-     * <li><code>bindDn/bindCredential</code>  set to blank - Skip connection initializing; perform operations anonymously. </li>
+     * <li>{@code bindDn/bindCredential} provided - Use the provided credentials to bind when initializing connections.</li>
+     * <li>{@code bindDn/bindCredential}  set to {@code *} - Use a fast-bind strategy to initialize the pool.</li>
+     * <li>{@code bindDn/bindCredential}  set to blank - Skip connection initializing; perform operations anonymously. </li>
      * <li>SASL mechanism provided - Use the given SASL mechanism to bind when initializing connections. </li>
      * </ul>
      */
@@ -538,10 +538,10 @@ public abstract class AbstractLdapProperties implements Serializable {
         /**
          * The following LDAP validators can be used to test connection health status:
          * <ul>
-         *     <li><code>search</code>: Validates a connection is healthy by performing a search operation.
+         *     <li>{@code search}: Validates a connection is healthy by performing a search operation.
          *     Validation is considered successful if the search result size is greater than zero.</li>
-         *     <li><code>none</code>: No validation takes place.</li>
-         *     <li><code>compare</code>: Validates a connection is healthy by performing a compare operation.</li>
+         *     <li>{@code none}: No validation takes place.</li>
+         *     <li>{@code compare}: Validates a connection is healthy by performing a compare operation.</li>
          * </ul>
          */
         private String type = "search";

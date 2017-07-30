@@ -40,8 +40,8 @@ public class SamlMetadataUIProperties implements Serializable {
     /**
      * Metadata resources to load and parse through based on the incoming entity id
      * in order to locate MDUI. Resources can be classpath/file/http resources.
-     * If each metadata resource has a signing certificate, they can be added onto the resource with a <code>::</code>
-     * separator. Example: <code>classpath:/sp-metadata.xml::classpath:/pub.key</code>.
+     * If each metadata resource has a signing certificate, they can be added onto the resource with a {@code ::}
+     * separator. Example: {@code classpath:/sp-metadata.xml::classpath:/pub.key}.
      */
     private List<String> resources = Arrays.asList("classpath:/sp-metadata::classpath:/pub.key,"
             + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");

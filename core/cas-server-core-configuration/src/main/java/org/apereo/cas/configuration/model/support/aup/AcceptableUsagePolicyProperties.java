@@ -48,7 +48,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         private String baseDn;
         /**
          * Search filter to use.
-         * Syntax is <code>cn={user}</code> or <code>cn={0}</code>
+         * Syntax is {@code cn={user}} or {@code cn={0}}
          */
         private String userFilter;
 

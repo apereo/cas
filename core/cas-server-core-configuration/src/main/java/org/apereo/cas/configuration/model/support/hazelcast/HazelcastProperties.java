@@ -37,7 +37,7 @@ public class HazelcastProperties implements Serializable {
      */
     private int pageSize = 500;
     /**
-     * Location of a <code>hazelcast.xml</code> file that fully takes over the construction and configuration
+     * Location of a {@code hazelcast.xml} file that fully takes over the construction and configuration
      * of hazelcast caches, etc.
      */
     private Resource configLocation;
