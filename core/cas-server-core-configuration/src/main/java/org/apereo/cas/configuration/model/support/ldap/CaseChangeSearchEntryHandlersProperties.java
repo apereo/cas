@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import org.ldaptive.handler.CaseChangeEntryHandler;
-
 import java.io.Serializable;
 
 /**
@@ -15,41 +13,41 @@ public class CaseChangeSearchEntryHandlersProperties implements Serializable {
     /**
      * The Dn case change.
      */
-    private CaseChangeEntryHandler.CaseChange dnCaseChange;
+    private String dnCaseChange;
     /**
      * The Attribute name case change.
      */
-    private CaseChangeEntryHandler.CaseChange attributeNameCaseChange;
+    private String attributeNameCaseChange;
     /**
      * The Attribute value case change.
      */
-    private CaseChangeEntryHandler.CaseChange attributeValueCaseChange;
+    private String attributeValueCaseChange;
     /**
      * The Attribute names.
      */
     private String[] attributeNames;
 
-    public CaseChangeEntryHandler.CaseChange getDnCaseChange() {
+    public String getDnCaseChange() {
         return dnCaseChange;
     }
 
-    public void setDnCaseChange(final CaseChangeEntryHandler.CaseChange dnCaseChange) {
+    public void setDnCaseChange(final String dnCaseChange) {
         this.dnCaseChange = dnCaseChange;
     }
 
-    public CaseChangeEntryHandler.CaseChange getAttributeNameCaseChange() {
+    public String getAttributeNameCaseChange() {
         return attributeNameCaseChange;
     }
 
-    public void setAttributeNameCaseChange(final CaseChangeEntryHandler.CaseChange attributeNameCaseChange) {
+    public void setAttributeNameCaseChange(final String attributeNameCaseChange) {
         this.attributeNameCaseChange = attributeNameCaseChange;
     }
 
-    public CaseChangeEntryHandler.CaseChange getAttributeValueCaseChange() {
+    public String getAttributeValueCaseChange() {
         return attributeValueCaseChange;
     }
 
-    public void setAttributeValueCaseChange(final CaseChangeEntryHandler.CaseChange attributeValueCaseChange) {
+    public void setAttributeValueCaseChange(final String attributeValueCaseChange) {
         this.attributeValueCaseChange = attributeValueCaseChange;
     }
 

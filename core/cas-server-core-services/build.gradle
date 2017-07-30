@@ -2,8 +2,8 @@ description = "Apereo CAS Core Services"
 dependencies {
     compile project(":api:cas-server-core-api-services")
     
-    implementation libraries.quartz
-    implementation libraries.httpclient
+    
+    
     implementation libraries.groovy
     
     compileOnly project(":core:cas-server-core-util")

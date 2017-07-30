@@ -1,7 +1,7 @@
 description = "Apereo CAS JDBC Authentication Throttling"
 dependencies {
     
-    implementation libraries.quartz
+    
 
 
     compile project(":support:cas-server-support-audit-jdbc")

@@ -1,7 +1,7 @@
 description = "Apereo CAS MongoDb Core Support"
 dependencies {
     implementation libraries.mongo
-    implementation libraries.persondirectory
+    
 
     compile project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-util")

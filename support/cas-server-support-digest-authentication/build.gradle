@@ -6,6 +6,6 @@ dependencies {
     compile project(":core:cas-server-core-web")
     implementation libraries.pac4j
 
-    implementation libraries.httpclient
+    
     
 }

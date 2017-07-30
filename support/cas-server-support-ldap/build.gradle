@@ -4,8 +4,7 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-ldap-core")
     compile project(":core:cas-server-core-configuration")
-    implementation libraries.persondirectory
-    implementation libraries.ldaptive
+    
     implementation libraries.pac4j
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

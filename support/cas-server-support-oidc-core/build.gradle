@@ -1,6 +1,6 @@
 description = "Apereo CAS Server OpenID Connect Core"
 dependencies {
-    implementation libraries.httpclient
+    
     compile project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":support:cas-server-support-json-service-registry")

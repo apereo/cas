@@ -2,7 +2,7 @@ description = "Apereo CAS Mongo Integration"
 dependencies {
     compile project(":core:cas-server-core-services")
     implementation libraries.mongo
-    implementation libraries.persondirectory
+    
 
     compile project(":support:cas-server-support-mongo-core")
     testImplementation project(":core:cas-server-core-authentication")
