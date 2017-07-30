@@ -4923,7 +4923,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.rest.endpoint=https://api.example.org/trustedBrowser
 ```
 
-## Apache Fortress Integration
+## Apache Fortress Authentication
 
 To learn more about this topic, [please review this guide](../integration/Configuring-Fortress-Integration.html).
 
