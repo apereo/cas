@@ -10,6 +10,8 @@ import org.springframework.core.io.ClassPathResource;
  * @since 5.2.0
  */
 public class JsonServiceRegistryProperties extends SpringResourceProperties {
+    private static final long serialVersionUID = -3022199446494732533L;
+
     public JsonServiceRegistryProperties() {
         setLocation(new ClassPathResource("services"));
     }

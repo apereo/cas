@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import org.springframework.core.io.Resource;
 
 /**
  * This is {@link ScriptedPrincipalAttributesProperties}.
