@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 /**
  * This is {@link GroovyPrincipalAttributesProperties}.
@@ -8,7 +8,7 @@ import org.apereo.cas.configuration.support.AbstractConfigProperties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class GroovyPrincipalAttributesProperties extends AbstractConfigProperties {
+public class GroovyPrincipalAttributesProperties extends SpringResourceProperties {
     private static final long serialVersionUID = 7901595963842506684L;
     /**
      * Whether attribute repository should consider the underlying
