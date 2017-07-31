@@ -40,11 +40,26 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
      */
     private int windowSize = 3;
 
+    /**
+     * Store google authenticator devices inside a MongoDb instance.
+     */
     private MongoDb mongodb = new MongoDb();
+    /**
+     * Store google authenticator devices inside a jdbc instance.
+     */
     private Jpa jpa = new Jpa();
+    /**
+     * Store google authenticator devices inside a json file.
+     */
     private Json json = new Json();
+    /**
+     * Store google authenticator devices via a rest interface.
+     */
     private Rest rest = new Rest();
 
+    /**
+     * Control how stale expired tokens should be cleared from the underlying store.
+     */
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
 
     public GAuthMultifactorProperties() {
