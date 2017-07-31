@@ -264,7 +264,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
         buildMetadataFilters(service, metadataProvider);
 
-        LOGGER.info("Initializing metadata resolver from [{}]", service.getMetadataLocation());
+        LOGGER.debug("Initializing metadata resolver from [{}]", service.getMetadataLocation());
         metadataProvider.initialize();
         LOGGER.info("Initialized metadata resolver from [{}]", service.getMetadataLocation());
     }
