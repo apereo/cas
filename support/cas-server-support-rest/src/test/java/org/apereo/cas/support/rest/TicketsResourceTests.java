@@ -97,7 +97,7 @@ public class TicketsResourceTests {
     }
 
     @Test
-    public void normalCreationOfTGT_Json() throws Throwable {
+    public void jsonCreationOfTGT() throws Throwable {
         final String expectedReturnEntityBody = "TGT-1";
 
         configureCasMockToCreateValidTGT();
@@ -112,7 +112,7 @@ public class TicketsResourceTests {
     }
 
     @Test
-    public void normalCreationOfTGT_Default() throws Throwable {
+    public void defaultCreationOfTGT() throws Throwable {
         final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
                 + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
                 + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
@@ -131,7 +131,7 @@ public class TicketsResourceTests {
     }
 
     @Test
-    public void normalCreationOfTGT_HTML() throws Throwable {
+    public void htmlCreationOfTGT() throws Throwable {
         final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
                 + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
                 + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
