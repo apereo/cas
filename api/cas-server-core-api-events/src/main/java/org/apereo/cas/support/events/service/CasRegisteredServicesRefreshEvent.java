@@ -1,7 +1,5 @@
 package org.apereo.cas.support.events.service;
 
-import org.apereo.cas.support.events.AbstractCasEvent;
-
 /**
  * This is {@link CasRegisteredServicesRefreshEvent} that is signaled
  * when a registered service is saved into the CAS registry.
@@ -9,7 +7,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public class CasRegisteredServicesRefreshEvent extends AbstractCasEvent {
+public class CasRegisteredServicesRefreshEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = 291168299766263298L;
 
