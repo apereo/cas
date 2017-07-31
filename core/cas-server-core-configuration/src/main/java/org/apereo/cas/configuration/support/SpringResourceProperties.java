@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 public class SpringResourceProperties implements Serializable {
+    private static final long serialVersionUID = 4142130961445546358L;
     /**
      * The location of service definitions. Resources can be URLS, or
      * files found either on the classpath or outside somewhere
