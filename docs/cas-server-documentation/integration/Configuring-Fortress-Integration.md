@@ -1,9 +1,9 @@
 ---
 layout: default
-title: CAS - Apache Fortress Integration
+title: CAS - Apache Fortress Authentication
 ---
 
-# Apache Fortress Integration
+# Apache Fortress Authentication
 
 Services connected to CAS can use [Apache Fortress](http://directory.apache.org/fortress/) to handle the authentication and authorization with Apache Fortress. 
 The idea of this is because Apache Fortress does not have any SSO mechanism. However, Apache Fortress is complied for `ANSI INCITS 359 RBAC`.  
