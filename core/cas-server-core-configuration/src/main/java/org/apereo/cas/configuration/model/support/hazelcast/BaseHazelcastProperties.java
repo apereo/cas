@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -35,6 +36,7 @@ public class BaseHazelcastProperties implements Serializable {
     /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
+    @NestedConfigurationProperty
     private HazelcastClusterProperties cluster = new HazelcastClusterProperties();
     
     public Resource getConfigLocation() {
