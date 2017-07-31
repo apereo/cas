@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.gua;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import java.io.Serializable;
 
@@ -22,7 +22,7 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
     /**
      * Locate GUA settings and images from a static image.
      */
-    private Resource resource = new Resource();
+    private SpringResourceProperties resource = new SpringResourceProperties();
 
     public Ldap getLdap() {
         return ldap;
@@ -32,16 +32,12 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
         this.ldap = ldap;
     }
 
-    public Resource getResource() {
+    public SpringResourceProperties getResource() {
         return resource;
     }
 
-    public void setResource(final Resource resource) {
+    public void setResource(final SpringResourceProperties resource) {
         this.resource = resource;
-    }
-
-    public static class Resource extends AbstractConfigProperties {
-        private static final long serialVersionUID = 5254023402527794969L;
     }
     
     public static class Ldap extends AbstractLdapProperties {
