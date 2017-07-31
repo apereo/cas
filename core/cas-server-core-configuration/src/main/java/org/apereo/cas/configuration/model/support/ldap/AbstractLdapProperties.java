@@ -533,8 +533,9 @@ public abstract class AbstractLdapProperties implements Serializable {
         this.responseTimeout = responseTimeout;
     }
 
-    public static class Validator {
+    public static class Validator implements Serializable {
 
+        private static final long serialVersionUID = 1150417354213235193L;
         /**
          * The following LDAP validators can be used to test connection health status:
          * <ul>

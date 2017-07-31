@@ -108,7 +108,8 @@ public class RiskBasedAuthenticationProperties implements Serializable {
         this.dateTime = dateTime;
     }
 
-    public static class IpAddress {
+    public static class IpAddress implements Serializable {
+        private static final long serialVersionUID = 577801361041617794L;
         /**
          * Enable IP address checking and criteria
          * to calculate risky authentication attempts.
@@ -124,8 +125,9 @@ public class RiskBasedAuthenticationProperties implements Serializable {
         }
     }
 
-    public static class Agent {
+    public static class Agent implements Serializable {
 
+        private static final long serialVersionUID = 7766080681971729400L;
         /**
          * Enable user-agent checking and criteria
          * to calculate risky authentication attempts.
@@ -141,8 +143,9 @@ public class RiskBasedAuthenticationProperties implements Serializable {
         }
     }
 
-    public static class GeoLocation {
+    public static class GeoLocation implements Serializable {
 
+        private static final long serialVersionUID = 4115333388680538358L;
         /**
          * Enable geolocation checking and criteria
          * to calculate risky authentication attempts.
@@ -158,8 +161,9 @@ public class RiskBasedAuthenticationProperties implements Serializable {
         }
     }
 
-    public static class DateTime {
+    public static class DateTime implements Serializable {
 
+        private static final long serialVersionUID = -3776875583039922050L;
         /**
          * Enable date/time checking and criteria
          * to calculate risky authentication attempts.
@@ -189,8 +193,9 @@ public class RiskBasedAuthenticationProperties implements Serializable {
         }
     }
     
-    public static class Response {
+    public static class Response implements Serializable {
 
+        private static final long serialVersionUID = 8254082561120701582L;
         /**
          * If an authentication attempt is deemed risky, block the response
          * and do not allow further attempts.
@@ -259,8 +264,9 @@ public class RiskBasedAuthenticationProperties implements Serializable {
             this.riskyAuthenticationAttribute = riskyAuthenticationAttribute;
         }
 
-        public static class Mail {
+        public static class Mail implements Serializable {
 
+            private static final long serialVersionUID = 7367120636536230761L;
             /**
              * Principal attribute name that indicates the destination email address
              * for this message. The attribute must already be resolved and available

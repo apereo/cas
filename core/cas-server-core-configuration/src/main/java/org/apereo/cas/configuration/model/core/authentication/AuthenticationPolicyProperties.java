@@ -144,7 +144,8 @@ public class AuthenticationPolicyProperties implements Serializable {
         }
     }
 
-    public static class Req {
+    public static class Req implements Serializable {
+        private static final long serialVersionUID = -4206244023952305821L;
         /**
          * Enables the policy.
          */

@@ -94,7 +94,8 @@ public class HttpWebRequestProperties implements Serializable {
         this.header = header;
     }
 
-    public static class Web {
+    public static class Web implements Serializable {
+        private static final long serialVersionUID = -4711604991237695091L;
         /**
          * Control and specify the encoding for all http requests.
          */
@@ -123,7 +124,8 @@ public class HttpWebRequestProperties implements Serializable {
         }
     }
 
-    public static class Cors {
+    public static class Cors implements Serializable {
+        private static final long serialVersionUID = 5938828345939769185L;
         /**
          * Whether CORS should be enabled for http requests.
          */
@@ -231,7 +233,8 @@ public class HttpWebRequestProperties implements Serializable {
         }
     }
 
-    public static class Header {
+    public static class Header implements Serializable {
+        private static final long serialVersionUID = 5993704062519851359L;
         /**
          * When true, will inject the following headers into the response for non-static resources.
          * <pre>

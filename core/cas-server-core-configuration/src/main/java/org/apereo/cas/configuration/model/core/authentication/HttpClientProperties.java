@@ -80,8 +80,9 @@ public class HttpClientProperties implements Serializable {
         this.readTimeout = readTimeout;
     }
 
-    public static class Truststore {
+    public static class Truststore implements Serializable {
 
+        private static final long serialVersionUID = -1357168622083627654L;
         /**
          * The CAS local truststore resource to contain certificates to the CAS deployment.
          * In the event that local certificates are to be imported into the CAS running environment,
