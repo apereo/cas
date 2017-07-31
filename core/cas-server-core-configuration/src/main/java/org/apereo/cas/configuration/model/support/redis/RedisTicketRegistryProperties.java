@@ -109,8 +109,9 @@ public class RedisTicketRegistryProperties implements Serializable {
     /**
      * Pool properties.
      */
-    public static class Pool {
+    public static class Pool implements Serializable {
 
+        private static final long serialVersionUID = 8534823157764550894L;
         /**
          * Max number of "idle" connections in the pool. Use a negative value to indicate
          * an unlimited number of idle connections.

@@ -61,7 +61,8 @@ public class OAuthProperties implements Serializable {
         this.code = code;
     }
 
-    public static class Code {
+    public static class Code implements Serializable {
+        private static final long serialVersionUID = -7687928082301669359L;
         /**
          * Number of times this code is valid and can be used.
          */
@@ -88,7 +89,8 @@ public class OAuthProperties implements Serializable {
         }
     }
 
-    public static class AccessToken {
+    public static class AccessToken implements Serializable {
+        private static final long serialVersionUID = -6832081675586528350L;
         /**
          * Hard timeout to kill the access token and expire it.
          */
@@ -129,7 +131,8 @@ public class OAuthProperties implements Serializable {
         }
     }
 
-    public static class RefreshToken {
+    public static class RefreshToken implements Serializable {
+        private static final long serialVersionUID = -8328568272835831702L;
         /**
          * Hard timeout beyond which the refresh token is considered expired.
          */
@@ -144,7 +147,8 @@ public class OAuthProperties implements Serializable {
         }
     }
     
-    public static class Grants {
+    public static class Grants implements Serializable {
+        private static final long serialVersionUID = -2246860215082703251L;
         /**
          * Resource owner grant settings.
          */
@@ -158,7 +162,8 @@ public class OAuthProperties implements Serializable {
             this.resourceOwner = resourceOwner;
         }
 
-        public static class ResourceOwner {
+        public static class ResourceOwner implements Serializable {
+            private static final long serialVersionUID = 3171206304518294330L;
             /**
              * Whether using the resource-owner grant should
              * enforce authorization rules and per-service policies
