@@ -32,21 +32,21 @@ public class HazelcastConfigurationFactory {
      *
      * @param hz          the hz
      * @param storageName the storage name
-     * @param timeout     the timeout
+     * @param timeoutSeconds     the timeoutSeconds
      * @return the map config
      */
     public MapConfig buildMapConfig(final HazelcastProperties hz,
                                final String storageName,
-                               final long timeout) {
+                               final long timeoutSeconds) {
         final HazelcastProperties.Cluster cluster = hz.getCluster();
         final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
 
-        LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeout [{}] second(s)",
-                storageName, timeout);
+        LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeoutSeconds [{}] second(s)",
+                storageName, timeoutSeconds);
 
         return new MapConfig()
                 .setName(storageName)
-                .setMaxIdleSeconds((int) timeout)
+                .setMaxIdleSeconds((int) timeoutSeconds)
                 .setBackupCount(cluster.getBackupCount())
                 .setAsyncBackupCount(cluster.getAsyncBackupCount())
                 .setEvictionPolicy(evictionPolicy)

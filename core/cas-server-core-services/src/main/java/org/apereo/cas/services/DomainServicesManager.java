@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 public class DomainServicesManager implements ServicesManager, Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomainServicesManager.class);
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final ServiceRegistryDao serviceRegistryDao;
