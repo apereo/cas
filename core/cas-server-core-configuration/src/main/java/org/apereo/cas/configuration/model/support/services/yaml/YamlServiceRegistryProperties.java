@@ -10,6 +10,8 @@ import org.springframework.core.io.ClassPathResource;
  * @since 5.2.0
  */
 public class YamlServiceRegistryProperties extends SpringResourceProperties {
+    private static final long serialVersionUID = 4863603996990314548L;
+
     public YamlServiceRegistryProperties() {
         setLocation(new ClassPathResource("services"));
     }
