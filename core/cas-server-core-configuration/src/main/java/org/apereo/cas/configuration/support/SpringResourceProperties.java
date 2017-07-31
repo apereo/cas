@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.support;
 
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
