@@ -34,20 +34,20 @@ public class JsonServiceRegistryConfiguration {
     @Bean
     public ServiceRegistryDao serviceRegistryDao() {
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-        if (registry.getConfig().getLocation() == null) {
+        if (registry.getJson().getLocation() == null) {
             LOGGER.warn("The location of service definitions is undefined for the service registry");
             throw new IllegalArgumentException("Service configuration directory for registry must be defined");
         }
 
 
         try {
-            if (registry.getConfig().getLocation() instanceof ClassPathResource) {
+            if (registry.getJson().getLocation() instanceof ClassPathResource) {
                 LOGGER.warn("The location of service definitions [{}] is on the classpath. It is recommended that the location of service definitions "
                         + "be externalized to allow for easier modifications and better "
-                        + "sharing of the configuration.", registry.getConfig().getLocation());
+                        + "sharing of the configuration.", registry.getJson().getLocation());
             }
 
-            return new JsonServiceRegistryDao(registry.getConfig().getLocation(), registry.isWatcherEnabled(), eventPublisher);
+            return new JsonServiceRegistryDao(registry.getJson().getLocation(), registry.isWatcherEnabled(), eventPublisher);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

@@ -140,8 +140,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
-        if (gauth.getJson().getConfig().getLocation() != null) {
-            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getConfig().getLocation(), googleAuthenticatorInstance());
+        if (gauth.getJson().getLocation() != null) {
+            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance());
         }
         if (StringUtils.isNotBlank(gauth.getRest().getEndpointUrl())) {
             return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance(),
