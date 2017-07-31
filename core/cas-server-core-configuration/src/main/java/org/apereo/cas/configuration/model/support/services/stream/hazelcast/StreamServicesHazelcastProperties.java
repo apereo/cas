@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -27,25 +27,29 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
      * short a value will cause the record to expire before it reaches other members of the cluster.
      */
     private String duration = "PT30S";
-    
+
+    /**
+     * Configuration of the hazelcast instance to queue and stream items.
+     */
     @NestedConfigurationProperty
-    private HazelcastTicketRegistryProperties config = new HazelcastTicketRegistryProperties();
+    private BaseHazelcastProperties config = new BaseHazelcastProperties();
 
     /**
      * Settings that deal with setting up a threaded pool
      * to spawn worker threads from the pool and process events.
      */
+    @NestedConfigurationProperty
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
     
     public StreamServicesHazelcastProperties() {
         config.getCluster().setPort(PORT);
     }
 
-    public HazelcastTicketRegistryProperties getConfig() {
+    public BaseHazelcastProperties getConfig() {
         return config;
     }
 
-    public void setConfig(final HazelcastTicketRegistryProperties config) {
+    public void setConfig(final BaseHazelcastProperties config) {
         this.config = config;
     }
 

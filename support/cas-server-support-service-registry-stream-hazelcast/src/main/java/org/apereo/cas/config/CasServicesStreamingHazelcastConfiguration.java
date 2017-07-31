@@ -7,7 +7,7 @@ import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
@@ -62,7 +62,7 @@ public class CasServicesStreamingHazelcastConfiguration {
 
         final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
         final StreamServicesHazelcastProperties stream = casProperties.getServiceRegistry().getStream().getHazelcast();
-        final HazelcastTicketRegistryProperties hz = stream.getConfig();
+        final BaseHazelcastProperties hz = stream.getConfig();
         final MapConfig mapConfig = factory.buildMapConfig(hz, name, TimeUnit.MILLISECONDS.toSeconds(stream.getDuration()));
         final Config cfg = factory.build(hz, mapConfig);
 
