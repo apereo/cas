@@ -7,11 +7,12 @@ import org.apereo.cas.services.ServiceRegistryDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link JsonServiceRegistryConfiguration}.
@@ -21,6 +22,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 @Configuration("jsonServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
 public class JsonServiceRegistryConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryConfiguration.class);
@@ -33,20 +35,8 @@ public class JsonServiceRegistryConfiguration {
 
     @Bean
     public ServiceRegistryDao serviceRegistryDao() {
-        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-        if (registry.getJson().getLocation() == null) {
-            LOGGER.warn("The location of service definitions is undefined for the service registry");
-            throw new IllegalArgumentException("Service configuration directory for registry must be defined");
-        }
-
-
         try {
-            if (registry.getJson().getLocation() instanceof ClassPathResource) {
-                LOGGER.warn("The location of service definitions [{}] is on the classpath. It is recommended that the location of service definitions "
-                        + "be externalized to allow for easier modifications and better "
-                        + "sharing of the configuration.", registry.getJson().getLocation());
-            }
-
+            final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
             return new JsonServiceRegistryDao(registry.getJson().getLocation(), registry.isWatcherEnabled(), eventPublisher);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
