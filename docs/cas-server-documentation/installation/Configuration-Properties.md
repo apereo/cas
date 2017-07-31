@@ -4178,6 +4178,32 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
+## Service Registey Replication Hazelcast
+
+```properties
+# cas.serviceRegistry.stream.hazelcast.duration=PT30S
+# cas.serviceRegistry.stream.hazelcast.config.configLocation=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.evictionPolicy=LRU
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxNoHeartbeatSeconds=300
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastEnabled=false
+# cas.serviceRegistry.stream.hazelcast.config.cluster.tcpipEnabled=true
+# cas.serviceRegistry.stream.hazelcast.config.cluster.members=localhost
+# cas.serviceRegistry.stream.hazelcast.config.cluster.loggingType=slf4j
+# cas.serviceRegistry.stream.hazelcast.config.cluster.instanceName=localhost
+# cas.serviceRegistry.stream.hazelcast.config.cluster.port=5801
+# cas.serviceRegistry.stream.hazelcast.config.cluster.portAutoIncrement=true
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxHeapSizePercentage=85
+# cas.serviceRegistry.stream.hazelcast.config.cluster.backupCount=1
+# cas.serviceRegistry.stream.hazelcast.config.cluster.asyncBackupCount=0
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# cas.serviceRegistry.stream.hazelcast.config.cluster.timeout=5
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTrustedInterfaces=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastPort=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastGroup=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeout=2
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeToLive=32
+```
+
 ## Ticket Registry
 
 To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).

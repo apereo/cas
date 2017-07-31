@@ -5,7 +5,7 @@ import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -50,7 +50,7 @@ public class HazelcastTicketRegistryConfiguration {
     @Autowired
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
                 ticketCatalog,
                 hz.getPageSize());
@@ -71,7 +71,7 @@ public class HazelcastTicketRegistryConfiguration {
     }
 
     private Config getConfig(final TicketCatalog ticketCatalog) {
-        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final Map<String, MapConfig> configs = buildHazelcastMapConfigurations(ticketCatalog);
         final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
         return factory.build(hz, configs);
@@ -80,7 +80,7 @@ public class HazelcastTicketRegistryConfiguration {
     private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {
         final Map<String, MapConfig> mapConfigs = new HashMap<>();
 
-        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
         
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();

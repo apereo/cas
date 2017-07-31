@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
@@ -59,7 +59,7 @@ public class TicketRegistryProperties implements Serializable {
      * Hazelcast registry settings.
      */
     @NestedConfigurationProperty
-    private HazelcastProperties hazelcast = new HazelcastProperties();
+    private HazelcastTicketRegistryProperties hazelcast = new HazelcastTicketRegistryProperties();
 
     /**
      * Apache Ignite registry settings.
@@ -135,11 +135,11 @@ public class TicketRegistryProperties implements Serializable {
         this.ehcache = ehcache;
     }
 
-    public HazelcastProperties getHazelcast() {
+    public HazelcastTicketRegistryProperties getHazelcast() {
         return hazelcast;
     }
 
-    public void setHazelcast(final HazelcastProperties hazelcast) {
+    public void setHazelcast(final HazelcastTicketRegistryProperties hazelcast) {
         this.hazelcast = hazelcast;
     }
 

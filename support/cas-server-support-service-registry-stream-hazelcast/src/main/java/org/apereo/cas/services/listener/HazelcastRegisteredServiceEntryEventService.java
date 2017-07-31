@@ -1,7 +1,6 @@
 package org.apereo.cas.services.listener;
 
 import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryEventType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.listener.handlers.RegisteredServiceEntryAddedEventHandler;
