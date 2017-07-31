@@ -43,7 +43,7 @@ ecosystem.
 
 ## Paid Support
 
-A number of consulting firms offer paid support for CAS. We list a few here with whom we have had positive experiences
+A number of [consulting firms offer paid support](https://www.apereo.org/content/commercial-affiliates) for CAS. We list a few here with whom we have had positive experiences
 and feel comfortable recommending.
 
 ### Unicon
