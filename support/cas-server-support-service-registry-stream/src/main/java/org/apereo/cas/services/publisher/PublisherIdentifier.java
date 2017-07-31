@@ -3,6 +3,7 @@ package org.apereo.cas.services.publisher;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -11,7 +12,8 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class PublisherIdentifier {
+public class PublisherIdentifier implements Serializable {
+    private static final long serialVersionUID = -2216572507148074902L;
     private String id;
 
     public PublisherIdentifier(final String id) {

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -43,35 +42,4 @@ public class CasRegisteredServiceHazelcastStreamPublisher implements CasRegister
         inst.set(service.getName(), new RegisteredServicesQueuedEvent(LocalDateTime.now().toString(), event, service, this.publisherId));
     }
 
-    public static class RegisteredServicesQueuedEvent implements Serializable {
-        private static final long serialVersionUID = -8826414612954655099L;
-        private final String timestamp;
-        private final ApplicationEvent event;
-        private final RegisteredService service;
-        private final PublisherIdentifier publisher;
-
-        public RegisteredServicesQueuedEvent(final String timestamp, final ApplicationEvent event,
-                                             final RegisteredService service, final PublisherIdentifier publisher) {
-            this.timestamp = timestamp;
-            this.event = event;
-            this.service = service;
-            this.publisher = publisher;
-        }
-
-        public String getTimestamp() {
-            return timestamp;
-        }
-
-        public ApplicationEvent getEvent() {
-            return event;
-        }
-
-        public RegisteredService getService() {
-            return service;
-        }
-
-        public PublisherIdentifier getPublisher() {
-            return publisher;
-        }
-    }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 
+import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -21,13 +22,21 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
     /**
      * Duration that indicates how long should items be kept in the hazelcast cache.
      * Note that generally this number needs to be short as once an item is delivered
-     * to a target, it is explicitly removed from the cache/queue.
+     * to a target, it is explicitly removed from the cache/queue. This duration needs to be
+     * adjusted if the latency between the CAS nodes in the cluster is too large. Having too
+     * short a value will cause the record to expire before it reaches other members of the cluster.
      */
-    private String duration = "PT10S";
+    private String duration = "PT30S";
     
     @NestedConfigurationProperty
     private HazelcastProperties config = new HazelcastProperties();
 
+    /**
+     * Settings that deal with setting up a threaded pool
+     * to spawn worker threads from the pool and process events.
+     */
+    private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
+    
     public StreamServicesHazelcastProperties() {
         config.getCluster().setPort(PORT);
     }
@@ -46,5 +55,13 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
 
     public void setDuration(final String duration) {
         this.duration = duration;
+    }
+
+    public ConnectionPoolingProperties getPool() {
+        return pool;
+    }
+
+    public void setPool(final ConnectionPoolingProperties pool) {
+        this.pool = pool;
     }
 }

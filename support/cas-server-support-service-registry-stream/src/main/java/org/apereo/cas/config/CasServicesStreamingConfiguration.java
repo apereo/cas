@@ -30,7 +30,8 @@ public class CasServicesStreamingConfiguration {
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceNoOpStreamPublisher();
     }
-    
+
+    @ConditionalOnMissingBean(name = "casRegisteredServiceStreamPublisherIdentifier")
     @Bean
     public PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier() {
         return new PublisherIdentifier();     

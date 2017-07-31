@@ -26,7 +26,7 @@ public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
     /**
-     * DyanmoDb registry settings.
+     * DynamoDb registry settings.
      */
     @NestedConfigurationProperty
     private DynamoDbTicketRegistryProperties dynamoDb = new DynamoDbTicketRegistryProperties();

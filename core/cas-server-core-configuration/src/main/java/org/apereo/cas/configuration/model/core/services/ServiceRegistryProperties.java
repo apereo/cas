@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegist
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
@@ -70,6 +71,11 @@ public class ServiceRegistryProperties implements Serializable {
     @NestedConfigurationProperty
     private StreamingServiceRegistryProperties stream = new StreamingServiceRegistryProperties();
 
+    /**
+     * Scheduler settings to indicate how often is metadata reloaded.
+     */
+    @NestedConfigurationProperty
+    private SchedulingProperties schedule = new SchedulingProperties();
     
     /**
      * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
@@ -161,5 +167,13 @@ public class ServiceRegistryProperties implements Serializable {
 
     public void setStream(final StreamingServiceRegistryProperties stream) {
         this.stream = stream;
+    }
+
+    public SchedulingProperties getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(final SchedulingProperties schedule) {
+        this.schedule = schedule;
     }
 }
