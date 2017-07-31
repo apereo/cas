@@ -21,7 +21,18 @@ public interface ServicesManager {
      * @param registeredService the RegisteredService to update or add.
      * @return newly persisted RegisteredService instance
      */
-    RegisteredService save(RegisteredService registeredService);
+    default RegisteredService save(RegisteredService registeredService) {
+        return save(registeredService, true);
+    }
+
+    /**
+     * Register a service with CAS, or update an existing an entry.
+     *
+     * @param registeredService the RegisteredService to update or add.
+     * @param publishEvent      whether events should be published to indicate the save operation.
+     * @return newly persisted RegisteredService instance
+     */
+    RegisteredService save(RegisteredService registeredService, boolean publishEvent);
 
     /**
      * Delete the entry for this RegisteredService.
@@ -64,7 +75,7 @@ public interface ServicesManager {
      * @return the t
      */
     <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz);
-    
+
     /**
      * Find service by type.
      *
