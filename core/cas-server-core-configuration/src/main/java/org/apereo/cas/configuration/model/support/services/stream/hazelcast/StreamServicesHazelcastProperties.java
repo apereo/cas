@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -29,7 +29,7 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
     private String duration = "PT30S";
     
     @NestedConfigurationProperty
-    private HazelcastProperties config = new HazelcastProperties();
+    private HazelcastTicketRegistryProperties config = new HazelcastTicketRegistryProperties();
 
     /**
      * Settings that deal with setting up a threaded pool
@@ -41,11 +41,11 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
         config.getCluster().setPort(PORT);
     }
 
-    public HazelcastProperties getConfig() {
+    public HazelcastTicketRegistryProperties getConfig() {
         return config;
     }
 
-    public void setConfig(final HazelcastProperties config) {
+    public void setConfig(final HazelcastTicketRegistryProperties config) {
         this.config = config;
     }
 
