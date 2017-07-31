@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 /**
  * This is {@link JsonPrincipalAttributesProperties}.
@@ -23,7 +23,7 @@ import org.apereo.cas.configuration.support.AbstractConfigProperties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class JsonPrincipalAttributesProperties extends AbstractConfigProperties {
+public class JsonPrincipalAttributesProperties extends SpringResourceProperties {
     private static final long serialVersionUID = -6573755681498251678L;
     /**
      * The order of this attribute repository in the chain of repositories.

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
+import org.springframework.core.io.Resource;
 
 /**
  * This is {@link ScriptedPrincipalAttributesProperties}.
@@ -8,7 +9,7 @@ import org.apereo.cas.configuration.support.AbstractConfigProperties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class ScriptedPrincipalAttributesProperties extends AbstractConfigProperties {
+public class ScriptedPrincipalAttributesProperties extends SpringResourceProperties {
     private static final long serialVersionUID = 4221139939506528713L;
 
     /**
@@ -22,7 +23,7 @@ public class ScriptedPrincipalAttributesProperties extends AbstractConfigPropert
      * merging strategies.
      */
     private int order;
-
+        
     public int getOrder() {
         return order;
     }
