@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.publisher.CasRegisteredServiceAmqpStreamPublisher;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casServicesStreamingAmqpConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasServicesStreamingAmqpConfiguration {
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Bean
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceAmqpStreamPublisher();

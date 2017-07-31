@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -173,8 +174,8 @@ public class CasCoreServicesConfiguration {
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
-        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-        return ObjectUtils.defaultIfNull(registry.getConfig().getLocation(), new ClassPathResource("services"));
+        final JsonServiceRegistryProperties registry = casProperties.getServiceRegistry().getJson();
+        return ObjectUtils.defaultIfNull(registry.getLocation(), new ClassPathResource("services"));
     }
 
     /**
