@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.model.support.infinispan.InfinispanPropertie
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -93,7 +93,7 @@ public class TicketRegistryProperties implements Serializable {
     /**
      * Ticket registry cleaner settings.
      */
-    private Cleaner cleaner = new Cleaner();
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
     public MongoTicketRegistryProperties getMongo() {
         return mongo;
@@ -111,11 +111,11 @@ public class TicketRegistryProperties implements Serializable {
         this.inMemory = inMemory;
     }
 
-    public Cleaner getCleaner() {
+    public ScheduledJobProperties getCleaner() {
         return cleaner;
     }
 
-    public void setCleaner(final Cleaner cleaner) {
+    public void setCleaner(final ScheduledJobProperties cleaner) {
         this.cleaner = cleaner;
     }
 
@@ -248,43 +248,6 @@ public class TicketRegistryProperties implements Serializable {
 
         public void setConcurrency(final int concurrency) {
             this.concurrency = concurrency;
-        }
-    }
-
-    public static class Cleaner implements Serializable {
-
-        private static final long serialVersionUID = 6726908583118452494L;
-        /**
-         * Cleaner id used to control locking strategies.
-         */
-        private String appId = "cas-ticket-registry-cleaner";
-
-        /**
-         * Schedule that determines how often should the cleaner run.
-         */
-        @NestedConfigurationProperty
-        private SchedulingProperties schedule = new SchedulingProperties();
-
-        public Cleaner() {
-            schedule.setEnabled(true);
-            schedule.setStartDelay("PT10S");
-            schedule.setRepeatInterval("PT1M");
-        }
-
-        public SchedulingProperties getSchedule() {
-            return schedule;
-        }
-
-        public void setSchedule(final SchedulingProperties schedule) {
-            this.schedule = schedule;
-        }
-
-        public String getAppId() {
-            return appId;
-        }
-
-        public void setAppId(final String appId) {
-            this.appId = appId;
         }
     }
 }
