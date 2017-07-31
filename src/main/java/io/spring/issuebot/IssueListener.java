@@ -30,6 +30,17 @@ public interface IssueListener {
 	 *
 	 * @param issue the open issue
 	 */
-	void onOpenIssue(Issue issue);
+	default void onOpenIssue(Issue issue) {
+
+	}
+
+	/**
+	 * Notification that the given {@code issue} is being closed.
+	 *
+	 * @param issue the open issue
+	 */
+	default void onIssueClosure(Issue issue) {
+
+	}
 
 }

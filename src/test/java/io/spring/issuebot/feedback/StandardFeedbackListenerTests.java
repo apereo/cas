@@ -18,9 +18,11 @@ package io.spring.issuebot.feedback;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Test;
 
+import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
@@ -38,9 +40,12 @@ public class StandardFeedbackListenerTests {
 
 	private final GitHubOperations gitHub = mock(GitHubOperations.class);
 
+	private final IssueListener issueListener = mock(IssueListener.class);
+
 	private final FeedbackListener listener = new StandardFeedbackListener(this.gitHub,
 			"feedback-provided", "feedback-required", "feedback-reminder",
-			"Please provide requested feedback", "Closing due to lack of feedback");
+			"Please provide requested feedback", "Closing due to lack of feedback",
+			Arrays.asList(this.issueListener));
 
 	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(),
 			null, null);
@@ -88,6 +93,7 @@ public class StandardFeedbackListenerTests {
 		verify(this.gitHub).addComment(this.issue, "Closing due to lack of feedback");
 		verify(this.gitHub).close(this.issue);
 		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
+		verify(this.issueListener).onIssueClosure(this.issue);
 	}
 
 }

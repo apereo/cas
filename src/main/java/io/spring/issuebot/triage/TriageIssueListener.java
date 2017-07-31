@@ -45,11 +45,6 @@ final class TriageIssueListener implements IssueListener {
 		this.triageListener = triageListener;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see io.spring.issuebot.IssueListener#onOpenIssue(io.spring.issuebot.github.Issue)
-	 */
 	@Override
 	public void onOpenIssue(Issue issue) {
 		if (requiresTriage(issue)) {
@@ -64,6 +59,11 @@ final class TriageIssueListener implements IssueListener {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void onIssueClosure(Issue issue) {
+		this.triageListener.doesNotRequireTriage(issue);
 	}
 
 }

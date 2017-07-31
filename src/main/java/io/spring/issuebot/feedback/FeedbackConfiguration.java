@@ -16,11 +16,14 @@
 
 package io.spring.issuebot.feedback;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.spring.issuebot.GitHubProperties;
+import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.github.GitHubOperations;
 
 /**
@@ -35,7 +38,8 @@ class FeedbackConfiguration {
 
 	@Bean
 	FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub,
-			GitHubProperties githubProperties, FeedbackProperties feedbackProperties) {
+			GitHubProperties githubProperties, FeedbackProperties feedbackProperties,
+			List<IssueListener> issueListener) {
 		return new FeedbackIssueListener(gitHub, feedbackProperties.getRequiredLabel(),
 				githubProperties.getRepository().getCollaborators(),
 				githubProperties.getCredentials().getUsername(),
@@ -44,7 +48,7 @@ class FeedbackConfiguration {
 						feedbackProperties.getRequiredLabel(),
 						feedbackProperties.getReminderLabel(),
 						feedbackProperties.getReminderComment(),
-						feedbackProperties.getCloseComment()));
+						feedbackProperties.getCloseComment(), issueListener));
 	}
 
 }

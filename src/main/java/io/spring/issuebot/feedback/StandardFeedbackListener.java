@@ -17,7 +17,9 @@
 package io.spring.issuebot.feedback;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
+import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
@@ -41,15 +43,18 @@ final class StandardFeedbackListener implements FeedbackListener {
 
 	private final String closeComment;
 
+	private final List<IssueListener> issueListeners;
+
 	StandardFeedbackListener(GitHubOperations gitHub, String providedLabel,
 			String requiredLabel, String reminderLabel, String reminderComment,
-			String closeComment) {
+			String closeComment, List<IssueListener> issueListeners) {
 		this.gitHub = gitHub;
 		this.providedLabel = providedLabel;
 		this.requiredLabel = requiredLabel;
 		this.reminderLabel = reminderLabel;
 		this.reminderComment = reminderComment;
 		this.closeComment = closeComment;
+		this.issueListeners = issueListeners;
 	}
 
 	@Override
@@ -77,6 +82,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 		this.gitHub.close(issue);
 		this.gitHub.removeLabel(issue, this.requiredLabel);
 		this.gitHub.removeLabel(issue, this.reminderLabel);
+		this.issueListeners.forEach((listener) -> listener.onIssueClosure(issue));
 	}
 
 	private boolean hasReminderLabel(Issue issue) {

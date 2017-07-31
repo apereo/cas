@@ -19,7 +19,7 @@ package io.spring.issuebot.triage;
 import io.spring.issuebot.github.Issue;
 
 /**
- * A {@code TriageListener} is notified of issues that require triage.
+ * A {@code TriageListener} is notified of issues' triage requirements.
  *
  * @author Andy Wilkinson
  */
@@ -31,4 +31,12 @@ interface TriageListener {
 	 * @param issue the issue
 	 */
 	void requiresTriage(Issue issue);
+
+	/**
+	 * Notification that the given {@code issue} does not require triage.
+	 *
+	 * @param issue the issue
+	 */
+	void doesNotRequireTriage(Issue issue);
+
 }

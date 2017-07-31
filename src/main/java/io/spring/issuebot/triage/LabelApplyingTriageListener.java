@@ -48,4 +48,9 @@ final class LabelApplyingTriageListener implements TriageListener {
 		this.gitHub.addLabel(issue, this.label);
 	}
 
+	@Override
+	public void doesNotRequireTriage(Issue issue) {
+		this.gitHub.removeLabel(issue, this.label);
+	}
+
 }
