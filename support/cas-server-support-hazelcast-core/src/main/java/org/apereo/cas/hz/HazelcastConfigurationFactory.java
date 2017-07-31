@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,6 +71,19 @@ public class HazelcastConfigurationFactory {
         return cfg;
     }
 
+    /**
+     * Build config.
+     *
+     * @param hz        the hz
+     * @param mapConfig the map config
+     * @return the config
+     */
+    public Config build(final HazelcastProperties hz, final MapConfig mapConfig) {
+        final Map<String, MapConfig> cfg = new HashMap<>();
+        cfg.put(mapConfig.getName(), mapConfig);
+        return build(hz, cfg);
+    }
+    
     /**
      * Build config.
      *

@@ -69,7 +69,7 @@ public class PasswordManagementConfiguration {
     public PasswordManagementService passwordChangeService() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            final Resource location = pm.getJson().getConfig().getLocation();
+            final Resource location = pm.getJson().getLocation();
             if (location != null) {
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                 return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor(),
