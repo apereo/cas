@@ -13,6 +13,8 @@ import java.security.SecureRandom;
 public abstract class AbstractRandomStringGenerator implements RandomStringGenerator{
     /** An instance of secure random to ensure randomness is secure. */
     protected final SecureRandom randomizer = new SecureRandom();
+
+    /** Default string length before encoding. */
     protected final int defaultLength;
 
     /**
@@ -37,12 +39,6 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
         return defaultLength;
     }
 
-    @Override
-    public String getNewString(final int size) {
-        final byte[] random = getNewStringAsBytes(size);
-        return this.convertBytesToString(random);
-    }
-
     /**
      * Converts byte[] to String by simple cast. Subclasses should override.
      *
@@ -53,6 +49,11 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
         return new String(random);
     }
 
+    @Override
+    public String getNewString(final int size) {
+        final byte[] random = getNewStringAsBytes(size);
+        return this.convertBytesToString(random);
+    }
 
     @Override
     public String getNewString() {

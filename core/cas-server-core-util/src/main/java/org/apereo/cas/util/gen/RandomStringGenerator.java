@@ -18,6 +18,7 @@ public interface RandomStringGenerator {
     int getDefaultLength();
 
     /**
+     * @param size length of random string before encoding
      * @return a new random string of specified initial size
      */
     String getNewString(int size);
