@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -132,7 +132,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         this.label = label;
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 4303355159388663888L;
     }
 

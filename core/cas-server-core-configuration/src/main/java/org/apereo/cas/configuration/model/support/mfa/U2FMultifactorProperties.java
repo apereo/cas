@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -101,7 +102,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
         this.expireDevicesTimeUnit = expireDevicesTimeUnit;
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = -6883660787308509919L;
     }
 

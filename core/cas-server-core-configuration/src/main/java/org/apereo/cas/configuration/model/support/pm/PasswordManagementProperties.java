@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -355,7 +355,7 @@ public class PasswordManagementProperties implements Serializable {
         }
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 1129426669588789974L;
     }
 }
