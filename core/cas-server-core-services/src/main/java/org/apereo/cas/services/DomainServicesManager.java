@@ -159,6 +159,14 @@ public class DomainServicesManager implements ServicesManager, Serializable {
             actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
+    public RegisteredService save(final RegisteredService registeredService) {
+        return save(registeredService, true);
+    }
+
+    @Audit(action = "SAVE_SERVICE",
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
