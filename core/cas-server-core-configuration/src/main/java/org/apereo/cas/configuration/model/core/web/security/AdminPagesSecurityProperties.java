@@ -145,7 +145,8 @@ public class AdminPagesSecurityProperties implements Serializable {
         this.ldap = ldap;
     }
 
-    public static class Jaas {
+    public static class Jaas implements Serializable {
+        private static final long serialVersionUID = -3024678577827371641L;
         /**
          * JAAS login resource file.
          */
