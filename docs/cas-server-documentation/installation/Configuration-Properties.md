@@ -4219,7 +4219,6 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave.
 
 ```properties
-# cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
 # cas.ticket.registry.cleaner.schedule.startDelay=10000
 # cas.ticket.registry.cleaner.schedule.repeatInterval=60000
 # cas.ticket.registry.cleaner.schedule.enabled=true
