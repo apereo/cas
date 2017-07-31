@@ -3,7 +3,7 @@ layout: default
 title: CAS Configuration Metadata Repository
 ---
 
-# CAS Configuration Metadata Repository
+# Configuration Metadata
 
 CAS ships with meta-data files that provide details of all supported configuration properties and settings. The repository of all configuration metadata
 is generated automatically at build and release time by processing all items annotated with `@ConfigurationProperties` within the codebase. This repository
