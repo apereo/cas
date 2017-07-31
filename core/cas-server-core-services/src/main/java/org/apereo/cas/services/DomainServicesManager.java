@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
@@ -183,6 +184,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         final Map<String, TreeSet<RegisteredService>> localDomains = new ConcurrentHashMap<>();
         this.services.values().stream().forEach(r -> addToDomain(r, localDomains));
         this.domains = localDomains;
+        publishEvent(new CasRegisteredServicesLoadedEvent(this, services.values()));
         LOGGER.info("Loaded [{}] services from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 

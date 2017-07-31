@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaService
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -32,7 +33,6 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private YamlServiceRegistryProperties yaml = new YamlServiceRegistryProperties();
-    
     
     /**
      * Properties pertaining to jpa service registry.
@@ -64,6 +64,13 @@ public class ServiceRegistryProperties implements Serializable {
     @NestedConfigurationProperty
     private DynamoDbServiceRegistryProperties dynamoDb = new DynamoDbServiceRegistryProperties();
 
+    /**
+     * Properties pertaining to streaming service registry content over the wire.
+     */
+    @NestedConfigurationProperty
+    private StreamingServiceRegistryProperties stream = new StreamingServiceRegistryProperties();
+
+    
     /**
      * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
      * with CAS in JSON format.
@@ -146,5 +153,13 @@ public class ServiceRegistryProperties implements Serializable {
 
     public void setYaml(final YamlServiceRegistryProperties yaml) {
         this.yaml = yaml;
+    }
+
+    public StreamingServiceRegistryProperties getStream() {
+        return stream;
+    }
+
+    public void setStream(final StreamingServiceRegistryProperties stream) {
+        this.stream = stream;
     }
 }

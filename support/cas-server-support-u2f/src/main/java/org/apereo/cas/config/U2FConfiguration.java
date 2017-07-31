@@ -183,9 +183,9 @@ public class U2FConfiguration {
                             }
                         });
 
-        if (u2f.getJson().getConfig().getLocation() != null) {
+        if (u2f.getJson().getLocation() != null) {
             return new U2FJsonResourceDeviceRepository(requestStorage,
-                    u2f.getJson().getConfig().getLocation(),
+                    u2f.getJson().getLocation(),
                     u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
         }
 

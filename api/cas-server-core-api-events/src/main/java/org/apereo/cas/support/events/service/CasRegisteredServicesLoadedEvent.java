@@ -1,7 +1,6 @@
 package org.apereo.cas.support.events.service;
 
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.AbstractCasEvent;
 
 import java.util.Collection;
 
@@ -12,7 +11,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasRegisteredServicesLoadedEvent extends AbstractCasEvent {
+public class CasRegisteredServicesLoadedEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = 291168299712263298L;
 

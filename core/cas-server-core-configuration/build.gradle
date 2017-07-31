@@ -22,4 +22,7 @@ task generateConfigurationMetadata(type:JavaExec) {
 }
 
 compileJava.dependsOn(processResources)
-jar.dependsOn(generateConfigurationMetadata)
+
+if (!Boolean.getBoolean("skipNestedConfigMetadataGen")) {
+    jar.dependsOn(generateConfigurationMetadata)
+}
