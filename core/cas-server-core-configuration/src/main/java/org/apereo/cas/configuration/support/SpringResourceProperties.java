@@ -18,7 +18,7 @@ public class SpringResourceProperties implements Serializable {
      * files found either on the classpath or outside somewhere
      * in the file system.
      */
-    private Resource location = new ClassPathResource("services");
+    private Resource location;
 
     public Resource getLocation() {
         return location;

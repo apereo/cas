@@ -37,10 +37,7 @@ import java.io.Serializable;
 public class PasswordManagementConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
