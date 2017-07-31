@@ -31,7 +31,9 @@ import java.util.stream.Collectors;
  *
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated As of 5.2 in favor of {@link DomainServicesManager}.
  */
+@Deprecated
 public class DefaultServicesManager implements ServicesManager, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManager.class);

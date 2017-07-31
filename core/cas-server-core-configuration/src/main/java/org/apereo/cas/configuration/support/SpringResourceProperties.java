@@ -6,12 +6,12 @@ import org.springframework.core.io.Resource;
 import java.io.Serializable;
 
 /**
- * This is {@link BaseResourceProperties}.
+ * This is {@link SpringResourceProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class BaseResourceProperties implements Serializable {
+public class SpringResourceProperties implements Serializable {
     /**
      * The location of service definitions. Resources can be URLS, or
      * files found either on the classpath or outside somewhere
