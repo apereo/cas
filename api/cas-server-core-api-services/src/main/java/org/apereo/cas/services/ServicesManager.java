@@ -21,9 +21,7 @@ public interface ServicesManager {
      * @param registeredService the RegisteredService to update or add.
      * @return newly persisted RegisteredService instance
      */
-    default RegisteredService save(RegisteredService registeredService) {
-        return save(registeredService, true);
-    }
+    RegisteredService save(RegisteredService registeredService);
 
     /**
      * Register a service with CAS, or update an existing an entry.
