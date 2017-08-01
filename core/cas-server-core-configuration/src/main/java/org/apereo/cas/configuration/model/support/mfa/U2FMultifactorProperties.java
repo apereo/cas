@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +46,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Clean up expired records via a background cleaner process.
      */
+    @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
     public U2FMultifactorProperties() {

@@ -1,10 +1,7 @@
 package org.apereo.cas.config;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
@@ -22,8 +19,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResou
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.TemplatedMetadataAndCertificatesGenerationService;
-import org.apereo.cas.support.saml.web.idp.profile.ECPProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.DefaultAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -35,19 +30,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlNameI
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlSubjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileCallbackHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -87,10 +75,6 @@ public class SamlIdPConfiguration {
     private PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator;
 
     @Autowired
-    @Qualifier("casClientTicketValidator")
-    private AbstractUrlBasedTicketValidator casClientTicketValidator;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
@@ -105,14 +89,6 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     private VelocityEngineFactory velocityEngineFactory;
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
@@ -272,176 +248,7 @@ public class SamlIdPConfiguration {
     public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
         return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean, new SamlAttributeEncoder());
     }
-
-    @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
-    @Bean
-    public SamlObjectSignatureValidator samlIdPObjectSignatureValidator() {
-        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-        return new SamlIdPObjectSignatureValidator(
-                algs.getOverrideSignatureReferenceDigestMethods(),
-                algs.getOverrideSignatureAlgorithms(),
-                algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-                algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
-                casSamlIdPMetadataResolver()
-        );
-    }
-
-    @ConditionalOnMissingBean(name = "samlObjectSignatureValidator")
-    @Bean
-    public SamlObjectSignatureValidator samlObjectSignatureValidator() {
-        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-        return new SamlObjectSignatureValidator(
-                algs.getOverrideSignatureReferenceDigestMethods(),
-                algs.getOverrideSignatureAlgorithms(),
-                algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-                algs.getOverrideWhiteListedSignatureSigningAlgorithms()
-        );
-    }
-
-    @Bean
-    @RefreshScope
-    public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
-        return new SSOPostProfileHandlerController(
-                samlObjectSigner(),
-                openSamlConfigBean.getParserPool(),
-                authenticationSystemSupport,
-                servicesManager,
-                webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
-                openSamlConfigBean,
-                samlProfileSamlResponseBuilder(),
-                casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings(),
-                casProperties.getServer().getPrefix(),
-                casProperties.getServer().getName(),
-                casProperties.getAuthn().getMfa().getRequestParameter(),
-                casProperties.getServer().getLoginUrl(),
-                casProperties.getServer().getLogoutUrl(),
-                casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests(),
-                casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled(),
-                samlObjectSignatureValidator());
-    }
-
-    @Bean
-    @RefreshScope
-    public SLORedirectProfileHandlerController sloRedirectProfileHandlerController() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        return new SLORedirectProfileHandlerController(
-                samlObjectSigner(),
-                openSamlConfigBean.getParserPool(),
-                authenticationSystemSupport,
-                servicesManager,
-                webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
-                openSamlConfigBean,
-                samlProfileSamlResponseBuilder(),
-                casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings(),
-                casProperties.getServer().getPrefix(),
-                casProperties.getServer().getName(),
-                casProperties.getAuthn().getMfa().getRequestParameter(),
-                casProperties.getServer().getLoginUrl(),
-                casProperties.getServer().getLogoutUrl(),
-                idp.getLogout().isForceSignedLogoutRequests(),
-                idp.getLogout().isSingleLogoutCallbacksDisabled(),
-                samlObjectSignatureValidator());
-    }
-
-    @Bean
-    @RefreshScope
-    public SLOPostProfileHandlerController sloPostProfileHandlerController() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        return new SLOPostProfileHandlerController(
-                samlObjectSigner(),
-                openSamlConfigBean.getParserPool(),
-                authenticationSystemSupport,
-                servicesManager,
-                webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
-                openSamlConfigBean,
-                samlProfileSamlResponseBuilder(),
-                casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings(),
-                casProperties.getServer().getPrefix(),
-                casProperties.getServer().getName(),
-                casProperties.getAuthn().getMfa().getRequestParameter(),
-                casProperties.getServer().getLoginUrl(),
-                casProperties.getServer().getLogoutUrl(),
-                idp.getLogout().isForceSignedLogoutRequests(),
-                idp.getLogout().isSingleLogoutCallbacksDisabled(),
-                samlObjectSignatureValidator());
-    }
-
-    @Bean
-    @RefreshScope
-    public IdPInitiatedProfileHandlerController idPInitiatedSamlProfileHandlerController() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        return new IdPInitiatedProfileHandlerController(
-                samlObjectSigner(),
-                openSamlConfigBean.getParserPool(),
-                authenticationSystemSupport,
-                servicesManager,
-                webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
-                openSamlConfigBean,
-                samlProfileSamlResponseBuilder(),
-                idp.getAuthenticationContextClassMappings(),
-                casProperties.getServer().getPrefix(),
-                casProperties.getServer().getName(),
-                casProperties.getAuthn().getMfa().getRequestParameter(),
-                casProperties.getServer().getLoginUrl(),
-                casProperties.getServer().getLogoutUrl(),
-                idp.getLogout().isForceSignedLogoutRequests(),
-                idp.getLogout().isSingleLogoutCallbacksDisabled(),
-                samlIdPObjectSignatureValidator());
-    }
-
-    @Bean
-    @RefreshScope
-    public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        return new SSOPostProfileCallbackHandlerController(
-                samlObjectSigner(),
-                openSamlConfigBean.getParserPool(),
-                authenticationSystemSupport,
-                servicesManager,
-                webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
-                openSamlConfigBean,
-                samlProfileSamlResponseBuilder(),
-                idp.getAuthenticationContextClassMappings(),
-                casProperties.getServer().getPrefix(),
-                casProperties.getServer().getName(),
-                casProperties.getAuthn().getMfa().getRequestParameter(),
-                casProperties.getServer().getLoginUrl(),
-                casProperties.getServer().getLogoutUrl(),
-                idp.getLogout().isForceSignedLogoutRequests(),
-                idp.getLogout().isSingleLogoutCallbacksDisabled(),
-                samlObjectSignatureValidator(),
-                this.casClientTicketValidator);
-    }
-
-    @Bean
-    @RefreshScope
-    public ECPProfileHandlerController ecpProfileHandlerController() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        return new ECPProfileHandlerController(samlObjectSigner(),
-                openSamlConfigBean.getParserPool(),
-                authenticationSystemSupport,
-                servicesManager,
-                webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
-                openSamlConfigBean,
-                samlProfileSamlSoap11ResponseBuilder(),
-                samlProfileSamlSoap11FaultResponseBuilder(),
-                idp.getAuthenticationContextClassMappings(),
-                casProperties.getServer().getPrefix(),
-                casProperties.getServer().getName(),
-                casProperties.getAuthn().getMfa().getRequestParameter(),
-                casProperties.getServer().getLoginUrl(),
-                casProperties.getServer().getLogoutUrl(),
-                idp.getLogout().isForceSignedLogoutRequests(),
-                idp.getLogout().isSingleLogoutCallbacksDisabled(),
-                samlObjectSignatureValidator());
-    }
-
+    
     @Bean
     public MetadataResolver casSamlIdPMetadataResolver() {
         try {
