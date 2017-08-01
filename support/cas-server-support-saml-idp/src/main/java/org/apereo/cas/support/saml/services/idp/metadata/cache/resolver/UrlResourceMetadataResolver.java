@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -12,12 +13,13 @@ import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * This is {@link UrlResourceMetadataResolver}.
@@ -45,13 +47,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
             final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             
-            final SamlIdPProperties.Metadata md = samlIdPProperties.getMetadata();
-            final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
-            final File backupFile = new File(backupDirectory, metadataResource.getFilename());
-
-            LOGGER.debug("Metadata backup directory is designated to be [{}]", backupDirectory.getCanonicalPath());
-            FileUtils.forceMkdir(backupDirectory);
-
+            final File backupFile = getMetadataBackupFile(metadataResource, service);
             final String canonicalPath = backupFile.getCanonicalPath();
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
@@ -65,6 +61,23 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             LOGGER.error(e.getMessage(), e);
         }
         return new ArrayList<>();
+    }
+
+    private File getMetadataBackupFile(final AbstractResource metadataResource,
+                                       final RegisteredService service) throws IOException {
+        final SamlIdPProperties.Metadata md = samlIdPProperties.getMetadata();
+        final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
+        LOGGER.debug("Metadata backup directory is at [{}]", backupDirectory.getCanonicalPath());
+        
+        final String metadataFileName = service.getName().concat("-").concat(UUID.randomUUID().toString()).concat(metadataResource.getFilename());
+        final File backupFile = new File(backupDirectory, metadataFileName);
+        if (backupFile.exists()) {
+            LOGGER.warn("Metadata file designated for service [{}] already exists at path [{}].", service.getName(), backupFile.getCanonicalPath());
+        } else {
+            LOGGER.debug("Metadata to fetch for service [{}] will be placed at [{}]", service.getName(), backupFile.getCanonicalPath());
+        }
+        FileUtils.forceMkdir(backupDirectory);
+        return backupFile;
     }
 
     @Override
