@@ -186,7 +186,7 @@ metadata and thus load times are improved.
 
 ### Metadata Resolution
 
-Service provider metadata is fetched, loaded on demand for every service and then cached in a global cache for a configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed, will resort to actually resolving the metadata by loading or contacting the configured resource.
+Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed, will resort to actually resolving the metadata by loading or contacting the configured resource.
 
 ### Attribute Name Formats
 

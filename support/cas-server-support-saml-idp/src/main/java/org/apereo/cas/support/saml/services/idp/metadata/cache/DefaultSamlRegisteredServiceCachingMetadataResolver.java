@@ -20,10 +20,8 @@ import java.util.concurrent.TimeUnit;
 public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
 
-    private long metadataCacheExpirationMinutes;
-
-    private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
-
+    private final long metadataCacheExpirationMinutes;
+    private final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
     private final LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
 
     public DefaultSamlRegisteredServiceCachingMetadataResolver(final long metadataCacheExpirationMinutes,
