@@ -19,7 +19,7 @@ This is the simplest option as CAS is completely ignorant of extra process in th
 ## Hazelcast
 
 If you'd rather not resort to outside tooling and processes or if the native options for your 
-deployment are not that attractive, you can take advantage of CAS' own tooling that provide a 
+deployment are not that attractive, you can take advantage of CAS' own tooling that provides a 
 distributed cache to broadcast service definition files across the cluster and add/remove/update 
 each node as needed. As service definitions are loaded by CAS, events are broadcasted to all 
 CAS nodes in the cluster to pick up the changes and keep definitions in sync. 
