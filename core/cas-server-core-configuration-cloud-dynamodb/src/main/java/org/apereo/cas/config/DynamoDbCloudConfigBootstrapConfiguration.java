@@ -2,9 +2,11 @@ package org.apereo.cas.config;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Region;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -63,7 +65,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final AmazonDynamoDBClient amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
+        final AmazonDynamoDB amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
         createSettingsTable(amazonDynamoDBClient, false);
 
         final ScanRequest scan = new ScanRequest(TABLE_NAME);
@@ -89,7 +91,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         return environment.getProperty("cas.spring.cloud.dynamodb." + key);
     }
 
-    private static AmazonDynamoDBClient getAmazonDynamoDbClient(final Environment environment) {
+    private static AmazonDynamoDB getAmazonDynamoDbClient(final Environment environment) {
         final ClientConfiguration cfg = new ClientConfiguration();
 
         try {
@@ -105,25 +107,26 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final String secret = getSetting(environment, "credentialSecretKey");
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
 
-        final AmazonDynamoDBClient client = new AmazonDynamoDBClient(credentials, cfg);
-        final String endpoint = getSetting(environment, "endpoint");
-        if (StringUtils.isNotBlank(endpoint)) {
-            client.setEndpoint(endpoint);
+        String region = getSetting(environment, "region");
+        if (StringUtils.isBlank(region)) {
+            region = Regions.getCurrentRegion().getName();
         }
 
-        final String region = getSetting(environment, "region");
-        if (StringUtils.isNotBlank(region)) {
-            client.setRegion(Region.getRegion(Regions.valueOf(region)));
-        }
-
-        final String regionOverride = getSetting(environment, "regionOverride");
+        String regionOverride = getSetting(environment, "regionOverride");
         if (StringUtils.isNotBlank(regionOverride)) {
-            client.setSignerRegionOverride(regionOverride);
+            regionOverride = Regions.getCurrentRegion().getName();
         }
+        final String endpoint = getSetting(environment, "endpoint");
+        final AmazonDynamoDB client = AmazonDynamoDBClient.builder()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withClientConfiguration(cfg)
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride))
+                .withRegion(region)
+                .build();
         return client;
     }
 
-    private static void createSettingsTable(final AmazonDynamoDBClient amazonDynamoDBClient, final boolean deleteTables) {
+    private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
         try {
             final String name = ColumnNames.ID.getName();
             final CreateTableRequest request = new CreateTableRequest()

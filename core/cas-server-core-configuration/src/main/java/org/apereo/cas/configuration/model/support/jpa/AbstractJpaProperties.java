@@ -104,10 +104,31 @@ public abstract class AbstractJpaProperties implements Serializable {
     private int batchSize = 5;
 
     /**
-     * Whether or not the construction of the pool should throw an exception
-     * if the minimum number of connections cannot be created.
+     * Set the pool initialization failure timeout.
+     * <ul>
+     *   <li>Any value greater than zero will be treated as a timeout for pool initialization.
+     *       The calling thread will be blocked from continuing until a successful connection
+     *       to the database, or until the timeout is reached.  If the timeout is reached, then
+     *       a {@code PoolInitializationException} will be thrown. </li>
+     *   <li>A value of zero will <i>not</i>  prevent the pool from starting in the
+     *       case that a connection cannot be obtained. However, upon start the pool will
+     *       attempt to obtain a connection and validate that the {@code connectionTestQuery}
+     *       and {@code connectionInitSql} are valid.  If those validations fail, an exception
+     *       will be thrown.  If a connection cannot be obtained, the validation is skipped
+     *       and the the pool will start and continue to try to obtain connections in the
+     *       background.  This can mean that callers to {@code DataSource#getConnection()} may
+     *       encounter exceptions. </li>
+     *   <li>A value less than zero will <i>not</i> bypass any connection attempt and
+     *       validation during startup, and therefore the pool will start immediately.  The
+     *       pool will continue to try to obtain connections in the background. This can mean
+     *       that callers to {@code DataSource#getConnection()} may encounter exceptions. </li>
+     * </ul>
+     * Note that if this timeout value is greater than or equal to zero (0), and therefore an
+     * initial connection validation is performed, this timeout does not override the
+     * {@code connectionTimeout} or {@code validationTimeout}; they will be honored before this
+     * timeout is applied.  The default value is one millisecond.
      */
-    private boolean failFast = true;
+    private long failFastTimeout = 1;
 
     /**
      * This property determines whether data source isolates internal pool queries, such as the connection alive test,
@@ -226,15 +247,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     public void setLeakThreshold(final int leakThreshold) {
         this.leakThreshold = leakThreshold;
     }
-
-    public boolean isFailFast() {
-        return failFast;
-    }
-
-    public void setFailFast(final boolean failFast) {
-        this.failFast = failFast;
-    }
-
+    
     public boolean isIsolateInternalQueries() {
         return isolateInternalQueries;
     }
@@ -281,5 +294,13 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     public void setProperties(final Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public long getFailFastTimeout() {
+        return failFastTimeout;
+    }
+
+    public void setFailFastTimeout(final long failFastTimeout) {
+        this.failFastTimeout = failFastTimeout;
     }
 }

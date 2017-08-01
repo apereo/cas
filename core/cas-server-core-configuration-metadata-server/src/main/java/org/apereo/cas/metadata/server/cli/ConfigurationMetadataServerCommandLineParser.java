@@ -5,7 +5,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -26,62 +25,62 @@ public class ConfigurationMetadataServerCommandLineParser {
     /**
      * Command line option that indicates a shell should be launched.
      */
-    public static final Option OPTION_SHELL = OptionBuilder
-            .withLongOpt("shell")
-            .withDescription("Launch into a CAS interactive shell to execute commands. Activating this option will disable "
+    public static final Option OPTION_SHELL = Option.builder("sh")
+            .longOpt("shell")
+            .desc("Launch into a CAS interactive shell to execute commands. Activating this option will disable "
                     + "basic CLI capabilities and allows you to interactively query the CAS configuration metadata server.")
-            .create("sh");
+            .build();
 
     /**
      * Command line option that indicates a property.
      */
-    public static final Option OPTION_PROPERTY = OptionBuilder
-            .withLongOpt("property")
+    public static final Option OPTION_PROPERTY = Option.builder("p")
+            .longOpt("property")
             .hasArg()
-            .withDescription("A regular expression filter to indicate the property name (i.e. cas.server.name).")
-            .create("p");
+            .desc("A regular expression filter to indicate the property name (i.e. cas.server.name).")
+            .build();
 
     /**
      * Command line option that indicates a group.
      */
-    public static final Option OPTION_GROUP = OptionBuilder
+    public static final Option OPTION_GROUP = Option.builder("g")
             .hasArg()
-            .withLongOpt("group")
-            .withDescription("A regular expression filter to indicate the group name (i.e. cas.authn).")
-            .create("g");
+            .longOpt("group")
+            .desc("A regular expression filter to indicate the group name (i.e. cas.authn).")
+            .build();
 
     /**
      * Command line option that indicates a summary.
      */
-    public static final Option OPTION_SUMMARY = OptionBuilder
-            .withLongOpt("summary")
-            .withDescription("Display a compact version of the query results; Summarize output.")
-            .create("su");
+    public static final Option OPTION_SUMMARY = Option.builder("su")
+            .longOpt("summary")
+            .desc("Display a compact version of the query results; Summarize output.")
+            .build();
 
     /**
      * Command line option that indicates a strict-mode matching.
      */
-    public static final Option OPTION_STRICT_MATCH = OptionBuilder
-            .withLongOpt("strict-match")
-            .withDescription("Control whether pattern matching should be done in strict mode which means "
+    public static final Option OPTION_STRICT_MATCH = Option.builder("sm")
+            .longOpt("strict-match")
+            .desc("Control whether pattern matching should be done in strict mode which means "
                     + "the matching engine tries to match the entire region for the query.")
-            .create("sm");
+            .build();
 
     /**
      * Command line option that indicates banner should be skipped.
      */
-    public static final Option OPTION_SKIP_BANNER = OptionBuilder
-            .withDescription("Skip printing the CAS banner.")
-            .withLongOpt("skip-banner")
-            .create("skb");
+    public static final Option OPTION_SKIP_BANNER = Option.builder("skb")
+            .desc("Skip printing the CAS banner.")
+            .longOpt("skip-banner")
+            .build();
 
     /**
      * Command line option that indicates help information should be displayed.
      */
-    public static final Option OPTION_HELP = OptionBuilder
-            .withDescription("Print help and usage information.")
-            .withLongOpt("help")
-            .create("h");
+    public static final Option OPTION_HELP = Option.builder("h")
+            .desc("Print help and usage information.")
+            .longOpt("help")
+            .build();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataServerCommandLineParser.class);
     private static final int WIDTH = 120;
@@ -207,7 +206,7 @@ public class ConfigurationMetadataServerCommandLineParser {
     public static boolean isSkippingBanner(final Environment env) {
         return env.containsProperty(OPTION_SKIP_BANNER.getOpt());
     }
-    
+
     /**
      * Gets option value.
      *
@@ -286,5 +285,4 @@ public class ConfigurationMetadataServerCommandLineParser {
             }
         });
     }
-
 }
