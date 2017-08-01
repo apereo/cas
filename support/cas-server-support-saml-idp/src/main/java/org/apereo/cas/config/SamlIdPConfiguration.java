@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
@@ -8,17 +7,7 @@ import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.FileSystemResourceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolver;
-import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
-import org.apereo.cas.support.saml.web.idp.metadata.SamlMetadataController;
-import org.apereo.cas.support.saml.web.idp.metadata.TemplatedMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.DefaultAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -34,17 +23,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncryp
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpClient;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.ecp.Response;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,10 +36,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.ui.velocity.VelocityEngineFactory;
-
-import java.util.Collection;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -71,16 +52,16 @@ public class SamlIdPConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    private SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
+
+    @Autowired
     @Qualifier("shibbolethCompatiblePersistentIdGenerator")
     private PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
@@ -92,41 +73,9 @@ public class SamlIdPConfiguration {
 
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
-        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver());
-    }
-
-    @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
-    @Bean
-    @RefreshScope
-    public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
-        return new ChainingMetadataResolverCacheLoader(
-                openSamlConfigBean, httpClient,
-                casProperties.getAuthn().getSamlIdp(), 
-                samlRegisteredServiceMetadataResolvers());
-    }
-
-    @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
-    @Bean
-    @RefreshScope
-    public Collection<SamlRegisteredServiceMetadataResolver> samlRegisteredServiceMetadataResolvers() {
-        return CollectionUtils.wrapSet(
-                new DynamicMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, httpClient),
-                new FileSystemResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean),
-                new UrlResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, httpClient),
-                new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean)
-        );
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver);
     }
     
-    @ConditionalOnMissingBean(name = "defaultSamlRegisteredServiceCachingMetadataResolver")
-    @Bean
-    @RefreshScope
-    public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
-        return new DefaultSamlRegisteredServiceCachingMetadataResolver(
-                casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
-                chainingMetadataResolverCacheLoader()
-        );
-    }
-
     @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
     @Bean
     @RefreshScope
@@ -146,36 +95,7 @@ public class SamlIdPConfiguration {
         return new SamlProfileSamlSubjectBuilder(openSamlConfigBean, samlProfileSamlNameIdBuilder(),
                 casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
     }
-
-    @ConditionalOnMissingBean(name = "samlObjectEncrypter")
-    @Bean
-    @RefreshScope
-    public SamlObjectEncrypter samlObjectEncrypter() {
-        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-        return new SamlObjectEncrypter(algs.getOverrideDataEncryptionAlgorithms(),
-                algs.getOverrideKeyEncryptionAlgorithms(),
-                algs.getOverrideBlackListedEncryptionAlgorithms(),
-                algs.getOverrideWhiteListedAlgorithms());
-    }
-
-    @ConditionalOnMissingBean(name = "samlObjectSigner")
-    @Bean
-    @RefreshScope
-    public BaseSamlObjectSigner samlObjectSigner() {
-        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-        return new BaseSamlObjectSigner(
-                algs.getOverrideSignatureReferenceDigestMethods(),
-                algs.getOverrideSignatureAlgorithms(),
-                algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-                algs.getOverrideWhiteListedSignatureSigningAlgorithms());
-    }
-
-    @ConditionalOnMissingBean(name = "shibbolethIdpMetadataAndCertificatesGenerationService")
-    @Bean
-    public SamlIdpMetadataAndCertificatesGenerationService shibbolethIdpMetadataAndCertificatesGenerationService() {
-        return new TemplatedMetadataAndCertificatesGenerationService();
-    }
-
+    
     @ConditionalOnMissingBean(name = "samlProfileSamlSoap11FaultResponseBuilder")
     @Bean
     @RefreshScope
@@ -248,27 +168,28 @@ public class SamlIdPConfiguration {
     public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
         return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean, new SamlAttributeEncoder());
     }
-    
-    @Bean
-    public MetadataResolver casSamlIdPMetadataResolver() {
-        try {
-            final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-            final ResourceBackedMetadataResolver resolver = new ResourceBackedMetadataResolver(
-                    ResourceHelper.of(new FileSystemResource(idp.getMetadata().getMetadataFile())));
-            resolver.setParserPool(this.openSamlConfigBean.getParserPool());
-            resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
-            resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
-            resolver.setId(idp.getEntityId());
-            resolver.initialize();
-            return resolver;
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
-    }
 
+    @ConditionalOnMissingBean(name = "samlObjectEncrypter")
     @Bean
     @RefreshScope
-    public SamlMetadataController samlMetadataController() {
-        return new SamlMetadataController(shibbolethIdpMetadataAndCertificatesGenerationService());
+    public SamlObjectEncrypter samlObjectEncrypter() {
+        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        return new SamlObjectEncrypter(algs.getOverrideDataEncryptionAlgorithms(),
+                algs.getOverrideKeyEncryptionAlgorithms(),
+                algs.getOverrideBlackListedEncryptionAlgorithms(),
+                algs.getOverrideWhiteListedAlgorithms());
     }
+
+    @ConditionalOnMissingBean(name = "samlObjectSigner")
+    @Bean
+    @RefreshScope
+    public BaseSamlObjectSigner samlObjectSigner() {
+        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        return new BaseSamlObjectSigner(
+                algs.getOverrideSignatureReferenceDigestMethods(),
+                algs.getOverrideSignatureAlgorithms(),
+                algs.getOverrideBlackListedSignatureSigningAlgorithms(),
+                algs.getOverrideWhiteListedSignatureSigningAlgorithms());
+    }
+
 }
