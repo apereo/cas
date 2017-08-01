@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoSer
 import org.apereo.cas.mongo.MongoDbObjectFactory;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.services.convert.BaseConverters;
+import org.apereo.cas.mongo.BaseConverters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,25 +33,9 @@ public class MongoDbServiceRegistryConfiguration {
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        factory.setCustomConversions(customConversions());
         return factory.buildMongoTemplate(casProperties.getServiceRegistry().getMongo());
     }
     
-    private CustomConversions customConversions() {
-        return new CustomConversions(Arrays.asList(
-                new BaseConverters.LoggerConverter(),
-                new BaseConverters.ClassConverter(),
-                new BaseConverters.CommonsLogConverter(),
-                new BaseConverters.PersonAttributesConverter(),
-                new BaseConverters.CacheLoaderConverter(),
-                new BaseConverters.RunnableConverter(),
-                new BaseConverters.ReferenceQueueConverter(),
-                new BaseConverters.ThreadLocalConverter(),
-                new BaseConverters.CertPathConverter(),
-                new BaseConverters.CacheConverter()
-        ));
-    }
-
     @Bean
     public ServiceRegistryDao serviceRegistryDao() throws Exception {
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();

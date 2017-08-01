@@ -33,6 +33,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,14 +50,21 @@ public class MongoDbObjectFactory {
     private static final int TIMEOUT = 5000;
     private static final int DEFAULT_PORT = 27017;
 
-    private CustomConversions customConversions;
+    private CustomConversions customConversions = new CustomConversions(Arrays.asList(
+            new BaseConverters.LoggerConverter(),
+            new BaseConverters.ClassConverter(),
+            new BaseConverters.CommonsLogConverter(),
+            new BaseConverters.PersonAttributesConverter(),
+            new BaseConverters.CacheLoaderConverter(),
+            new BaseConverters.RunnableConverter(),
+            new BaseConverters.ReferenceQueueConverter(),
+            new BaseConverters.ThreadLocalConverter(),
+            new BaseConverters.CertPathConverter(),
+            new BaseConverters.CacheConverter()
+    ));
 
     public MongoDbObjectFactory() {
         this.customConversions = new CustomConversions(new ArrayList<>());
-    }
-
-    public void setCustomConversions(final CustomConversions customConversions) {
-        this.customConversions = customConversions;
     }
 
     /**
@@ -201,7 +209,7 @@ public class MongoDbObjectFactory {
                                 mongo.getPassword().toCharArray())),
                 buildMongoDbClientOptions(mongo));
     }
-    
+
     private Mongo buildMongoDbClient(final String clientUri) {
         final MongoClientURI mongoClientUri = buildMongoClientURI(clientUri);
         final MongoCredential credential = MongoCredential.createCredential(

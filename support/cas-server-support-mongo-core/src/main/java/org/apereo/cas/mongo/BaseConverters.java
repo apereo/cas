@@ -1,4 +1,4 @@
-package org.apereo.cas.services.convert;
+package org.apereo.cas.mongo;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
