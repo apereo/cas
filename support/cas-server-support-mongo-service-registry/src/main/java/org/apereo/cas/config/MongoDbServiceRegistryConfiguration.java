@@ -5,16 +5,12 @@ import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoSer
 import org.apereo.cas.mongo.MongoDbObjectFactory;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.mongo.BaseConverters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
-
-import java.util.Arrays;
 
 /**
  * This is {@link MongoDbServiceRegistryConfiguration}.
