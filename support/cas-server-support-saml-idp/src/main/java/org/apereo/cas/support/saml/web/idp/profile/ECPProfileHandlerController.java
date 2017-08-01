@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -74,14 +75,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param configBean                                   the config bean
      * @param responseBuilder                              the response builder
      * @param samlEcpFaultResponseBuilder                  the saml ecp fault response builder
-     * @param authenticationContextClassMappings           the authentication context class mappings
-     * @param serverPrefix                                 the server prefix
-     * @param serverName                                   the server name
-     * @param authenticationContextRequestParameter        the authentication context request parameter
-     * @param loginUrl                                     the login url
-     * @param logoutUrl                                    the logout url
-     * @param forceSignedLogoutRequests                    the force signed logout requests
-     * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
+     * @param casProperties                                the cas properties
      * @param samlObjectSignatureValidator                 the saml object signature validator
      */
     public ECPProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
@@ -93,23 +87,12 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final OpenSamlConfigBean configBean,
                                        final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> responseBuilder,
                                        final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder,
-                                       final Set<String> authenticationContextClassMappings,
-                                       final String serverPrefix,
-                                       final String serverName,
-                                       final String authenticationContextRequestParameter,
-                                       final String loginUrl,
-                                       final String logoutUrl,
-                                       final boolean forceSignedLogoutRequests,
-                                       final boolean singleLogoutCallbacksDisabled,
+                                       final CasConfigurationProperties casProperties,
                                        final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
                 servicesManager, webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder,
-                authenticationContextClassMappings,
-                serverPrefix, serverName,
-                authenticationContextRequestParameter, loginUrl, logoutUrl,
-                forceSignedLogoutRequests, singleLogoutCallbacksDisabled,
+                configBean, responseBuilder, casProperties,
                 samlObjectSignatureValidator);
         this.samlEcpFaultResponseBuilder = samlEcpFaultResponseBuilder;
     }
