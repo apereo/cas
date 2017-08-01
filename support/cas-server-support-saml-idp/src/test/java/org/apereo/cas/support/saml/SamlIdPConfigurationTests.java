@@ -18,7 +18,11 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
+import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
+import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPWebflowConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
@@ -54,6 +58,10 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasCoreWebConfiguration.class,
         CasCoreWebflowConfiguration.class,
         SamlIdPConfiguration.class,
+        SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
+        SamlIdPEndpointsConfiguration.class,
+        SamlIdPMetadataConfiguration.class,
+        SamlIdPWebflowConfiguration.class,
         RefreshAutoConfiguration.class,
         AopAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
