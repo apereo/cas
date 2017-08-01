@@ -7,4 +7,5 @@ dependencies {
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-ldap-core")
     implementation libraries.groovy
+    implementation libraries.caffein
 }
