@@ -19,7 +19,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
-
+    private static final int MAX_CACHE_SIZE = 10_000;
+    
     private final long metadataCacheExpirationMinutes;
     private final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
     private final LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
@@ -28,7 +29,8 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
                                                                final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
         this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
         this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
-        this.cache = Caffeine.newBuilder().maximumSize(1)
+        this.cache = Caffeine.newBuilder()
+                .maximumSize(MAX_CACHE_SIZE)
                 .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES)
                 .build(this.chainingMetadataResolverCacheLoader);
     }
