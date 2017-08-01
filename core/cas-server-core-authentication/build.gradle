@@ -7,5 +7,6 @@ dependencies {
     api libraries.metrics
     implementation libraries.groovy
     implementation libraries.springsecurity
+    implementation libraries.caffein
     testImplementation project(":core:cas-server-core-web")
 }

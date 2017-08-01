@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
-import com.google.common.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -25,7 +25,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
+public class ChainingMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChainingMetadataResolverCacheLoader.class);
 
     /**

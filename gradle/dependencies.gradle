@@ -396,6 +396,17 @@ ext.libraries = [
                     force = true
                 }
         ],
+        caffein : [
+                dependencies.create("com.github.ben-manes.caffeine:caffeine:$caffeinVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("com.github.ben-manes.caffeine:guava:$caffeinVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         guava                   : [
                 dependencies.create("com.google.guava:guava:$guavaVersion") {
                     force = true
@@ -883,6 +894,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
+                    exclude(group: "com.github.ben-manes.caffein", module: "caffein")
                     force = true
                 },
                 dependencies.create("org.infinispan:infinispan-commons:$infinispanVersion") {
@@ -893,6 +905,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
+                    exclude(group: "com.github.ben-manes.caffein", module: "caffein")
                     force = true
                 },
                 dependencies.create("org.infinispan:infinispan-core:$infinispanVersion") {
@@ -903,6 +916,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
+                    exclude(group: "com.github.ben-manes.caffein", module: "caffein")
                     force = true
                 }
         ],

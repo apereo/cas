@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
@@ -303,8 +303,7 @@ public class CasPersonDirectoryConfiguration {
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
-        final Cache graphs = CacheBuilder.newBuilder()
-                .concurrencyLevel(2)
+        final Cache graphs = Caffeine.newBuilder()
                 .weakKeys()
                 .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
                 .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
