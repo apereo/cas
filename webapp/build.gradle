@@ -30,7 +30,16 @@ task compileSass(type: NpmTask) {
   args = ['run', 'gulp', '--silent']
 }
 
+task runWebpack(type: NpmTask) {
+  group 'UI'
+  dependsOn npm_install
+  description "Compile React code"
+  args = ['run', 'prod', '--silent']
+}
+
+
 processResources.dependsOn npmLint
 processResources.dependsOn compileSass
+processResources.dependsOn runWebpack
 
 clean.delete << file("./node_modules")
