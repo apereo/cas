@@ -68,13 +68,13 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
     /**
      * Return the name of the default theme.
-     * 
+     *
      * @return the name of the default theme, may be null.
      */
     public String getDefaultThemeName() {
         return this.defaultThemeName;
     }
-    
+
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
         final View view = super.loadView(viewName, locale);
@@ -84,7 +84,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final HttpServletResponse response;
         final List<ArgumentExtractor> argumentExtractorList = CollectionUtils.wrap(this.argumentExtractor);
-        
+
         if (requestContext != null) {
             response = WebUtils.getHttpServletResponse(requestContext);
             service = WebUtils.getService(argumentExtractorList, requestContext);
@@ -101,6 +101,8 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
             applyServiceThemeToTemplateName(view, service, response);
             return view;
         }
+        applyServiceThemeToTemplateName(view, service, response);
+        return view;
     }
 
     private void applyServiceThemeToTemplateName(final View view, final WebApplicationService service, final HttpServletResponse response) {
@@ -144,10 +146,9 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
             LOGGER.debug("Found view [{}]", viewUrl);
             thymeleafView.setTemplateName(viewUrl);
             return true;
-        } else {
-            LOGGER.debug("View [{}] does not exist. Falling back to default view at [{}]", viewLocationUrl, thymeleafView.getTemplateName());
-            return false;
         }
+        LOGGER.debug("View [{}] does not exist. Falling back to default view at [{}]", viewLocationUrl, thymeleafView.getTemplateName());
+        return false;
     }
-    
+
 }
