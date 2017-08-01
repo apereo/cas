@@ -53,12 +53,4 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
             }
         }
     }
-
-    public void setChainingMetadataResolverCacheLoader(final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
-        this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
-    }
-
-    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
-        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
-    }
 }

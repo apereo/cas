@@ -14,6 +14,11 @@ import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlB
 import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.FileSystemResourceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.TemplatedMetadataAndCertificatesGenerationService;
@@ -40,6 +45,7 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerCont
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileCallbackHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -60,6 +66,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.ui.velocity.VelocityEngineFactory;
+
+import java.util.Collection;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -116,10 +124,23 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         return new ChainingMetadataResolverCacheLoader(
-                openSamlConfigBean, httpClient
-        );
+                openSamlConfigBean, httpClient,
+                casProperties.getAuthn().getSamlIdp(), 
+                samlRegisteredServiceMetadataResolvers());
     }
 
+    @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
+    @Bean
+    @RefreshScope
+    public Collection<SamlRegisteredServiceMetadataResolver> samlRegisteredServiceMetadataResolvers() {
+        return CollectionUtils.wrapSet(
+                new DynamicMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, httpClient),
+                new FileSystemResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean),
+                new UrlResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, httpClient),
+                new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean)
+        );
+    }
+    
     @ConditionalOnMissingBean(name = "defaultSamlRegisteredServiceCachingMetadataResolver")
     @Bean
     @RefreshScope
