@@ -57,8 +57,8 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     
     
     /**
-     * Set the name of the default theme, if set to {@code null} or empty string no default theme will be used.<br/>
-     * The initial value is {@link #AbstractThemeResolver}.ORIGINAL_DEFAULT_THEME_NAME.
+     * Set the name of the default theme, if set to {@code null} or empty string no default theme will be used.
+     * The initial value is {@link AbstractThemeResolver}.ORIGINAL_DEFAULT_THEME_NAME.
      * 
      * @param defaultThemeName the name of the default theme
      */
