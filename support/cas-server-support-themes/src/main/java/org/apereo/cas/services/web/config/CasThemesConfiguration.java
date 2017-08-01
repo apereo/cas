@@ -66,9 +66,12 @@ public class CasThemesConfiguration {
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
+        final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
+        
         final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver(servicesManager, argumentExtractors,
                 thymeleafProperties.getPrefix(), thymeleafProperties.getSuffix());
-
+        
+        r.setDefaultThemeName( defaultThemeName );
         r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
         r.setCache(this.thymeleafProperties.isCache());
         if (!r.isCache()) {
@@ -104,7 +107,7 @@ public class CasThemesConfiguration {
 
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
-
+        
         return r;
     }
 
