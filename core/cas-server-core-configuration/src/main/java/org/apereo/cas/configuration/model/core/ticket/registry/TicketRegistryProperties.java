@@ -93,6 +93,7 @@ public class TicketRegistryProperties implements Serializable {
     /**
      * Ticket registry cleaner settings.
      */
+    @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
     public MongoTicketRegistryProperties getMongo() {
