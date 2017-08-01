@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -60,6 +61,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Control how stale expired tokens should be cleared from the underlying store.
      */
+    @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
 
     public GAuthMultifactorProperties() {
