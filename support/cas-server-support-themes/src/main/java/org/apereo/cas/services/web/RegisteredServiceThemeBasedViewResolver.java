@@ -41,7 +41,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     private final ArgumentExtractor argumentExtractor;
     private final String prefix;
     private final String suffix;
-    
+
     private String defaultThemeName;
 
     public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager,
@@ -54,12 +54,12 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         this.suffix = suffix;
         this.defaultThemeName = AbstractThemeResolver.ORIGINAL_DEFAULT_THEME_NAME;
     }
-    
-    
+
+
     /**
      * Set the name of the default theme, if set to {@code null} or empty string no default theme will be used.
      * The initial value is {@link AbstractThemeResolver}.ORIGINAL_DEFAULT_THEME_NAME.
-     * 
+     *
      * @param defaultThemeName the name of the default theme
      */
     public void setDefaultThemeName(final String defaultThemeName) {
@@ -96,9 +96,6 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         if (service == null) {
             applyDefaultThemeToTemplateName(view);
-            return view;
-        } else {
-            applyServiceThemeToTemplateName(view, service, response);
             return view;
         }
         applyServiceThemeToTemplateName(view, service, response);
