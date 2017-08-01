@@ -205,7 +205,6 @@ public class CasServerProperties implements Serializable {
         /**
          * Additional attributes to be set on the AJP connector in form of key-value pairs.
          * Examples include:
-         * <p>
          * <ul>
          * <li>{@code tomcatAuthentication}: If set to true, the authentication will be done in Tomcat.
          * Otherwise, the authenticated principal will be propagated from the native webserver

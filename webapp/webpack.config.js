@@ -5,7 +5,6 @@ const config = {
   context: __dirname,
   entry:
     {
-      dashboard: './resources/static/js/components/dashboard/Dashboard',
       statistics: './resources/static/js/StatisticsApp'
     },
   devtool: 'eval',
@@ -75,7 +74,6 @@ const config = {
 
 if (process.env.NODE_ENV === 'production') {
   config.entry = {
-    dashboard: './resources/static/js/components/dashboard/Dashboard',
     statistics: './resources/static/js/StatisticsApp'
   }
   config.devtool = false;

@@ -550,7 +550,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.healthQuery=
 # cas.adminPagesSecurity.jdbc.isolateInternalQueries=false
 # cas.adminPagesSecurity.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.adminPagesSecurity.jdbc.failFast=true
+# cas.adminPagesSecurity.jdbc.failFastTimeout=1
 # cas.adminPagesSecurity.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.adminPagesSecurity.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.adminPagesSecurity.jdbc.leakThreshold=10
@@ -965,7 +965,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].healthQuery=
 # cas.authn.attributeRepository.jdbc[0].isolateInternalQueries=false
 # cas.authn.attributeRepository.jdbc[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.attributeRepository.jdbc[0].failFast=true
+# cas.authn.attributeRepository.jdbc[0].failFastTimeout=1
 # cas.authn.attributeRepository.jdbc[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.attributeRepository.jdbc[0].leakThreshold=10
@@ -1176,7 +1176,7 @@ same IP address.
 # cas.authn.throttle.jdbc.healthQuery=
 # cas.authn.throttle.jdbc.isolateInternalQueries=false
 # cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.throttle.jdbc.failFast=true
+# cas.authn.throttle.jdbc.failFastTimeout=1
 # cas.authn.throttle.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.throttle.jdbc.leakThreshold=10
@@ -1287,7 +1287,7 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.jdbc.healthQuery=
 # cas.authn.surrogate.jdbc.isolateInternalQueries=false
 # cas.authn.surrogate.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.surrogate.jdbc.failFast=true
+# cas.authn.surrogate.jdbc.failFastTimeout=1
 # cas.authn.surrogate.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.surrogate.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.surrogate.jdbc.leakThreshold=10
@@ -1538,7 +1538,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].healthQuery=
 # cas.authn.jdbc.query[0].isolateInternalQueries=false
 # cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.query[0].failFast=true
+# cas.authn.jdbc.query[0].failFastTimeout=1
 # cas.authn.jdbc.query[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.query[0].leakThreshold=10
@@ -1586,7 +1586,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].healthQuery=
 # cas.authn.jdbc.search[0].isolateInternalQueries=false
 # cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.search[0].failFast=true
+# cas.authn.jdbc.search[0].failFastTimeout=1
 # cas.authn.jdbc.search[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.search[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.search[0].leakThreshold=10
@@ -1626,7 +1626,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].healthQuery=
 # cas.authn.jdbc.bind[0].isolateInternalQueries=false
 # cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.bind[0].failFast=true
+# cas.authn.jdbc.bind[0].failFastTimeout=1
 # cas.authn.jdbc.bind[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.bind[0].leakThreshold=10
@@ -1681,7 +1681,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].healthQuery=
 # cas.authn.jdbc.encode[0].isolateInternalQueries=false
 # cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.encode[0].failFast=true
+# cas.authn.jdbc.encode[0].failFastTimeout=1
 # cas.authn.jdbc.encode[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.encode[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.encode[0].leakThreshold=10
@@ -2536,7 +2536,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 # cas.authn.mfa.trusted.jpa.healthQuery=
 # cas.authn.mfa.trusted.jpa.isolateInternalQueries=false
 # cas.authn.mfa.trusted.jpa.url=jdbc:hsqldb:mem:cas-jdbc-storage
-# cas.authn.mfa.trusted.jpa.failFast=true
+# cas.authn.mfa.trusted.jpa.failFastTimeout=1
 # cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.trusted.jpa.leakThreshold=10
 # cas.authn.mfa.trusted.jpa.batchSize=1
@@ -2639,7 +2639,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.jpa.database.healthQuery=
 # cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
 # cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
-# cas.authn.mfa.gauth.jpa.database.failFast=true
+# cas.authn.mfa.gauth.jpa.database.failFastTimeout=1
 # cas.authn.mfa.gauth.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.gauth.jpa.database.leakThreshold=10
 # cas.authn.mfa.gauth.jpa.database.batchSize=1
@@ -2700,7 +2700,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.jpa.healthQuery=
 # cas.authn.mfa.yubikey.jpa.isolateInternalQueries=false
 # cas.authn.mfa.yubikey.jpa.url=jdbc:hsqldb:mem:cas-yubikeymfa
-# cas.authn.mfa.yubikey.jpa.failFast=true
+# cas.authn.mfa.yubikey.jpa.failFastTimeout=1
 # cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.yubikey.jpa.leakThreshold=10
 # cas.authn.mfa.yubikey.jpa.batchSize=1
@@ -2840,7 +2840,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.jpa.healthQuery=
 # cas.authn.mfa.u2f.jpa.isolateInternalQueries=false
 # cas.authn.mfa.u2f.jpa.url=jdbc:hsqldb:mem:cas-u2f
-# cas.authn.mfa.u2f.jpa.failFast=true
+# cas.authn.mfa.u2f.jpa.failFastTimeout=1
 # cas.authn.mfa.u2f.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.u2f.jpa.leakThreshold=10
 # cas.authn.mfa.u2f.jpa.batchSize=1
@@ -3715,7 +3715,7 @@ Store audit logs inside a database.
 # cas.audit.jdbc.healthQuery=
 # cas.audit.jdbc.isolateInternalQueries=false
 # cas.audit.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.audit.jdbc.failFast=true
+# cas.audit.jdbc.failFastTimeout=1
 # cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.audit.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.audit.jdbc.leakThreshold=10
@@ -3793,7 +3793,7 @@ for authentication or attribute retrieval.
 # cas.monitor.jdbc.healthQuery=
 # cas.monitor.jdbc.isolateInternalQueries=false
 # cas.monitor.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.monitor.jdbc.failFast=true
+# cas.monitor.jdbc.failFastTimeout=1
 # cas.monitor.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.monitor.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.monitor.jdbc.leakThreshold=10
@@ -3903,7 +3903,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.healthQuery=
 # cas.events.jpa.isolateInternalQueries=false
 # cas.events.jpa.url=jdbc:hsqldb:mem:cas-events
-# cas.events.jpa.failFast=true
+# cas.events.jpa.failFastTimeout=1
 # cas.events.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.events.jpa.leakThreshold=10
 # cas.events.jpa.batchSize=1
@@ -4157,7 +4157,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.healthQuery=
 # cas.serviceRegistry.jpa.isolateInternalQueries=false
 # cas.serviceRegistry.jpa.url=jdbc:hsqldb:mem:cas-service-registry
-# cas.serviceRegistry.jpa.failFast=true
+# cas.serviceRegistry.jpa.failFastTimeout=1
 # cas.serviceRegistry.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.serviceRegistry.jpa.leakThreshold=10
 # cas.serviceRegistry.jpa.batchSize=1
@@ -4235,7 +4235,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.healthQuery=
 # cas.ticket.registry.jpa.isolateInternalQueries=false
 # cas.ticket.registry.jpa.url=jdbc:hsqldb:mem:cas-ticket-registry
-# cas.ticket.registry.jpa.failFast=true
+# cas.ticket.registry.jpa.failFastTimeout=1
 # cas.ticket.registry.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.ticket.registry.jpa.leakThreshold=10
 # cas.ticket.registry.jpa.jpaLockingTgtEnabled=true
@@ -4933,7 +4933,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.jpa.healthQuery=
 # cas.consent.jpa.isolateInternalQueries=false
 # cas.consent.jpa.url=jpa:hsqldb:mem:cas-hsql-database
-# cas.consent.jpa.failFast=true
+# cas.consent.jpa.failFastTimeout=1
 # cas.consent.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.consent.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.consent.jpa.leakThreshold=10
@@ -5066,7 +5066,7 @@ The following LDAP types are supported:
 # cas.authn.pm.jdbc.healthQuery=
 # cas.authn.pm.jdbc.isolateInternalQueries=false
 # cas.authn.pm.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.pm.jdbc.failFast=true
+# cas.authn.pm.jdbc.failFastTimeout=1
 # cas.authn.pm.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.pm.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.pm.jdbc.leakThreshold=10
