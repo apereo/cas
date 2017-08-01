@@ -14,8 +14,8 @@
         };
         var urls = {
             availability: /*[[@{/status/stats/getAvailability}]]*/ ,
-            memory: /*[[@{/status/stats/getMemStats}]]*/ , 
-            tickets: /*[[@{/status/stats/getTicketStats}]]*/ 
+            memory: /*[[@{/status/stats/getMemStats}]]*/ ,
+            tickets: /*[[@{/status/stats/getTicketStats}]]*/
         };
         function jqueryReady() {
             head.load(
@@ -99,6 +99,9 @@
             </div>
         </div>
 
+        <div class="row section">
+          <div id="statistics-app"></div>
+        </div>
         <h3 th:text="#{cas.statistics.section.serverstatistics.title}"></h3>
         <div class="row runtimePanels">
             <div class="col-md-4">
@@ -188,6 +191,7 @@
 
         <div th:replace="fragments/footerButtons"/>
     </div>
+    <script src="/cas/js/statistics-bundle.js"></script>
 </div>
 </body>
 </html>
