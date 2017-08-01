@@ -4,8 +4,8 @@ import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceMetadataResolverCacheLoader;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicMetadataResolver;
@@ -83,8 +83,8 @@ public class SamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
     @Bean
     @RefreshScope
-    public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
-        return new ChainingMetadataResolverCacheLoader(
+    public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
+        return new SamlRegisteredServiceMetadataResolverCacheLoader(
                 openSamlConfigBean, httpClient,
                 casProperties.getAuthn().getSamlIdp(),
                 samlRegisteredServiceMetadataResolvers());
@@ -106,7 +106,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
-        return new DefaultSamlRegisteredServiceCachingMetadataResolver(
+        return new SamlRegisteredServiceDefaultCachingMetadataResolver(
                 casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
                 chainingMetadataResolverCacheLoader()
         );

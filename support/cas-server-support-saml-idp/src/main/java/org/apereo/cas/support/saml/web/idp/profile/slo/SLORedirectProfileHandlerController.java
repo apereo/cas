@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 /**
  * This is {@link SLORedirectProfileHandlerController}, responsible for
