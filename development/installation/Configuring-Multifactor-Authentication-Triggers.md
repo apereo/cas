@@ -23,7 +23,7 @@ The execution order of multifactor authentication triggers is outlined below:
 11. Grouper
 12. Other
 
-Each trigger should properly try to ignore the authentication request, if applicable confguration is not found for its activation and execution. Also note that various CAS modules present and inject their own *internal triggers* into the CAS application runtime in order to translate protocol-specific authentication requests into multifactor authentication flows.
+Each trigger should properly try to ignore the authentication request, if applicable confguration is not found for its activation and execution. Also note that various CAS modules present and inject their own *internal triggers* into the CAS application runtime in order to translate protocol-specific authentication requests (such as those presented by SAML2 or OpenID Connect) into multifactor authentication flows.
 
 <div class="alert alert-info"><strong>Service Requirement</strong><p>Most multifactor authentication triggers require that the original authentication request submitted to CAS contain a <code>service</code> parameter. Failure to do so will simply result in an initial successful authentication attempt where subsequent requests that carry the relevant parameter will elevate the authentication context and trigger multifactor later. If you need to test a particular trigger, remember to provide the <code>service</code> parameter appropriately to see the trigger in action.</div>
 
