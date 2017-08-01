@@ -2878,6 +2878,8 @@ Delegate authentication to an external CAS server.
 ```properties
 # cas.authn.pac4j.cas[0].loginUrl=
 # cas.authn.pac4j.cas[0].protocol=
+# (Optional) Friendly name for CAS, e.g. "This Organization" or "That Organization"
+# cas.authn.pac4j.cas[0].clientName=
 ```
 
 ### Facebook
@@ -2889,6 +2891,7 @@ Delegate authentication to Facebook.
 # cas.authn.pac4j.facebook.id=
 # cas.authn.pac4j.facebook.secret=
 # cas.authn.pac4j.facebook.scope=
+# cas.authn.pac4j.facebook.clientName=
 ```
 
 ### LinkedIn
@@ -2900,6 +2903,7 @@ Delegate authentication to LinkedIn.
 # cas.authn.pac4j.linkedIn.id=
 # cas.authn.pac4j.linkedIn.secret=
 # cas.authn.pac4j.linkedIn.scope=
+# cas.authn.pac4j.linkedIn.clientName=
 ```
 
 ### Twitter
@@ -2909,6 +2913,7 @@ Delegate authentication to Twitter.
 ```properties
 # cas.authn.pac4j.twitter.id=
 # cas.authn.pac4j.twitter.secret=
+# cas.authn.pac4j.twitter.clientName=
 ```
 
 
@@ -2919,6 +2924,7 @@ Delegate authentication to Paypal.
 ```properties
 # cas.authn.pac4j.paypal.id=
 # cas.authn.pac4j.paypal.secret=
+# cas.authn.pac4j.paypal.clientName=
 ```
 
 
@@ -2929,6 +2935,7 @@ Delegate authentication to Wordpress.
 ```properties
 # cas.authn.pac4j.wordpress.id=
 # cas.authn.pac4j.wordpress.secret=
+# cas.authn.pac4j.wordpress.clientName=
 ```
 
 ### OAuth20
@@ -2945,6 +2952,8 @@ Delegate authentication to an generic OAuth2 server.
 # cas.authn.pac4j.oauth2[0].profileVerb=GET|POST
 # cas.authn.pac4j.oauth2[0].profileAttrs.attr1=path-to-attr-in-profile
 # cas.authn.pac4j.oauth2[0].customParams.param1=value1
+# (Optional) Friendly name for OAuth 2 provider, e.g. "This Organization" or "That Organization"
+# cas.authn.pac4j.oauth2[0].clientName=
 ```
 
 ### OpenID Connect
@@ -2961,6 +2970,9 @@ Delegate authentication to an external OpenID Connect server.
 # cas.authn.pac4j.oidc[0].useNonce=
 # cas.authn.pac4j.oidc[0].preferredJwsAlgorithm=
 # cas.authn.pac4j.oidc[0].customParams.param1=value1
+# (Optional) Friendly name for OIDC provider, e.g. "This Organization" or "That Organization"
+# cas.authn.pac4j.oidc[0].clientName=
+
 ```
 
 ### SAML
@@ -3000,6 +3012,7 @@ Delegate authentication to Yahoo.
 ```properties
 # cas.authn.pac4j.yahoo.id=
 # cas.authn.pac4j.yahoo.secret=
+# cas.authn.pac4j.yahoo.clientName=
 ```
 
 ### Dropbox
@@ -3009,6 +3022,7 @@ Delegate authentication to Dropbox.
 ```properties
 # cas.authn.pac4j.dropbox.id=
 # cas.authn.pac4j.dropbox.secret=
+# cas.authn.pac4j.dropbox.clientName=
 ```
 
 ### Github
@@ -3018,6 +3032,7 @@ Delegate authentication to Github.
 ```properties
 # cas.authn.pac4j.github.id=
 # cas.authn.pac4j.github.secret=
+# cas.authn.pac4j.github.clientName=
 ```
 
 ### Foursquare
@@ -3027,6 +3042,7 @@ Delegate authentication to Foursquare.
 ```properties
 # cas.authn.pac4j.foursquare.id=
 # cas.authn.pac4j.foursquare.secret=
+# cas.authn.pac4j.foursquare.clientName=
 ```
 
 ### WindowsLive
@@ -3036,6 +3052,7 @@ Delegate authentication to WindowsLive.
 ```properties
 # cas.authn.pac4j.windowsLive.id=
 # cas.authn.pac4j.windowsLive.secret=
+# cas.authn.pac4j.windowsLive.clientName=
 ```
 
 ### Google
@@ -3046,6 +3063,7 @@ Delegate authentication to Google.
 # cas.authn.pac4j.google.id=
 # cas.authn.pac4j.google.secret=
 # cas.authn.pac4j.google.scope=EMAIL|PROFILE|EMAIL_AND_PROFILE
+# cas.authn.pac4j.google.clientName=
 ```
 
 ## WS Federation
