@@ -50,6 +50,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Settings that control the background cleaner process.
      */
+    @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
     /**
      * Store devices records inside MongoDb.
