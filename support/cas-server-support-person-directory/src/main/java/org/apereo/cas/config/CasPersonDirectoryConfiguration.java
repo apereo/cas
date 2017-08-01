@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
@@ -100,7 +100,7 @@ public class CasPersonDirectoryConfiguration {
     public List<IPersonAttributeDao> jsonAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getJson().forEach(Unchecked.consumer(json -> {
-            final Resource r = json.getConfig().getLocation();
+            final Resource r = json.getLocation();
             if (r != null) {
                 final JsonBackedComplexStubPersonAttributeDao dao = new JsonBackedComplexStubPersonAttributeDao(r);
                 dao.setOrder(json.getOrder());
@@ -118,12 +118,12 @@ public class CasPersonDirectoryConfiguration {
     public List<IPersonAttributeDao> groovyAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getGroovy().forEach(groovy -> {
-            if (groovy.getConfig().getLocation() != null) {
+            if (groovy.getLocation() != null) {
                 final GroovyPersonAttributeDao dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
                 dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
                 dao.setOrder(groovy.getOrder());
 
-                LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getConfig().getLocation());
+                LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
                 list.add(dao);
             }
         });
@@ -257,11 +257,11 @@ public class CasPersonDirectoryConfiguration {
         casProperties.getAuthn().getAttributeRepository().getScript()
                 .forEach(Unchecked.consumer(script -> {
                     final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
-                    final String scriptFile = IOUtils.toString(script.getConfig().getLocation().getInputStream(), StandardCharsets.UTF_8);
+                    final String scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
                     dao.setScriptFile(scriptFile);
                     dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
                     dao.setOrder(script.getOrder());
-                    LOGGER.debug("Configured scripted attribute sources from [{}]", script.getConfig().getLocation());
+                    LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
                     list.add(dao);
                 }));
         return list;
@@ -303,8 +303,7 @@ public class CasPersonDirectoryConfiguration {
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
-        final Cache graphs = CacheBuilder.newBuilder()
-                .concurrencyLevel(2)
+        final Cache graphs = Caffeine.newBuilder()
                 .weakKeys()
                 .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
                 .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)

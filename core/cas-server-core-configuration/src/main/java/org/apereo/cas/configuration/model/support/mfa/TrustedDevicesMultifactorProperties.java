@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
-import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -50,7 +50,8 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Settings that control the background cleaner process.
      */
-    private Cleaner cleaner = new Cleaner();
+    @NestedConfigurationProperty
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
     /**
      * Store devices records inside MongoDb.
      */
@@ -123,11 +124,11 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
         this.deviceRegistrationEnabled = deviceRegistrationEnabled;
     }
 
-    public Cleaner getCleaner() {
+    public ScheduledJobProperties getCleaner() {
         return cleaner;
     }
 
-    public void setCleaner(final Cleaner cleaner) {
+    public void setCleaner(final ScheduledJobProperties cleaner) {
         this.cleaner = cleaner;
     }
 
@@ -156,28 +157,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
         public MongoDb() {
             setCollection("MongoDbCasTrustedAuthnMfaRepository");
-        }
-    }
-
-    public static class Cleaner implements Serializable {
-
-        private static final long serialVersionUID = 751673609815531025L;
-
-        @NestedConfigurationProperty
-        private SchedulingProperties schedule = new SchedulingProperties();
-
-        public Cleaner() {
-            schedule.setEnabled(true);
-            schedule.setStartDelay("PT15S");
-            schedule.setRepeatInterval("PT2M");
-        }
-
-        public SchedulingProperties getSchedule() {
-            return schedule;
-        }
-
-        public void setSchedule(final SchedulingProperties schedule) {
-            this.schedule = schedule;
         }
     }
 }

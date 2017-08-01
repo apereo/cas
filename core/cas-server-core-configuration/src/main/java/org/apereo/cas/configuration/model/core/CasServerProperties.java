@@ -136,8 +136,9 @@ public class CasServerProperties implements Serializable {
         return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
     }
 
-    public static class Ajp {
+    public static class Ajp implements Serializable {
 
+        private static final long serialVersionUID = -32143821503580896L;
         /**
          * Sets the protocol to handle incoming traffic.
          */
@@ -339,8 +340,9 @@ public class CasServerProperties implements Serializable {
         }
     }
 
-    public static class ExtendedAccessLog {
+    public static class ExtendedAccessLog implements Serializable {
 
+        private static final long serialVersionUID = 6738161402499196038L;
         /**
          * Flag to indicate whether extended log facility is enabled.
          */
@@ -407,7 +409,8 @@ public class CasServerProperties implements Serializable {
         }
     }
 
-    public static class HttpProxy {
+    public static class HttpProxy implements Serializable {
+        private static final long serialVersionUID = 9129851352067677264L;
         /**
          * Enable the container running in proxy mode.
          */
@@ -494,8 +497,9 @@ public class CasServerProperties implements Serializable {
         }
     }
 
-    public static class Http {
+    public static class Http implements Serializable {
 
+        private static final long serialVersionUID = -8809922027350085888L;
         /**
          * Enable a separate port for the embedded container for HTTP access.
          */
@@ -549,7 +553,8 @@ public class CasServerProperties implements Serializable {
         }
     }
 
-    public static class SslValve {
+    public static class SslValve implements Serializable {
+        private static final long serialVersionUID = 3164446071136700242L;
         /**
          * Enable the SSL valve for apache tomcat.
          */

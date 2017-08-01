@@ -820,7 +820,7 @@ If you wish to directly and separately retrieve attributes from a Groovy script,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.groovy[0].config.location=file:/etc/cas/attributes.groovy
+# cas.authn.attributeRepository.groovy[0].location=file:/etc/cas/attributes.groovy
 # cas.authn.attributeRepository.groovy[0].caseInsensitive=false
 # cas.authn.attributeRepository.groovy[0].order=0
 ```
@@ -848,7 +848,7 @@ If you wish to directly and separately retrieve attributes from a static JSON so
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.json[0].config.location=file://etc/cas/attribute-repository.json
+# cas.authn.attributeRepository.json[0].location=file://etc/cas/attribute-repository.json
 # cas.authn.attributeRepository.json[0].order=0
 ```
 
@@ -897,7 +897,7 @@ to be a JSON map as such:
 Similiar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
 
 ```properties
-# cas.authn.attributeRepository.script[0].config.location=file:/etc/cas/script.groovy
+# cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
 # cas.authn.attributeRepository.script[0].order=0
 # cas.authn.attributeRepository.script[0].caseInsensitive=false
 ```
@@ -1233,7 +1233,7 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 ### JSON Surrogate Accounts
 
 ```properties
-# cas.authn.surrogate.json.config.location=file:/etc/cas/config/surrogates.json
+# cas.authn.surrogate.json.location=file:/etc/cas/config/surrogates.json
 ```
 
 ### LDAP Surrogate Accounts
@@ -2126,7 +2126,7 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.config.location=file:/path/to/image.jpg
+# cas.authn.gua.resource.location=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
@@ -2401,7 +2401,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 ```properties
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
-# cas.authn.shiro.config.location=classpath:shiro.ini
+# cas.authn.shiro.location=classpath:shiro.ini
 # cas.authn.shiro.name=
 
 # cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
@@ -2615,7 +2615,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator JSON
 
 ```properties
-# cas.authn.mfa.gauth.json.config.location=file:/somewhere.json
+# cas.authn.mfa.gauth.json.location=file:/somewhere.json
 ```
 
 #### Google Authenticator Rest
@@ -2823,7 +2823,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 ### FIDO U2F JSON
 
 ```properties
-# cas.authn.mfa.u2f.json.config.location=file:///etc/cas/config/u2fdevices.json
+# cas.authn.mfa.u2f.json.location=file:///etc/cas/config/u2fdevices.json
 ```
 
 ### FIDO U2F Cleaner
@@ -4005,17 +4005,27 @@ The default options are avaiable for hostname verification:
 # cas.serviceRegistry.initFromJson=false
 ```
 
-### Resource-based (JSON/YAML) Service Registry
+### JSON Service Registry
 
 If the underlying service registry is using local system resources
-to locate service definitions, decide how those resources should be found.
+to locate JSON service definitions, decide how those resources should be found.
 
 ```properties
-# cas.serviceRegistry.config.location=classpath:/services
+# cas.serviceRegistry.json.location=classpath:/services
 ```
 
-To learn more about this topic, [please review this guide](JSON-Service-Management.html)
-or [this guide](YAML-Service-Management.html).
+To learn more about this topic, [please review this guide](JSON-Service-Management.html).
+
+### YAML Service Registry
+
+If the underlying service registry is using local system resources
+to locate YAML service definitions, decide how those resources should be found.
+
+```properties
+# cas.serviceRegistry.yaml.location=classpath:/services
+```
+
+To learn more about this topic, [please review this guide](YAML-Service-Management.html).
 
 ### DynamoDb Service Registry
 
@@ -4168,6 +4178,32 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
+## Service Registey Replication Hazelcast
+
+```properties
+# cas.serviceRegistry.stream.hazelcast.duration=PT30S
+# cas.serviceRegistry.stream.hazelcast.config.configLocation=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.evictionPolicy=LRU
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxNoHeartbeatSeconds=300
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastEnabled=false
+# cas.serviceRegistry.stream.hazelcast.config.cluster.tcpipEnabled=true
+# cas.serviceRegistry.stream.hazelcast.config.cluster.members=localhost
+# cas.serviceRegistry.stream.hazelcast.config.cluster.loggingType=slf4j
+# cas.serviceRegistry.stream.hazelcast.config.cluster.instanceName=localhost
+# cas.serviceRegistry.stream.hazelcast.config.cluster.port=5801
+# cas.serviceRegistry.stream.hazelcast.config.cluster.portAutoIncrement=true
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxHeapSizePercentage=85
+# cas.serviceRegistry.stream.hazelcast.config.cluster.backupCount=1
+# cas.serviceRegistry.stream.hazelcast.config.cluster.asyncBackupCount=0
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# cas.serviceRegistry.stream.hazelcast.config.cluster.timeout=5
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTrustedInterfaces=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastPort=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastGroup=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeout=2
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeToLive=32
+```
+
 ## Ticket Registry
 
 To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).
@@ -4183,7 +4219,6 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave.
 
 ```properties
-# cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
 # cas.ticket.registry.cleaner.schedule.startDelay=10000
 # cas.ticket.registry.cleaner.schedule.repeatInterval=60000
 # cas.ticket.registry.cleaner.schedule.enabled=true
@@ -4887,7 +4922,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 ### JSON Attribute Consent
 
 ```properties
-# cas.consent.json.config.location=file:/etc/cas/config/consent.json
+# cas.consent.json.location=file:/etc/cas/config/consent.json
 ```
 
 ### JPA Attribute Consent
@@ -4960,7 +4995,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 ### JSON Password Management
 
 ```properties
-# cas.authn.pm.json.config.location=classpath:jsonResourcePassword.json
+# cas.authn.pm.json.location=classpath:jsonResourcePassword.json
 ```
 
 ### LDAP Password Management

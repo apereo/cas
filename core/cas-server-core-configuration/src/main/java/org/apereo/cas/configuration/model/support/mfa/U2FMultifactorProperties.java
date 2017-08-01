@@ -1,11 +1,10 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,17 +46,18 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Clean up expired records via a background cleaner process.
      */
-    private Cleaner cleaner = new Cleaner();
+    @NestedConfigurationProperty
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
     public U2FMultifactorProperties() {
         setId("mfa-u2f");
     }
 
-    public Cleaner getCleaner() {
+    public ScheduledJobProperties getCleaner() {
         return cleaner;
     }
 
-    public void setCleaner(final Cleaner cleaner) {
+    public void setCleaner(final ScheduledJobProperties cleaner) {
         this.cleaner = cleaner;
     }
 
@@ -101,7 +101,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
         this.expireDevicesTimeUnit = expireDevicesTimeUnit;
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = -6883660787308509919L;
     }
 
@@ -117,25 +117,5 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
         private static final long serialVersionUID = -4334840263678287815L;
     }
 
-    public static class Cleaner implements Serializable {
-        private static final long serialVersionUID = 8459671958275130605L;
-
-        @NestedConfigurationProperty
-        private SchedulingProperties schedule = new SchedulingProperties();
-
-        public Cleaner() {
-            schedule.setEnabled(true);
-            schedule.setStartDelay("PT10S");
-            schedule.setRepeatInterval("PT1M");
-        }
-
-        public SchedulingProperties getSchedule() {
-            return schedule;
-        }
-
-        public void setSchedule(final SchedulingProperties schedule) {
-            this.schedule = schedule;
-        }
-    }
 }
 

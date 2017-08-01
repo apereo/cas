@@ -31,7 +31,9 @@ import java.util.stream.Collectors;
  *
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated As of 5.2 in favor of {@link DomainServicesManager}.
  */
+@Deprecated
 public class DefaultServicesManager implements ServicesManager, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManager.class);
@@ -131,12 +133,23 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
             actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
-    public synchronized RegisteredService save(final RegisteredService registeredService) {
+    public RegisteredService save(final RegisteredService registeredService) {
+        return save(registeredService, true);
+    }
+    
+    @Audit(action = "SAVE_SERVICE",
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Override
+    public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
-        publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+        
+        if (publishEvent) {
+            publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+        }
         return r;
     }
 

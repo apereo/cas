@@ -21,7 +21,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
@@ -37,10 +36,7 @@ import java.io.Serializable;
 public class PasswordManagementConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -69,7 +65,7 @@ public class PasswordManagementConfiguration {
     public PasswordManagementService passwordChangeService() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            final Resource location = pm.getJson().getConfig().getLocation();
+            final Resource location = pm.getJson().getLocation();
             if (location != null) {
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                 return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor(),
@@ -80,7 +76,7 @@ public class PasswordManagementConfiguration {
                     + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
                     + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
         } else {
-            LOGGER.info("Password management is disabled. To enabled the password management functionality, "
+            LOGGER.info("Password management is disabled. To enable the password management functionality, "
                     + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),

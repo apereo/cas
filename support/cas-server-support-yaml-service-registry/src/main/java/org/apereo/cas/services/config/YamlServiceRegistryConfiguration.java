@@ -12,7 +12,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * This is {@link YamlServiceRegistryConfiguration}.
@@ -34,20 +33,9 @@ public class YamlServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
-        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-        if (registry.getConfig().getLocation() == null) {
-            LOGGER.warn("The location of service definitions is undefined for the service registry");
-            throw new IllegalArgumentException("Service configuration directory for registry must be defined");
-        }
-
-
         try {
-            if (registry.getConfig().getLocation() instanceof ClassPathResource) {
-                LOGGER.warn("The location of service definitions [{}] is on the classpath. It is recommended that the location of service definitions "
-                                + "be externalized to allow for easier modifications and better sharing of the configuration.",
-                        registry.getConfig().getLocation());
-            }
-            return new YamlServiceRegistryDao(registry.getConfig().getLocation(), registry.isWatcherEnabled(), eventPublisher);
+            final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+            return new YamlServiceRegistryDao(registry.getYaml().getLocation(), registry.isWatcherEnabled(), eventPublisher);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

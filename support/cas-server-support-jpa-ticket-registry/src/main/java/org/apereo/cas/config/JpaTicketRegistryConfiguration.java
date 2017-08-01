@@ -89,6 +89,6 @@ public class JpaTicketRegistryConfiguration {
     public LockingStrategy lockingStrategy() {
         final TicketRegistryProperties registry = casProperties.getTicket().getRegistry();
         final String uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
-        return new JpaLockingStrategy(registry.getCleaner().getAppId(), uniqueId, registry.getJpa().getJpaLockingTimeout());
+        return new JpaLockingStrategy("cas-ticket-registry-cleaner", uniqueId, registry.getJpa().getJpaLockingTimeout());
     }
 }

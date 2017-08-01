@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
  */
 public class DomainServicesManager implements ServicesManager, Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomainServicesManager.class);
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final ServiceRegistryDao serviceRegistryDao;
@@ -158,11 +159,21 @@ public class DomainServicesManager implements ServicesManager, Serializable {
             actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
-    public synchronized RegisteredService save(final RegisteredService registeredService) {
+    public RegisteredService save(final RegisteredService registeredService) {
+        return save(registeredService, true);
+    }
+
+    @Audit(action = "SAVE_SERVICE",
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Override
+    public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
         addToDomain(r, this.domains);
-        publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+        if (publishEvent) {
+            publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+        }
         return r;
     }
 
@@ -183,6 +194,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         final Map<String, TreeSet<RegisteredService>> localDomains = new ConcurrentHashMap<>();
         this.services.values().stream().forEach(r -> addToDomain(r, localDomains));
         this.domains = localDomains;
+        publishEvent(new CasRegisteredServicesLoadedEvent(this, services.values()));
         LOGGER.info("Loaded [{}] services from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 

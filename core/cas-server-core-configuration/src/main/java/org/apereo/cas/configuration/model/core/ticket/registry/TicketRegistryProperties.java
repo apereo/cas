@@ -4,13 +4,13 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -26,7 +26,7 @@ public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
     /**
-     * DyanmoDb registry settings.
+     * DynamoDb registry settings.
      */
     @NestedConfigurationProperty
     private DynamoDbTicketRegistryProperties dynamoDb = new DynamoDbTicketRegistryProperties();
@@ -59,7 +59,7 @@ public class TicketRegistryProperties implements Serializable {
      * Hazelcast registry settings.
      */
     @NestedConfigurationProperty
-    private HazelcastProperties hazelcast = new HazelcastProperties();
+    private HazelcastTicketRegistryProperties hazelcast = new HazelcastTicketRegistryProperties();
 
     /**
      * Apache Ignite registry settings.
@@ -93,7 +93,8 @@ public class TicketRegistryProperties implements Serializable {
     /**
      * Ticket registry cleaner settings.
      */
-    private Cleaner cleaner = new Cleaner();
+    @NestedConfigurationProperty
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
     public MongoTicketRegistryProperties getMongo() {
         return mongo;
@@ -111,11 +112,11 @@ public class TicketRegistryProperties implements Serializable {
         this.inMemory = inMemory;
     }
 
-    public Cleaner getCleaner() {
+    public ScheduledJobProperties getCleaner() {
         return cleaner;
     }
 
-    public void setCleaner(final Cleaner cleaner) {
+    public void setCleaner(final ScheduledJobProperties cleaner) {
         this.cleaner = cleaner;
     }
 
@@ -135,11 +136,11 @@ public class TicketRegistryProperties implements Serializable {
         this.ehcache = ehcache;
     }
 
-    public HazelcastProperties getHazelcast() {
+    public HazelcastTicketRegistryProperties getHazelcast() {
         return hazelcast;
     }
 
-    public void setHazelcast(final HazelcastProperties hazelcast) {
+    public void setHazelcast(final HazelcastTicketRegistryProperties hazelcast) {
         this.hazelcast = hazelcast;
     }
 
@@ -248,43 +249,6 @@ public class TicketRegistryProperties implements Serializable {
 
         public void setConcurrency(final int concurrency) {
             this.concurrency = concurrency;
-        }
-    }
-
-    public static class Cleaner implements Serializable {
-
-        private static final long serialVersionUID = 6726908583118452494L;
-        /**
-         * Cleaner id used to control locking strategies.
-         */
-        private String appId = "cas-ticket-registry-cleaner";
-
-        /**
-         * Schedule that determines how often should the cleaner run.
-         */
-        @NestedConfigurationProperty
-        private SchedulingProperties schedule = new SchedulingProperties();
-
-        public Cleaner() {
-            schedule.setEnabled(true);
-            schedule.setStartDelay("PT10S");
-            schedule.setRepeatInterval("PT1M");
-        }
-
-        public SchedulingProperties getSchedule() {
-            return schedule;
-        }
-
-        public void setSchedule(final SchedulingProperties schedule) {
-            this.schedule = schedule;
-        }
-
-        public String getAppId() {
-            return appId;
-        }
-
-        public void setAppId(final String appId) {
-            this.appId = appId;
         }
     }
 }

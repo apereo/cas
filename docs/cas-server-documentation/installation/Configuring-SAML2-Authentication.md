@@ -184,6 +184,10 @@ metadata itself. This is essentially the same thing as forcing the pattern
 to match entity ids, except that it's done while CAS is reading the
 metadata and thus load times are improved.
 
+### Metadata Resolution
+
+Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed, will resort to actually resolving the metadata by loading or contacting the configured resource.
+
 ### Attribute Name Formats
 
 Attribute name formats can be specified per relying party in the service registry.

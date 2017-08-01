@@ -2,8 +2,8 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
-import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -41,12 +41,28 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
      */
     private int windowSize = 3;
 
+    /**
+     * Store google authenticator devices inside a MongoDb instance.
+     */
     private MongoDb mongodb = new MongoDb();
+    /**
+     * Store google authenticator devices inside a jdbc instance.
+     */
     private Jpa jpa = new Jpa();
+    /**
+     * Store google authenticator devices inside a json file.
+     */
     private Json json = new Json();
+    /**
+     * Store google authenticator devices via a rest interface.
+     */
     private Rest rest = new Rest();
 
-    private Cleaner cleaner = new Cleaner();
+    /**
+     * Control how stale expired tokens should be cleared from the underlying store.
+     */
+    @NestedConfigurationProperty
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
 
     public GAuthMultifactorProperties() {
         setId("mfa-gauth");
@@ -60,11 +76,11 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         this.rest = rest;
     }
 
-    public Cleaner getCleaner() {
+    public ScheduledJobProperties getCleaner() {
         return cleaner;
     }
 
-    public void setCleaner(final Cleaner cleaner) {
+    public void setCleaner(final ScheduledJobProperties cleaner) {
         this.cleaner = cleaner;
     }
 
@@ -132,7 +148,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         this.label = label;
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 4303355159388663888L;
     }
 
@@ -194,27 +210,6 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
             public Database() {
                 super.setUrl("jdbc:hsqldb:mem:cas-gauth");
             }
-        }
-    }
-
-    public static class Cleaner implements Serializable {
-        private static final long serialVersionUID = -6036042153454544990L;
-        
-        @NestedConfigurationProperty
-        private SchedulingProperties schedule = new SchedulingProperties();
-
-        public Cleaner() {
-            schedule.setEnabled(true);
-            schedule.setStartDelay("PT1M");
-            schedule.setRepeatInterval("PT1M");
-        }
-
-        public SchedulingProperties getSchedule() {
-            return schedule;
-        }
-
-        public void setSchedule(final SchedulingProperties schedule) {
-            this.schedule = schedule;
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * An adaptation of metadata resolver which handles the resolution of metadata resources
- * inside a Guava cache. It basically is a fancy wrapper around Guava, and constructs the cache
+ * inside a cache. It basically is a fancy wrapper around a cache, and constructs the cache
  * semantics before processing the resolution of metadata for a SAML service.
  *
  * @author Misagh Moayyed
@@ -19,19 +19,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
-
-    private long metadataCacheExpirationMinutes;
-
-    private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
-
+    private static final int MAX_CACHE_SIZE = 10_000;
+    
+    private final long metadataCacheExpirationMinutes;
+    private final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
     private final LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
 
     public DefaultSamlRegisteredServiceCachingMetadataResolver(final long metadataCacheExpirationMinutes,
                                                                final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
         this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
         this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
-        this.cache = CacheBuilder.newBuilder().maximumSize(1)
-                .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES).build(this.chainingMetadataResolverCacheLoader);
+        this.cache = Caffeine.newBuilder()
+                .maximumSize(MAX_CACHE_SIZE)
+                .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES)
+                .build(this.chainingMetadataResolverCacheLoader);
     }
 
     @Override
@@ -52,13 +53,5 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
                         this.metadataCacheExpirationMinutes);
             }
         }
-    }
-
-    public void setChainingMetadataResolverCacheLoader(final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
-        this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
-    }
-
-    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
-        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
     }
 }
