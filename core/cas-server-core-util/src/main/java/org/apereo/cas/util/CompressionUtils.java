@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -132,7 +133,7 @@ public final class CompressionUtils {
         try {
             final byte[] bytes = Base64.decodeBase64(zippedBase64Str);
             zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
-            return IOUtils.toString(zi);
+            return IOUtils.toString(zi, Charset.defaultCharset());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
