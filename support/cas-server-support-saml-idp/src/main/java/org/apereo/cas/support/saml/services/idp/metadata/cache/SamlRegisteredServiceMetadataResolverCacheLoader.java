@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * This is {@link ChainingMetadataResolverCacheLoader} that uses Guava's cache loading strategy
+ * This is {@link SamlRegisteredServiceMetadataResolverCacheLoader} that uses Guava's cache loading strategy
  * to keep track of metadata resources and resolvers. The cache loader here supports loading
  * metadata resources from SAML services, supports dynamic metadata queries and is able
  * to run various validation filters on the metadata before finally caching the resolver.
@@ -25,8 +25,8 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ChainingMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChainingMetadataResolverCacheLoader.class);
+public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, MetadataResolver> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceMetadataResolverCacheLoader.class);
 
     /**
      * The Config bean.
@@ -41,10 +41,10 @@ public class ChainingMetadataResolverCacheLoader implements CacheLoader<SamlRegi
     private final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers;
     private final SamlIdPProperties samlIdPProperties;
 
-    public ChainingMetadataResolverCacheLoader(final OpenSamlConfigBean configBean,
-                                               final HttpClient httpClient,
-                                               final SamlIdPProperties samlIdPProperties,
-                                               final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers) {
+    public SamlRegisteredServiceMetadataResolverCacheLoader(final OpenSamlConfigBean configBean,
+                                                            final HttpClient httpClient,
+                                                            final SamlIdPProperties samlIdPProperties,
+                                                            final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers) {
         this.configBean = configBean;
         this.httpClient = httpClient;
         this.samlIdPProperties = samlIdPProperties;
