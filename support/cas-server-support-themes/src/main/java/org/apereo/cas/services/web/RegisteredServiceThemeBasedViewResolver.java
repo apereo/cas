@@ -60,7 +60,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
      * Set the name of the default theme.
      * Out-of-the-box value is "theme".
      */
-    public void setDefaultThemeName(String defaultThemeName) {
+    public void setDefaultThemeName(final String defaultThemeName) {
         this.defaultThemeName = defaultThemeName;
     }
 
@@ -91,15 +91,15 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         }
 
         if (service == null) {
-            applyDefaultThemeToTemplateName( view );
+            applyDefaultThemeToTemplateName(view);
             return view;
         } else {
-            applyServiceThemeToTemplateName( view, service, response );
+            applyServiceThemeToTemplateName(view, service, response);
             return view;
         }
     }
 
-    private void applyServiceThemeToTemplateName( final View view, final WebApplicationService service, final HttpServletResponse response ) {
+    private void applyServiceThemeToTemplateName(final View view, final WebApplicationService service, final HttpServletResponse response) {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null) {
             try {
@@ -116,23 +116,23 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
             final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
             final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
 
-            final boolean success = applyThemeToTemplateName( thymeleafView, viewUrl );
-            if ( !success ) {
-                applyDefaultThemeToTemplateName( thymeleafView );
+            final boolean success = applyThemeToTemplateName(thymeleafView, viewUrl);
+            if (!success) {
+                applyDefaultThemeToTemplateName(thymeleafView);
             }
         }
     }
 
-    private void applyDefaultThemeToTemplateName( final View view ) {
+    private void applyDefaultThemeToTemplateName(final View view) {
         if (StringUtils.hasText(defaultThemeName) && view instanceof AbstractThymeleafView) {
             LOGGER.debug("Attempting to locate views for default theme with name [{}]", defaultThemeName);
             final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
             final String viewUrl = defaultThemeName + '/' + thymeleafView.getTemplateName();
-            applyThemeToTemplateName( thymeleafView, viewUrl );
+            applyThemeToTemplateName(thymeleafView, viewUrl);
         }
     }
 
-    private boolean applyThemeToTemplateName( final AbstractThymeleafView thymeleafView, final String viewUrl ) {
+    private boolean applyThemeToTemplateName(final AbstractThymeleafView thymeleafView, final String viewUrl) {
         final String viewLocationUrl = prefix.concat(viewUrl).concat(suffix);
         LOGGER.debug("Attempting to locate view at [{}]", viewLocationUrl);
         final TemplateLocation location = new TemplateLocation(viewLocationUrl);

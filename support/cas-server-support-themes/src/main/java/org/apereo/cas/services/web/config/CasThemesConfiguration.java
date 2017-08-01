@@ -71,7 +71,7 @@ public class CasThemesConfiguration {
         final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver(servicesManager, argumentExtractors,
                 thymeleafProperties.getPrefix(), thymeleafProperties.getSuffix());
         
-        r.setDefaultThemeName( defaultThemeName );
+        r.setDefaultThemeName(defaultThemeName);
         r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
         r.setCache(this.thymeleafProperties.isCache());
         if (!r.isCache()) {
