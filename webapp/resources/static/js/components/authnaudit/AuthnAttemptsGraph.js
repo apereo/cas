@@ -1,16 +1,10 @@
 import React from 'react'
 import { VictoryChart, VictoryVoronoiContainer, VictoryLine } from 'victory'
-const { array, func } = React.PropTypes
+const { array } = React.PropTypes
 
 const AuthnAttemptsGraph = React.createClass({
   propTypes: {
-    graphData: array,
-    refreshHandler: func
-  },
-
-  clickHandler: function () {
-    console.log('clickHandler')
-    this.props.refreshHandler()
+    graphData: array
   },
 
   render: function () {
