@@ -8,9 +8,12 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -80,4 +83,12 @@ public class CasCoreWebConfiguration {
         configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
         return new DefaultArgumentExtractor(serviceFactoryList);
     }
+
+    @Bean
+    public FactoryBean<UrlValidator> urlValidator() {
+        final SimpleUrlValidatorFactoryBean bean = new SimpleUrlValidatorFactoryBean();
+        bean.setCasProperties(this.casProperties);
+        return bean;
+    }
+
 }
