@@ -12,7 +12,7 @@ particular group of functionality in CAS, such as LDAP authentication.
 
 ## Metadata via REST
 
-Configuration metadata can be queried via the following REST endpoint that are prefixed at `/cas/config/metadata`:
+Configuration metadata can be queried via the following REST endpoint that are prefixed at `/config/metadata`:
 
 | Endpoint              | Method      | Description
 |-----------------------|-------------|----------------------------------------------------------
@@ -26,14 +26,13 @@ This interface ships with CAS by default and you need not do anything special to
 ## Metadata via CLI
 
 The metadata repository can also be examined using the command-line as a separate utility. 
-The functionality is contained with a self-contained CAS module/JAR
-that is `cas-server-core-configuration-metadata-server` which presents a command-line 
+The functionality is contained with a self-contained CAS module/JAR which presents a command-line 
 interface as well as an interactive shell allowing you to query settings and groups.
 
 To invoke and work with the repository, simply execute:
 
 ```bash
-java -jar /path/to/cas-server-core-configuration-metadata-server-$casVersion.jar
+java -jar /path/to/cas-server-support-shell-$casVersion.jar
 ```
 
 ...where `$casVersion` needless to say is the CAS version that is deployed.
