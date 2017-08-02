@@ -26,12 +26,23 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
                 LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
                 return serviceLogoutUrl;
             }
-            if (UrlValidator.getInstance().isValid(singleLogoutService.getOriginalUrl())) {
+
+            final UrlValidator validator = getUrlValidator(registeredService);
+            if (validator.isValid(singleLogoutService.getOriginalUrl())) {
                 return new URL(singleLogoutService.getOriginalUrl());
             }
+
             return null;
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
+
+    private UrlValidator getUrlValidator(final RegisteredService registeredService) {
+        if (registeredService.isLocalLogoutUrlAllowed()){
+            return new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+        }
+        return UrlValidator.getInstance();
+    }
+
 }

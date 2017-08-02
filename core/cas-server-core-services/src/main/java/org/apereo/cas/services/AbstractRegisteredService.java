@@ -71,29 +71,29 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String description;
-    
+
     @Lob
     @Column(name = "proxy_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
-    
+
     @Lob
     @Column(name = "username_attr", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
-    
+
     @Column(name = "logout_type", nullable = true)
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
     @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
-    
+
     @Lob
     @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
-    
+
     @Lob
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
@@ -103,6 +103,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Column(name = "logout_url")
     private URL logoutUrl;
+
+    @Column(name = "local_logout_url_allowed")
+    private boolean localLogoutUrlAllowed;
 
     @Lob
     @Column(name = "access_strategy", nullable = true, length = Integer.MAX_VALUE)
@@ -166,6 +169,11 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         return this.logoutUrl;
     }
 
+    @Override
+    public boolean isLocalLogoutUrlAllowed() {
+        return this.localLogoutUrlAllowed;
+    }    
+    
     /**
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.
@@ -231,6 +239,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
                 .append(this.logo, that.logo)
                 .append(this.publicKey, that.publicKey)
                 .append(this.logoutUrl, that.logoutUrl)
+                .append(this.localLogoutUrlAllowed, that.localLogoutUrlAllowed)
                 .append(this.requiredHandlers, that.requiredHandlers)
                 .append(this.proxyPolicy, that.proxyPolicy)
                 .append(this.properties, that.properties)
@@ -256,6 +265,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
                 .append(this.logo)
                 .append(this.publicKey)
                 .append(this.logoutUrl)
+                .append(this.localLogoutUrlAllowed)
                 .append(this.requiredHandlers)
                 .append(this.proxyPolicy)
                 .append(this.properties)
@@ -313,6 +323,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     public void setLogoutUrl(final URL logoutUrl) {
         this.logoutUrl = logoutUrl;
+    }
+
+    public void setLocalLogoutUrlAllowed(final Boolean localURLAllowed) {
+        this.localLogoutUrlAllowed = localURLAllowed;
     }
 
     public void setInformationUrl(final String informationUrl) {
@@ -374,6 +388,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         setAccessStrategy(source.getAccessStrategy());
         setLogo(source.getLogo());
         setLogoutUrl(source.getLogoutUrl());
+        setLocalLogoutUrlAllowed(source.isLocalLogoutUrlAllowed());
         setPublicKey(source.getPublicKey());
         setRequiredHandlers(source.getRequiredHandlers());
         setProperties(source.getProperties());
@@ -416,6 +431,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
         toStringBuilder.append("logo", this.logo);
         toStringBuilder.append("logoutUrl", this.logoutUrl);
+        toStringBuilder.append("localLogoutUrlAllowed", this.localLogoutUrlAllowed);
         toStringBuilder.append("requiredHandlers", this.requiredHandlers);
         toStringBuilder.append("properties", this.properties);
         toStringBuilder.append("multifactorPolicy", this.multifactorPolicy);

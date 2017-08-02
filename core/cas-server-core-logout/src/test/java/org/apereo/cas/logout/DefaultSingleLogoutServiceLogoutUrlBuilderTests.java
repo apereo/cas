@@ -44,4 +44,25 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         final URL url = builder.determineLogoutUrl(svc, RegisteredServiceTestUtils.getService("imaps://etc.example.org"));
         assertNull(url);       
     }
+
+    @Test
+    public void verifyLocalLogoutUrlWithLocalUrlNotAllowed() throws Exception {
+        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".+");
+        svc.setLogoutUrl(null);
+        svc.setLocalLogoutUrlAllowed(false);
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = new DefaultSingleLogoutServiceLogoutUrlBuilder();
+        final URL url = builder.determineLogoutUrl(svc, RegisteredServiceTestUtils.getService("https://localhost/logout?p=v"));
+        assertNull(url);
+    }  
+
+    @Test
+    public void verifyLocalLogoutUrlWithLocalUrlAllowed() throws Exception {
+        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".+");
+        svc.setLogoutUrl(null);
+        svc.setLocalLogoutUrlAllowed(true);
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = new DefaultSingleLogoutServiceLogoutUrlBuilder();
+        final URL url = builder.determineLogoutUrl(svc, RegisteredServiceTestUtils.getService("https://localhost/logout?p=v"));
+        assertEquals(url, new URL("https://localhost/logout?p=v"));    
+    }     
+
 }

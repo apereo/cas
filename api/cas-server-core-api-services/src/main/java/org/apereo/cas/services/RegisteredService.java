@@ -192,6 +192,14 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
     URL getLogoutUrl();
 
     /**
+     * Specifies if this service allows local logout URLs (for example http://localhost/logout). 
+     *
+     * @return true if local logout URLs are allowed, false if not
+     * @since 5.1
+     */
+    boolean isLocalLogoutUrlAllowed();
+
+    /**
      * Gets the public key associated with this service
      * that is used to authorize the request by
      * encrypting certain elements and attributes in
