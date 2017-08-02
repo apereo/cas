@@ -1,7 +1,7 @@
-package org.apereo.cas.metadata.server.shell;
+package org.apereo.cas.shell;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.metadata.server.cli.ConfigurationMetadataServerCommandLineParser;
+import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class CasBannerProvider extends DefaultBannerProvider {
     @Override
     public String getBanner() {
         
-        if (ConfigurationMetadataServerCommandLineParser.isSkippingBanner(environment)) {
+        if (CasCommandLineParser.isSkippingBanner(environment)) {
             return null;    
         }
         
