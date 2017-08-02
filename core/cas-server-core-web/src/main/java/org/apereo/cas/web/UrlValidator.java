@@ -6,6 +6,7 @@ package org.apereo.cas.web;
  * @author swoeste
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface UrlValidator {
 
     /**

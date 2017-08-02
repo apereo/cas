@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -14,9 +13,12 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
 
     private static final UrlValidator URL_VALIDATOR_ALLOW_LOCAL_URLS = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
 
-    private CasConfigurationProperties casProperties;
+    private final boolean allowLocalLogoutUrls;
+    
+    public SimpleUrlValidatorFactoryBean(final boolean allowLocalLogoutUrls) {
+        this.allowLocalLogoutUrls = allowLocalLogoutUrls;
+    }
 
-    /** {@inheritDoc} */
     @Override
     public org.apereo.cas.web.UrlValidator getObject() throws Exception {
         final UrlValidator instance = getUrlValidator();
@@ -24,26 +26,17 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     }
 
     private UrlValidator getUrlValidator() {
-        if (this.casProperties.getHttpClient().isAllowLocalLogoutUrls()){
+        if (this.allowLocalLogoutUrls){
             return URL_VALIDATOR_ALLOW_LOCAL_URLS;
         }
         return UrlValidator.getInstance();
     }
 
-    /**
-     * @param casProperties the casProperties to set
-     */
-    public void setCasProperties(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public Class<?> getObjectType() {
         return SimpleUrlValidator.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isSingleton() {
         return true;

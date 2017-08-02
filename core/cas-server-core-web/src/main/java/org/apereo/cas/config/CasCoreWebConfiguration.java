@@ -86,9 +86,8 @@ public class CasCoreWebConfiguration {
 
     @Bean
     public FactoryBean<UrlValidator> urlValidator() {
-        final SimpleUrlValidatorFactoryBean bean = new SimpleUrlValidatorFactoryBean();
-        bean.setCasProperties(this.casProperties);
-        return bean;
+        final boolean allowLocalLogoutUrls = this.casProperties.getHttpClient().isAllowLocalLogoutUrls();
+        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls);
     }
 
 }
