@@ -20,7 +20,7 @@ public class CacheCredentialsCipherExecutor extends BaseStringCipherExecutor {
     public CacheCredentialsCipherExecutor(final String secretKeyEncryption,
                                           final String secretKeySigning,
                                           final String alg) {
-        super(secretKeyEncryption, secretKeySigning);
+        super(secretKeyEncryption, secretKeySigning, alg);
     }
 
 

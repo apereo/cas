@@ -33,7 +33,7 @@ public class CasBannerProvider extends DefaultBannerProvider {
     
     @Override
     public String getProviderName() {
-        return "CAS Metadata Configuration Server Shell";
+        return "CAS Command-line Shell";
     }
 
     @Override
