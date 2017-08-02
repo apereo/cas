@@ -6,8 +6,9 @@ import { DebugElement } from '@angular/core';
 
 import { UidattrsComponent } from './uidattrs.component';
 import {Messages} from "../../messages";
-import {FormData, ServiceData} from "../../../domain/service-edit-bean";
+import {FormData} from "../../../domain/service-view-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('UidattrsComponent', () => {
   let component: UidattrsComponent;
@@ -25,7 +26,7 @@ describe('UidattrsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UidattrsComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     component.formData = new FormData();
     fixture.detectChanges();
   });

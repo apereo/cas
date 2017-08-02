@@ -1,5 +1,5 @@
-<div class="attribute-release-policy-container" id="attribute-release-policy-container"
-     *ngIf="serviceData.type != 'oidc'">
+<div class="attribute-release-policy-container"
+     *ngIf="type != 'oidc'">
 
   <div class="panel panel-success">
     <div class="panel-heading">
@@ -10,26 +10,26 @@
       </h3>
     </div>
     <div class="panel-body">
-      <app-attribute-release-checks [serviceData]="serviceData"
+      <app-attribute-release-checks [service]="service"
                                     [formData]="formData"
                                     [selectOptions]="selectOptions"></app-attribute-release-checks>
-      <app-attribute-release-filters [serviceData]="serviceData"
+      <app-attribute-release-filters [service]="service"
                                      [formData]="formData"
                                      [selectOptions]="selectOptions"></app-attribute-release-filters>
-      <app-attribute-release-principal-repo [serviceData]="serviceData"
+      <app-attribute-release-principal-repo [service]="service"
                                             [formData]="formData"
                                             [selectOptions]="selectOptions"></app-attribute-release-principal-repo>
     </div>
   </div>
 
-  <app-attribute-release-policies [serviceData]="serviceData"
+  <app-attribute-release-policies [service]="service"
                                   [formData]="formData"
                                   [selectOptions]="selectOptions"></app-attribute-release-policies>
 </div>
 
 
-<div class="attribute-release-policy-container" id="attribute-release-policy-container"
-     *ngIf="serviceData.type == 'oidc'">
+<div class="attribute-release-policy-container"
+     *ngIf="type == 'oidc'">
 
   <div class="well well-sm">
     <ng-container i18n="management.services.service.noAction">
@@ -39,9 +39,9 @@
 </div>
 
 <div class="attribute-release-policy-container" id="attribute-release-policy-container"
-     *ngIf="serviceData.type == 'wsfed'">
+     *ngIf="type == 'wsfed'">
 
-  <h1>{{serviceFormCtrl.serviceData.type}}</h1>
+  <h1>{{type}}</h1>
   <div class="panel panel-info">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -50,11 +50,11 @@
         </ng-container></h3>
     </div>
     <div class="panel-body">
-      <app-attribute-release-principal-repo [serviceData]="serviceData"
+      <app-attribute-release-principal-repo [service]="service"
                                             [formData]="formData"
                                             [selectOptions]="selectOptions"></app-attribute-release-principal-repo>
     </div>
   </div>
 
-  <app-wsfedattrrelpolicies [serviceData]="serviceData" [formData]="formData"></app-wsfedattrrelpolicies>
+  <app-wsfedattrrelpolicies [service]="service" [formData]="formData"></app-wsfedattrrelpolicies>
 </div>

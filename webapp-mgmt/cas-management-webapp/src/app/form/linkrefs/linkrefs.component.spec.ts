@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { LinkrefsComponent } from './linkrefs.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('LinkrefsComponent', () => {
   let component: LinkrefsComponent;
@@ -25,7 +25,7 @@ describe('LinkrefsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LinkrefsComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

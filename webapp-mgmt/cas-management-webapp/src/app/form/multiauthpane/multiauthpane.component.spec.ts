@@ -7,8 +7,8 @@ import { DebugElement } from '@angular/core';
 import { MultiauthpaneComponent } from './multiauthpane.component';
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('MultiauthpaneComponent', () => {
   let component: MultiauthpaneComponent;
@@ -27,7 +27,7 @@ describe('MultiauthpaneComponent', () => {
     fixture = TestBed.createComponent(MultiauthpaneComponent);
     component = fixture.componentInstance;
     component.selectOptions = new TabService().selectOptions;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

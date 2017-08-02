@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { ReqhandlersComponent } from './reqhandlers.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('ReqhandlersComponent', () => {
   let component: ReqhandlersComponent;
@@ -25,7 +25,7 @@ describe('ReqhandlersComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReqhandlersComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
 
 @Component({
   selector: 'app-oauthclient',
@@ -9,10 +9,12 @@ import {ServiceData} from "../../../domain/service-edit-bean";
 export class OauthclientComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   selectOptions;
+
+  type: String;
 
   constructor(public messages: Messages) { }
 

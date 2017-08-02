@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
 
 @Component({
   selector: 'app-multiauthpane',
@@ -9,7 +9,7 @@ import {ServiceData} from "../../../domain/service-edit-bean";
 export class MultiauthpaneComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   selectOptions;
@@ -20,6 +20,10 @@ export class MultiauthpaneComponent implements OnInit {
   constructor(public messages: Messages) { }
 
   ngOnInit() {
+  }
+
+  saveProviders(providers: String) {
+    this.service.multifactorPolicy.multifactorAuthenticationProviders = providers.split(',');
   }
 
 }

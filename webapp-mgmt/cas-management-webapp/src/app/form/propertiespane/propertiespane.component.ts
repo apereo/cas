@@ -1,6 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {ServiceData, PropertyBean} from "../../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {DefaultRegisteredServiceProperty} from "../../../domain/property";
 
 @Component({
   selector: 'app-propertiespane',
@@ -9,23 +10,31 @@ import {ServiceData, PropertyBean} from "../../../domain/service-edit-bean";
 export class PropertiespaneComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   rows: Row[];
   addName: String;
-  addValue: String;
+  addValue: String[];
   isAdding: boolean;
 
   constructor(public messages: Messages) { }
 
   ngOnInit() {
-    this.rows = this.serviceData.properties.map((p) => new Row(p));
+    this.rows = [];
+    if (!this.service.properties || Object.keys(this.service.properties).length == 0) {
+      this.service.properties = new Map();
+    }
+
+    for( let entry of Array.from(Object.keys(this.service.properties))) {
+      this.rows.push(new Row(entry,this.service.properties[entry].values));
+    }
   }
 
   addRow() {
-    let p: PropertyBean = new PropertyBean(this.addName, this.addValue);
-    let r: Row = new Row(p);
-    this.serviceData.properties.push(p);
+    let p: DefaultRegisteredServiceProperty = new DefaultRegisteredServiceProperty();
+    p.values = this.addValue;
+    let r: Row = new Row(this.addName, this.addValue);
+    this.service.properties[this.addName as string] = p;
     this.rows.push(r);
     this.isAdding = false;
     this.addName = null;
@@ -51,7 +60,7 @@ export class PropertiespaneComponent implements OnInit {
   }
 
   delete(r: Row) {
-    this.serviceData.properties.splice(this.serviceData.properties.indexOf(r.property),1);
+    this.service.properties.delete(r.tmpName);
     this.rows.splice(this.rows.indexOf(r),1);
   }
 
@@ -59,13 +68,14 @@ export class PropertiespaneComponent implements OnInit {
 
 class Row {
 
-  constructor(p: PropertyBean) {
-    this.property = p;
-    this.tmpName = p.name;
-    this.tmpValue = p.value;
+  constructor(k: String, v: String[]) {
+    this.property = {"name":k,"value":v};
+    this.tmpName = k;
+    this.tmpValue = v;
+
   }
   isEditing: boolean;
-  property: PropertyBean;
+  property: any;
   tmpName: String;
-  tmpValue: String;
+  tmpValue: String[];
 }

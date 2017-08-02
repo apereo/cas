@@ -1,9 +1,8 @@
 <div class="checkbox-group">
   <div class="checkbox">
     <label>
-      <input type="checkbox" value="0"
-             [(ngModel)]="serviceData.attrRelease.excludeDefault"
-             [checked]="serviceData.attrRelease.excludeDefault"/>
+      <input type="checkbox"
+             [(ngModel)]="service.attributeReleasePolicy.excludeDefaultAttributes"/>
       <ng-container i18n="services.form.label.attrRelease.excludeDefault">
         {{ messages.services_form_label_attrRelease_excludeDefault }}
       </ng-container>
@@ -14,9 +13,8 @@
 
   <div class="checkbox">
     <label>
-      <input type="checkbox" value="1"
-             [(ngModel)]="serviceData.attrRelease.releasePassword"
-             [checked]="serviceData.attrRelease.releasePassword"/>
+      <input type="checkbox"
+             [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseCredentialPassword"/>
       <ng-container i18n="services.form.label.attrRelease.releaseCredPassword">
         {{ messages.services_form_label_attrRelease_releaseCredPassword }}
       </ng-container>
@@ -27,9 +25,8 @@
 
   <div class="checkbox">
     <label>
-      <input type="checkbox" value="1"
-             [(ngModel)]="serviceData.attrRelease.releaseTicket"
-             [checked]="serviceData.attrRelease.releaseTicket"/>
+      <input type="checkbox"
+             [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket"/>
       <ng-container i18n="services.form.label.attrRelease.releaseProxyTicket">
         {{ messages.services_form_label_attrRelease_releaseProxyTicket }}
       </ng-container>

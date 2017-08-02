@@ -66,7 +66,8 @@
           <td><input name="addPropertyValue" class="form-control noresize editable-text" rows="2"
                      i18n-placeholder
                      placeholder="New property value"
-                     [(ngModel)]="addValue" required="required"></td>
+                     [ngModel]="addValue"
+                     (ngModelChange)="addValue = $event.split(',')" required="required"></td>
           <td>
             <!-- Add Row toggle -->
             <button class="btn btn-success btn-sm"

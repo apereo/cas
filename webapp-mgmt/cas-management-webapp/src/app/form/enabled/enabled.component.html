@@ -13,11 +13,11 @@
       </label>
       <div class="col-sm-1">
         <div class="checkbox checkbox-inline">
-          <input type="checkbox" id="casEnabled" [(ngModel)]="serviceData.supportAccess.casEnabled">
+          <input type="checkbox" id="casEnabled" [(ngModel)]="service.accessStrategy.enabled">
         </div>
       </div>
       <div class="col-sm-8">
-        <div class="alert alert-danger" role="alert" *ngIf="!serviceData.supportAccess.casEnabled">
+        <div class="alert alert-danger" role="alert" *ngIf="!service.accessStrategy.enabled">
           <p>
             <i class="fa fa-lg fa-info-circle"></i>
             <ng-container i18n="services.form.warning.casDisabled">
