@@ -47,25 +47,25 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         assertNull(url);
     }
 
-    @Test 
-    public void verifyLocalLogoutUrlWithLocalUrlNotAllowed() throws Exception { 
-        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".+"); 
-        svc.setLogoutUrl(null); 
-        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false); 
-        final URL url = builder.determineLogoutUrl(svc, RegisteredServiceTestUtils.getService("https://localhost/logout?p=v")); 
-        assertNull(url); 
-    }
- 
-    @Test 
-    public void verifyLocalLogoutUrlWithLocalUrlAllowed() throws Exception { 
-        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".+"); 
-        svc.setLogoutUrl(null); 
-        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true); 
-        final URL url = builder.determineLogoutUrl(svc, RegisteredServiceTestUtils.getService("https://localhost/logout?p=v")); 
-        assertEquals(url, new URL("https://localhost/logout?p=v"));     
+    @Test
+    public void verifyLocalLogoutUrlWithLocalUrlNotAllowed() throws Exception {
+        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".+");
+        svc.setLogoutUrl(null);
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
+        final URL url = builder.determineLogoutUrl(svc, RegisteredServiceTestUtils.getService("https://localhost/logout?p=v"));
+        assertNull(url);
     }
 
-    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) 
+    @Test
+    public void verifyLocalLogoutUrlWithLocalUrlAllowed() throws Exception {
+        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(".+");
+        svc.setLogoutUrl(null);
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true);
+        final URL url = builder.determineLogoutUrl(svc, RegisteredServiceTestUtils.getService("https://localhost/logout?p=v"));
+        assertEquals(url, new URL("https://localhost/logout?p=v"));
+    }
+
+    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls)
             throws Exception{
         final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls).getObject();
         return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
