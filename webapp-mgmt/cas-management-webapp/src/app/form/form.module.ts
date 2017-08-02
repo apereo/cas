@@ -52,6 +52,9 @@ import { AttributeReleasePrincipalRepoComponent } from './attribute-release-prin
 import { WsfedclientComponent } from './wsfedclient/wsfedclient.component';
 import { WsfedattrrelpoliciesComponent } from './wsfedattrrelpolocies/wsfedattrrelpolicies.component';
 import { SamlservicespaneComponent } from './samlservicespane/samlservicespane.component';
+import { RemoteComponent } from './access-strategy/remote/remote.component';
+import { TimeComponent } from './access-strategy/time/time.component';
+import { GrouperComponent } from './access-strategy/grouper/grouper.component';
 
 @NgModule({
   imports: [
@@ -104,6 +107,9 @@ import { SamlservicespaneComponent } from './samlservicespane/samlservicespane.c
     WsfedclientComponent,
     WsfedattrrelpoliciesComponent,
     SamlservicespaneComponent,
+    RemoteComponent,
+    TimeComponent,
+    GrouperComponent,
   ],
   providers: [
     FormResolve,

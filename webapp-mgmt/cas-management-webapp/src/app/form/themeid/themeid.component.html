@@ -12,7 +12,7 @@
         </span>
       </label>
       <div class="col-sm-6">
-        <input type="text" class="form-control" id="serviceTheme" [(ngModel)]="serviceData.theme">
+        <input type="text" class="form-control" id="serviceTheme" [(ngModel)]="service.theme">
       </div>
     </div>
   </div>
@@ -30,8 +30,8 @@
       </label>
       <div class="col-sm-7">
         <input type="text" class="form-control" id="assignedId"
-               [disabled]="serviceData.assignedId != ''"
-               [(ngModel)]="serviceData.assignedId">
+               [disabled]="service.id != -1"
+               [(ngModel)]="service.id">
       </div>
     </div>
   </div>

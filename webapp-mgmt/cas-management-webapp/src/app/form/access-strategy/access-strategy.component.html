@@ -8,7 +8,7 @@
     <div class="form-group">
       <div class="col-sm-6 checkbox">
         <label class="col-sm-12" for="ssoEnabled">
-          <input type="checkbox" id="ssoEnabled" [(ngModel)]="serviceData.supportAccess.ssoEnabled">
+          <input type="checkbox" id="ssoEnabled" [(ngModel)]="service.accessStrategy.ssoEnabled">
           <ng-container i18n="services.form.label.sas.ssoEnabled">
             {{ messages.services_form_label_sas_ssoEnabled }}
           </ng-container>
@@ -18,7 +18,7 @@
       <div class="col-sm-6 checkbox">
         <label class="col-sm-12" for="sasRequireAll">
           <input type="checkbox" id="sasRequireAll"
-                 [(ngModel)]="serviceData.supportAccess.requireAll">
+                 [(ngModel)]="service.accessStrategy.requireAllAttributes">
           <ng-container i18n="services.form.label.sas.requireAll">
             {{ messages.services_form_label_sas_requireAll }}
           </ng-container>
@@ -57,7 +57,8 @@
         <tr *ngFor="let mappedValue of formData.availableAttributes">
           <td class="va-middle">{{ mappedValue }}</td>
           <td><input class="form-control noresize"
-                     [(ngModel)]="serviceData.supportAccess.requiredAttrStr[ mappedValue ]">
+                     [ngModel]="service.accessStrategy.requiredAttributes[mappedValue]"
+                     (ngModelChange)="service.accessStrategy.requiredAttributes[mappedValue] = $event.split(',')">
           </td>
         </tr>
         </tbody>
@@ -76,7 +77,7 @@
       </label>
       <div class="col-sm-8">
         <input type="text" class="form-control" id="unauthorizedRedirectUrl"
-               [(ngModel)]="serviceData.supportAccess.unauthorizedRedirectUrl">
+               [(ngModel)]="service.accessStrategy.unauthorizedRedirectUrl">
       </div>
     </div>
 
@@ -92,12 +93,12 @@
       </label>
       <div class="col-sm-8">
         <div class="checkbox checkbox-inline">
-          <input type="checkbox" id="caseInsensitive" [(ngModel)]="serviceData.supportAccess.caseSensitive">
+          <input type="checkbox" id="caseInsensitive" [(ngModel)]="service.accessStrategy.caseInsensitive">
         </div>
       </div>
     </div>
 
-    <app-rejectedattributes [serviceData]="serviceData"></app-rejectedattributes>
+    <app-rejectedattributes [service]="service"></app-rejectedattributes>
 
     <!-- Select Type -->
     <div class="form-group">
@@ -110,7 +111,7 @@
         </span>
       </label>
       <div class="col-sm-8">
-        <select class="form-control" id="selectType" [(ngModel)]="serviceData.supportAccess.type">
+        <select class="form-control" id="selectType" [(ngModel)]="type" (change)="changeType()">
           <option
             *ngFor="let opt of selectOptions.selectType"
             [value]="opt.value">
@@ -120,112 +121,18 @@
       </div>
     </div>
 
-    <div class="form-group" *ngIf="serviceData.supportAccess.type == 'REMOTE'">
-      <label for="unauthorizedRedirectUrl" class="col-sm-4">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.sas.remoteUrl">
-            {{ messages.services_form_label_sas_remoteUrl }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.sas.remoteUrl"
-             [myTooltip]="messages.services_form_tooltip_sas_remoteUrl"></i>
-        </span>
-      </label>
-      <div class="col-sm-8">
-        <input type="text" class="form-control" id="remoteUrl"
-               [(ngModel)]="serviceData.supportAccess.url">
-      </div>
-
-      <label for="authorizedCodes" class="col-sm-4">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.sas.authorizedCodes">
-            {{ messages.services_form_label_sas_authorizedCodes }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.sas.authorizedCodes"
-             [myTooltip]="messages.services_form_tooltip_sas_authorizedCodes"></i>
-        </span>
-      </label>
-      <div class="col-sm-8">
-        <input type="text" class="form-control" id="authorizedCodes"
-               [(ngModel)]="serviceData.supportAccess.codes">
-      </div>
+    <div class="form-group" *ngIf="type == 'REMOTE'">
+      <app-remote [accessStrategy]="service.accessStrategy"></app-remote>
     </div>
 
     <div id="accessDateTime"
-         *ngIf="serviceData.supportAccess.type != 'DEFAULT' && serviceData.supportAccess.type != 'REMOTE'">
-      <div class="form-group">
-        <label for="accessStartingDateInput" class="col-sm-4">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.sas.starttime">
-              {{ messages.services_form_label_sas_starttime }}
-            </ng-container>
-            <i i18n="services.form.tooltip.sas.starttime"
-               [myTooltip]="messages.services_form_tooltip_sas_starttime"></i>
-          </span>
-        </label>
-
-        <div class='col-sm-8'>
-          <div class="input-group date" id="accessStartingDate">
-            <input type='datetime-local' class="form-control"
-                   id='accessStartingDateInput'
-                   [(ngModel)]="serviceData.supportAccess.startingTime">
-<!--            <span class="input-group-addon">
-              <span class="glyphicon glyphicon-time"></span>
-            </span>-->
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="accessEndingDateInput" class="col-sm-4">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.sas.endtime">
-              {{ messages.services_form_label_sas_endtime }}
-            </ng-container>
-            <i i18n="services.form.tooltip.sas.endtime"
-               [myTooltip]="messages.services_form_tooltip_sas_endtime"></i>
-          </span>
-        </label>
-        <div class="col-sm-8">
-          <div class='input-group date' id='accessEndingDate'>
-            <input type='datetime-local' class="form-control"
-                   id='accessEndingDateInput'
-                   [(ngModel)]="serviceData.supportAccess.endingTime">
-<!--            <span class="input-group-addon">
-              <span class="glyphicon glyphicon-time"></span>
-            </span> -->
-          </div>
-        </div>
-      </div>
+         *ngIf="type != 'DEFAULT' && type != 'REMOTE'">
+      <app-time [accessStrategy]="service.accessStrategy"></app-time>
     </div>
 
 
-    <div id="grouperOptions" *ngIf="serviceData.supportAccess.type == 'GROUPER'">
-      <div class="form-group">
-        <label for="groupField" class="col-sm-4">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.sas.grouper.groupfield">
-              {{ messages.services_form_label_sas_grouper_groupfield }}
-            </ng-container>
-            <i i18n="services.form.tooltip.sas.grouper"
-               [myTooltip]="messages.services_form_tooltip_sas_grouper"></i>
-          </span>
-        </label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <select class="form-control" id="groupField" [(ngModel)]="serviceData.supportAccess.groupField">
-              <option
-                *ngFor="let opt of selectOptions.groupField"
-                [value]="opt.value">
-                {{ opt.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <div id="grouperOptions" *ngIf="type == 'GROUPER'">
+      <app-grouper [accessStrategy]="service.accessStrategy" [selectOptions]="selectOptions"></app-grouper>
     </div>
   </div>
 </div>

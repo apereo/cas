@@ -1,15 +1,19 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {FormData, ServiceData} from "../../../domain/service-edit-bean";
+import {FormData} from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {isEmpty} from "rxjs/operator/isEmpty";
+import {RegisteredServiceRegexAttributeFilter} from "../../../domain/attribute-release";
 
 @Component({
   selector: 'app-attribute-release-filters',
   templateUrl: './attribute-release-filters.component.html',
   styleUrls: ['./attribute-release-filters.component.css']
 })
+
 export class AttributeReleaseFiltersComponent implements OnInit {
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   formData: FormData;
@@ -17,9 +21,16 @@ export class AttributeReleaseFiltersComponent implements OnInit {
   @Input()
   selectOptions;
 
+  attributeFilter: RegisteredServiceRegexAttributeFilter;
+
   constructor(public messages: Messages) { }
 
   ngOnInit() {
+    if (!this.service.attributeReleasePolicy.attributeFilter ||
+        Object.keys(this.service.attributeReleasePolicy.attributeFilter).length == 0) {
+      this.service.attributeReleasePolicy.attributeFilter = new RegisteredServiceRegexAttributeFilter();
+    }
+    this.attributeFilter = this.service.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
   }
 
   isEmpty(data: any[]) {

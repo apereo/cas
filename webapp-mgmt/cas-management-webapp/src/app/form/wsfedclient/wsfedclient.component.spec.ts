@@ -5,8 +5,8 @@ import {SharedModule} from "../../shared/shared.module";
 import {FormModule} from "../form.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {TabService} from "../tab.service";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('WsfedclientComponent', () => {
   let component: WsfedclientComponent;
@@ -24,7 +24,7 @@ describe('WsfedclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WsfedclientComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     component.selectOptions = new TabService().selectOptions;
     fixture.detectChanges();
   });

@@ -3,6 +3,7 @@ package org.apereo.cas.mgmt.services.web;
 import com.google.common.base.Throwables;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.JsonUtils;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,10 +58,10 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param service  the edit bean
      */
     @PostMapping(value = "saveService", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveService(@RequestBody final RegisteredServiceEditBean.ServiceData service) {
-        final RegisteredService svcToUse = this.registeredServiceFactory.createRegisteredService(service);
-        final RegisteredService newSvc = this.servicesManager.save(svcToUse);
-        LOGGER.info("Saved changes to service [{}]", svcToUse.getId());
+    public ResponseEntity<String> saveService(@RequestBody final RegisteredService service) {
+        //final RegisteredService svcToUse = this.registeredServiceFactory.createRegisteredService(service);
+        final RegisteredService newSvc = this.servicesManager.save(service);
+        LOGGER.info("Saved changes to service [{}]", service.getId());
         return new ResponseEntity<String>(String.valueOf(newSvc.getId()),HttpStatus.OK);
     }
 
@@ -67,30 +69,31 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * Gets service by id.
      *
      * @param id       the id
-     * @param request  the request
-     * @param response the response
      */
     @GetMapping(value = "getService")
-    public ResponseEntity<RegisteredServiceEditBean> getServiceById(@RequestParam(value = "id", required = false) final Long id,
-                               final HttpServletRequest request, final HttpServletResponse response) {
-        try {
-            final RegisteredServiceEditBean bean = new RegisteredServiceEditBean();
-            if (id == -1) {
-                bean.setServiceData(null);
-            } else {
-                final RegisteredService service = this.servicesManager.findServiceBy(id);
-
-                if (service == null) {
-                    LOGGER.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
-                    throw new IllegalArgumentException("Service id " + id + " cannot be found");
-                }
-                bean.setServiceData(this.registeredServiceFactory.createServiceData(service));
+    public ResponseEntity<RegisteredService> getServiceById(@RequestParam(value = "id", required = false) final Long id) throws Exception {
+        RegisteredService service;
+        if (id == -1) {
+            service = new RegexRegisteredService();
+        } else {
+            service = this.servicesManager.findServiceBy(id);
+            if (service == null) {
+                LOGGER.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
+                throw new IllegalArgumentException("Service id " + id + " cannot be found");
             }
-            bean.setFormData(this.registeredServiceFactory.createFormData());
-
-            return new ResponseEntity<RegisteredServiceEditBean>(bean,HttpStatus.OK);
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
         }
+        return new ResponseEntity<RegisteredService>(service,HttpStatus.OK);
+    }
+
+    @GetMapping(value = "formData")
+    public ResponseEntity<RegisteredServiceEditBean.FormData> getFormData() throws Exception {
+        RegisteredServiceEditBean.FormData data = new RegisteredServiceEditBean.FormData();
+        ArrayList<String> attrs = new ArrayList<String>();
+        attrs.add("uid");
+        attrs.add("givenName");
+        attrs.add("surName");
+        attrs.add("eppn");
+        data.setAvailableAttributes(attrs);
+        return new ResponseEntity<>(data,HttpStatus.OK);
     }
 }

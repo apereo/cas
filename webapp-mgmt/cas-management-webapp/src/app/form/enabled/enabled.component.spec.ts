@@ -5,9 +5,9 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { EnabledComponent } from './enabled.component';
-import { ServiceData } from "../../../domain/service-edit-bean";
 import {Messages} from "../../messages";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('EnabledComponent', () => {
   let component: EnabledComponent;
@@ -25,7 +25,7 @@ describe('EnabledComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EnabledComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

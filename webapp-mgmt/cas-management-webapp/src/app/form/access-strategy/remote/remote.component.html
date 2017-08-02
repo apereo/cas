@@ -1,0 +1,28 @@
+<label for="unauthorizedRedirectUrl" class="col-sm-4">
+        <span style="float:right">
+          <ng-container i18n="services.form.label.sas.remoteUrl">
+            {{ messages.services_form_label_sas_remoteUrl }}
+          </ng-container>
+          <i i18n-myTooltip="services.form.tooltip.sas.remoteUrl"
+             [myTooltip]="messages.services_form_tooltip_sas_remoteUrl"></i>
+        </span>
+</label>
+
+<div class="col-sm-8">
+  <input type="text" class="form-control" id="remoteUrl"
+         [(ngModel)]="accessStrategy.endpointUrl">
+</div>
+
+<label for="authorizedCodes" class="col-sm-4">
+        <span style="float:right">
+          <ng-container i18n="services.form.label.sas.authorizedCodes">
+            {{ messages.services_form_label_sas_authorizedCodes }}
+          </ng-container>
+          <i i18n-myTooltip="services.form.tooltip.sas.authorizedCodes"
+             [myTooltip]="messages.services_form_tooltip_sas_authorizedCodes"></i>
+        </span>
+</label>
+<div class="col-sm-8">
+  <input type="text" class="form-control" id="authorizedCodes"
+         [(ngModel)]="accessStrategy.acceptableResponseCodes">
+</div>

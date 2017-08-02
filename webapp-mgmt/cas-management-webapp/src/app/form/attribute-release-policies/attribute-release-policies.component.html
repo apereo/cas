@@ -10,8 +10,8 @@
       <!-- Filter Policies Radio Button - Return Script -->
       <label class="radio-inline">
         <input type="radio" name="policiesReturnScript" id="policiesRadioScript" value="script"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'script'" />
+               [(ngModel)]="type"
+               (change)="changeType()" />
         <ng-container i18n="services.form.label.attrRelease.policies.script">
           {{ messages.services_form_label_attrRelease_policies_script }}
         </ng-container>
@@ -20,8 +20,8 @@
       <!-- Filter Policies Radio Button - Return Groovy Script -->
       <label class="radio-inline">
         <input type="radio" name="policiesReturnGroovy" id="policiesRadioGroovy" value="groovy"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'groovy'" />
+               [(ngModel)]="type"
+               (change)="changeType()" />
         <ng-container i18n="services.form.label.attrRelease.policies.groovy">
           {{ messages.services_form_label_attrRelease_policies_groovy }}
         </ng-container>
@@ -30,18 +30,18 @@
       <!-- Filter Policies Radio Button - Return All -->
       <label class="radio-inline">
         <input type="radio" name="policiesReturnAll" id="policiesRadioAll" value="all"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'all'" />
+               [(ngModel)]="type"
+               (change)="changeType()" />
         <ng-container i18n="services.form.label.attrRelease.policies.returnAll">
           {{ messages.services_form_label_attrRelease_policies_returnAll }}
         </ng-container>
       </label>
 
-      <!-- Filter Policies Radio Button - Return All -->
+      <!-- Filter Policies Radio Button - Deny All -->
       <label class="radio-inline">
         <input type="radio" name="policiesReturnAll" id="policiesRadioDeny" value="deny"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'deny'" />
+               [(ngModel)]="type"
+               (change)="changeType()"/>
         <ng-container i18n="services.form.label.attrRelease.policies.denyAll">
           {{ messages.services_form_label_attrRelease_policies_denyAll }}
         </ng-container>
@@ -50,19 +50,19 @@
       <!-- Filter Policies Radio Button - Return Allowed -->
       <label class="radio-inline">
         <input type="radio" name="policiesReturnAllowed" id="policiesReturnAllowed" value="allowed"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'allowed'"
+               [(ngModel)]="type"
+               (change)="changeType()"
                [disabled]="isEmpty( formData.availableAttributes )" />
         <ng-container i18n="services.form.label.attrRelease.policies.returnAllowed">
           {{ messages.services_form_label_attrRelease_policies_returnAllowed }}
         </ng-container>
       </label>
 
-      <!-- Filter Policies Radio Button - Return Allowed -->
+      <!-- Filter Policies Radio Button - Return Mapped -->
       <label class="radio-inline">
         <input type="radio" name="policiesReturnMapped" id="policiesReturnMapped" value="mapped"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'mapped'"
+               [(ngModel)]="type"
+               (change)="changeType()"
                [disabled]="isEmpty( formData.availableAttributes )" />
         <ng-container i18n="services.form.label.attrRelease.policies.returnMapped">
             {{ messages.services_form_label_attrRelease_policies_returnMapped }}
@@ -70,10 +70,10 @@
       </label>
 
       <!-- Filter Policies Radio Button - Pattern Matching -->
-      <label class="radio-inline" *ngIf="serviceData.type=='saml'">
+      <label class="radio-inline" *ngIf="type=='saml'">
         <input type="radio" name="policiesReturnMapped" id="policiesPatternMatching" value="matching"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'matching'"
+               [(ngModel)]="type"
+               (change)="changeType()"
                [disabled]="isEmpty( formData.availableAttributes )" />
         <ng-container i18n="services.form.label.attrRelease.policies.patternMatching">
           {{ messaes.services_form_label_attrRelease_policies_patternMatching }}
@@ -81,10 +81,10 @@
       </label>
 
       <!-- Filter Policies Radio Button - Release InCommon -->
-      <label class="radio-inline" *ngIf="serviceData.type == 'saml'">
+      <label class="radio-inline" *ngIf="type == 'saml'">
         <input type="radio" name="policiesReleaseInCommon" id="policiesReleaseInCommon" value="incommon"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.type"
-               [checked]="serviceData.attrRelease.attrPolicy.type == 'incommon'"/>
+               [(ngModel)]="type"
+               (change)="changeType()"/>
         <ng-container i18n="services.form.label.attrRelease.policies.releaseIncommon">
           {{ messages.services_form_label_attrRelease_policies_releaseInCommon }}
         </ng-container>
@@ -93,7 +93,7 @@
 
 
     <!-- Attribute Release Policies Return Script Option -->
-    <div class="form-group" *ngIf="serviceData.attrRelease.attrPolicy.type == 'script'">
+    <div class="form-group" *ngIf="type == 'script'">
       <label class="col-sm-4" for="scriptFile">
         <span style="float:right">
           <ng-container i18n="services.form.label.attrRelease.policies.scriptFile">
@@ -106,13 +106,13 @@
 
       <div class="col-sm-8">
         <input type="text" autocomplete="off" class="form-control" id="scriptFile"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.scriptFile"/>
+               [(ngModel)]="service.attributeReleasePolicy.scriptFile"/>
       </div>
     </div>
 
 
     <!-- Attribute Release Policies Return Groovy Option -->
-    <div class="form-group" *ngIf="serviceData.attrRelease.attrPolicy.type == 'groovy'">
+    <div class="form-group" *ngIf="type == 'groovy'">
       <label class="col-sm-4" for="groovyFile">
         <span style="float:right">
           <ng-container i18n="services.form.label.attrRelease.policies.scriptFile">
@@ -125,20 +125,20 @@
 
       <div class="col-sm-8">
         <input type="text" autocomplete="off" class="form-control" id="groovyFile"
-               [(ngModel)]="serviceData.attrRelease.attrPolicy.scriptFile"/>
+               [(ngModel)]="service.attributeReleasePolicy.groovyScript"/>
       </div>
     </div>
 
 
     <!-- Attribute Release Policies Return All Option -->
-    <div class="well well-sm" *ngIf="serviceData.attrRelease.attrPolicy.type == 'all' || isEmpty( formData.availableAttributes )">
+    <div class="well well-sm" *ngIf="type == 'all' || type == 'deny' || isEmpty( formData.availableAttributes )">
       <ng-container i18n="management.services.service.noAction">
         {{ messages.management_services_service_noAction }}
       </ng-container>
     </div>
 
     <!-- Attribute Release Policies Return Allowed Option -->
-    <div class="form-group" *ngIf="serviceData.attrRelease.attrPolicy.type == 'allowed' && !isEmpty( formData.availableAttributes )">
+    <div class="form-group" *ngIf="type == 'allowed' && !isEmpty( formData.availableAttributes )">
       <label class="col-sm-3" for="returnAllowed">
         <span style="float:right">
           <ng-container i18n="services.form.label.attrRelease.policies.returnAllowed">
@@ -150,7 +150,7 @@
       </label>
       <div class="col-sm-9">
         <select class="form-control" multiple="true" id="returnedAllowed"
-                [(ngModel)]="serviceData.attrRelease.attrPolicy.allowed">
+                [(ngModel)]="service.attributeReleasePolicy.allowedAttributes">
           <option *ngFor="let opt of formData.availableAttributes" [value]="opt">
             {{ opt }}
           </option>
@@ -159,7 +159,7 @@
     </div>
 
     <!-- Attribute Release Policies Return Mapped Option -->
-    <div class="panel panel-default" *ngIf="serviceData.attrRelease.attrPolicy.type == 'mapped' && !isEmpty( formData.availableAttributes )">
+    <div class="panel panel-default" *ngIf="type == 'mapped' && !isEmpty( formData.availableAttributes )">
       <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed" >
         <thead>
         <tr>
@@ -180,7 +180,7 @@
         <tbody>
         <tr *ngFor="let mappedValue of formData.availableAttributes">
           <td class="va-middle">{{ mappedValue }}</td>
-          <td><input [(ngModel)]="serviceData.attrRelease.attrPolicy.mapped[ mappedValue ]" type="text" class="form-control input-sm" /></td>
+          <td><input [(ngModel)]="service.attributeReleasePolicy.allowedAttributes[ mappedValue ]" type="text" class="form-control input-sm" /></td>
         </tr>
         </tbody>
       </table>

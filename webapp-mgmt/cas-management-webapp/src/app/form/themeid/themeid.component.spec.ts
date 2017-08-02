@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { ThemeidComponent } from './themeid.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('ThemeidComponent', () => {
   let component: ThemeidComponent;
@@ -25,7 +25,7 @@ describe('ThemeidComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ThemeidComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

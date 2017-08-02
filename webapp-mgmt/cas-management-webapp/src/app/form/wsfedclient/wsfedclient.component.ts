@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
 
 @Component({
   selector: 'app-wsfedclient',
@@ -10,7 +10,7 @@ import {ServiceData} from "../../../domain/service-edit-bean";
 export class WsfedclientComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   selectOptions;

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ServiceData, PropertyBean} from "../../../domain/service-edit-bean";
 import {Messages} from "../../messages";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
 
 @Component({
   selector: 'app-samlservicespane',
@@ -10,7 +10,7 @@ import {Messages} from "../../messages";
 export class SamlservicespaneComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   selectOptions;
@@ -20,16 +20,18 @@ export class SamlservicespaneComponent implements OnInit {
   addValue: String;
   isAdding: boolean;
 
+  type: String;
+
   constructor(public messages: Messages) { }
 
   ngOnInit() {
-    this.rows = this.serviceData.properties.map((p) => new Row(p));
+    //this.rows = this.service.properties.map((p) => new Row(p));
   }
 
   addRow() {
-    let p: PropertyBean = new PropertyBean(this.addName, this.addValue);
+    let p: any = {"name":this.addName, "value":this.addValue};
     let r: Row = new Row(p);
-    this.serviceData.properties.push(p);
+    this.service.properties.set(p.name,p);
     this.rows.push(r);
     this.isAdding = false;
     this.addName = null;
@@ -55,7 +57,7 @@ export class SamlservicespaneComponent implements OnInit {
   }
 
   delete(r: Row) {
-    this.serviceData.properties.splice(this.serviceData.properties.indexOf(r.property),1);
+    //this.serviceData.properties.splice(this.serviceData.properties.indexOf(r.property),1);
     this.rows.splice(this.rows.indexOf(r),1);
   }
 
@@ -71,13 +73,13 @@ export class SamlservicespaneComponent implements OnInit {
 
 class Row {
 
-  constructor(p: PropertyBean) {
+  constructor(p: any) {
     this.property = p;
     this.tmpName = p.name;
     this.tmpValue = p.value;
   }
   isEditing: boolean;
-  property: PropertyBean;
+  property: any;
   tmpName: String;
   tmpValue: String;
 }

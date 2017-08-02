@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { PropertiespaneComponent } from './propertiespane.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('PropertiespaneComponent', () => {
   let component: PropertiespaneComponent;
@@ -25,7 +25,7 @@ describe('PropertiespaneComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PropertiespaneComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData;
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

@@ -27,7 +27,7 @@ export class SaveformtopComponent implements OnInit {
   }
 
   isNew() {
-    return +this.tabService.serviceData.assignedId == -1;
+    return this.tabService.service.id == -1;
   }
 
   isView() {

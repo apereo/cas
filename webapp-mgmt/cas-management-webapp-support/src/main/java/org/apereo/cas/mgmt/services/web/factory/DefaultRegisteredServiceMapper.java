@@ -12,7 +12,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
-import org.apereo.cas.services.LogoutType;
+import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;

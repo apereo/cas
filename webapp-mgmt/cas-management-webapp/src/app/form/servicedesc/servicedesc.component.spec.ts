@@ -4,8 +4,8 @@ import { FormsModule } from "@angular/forms";
 
 import { ServicedescComponent } from './servicedesc.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('ServicedescComponent', () => {
   let component: ServicedescComponent;
@@ -23,7 +23,7 @@ describe('ServicedescComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ServicedescComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

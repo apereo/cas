@@ -3,14 +3,14 @@
  */
 
 import {Injectable} from "@angular/core";
-import {ServiceData, FormData } from "../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../domain/registered-service";
+import {FormData} from "../../domain/service-view-bean";
 
 @Injectable()
 export class TabService {
   isAdmin: boolean;
-  formData: FormData = new FormData();
-  serviceData: ServiceData = new ServiceData();
-
+  service: AbstractRegisteredService;
+  formData: FormData;
   roles = [
     {id: 1, text: "guest"},
     {id: 2, text: "user"},
@@ -39,9 +39,9 @@ export class TabService {
       {name: "OpenID Connect Client", value: "oidc"}
     ],
     logoutTypeList: [
-      {name: "NONE", value: "none"},
-      {name: "BACK_CHANNEL", value: "back"},
-      {name: "FRONT_CHANNEL", value: "front"}
+      {name: "NONE", value: "NONE"},
+      {name: "BACK_CHANNEL", value: "BACK_CHANNEL"},
+      {name: "FRONT_CHANNEL", value: "FRONT_CHANNEL"}
     ],
     timeUnitsList: [
       {name: "MILLISECONDS", value: "MILLISECONDS"},
@@ -51,7 +51,7 @@ export class TabService {
       {name: "DAYS", value: "DAYS"}
     ],
     mergeStrategyList: [
-      {name: "DEFAULT", value: "DEFAULT"},
+      {name: "NONE", value: "NONE"},
       {name: "ADD", value: "ADD"},
       {name: "MULTIVALUED", value: "MULTIVALUED"},
       {name: "REPLACE", value: "REPLACE"}

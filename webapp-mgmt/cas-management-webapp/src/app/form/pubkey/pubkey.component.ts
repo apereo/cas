@@ -1,6 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {RegisteredServicePublicKeyImpl} from "../../../domain/public-key";
 
 @Component({
   selector: 'app-pubkey',
@@ -9,11 +10,14 @@ import {ServiceData} from "../../../domain/service-edit-bean";
 export class PubkeyComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   constructor(public messages: Messages) { }
 
   ngOnInit() {
+    if (!this.service.publicKey) {
+      this.service.publicKey = new RegisteredServicePublicKeyImpl();
+    }
   }
 
 }

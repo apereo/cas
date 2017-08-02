@@ -1,6 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {FormData, ServiceData} from "../../../domain/service-edit-bean";
+import {FormData} from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
 
 @Component({
   selector: 'app-attribute-release-checks',
@@ -9,7 +10,7 @@ import {Messages} from "../../messages";
 })
 export class AttributeReleaseChecksComponent implements OnInit {
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   formData: FormData;

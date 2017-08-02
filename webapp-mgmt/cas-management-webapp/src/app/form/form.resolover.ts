@@ -4,15 +4,15 @@
 
 import {Injectable} from "@angular/core";
 import {Resolve, Router, ActivatedRouteSnapshot} from "@angular/router";
-import {ServiceEditBean} from "../../domain/service-edit-bean";
 import {FormService} from "./form.service";
+import {AbstractRegisteredService} from "../../domain/registered-service";
 
 @Injectable()
-export class FormResolve implements Resolve<ServiceEditBean> {
+export class FormResolve implements Resolve<AbstractRegisteredService> {
 
   constructor(private service: FormService, private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot): Promise<ServiceEditBean> {
+  resolve(route: ActivatedRouteSnapshot): Promise<AbstractRegisteredService> {
     let param: string = route.params['id'];
     let dup: boolean = route.params['duplicate'];
 
@@ -22,7 +22,7 @@ export class FormResolve implements Resolve<ServiceEditBean> {
       return this.service.getService(param).then(resp => {
         if (resp) {
           if (dup) {
-            resp.serviceData.assignedId = '-1';
+            resp.id = -1;
           }
           return resp;
         } else {

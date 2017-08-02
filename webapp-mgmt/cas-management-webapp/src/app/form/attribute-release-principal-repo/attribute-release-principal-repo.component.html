@@ -9,8 +9,8 @@
       <!-- Principle Repository Radio Button - Default -->
       <label class="radio-inline">
         <input type="radio" name="prinFilterDefault" id="prinFilterDefault" value="DEFAULT"
-               [(ngModel)]="serviceData.attrRelease.attrOption"
-               [checked]="serviceData.attrRelease.attrOption == 'DEFAULT'"/>
+               [(ngModel)]="type"
+               (change)="changeType()"/>
         <ng-container i18n="services.form.label.attrRelease.principleAttRepo.default">
           {{ messages.services_form_label_attrRelease_principleAttRepo_default }}
         </ng-container>
@@ -18,8 +18,8 @@
       <!-- Principle Filter Radio Button - Cached -->
       <label class="radio-inline">
         <input type="radio" name="prinFilterCached" id="prinFilterCached" value="CACHED"
-               [(ngModel)]="serviceData.attrRelease.attrOption"
-               [checked]="serviceData.attrRelease.attrOption == 'CACHED'"/>
+               [(ngModel)]="type"
+               (change)="changeType()"/>
         <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached">
           {{ messages.services_form_label_attrRelease_principleAttRepo_cached }}
         </ng-container>
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Principle Attribute Repo Default Options -->
-    <div class="well well-sm" *ngIf="serviceData.attrRelease.attrOption == 'DEFAULT'">
+    <div class="well well-sm" *ngIf="type == 'DEFAULT'">
       <ng-container i18n="services.service.noAction">
         {{ messages.management_services_service_noAction }}
       </ng-container>
@@ -35,7 +35,7 @@
 
     <!-- Principle Attribute Repo Cached Options -->
     <div class="principle-attribute-cached-container"
-         *ngIf="serviceData.attrRelease.attrOption == 'CACHED'">
+         *ngIf="type == 'CACHED'">
       <!-- Principle Attribute Repo Cached Time -->
       <div class="form-group">
         <label class="col-sm-4" for="cachedTime">
@@ -54,7 +54,7 @@
                  [title]="messages.services_form_required">
               <i class="fa fa-exclamation-triangle"></i>
             </div>
-            <select class="form-control" id="cachedTime" [(ngModel)]="serviceData.attrRelease.cachedTimeUnit">
+            <select class="form-control" id="cachedTime" [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
               <option *ngFor="let opt of selectOptions.timeUnitsList" [value]="opt.value">
                 {{ opt.name }}
               </option>
@@ -76,7 +76,7 @@
         </label>
         <div class="col-sm-8">
           <input type="number" min="0" class="form-control" id="cachedExp"
-                 [(ngModel)]="serviceData.attrRelease.cachedExpiration"/>
+                 [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.expiration"/>
         </div>
 
         <!-- Principle Attribute Repo Merging Strategy -->
@@ -96,7 +96,7 @@
                  i18n-title="services.form.required" [title]="messages.services_form_required">
               <i class="fa fa-exclamation-triangle"></i>
             </div>
-            <select class="form-control" id="mergingStrategy" [(ngModel)]="serviceData.attrRelease.mergingStrategy">
+            <select class="form-control" id="mergingStrategy" [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
               <option *ngFor="let opt of selectOptions.mergeStrategyList" [value]="opt.value">
                 {{ opt.name }}
               </option>

@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ServiceData, FormData } from "../../../domain/service-edit-bean";
+import {FormData} from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
 
 @Component({
   selector: 'app-wsfedattrrelpolicies',
@@ -10,7 +11,7 @@ import {Messages} from "../../messages";
 export class WsfedattrrelpoliciesComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   formData: FormData;

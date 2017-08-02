@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
 
 @Component({
   selector: 'app-themeid',
@@ -9,7 +9,7 @@ import {ServiceData} from "../../../domain/service-edit-bean";
 export class ThemeidComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   constructor(public messages: Messages) { }
 

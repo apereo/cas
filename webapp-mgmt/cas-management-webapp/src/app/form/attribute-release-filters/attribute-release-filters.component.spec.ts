@@ -5,7 +5,8 @@ import {SharedModule} from "../../shared/shared.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
-import {FormData, ServiceData} from "../../../domain/service-edit-bean";
+import {FormData} from "../../../domain/service-view-bean";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('AttributeReleaseFiltersComponent', () => {
   let component: AttributeReleaseFiltersComponent;
@@ -25,7 +26,7 @@ describe('AttributeReleaseFiltersComponent', () => {
     component = fixture.componentInstance;
     component.selectOptions = new TabService().selectOptions;
     component.formData = new FormData();
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

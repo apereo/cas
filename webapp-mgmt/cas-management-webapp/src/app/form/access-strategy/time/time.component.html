@@ -1,0 +1,43 @@
+<div class="form-group">
+  <label for="accessStartingDateInput" class="col-sm-4">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.sas.starttime">
+              {{ messages.services_form_label_sas_starttime }}
+            </ng-container>
+            <i i18n="services.form.tooltip.sas.starttime"
+               [myTooltip]="messages.services_form_tooltip_sas_starttime"></i>
+          </span>
+  </label>
+
+  <div class='col-sm-8'>
+    <div class="input-group date" id="accessStartingDate">
+      <input type='datetime-local' class="form-control"
+             id='accessStartingDateInput'
+             [(ngModel)]="accessStrategy.startingDateTime">
+      <!--            <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                  </span>-->
+    </div>
+  </div>
+</div>
+<div class="form-group">
+  <label for="accessEndingDateInput" class="col-sm-4">
+          <span style="float:right">
+            <ng-container i18n="services.form.label.sas.endtime">
+              {{ messages.services_form_label_sas_endtime }}
+            </ng-container>
+            <i i18n="services.form.tooltip.sas.endtime"
+               [myTooltip]="messages.services_form_tooltip_sas_endtime"></i>
+          </span>
+  </label>
+  <div class="col-sm-8">
+    <div class='input-group date' id='accessEndingDate'>
+      <input type='datetime-local' class="form-control"
+             id='accessEndingDateInput'
+             [(ngModel)]="accessStrategy.endingDateTime">
+      <!--            <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                  </span> -->
+    </div>
+  </div>
+</div>

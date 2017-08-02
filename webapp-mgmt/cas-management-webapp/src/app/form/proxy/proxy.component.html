@@ -13,7 +13,7 @@
         <!-- Proxy Policy Radio Button - Refuse -->
         <label class="radio-inline">
           <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="REFUSE"
-                 [(ngModel)]="serviceData.proxyPolicy.type" checked="true">
+                 [(ngModel)]="type" (change)="changeType()" checked="true">
           <ng-container i18n="services.form.label.proxyPolicy.refuse">
             {{ messages.services_form_label_proxyPolicy_refuse }}
           </ng-container>
@@ -22,7 +22,7 @@
         <!-- Proxy Policy Radio Button - Regex -->
         <label class="radio-inline">
           <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="REGEX"
-                 [(ngModel)]="serviceData.proxyPolicy.type">
+                 [(ngModel)]="type" (change)="changeType()">
           <ng-container i18n="services.form.label.proxyPolicy.regex">
             {{ messages.services_form_label_proxyPolicy_regex }}
           </ng-container>
@@ -30,14 +30,14 @@
       </div>
 
       <!-- Proxy Policy Refuse Options -->
-      <div class="well well-sm" *ngIf="serviceData.proxyPolicy.type === 'REFUSE'">
+      <div class="well well-sm" *ngIf="type === 'REFUSE'">
         <ng-container i18n="management.services.service.noAction">
           {{ messages.management_services_service_noAction }}
         </ng-container>
       </div>
 
       <!-- Proxy Policy Regex Options -->
-      <div class="form-group" *ngIf="serviceData.proxyPolicy.type === 'REGEX'">
+      <div class="form-group" *ngIf="type === 'REGEX'">
         <label class="col-sm-3" for="proxyPolicyRegex">
           <span style="float:right">
             <ng-container i18n="services.form.label.proxyPolicy.regex">
@@ -55,7 +55,7 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input type="text" class="form-control" id="proxyPolicyRegex"
-                   [(ngModel)]="serviceData.proxyPolicy.value">
+                   [(ngModel)]="service.proxyPolicy.pattern">
           </div>
         </div>
       </div>

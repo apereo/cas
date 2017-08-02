@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { ProxyComponent } from './proxy.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('ProxyComponent', () => {
   let component: ProxyComponent;
@@ -25,7 +25,7 @@ describe('ProxyComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ProxyComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

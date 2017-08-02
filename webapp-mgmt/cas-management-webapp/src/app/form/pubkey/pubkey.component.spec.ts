@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { PubkeyComponent } from './pubkey.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('PubkeyComponent', () => {
   let component: PubkeyComponent;
@@ -25,7 +25,7 @@ describe('PubkeyComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PubkeyComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 
