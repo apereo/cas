@@ -1,0 +1,8 @@
+description = "Apereo CAS Remote Shell Support via Crash"
+
+dependencies {
+    implementation libraries.springbootremoteshell
+}
+
+
+
