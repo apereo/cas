@@ -1,15 +1,15 @@
-package org.apereo.cas.metadata.server.shell;
+package org.apereo.cas.shell;
 
-import org.apereo.cas.metadata.server.cli.ConfigurationMetadataServerCommandLineParser;
+import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.springframework.shell.Bootstrap;
 
 /**
- * This is {@link CasConfigurationMetadataServerShell}.
+ * This is {@link CasCommandLineShellBootstrapper}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class CasConfigurationMetadataServerShell {
+public class CasCommandLineShellBootstrapper {
 
     /**
      * Execute.
@@ -18,7 +18,7 @@ public class CasConfigurationMetadataServerShell {
      */
     public void execute(final String[] args) {
         try {
-            ConfigurationMetadataServerCommandLineParser.convertToSystemProperties(args);
+            CasCommandLineParser.convertToSystemProperties(args);
             Bootstrap.main(new String[]{});
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);

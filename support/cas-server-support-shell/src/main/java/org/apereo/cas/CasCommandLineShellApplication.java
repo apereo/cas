@@ -1,9 +1,9 @@
-package org.apereo.cas.metadata.server;
+package org.apereo.cas;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.metadata.server.cli.ConfigurationMetadataServerCommandEngine;
-import org.apereo.cas.metadata.server.cli.ConfigurationMetadataServerCommandLineParser;
-import org.apereo.cas.metadata.server.shell.CasConfigurationMetadataServerShell;
+import org.apereo.cas.shell.CasCommandLineShellBootstrapper;
+import org.apereo.cas.shell.cli.CasCommandLineEngine;
+import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
- * This is {@link CasConfigurationMetadataServerApplication}.
+ * This is {@link CasCommandLineShellApplication}.
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
@@ -47,8 +47,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
                 RedisRepositoriesAutoConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
-public class CasConfigurationMetadataServerApplication {
-    protected CasConfigurationMetadataServerApplication() {
+public class CasCommandLineShellApplication {
+    protected CasCommandLineShellApplication() {
     }
 
     /**
@@ -57,9 +57,9 @@ public class CasConfigurationMetadataServerApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasConfigurationMetadataServerApplication.class)
+        new SpringApplicationBuilder(CasCommandLineShellApplication.class)
                 .banner(new DefaultCasBanner())
-                .bannerMode(ConfigurationMetadataServerCommandLineParser.getBannerMode(args))
+                .bannerMode(CasCommandLineParser.getBannerMode(args))
                 .logStartupInfo(false)
                 .web(false)
                 .run(args);
@@ -74,11 +74,11 @@ public class CasConfigurationMetadataServerApplication {
     @Bean
     public CommandLineRunner commandLineRunner() throws Exception {
         return args -> {
-            if (ConfigurationMetadataServerCommandLineParser.isShell(args)) {
-                final CasConfigurationMetadataServerShell sh = new CasConfigurationMetadataServerShell();
+            if (CasCommandLineParser.isShell(args)) {
+                final CasCommandLineShellBootstrapper sh = new CasCommandLineShellBootstrapper();
                 sh.execute(args);
             } else {
-                final ConfigurationMetadataServerCommandEngine engine = new ConfigurationMetadataServerCommandEngine();
+                final CasCommandLineEngine engine = new CasCommandLineEngine();
                 engine.execute(args);
             }
         };

@@ -1,20 +1,20 @@
-package org.apereo.cas.metadata.server.cli;
+package org.apereo.cas.shell.cli;
 
 import org.apache.commons.cli.CommandLine;
-import org.apereo.cas.metadata.server.shell.commands.FindCommand;
+import org.apereo.cas.shell.commands.FindCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.regex.Pattern;
 
 /**
- * This is {@link ConfigurationMetadataServerCommandEngine}.
+ * This is {@link CasCommandLineEngine}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class ConfigurationMetadataServerCommandEngine {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataServerCommandEngine.class);
+public class CasCommandLineEngine {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCommandLineEngine.class);
     
     
     /**
@@ -23,7 +23,7 @@ public class ConfigurationMetadataServerCommandEngine {
      * @param args the args
      */
     public void execute(final String[] args) {
-        final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
+        final CasCommandLineParser parser = new CasCommandLineParser();
         final CommandLine line = parser.parse(args);
         if (args.length == 0 || parser.isHelp(line)) {
             parser.printHelp();

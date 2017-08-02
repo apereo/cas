@@ -5,14 +5,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link CasCoreMetadataServerConfiguration}.
+ * This is {@link CasCommandLineShellConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casCoreMetadataServerConfiguration")
+@Configuration("casCommandLineShellConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreMetadataServerConfiguration {
-    
-
+public class CasCommandLineShellConfiguration {
 }

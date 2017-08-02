@@ -1,4 +1,4 @@
-package org.apereo.cas.metadata.server.shell;
+package org.apereo.cas.shell;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

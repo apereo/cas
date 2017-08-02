@@ -1,4 +1,4 @@
-package org.apereo.cas.metadata.server.shell.commands;
+package org.apereo.cas.shell.commands;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
