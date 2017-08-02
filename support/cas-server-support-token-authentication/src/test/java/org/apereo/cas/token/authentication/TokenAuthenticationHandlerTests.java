@@ -22,6 +22,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.token.TokenConstants;
+import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.core.profile.CommonProfile;
@@ -63,8 +64,9 @@ import static org.junit.Assert.*;
         TokenAuthenticationConfiguration.class})
 public class TokenAuthenticationHandlerTests {
 
-    private static final String SIGNING_SECRET = RandomStringUtils.randomAlphanumeric(256);
-    private static final String ENCRYPTION_SECRET = RandomStringUtils.randomAlphanumeric(48);
+    private static final Base64RandomStringGenerator base64RandomStringGenerator = new Base64RandomStringGenerator();
+    private static final String SIGNING_SECRET = base64RandomStringGenerator.getNewString(256);
+    private static final String ENCRYPTION_SECRET = base64RandomStringGenerator.getNewString(48);
 
     @Autowired
     @Qualifier("tokenAuthenticationHandler")

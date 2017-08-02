@@ -127,6 +127,16 @@ public final class EncodingUtils {
     }
 
     /**
+     * Base64-encode the given string as a string.
+     *
+     * @param data the String to encode
+     * @return the encoded string
+     */
+    public static String encodeBase64(final String data) {
+        return Base64.encodeBase64String(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
      * Base64-decode the given string as byte[].
      *
      * @param data the base64 string
@@ -196,6 +206,15 @@ public final class EncodingUtils {
         }
     }
 
+
+    /**
+     * Validates Base64 encoding.
+     * @param value the value to check
+     * @return true if the string is validly Base64 encoded
+     */
+    public static boolean isBase64(final String value) {
+        return Base64.isBase64(value);
+    }
 
     /**
      * Verify jws signature byte [ ].

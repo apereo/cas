@@ -131,7 +131,7 @@ public final class CompressionUtils {
     public static String decompress(final String zippedBase64Str) {
         GZIPInputStream zi = null;
         try {
-            final byte[] bytes = Base64.decodeBase64(zippedBase64Str);
+            final byte[] bytes = EncodingUtils.decodeBase64(zippedBase64Str);
             zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
             return IOUtils.toString(zi, Charset.defaultCharset());
         } catch (final Exception e) {
