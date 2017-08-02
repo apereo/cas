@@ -11,7 +11,7 @@ import org.junit.runners.JUnit4;
  * @since 5.1.0
  */
 @RunWith(JUnit4.class)
-public class SimpleUrlValidatorFactoryBeanTest {
+public class SimpleUrlValidatorFactoryBeanTests {
 
     @Test
     public void verifyValidation() throws Exception {
