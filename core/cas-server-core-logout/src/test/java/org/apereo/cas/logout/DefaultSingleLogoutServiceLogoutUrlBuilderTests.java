@@ -67,8 +67,8 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
 
     private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) 
             throws Exception{
-         final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls).getObject();
-         return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls).getObject();
+        return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
     }
 
 }
