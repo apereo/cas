@@ -1,4 +1,4 @@
-package org.apereo.cas.metadata.server.cli;
+package org.apereo.cas.shell.cli;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -16,12 +16,12 @@ import org.springframework.core.env.Environment;
 import java.util.regex.Pattern;
 
 /**
- * This is {@link ConfigurationMetadataServerCommandLineParser}.
+ * This is {@link CasCommandLineParser}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class ConfigurationMetadataServerCommandLineParser {
+public class CasCommandLineParser {
     /**
      * Command line option that indicates a shell should be launched.
      */
@@ -82,13 +82,13 @@ public class ConfigurationMetadataServerCommandLineParser {
             .longOpt("help")
             .build();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataServerCommandLineParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCommandLineParser.class);
     private static final int WIDTH = 120;
 
     private final CommandLineParser parser;
     private final Options options;
 
-    public ConfigurationMetadataServerCommandLineParser() {
+    public CasCommandLineParser() {
         options = new Options();
         options.addOption(OPTION_GROUP);
         options.addOption(OPTION_PROPERTY);
@@ -124,14 +124,17 @@ public class ConfigurationMetadataServerCommandLineParser {
      */
     public void printHelp() {
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(WIDTH, "java -jar [cas-server-core-configuration-metadata-server-X-Y-Z.jar]",
-                "\nCAS Configuration Metadata Server\n", options,
-                "\nThe CAS Configuration Metadata Server provides the ability to query the CAS server "
-                        + "for help on available settings and modules. The query engine "
-                        + "is presented as a CLI utility that is able to accept parameters on groups/settings "
-                        + "and report back results.\n\nExample use cases include: \n"
+        formatter.printHelp(WIDTH, "java -jar [cas-server-support-shell-X-Y-Z.jar]",
+                "\nCAS Command-line Shell\n", options,
+                "\nThe CAS command-line shell provides the ability to query the CAS server "
+                        + "for help on available settings/modules and various other utility functions."
+                        + "The shell engine is presented as both a CLI utility and an interactive shell."
+                        + "\n\nExample use cases include: \n"
                         + "1) Information on a property, such as description, defaults, hints and deprecation.\n"
-                        + "2) Retrieving list of available settings for a given module/group.\n",
+                        + "2) Generating signing/encryption keys for relevant CAS configuration.\n"
+                        + "3) Validating JSON/YAML service definitions for fun and profit.\n"
+                        + "4) Retrieving list of available settings for a given module/group.\n"
+                        + "4) etc.\n",
                 true);
     }
 
@@ -253,7 +256,7 @@ public class ConfigurationMetadataServerCommandLineParser {
      * @return the banner mode
      */
     public static Banner.Mode getBannerMode(final String[] args) {
-        final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
+        final CasCommandLineParser parser = new CasCommandLineParser();
         final CommandLine line = parser.parse(args);
         return (line != null && parser.isSkippingBanner(line) || isShell(args)) ? Banner.Mode.OFF : Banner.Mode.CONSOLE;
     }
@@ -265,7 +268,7 @@ public class ConfigurationMetadataServerCommandLineParser {
      * @return the boolean
      */
     public static boolean isShell(final String[] args) {
-        final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
+        final CasCommandLineParser parser = new CasCommandLineParser();
         final CommandLine line = parser.parse(args);
         return line != null && parser.hasOption(line, OPTION_SHELL);
     }
@@ -276,7 +279,7 @@ public class ConfigurationMetadataServerCommandLineParser {
      * @param args the args
      */
     public static void convertToSystemProperties(final String[] args) {
-        final ConfigurationMetadataServerCommandLineParser parser = new ConfigurationMetadataServerCommandLineParser();
+        final CasCommandLineParser parser = new CasCommandLineParser();
         final CommandLine line = parser.parse(args);
         parser.getOptions().getOptions().forEach(o -> {
             if (parser.hasOption(line, o)) {
