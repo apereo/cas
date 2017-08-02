@@ -64,7 +64,7 @@ class StatisticsApp extends React.Component {
     return (
       <div>
         <h3>Authentication Attempts</h3>
-        <AuthnAttemptsGraph refreshHandler={this.getData} graphData={this.state.graphData} />
+        <AuthnAttemptsGraph graphData={this.state.graphData} />
         {button}
       </div>
     )
