@@ -17,7 +17,6 @@ public class SimpleUrlValidator implements org.apereo.cas.web.UrlValidator {
         this.urlValidator = urlValidator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isValid(final String value) {
         return this.urlValidator.isValid(value);
