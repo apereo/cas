@@ -1,6 +1,8 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
-import {ServiceData, FormData } from "../../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {FormData} from "../../../domain/service-view-bean";
+import {RegisteredServiceRegexAttributeFilter} from "../../../domain/attribute-release";
 
 @Component({
   selector: 'app-attribute-release',
@@ -9,7 +11,7 @@ import {ServiceData, FormData } from "../../../domain/service-edit-bean";
 export class AttributeReleaseComponent implements OnInit {
 
   @Input()
-  serviceData: ServiceData;
+  service: AbstractRegisteredService;
 
   @Input()
   formData: FormData;
@@ -17,9 +19,13 @@ export class AttributeReleaseComponent implements OnInit {
   @Input()
   selectOptions;
 
+  type: String;
+
+
   constructor(public messages: Messages) { }
 
   ngOnInit() {
+
   }
 
   isEmpty(data: any[]) {

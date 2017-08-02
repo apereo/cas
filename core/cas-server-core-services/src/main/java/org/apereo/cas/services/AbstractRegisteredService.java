@@ -333,7 +333,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.usernameAttributeProvider = usernameProvider;
     }
 
-    @JsonIgnore
+    //@JsonIgnore
     @Override
     public LogoutType getLogoutType() {
         return this.logoutType;

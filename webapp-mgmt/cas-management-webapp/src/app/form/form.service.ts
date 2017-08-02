@@ -3,30 +3,43 @@
  */
 import {Http, Headers} from '@angular/http'
 import {Injectable} from "@angular/core";
-import {ServiceEditBean, ServiceData} from "../../domain/service-edit-bean";
+import {AbstractRegisteredService} from "../../domain/registered-service";
+import {FormData} from "../../domain/service-view-bean";
 
 @Injectable()
 export class FormService {
 
   constructor(private http: Http) {}
 
-  getService(id: string): Promise<ServiceEditBean> {
+  getService(id: string): Promise<AbstractRegisteredService> {
     return this.http.get("getService?id="+id)
       .toPromise()
-      .then(resp => resp.json())
+      .then(resp => {
+        let as: AbstractRegisteredService = resp.json() as AbstractRegisteredService;
+        console.log("id = "+JSON.stringify(as.accessStrategy));
+        return as;
+      })
       .catch(this.handleError)
   }
 
-  saveService(serviceData: ServiceData): Promise<String> {
+  saveService(service: AbstractRegisteredService): Promise<number> {
     let headers = new Headers({
       'Content-Type': 'application/json'
     });
 
     return this.http
-      .post("saveService", JSON.stringify(serviceData), {headers: headers})
+      .post("saveService", JSON.stringify(service), {headers: headers})
       .toPromise()
       .then(resp => resp.text())
       .catch(this.handleError)
+  }
+
+
+  formData(): Promise<FormData> {
+    return this.http.get("formData")
+      .toPromise()
+      .then(resp => resp.json())
+      .catch(this.handleError);
   }
 
   handleError(e: any) : Promise<any> {

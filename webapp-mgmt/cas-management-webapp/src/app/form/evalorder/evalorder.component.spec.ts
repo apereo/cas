@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { EvalorderComponent } from './evalorder.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('EvalorderComponent', () => {
   let component: EvalorderComponent;
@@ -25,7 +25,7 @@ describe('EvalorderComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EvalorderComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 
