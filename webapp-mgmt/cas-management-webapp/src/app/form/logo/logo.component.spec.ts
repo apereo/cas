@@ -6,8 +6,8 @@ import { DebugElement } from '@angular/core';
 
 import { LogoComponent } from './logo.component';
 import {Messages} from "../../messages";
-import {ServiceData} from "../../../domain/service-edit-bean";
 import {SharedModule} from "../../shared/shared.module";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('LogoComponent', () => {
   let component: LogoComponent;
@@ -25,7 +25,7 @@ describe('LogoComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LogoComponent);
     component = fixture.componentInstance;
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

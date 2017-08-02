@@ -1,14 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  ServiceData, ServiceEditBean, FormData, AttributeRelease, AttributeReleasePolicy, SupportAccess,
-  UsernameAttributeProvider, PublicKey, MultiAuth, PrincipalAttribute, ProxyPolicy
-} from "../../domain/service-edit-bean";
+import {FormData} from "../../domain/service-view-bean";
 import {Messages} from "../messages";
 import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
 import {Location} from "@angular/common";
 import {FormService} from "./form.service";
 import {TabService} from "./tab.service";
 import {AlertComponent} from "../alert/alert.component";
+import {AbstractRegisteredService, RegexRegisteredService} from "../../domain/registered-service";
+import {DenyAllAttributeReleasePolicy} from "../../domain/attribute-release";
+import {DefaultPrincipalAttributesRepository} from "../../domain/attribute-repo";
+import {DefaultRegisteredServiceAccessStrategy} from "../../domain/access-strategy";
+import {RegisteredServicePublicKeyImpl} from "../../domain/public-key";
+import {DefaultRegisteredServiceUsernameProvider} from "../../domain/attribute-provider";
+import {RefuseRegisteredServiceProxyPolicy} from "../../domain/proxy-policy,ts";
+import {DefaultRegisteredServiceMultifactorPolicy} from "../../domain/multifactor";
 
 @Component({
   selector: 'app-form',
@@ -17,7 +22,7 @@ import {AlertComponent} from "../alert/alert.component";
 })
 export class FormComponent implements OnInit {
 
-  serviceData: ServiceData = new ServiceData();
+  service: AbstractRegisteredService = new RegexRegisteredService();
   formData: FormData = new FormData();
   radioWatchBypass: boolean = true;
   showOAuthSecret: boolean = false;
@@ -37,15 +42,15 @@ export class FormComponent implements OnInit {
   constructor(public messages: Messages,
               private route: ActivatedRoute,
               private router: Router,
-              private service: FormService,
+              private fservice: FormService,
               public tabService: TabService,
               private location: Location) {
   }
 
   ngOnInit() {
     this.route.data
-      .subscribe((data: { resp: ServiceEditBean}) => {
-        if (!data.resp || !data.resp.serviceData) {
+      .subscribe((data: { resp: AbstractRegisteredService}) => {
+        if (!data.resp) {
           this.newService()
         } else {
           this.loadService(data.resp,false);
@@ -74,46 +79,52 @@ export class FormComponent implements OnInit {
   }
 
   newService() {
+    this.service = new RegexRegisteredService();
     this.radioWatchBypass = true;
 
     this.showOAuthSecret = false;
-    this.serviceData.assignedId = "-1",
-    this.serviceData.evalOrder = -1,
-    this.serviceData.type = this.tabService.selectOptions.serviceTypeList[0].value;
-    this.serviceData.logoutType = this.tabService.selectOptions.logoutTypeList[1].value;
-    this.serviceData.attrRelease = new AttributeRelease();
-    this.serviceData.attrRelease.attrOption = 'DEFAULT';
-    this.serviceData.attrRelease.attrPolicy = new AttributeReleasePolicy();
-    this.serviceData.attrRelease.attrPolicy.type = 'all';
-    this.serviceData.attrRelease.cachedTimeUnit = this.tabService.selectOptions.timeUnitsList[0].value;
-    this.serviceData.attrRelease.mergingStrategy = this.tabService.selectOptions.mergeStrategyList[0].value;
+    this.service.id = -1,
+    this.service.evaluationOrder = -1,
+    //this.service.type = this.tabService.selectOptions.serviceTypeList[0].value;
+    this.service.logoutType = "BACK_CHANNEL";
+    this.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy();
+    this.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+    //this.service.attributeReleasePolicy.attrOption = 'DEFAULT';
+    //this.service.attributeReleasePolicy.attrPolicy = {};
+    //this.service.attributeReleasePolicy.attrPolicy.type = 'all';
+    //this.service.attributeReleasePolicy.cachedTimeUnit = this.tabService.selectOptions.timeUnitsList[0].value;
+    //this.service.attributeReleasePolicy.mergingStrategy = this.tabService.selectOptions.mergeStrategyList[0].value;
 
-    this.serviceData.supportAccess = new SupportAccess();
-    this.serviceData.supportAccess.casEnabled = true;
-    this.serviceData.supportAccess.ssoEnabled = true;
-    this.serviceData.supportAccess.caseSensitive = true;
-    this.serviceData.supportAccess.type = this.tabService.selectOptions.selectType[0].value;
-    this.serviceData.publicKey = new PublicKey();
-    this.serviceData.userAttrProvider = new UsernameAttributeProvider();
-    this.serviceData.proxyPolicy = new ProxyPolicy();
-    this.serviceData.proxyPolicy.type = 'REFUSE';
-    this.serviceData.multiAuth = new MultiAuth();
-    this.serviceData.multiAuth.failureMode = this.tabService.selectOptions.failureMode[1].value;
+    this.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+    this.service.accessStrategy.enabled = true;
+    this.service.accessStrategy.ssoEnabled = true;
+    this.service.accessStrategy.caseInsensitive = true;
+    //this.service.accessStrategy.type = this.tabService.selectOptions.selectType[0].value;
+    this.service.publicKey = new RegisteredServicePublicKeyImpl();//new PublicKey();
+    this.service.usernameAttributeProvider =  new DefaultRegisteredServiceUsernameProvider();//UsernameAttributeProvider();
+    this.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();//new ProxyPolicy();
+    //this.service.proxyPolicy.type = 'REFUSE';
+    this.service.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+    this.service.multifactorPolicy.failureMode = this.tabService.selectOptions.failureMode[1].value;
 
-    this.serviceDataTransformation('load');
     //this.showInstructions();
 
-    this.service.getService('-1').then(resp => {
-      this.formData = resp.formData;
-      this.serviceDataTransformation('load');
+
+    this.fservice.formData().then(resp => {
+      this.formData = resp;
+      this.tabService.formData = resp;
       this.radioWatchBypass = false;
     });
 
+    this.tabService.service = this.service;
+
   };
 
-  loadService(form: ServiceEditBean, duplicate) {
+  loadService(form: AbstractRegisteredService, duplicate) {
+    this.service = form;
     this.radioWatchBypass = true;
     this.showOAuthSecret = false;
+    /*
     if (this.formData != form.formData) {
       this.formData = form.formData;
     }
@@ -121,10 +132,16 @@ export class FormComponent implements OnInit {
     if (duplicate) {
       this.serviceData.assignedId = "-1";
     }
-    this.serviceDataTransformation('load');
+    */
+    this.fservice.formData().then(resp => {
+      this.formData = resp;
+      this.tabService.formData = resp;
+      this.radioWatchBypass = false;
+    });
     //this.showInstructions();
 
-    this.radioWatchBypass = false;
+    this.tabService.service = form;
+
   };
 
   textareaArrParse(dir, value) {
@@ -146,68 +163,11 @@ export class FormComponent implements OnInit {
     return newValue;
   };
 
-  serviceDataTransformation(dir) {
-    let data = this.serviceData;
-
-    // Logic safeties
-    this.formData.availableAttributes = this.formData.availableAttributes || [];
-    data.supportAccess.requiredAttr = data.supportAccess.requiredAttr || new Map();
-    data.supportAccess.requiredAttrStr = data.supportAccess.requiredAttrStr || new Map();
-    data.supportAccess.rejectedAttr = data.supportAccess.rejectedAttr || [];
-    data.attrRelease.attrPolicy.mapped = new Map();
-    //data.multiAuth.principalAttr = new PrincipalAttribute();
-    if (dir == 'load') {
-      // console.log('load');
-
-      this.formData.availableAttributes.forEach((item: any) => {
-        data.supportAccess.requiredAttrStr[item] = this.textareaArrParse(dir, data.supportAccess.requiredAttr[item]);
-      });
-
-      data.reqHandlersStr = this.textareaArrParse(dir, data.requiredHandlers);
-      data.userAttrProvider.valueAnon = (data.userAttrProvider.type == 'anon') ? data.userAttrProvider.value : '';
-      data.userAttrProvider.valueAttr = (data.userAttrProvider.type == 'attr') ? data.userAttrProvider.value : '';
-    } else {
-      // console.log('else');
-      this.formData.availableAttributes.forEach((item: any) => {
-        data.supportAccess.requiredAttr[item] = this.textareaArrParse(dir, data.supportAccess.requiredAttrStr[item]);
-      });
-
-      data.requiredHandlers = this.textareaArrParse(dir, data.reqHandlersStr);
-      if (data.userAttrProvider.type == 'anon')
-        data.userAttrProvider.value = data.userAttrProvider.valueAnon;
-      else if (data.userAttrProvider.type == 'attr')
-        data.userAttrProvider.value = data.userAttrProvider.valueAttr;
-    }
-
-    switch (data.attrRelease.attrPolicy.type) {
-      case 'mapped':
-        if (dir == 'load')
-          data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.attributes;
-        else
-          data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.mapped || {};
-        break;
-      case 'allowed':
-        if (dir == 'load')
-          data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.attributes;
-        else
-          data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.allowed || [];
-        break;
-      default:
-        data.attrRelease.attrPolicy.value = null;
-        break;
-    }
-
-    this.serviceData = data;
-    this.tabService.serviceData = data;
-    this.tabService.formData = this.formData;
-  };
-
   saveForm() {
     let formErrors;
     // console.log(serviceForm.serviceData);
     // return;
     this.clearErrors();
-    this.serviceDataTransformation('save');
     formErrors = this.validateForm();
     if (formErrors.length > 0) {
       this.alert.show(this.messages.services_form_alert_formHasErrors, 'danger');
@@ -218,7 +178,7 @@ export class FormComponent implements OnInit {
       return;
     }
 
-    this.service.saveService(this.serviceData)
+    this.fservice.saveService(this.service)
       .then(resp => this.handleSave(resp))
       .catch(e => this.handleNotSaved(e));
 
@@ -233,12 +193,12 @@ export class FormComponent implements OnInit {
     }
   }
 
-  handleSave(id: String) {
-    let hasIdAssignedAlready = (this.serviceData.assignedId != undefined &&
-    Number.parseInt(this.serviceData.assignedId.toString()) > 0);
+  handleSave(id: number) {
+    let hasIdAssignedAlready = (this.service.id != undefined &&
+    Number.parseInt(this.service.id.toString()) > 0);
 
-    if (!hasIdAssignedAlready && id != null && id != "0") {
-      this.serviceData.assignedId = id;
+    if (!hasIdAssignedAlready && id != null && id != 0) {
+      this.service.id = id;
       this.alert.show(this.messages.services_form_alert_serviceAdded,'info');
     }
     else {
@@ -265,7 +225,7 @@ export class FormComponent implements OnInit {
 
   validateForm() {
     let err = [],
-    data = this.serviceData;
+    data = this.service;
 
     // Service Basics
     if (!data.serviceId) {
@@ -284,11 +244,14 @@ export class FormComponent implements OnInit {
       err.push('serviceDesc');
     }
 
+    /*
     if (!data.type) {
       err.push('serviceType');
     }
+    */
 
     // OAuth Client Options Only
+    /*
     if (data.type == 'oauth') {
       if (!data.oauth.clientId) {
         err.push('oauthClientId');
@@ -297,8 +260,11 @@ export class FormComponent implements OnInit {
         err.push('oauthClientSecret');
       }
     }
+    */
+
     // Username Attribute Provider Options
-    if (!data.userAttrProvider.value) {
+    /*
+    if (!data.usernameAttributeProvider) {
       if (data.userAttrProvider.type == 'attr'){
         err.push('uapUsernameAttribute');
       }
@@ -306,7 +272,9 @@ export class FormComponent implements OnInit {
         err.push('uapSaltSetting');
       }
     }
+    */
     // Proxy Policy Options
+    /*
     if (data.proxyPolicy.type == 'REGEX' && !data.proxyPolicy.value) {
       err.push('proxyPolicyRegex');
     }
@@ -316,22 +284,25 @@ export class FormComponent implements OnInit {
         err.push('proxyPolicyRegex');
       }
     }
+    */
 
 
     // Principle Attribute Repository Options
-    if (data.attrRelease.attrOption == 'CACHED') {
-      if (!data.attrRelease.cachedTimeUnit){
+    /*
+    if (data.attributeReleasePolicy.attrOption == 'CACHED') {
+      if (!data.attributeReleasePolicy.cachedTimeUnit){
         err.push('cachedTime');
       }
-      if (!data.attrRelease.mergingStrategy){
+      if (!data.attributeReleasePolicy.mergingStrategy){
         err.push('mergingStrategy');
       }
     }
-    if (data.attrRelease.attrFilter != null) {
-      if (!this.validateRegex(data.attrRelease.attrFilter)) {
+    if (data.attributeReleasePolicy.attrFilter != null) {
+      if (!this.validateRegex(data.attributeReleasePolicy.attrFilter)) {
         err.push('attFilter');
       }
     }
+    */
     return err;
   };
 }

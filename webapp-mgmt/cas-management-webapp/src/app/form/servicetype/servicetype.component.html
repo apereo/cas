@@ -15,7 +15,7 @@
            [title]="messages.services_form_required">
         <i class="fa fa-exclamation-triangle"></i>
       </div>
-      <select class="form-control" id="serviceType" [(ngModel)]="serviceData.type">
+      <select class="form-control" id="serviceType" [(ngModel)]="service.type">
         <option *ngFor="let opt of selectOptions.serviceTypeList" [value]="opt.value">
           {{ opt.name }}
         </option>

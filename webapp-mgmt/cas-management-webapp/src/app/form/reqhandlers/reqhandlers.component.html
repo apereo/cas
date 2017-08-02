@@ -9,6 +9,8 @@
     </span>
   </label>
   <div class="col-sm-7">
-    <input class="form-control noresize" id="reqHandler" [(ngModel)]="serviceData.reqHandlersStr">
+    <input class="form-control noresize" id="reqHandler"
+           [ngModel]="service.requiredHandlers"
+           (ngModelChange)="service.requiredHandlers = $event.split(',')">
   </div>
 </div>

@@ -12,7 +12,7 @@
         </span>
       </label>
       <div class="col-sm-6">
-        <select class="form-control" id="logoutType" [(ngModel)]="serviceData.logoutType">
+        <select class="form-control" id="logoutType" [(ngModel)]="service.logoutType">
           <option *ngFor="let opt of selectOptions.logoutTypeList" [value]="opt.value">{{ opt.name }}</option>
         </select>
       </div>

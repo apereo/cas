@@ -21,7 +21,7 @@
           </span>
         </label>
         <div class="col-sm-7">
-          <input type="text" class="form-control" id="publicKeyLocation" [(ngModel)]="serviceData.publicKey.location">
+          <input type="text" class="form-control" id="publicKeyLocation" [(ngModel)]="service.publicKey.location">
         </div>
       </div>
       <!-- Public Key Algorithm -->
@@ -36,7 +36,7 @@
           </span>
         </label>
         <div class="col-sm-7">
-          <select class="form-control" id="publicKeyAlgorithm" [(ngModel)]="serviceData.publicKey.algorithm">
+          <select class="form-control" id="publicKeyAlgorithm" [(ngModel)]="service.publicKey.algorithm">
             <option value="RSA">RSA</option>
           </select>
         </div>

@@ -1,4 +1,4 @@
-<div class="oauth-only-options-container" *ngIf="serviceData.type=='oauth' || serviceData.type=='oidc'">
+<div class="oauth-only-options-container" *ngIf="type=='oauth' || type=='oidc'">
   <div class="panel panel-warning">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -10,7 +10,7 @@
     <div class="panel-body">
 
       <!-- OIDC JWKS -->
-      <div class="form-group" *ngIf="serviceData.type=='oidc'">
+      <div class="form-group" *ngIf="type=='oidc'">
         <label class="col-sm-4" for="oidcJwks">
           <span style="float:right">
             <ng-container i18n="services.form.label.oidc.jwks">
@@ -29,13 +29,13 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input type="text" autocomplete="off" class="form-control" id="oidcJwks"
-                   [(ngModel)]="serviceData.oidc.jwks">
+                   [(ngModel)]="service.oidc.jwks">
           </div>
         </div>
       </div>
 
       <!-- OIDC Scopes -->
-      <div class="form-group" *ngIf="serviceData.type=='oidc'">
+      <div class="form-group" *ngIf="type=='oidc'">
         <label class="col-sm-4" for="scopes">
           <span style="float:right">
             <ng-container i18n="services.form.label.oidc.scopes">
@@ -48,13 +48,13 @@
 
         <div class="col-sm-8">
           <select class="form-control" id="scopes" multiple
-                  [(ngModel)]="serviceData.oidc.scopes">
+                  [(ngModel)]="service.oidc.scopes">
             <option *ngFor="let opt of selectOptions.oidcScopes"
                     [value]="opt.value"
                     [selected]="opt.value === selectOptions.oidcScopes.type">{{ opt.name }}</option>
           </select>
         </div>
-        <div class="col-md-8 col-md-offset-4" *ngIf="serviceData.oidc.scopes.indexOf('user_defined') > -1">
+        <div class="col-md-8 col-md-offset-4" *ngIf="service.oidc.scopes.indexOf('user_defined') > -1">
           <div class="checkbox">
             <input type="text"
                    autocomplete="off"
@@ -62,8 +62,8 @@
                    id="oidcScopesUserDefined"
                    autofocus
                    placeholder="Enter User Defined values"
-                   *ngIf="serviceData.oidc.scopes.indexOf('user_defined') > -1"
-                   [ngModel]="serviceData.oidc.scopes_userdefined"/>
+                   *ngIf="service.oidc.scopes.indexOf('user_defined') > -1"
+                   [ngModel]="service.oidc.scopes_userdefined"/>
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input type="text" autocomplete="off" class="form-control" id="oauthClientId"
-                   [(ngModel)]="serviceData.oauth.clientId">
+                   [(ngModel)]="service.oauth.clientId">
           </div>
         </div>
       </div>
@@ -113,9 +113,9 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input class="form-control" autocomplete="off" id="oauthClientSecret" type="text"
-                   [(ngModel)]="serviceData.oauth.clientSecret" *ngIf="showOAuthSecret">
+                   [(ngModel)]="service.oauth.clientSecret" *ngIf="showOAuthSecret">
             <input class="form-control" autocomplete="off" id="oauthClientSecret" type="password"
-                   [(ngModel)]="serviceData.oauth.clientSecret" *ngIf="!showOAuthSecret">
+                   [(ngModel)]="service.oauth.clientSecret" *ngIf="!showOAuthSecret">
           </div>
         </div>
 
@@ -134,7 +134,7 @@
           <!-- OAuth Bypass Approval Prompt -->
           <div class="checkbox">
             <label for="oauthBypass">
-              <input type="checkbox" id="oauthBypass" [(ngModel)]="serviceData.oauth.bypass">
+              <input type="checkbox" id="oauthBypass" [(ngModel)]="service.oauth.bypass">
               <ng-container i18n="services.form.label.oauthBypass">
                 {{ messages.services_form_label_oauthBypass }}
               </ng-container>
@@ -145,7 +145,7 @@
           <!-- OAuth Refresh token generation -->
           <div class="checkbox">
             <label for="oauthRefreshToken">
-              <input type="checkbox" id="oauthRefreshToken" [(ngModel)]="serviceData.oauth.refreshToken">
+              <input type="checkbox" id="oauthRefreshToken" [(ngModel)]="service.oauth.refreshToken">
               <ng-container i18n="services.form.label.oauthRefreshToken">
                 {{ messages.services_form_label_oauthRefreshToken }}
               </ng-container>
@@ -156,7 +156,7 @@
           <!-- OAuth JSON format -->
           <div class="checkbox">
             <label for="oauthJsonFormat">
-              <input type="checkbox" id="oauthJsonFormat" [(ngModel)]="serviceData.oauth.jsonFormat">
+              <input type="checkbox" id="oauthJsonFormat" [(ngModel)]="service.oauth.jsonFormat">
               <ng-container i18n="services.form.label.oauthJsonFormat">
                 {{ messages.services_form_label_oauthJsonFormat }}
               </ng-container>
@@ -168,7 +168,7 @@
           <!-- OIDC Options -->
           <div class="checkbox" *ngIf="serviceData.type=='oidc'">
             <label for="oidcSignToken">
-              <input type="checkbox" id="oidcSignToken" [(ngModel)]="serviceData.oidc.signToken">
+              <input type="checkbox" id="oidcSignToken" [(ngModel)]="service.oidc.signToken">
               <ng-container i18n="services.form.label.oidc.signToken">
                 {{ messages.services_form_label_oidc_signToken }}
               </ng-container>
@@ -179,7 +179,7 @@
 
           <div class="checkbox" *ngIf="serviceData.type=='oidc'">
             <label for="oidcImplicit">
-              <input type="checkbox" id="oidcImplicit" [(ngModel)]="serviceData.oidc.implicit">
+              <input type="checkbox" id="oidcImplicit" [(ngModel)]="service.oidc.implicit">
               <ng-container i18n="services.form.label.oidc.implicit">
                 {{ messages.services_form_label_oidc_implicit }}
               </ng-container>
@@ -188,9 +188,9 @@
             </label>
           </div>
 
-          <div class="checkbox" *ngIf="serviceData.type=='oidc'">
+          <div class="checkbox" *ngIf="service.type=='oidc'">
             <label for="oidcEncrypt">
-              <input type="checkbox" id="oidcEncrypt" [(ngModel)]="serviceData.oidc.encrypt">
+              <input type="checkbox" id="oidcEncrypt" [(ngModel)]="service.oidc.encrypt">
               <ng-container i18n="services.form.label.oidc.encrypt">
                 {{ messages.services_form_label_oidc_encrypt }}
               </ng-container>
@@ -202,7 +202,7 @@
       </div>
 
 
-      <div class="form-group" *ngIf="serviceData.type=='oidc'">
+      <div class="form-group" *ngIf="service.type=='oidc'">
         <label class="col-sm-4" for="oidcEncryptAlg">
           <span style="float:right">
             <ng-container i18n="services.form.label.oidc.encryptAlg">
@@ -221,12 +221,12 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input type="text" autocomplete="off" class="form-control" id="oidcEncryptAlg"
-                   [(ngModel)]="serviceData.oidc.encryptAlg">
+                   [(ngModel)]="service.oidc.encryptAlg">
           </div>
         </div>
       </div>
 
-      <div class="form-group" *ngIf="serviceData.type=='oidc'">
+      <div class="form-group" *ngIf="type=='oidc'">
         <label class="col-sm-4" for="oidcEncryptEnc">
           <span style="float:right">
             <ng-container i18n="services.form.label.oidc.encryptEnc">
@@ -245,13 +245,13 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input type="text" autocomplete="off" class="form-control" id="oidcEncryptEnc"
-                   [(ngModel)]="serviceData.oidc.encryptEnc">
+                   [(ngModel)]="service.oidc.encryptEnc">
           </div>
         </div>
       </div>
 
       <!-- OIDC Dynamic Registration Date -->
-      <div class="form-group" *ngIf="serviceData.type=='oidc' && serviceData.oidc.dynamic">
+      <div class="form-group" *ngIf="type=='oidc' && service.oidc.dynamic">
         <label class="col-sm-4" for="oidcDynamicDate">
           <span style="float:right">
             <ng-container i18n="services.form.label.oidc.dynamicDate">
@@ -266,7 +266,7 @@
           <input type="text" disabled readonly
                  autocomplete="off" class="form-control"
                  id="oidcDynamicDate"
-                 [(ngModel)]="serviceData.oidc.dynamicDate"/>
+                 [(ngModel)]="service.oidc.dynamicDate"/>
         </div>
       </div>
 

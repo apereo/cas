@@ -1,12 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttributeReleasePoliciesComponent } from './attribute-release-policies.component';
-import {FormData, ServiceData } from "../../../domain/service-edit-bean";
+import {FormData} from "../../../domain/service-view-bean";
 import {SharedModule} from "../../shared/shared.module";
 import {FormModule} from "../form.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
 import {TabService} from "../tab.service";
+import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('AttributeReleasePoliciesComponent', () => {
   let component: AttributeReleasePoliciesComponent;
@@ -26,7 +27,7 @@ describe('AttributeReleasePoliciesComponent', () => {
     component = fixture.componentInstance;
     component.selectOptions = new TabService().selectOptions;
     component.formData = new FormData();
-    component.serviceData = new ServiceData();
+    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 
