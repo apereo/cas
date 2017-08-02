@@ -27,6 +27,8 @@ Each trigger should properly try to ignore the authentication request, if applic
 
 Also note that various CAS modules present and inject their own *internal triggers* into the CAS application runtime in order to translate protocol-specific authentication requests into multifactor authentication flows.
 
+<div class="alert alert-info"><strong>Service Requirement</strong><p>Most multifactor authentication triggers require that the original authentication request submitted to CAS contain a <code>service</code> parameter. Failure to do so will simply result in an initial successful authentication attempt where subsequent requests that carry the relevant parameter will elevate the authentication context and trigger multifactor later. If you need to test a particular trigger, remember to provide the <code>service</code> parameter appropriately to see the trigger in action.</p></div>
+
 ## Global
 
 MFA can be triggered for all applications and users regardless of individual settings.
