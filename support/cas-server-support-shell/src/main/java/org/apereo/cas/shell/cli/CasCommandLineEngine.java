@@ -2,6 +2,7 @@ package org.apereo.cas.shell.cli;
 
 import org.apache.commons.cli.CommandLine;
 import org.apereo.cas.shell.commands.FindCommand;
+import org.apereo.cas.shell.commands.GenerateKeyCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,6 @@ import java.util.regex.Pattern;
  */
 public class CasCommandLineEngine {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCommandLineEngine.class);
-    
     
     /**
      * Execute.
@@ -34,8 +34,12 @@ public class CasCommandLineEngine {
         final Pattern groupPattern = parser.getGroup(line);
         final Pattern propertyPattern = parser.getProperty(line);
         
-        final FindCommand cmd = new FindCommand();
-        cmd.find(strict, parser.isSummary(line), groupPattern, propertyPattern);
-
+        if (parser.isGeneratingKey(line)) {
+            final GenerateKeyCommand cmd = new GenerateKeyCommand();
+            cmd.generateKey(parser.getPropertyValue(line));
+        } else {
+            final FindCommand cmd = new FindCommand();
+            cmd.find(strict, parser.isSummary(line), groupPattern, propertyPattern);
+        }
     }
 }
