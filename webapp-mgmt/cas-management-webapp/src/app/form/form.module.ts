@@ -55,6 +55,7 @@ import { SamlservicespaneComponent } from './samlservicespane/samlservicespane.c
 import { RemoteComponent } from './access-strategy/remote/remote.component';
 import { TimeComponent } from './access-strategy/time/time.component';
 import { GrouperComponent } from './access-strategy/grouper/grouper.component';
+import { OidcclientComponent } from './oidcclient/oidcclient.component';
 
 @NgModule({
   imports: [
@@ -110,6 +111,7 @@ import { GrouperComponent } from './access-strategy/grouper/grouper.component';
     RemoteComponent,
     TimeComponent,
     GrouperComponent,
+    OidcclientComponent,
   ],
   providers: [
     FormResolve,

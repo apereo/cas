@@ -1,4 +1,4 @@
-<div class="oauth-only-options-container" *ngIf="type=='oauth' || type=='oidc'">
+<div class="oauth-only-options-container">
   <div class="panel panel-warning">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -9,67 +9,6 @@
     </div>
     <div class="panel-body">
 
-      <!-- OIDC JWKS -->
-      <div class="form-group" *ngIf="type=='oidc'">
-        <label class="col-sm-4" for="oidcJwks">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.oidc.jwks">
-              {{ messages.services_form_label_oidc_jwks }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.oidc.jwks"
-              [myTooltip]="messages.services_form_tooltip_oidc_jwks"></i>
-          </span>
-        </label>
-
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="service.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <input type="text" autocomplete="off" class="form-control" id="oidcJwks"
-                   [(ngModel)]="service.oidc.jwks">
-          </div>
-        </div>
-      </div>
-
-      <!-- OIDC Scopes -->
-      <div class="form-group" *ngIf="type=='oidc'">
-        <label class="col-sm-4" for="scopes">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.oidc.scopes">
-              {{ messages.services_form_label_oidc_scopes }}
-            </ng-container>
-            <i i18n="services.form.tooltip.oidc.scopes"
-              [myTooltip]="messages.services_form_tooltip_oidc_scopes"></i>
-          </span>
-        </label>
-
-        <div class="col-sm-8">
-          <select class="form-control" id="scopes" multiple
-                  [(ngModel)]="service.oidc.scopes">
-            <option *ngFor="let opt of selectOptions.oidcScopes"
-                    [value]="opt.value"
-                    [selected]="opt.value === selectOptions.oidcScopes.type">{{ opt.name }}</option>
-          </select>
-        </div>
-        <div class="col-md-8 col-md-offset-4" *ngIf="service.oidc.scopes.indexOf('user_defined') > -1">
-          <div class="checkbox">
-            <input type="text"
-                   autocomplete="off"
-                   class="form-control"
-                   id="oidcScopesUserDefined"
-                   autofocus
-                   placeholder="Enter User Defined values"
-                   *ngIf="service.oidc.scopes.indexOf('user_defined') > -1"
-                   [ngModel]="service.oidc.scopes_userdefined"/>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- OAuth Client ID -->
       <div class="form-group">
         <label class="col-sm-4" for="oauthClientId">
           <span style="float:right">
@@ -89,7 +28,7 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input type="text" autocomplete="off" class="form-control" id="oauthClientId"
-                   [(ngModel)]="service.oauth.clientId">
+                   [(ngModel)]="service.clientId">
           </div>
         </div>
       </div>
@@ -113,9 +52,9 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input class="form-control" autocomplete="off" id="oauthClientSecret" type="text"
-                   [(ngModel)]="service.oauth.clientSecret" *ngIf="showOAuthSecret">
+                   [(ngModel)]="service.clientSecret" *ngIf="showOAuthSecret">
             <input class="form-control" autocomplete="off" id="oauthClientSecret" type="password"
-                   [(ngModel)]="service.oauth.clientSecret" *ngIf="!showOAuthSecret">
+                   [(ngModel)]="service.clientSecret" *ngIf="!showOAuthSecret">
           </div>
         </div>
 
@@ -134,7 +73,7 @@
           <!-- OAuth Bypass Approval Prompt -->
           <div class="checkbox">
             <label for="oauthBypass">
-              <input type="checkbox" id="oauthBypass" [(ngModel)]="service.oauth.bypass">
+              <input type="checkbox" id="oauthBypass" [(ngModel)]="service.bypassApprovalPrompt">
               <ng-container i18n="services.form.label.oauthBypass">
                 {{ messages.services_form_label_oauthBypass }}
               </ng-container>
@@ -145,7 +84,7 @@
           <!-- OAuth Refresh token generation -->
           <div class="checkbox">
             <label for="oauthRefreshToken">
-              <input type="checkbox" id="oauthRefreshToken" [(ngModel)]="service.oauth.refreshToken">
+              <input type="checkbox" id="oauthRefreshToken" [(ngModel)]="service.generateRefreshToken">
               <ng-container i18n="services.form.label.oauthRefreshToken">
                 {{ messages.services_form_label_oauthRefreshToken }}
               </ng-container>
@@ -156,7 +95,7 @@
           <!-- OAuth JSON format -->
           <div class="checkbox">
             <label for="oauthJsonFormat">
-              <input type="checkbox" id="oauthJsonFormat" [(ngModel)]="service.oauth.jsonFormat">
+              <input type="checkbox" id="oauthJsonFormat" [(ngModel)]="service.jsonFormat">
               <ng-container i18n="services.form.label.oauthJsonFormat">
                 {{ messages.services_form_label_oauthJsonFormat }}
               </ng-container>
@@ -164,115 +103,12 @@
                 [myTooltip]="messages.services_form_tooltip_oauthJsonFormat"></i>
             </label>
           </div>
-
-          <!-- OIDC Options -->
-          <div class="checkbox" *ngIf="serviceData.type=='oidc'">
-            <label for="oidcSignToken">
-              <input type="checkbox" id="oidcSignToken" [(ngModel)]="service.oidc.signToken">
-              <ng-container i18n="services.form.label.oidc.signToken">
-                {{ messages.services_form_label_oidc_signToken }}
-              </ng-container>
-              <i i18n-myTooltip="services.form.tooltip.oidc.signToken"
-                [myTooltip]="messages.services_form_tooltip_oidc_signToken"></i>
-            </label>
-          </div>
-
-          <div class="checkbox" *ngIf="serviceData.type=='oidc'">
-            <label for="oidcImplicit">
-              <input type="checkbox" id="oidcImplicit" [(ngModel)]="service.oidc.implicit">
-              <ng-container i18n="services.form.label.oidc.implicit">
-                {{ messages.services_form_label_oidc_implicit }}
-              </ng-container>
-              <i i18n="services.form.tooltip.oidc.implicit"
-                [myTooltip]="messages.services_form_tooltip_oidc_implicit"></i>
-            </label>
-          </div>
-
-          <div class="checkbox" *ngIf="service.type=='oidc'">
-            <label for="oidcEncrypt">
-              <input type="checkbox" id="oidcEncrypt" [(ngModel)]="service.oidc.encrypt">
-              <ng-container i18n="services.form.label.oidc.encrypt">
-                {{ messages.services_form_label_oidc_encrypt }}
-              </ng-container>
-              <i i18n-myTooltip="services.form.tooltip.oidc.encrypt"
-                [myTooltip]="messages.services_form_tooltip_oidc_encrypt"></i>
-            </label>
+          <div *ngIf="type == 'oidc'">
+            <app-oidcclient [service]="service" [selectOptions]="selectOptions"></app-oidcclient>
           </div>
         </div>
-      </div>
-
-
-      <div class="form-group" *ngIf="service.type=='oidc'">
-        <label class="col-sm-4" for="oidcEncryptAlg">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.oidc.encryptAlg">
-              {{ messages.services_form_label_oidc_encryptAlg }}
-            </ng-container>
-            <i i18n="services.form.tooltip.oidc.encryptAlg"
-              [myTooltip]="messages.services_form_tooltip_oidc_encryptAlg"></i>
-          </span>
-        </label>
-
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <input type="text" autocomplete="off" class="form-control" id="oidcEncryptAlg"
-                   [(ngModel)]="service.oidc.encryptAlg">
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group" *ngIf="type=='oidc'">
-        <label class="col-sm-4" for="oidcEncryptEnc">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.oidc.encryptEnc">
-              {{ messages.services_form_label_oidc_encryptEnc }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.oidc.encryptEnc"
-              [myTooltip]="messages.services_form_tooltip_oidc_encryptEnc"></i>
-          </span>
-        </label>
-
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <input type="text" autocomplete="off" class="form-control" id="oidcEncryptEnc"
-                   [(ngModel)]="service.oidc.encryptEnc">
-          </div>
-        </div>
-      </div>
-
-      <!-- OIDC Dynamic Registration Date -->
-      <div class="form-group" *ngIf="type=='oidc' && service.oidc.dynamic">
-        <label class="col-sm-4" for="oidcDynamicDate">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.oidc.dynamicDate">
-              {{ messages.services_form_label_oidc_dynamicDate }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.oidc.dynamicDate"
-              [myTooltip]="messages.services_form_tooltip_oidc_dynamicDate"></i>
-          </span>
-        </label>
-
-        <div class="col-sm-8">
-          <input type="text" disabled readonly
-                 autocomplete="off" class="form-control"
-                 id="oidcDynamicDate"
-                 [(ngModel)]="service.oidc.dynamicDate"/>
-        </div>
-      </div>
-
-
     </div>
-
+    </div>
   </div>
 
 </div>

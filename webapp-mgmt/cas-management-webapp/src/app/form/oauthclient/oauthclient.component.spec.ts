@@ -8,6 +8,7 @@ import { OauthclientComponent } from './oauthclient.component';
 import {Messages} from "../../messages";
 import {SharedModule} from "../../shared/shared.module";
 import {RegexRegisteredService} from "../../../domain/registered-service";
+import {OAuthRegisteredService} from "../../../domain/oauth-service";
 
 describe('OauthclientComponent', () => {
   let component: OauthclientComponent;
@@ -25,7 +26,7 @@ describe('OauthclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(OauthclientComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
+    component.service = new OAuthRegisteredService();
     fixture.detectChanges();
   });
 

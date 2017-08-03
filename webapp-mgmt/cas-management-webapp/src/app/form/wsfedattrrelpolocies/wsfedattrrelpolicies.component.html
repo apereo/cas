@@ -10,7 +10,7 @@
       <!-- Filter Policies Radio Button - Return Allowed -->
       <label class="radio-inline">
         <input type="checkbox" name="policiesReturnMapped" id="policiesReturnMapped"
-               [(ngModel)]="service.attributeReleasePolicy.attrPolicy.wsfed_only"
+               [(ngModel)]="wsFedOnly"
                [disabled]="isEmpty(formData.availableAttributes )" />
         <ng-container i18n="services.form.label.wsfed.wsFederationOnly">
           {{ messages.services_form_label_wsfed_wsFederationOnly }}
@@ -19,7 +19,7 @@
     </div>
 
     <!-- Attribute Release Policies Return Mapped Option -->
-    <div class="panel panel-default" *ngIf="serviceData.attributeReleasePolicy.attrPolicy.wsfed_only && !isEmpty(formData.availableAttributes )">
+    <div class="panel panel-default" *ngIf="wsFedOnly && !isEmpty(formData.availableAttributes )">
       <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed" >
         <thead>
         <tr>
