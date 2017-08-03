@@ -17,6 +17,6 @@ public class CasSamlSPWorkdayConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getWorkday();
+        return casProperties.getSamlSp().getWorkday();
     }
 }

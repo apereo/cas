@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -32,7 +31,7 @@ public final class JsonUtils {
             final MediaType jsonMimeType = MediaType.APPLICATION_JSON;
             jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -47,7 +46,7 @@ public final class JsonUtils {
             response.setStatus(HttpServletResponse.SC_OK);
             render(map, response);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
     }

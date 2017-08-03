@@ -17,6 +17,6 @@ public class CasSamlSPNetPartnerConfiguration extends BaseCasSamlSPConfiguration
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getNetPartner();
+        return casProperties.getSamlSp().getNetPartner();
     }
 }

@@ -17,6 +17,6 @@ public class CasSamlSPAcademicWorksConfiguration extends BaseCasSamlSPConfigurat
     
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getAcademicWorks();
+        return casProperties.getSamlSp().getAcademicWorks();
     }
 }

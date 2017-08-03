@@ -1,22 +1,24 @@
 package org.apereo.cas.util.cipher;
 
-import com.google.common.base.Throwables;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Map;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
+ * This is {@link BaseBinaryCipherExecutor}.
+ *
  * A implementation that is based on algorithms
  * provided by the default platform's JCE. By default AES encryption is
  * used.
@@ -32,12 +34,12 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      */
     private String secretKeyAlgorithm = "AES";
 
-    private final String encryptionSecretKey;
+    private final byte[] encryptionSecretKey;
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
      *
-     * @param encryptionSecretKey the encryption secret key
+     * @param encryptionSecretKey the encryption secret key, base64 encoded
      * @param signingSecretKey    the signing key
      * @param signingKeySize      the signing key size
      * @param encryptionKeySize   the encryption key size
@@ -46,6 +48,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                                     final String signingSecretKey,
                                     final int signingKeySize,
                                     final int encryptionKeySize) {
+        final byte[] encryptionKey;
 
         String signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
@@ -60,12 +63,30 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
                     getEncryptionKeySetting());
-            this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
+            final String key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                    this.encryptionSecretKey, encryptionKeySize, getEncryptionKeySetting());
+                key, encryptionKeySize, getEncryptionKeySetting());
+            encryptionKey = EncodingUtils.decodeBase64(key);
         } else {
-            this.encryptionSecretKey = encryptionSecretKey;
+            final boolean base64 = EncodingUtils.isBase64(encryptionSecretKey);
+            byte[] key = new byte[0];
+            if (base64) {
+                key = EncodingUtils.decodeBase64(encryptionSecretKey);
+            }
+            if (base64 && key.length == encryptionKeySize) {
+                LOGGER.info("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
+                encryptionKey = key;
+            } else if (encryptionSecretKey.length() != encryptionKeySize) {
+                LOGGER.warn("Secret key for encryption defined under [{}] is Base64 encoded but the size does not match the key size [{}].",
+                    getEncryptionKeySetting(), encryptionKeySize);
+                encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
+            } else {
+                LOGGER.warn("Secret key for encryption defined under [{}] is not Base64 encoded. Clear the setting to regenerate (Recommended) or replace with"
+                    + " [{}].", getEncryptionKeySetting(), EncodingUtils.encodeBase64(encryptionSecretKey));
+                encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
+            }
         }
+        this.encryptionSecretKey = encryptionKey;
     }
 
 
@@ -76,14 +97,14 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @Override
     public byte[] encode(final byte[] value) {
         try {
-            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(StandardCharsets.UTF_8),
+            final Key key = new SecretKeySpec(this.encryptionSecretKey,
                     this.secretKeyAlgorithm);
             final CipherService cipher = new AesCipherService();
             final byte[] result = cipher.encrypt(value, key.getEncoded()).getBytes();
             return sign(result);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -91,12 +112,12 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     public byte[] decode(final byte[] value) {
         try {
             final byte[] verifiedValue = verifySignature(value);
-            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(StandardCharsets.UTF_8),
+            final Key key = new SecretKeySpec(this.encryptionSecretKey,
                     this.secretKeyAlgorithm);
             final CipherService cipher = new AesCipherService();
             return cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -107,7 +128,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             return params.get("k").toString();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

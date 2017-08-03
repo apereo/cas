@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceLogoutTypeEditBean;
@@ -272,7 +271,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
 
             return regSvc;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

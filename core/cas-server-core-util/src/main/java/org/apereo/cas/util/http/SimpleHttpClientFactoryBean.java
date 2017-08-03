@@ -1,6 +1,5 @@
 package org.apereo.cas.util.http;
 
-import com.google.common.base.Throwables;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -255,7 +254,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

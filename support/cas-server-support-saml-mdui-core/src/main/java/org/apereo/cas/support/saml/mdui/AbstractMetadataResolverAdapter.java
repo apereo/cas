@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.mdui;
 
-import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -98,7 +97,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                 return this.metadataResolver.resolveSingle(criterions);
             }
         } catch (final Exception ex) {
-            throw Throwables.propagate(ex);
+            throw new RuntimeException(ex.getMessage(), ex);
         }
         return null;
 
@@ -139,7 +138,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                 LOGGER.info("Metadata aggregate initialized successfully.");
             }
         } catch (final Exception ex) {
-            throw Throwables.propagate(ex);
+            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 

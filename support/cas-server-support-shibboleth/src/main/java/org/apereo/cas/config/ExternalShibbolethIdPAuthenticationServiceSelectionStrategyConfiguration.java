@@ -41,12 +41,12 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     @RefreshScope
     public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy() {
         return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
-                casProperties.getAuthn().getShibIdP().getServerUrl());
+                casProperties.getAuthn().getShibIdp().getServerUrl());
     }
 
     @Override
     public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getShibIdP().getServerUrl())) {
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getShibIdp().getServerUrl())) {
             plan.registerStrategy(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy());
         } else {
             LOGGER.warn("Shibboleth IdP url is not specified; External authentication requests by the IdP will not be recognized by CAS");

@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
@@ -14,6 +13,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -75,7 +75,7 @@ public final class SamlSPUtils {
             final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
             policy.addPolicy(new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(attributes)));
             service.setAttributeReleasePolicy(policy);
-            
+
             service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());
             service.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
             service.setMetadataCriteriaRemoveRolelessEntityDescriptors(true);
@@ -84,29 +84,7 @@ public final class SamlSPUtils {
                 service.setMetadataSignatureLocation(sp.getSignatureLocation());
             }
 
-            final List<String> entityIDList = sp.getEntityIds();
-            if (entityIDList.isEmpty()) {
-                final ChainingMetadataResolver chainingResolver = resolver.resolve(service);
-                if (chainingResolver.getResolvers().isEmpty()) {
-                    LOGGER.warn("Skipped registration of [{}] since no metadata resolver could be constructed", sp.getName());
-                    return null;
-                }
-
-                chainingResolver.getResolvers().forEach(r -> {
-                    if (r instanceof AbstractBatchMetadataResolver) {
-                        final Iterator<EntityDescriptor> it = ((AbstractBatchMetadataResolver) r).iterator();
-                        final Optional<EntityDescriptor> descriptor =
-                                StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                                        .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
-                                        .findFirst();
-                        if (descriptor.isPresent()) {
-                            entityIDList.add(descriptor.get().getEntityID());
-                        } else {
-                            LOGGER.warn("Skipped registration of [{}] since no entity id could be found", sp.getName());
-                        }
-                    }
-                });
-            }
+            final List<String> entityIDList = determineEntityIdList(sp, resolver, service);
 
             if (entityIDList.isEmpty()) {
                 LOGGER.warn("Skipped registration of [{}] since no metadata entity ids could be found", sp.getName());
@@ -121,11 +99,43 @@ public final class SamlSPUtils {
 
             service.setSignAssertions(sp.isSignAssertions());
             service.setSignResponses(sp.isSignResponses());
-            
+
             return service;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    private static List<String> determineEntityIdList(final AbstractSamlSPProperties sp,
+                                                      final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                      final SamlRegisteredService service) {
+        final List<String> entityIDList = sp.getEntityIds();
+        if (entityIDList.isEmpty()) {
+            final MetadataResolver metadataResolver = resolver.resolve(service);
+
+            final List<MetadataResolver> resolvers = new ArrayList<>();
+            if (metadataResolver instanceof ChainingMetadataResolver) {
+                resolvers.addAll(((ChainingMetadataResolver) metadataResolver).getResolvers());
+            } else {
+                resolvers.add(metadataResolver);
+            }
+
+            resolvers.forEach(r -> {
+                if (r instanceof AbstractBatchMetadataResolver) {
+                    final Iterator<EntityDescriptor> it = ((AbstractBatchMetadataResolver) r).iterator();
+                    final Optional<EntityDescriptor> descriptor =
+                            StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+                                    .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
+                                    .findFirst();
+                    if (descriptor.isPresent()) {
+                        entityIDList.add(descriptor.get().getEntityID());
+                    } else {
+                        LOGGER.warn("Skipped registration of [{}] since no entity id could be found", sp.getName());
+                    }
+                }
+            });
+        }
+        return entityIDList;
     }
 
     /**

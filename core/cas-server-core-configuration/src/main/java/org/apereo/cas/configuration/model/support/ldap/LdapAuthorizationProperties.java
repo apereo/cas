@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * This is {@link LdapAuthorizationProperties}.
  *
@@ -9,11 +11,12 @@ import org.apache.commons.lang3.StringUtils;
  * @since 5.0.0
  */
 
-public class LdapAuthorizationProperties {
+public class LdapAuthorizationProperties implements Serializable {
     /**
      * Default role prefix.
      */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
+    private static final long serialVersionUID = -2680169790567609780L;
 
     /**
      * Attribute expected to be found on the entry whose value is going to be used to

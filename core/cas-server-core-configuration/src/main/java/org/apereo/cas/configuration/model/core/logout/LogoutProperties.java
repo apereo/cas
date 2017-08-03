@@ -1,16 +1,19 @@
 package org.apereo.cas.configuration.model.core.logout;
 
+import java.io.Serializable;
+
 /**
  * This is {@link LogoutProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class LogoutProperties {
+public class LogoutProperties implements Serializable {
+    private static final long serialVersionUID = 7466171260665661949L;
     /**
      * The target destination to which CAS should redirect after logout
      * is indicated and extracted by a parameter name of your choosing here. If none specified,
-     * the default will be used as <code>service</code>.
+     * the default will be used as {@code service}.
      */
     private String redirectParameter;
     /**

@@ -1,10 +1,9 @@
 package org.apereo.cas.config;
 
-import com.mongodb.Mongo;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.mongo.MongoDbObjectFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
@@ -16,11 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * This is {@link MongoDbTicketRegistryConfiguration}.
@@ -30,7 +30,7 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
  */
 @Configuration("mongoTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfiguration {
+public class MongoDbTicketRegistryConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbTicketRegistryConfiguration.class);
 
     @Autowired
@@ -41,7 +41,7 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
     @Autowired
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) throws Exception {
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        return new MongoDbTicketRegistry(ticketCatalog, mongo.isDropCollection(), mongoTemplate());
+        return new MongoDbTicketRegistry(ticketCatalog, mongo.isDropCollection(), mongoDbTicketRegistryTemplate());
     }
 
     @Autowired
@@ -49,7 +49,7 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
     public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("lockingStrategy") final LockingStrategy lockingStrategy,
                                                        @Qualifier("logoutManager") final LogoutManager logoutManager,
                                                        @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) throws Exception {
-        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().isEnabled();
+        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
             return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
@@ -60,15 +60,10 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
         return new NoOpTicketRegistryCleaner();
     }
 
-    @Override
-    protected String getDatabaseName() {
-        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        return mongo.getDatabaseName();
-    }
-
-    @Override
-    public Mongo mongo() throws Exception {
-        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        return Beans.newMongoDbClient(mongo);
+    @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
+    @Bean
+    public MongoTemplate mongoDbTicketRegistryTemplate() {
+        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        return factory.buildMongoTemplate(casProperties.getTicket().getRegistry().getMongo());
     }
 }

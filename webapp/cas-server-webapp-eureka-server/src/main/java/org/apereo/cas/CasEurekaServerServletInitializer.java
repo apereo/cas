@@ -4,7 +4,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 /**
- * This is {@link CasConfigurationServerServletInitializer}.
+ * This is {@link CasEurekaServerServletInitializer}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0

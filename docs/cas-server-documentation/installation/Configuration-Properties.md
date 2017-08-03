@@ -550,7 +550,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.healthQuery=
 # cas.adminPagesSecurity.jdbc.isolateInternalQueries=false
 # cas.adminPagesSecurity.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.adminPagesSecurity.jdbc.failFast=true
+# cas.adminPagesSecurity.jdbc.failFastTimeout=1
 # cas.adminPagesSecurity.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.adminPagesSecurity.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.adminPagesSecurity.jdbc.leakThreshold=10
@@ -820,7 +820,7 @@ If you wish to directly and separately retrieve attributes from a Groovy script,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.groovy[0].config.location=file:/etc/cas/attributes.groovy
+# cas.authn.attributeRepository.groovy[0].location=file:/etc/cas/attributes.groovy
 # cas.authn.attributeRepository.groovy[0].caseInsensitive=false
 # cas.authn.attributeRepository.groovy[0].order=0
 ```
@@ -848,7 +848,7 @@ If you wish to directly and separately retrieve attributes from a static JSON so
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.json[0].config.location=file://etc/cas/attribute-repository.json
+# cas.authn.attributeRepository.json[0].location=file://etc/cas/attribute-repository.json
 # cas.authn.attributeRepository.json[0].order=0
 ```
 
@@ -897,7 +897,7 @@ to be a JSON map as such:
 Similiar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
 
 ```properties
-# cas.authn.attributeRepository.script[0].config.location=file:/etc/cas/script.groovy
+# cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
 # cas.authn.attributeRepository.script[0].order=0
 # cas.authn.attributeRepository.script[0].caseInsensitive=false
 ```
@@ -965,7 +965,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].healthQuery=
 # cas.authn.attributeRepository.jdbc[0].isolateInternalQueries=false
 # cas.authn.attributeRepository.jdbc[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.attributeRepository.jdbc[0].failFast=true
+# cas.authn.attributeRepository.jdbc[0].failFastTimeout=1
 # cas.authn.attributeRepository.jdbc[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.attributeRepository.jdbc[0].leakThreshold=10
@@ -991,7 +991,8 @@ the following settings are then relevant:
 ### Grouper
 
 This option reads all the groups from [a Grouper instance](www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
-as CAS attributes under a `grouperGroups` multi-valued attribute. To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
+as CAS attributes under a `grouperGroups` multi-valued attribute. 
+To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
 ```properties
 # cas.authn.attributeRepository.grouper[0].enabled=true
@@ -1019,7 +1020,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
 
 ```properties
-# cas.authn.shibIdP.serverUrl=https://idp.example.org
+# cas.authn.shibIdp.serverUrl=https://idp.example.org
 ```
 
 ### Default Bundle
@@ -1155,8 +1156,8 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.startDelay=10000
-# cas.authn.throttle.repeatInterval=20000
+# cas.authn.throttle.schedule.startDelay=10000
+# cas.authn.throttle.schedule.repeatInterval=20000
 # cas.authn.throttle.appcode=CAS
 
 # cas.authn.throttle.failure.threshold=100
@@ -1175,7 +1176,7 @@ same IP address.
 # cas.authn.throttle.jdbc.healthQuery=
 # cas.authn.throttle.jdbc.isolateInternalQueries=false
 # cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.throttle.jdbc.failFast=true
+# cas.authn.throttle.jdbc.failFastTimeout=1
 # cas.authn.throttle.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.throttle.jdbc.leakThreshold=10
@@ -1232,7 +1233,7 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 ### JSON Surrogate Accounts
 
 ```properties
-# cas.authn.surrogate.json.config.location=file:/etc/cas/config/surrogates.json
+# cas.authn.surrogate.json.location=file:/etc/cas/config/surrogates.json
 ```
 
 ### LDAP Surrogate Accounts
@@ -1286,7 +1287,7 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.jdbc.healthQuery=
 # cas.authn.surrogate.jdbc.isolateInternalQueries=false
 # cas.authn.surrogate.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.surrogate.jdbc.failFast=true
+# cas.authn.surrogate.jdbc.failFastTimeout=1
 # cas.authn.surrogate.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.surrogate.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.surrogate.jdbc.leakThreshold=10
@@ -1537,7 +1538,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].healthQuery=
 # cas.authn.jdbc.query[0].isolateInternalQueries=false
 # cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.query[0].failFast=true
+# cas.authn.jdbc.query[0].failFastTimeout=1
 # cas.authn.jdbc.query[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.query[0].leakThreshold=10
@@ -1585,7 +1586,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].healthQuery=
 # cas.authn.jdbc.search[0].isolateInternalQueries=false
 # cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.search[0].failFast=true
+# cas.authn.jdbc.search[0].failFastTimeout=1
 # cas.authn.jdbc.search[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.search[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.search[0].leakThreshold=10
@@ -1625,7 +1626,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].healthQuery=
 # cas.authn.jdbc.bind[0].isolateInternalQueries=false
 # cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.bind[0].failFast=true
+# cas.authn.jdbc.bind[0].failFastTimeout=1
 # cas.authn.jdbc.bind[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.bind[0].leakThreshold=10
@@ -1680,7 +1681,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].healthQuery=
 # cas.authn.jdbc.encode[0].isolateInternalQueries=false
 # cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.encode[0].failFast=true
+# cas.authn.jdbc.encode[0].failFastTimeout=1
 # cas.authn.jdbc.encode[0].isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.jdbc.encode[0].dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.jdbc.encode[0].leakThreshold=10
@@ -2125,7 +2126,7 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.config.location=file:/path/to/image.jpg
+# cas.authn.gua.resource.location=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
@@ -2162,6 +2163,8 @@ To learn more about this topic, [please review this guide](Couchbase-Authenticat
 # cas.authn.couchbase.nodeSet=localhost:8091
 # cas.authn.couchbase.password=
 # cas.authn.couchbase.bucket=default
+# cas.authn.couchbase.timeout=5000
+# cas.authn.couchbase.queryEnabled=true
 # cas.authn.couchbase.usernameAttribute=username
 # cas.authn.couchbase.passwordAttribute=psw
 
@@ -2335,7 +2338,6 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.regExSubjectDnPattern=.+
 # cas.authn.x509.regExTrustedIssuerDnPattern=.+
-# cas.authn.x509.trustedIssuerDnPattern=.+
 
 # cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
@@ -2349,7 +2351,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
-# cas.authn.x509.certificateAttribute=certificateRevocationList
+
 
 # cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.x509.ldap.connectionStrategy=
@@ -2377,6 +2379,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.prunePeriod=600
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.x509.ldap.certificateAttribute=certificateRevocationList
 
 # cas.authn.x509.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.x509.ldap.validator.baseDn=
@@ -2398,7 +2401,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 ```properties
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
-# cas.authn.shiro.config.location=classpath:shiro.ini
+# cas.authn.shiro.location=classpath:shiro.ini
 # cas.authn.shiro.name=
 
 # cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
@@ -2533,7 +2536,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 # cas.authn.mfa.trusted.jpa.healthQuery=
 # cas.authn.mfa.trusted.jpa.isolateInternalQueries=false
 # cas.authn.mfa.trusted.jpa.url=jdbc:hsqldb:mem:cas-jdbc-storage
-# cas.authn.mfa.trusted.jpa.failFast=true
+# cas.authn.mfa.trusted.jpa.failFastTimeout=1
 # cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.trusted.jpa.leakThreshold=10
 # cas.authn.mfa.trusted.jpa.batchSize=1
@@ -2577,8 +2580,8 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave.
 
 ```properties
-# cas.authn.mfa.trusted.cleaner.startDelay=10000
-# cas.authn.mfa.trusted.cleaner.repeatInterval=60000
+# cas.authn.mfa.trusted.cleaner.schedule.startDelay=10000
+# cas.authn.mfa.trusted.cleaner.schedule.repeatInterval=60000
 # cas.authn.mfa.trusted.cleaner.enabled=true
 ```
 
@@ -2597,8 +2600,8 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.name=
 
 # cas.authn.mfa.gauth.cleaner.enabled=true
-# cas.authn.mfa.gauth.cleaner.startDelay=20000
-# cas.authn.mfa.gauth.cleaner.repeatInterval=60000
+# cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
+# cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
@@ -2612,7 +2615,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator JSON
 
 ```properties
-# cas.authn.mfa.gauth.json.config.location=file:/somewhere.json
+# cas.authn.mfa.gauth.json.location=file:/somewhere.json
 ```
 
 #### Google Authenticator Rest
@@ -2636,7 +2639,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.jpa.database.healthQuery=
 # cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
 # cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
-# cas.authn.mfa.gauth.jpa.database.failFast=true
+# cas.authn.mfa.gauth.jpa.database.failFastTimeout=1
 # cas.authn.mfa.gauth.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.gauth.jpa.database.leakThreshold=10
 # cas.authn.mfa.gauth.jpa.database.batchSize=1
@@ -2697,7 +2700,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.jpa.healthQuery=
 # cas.authn.mfa.yubikey.jpa.isolateInternalQueries=false
 # cas.authn.mfa.yubikey.jpa.url=jdbc:hsqldb:mem:cas-yubikeymfa
-# cas.authn.mfa.yubikey.jpa.failFast=true
+# cas.authn.mfa.yubikey.jpa.failFastTimeout=1
 # cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.yubikey.jpa.leakThreshold=10
 # cas.authn.mfa.yubikey.jpa.batchSize=1
@@ -2820,15 +2823,15 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 ### FIDO U2F JSON
 
 ```properties
-# cas.authn.mfa.u2f.json.config.location=file:///etc/cas/config/u2fdevices.json
+# cas.authn.mfa.u2f.json.location=file:///etc/cas/config/u2fdevices.json
 ```
 
 ### FIDO U2F Cleaner
 
 ```properties
-# cas.authn.mfa.u2f.cleaner.enabled=true
-# cas.authn.mfa.u2f.cleaner.startDelay=PT10S
-# cas.authn.mfa.u2f.cleaner.repeatInterval=PT60S
+# cas.authn.mfa.u2f.cleaner.schedule.enabled=true
+# cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
+# cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
 ```
 
 #### FIDO U2F JPA
@@ -2837,7 +2840,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.jpa.healthQuery=
 # cas.authn.mfa.u2f.jpa.isolateInternalQueries=false
 # cas.authn.mfa.u2f.jpa.url=jdbc:hsqldb:mem:cas-u2f
-# cas.authn.mfa.u2f.jpa.failFast=true
+# cas.authn.mfa.u2f.jpa.failFastTimeout=1
 # cas.authn.mfa.u2f.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.u2f.jpa.leakThreshold=10
 # cas.authn.mfa.u2f.jpa.batchSize=1
@@ -3001,256 +3004,256 @@ To learn more about this topic, [please review this guide](../integration/Config
 ### Dropbox
 
 ```properties
-# cas.samlSP.dropbox.metadata=/etc/cas/saml/dropbox.xml
-# cas.samlSP.dropbox.name=Dropbox
-# cas.samlSP.dropbox.description=Dropbox Integration
-# cas.samlSP.dropbox.nameIdAttribute=mail
-# cas.samlSP.dropbox.signatureLocation=
+# cas.samlSp.dropbox.metadata=/etc/cas/saml/dropbox.xml
+# cas.samlSp.dropbox.name=Dropbox
+# cas.samlSp.dropbox.description=Dropbox Integration
+# cas.samlSp.dropbox.nameIdAttribute=mail
+# cas.samlSp.dropbox.signatureLocation=
 ```
 
 ### TestShib
 
 ```properties
-# cas.samlSP.testShib.metadata=http://www.testshib.org/metadata/testshib-providers.xml
-# cas.samlSP.testShib.name=TestShib
-# cas.samlSP.testShib.description=TestShib Integration
-# cas.samlSP.testShib.attributes=eduPersonPrincipalName
-# cas.samlSP.testShib.signatureLocation=
+# cas.samlSp.testShib.metadata=http://www.testshib.org/metadata/testshib-providers.xml
+# cas.samlSp.testShib.name=TestShib
+# cas.samlSp.testShib.description=TestShib Integration
+# cas.samlSp.testShib.attributes=eduPersonPrincipalName
+# cas.samlSp.testShib.signatureLocation=
 ```
 
 ### OpenAthens
 
 ```properties
-# cas.samlSP.openAthens.metadata=/path/to/openAthens-metadata.xml
-# cas.samlSP.openAthens.name=openAthens
-# cas.samlSP.openAthens.description=openAthens Integration
-# cas.samlSP.openAthens.attributes=eduPersonPrincipalName,email
+# cas.samlSp.openAthens.metadata=/path/to/openAthens-metadata.xml
+# cas.samlSp.openAthens.name=openAthens
+# cas.samlSp.openAthens.description=openAthens Integration
+# cas.samlSp.openAthens.attributes=eduPersonPrincipalName,email
 ```
 
 ### Web Advisor
 
 ```properties
-# cas.samlSP.webAdvisor.metadata=/path/to/webadvisor-metadata.xml
-# cas.samlSP.webAdvisor.name=Web Advisor
-# cas.samlSP.webAdvisor.description=Web Advisor Integration
-# cas.samlSP.webAdvisor.attributes=uid
+# cas.samlSp.webAdvisor.metadata=/path/to/webadvisor-metadata.xml
+# cas.samlSp.webAdvisor.name=Web Advisor
+# cas.samlSp.webAdvisor.description=Web Advisor Integration
+# cas.samlSp.webAdvisor.attributes=uid
 ```
 
 ### Adobe Creative Cloud
 
 ```properties
-# cas.samlSP.adobeCloud.metadata=/path/to/adobe-metadata.xml
-# cas.samlSP.adobeCloud.name=Adobe Creative Cloud
-# cas.samlSP.adobeCloud.description=Adobe Creative Cloud Integration
-# cas.samlSP.adobeCloud.attributes=Email,FirstName,LastName
+# cas.samlSp.adobeCloud.metadata=/path/to/adobe-metadata.xml
+# cas.samlSp.adobeCloud.name=Adobe Creative Cloud
+# cas.samlSp.adobeCloud.description=Adobe Creative Cloud Integration
+# cas.samlSp.adobeCloud.attributes=Email,FirstName,LastName
 ```
 
 ### Securing The Human
 
 ```properties
-# cas.samlSP.sansSth.metadata=/path/to/sth-metadata.xml
-# cas.samlSP.sansSth.name=Securing The Human
-# cas.samlSP.sansSth.description=Securing The Human Integration
-# cas.samlSP.sansSth.attributes=email,firstName,lastName,scopedUserId,department,reference
+# cas.samlSp.sansSth.metadata=/path/to/sth-metadata.xml
+# cas.samlSp.sansSth.name=Securing The Human
+# cas.samlSp.sansSth.description=Securing The Human Integration
+# cas.samlSp.sansSth.attributes=email,firstName,lastName,scopedUserId,department,reference
 ```
 
 ### Easy IEP
 
 ```properties
-# cas.samlSP.easyIep.metadata=/path/to/easyiep-metadata.xml
-# cas.samlSP.easyIep.name=Easy IEP
-# cas.samlSP.easyIep.description=Easy IEP Integration
-# cas.samlSP.easyIep.attributes=employeeId
+# cas.samlSp.easyIep.metadata=/path/to/easyiep-metadata.xml
+# cas.samlSp.easyIep.name=Easy IEP
+# cas.samlSp.easyIep.description=Easy IEP Integration
+# cas.samlSp.easyIep.attributes=employeeId
 ```
 
 ### Infinite Campus
 
 ```properties
-# cas.samlSP.infiniteCampus.metadata=/path/to/infinitecampus-metadata.xml
-# cas.samlSP.infiniteCampus.name=Infinite Campus
-# cas.samlSP.infiniteCampus.description=Infinite Campus Integration
-# cas.samlSP.infiniteCampus.attributes=employeeId
+# cas.samlSp.infiniteCampus.metadata=/path/to/infinitecampus-metadata.xml
+# cas.samlSp.infiniteCampus.name=Infinite Campus
+# cas.samlSp.infiniteCampus.description=Infinite Campus Integration
+# cas.samlSp.infiniteCampus.attributes=employeeId
 ```
 
 ### Slack
 
 ```properties
-# cas.samlSP.slack.metadata=/path/to/slack-metadata.xml
-# cas.samlSP.slack.name=Slack
-# cas.samlSP.slack.description=Slack Integration
-# cas.samlSP.slack.attributes=User.Email,User.Username,first_name,last_name
-# cas.samlSP.slack.nameIdFormat=persistent
-# cas.samlSP.slack.nameIdAttribute=employeeId
+# cas.samlSp.slack.metadata=/path/to/slack-metadata.xml
+# cas.samlSp.slack.name=Slack
+# cas.samlSp.slack.description=Slack Integration
+# cas.samlSp.slack.attributes=User.Email,User.Username,first_name,last_name
+# cas.samlSp.slack.nameIdFormat=persistent
+# cas.samlSp.slack.nameIdAttribute=employeeId
 ```
 
 ### Zendesk
 
 ```properties
-# cas.samlSP.zendesk.metadata=/path/to/zendesk-metadata.xml
-# cas.samlSP.zendesk.name=Zendesk
-# cas.samlSP.zendesk.description=Zendesk Integration
-# cas.samlSP.zendesk.attributes=organization,tags,phone,role
-# cas.samlSP.zendesk.nameIdFormat=emailAddress
-# cas.samlSP.zendesk.nameIdAttribute=email
+# cas.samlSp.zendesk.metadata=/path/to/zendesk-metadata.xml
+# cas.samlSp.zendesk.name=Zendesk
+# cas.samlSp.zendesk.description=Zendesk Integration
+# cas.samlSp.zendesk.attributes=organization,tags,phone,role
+# cas.samlSp.zendesk.nameIdFormat=emailAddress
+# cas.samlSp.zendesk.nameIdAttribute=email
 ```
 
 ### Gartner
 
 ```properties
-# cas.samlSP.gartner.metadata=/path/to/gartner-metadata.xml
-# cas.samlSP.gartner.name=Gartner
-# cas.samlSP.gartner.description=Gartner Integration
-# cas.samlSP.gartner.attributes=urn:oid:2.5.4.42,urn:oid:2.5.4.4,urn:oid:0.9.2342.19200300.100.1.3
+# cas.samlSp.gartner.metadata=/path/to/gartner-metadata.xml
+# cas.samlSp.gartner.name=Gartner
+# cas.samlSp.gartner.description=Gartner Integration
+# cas.samlSp.gartner.attributes=urn:oid:2.5.4.42,urn:oid:2.5.4.4,urn:oid:0.9.2342.19200300.100.1.3
 ```
 
 ### Arc GIS
 
 ```properties
-# cas.samlSP.arcGIS.metadata=/path/to/arc-metadata.xml
-# cas.samlSP.arcGIS.name=ArcGIS
-# cas.samlSP.arcGIS.description=ArcGIS Integration
-# cas.samlSP.arcGIS.nameIdAttribute=arcNameId
-# cas.samlSP.arcGIS.attributes=mail,givenName,arcNameId
-# cas.samlSP.arcGIS.nameIdFormat=unspecified
+# cas.samlSp.arcGIS.metadata=/path/to/arc-metadata.xml
+# cas.samlSp.arcGIS.name=ArcGIS
+# cas.samlSp.arcGIS.description=ArcGIS Integration
+# cas.samlSp.arcGIS.nameIdAttribute=arcNameId
+# cas.samlSp.arcGIS.attributes=mail,givenName,arcNameId
+# cas.samlSp.arcGIS.nameIdFormat=unspecified
 ```
 
 ### Benefit Focus
 
 ```properties
-# cas.samlSP.benefitFocus.metadata=/path/to/benefitFocus-metadata.xml
-# cas.samlSP.benefitFocus.name=Benefit Focus
-# cas.samlSP.benefitFocus.description=Benefit Focus Integration
-# cas.samlSP.benefitFocus.nameIdAttribute=benefitFocusUniqueId
-# cas.samlSP.benefitFocus.nameIdFormat=unspecified
+# cas.samlSp.benefitFocus.metadata=/path/to/benefitFocus-metadata.xml
+# cas.samlSp.benefitFocus.name=Benefit Focus
+# cas.samlSp.benefitFocus.description=Benefit Focus Integration
+# cas.samlSp.benefitFocus.nameIdAttribute=benefitFocusUniqueId
+# cas.samlSp.benefitFocus.nameIdFormat=unspecified
 ```
 
 ### Office365
 
 ```properties
-# cas.samlSP.office365.metadata=/etc/cas/saml/azure.xml
-# cas.samlSP.office365.name=O365
-# cas.samlSP.office365.description=Office365 Integration
-# cas.samlSP.office365.nameIdAttribute=scopedImmutableID
-# cas.samlSP.office365.attributes=IDPEmail,ImmutableID
-# cas.samlSP.office365.signatureLocation=
+# cas.samlSp.office365.metadata=/etc/cas/saml/azure.xml
+# cas.samlSp.office365.name=O365
+# cas.samlSp.office365.description=Office365 Integration
+# cas.samlSp.office365.nameIdAttribute=scopedImmutableID
+# cas.samlSp.office365.attributes=IDPEmail,ImmutableID
+# cas.samlSp.office365.signatureLocation=
 ```
 
 ### SAManage
 
 ```properties
-# cas.samlSP.saManage.metadata=/etc/cas/saml/samanage.xml
-# cas.samlSP.saManage.name=SAManage
-# cas.samlSP.saManage.description=SAManage Integration
-# cas.samlSP.saManage.nameIdAttribute=mail
-# cas.samlSP.saManage.signatureLocation=
+# cas.samlSp.saManage.metadata=/etc/cas/saml/samanage.xml
+# cas.samlSp.saManage.name=SAManage
+# cas.samlSp.saManage.description=SAManage Integration
+# cas.samlSp.saManage.nameIdAttribute=mail
+# cas.samlSp.saManage.signatureLocation=
 ```
 
 ### Workday
 
 ```properties
-# cas.samlSP.workday.metadata=/etc/cas/saml/workday.xml
-# cas.samlSP.workday.name=Workday
-# cas.samlSP.workday.description=Workday Integration
-# cas.samlSP.workday.signatureLocation=
+# cas.samlSp.workday.metadata=/etc/cas/saml/workday.xml
+# cas.samlSp.workday.name=Workday
+# cas.samlSp.workday.description=Workday Integration
+# cas.samlSp.workday.signatureLocation=
 ```
 
 ### Salesforce
 
 ```properties
-# cas.samlSP.salesforce.metadata=/etc/cas/saml/salesforce.xml
-# cas.samlSP.salesforce.name=Salesforce
-# cas.samlSP.salesforce.description=Salesforce Integration
-# cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
-# cas.samlSP.salesforce.signatureLocation=
+# cas.samlSp.salesforce.metadata=/etc/cas/saml/salesforce.xml
+# cas.samlSp.salesforce.name=Salesforce
+# cas.samlSp.salesforce.description=Salesforce Integration
+# cas.samlSp.salesforce.attributes=mail,eduPersonPrincipalName
+# cas.samlSp.salesforce.signatureLocation=
 ```
 
 ### Academic Works
 
 ```properties
-# cas.samlSP.academicWorks.metadata=/etc/cas/saml/aw.xml
-# cas.samlSP.academicWorks.name=AcademicWorks
-# cas.samlSP.academicWorks.description=AcademicWorks Integration
-# cas.samlSP.academicWorks.attributes=mail,displayName
+# cas.samlSp.academicWorks.metadata=/etc/cas/saml/aw.xml
+# cas.samlSp.academicWorks.name=AcademicWorks
+# cas.samlSp.academicWorks.description=AcademicWorks Integration
+# cas.samlSp.academicWorks.attributes=mail,displayName
 ```
 
 ### Zoom
 
 ```properties
-# cas.samlSP.zoom.metadata=/etc/cas/saml/zoom.xml
-# cas.samlSP.zoom.name=Zoom
-# cas.samlSP.zoom.description=Zoom Integration
-# cas.samlSP.zoom.attributes=mail,sn,givenName
-# cas.samlSP.zoom.nameIdAttribute=mail
+# cas.samlSp.zoom.metadata=/etc/cas/saml/zoom.xml
+# cas.samlSp.zoom.name=Zoom
+# cas.samlSp.zoom.description=Zoom Integration
+# cas.samlSp.zoom.attributes=mail,sn,givenName
+# cas.samlSp.zoom.nameIdAttribute=mail
 ```
 
 ### Evernote
 
 ```properties
-# cas.samlSP.evernote.metadata=/etc/cas/saml/evernote.xml
-# cas.samlSP.evernote.name=Evernote
-# cas.samlSP.evernote.description=Evernote Integration
-# cas.samlSP.evernote.nameIdAttribute=mail
-# cas.samlSP.evernote.nameIdFormat=emailAddress
+# cas.samlSp.evernote.metadata=/etc/cas/saml/evernote.xml
+# cas.samlSp.evernote.name=Evernote
+# cas.samlSp.evernote.description=Evernote Integration
+# cas.samlSp.evernote.nameIdAttribute=mail
+# cas.samlSp.evernote.nameIdFormat=emailAddress
 ```
 
 ### Tableau
 
 ```properties
-# cas.samlSP.tableau.metadata=/etc/cas/saml/tableau.xml
-# cas.samlSP.tableau.name=Tableau
-# cas.samlSP.tableau.description=Tableau Integration
-# cas.samlSP.tableau.attributes=username
+# cas.samlSp.tableau.metadata=/etc/cas/saml/tableau.xml
+# cas.samlSp.tableau.name=Tableau
+# cas.samlSp.tableau.description=Tableau Integration
+# cas.samlSp.tableau.attributes=username
 ```
 
 ### Asana
 
 ```properties
-# cas.samlSP.asana.metadata=/etc/cas/saml/asana.xml
-# cas.samlSP.asana.name=Asana
-# cas.samlSP.asana.description=Asana Integration
-# cas.samlSP.asana.nameIdAttribute=mail
-# cas.samlSP.asana.nameIdFormat=emailAddress
+# cas.samlSp.asana.metadata=/etc/cas/saml/asana.xml
+# cas.samlSp.asana.name=Asana
+# cas.samlSp.asana.description=Asana Integration
+# cas.samlSp.asana.nameIdAttribute=mail
+# cas.samlSp.asana.nameIdFormat=emailAddress
 ```
 
 ### Box
 
 ```properties
-# cas.samlSP.box.metadata=/etc/cas/saml/box.xml
-# cas.samlSP.box.name=Box
-# cas.samlSP.box.description=Box Integration
-# cas.samlSP.box.attributes=email,firstName,lastName
-# cas.samlSP.box.signatureLocation=
+# cas.samlSp.box.metadata=/etc/cas/saml/box.xml
+# cas.samlSp.box.name=Box
+# cas.samlSp.box.description=Box Integration
+# cas.samlSp.box.attributes=email,firstName,lastName
+# cas.samlSp.box.signatureLocation=
 ```
 
 ### Service Now
 
 ```properties
-# cas.samlSP.serviceNow.metadata=/etc/cas/saml/serviceNow.xml
-# cas.samlSP.serviceNow.name=ServiceNow
-# cas.samlSP.serviceNow.description=serviceNow Integration
-# cas.samlSP.serviceNow.attributes=eduPersonPrincipalName
-# cas.samlSP.serviceNow.signatureLocation=
+# cas.samlSp.serviceNow.metadata=/etc/cas/saml/serviceNow.xml
+# cas.samlSp.serviceNow.name=ServiceNow
+# cas.samlSp.serviceNow.description=serviceNow Integration
+# cas.samlSp.serviceNow.attributes=eduPersonPrincipalName
+# cas.samlSp.serviceNow.signatureLocation=
 ```
 
 ### Net Partner
 
 ```properties
-# cas.samlSP.netPartner.metadata=/etc/cas/saml/netPartner.xml
-# cas.samlSP.netPartner.name=Net Partner
-# cas.samlSP.netPartner.description=Net Partner Integration
-# cas.samlSP.netPartner.nameIdAttribute=studentId
-# cas.samlSP.netPartner.attributes=
-# cas.samlSP.netPartner.signatureLocation=
+# cas.samlSp.netPartner.metadata=/etc/cas/saml/netPartner.xml
+# cas.samlSp.netPartner.name=Net Partner
+# cas.samlSp.netPartner.description=Net Partner Integration
+# cas.samlSp.netPartner.nameIdAttribute=studentId
+# cas.samlSp.netPartner.attributes=
+# cas.samlSp.netPartner.signatureLocation=
 ```
 
 ### Webex
 
 ```properties
-# cas.samlSP.webex.metadata=/etc/cas/saml/webex.xml
-# cas.samlSP.webex.name=Webex
-# cas.samlSP.webex.description=Webex Integration
-# cas.samlSP.webex.nameIdAttribute=email
-# cas.samlSP.webex.attributes=firstName,lastName
+# cas.samlSp.webex.metadata=/etc/cas/saml/webex.xml
+# cas.samlSp.webex.name=Webex
+# cas.samlSp.webex.description=Webex Integration
+# cas.samlSp.webex.nameIdAttribute=email
+# cas.samlSp.webex.attributes=firstName,lastName
 ```
 
 ### InCommon
@@ -3260,12 +3263,12 @@ EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` 
 The signature location MUST BE the public key used to sign the metadata.
 
 ```properties
-# cas.samlSP.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
-# cas.samlSP.inCommon.name=InCommon Aggregate
-# cas.samlSP.inCommon.description=InCommon Metadata Aggregate
-# cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
-# cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
-# cas.samlSP.inCommon.entityIds[0]=sampleSPEntityId
+# cas.samlSp.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
+# cas.samlSp.inCommon.name=InCommon Aggregate
+# cas.samlSp.inCommon.description=InCommon Metadata Aggregate
+# cas.samlSp.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
+# cas.samlSp.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
+# cas.samlSp.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
 ## SQRL
@@ -3531,30 +3534,30 @@ to support the WS-Federation protocol.
 To learn more about this topic, [please review this guide](WS-Federation-Protocol.html)
 
 ```properties
-# cas.authn.wsfedIdP.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
-# cas.authn.wsfedIdP.idp.realmName=CAS
+# cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
+# cas.authn.wsfedIdp.idp.realmName=CAS
 
-# cas.authn.wsfedIdP.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
-# cas.authn.wsfedIdP.sts.signingKeystorePassword=storepass
-# cas.authn.wsfedIdP.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
-# cas.authn.wsfedIdP.sts.encryptionKeystorePassword=storepass
+# cas.authn.wsfedIdp.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
+# cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass
+# cas.authn.wsfedIdp.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
+# cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass
 
-# cas.authn.wsfedIdP.sts.subjectNameIdFormat=unspecified
-# cas.authn.wsfedIdP.sts.encryptTokens=true
+# cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified
+# cas.authn.wsfedIdp.sts.encryptTokens=true
 
-# cas.authn.wsfedIdP.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
-# cas.authn.wsfedIdP.sts.realm.keystorePassword=storepass
-# cas.authn.wsfedIdP.sts.realm.keystoreAlias=realmcas
-# cas.authn.wsfedIdP.sts.realm.keyPassword=cas
-# cas.authn.wsfedIdP.sts.realm.issuer=CAS
+# cas.authn.wsfedIdp.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
+# cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass
+# cas.authn.wsfedIdp.sts.realm.keystoreAlias=realmcas
+# cas.authn.wsfedIdp.sts.realm.keyPassword=cas
+# cas.authn.wsfedIdp.sts.realm.issuer=CAS
 ```
 
 ### Signing & Encryption
 
 ```properties
 # Used to secure authentication requests between the IdP and STS
-# cas.authn.wsfedIdP.sts.crypto.encryption.key=
-# cas.authn.wsfedIdP.sts.crypto.signing.key=
+# cas.authn.wsfedIdp.sts.crypto.encryption.key=
+# cas.authn.wsfedIdp.sts.crypto.signing.key=
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -3712,7 +3715,7 @@ Store audit logs inside a database.
 # cas.audit.jdbc.healthQuery=
 # cas.audit.jdbc.isolateInternalQueries=false
 # cas.audit.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.audit.jdbc.failFast=true
+# cas.audit.jdbc.failFastTimeout=1
 # cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.audit.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.audit.jdbc.leakThreshold=10
@@ -3790,7 +3793,7 @@ for authentication or attribute retrieval.
 # cas.monitor.jdbc.healthQuery=
 # cas.monitor.jdbc.isolateInternalQueries=false
 # cas.monitor.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.monitor.jdbc.failFast=true
+# cas.monitor.jdbc.failFastTimeout=1
 # cas.monitor.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.monitor.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.monitor.jdbc.leakThreshold=10
@@ -3900,7 +3903,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.healthQuery=
 # cas.events.jpa.isolateInternalQueries=false
 # cas.events.jpa.url=jdbc:hsqldb:mem:cas-events
-# cas.events.jpa.failFast=true
+# cas.events.jpa.failFastTimeout=1
 # cas.events.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.events.jpa.leakThreshold=10
 # cas.events.jpa.batchSize=1
@@ -3978,6 +3981,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.httpClient.asyncTimeout=5000
 # cas.httpClient.readTimeout=5000
 # cas.httpClient.hostnameVerifier=NONE|DEFAULT
+# cas.httpClient.allowLocalLogoutUrls=false
 
 # cas.httpClient.truststore.psw=changeit
 # cas.httpClient.truststore.file=classpath:/truststore.jks
@@ -3997,22 +4001,32 @@ The default options are avaiable for hostname verification:
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
-# cas.serviceRegistry.repeatInterval=120000
-# cas.serviceRegistry.startDelay=15000
+# cas.serviceRegistry.schedule.repeatInterval=120000
+# cas.serviceRegistry.schedule.startDelay=15000
 # cas.serviceRegistry.initFromJson=false
 ```
 
-### Resource-based (JSON/YAML) Service Registry
+### JSON Service Registry
 
 If the underlying service registry is using local system resources
-to locate service definitions, decide how those resources should be found.
+to locate JSON service definitions, decide how those resources should be found.
 
 ```properties
-# cas.serviceRegistry.config.location=classpath:/services
+# cas.serviceRegistry.json.location=classpath:/services
 ```
 
-To learn more about this topic, [please review this guide](JSON-Service-Management.html)
-or [this guide](YAML-Service-Management.html).
+To learn more about this topic, [please review this guide](JSON-Service-Management.html).
+
+### YAML Service Registry
+
+If the underlying service registry is using local system resources
+to locate YAML service definitions, decide how those resources should be found.
+
+```properties
+# cas.serviceRegistry.yaml.location=classpath:/services
+```
+
+To learn more about this topic, [please review this guide](YAML-Service-Management.html).
 
 ### DynamoDb Service Registry
 
@@ -4144,7 +4158,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.healthQuery=
 # cas.serviceRegistry.jpa.isolateInternalQueries=false
 # cas.serviceRegistry.jpa.url=jdbc:hsqldb:mem:cas-service-registry
-# cas.serviceRegistry.jpa.failFast=true
+# cas.serviceRegistry.jpa.failFastTimeout=1
 # cas.serviceRegistry.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.serviceRegistry.jpa.leakThreshold=10
 # cas.serviceRegistry.jpa.batchSize=1
@@ -4165,6 +4179,32 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
+## Service Registey Replication Hazelcast
+
+```properties
+# cas.serviceRegistry.stream.hazelcast.duration=PT30S
+# cas.serviceRegistry.stream.hazelcast.config.configLocation=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.evictionPolicy=LRU
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxNoHeartbeatSeconds=300
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastEnabled=false
+# cas.serviceRegistry.stream.hazelcast.config.cluster.tcpipEnabled=true
+# cas.serviceRegistry.stream.hazelcast.config.cluster.members=localhost
+# cas.serviceRegistry.stream.hazelcast.config.cluster.loggingType=slf4j
+# cas.serviceRegistry.stream.hazelcast.config.cluster.instanceName=localhost
+# cas.serviceRegistry.stream.hazelcast.config.cluster.port=5801
+# cas.serviceRegistry.stream.hazelcast.config.cluster.portAutoIncrement=true
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxHeapSizePercentage=85
+# cas.serviceRegistry.stream.hazelcast.config.cluster.backupCount=1
+# cas.serviceRegistry.stream.hazelcast.config.cluster.asyncBackupCount=0
+# cas.serviceRegistry.stream.hazelcast.config.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# cas.serviceRegistry.stream.hazelcast.config.cluster.timeout=5
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTrustedInterfaces=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastPort=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastGroup=
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeout=2
+# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeToLive=32
+```
+
 ## Ticket Registry
 
 To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).
@@ -4180,10 +4220,9 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave.
 
 ```properties
-# cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
-# cas.ticket.registry.cleaner.startDelay=10000
-# cas.ticket.registry.cleaner.repeatInterval=60000
-# cas.ticket.registry.cleaner.enabled=true
+# cas.ticket.registry.cleaner.schedule.startDelay=10000
+# cas.ticket.registry.cleaner.schedule.repeatInterval=60000
+# cas.ticket.registry.cleaner.schedule.enabled=true
 ```
 
 ### JPA Ticket Registry
@@ -4197,7 +4236,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.healthQuery=
 # cas.ticket.registry.jpa.isolateInternalQueries=false
 # cas.ticket.registry.jpa.url=jdbc:hsqldb:mem:cas-ticket-registry
-# cas.ticket.registry.jpa.failFast=true
+# cas.ticket.registry.jpa.failFastTimeout=1
 # cas.ticket.registry.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.ticket.registry.jpa.leakThreshold=10
 # cas.ticket.registry.jpa.jpaLockingTgtEnabled=true
@@ -4828,8 +4867,8 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 
 ```properties
 # cas.samlMetadataUi.requireValidMetadata=true
-# cas.samlMetadataUi.repeatInterval=120000
-# cas.samlMetadataUi.startDelay=30000
+# cas.samlMetadataUi.schedule.repeatInterval=120000
+# cas.samlMetadataUi.schedule.startDelay=30000
 # cas.samlMetadataUi.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
 # cas.samlMetadataUi.maxValidity=0
 # cas.samlMetadataUi.requireSignedRoot=false
@@ -4884,7 +4923,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 ### JSON Attribute Consent
 
 ```properties
-# cas.consent.json.config.location=file:/etc/cas/config/consent.json
+# cas.consent.json.location=file:/etc/cas/config/consent.json
 ```
 
 ### JPA Attribute Consent
@@ -4895,7 +4934,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.jpa.healthQuery=
 # cas.consent.jpa.isolateInternalQueries=false
 # cas.consent.jpa.url=jpa:hsqldb:mem:cas-hsql-database
-# cas.consent.jpa.failFast=true
+# cas.consent.jpa.failFastTimeout=1
 # cas.consent.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.consent.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.consent.jpa.leakThreshold=10
@@ -4918,6 +4957,14 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ```properties
 # cas.consent.rest.endpoint=https://api.example.org/trustedBrowser
+```
+
+## Apache Fortress Authentication
+
+To learn more about this topic, [please review this guide](../integration/Configuring-Fortress-Integration.html).
+
+```properties
+# cas.authn.fortress.rbaccontext=HOME
 ```
 
 ## Password Management
@@ -4949,7 +4996,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 ### JSON Password Management
 
 ```properties
-# cas.authn.pm.json.config.location=classpath:jsonResourcePassword.json
+# cas.authn.pm.json.location=classpath:jsonResourcePassword.json
 ```
 
 ### LDAP Password Management
@@ -5020,7 +5067,7 @@ The following LDAP types are supported:
 # cas.authn.pm.jdbc.healthQuery=
 # cas.authn.pm.jdbc.isolateInternalQueries=false
 # cas.authn.pm.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.pm.jdbc.failFast=true
+# cas.authn.pm.jdbc.failFastTimeout=1
 # cas.authn.pm.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.authn.pm.jdbc.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.pm.jdbc.leakThreshold=10

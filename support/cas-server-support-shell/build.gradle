@@ -1,8 +1,41 @@
-description = "Apereo CAS Remote Shell Support"
+apply plugin: "application"
+apply plugin: "org.springframework.boot"
+
+def MAIN_CLASS = "org.apereo.cas.CasCommandLineShellApplication"
+
+mainClassName = MAIN_CLASS
+description = "Apereo CAS Shell Support via Spring"
 
 dependencies {
-    implementation libraries.springbootremoteshell
+    compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-services-api")
+    compile project(":api:cas-server-core-api-services")
+    compile project(":core:cas-server-core-configuration-metadata-repository")
+    compile libraries.springbootconfigmetadata
 }
 
+springBoot {
+    mainClass = MAIN_CLASS
+}
 
+bootRepackage {
+    mainClass = MAIN_CLASS
+    enabled = !rootProject.publishReleases
+}
 
+bootRun {
+    systemProperties = System.properties
+    def list = []
+    if (Boolean.getBoolean("enableRemoteDebugging")) {
+        list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
+    }
+    jvmArgs = list
+}
+
+run {
+    def execArgs = System.getProperty('args')
+    if (execArgs != null) {
+        args execArgs.split()
+    }
+}

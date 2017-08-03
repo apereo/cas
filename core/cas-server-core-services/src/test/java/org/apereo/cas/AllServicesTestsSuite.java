@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.ResponseTests;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGeneratorTests;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
-import org.apereo.cas.authentication.support.DefaultCasAttributeEncoderTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
@@ -52,7 +51,6 @@ import org.junit.runners.Suite;
         ShibbolethCompatiblePersistentIdGeneratorTests.class,
         SimpleWebApplicationServiceImplTests.class, 
         WebApplicationServiceFactoryTests.class,
-        RegisteredServiceJsonSerializerTests.class,
-        DefaultCasAttributeEncoderTests.class})
+        RegisteredServiceJsonSerializerTests.class})
 public class AllServicesTestsSuite {
 }
