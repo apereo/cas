@@ -64,9 +64,9 @@ import static org.junit.Assert.*;
         TokenAuthenticationConfiguration.class})
 public class TokenAuthenticationHandlerTests {
 
-    private static final RandomStringGenerator generator = new DefaultRandomStringGenerator();
-    private static final String SIGNING_SECRET = generator.getNewString(256);
-    private static final String ENCRYPTION_SECRET = generator.getNewString(48);
+    private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
+    private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);
+    private static final String ENCRYPTION_SECRET = RANDOM_STRING_GENERATOR.getNewString(48);
 
     @Autowired
     @Qualifier("tokenAuthenticationHandler")

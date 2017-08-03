@@ -73,6 +73,7 @@ public class SamlIdPConfiguration {
     private VelocityEngineFactory velocityEngineFactory;
     
     @Autowired
+    @Qualifier("urlValidator")
     private UrlValidator urlValidator;
 
     @Bean

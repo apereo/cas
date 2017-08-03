@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,8 @@ public class GenerateKeyCommand implements CommandMarker {
                             LOGGER.info(cryptoGroup.concat(".signing.key="+EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
                         } else if (obj instanceof EncryptionRandomizedSigningJwtCryptographyProperties) {
                             final EncryptionRandomizedSigningJwtCryptographyProperties crypto = (EncryptionRandomizedSigningJwtCryptographyProperties) obj;
-                            LOGGER.info(cryptoGroup.concat(".encryption.key=" + RandomStringUtils.randomAlphanumeric(crypto.getEncryption().getKeySize())));
+                            final String encKey = new Base64RandomStringGenerator(crypto.getEncryption().getKeySize()).getNewString();
+                            LOGGER.info(cryptoGroup.concat(".encryption.key=" + encKey));
                             LOGGER.info(cryptoGroup.concat(".signing.key="+EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
                         }
                     }));
