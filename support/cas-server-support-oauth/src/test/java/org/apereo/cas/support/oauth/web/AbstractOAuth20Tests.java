@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuthConfiguration;
@@ -80,7 +81,8 @@ import java.util.List;
                 AbstractOAuth20Tests.OAuthTestConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreLogoutConfiguration.class,
-                CasCoreUtilConfiguration.class})
+                CasCoreUtilConfiguration.class,
+                CasCoreWebConfiguration.class})
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)

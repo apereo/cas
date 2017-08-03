@@ -3,6 +3,7 @@ package org.apereo.cas.digest.util;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.auth.DigestScheme;
+import org.apereo.cas.util.RandomUtils;
 
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
@@ -25,7 +26,7 @@ public final class DigestAuthenticationUtils {
      */
     public static String createNonce() {
         final String fmtDate = ZonedDateTime.now().toString();
-        final SecureRandom rand = new SecureRandom();
+        final SecureRandom rand = RandomUtils.getInstanceStrong();
         final Integer randomInt = rand.nextInt();
         return DigestUtils.md5Hex(fmtDate + randomInt);
     }
