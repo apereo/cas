@@ -48,9 +48,9 @@ public class BinaryCipherExecutorTests {
     public void checkLegacyKeys() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
         final CipherExecutor<byte[], byte[]> cc = new TestBinaryCipherExecutor("1234567890123456",
-          "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
-          512,
-          16);
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
+            512,
+            16);
         final byte[] bytes = cc.encode(value.getBytes());
         final byte[] decoded = cc.decode(bytes);
         assertEquals(new String(decoded), value);

@@ -24,7 +24,7 @@ public final class RandomUtils {
         try {
             return SecureRandom.getInstanceStrong();
         } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 }
