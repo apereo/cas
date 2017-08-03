@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RemoteEndpointServiceAccessStrategy} from "../../../../domain/access-strategy";
 import {Messages} from "../../../messages";
+import {Data} from "../../data";
 
 @Component({
   selector: 'app-remote',
@@ -9,10 +10,12 @@ import {Messages} from "../../../messages";
 })
 export class RemoteComponent implements OnInit {
 
-  @Input()
   accessStrategy: RemoteEndpointServiceAccessStrategy;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.accessStrategy = data.service.accessStrategy as RemoteEndpointServiceAccessStrategy;
+  }
 
   ngOnInit() {
   }

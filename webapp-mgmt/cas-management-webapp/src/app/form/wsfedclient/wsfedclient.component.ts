@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {WSFederationRegisterdService} from "../../../domain/wsed-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-wsfedclient',
@@ -10,13 +10,14 @@ import {WSFederationRegisterdService} from "../../../domain/wsed-service";
 })
 export class WsfedclientComponent implements OnInit {
 
-  @Input()
   service: WSFederationRegisterdService;
-
-  @Input()
   selectOptions;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service as WSFederationRegisterdService;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
   }

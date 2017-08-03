@@ -7,7 +7,7 @@ import { DebugElement } from '@angular/core';
 import { TabAttrreleaseComponent } from './tab-attrrelease.component';
 import {AttributeReleaseComponent} from "../attribute-release/attribute-release.component";
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {SharedModule} from "../../shared/shared.module";
 import {AttributeReleaseChecksComponent} from "../attribute-release-checks/attribute-release-checks.component";
 import {AttributeReleaseFiltersComponent} from "../attribute-release-filters/attribute-release-filters.component";
@@ -23,7 +23,7 @@ describe('TabAttrreleaseComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabAttrreleaseComponent, AttributeReleaseComponent, AttributeReleaseChecksComponent, AttributeReleaseFiltersComponent, AttributeReleasePoliciesComponent, AttributeReleasePrincipalRepoComponent, WsfedattrrelpoliciesComponent ],
-      providers: [ Messages, TabService ]
+      providers: [ Messages, Data ]
     })
     .compileComponents();
   }));

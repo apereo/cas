@@ -8,7 +8,7 @@ import { AccessStrategyComponent } from './access-strategy.component';
 import {RejectedattributesComponent} from "../rejectedattributes/rejectedattributes.component";
 import {Messages} from "../../messages";
 import {FormData} from "../../../domain/service-view-bean";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {SharedModule} from "../../shared/shared.module";
 import {RegexRegisteredService} from "../../../domain/registered-service";
 
@@ -32,7 +32,7 @@ describe('AccessStrategyComponent', () => {
     component = fixture.componentInstance;
     component.formData = new FormData();
     component.service = new RegexRegisteredService();
-    component.selectOptions = new TabService().selectOptions;
+    component.selectOptions = new Data().selectOptions;
     fixture.detectChanges();
   });
 

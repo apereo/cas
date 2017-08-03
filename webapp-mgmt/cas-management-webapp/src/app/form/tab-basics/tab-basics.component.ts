@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import 'rxjs/add/operator/switchMap';
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-tab-basics',
@@ -8,7 +8,7 @@ import {TabService} from "../tab.service";
 })
 export class TabBasicsComponent implements OnInit {
 
-  constructor(public tabService: TabService) { }
+  constructor() { }
 
   ngOnInit() {
   }

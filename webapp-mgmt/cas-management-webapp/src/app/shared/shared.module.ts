@@ -24,4 +24,8 @@ import {MyTooltipDirective} from "../my-tooltip.directive";
     MyTooltipDirective,
   ]
 })
-export class SharedModule {}
+export class SharedModule {
+  static empty(obj: any): boolean {
+    return !obj || Object.keys(obj).length == 0;
+  }
+}
