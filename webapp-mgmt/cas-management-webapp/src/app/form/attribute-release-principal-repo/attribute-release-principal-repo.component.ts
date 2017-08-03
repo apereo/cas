@@ -6,6 +6,7 @@ import {
   CachingPrincipalAttributesRepository,
   DefaultPrincipalAttributesRepository
 } from "../../../domain/attribute-repo";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-attribute-release-principal-repo',
@@ -13,32 +14,24 @@ import {
   styleUrls: ['./attribute-release-principal-repo.component.css']
 })
 export class AttributeReleasePrincipalRepoComponent implements OnInit {
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
   formData: FormData;
-
-  @Input()
   selectOptions;
-
   type: String;
 
-  constructor(public messages: Messages) { }
-
-  ngOnInit() {
-    switch(this.service.attributeReleasePolicy.principalAttributesRepository["@class"]) {
-      case "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository" :
-        this.type = "DEFAULT";
-        break;
-      case "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository" :
-        this.type = "CACHED";
-        break;
-    }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+    this.formData = data.formData;
+    this.selectOptions = data.selectOptions;
   }
 
-  isEmpty(data: any[]) {
-    return data != null && data.length == 0;
+  ngOnInit() {
+    if (DefaultPrincipalAttributesRepository.instanceOf(this.service.attributeReleasePolicy.principalAttributesRepository)) {
+      this.type = "DEFAULT";
+    } else if (CachingPrincipalAttributesRepository.instanceOf(this.service.attributeReleasePolicy.principalAttributesRepository)) {
+      this.type = "CACHED";
+    }
   }
 
   changeType() {

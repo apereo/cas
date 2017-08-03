@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { TabBasicsComponent } from './tab-basics.component';
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {ServicenameComponent} from "../servicename/servicename.component";
 import {ServicedescComponent} from "../servicedesc/servicedesc.component";
 import {LogoComponent} from "../logo/logo.component";
@@ -33,7 +33,7 @@ describe('TabBasicsComponent', () => {
         LinkrefsComponent,
         EnabledComponent
       ],
-      providers: [ Messages, TabService ]
+      providers: [ Messages, Data ]
     })
     .compileComponents();
   }));

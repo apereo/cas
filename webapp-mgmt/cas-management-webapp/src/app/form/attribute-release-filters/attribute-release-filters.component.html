@@ -10,7 +10,9 @@
   </label>
   <div class="col-sm-8">
     <div class="input-group">
-      <input type="text" class="form-control" id="attFilter" [(ngModel)]="attributeFilter.pattern"/>
+      <input type="text" class="form-control"
+             [ngModel]="getPattern()"
+             (ngModelChange)="updateFilter($event)"/>
     </div>
   </div>
 </div>

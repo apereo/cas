@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { TabUsernameattrComponent } from './tab-usernameattr.component';
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {Messages} from "../../messages";
 import {UidattrsComponent} from "../uidattrs/uidattrs.component";
 import {SharedModule} from "../../shared/shared.module";
@@ -18,7 +18,7 @@ describe('TabUsernameattrComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabUsernameattrComponent, UidattrsComponent ],
-      providers: [ Messages, TabService]
+      providers: [ Messages, Data]
     })
     .compileComponents();
   }));

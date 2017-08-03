@@ -7,7 +7,7 @@ import {AbstractRegisteredService} from "../../domain/registered-service";
 import {FormData} from "../../domain/service-view-bean";
 
 @Injectable()
-export class TabService {
+export class Data {
   isAdmin: boolean;
   service: AbstractRegisteredService;
   formData: FormData;

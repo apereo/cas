@@ -7,6 +7,7 @@ import {
   DefaultRegisteredServiceUsernameProvider,
   PrincipalAttributeRegisteredServiceUsernameProvider
 } from "../../../domain/attribute-provider";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-uidattrs',
@@ -14,18 +15,17 @@ import {
 })
 export class UidattrsComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
   formData: FormData;
-
-  @Input()
   selectOptions;
-
   type: String;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+    this.formData = data.formData;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
     switch(this.service.usernameAttributeProvider["@class"]) {

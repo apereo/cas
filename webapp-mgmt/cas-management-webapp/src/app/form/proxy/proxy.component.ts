@@ -5,6 +5,7 @@ import {
   RefuseRegisteredServiceProxyPolicy,
   RegexMatchingRegisteredServiceProxyPolicy
 } from "../../../domain/proxy-policy,ts";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-proxy',
@@ -12,21 +13,19 @@ import {
 })
 export class ProxyComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
-
   type: String;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+  }
 
   ngOnInit() {
-    switch (this.service.proxyPolicy["@class"]) {
-      case "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy" :
-        this.type = "REFUSE";
-        break;
-      case "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy" :
-        this.type = "REGEX";
-        break;
+    if (RefuseRegisteredServiceProxyPolicy.instanceOf(this.service.proxyPolicy)) {
+      this.type = "REFUSE";
+    } else if (RegexMatchingRegisteredServiceProxyPolicy.instanceOf(this.service.proxyPolicy)) {
+      this.type = "REGEX";
     }
   }
 

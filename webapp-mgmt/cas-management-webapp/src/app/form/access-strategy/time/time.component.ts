@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TimeBasedRegisteredServiceAccessStrategy} from "../../../../domain/access-strategy";
 import {Messages} from "../../../messages";
+import {Data} from "../../data";
 
 @Component({
   selector: 'app-time',
@@ -9,10 +10,12 @@ import {Messages} from "../../../messages";
 })
 export class TimeComponent implements OnInit {
 
-  @Input()
   accessStrategy: TimeBasedRegisteredServiceAccessStrategy;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.accessStrategy = data.service.accessStrategy as TimeBasedRegisteredServiceAccessStrategy;
+  }
 
   ngOnInit() {
   }

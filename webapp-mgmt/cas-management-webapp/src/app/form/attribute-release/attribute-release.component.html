@@ -10,21 +10,13 @@
       </h3>
     </div>
     <div class="panel-body">
-      <app-attribute-release-checks [service]="service"
-                                    [formData]="formData"
-                                    [selectOptions]="selectOptions"></app-attribute-release-checks>
-      <app-attribute-release-filters [service]="service"
-                                     [formData]="formData"
-                                     [selectOptions]="selectOptions"></app-attribute-release-filters>
-      <app-attribute-release-principal-repo [service]="service"
-                                            [formData]="formData"
-                                            [selectOptions]="selectOptions"></app-attribute-release-principal-repo>
+      <app-attribute-release-checks></app-attribute-release-checks>
+      <app-attribute-release-filters></app-attribute-release-filters>
+      <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
     </div>
   </div>
 
-  <app-attribute-release-policies [service]="service"
-                                  [formData]="formData"
-                                  [selectOptions]="selectOptions"></app-attribute-release-policies>
+  <app-attribute-release-policies></app-attribute-release-policies>
 </div>
 
 
@@ -50,11 +42,9 @@
         </ng-container></h3>
     </div>
     <div class="panel-body">
-      <app-attribute-release-principal-repo [service]="service"
-                                            [formData]="formData"
-                                            [selectOptions]="selectOptions"></app-attribute-release-principal-repo>
+      <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
     </div>
   </div>
 
-  <app-wsfedattrrelpolicies [service]="service" [formData]="formData"></app-wsfedattrrelpolicies>
+  <app-wsfedattrrelpolicies></app-wsfedattrrelpolicies>
 </div>

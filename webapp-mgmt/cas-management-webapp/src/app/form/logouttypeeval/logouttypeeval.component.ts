@@ -1,6 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-logouttypeeval',
@@ -8,13 +9,14 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 })
 export class LogouttypeevalComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
   selectOptions;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
   }

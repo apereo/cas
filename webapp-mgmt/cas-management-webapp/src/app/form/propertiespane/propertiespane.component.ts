@@ -2,6 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {DefaultRegisteredServiceProperty} from "../../../domain/property";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-propertiespane',
@@ -9,7 +10,6 @@ import {DefaultRegisteredServiceProperty} from "../../../domain/property";
 })
 export class PropertiespaneComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
 
   rows: Row[];
@@ -17,7 +17,10 @@ export class PropertiespaneComponent implements OnInit {
   addValue: String[];
   isAdding: boolean;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+  }
 
   ngOnInit() {
     this.rows = [];

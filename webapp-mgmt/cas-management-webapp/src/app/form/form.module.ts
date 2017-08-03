@@ -42,7 +42,7 @@ import {ServicenameComponent} from "./servicename/servicename.component";
 import {ServicetypeComponent} from "./servicetype/servicetype.component";
 import {ThemeidComponent} from "./themeid/themeid.component";
 import {UidattrsComponent} from "./uidattrs/uidattrs.component";
-import {TabService} from "./tab.service";
+import {Data} from "./data";
 import {SharedModule} from "../shared/shared.module";
 import {TabAdvancedComponent} from "./tab-advanced/tab-advanced.component";
 import { AttributeReleaseChecksComponent } from './attribute-release-checks/attribute-release-checks.component';
@@ -116,7 +116,7 @@ import { OidcclientComponent } from './oidcclient/oidcclient.component';
   providers: [
     FormResolve,
     FormService,
-    TabService
+    Data
   ]
 })
 

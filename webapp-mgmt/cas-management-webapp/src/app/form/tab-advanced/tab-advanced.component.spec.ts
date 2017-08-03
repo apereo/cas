@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { TabAdvancedComponent } from './tab-advanced.component';
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {Messages} from "../../messages";
 import {PubkeyComponent} from "../pubkey/pubkey.component";
 import {EvalorderComponent} from "../evalorder/evalorder.component";
@@ -20,7 +20,7 @@ describe('TabAdvancedComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabAdvancedComponent, PubkeyComponent, EvalorderComponent, ReqhandlersComponent ],
-      providers: [ TabService, Messages]
+      providers: [ Data, Messages]
     })
     .compileComponents();
   }));

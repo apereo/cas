@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { MultiauthpaneComponent } from './multiauthpane.component';
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {SharedModule} from "../../shared/shared.module";
 import {RegexRegisteredService} from "../../../domain/registered-service";
 
@@ -26,7 +26,7 @@ describe('MultiauthpaneComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MultiauthpaneComponent);
     component = fixture.componentInstance;
-    component.selectOptions = new TabService().selectOptions;
+    component.selectOptions = new Data().selectOptions;
     component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });

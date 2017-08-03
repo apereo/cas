@@ -7,7 +7,7 @@ import { DebugElement } from '@angular/core';
 import { TabServicetypeComponent } from './tab-servicetype.component';
 import {ServicetypeComponent} from "../servicetype/servicetype.component";
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {SamlclientComponent} from "../samlclient/samlclient.component";
 import {OauthclientComponent} from "../oauthclient/oauthclient.component";
 import {SharedModule} from "../../shared/shared.module";
@@ -23,7 +23,7 @@ describe('TabServicetypeComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabServicetypeComponent, ServicetypeComponent, SamlclientComponent, OauthclientComponent, WsfedclientComponent, WsfedattrrelpoliciesComponent, SamlservicespaneComponent ],
-      providers: [ Messages, TabService ]
+      providers: [ Messages, Data ]
     })
     .compileComponents();
   }));

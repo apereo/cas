@@ -2,6 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {OAuthRegisteredService, OidcRegisteredService} from "../../../domain/oauth-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-oauthclient',
@@ -9,18 +10,18 @@ import {OAuthRegisteredService, OidcRegisteredService} from "../../../domain/oau
 })
 export class OauthclientComponent implements OnInit {
 
-  @Input()
   service: OAuthRegisteredService;
-
-  @Input()
   selectOptions;
-
   @Input()
   type: String;
 
   showOAuthSecret: boolean;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service as OAuthRegisteredService;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
   }

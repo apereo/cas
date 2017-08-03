@@ -4,7 +4,7 @@ import {AbstractRegisteredService, RegexRegisteredService, RegisteredService} fr
 import {OAuthRegisteredService, OidcRegisteredService} from "../../../domain/oauth-service";
 import {SamlRegisteredService} from "../../../domain/saml-service";
 import {WSFederationRegisterdService} from "../../../domain/wsed-service";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-servicetype',
@@ -12,30 +12,24 @@ import {TabService} from "../tab.service";
 })
 export class ServicetypeComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
   selectOptions;
-
   type: String;
 
-  wsfed = WSFederationRegisterdService.instanceOf;
-  oauth = OAuthRegisteredService.instanceOf;
-  oidc = OidcRegisteredService.instanceOf;
-  saml = SamlRegisteredService.instanceOf;
-
   constructor(public messages: Messages,
-              private tabService: TabService) { }
+              private data: Data) {
+    this.service = data.service;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
-    if (this.oauth(this.service)) {
+    if (OAuthRegisteredService.instanceOf(this.service)) {
       this.type = this.selectOptions.serviceTypeList[1].value;
-    } else if (this.wsfed(this.service)) {
+    } else if (WSFederationRegisterdService.instanceOf(this.service)) {
       this.type = this.selectOptions.serviceTypeList[5].value;
-    } else if (this.oidc(this.service)) {
+    } else if (OidcRegisteredService.instanceOf(this.service)) {
       this.type = this.selectOptions.serviceTypeList[4].value;
-    } else if (this.saml(this.service)) {
+    } else if (SamlRegisteredService.instanceOf(this.service)) {
       this.type = this.selectOptions.serviceTypeList[3].value;
     } else {
       this.type = this.selectOptions.serviceTypeList[0].value;
@@ -61,8 +55,7 @@ export class ServicetypeComponent implements OnInit {
         this.service = new WSFederationRegisterdService(this.service);
         break;
     }
-    this.tabService.service = this.service;
-    console.log("Switch : "+this.service["@class"]);
+    this.data.service = this.service;
   }
 
 }

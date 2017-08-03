@@ -4,7 +4,7 @@ import { AttributeReleaseFiltersComponent } from './attribute-release-filters.co
 import {SharedModule} from "../../shared/shared.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {FormData} from "../../../domain/service-view-bean";
 import {RegexRegisteredService} from "../../../domain/registered-service";
 
@@ -24,9 +24,6 @@ describe('AttributeReleaseFiltersComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleaseFiltersComponent);
     component = fixture.componentInstance;
-    component.selectOptions = new TabService().selectOptions;
-    component.formData = new FormData();
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

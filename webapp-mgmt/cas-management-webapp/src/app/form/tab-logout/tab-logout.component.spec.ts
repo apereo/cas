@@ -7,7 +7,7 @@ import { DebugElement } from '@angular/core';
 import { TabLogoutComponent } from './tab-logout.component';
 import {LogoutComponent} from "../logout/logout.component";
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {LogouttypeevalComponent} from "../logouttypeeval/logouttypeeval.component";
 import {SharedModule} from "../../shared/shared.module";
 
@@ -19,7 +19,7 @@ describe('TabLogoutComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabLogoutComponent,LogoutComponent, LogouttypeevalComponent ],
-      providers: [ Messages, TabService ]
+      providers: [ Messages, Data ]
     })
     .compileComponents();
   }));

@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { TabMulitauthComponent } from './tab-mulitauth.component';
 import {MultiauthpaneComponent} from "../multiauthpane/multiauthpane.component";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {Messages} from "../../messages";
 import {SharedModule} from "../../shared/shared.module";
 
@@ -18,7 +18,7 @@ describe('TabMulitauthComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabMulitauthComponent, MultiauthpaneComponent ],
-      providers: [ Messages, TabService]
+      providers: [ Messages, Data]
     })
     .compileComponents();
   }));

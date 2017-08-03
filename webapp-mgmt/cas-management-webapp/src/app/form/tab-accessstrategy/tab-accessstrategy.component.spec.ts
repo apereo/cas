@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { TabAccessstrategyComponent } from './tab-accessstrategy.component';
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {AccessStrategyComponent} from "../access-strategy/access-strategy.component";
 import {Messages} from "../../messages";
 import {RejectedattributesComponent} from "../rejectedattributes/rejectedattributes.component";
@@ -19,7 +19,7 @@ describe('TabAccessstrategyComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabAccessstrategyComponent, AccessStrategyComponent, RejectedattributesComponent ],
-      providers: [ TabService, Messages ]
+      providers: [ Data, Messages ]
     })
     .compileComponents();
   }));

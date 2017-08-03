@@ -1,6 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-rejectedattributes',
@@ -8,7 +9,6 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 })
 export class RejectedattributesComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
 
   rows: Row[];
@@ -16,7 +16,10 @@ export class RejectedattributesComponent implements OnInit {
   addValue: String[];
   isAdding: boolean;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+  }
 
   ngOnInit() {
 
