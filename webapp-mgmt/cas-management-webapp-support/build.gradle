@@ -16,4 +16,5 @@ dependencies {
     compile project(":support:cas-server-support-grouper")
     compile project(":core:cas-server-core-logging-config")
     compile project(":api:cas-server-core-api-authentication")
+    compile project(":support:cas-server-support-ws-idp-api")
 }
