@@ -39,7 +39,7 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
                     unspecifiedDefaultValue = "",
                     optionContext = "Path to the JSON/YAML service definition") final String file,
 
-            @CliOption(key = {"file"},
+            @CliOption(key = {"directory"},
                     help = "Path to the JSON/YAML service definitions directory",
                     specifiedDefaultValue = "/etc/cas/services",
                     unspecifiedDefaultValue = "/etc/cas/services",
@@ -56,7 +56,7 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
             return;
         }
         if (StringUtils.isNotBlank(directory)) {
-            final File directoryPath = new File(file);
+            final File directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
                 FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(this::validate);
             }
@@ -67,7 +67,7 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
 
     private void validate(final File filePath) {
         try {
-            final RegisteredServiceValidator validator = new RegisteredServiceValidator(filePath);
+            final RegisteredServiceValidator validator = new RegisteredServiceValidator();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 final RegisteredService svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid", svc.getName());
@@ -75,20 +75,18 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Could not understand and validate [{}]: [{}]", filePath.getPath(), e.getMessage());
         }
     }
 
     private static class RegisteredServiceValidator extends AbstractJacksonBackedStringSerializer<RegisteredService> {
-        private final File file;
-
-        RegisteredServiceValidator(final File file) {
-            this.file = file;
+        RegisteredServiceValidator() {
+            super();
         }
 
         @Override
         protected JsonFactory getJsonFactory() {
-            return file.getName().endsWith(".yml") ? new YAMLFactory() : super.getJsonFactory();
+            return new YAMLFactory();
         }
 
         @Override
