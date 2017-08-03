@@ -1,8 +1,8 @@
 description = "Apereo CAS central configuration module providing type-safe configuration domain model to the rest of CAS server"
+
 dependencies {
     implementation libraries.springsecurity
-    implementation libraries.persondirectory
-    implementation libraries.ldaptive
+    
     implementation libraries.mongo
     implementation libraries.jasypt
     implementation libraries.groovy
@@ -15,4 +15,14 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
 }
 
+task generateConfigurationMetadata(type:JavaExec) {
+    main = "org.apereo.cas.configuration.ConfigurationMetadataGenerator"
+    classpath = sourceSets.main.runtimeClasspath
+    args buildDir, projectDir.canonicalPath
+}
+
 compileJava.dependsOn(processResources)
+
+if (!Boolean.getBoolean("skipNestedConfigMetadataGen")) {
+    jar.dependsOn(generateConfigurationMetadata)
+}

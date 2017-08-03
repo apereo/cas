@@ -5,8 +5,9 @@ import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistryDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
+
 import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,8 +42,7 @@ public class LdapServiceRegistryConfiguration {
     @Autowired
     public ServiceRegistryDao serviceRegistryDao(@Qualifier("ldapServiceRegistryMapper") final LdapRegisteredServiceMapper mapper) {
         final LdapServiceRegistryProperties ldap = casProperties.getServiceRegistry().getLdap();
-        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
-
+        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistryDao(connectionFactory, ldap.getBaseDn(), mapper, ldap);
     }
 }

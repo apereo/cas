@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import com.google.common.base.Throwables;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
@@ -209,7 +208,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
             return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

@@ -5,12 +5,9 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-jpa-util")
     compile project(":core:cas-server-core-configuration")
-
-    implementation libraries.quartz
-    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
-    
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-services")

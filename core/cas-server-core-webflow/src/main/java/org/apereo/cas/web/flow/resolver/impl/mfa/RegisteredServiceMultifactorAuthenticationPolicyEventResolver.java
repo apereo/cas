@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -104,7 +103,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
             return null;
 
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

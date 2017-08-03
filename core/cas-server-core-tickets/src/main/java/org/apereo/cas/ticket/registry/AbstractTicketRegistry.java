@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -243,7 +242,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             LOGGER.debug("Decoded ticket to [{}]", ticket);
             return ticket;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

@@ -7,6 +7,7 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-token-core")
     compile project(":support:cas-server-support-pac4j-authentication")
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")

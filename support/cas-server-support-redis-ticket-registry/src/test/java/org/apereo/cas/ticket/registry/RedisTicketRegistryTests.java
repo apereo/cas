@@ -3,7 +3,9 @@ package org.apereo.cas.ticket.registry;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -22,7 +24,10 @@ import redis.embedded.RedisServer;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@SpringBootTest(classes = {RedisTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {RedisTicketRegistryConfiguration.class,
+                           RefreshAutoConfiguration.class,
+                           CasCoreWebConfiguration.class,
+                           CasWebApplicationServiceFactoryConfiguration.class})
 @TestPropertySource(locations={"classpath:/redis.properties"})
 public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
 

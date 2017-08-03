@@ -68,6 +68,6 @@ public class CasConsentCoreConfiguration {
     @ConditionalOnMissingBean(name = "consentRepository")
     @Bean
     public ConsentRepository consentRepository() {
-        return new JsonConsentRepository(casProperties.getConsent().getJson().getConfig().getLocation());
+        return new JsonConsentRepository(casProperties.getConsent().getJson().getLocation());
     }
 }

@@ -82,6 +82,14 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("cas3ServiceFailureView")
     private View cas3ServiceFailureView;
+    
+    @Autowired
+    @Qualifier("cas2ProxySuccessView")
+    private View cas2ProxySuccessView;
+
+    @Autowired
+    @Qualifier("cas2ProxyFailureView")
+    private View cas2ProxyFailureView;
 
     @Autowired
     @Qualifier("proxy10Handler")
@@ -233,7 +241,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "proxyController")
     public ProxyController proxyController() {
-        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory);
+        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory,
+                cas2ProxySuccessView, cas2ProxyFailureView);
     }
 
     @Autowired
