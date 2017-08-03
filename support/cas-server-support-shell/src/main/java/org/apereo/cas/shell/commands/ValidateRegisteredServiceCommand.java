@@ -1,11 +1,9 @@
 package org.apereo.cas.shell.commands;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.shell.core.CommandMarker;
@@ -67,31 +65,15 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
 
     private void validate(final File filePath) {
         try {
-            final RegisteredServiceValidator validator = new RegisteredServiceValidator();
+            final RegisteredServiceJsonSerializer validator = new RegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 final RegisteredService svc = validator.from(filePath);
-                LOGGER.info("Service [{}] is valid", svc.getName());
+                LOGGER.info("Service [{}] is valid.", svc.getName());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
             }
         } catch (final Exception e) {
             LOGGER.error("Could not understand and validate [{}]: [{}]", filePath.getPath(), e.getMessage());
-        }
-    }
-
-    private static class RegisteredServiceValidator extends AbstractJacksonBackedStringSerializer<RegisteredService> {
-        RegisteredServiceValidator() {
-            super();
-        }
-
-        @Override
-        protected JsonFactory getJsonFactory() {
-            return new YAMLFactory();
-        }
-
-        @Override
-        protected Class<RegisteredService> getTypeToSerialize() {
-            return RegisteredService.class;
         }
     }
 }
