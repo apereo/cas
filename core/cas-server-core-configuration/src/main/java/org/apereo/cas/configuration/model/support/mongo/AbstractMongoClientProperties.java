@@ -15,7 +15,7 @@ public abstract class AbstractMongoClientProperties implements Serializable {
 
     /**
      * The connection uri to the mongodb instance.
-     * This typically takes on the form of <code>mongodb://user:psw@ds135522.somewhere.com:35522/db</code>
+     * This typically takes on the form of {@code mongodb://user:psw@ds135522.somewhere.com:35522/db}
      */
     private String clientUri = StringUtils.EMPTY;
 

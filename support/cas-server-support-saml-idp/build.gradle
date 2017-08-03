@@ -7,9 +7,8 @@ dependencies {
     compile project(":support:cas-server-support-saml-idp-core")
     implementation libraries.casclient
     implementation libraries.shibidp
-    implementation libraries.httpclient
     implementation libraries.pac4j
-
+    implementation libraries.caffein
     runtimeOnly libraries.groovy
 
     testCompileOnly libraries.metrics
@@ -19,6 +18,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(path: ":support:cas-server-support-json-service-registry")
     testImplementation project(":support:cas-server-support-cookie")

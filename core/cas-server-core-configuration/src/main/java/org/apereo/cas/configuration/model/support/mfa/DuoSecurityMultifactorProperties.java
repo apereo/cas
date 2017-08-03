@@ -7,7 +7,7 @@ package org.apereo.cas.configuration.model.support.mfa;
  * @since 5.2.0
  */
 public class DuoSecurityMultifactorProperties extends BaseMultifactorProvider {
-    private static final long serialVersionUID = -4445375354167880807L;
+    private static final long serialVersionUID = -4655375354167880807L;
     /**
      * Duo integration key.
      */
@@ -80,5 +80,3 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProvider {
         this.duoApiHost = duoApiHost;
     }
 }
-
-

@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.gua;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import java.io.Serializable;
 
 /**
  * This is {@link GraphicalUserAuthenticationProperties}
@@ -11,7 +13,8 @@ import org.apereo.cas.configuration.support.AbstractConfigProperties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class GraphicalUserAuthenticationProperties {
+public class GraphicalUserAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7527953699378415460L;
     /**
      * Locate GUA settings and images from LDAP.
      */
@@ -19,7 +22,7 @@ public class GraphicalUserAuthenticationProperties {
     /**
      * Locate GUA settings and images from a static image.
      */
-    private Resource resource = new Resource();
+    private SpringResourceProperties resource = new SpringResourceProperties();
 
     public Ldap getLdap() {
         return ldap;
@@ -29,15 +32,12 @@ public class GraphicalUserAuthenticationProperties {
         this.ldap = ldap;
     }
 
-    public Resource getResource() {
+    public SpringResourceProperties getResource() {
         return resource;
     }
 
-    public void setResource(final Resource resource) {
+    public void setResource(final SpringResourceProperties resource) {
         this.resource = resource;
-    }
-
-    public static class Resource extends AbstractConfigProperties {
     }
     
     public static class Ldap extends AbstractLdapProperties {
@@ -48,6 +48,7 @@ public class GraphicalUserAuthenticationProperties {
         private String baseDn;
         /**
          * Search filter to locate the account in LDAP.
+         * Syntax is {@code cn={user}} or {@code cn={0}}
          */
         private String userFilter;
         /**

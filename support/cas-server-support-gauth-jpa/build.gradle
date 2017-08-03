@@ -6,5 +6,6 @@ dependencies {
     compile project(":support:cas-server-support-jpa-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-person-directory")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

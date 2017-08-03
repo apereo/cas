@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
+
 /**
  * This is {@link FileAuthenticationProperties}.
  *
@@ -12,14 +14,15 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class FileAuthenticationProperties {
+public class FileAuthenticationProperties implements Serializable {
 
+    private static final long serialVersionUID = 4031366217090049241L;
     /**
      * File resource where user accounts are kept.
      */
     private Resource filename;
     /**
-     * Separator character that dinstinguishes between usernames and passwords in the file.
+     * Separator character that distinguishes between usernames and passwords in the file.
      */
     private String separator = "::";
 

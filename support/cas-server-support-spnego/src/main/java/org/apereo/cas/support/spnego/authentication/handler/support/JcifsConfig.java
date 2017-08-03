@@ -1,6 +1,5 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
-import com.google.common.base.Throwables;
 import jcifs.Config;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -115,7 +114,7 @@ public class JcifsConfig {
                 LOGGER.debug("configured login configuration path : [{}]", propValue);
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

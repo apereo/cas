@@ -17,6 +17,6 @@ public class CasSamlSPOpenAthensConfiguration extends BaseCasSamlSPConfiguration
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getOpenAthens();
+        return casProperties.getSamlSp().getOpenAthens();
     }
 }

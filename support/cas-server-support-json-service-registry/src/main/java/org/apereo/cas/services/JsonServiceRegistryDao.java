@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 
-import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 

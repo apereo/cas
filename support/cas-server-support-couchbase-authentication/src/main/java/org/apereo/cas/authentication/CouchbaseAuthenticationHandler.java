@@ -21,6 +21,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link CouchbaseAuthenticationHandler}.
@@ -42,7 +43,7 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
         this.couchbase = couchbase;
         this.couchbaseProperties = couchbaseProperties;
 
-        System.setProperty("com.couchbase.queryEnabled", Boolean.TRUE.toString());
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(couchbaseProperties.isQueryEnabled()));
     }
 
     @Override
@@ -54,7 +55,7 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
                         .eq('\'' + transformedCredential.getUsername() + '\''));
 
         final SimpleN1qlQuery query = N1qlQuery.simple(statement);
-        final N1qlQueryResult result = couchbase.getBucket().query(query);
+        final N1qlQueryResult result = couchbase.getBucket().query(query, couchbaseProperties.getTimeout(), TimeUnit.MILLISECONDS);
         if (result.finalSuccess()) {
             if (result.allRows().size() > 1) {
                 throw new FailedLoginException("More then one row found for user " + transformedCredential.getId());
