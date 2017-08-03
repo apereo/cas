@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.shell.CasCommandLineShellBootstrapper;
 import org.apereo.cas.shell.cli.CasCommandLineEngine;
@@ -34,6 +35,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication(
         exclude = {
                 HibernateJpaAutoConfiguration.class,
+                CasCoreServicesConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
                 JmxAutoConfiguration.class,
