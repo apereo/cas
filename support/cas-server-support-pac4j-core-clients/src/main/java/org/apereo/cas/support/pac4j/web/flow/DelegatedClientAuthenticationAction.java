@@ -211,6 +211,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
                 urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase(), getCssClass(name)));
+
             } catch (final HttpAction e) {
                 if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                     LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
