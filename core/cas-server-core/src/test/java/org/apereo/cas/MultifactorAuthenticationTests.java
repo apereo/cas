@@ -25,6 +25,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
@@ -83,7 +84,8 @@ import static org.junit.Assert.*;
                 CasCoreTicketsConfiguration.class,
                 CasPersonDirectoryTestConfiguration.class,
                 CasCoreTicketIdGeneratorsConfiguration.class,
-                CasCoreValidationConfiguration.class})
+                CasCoreValidationConfiguration.class,
+                CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/core.properties"}, properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 public class MultifactorAuthenticationTests {
 

@@ -23,6 +23,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncryp
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
+import org.apereo.cas.web.UrlValidator;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -70,10 +71,13 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     private VelocityEngineFactory velocityEngineFactory;
+    
+    @Autowired
+    private UrlValidator urlValidator;
 
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
-        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver);
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver, urlValidator);
     }
     
     @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
