@@ -9,18 +9,27 @@ package org.apereo.cas.util.gen;
  */
 public interface RandomStringGenerator {
 
-    /**
-     * @return the minimum length as an int guaranteed by this generator.
-     */
-    int getMinLength();
+    /** The default length. */
+    int DEFAULT_LENGTH = 36;
 
     /**
-     * @return the maximum length as an int guaranteed by this generator.
+     * @return the default length as an int.
      */
-    int getMaxLength();
+    int getDefaultLength();
 
     /**
-     * @return the new random string
+     * @return the algorithm used by the generator's SecureRandom instance.
+     */
+    String getAlgorithm();
+
+    /**
+     * @param size length of random string before encoding
+     * @return a new random string of specified initial size
+     */
+    String getNewString(int size);
+
+    /**
+     * @return a new random string of default initial size
      */
     String getNewString();
 
@@ -30,4 +39,12 @@ public interface RandomStringGenerator {
      * @return the new random string as bytes
      */
     byte[] getNewStringAsBytes();
+
+    /**
+     * Gets the new string as bytes.
+     *
+     * @param size the size of return
+     * @return the new random string as bytes
+     */
+    byte[] getNewStringAsBytes(int size);
 }

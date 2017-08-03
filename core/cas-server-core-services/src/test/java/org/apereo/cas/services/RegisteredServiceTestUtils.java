@@ -8,11 +8,11 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.apereo.cas.util.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,7 +105,7 @@ public final class RegisteredServiceTestUtils {
             s.setName("Test registered service " + id);
             s.setDescription("Registered service description");
             s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-            s.setId(new SecureRandom().nextInt(Math.abs(s.hashCode())));
+            s.setId(RandomUtils.getInstanceStrong().nextInt(Math.abs(s.hashCode())));
             s.setTheme("exampleTheme");
             s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
             final DefaultRegisteredServiceAccessStrategy accessStrategy =
