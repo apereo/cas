@@ -2,6 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {SamlRegisteredService} from "../../../domain/saml-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-samlclient',
@@ -9,13 +10,14 @@ import {SamlRegisteredService} from "../../../domain/saml-service";
 })
 export class SamlclientComponent implements OnInit {
 
-  @Input()
   service: SamlRegisteredService
-
-  @Input()
   selectOptions;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service as SamlRegisteredService;
+    this.selectOptions = data.selectOptions
+  }
 
   ngOnInit() {
   }

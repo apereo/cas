@@ -2,11 +2,12 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {
   DefaultRegisteredServiceAccessStrategy, GrouperRegisteredServiceAccessStrategy,
-  RegisteredServiceAccessStrategy,
   RemoteEndpointServiceAccessStrategy, TimeBasedRegisteredServiceAccessStrategy
 } from "../../../domain/access-strategy";
 import {FormData} from "../../../domain/service-view-bean";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {Util} from "../../util/util";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-access-strategy',
@@ -14,38 +15,35 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 })
 export class AccessStrategyComponent implements OnInit {
 
-  @Input()
   formData: FormData;
-
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
   selectOptions;
-
   type: String;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.formData = data.formData;
+    this.service = data.service;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
-    if (!this.service.accessStrategy.requiredAttributes || Object.keys(this.service.accessStrategy.requiredAttributes).length == 0) {
+    if (Util.isEmpty(this.service.accessStrategy.rejectedAttributes)) {
       this.service.accessStrategy.requiredAttributes = new Map();
     }
+
     this.formData.availableAttributes.forEach((item: any) => {
       this.service.accessStrategy.requiredAttributes[item] = this.service.accessStrategy.requiredAttributes[item] || [item];//this.textareaArrParse(dir, data.accessStrategy.requiredAttributes[item]);
     });
-    switch(this.service.accessStrategy["@class"]) {
-      case "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy" :
-        this.type = "REMOTE";
-        break;
-      case "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy" :
-        this.type = "TIME";
-        break;
-      case "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy" :
-        this.type = "GROUPER";
-        break;
-      default :
-        this.type = "DEFAULT";
+
+    if (RemoteEndpointServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
+      this.type = "REMOTE";
+    } else if (TimeBasedRegisteredServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
+      this.type = "TIME";
+    } else if (GrouperRegisteredServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
+      this.type = "GROUPER";
+    } else {
+      this.type = "DEFAULT";
     }
   }
 

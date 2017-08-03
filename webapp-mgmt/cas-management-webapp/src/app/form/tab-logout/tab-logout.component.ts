@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-tab-logout',
@@ -7,7 +7,7 @@ import {TabService} from "../tab.service";
 })
 export class TabLogoutComponent implements OnInit {
 
-  constructor(public tabService: TabService) { }
+  constructor() { }
 
   ngOnInit() {
   }

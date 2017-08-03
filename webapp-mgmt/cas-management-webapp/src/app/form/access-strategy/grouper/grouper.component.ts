@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {GrouperRegisteredServiceAccessStrategy} from "../../../../domain/access-strategy";
 import {Messages} from "../../../messages";
+import {Data} from "../../data";
 
 @Component({
   selector: 'app-grouper',
@@ -9,13 +10,14 @@ import {Messages} from "../../../messages";
 })
 export class GrouperComponent implements OnInit {
 
-  @Input()
   accessStrategy: GrouperRegisteredServiceAccessStrategy;
-
-  @Input()
   selectOptions;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.accessStrategy = data.service.accessStrategy as GrouperRegisteredServiceAccessStrategy;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
   }

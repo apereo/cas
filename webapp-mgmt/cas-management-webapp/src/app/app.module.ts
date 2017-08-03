@@ -24,7 +24,7 @@ import {FormModule} from "./form/form.module";
   ],
   declarations: [
     AppComponent,
-    HeaderComponent,
+    HeaderComponent
   ],
   providers: [
     Messages

@@ -280,6 +280,7 @@ export class Messages {
  readonly services_form_tooltip_oidc_encryptAlg = "Encryption algorithm to use with ID tokens.";
  readonly services_form_tooltip_oidc_implicit = "Indicates whether this service should support the implicit flow.";
  readonly services_form_tooltip_oidc_jwks = "Location of the JSON web keystore to sign id tokens with. ";
+ readonly services_form_tooltip_oidc_scopes = "Scopes";
 
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy = "Decides how attributes that are retrieved from the cache "+
     "should be merged into the existing attribute repository. Attributes may be replaced, ignored or contain multiple " +
