@@ -49,8 +49,8 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * </p>
      * {@code
      * {@code
-     * &lt;bean class="X509SubjectPrincipalResolver"
-     * p:descriptor="$UID@$DC.$DC" /&gt;
+     * <bean class="X509SubjectPrincipalResolver"
+     * p:descriptor="$UID@$DC.$DC"
      * }
      * }
      * <p>
@@ -90,7 +90,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      *
      * @param certificate X.509 certificate credential.
      * @return Resolved principal ID.
-     * @see AbstractX509PrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {

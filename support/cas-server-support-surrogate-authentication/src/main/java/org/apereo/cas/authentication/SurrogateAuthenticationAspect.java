@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -67,7 +66,7 @@ public class SurrogateAuthenticationAspect {
             LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", result.getPrincipal(), targetUserId);
             throw new FailedLoginException();
         } catch (final Throwable e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

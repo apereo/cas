@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for webflow.
  *
@@ -13,8 +15,9 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class WebflowProperties {
+public class WebflowProperties implements Serializable {
 
+    private static final long serialVersionUID = 4949978905279568311L;
     /**
      * Encryption/signing setting for webflow.
      */
@@ -100,7 +103,8 @@ public class WebflowProperties {
     /**
      * The Webflow Session settings.
      */
-    public static class Session {
+    public static class Session implements Serializable {
+        private static final long serialVersionUID = 7479028707118198914L;
         /**
          * Sets the time period that can elapse before a
          * timeout occurs on an attempt to acquire a conversation lock. The default is 30 seconds.
@@ -130,7 +134,7 @@ public class WebflowProperties {
         private boolean storage;
 
         /**
-         * If sessions are to be replicated via Hazelcast, defines the location of a <code>hazelcast.xml</code>
+         * If sessions are to be replicated via Hazelcast, defines the location of a {@code hazelcast.xml}
          * file that defines how state should be replicated.
          * Only relevant if session storage is done on the server.
          */

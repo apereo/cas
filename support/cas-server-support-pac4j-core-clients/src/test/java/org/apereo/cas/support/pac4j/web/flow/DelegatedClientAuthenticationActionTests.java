@@ -94,7 +94,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_LOCALE, mockSession.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls =
+        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls = 
                 (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>) flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
 
         assertFalse(urls.isEmpty());

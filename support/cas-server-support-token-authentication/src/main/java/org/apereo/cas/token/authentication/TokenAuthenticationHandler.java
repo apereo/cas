@@ -165,7 +165,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     }
 
     /**
-     * Convert secret to bytes honoring {@link TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED}
+     * Convert secret to bytes honoring {@link TokenConstants#PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED}
      * config parameter.
      *
      * @param secret                - String to be represented to byte[]

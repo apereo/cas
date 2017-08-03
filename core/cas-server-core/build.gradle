@@ -7,9 +7,7 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-configuration")
     implementation libraries.metrics
-    implementation libraries.persondirectory
     
-
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-logout", configuration: "tests")
     testImplementation project(":core:cas-server-core-util")

@@ -20,8 +20,8 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
      * Kicks off the job that attempts to clean the throttling submission record history.
      */
     @Override
-    @Scheduled(initialDelayString = "${cas.authn.throttle.startDelay:PT10S}",
-               fixedDelayString = "${cas.authn.throttle.repeatInterval:PT15S}")
+    @Scheduled(initialDelayString = "${cas.authn.throttle.schedule.startDelay:PT10S}",
+               fixedDelayString = "${cas.authn.throttle.schedule.repeatInterval:PT15S}")
     public void run() {
         this.throttlingAdapter.decrement();
     }

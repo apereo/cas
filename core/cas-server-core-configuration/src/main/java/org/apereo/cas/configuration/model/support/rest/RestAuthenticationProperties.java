@@ -3,18 +3,30 @@ package org.apereo.cas.configuration.model.support.rest;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link RestAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RestAuthenticationProperties {
+public class RestAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = -6122859176355467060L;
+    /**
+     * Endpoint URI to use for verification of credentials.
+     */
     private String uri;
 
+    /**
+     * Password encoder settings for REST authentication.
+     */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    /**
+     * Name of the authentication handler.
+     */
     private String name;
 
     public String getName() {

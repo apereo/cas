@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.services;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,6 +27,7 @@ import java.util.TreeMap;
 public class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataLocation;
 
     /**
@@ -59,6 +59,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(length = 255, updatable = true, insertable = true)
     private String nameIdQualifier;
+
+    @Column(length = 255, updatable = true, insertable = true)
+    private String metadataExpirationDuration = "PT60M";
 
     @Column(updatable = true, insertable = true)
     private boolean signAssertions;
@@ -219,6 +222,14 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.nameIdQualifier = nameIdQualifier;
     }
 
+    public String getMetadataExpirationDuration() {
+        return metadataExpirationDuration;
+    }
+
+    public void setMetadataExpirationDuration(final String metadataExpirationDuration) {
+        this.metadataExpirationDuration = metadataExpirationDuration;
+    }
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
@@ -240,6 +251,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
             setMetadataCriteriaDirection(samlRegisteredService.getMetadataCriteriaDirection());
             setMetadataCriteriaPattern(samlRegisteredService.getMetadataCriteriaPattern());
+            setMetadataExpirationDuration(samlRegisteredService.metadataExpirationDuration);
 
             setMetadataCriteriaRemoveEmptyEntitiesDescriptors(samlRegisteredService.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             setMetadataCriteriaRemoveRolelessEntityDescriptors(samlRegisteredService.isMetadataCriteriaRemoveRolelessEntityDescriptors());
@@ -250,7 +262,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setServiceProviderNameIdQualifier(samlRegisteredService.serviceProviderNameIdQualifier);
 
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -272,6 +284,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataMaxValidity, rhs.metadataMaxValidity)
                 .append(this.requiredAuthenticationContextClass, rhs.requiredAuthenticationContextClass)
                 .append(this.metadataSignatureLocation, rhs.metadataSignatureLocation)
+                .append(this.metadataExpirationDuration, rhs.metadataExpirationDuration)
                 .append(this.signAssertions, rhs.signAssertions)
                 .append(this.signResponses, rhs.signResponses)
                 .append(this.encryptAssertions, rhs.encryptAssertions)
@@ -307,6 +320,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.attributeNameFormats)
                 .append(this.serviceProviderNameIdQualifier)
                 .append(this.nameIdQualifier)
+                .append(this.metadataExpirationDuration)
                 .toHashCode();
     }
 
@@ -330,6 +344,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("attributeNameFormats", this.attributeNameFormats)
                 .append("serviceProviderNameIdQualifier", this.serviceProviderNameIdQualifier)
                 .append("nameIdQualifier", this.nameIdQualifier)
+                .append("metadataExpirationDuration", this.metadataExpirationDuration)
                 .toString();
     }
 }

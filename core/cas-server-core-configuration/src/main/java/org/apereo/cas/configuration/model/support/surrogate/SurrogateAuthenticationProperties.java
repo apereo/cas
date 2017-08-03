@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.support.surrogate;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,7 +14,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SurrogateAuthenticationProperties {
+public class SurrogateAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = -2088813217398883623L;
     /**
      * The separator character used to distinguish between the surrogate account and the admin account.
      */
@@ -75,7 +77,8 @@ public class SurrogateAuthenticationProperties {
         this.separator = separator;
     }
 
-    public static class Simple {
+    public static class Simple implements Serializable {
+        private static final long serialVersionUID = 16938920863432222L;
         /**
          * Define the list of accounts that are allowed to impersonate.
          * This is done in a key-value structure where the key is the admin user
@@ -93,7 +96,7 @@ public class SurrogateAuthenticationProperties {
         }
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 3599367681439517829L;
     }
 

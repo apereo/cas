@@ -17,6 +17,6 @@ public class CasSamlSPServiceNowConfiguration extends BaseCasSamlSPConfiguration
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getServiceNow();
+        return casProperties.getSamlSp().getServiceNow();
     }
 }

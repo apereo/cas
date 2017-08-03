@@ -17,6 +17,6 @@ public class CasSamlSPSaManageConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getSaManage();
+        return casProperties.getSamlSp().getSaManage();
     }
 }

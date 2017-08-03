@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.googleapps;
 
+import java.io.Serializable;
+
 /**
  * This is {@link GoogleAppsProperties}.
  *
@@ -7,8 +9,9 @@ package org.apereo.cas.configuration.model.support.saml.googleapps;
  * @since 5.0.0
  */
 
-public class GoogleAppsProperties {
+public class GoogleAppsProperties implements Serializable {
 
+    private static final long serialVersionUID = -5133482766495375325L;
     /**
      * The public key location that is also shared with google apps.
      */

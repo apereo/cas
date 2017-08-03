@@ -122,7 +122,7 @@ public class OAuth20CasAuthenticationBuilder {
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
-        /**
+        /*
          * pac4j UserProfile.getPermissions() and getRoles() returns UnmodifiableSet which Jackson Serializer
          * happily serializes to json but is unable to deserialize.
          * We have to wrap it to HashSet to avoid such problem

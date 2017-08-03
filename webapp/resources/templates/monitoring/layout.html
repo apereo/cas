@@ -6,22 +6,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
         <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Central Authentication Service</title>
-    
+
         <link rel="stylesheet" th:href="@{#{webjars.fontawesomemin.css}}"/>
         <link type="text/css" rel="stylesheet" th:href="@{#{webjars.bootstrapmin.css}}"/>
         <link rel="stylesheet" th:href="@{${#themes.code('admin.custom.css.file')}}" />
-        
+
         <script type="text/javascript" th:src="@{#{webjars.jquerymin.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.jquerycookie.js}}"></script>
 
         <script th:src="@{#{webjars.bootstrapmin.js}}"></script>
 
-        <link rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}" />
         <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
         <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
         <script th:src="@{#{webjars.mindmup.editable-table.js}}"></script>
-        
+
         <script th:inline="javascript">
             /*<![CDATA[*/
 
@@ -30,7 +29,7 @@
             /*]]>*/
         </script>
     </head>
-    
+
     <body>
         <!--/* Standard layout can be mixed with Layout Dialect */-->
         <div id="container" class="container">
@@ -43,6 +42,6 @@
             <div th:replace="fragments/footer"/>
         </div>
         <div th:insert="fragments/bottom"/>
-    
+
     </body>
 </html>

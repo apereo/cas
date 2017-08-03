@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.commons.io.FileUtils;
@@ -288,7 +287,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 this.dao.delete(r2);
                 Thread.sleep(2000);
             } catch (final InterruptedException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
             assertNull(this.dao.findServiceById(r2.getId()));
         });

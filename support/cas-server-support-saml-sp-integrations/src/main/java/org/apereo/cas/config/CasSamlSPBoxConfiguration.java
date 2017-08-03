@@ -17,6 +17,6 @@ public class CasSamlSPBoxConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getBox();
+        return casProperties.getSamlSp().getBox();
     }
 }

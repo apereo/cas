@@ -29,10 +29,10 @@ public class DefaultUniqueTicketIdGeneratorTests {
     @Test
     public void verifyNullSuffix() {
         final String nullSuffix = null;
-        final int lengthWithoutSuffix = 17;
-        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, nullSuffix);
+        final int lengthWithoutSuffix = 23;
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(12, nullSuffix);
 
         final String ticketId = generator.getNewTicketId("test");
-        assertEquals(ticketId.length(), lengthWithoutSuffix);
+        assertEquals(lengthWithoutSuffix, ticketId.length());
     }
 }

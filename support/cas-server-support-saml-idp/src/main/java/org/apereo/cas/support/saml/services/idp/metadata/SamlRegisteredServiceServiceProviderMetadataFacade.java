@@ -11,7 +11,6 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
-import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
@@ -99,7 +98,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
 
             LOGGER.info("Locating metadata for entityID [{}] with binding [{}] by attempting to run through the metadata chain...",
                     entityID, SAMLConstants.SAML2_POST_BINDING_URI);
-            final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
+            final MetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
             LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}] and binding [{}]",
                     registeredService.getServiceId(), entityID, SAMLConstants.SAML2_POST_BINDING_URI);
 

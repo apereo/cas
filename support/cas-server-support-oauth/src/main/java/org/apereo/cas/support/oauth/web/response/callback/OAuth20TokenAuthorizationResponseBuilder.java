@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.NameValuePair;
@@ -48,7 +47,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
             LOGGER.debug("Generated OAuth access token: [{}]", accessToken.getKey());
             return buildCallbackUrlResponseType(holder, redirectUri, accessToken.getKey(), new ArrayList<>(), accessToken.getValue(), context);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

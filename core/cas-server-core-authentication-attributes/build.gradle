@@ -1,0 +1,9 @@
+description = "Apereo CAS Core Authentication Attributes & Repositories"
+dependencies {
+    compile project(":api:cas-server-core-api-services")
+    compile project(":api:cas-server-core-api-ticket")
+    compile project(":api:cas-server-core-api-events")
+    implementation libraries.groovy
+    implementation libraries.caffein
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+}

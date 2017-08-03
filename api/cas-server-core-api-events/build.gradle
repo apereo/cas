@@ -4,9 +4,6 @@ dependencies {
     compile project(":api:cas-server-core-api-services")
     compile project(":api:cas-server-core-api-validation")
     compile project(":core:cas-server-core-util")
-    
-    
-
 }
 
 

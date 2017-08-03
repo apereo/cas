@@ -1,6 +1,7 @@
 package org.apereo.cas.util.services;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

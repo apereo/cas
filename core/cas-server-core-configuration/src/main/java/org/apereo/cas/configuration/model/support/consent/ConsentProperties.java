@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.consent;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -12,9 +12,10 @@ import java.time.temporal.ChronoUnit;
  * This is {@link ConsentProperties}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.2.0
  */
-public class ConsentProperties {
+public class ConsentProperties implements Serializable {
+    private static final long serialVersionUID = 5201308051524438384L;
     /**
      * Global reminder time unit, to reconfirm consent
      * in cases no changes are detected.
@@ -95,7 +96,7 @@ public class ConsentProperties {
         this.rest = rest;
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
 

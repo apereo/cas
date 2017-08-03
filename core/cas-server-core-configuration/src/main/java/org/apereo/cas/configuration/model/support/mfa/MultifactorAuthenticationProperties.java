@@ -166,7 +166,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
     /**
      * Activate and configure a multifactor authentication provider via Duo Security.
      */
-    @NestedConfigurationProperty
     private List<DuoSecurityMultifactorProperties> duo = new ArrayList<>();
     /**
      * Activate and configure a multifactor authentication provider via Authy.

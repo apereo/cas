@@ -79,7 +79,7 @@ public class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void normalCreationOfTGT() throws Exception {
+    public void verifyNormalCreationOfTGT() throws Exception {
         final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
                 + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
                 + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
@@ -97,6 +97,59 @@ public class TicketGrantingTicketResourceTests {
                 .andExpect(content().string(expectedReturnEntityBody));
     }
 
+    @Test
+    public void defaultCreationOfTGT() throws Throwable {
+        final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+                + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
+                + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
+                + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
+                + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>";
+
+        configureCasMockToCreateValidTGT();
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE)
+                .accept(MediaType.ALL))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
+                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().string(expectedReturnEntityBody));
+    }
+    
+    @Test
+    public void verifyHtmlCreationOfTGT() throws Throwable {
+        final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+                + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
+                + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
+                + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
+                + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>";
+
+        configureCasMockToCreateValidTGT();
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE)
+                .accept(MediaType.TEXT_HTML))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
+                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().string(expectedReturnEntityBody));
+    }
+    
+    @Test
+    public void verifyJsonCreationOfTGT() throws Throwable {
+        final String expectedReturnEntityBody = "TGT-1";
+
+        configureCasMockToCreateValidTGT();
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().string(expectedReturnEntityBody));
+    }
+    
     @Test
     public void creationOfTGTWithAuthenticationException() throws Exception {
         configureCasMockTGTCreationToThrowAuthenticationException();

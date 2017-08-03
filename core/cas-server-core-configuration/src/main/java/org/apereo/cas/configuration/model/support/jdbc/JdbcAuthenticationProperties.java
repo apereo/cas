@@ -1,11 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,415 +10,65 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class JdbcAuthenticationProperties {
-    private List<Search> search = new ArrayList();
-    private List<Encode> encode = new ArrayList();
-    private List<Query> query = new ArrayList();
-    private List<Bind> bind = new ArrayList();
+public class JdbcAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7199786191466526110L;
+    /**
+     * Settings related to search-mode jdbc authentication.
+     * Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
+     */
+    private List<SearchJdbcAuthenticationProperties> search = new ArrayList();
+    /**
+     * Settings related to query-encode-mode jdbc authentication.
+     * A JDBC querying handler that will pull back the password and the private salt value for a user and validate
+     * the encoded password using the public salt value. Assumes everything is inside the same database table.
+     * Supports settings for number of iterations as well as private salt.
+     * This password encoding method combines the private Salt and the public salt which it prepends to the password
+     * before hashing. If multiple iterations
+     * are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
+     * is converted to hex before comparing it to the database value.
+     */
+    private List<QueryEncodeJdbcAuthenticationProperties> encode = new ArrayList();
+    /**
+     * Settings related to query-mode jdbc authentication.
+     * Authenticates a user by comparing the user password
+     * (which can be encoded with a password encoder) against the password on record determined by a configurable database query.
+     */
+    private List<QueryJdbcAuthenticationProperties> query = new ArrayList();
+    /**
+     * Settings related to bind-mode jdbc authentication.
+     * Authenticates a user by attempting to create a database connection using the username and (hashed) password.
+     */
+    private List<BindJdbcAuthenticationProperties> bind = new ArrayList();
 
-    public List<Search> getSearch() {
+    public List<SearchJdbcAuthenticationProperties> getSearch() {
         return search;
     }
 
-    public void setSearch(final List<Search> search) {
+    public void setSearch(final List<SearchJdbcAuthenticationProperties> search) {
         this.search = search;
     }
 
-    public List<Encode> getEncode() {
+    public List<QueryEncodeJdbcAuthenticationProperties> getEncode() {
         return encode;
     }
 
-    public void setEncode(final List<Encode> encode) {
+    public void setEncode(final List<QueryEncodeJdbcAuthenticationProperties> encode) {
         this.encode = encode;
     }
 
-    public List<Query> getQuery() {
+    public List<QueryJdbcAuthenticationProperties> getQuery() {
         return query;
     }
 
-    public void setQuery(final List<Query> query) {
+    public void setQuery(final List<QueryJdbcAuthenticationProperties> query) {
         this.query = query;
     }
 
-    public List<Bind> getBind() {
+    public List<BindJdbcAuthenticationProperties> getBind() {
         return bind;
     }
 
-    public void setBind(final List<Bind> bind) {
+    public void setBind(final List<BindJdbcAuthenticationProperties> bind) {
         this.bind = bind;
-    }
-
-    public static class Query extends AbstractJpaProperties {
-        private static final long serialVersionUID = 7806132208223986680L;
-        private String sql;
-        private String credentialCriteria;
-        private String fieldPassword;
-        private String fieldExpired;
-        private String fieldDisabled;
-        private List principalAttributeList = new ArrayList();
-
-        @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation =
-                new PrincipalTransformationProperties();
-
-        @NestedConfigurationProperty
-        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
-
-        private String name;
-
-        private int order = Integer.MAX_VALUE;
-
-        public List getPrincipalAttributeList() {
-            return principalAttributeList;
-        }
-
-        public void setPrincipalAttributeList(final List principalAttributeList) {
-            this.principalAttributeList = principalAttributeList;
-        }
-
-        public int getOrder() {
-            return order;
-        }
-
-        public void setOrder(final int order) {
-            this.order = order;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(final String name) {
-            this.name = name;
-        }
-
-        public PasswordEncoderProperties getPasswordEncoder() {
-            return passwordEncoder;
-        }
-
-        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-            this.passwordEncoder = passwordEncoder;
-        }
-
-        public String getSql() {
-            return sql;
-        }
-
-        public void setSql(final String sql) {
-            this.sql = StringUtils.replace(sql, "{user}", "?");
-        }
-
-        public PrincipalTransformationProperties getPrincipalTransformation() {
-            return principalTransformation;
-        }
-
-        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-            this.principalTransformation = principalTransformation;
-        }
-
-        public String getCredentialCriteria() {
-            return credentialCriteria;
-        }
-
-        public void setCredentialCriteria(final String credentialCriteria) {
-            this.credentialCriteria = credentialCriteria;
-        }
-
-        public String getFieldPassword() {
-            return fieldPassword;
-        }
-
-        public void setFieldPassword(final String fieldPassword) {
-            this.fieldPassword = fieldPassword;
-        }
-
-        public String getFieldExpired() {
-            return fieldExpired;
-        }
-
-        public void setFieldExpired(final String fieldExpired) {
-            this.fieldExpired = fieldExpired;
-        }
-
-        public String getFieldDisabled() {
-            return fieldDisabled;
-        }
-
-        public void setFieldDisabled(final String fieldDisabled) {
-            this.fieldDisabled = fieldDisabled;
-        }
-    }
-
-    public static class Bind extends AbstractJpaProperties {
-        private static final long serialVersionUID = 4268982716707687796L;
-        private String credentialCriteria;
-
-        @NestedConfigurationProperty
-        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
-
-        @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
-
-        private String name;
-        private Integer order;
-
-        public Integer getOrder() {
-            return order;
-        }
-
-        public void setOrder(final Integer order) {
-            this.order = order;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(final String name) {
-            this.name = name;
-        }
-
-        public PasswordEncoderProperties getPasswordEncoder() {
-            return passwordEncoder;
-        }
-
-        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-            this.passwordEncoder = passwordEncoder;
-        }
-
-        public PrincipalTransformationProperties getPrincipalTransformation() {
-            return principalTransformation;
-        }
-
-        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-            this.principalTransformation = principalTransformation;
-        }
-
-        public String getCredentialCriteria() {
-            return credentialCriteria;
-        }
-
-        public void setCredentialCriteria(final String credentialCriteria) {
-            this.credentialCriteria = credentialCriteria;
-        }
-    }
-
-    public static class Search extends AbstractJpaProperties {
-        private static final long serialVersionUID = 6912107600297453730L;
-        private String fieldUser;
-        private String fieldPassword;
-        private String tableUsers;
-        private String credentialCriteria;
-
-        @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation =
-                new PrincipalTransformationProperties();
-
-        @NestedConfigurationProperty
-        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
-
-        private String name;
-
-        private int order = Integer.MAX_VALUE;
-
-        public int getOrder() {
-            return order;
-        }
-
-        public void setOrder(final int order) {
-            this.order = order;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(final String name) {
-            this.name = name;
-        }
-
-        public PasswordEncoderProperties getPasswordEncoder() {
-            return passwordEncoder;
-        }
-
-        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-            this.passwordEncoder = passwordEncoder;
-        }
-
-        public String getFieldUser() {
-            return fieldUser;
-        }
-
-        public void setFieldUser(final String fieldUser) {
-            this.fieldUser = fieldUser;
-        }
-
-        public String getFieldPassword() {
-            return fieldPassword;
-        }
-
-        public void setFieldPassword(final String fieldPassword) {
-            this.fieldPassword = fieldPassword;
-        }
-
-        public String getTableUsers() {
-            return tableUsers;
-        }
-
-        public void setTableUsers(final String tableUsers) {
-            this.tableUsers = tableUsers;
-        }
-
-        public PrincipalTransformationProperties getPrincipalTransformation() {
-            return principalTransformation;
-        }
-
-        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-            this.principalTransformation = principalTransformation;
-        }
-
-        public String getCredentialCriteria() {
-            return credentialCriteria;
-        }
-
-        public void setCredentialCriteria(final String credentialCriteria) {
-            this.credentialCriteria = credentialCriteria;
-        }
-    }
-
-    public static class Encode extends AbstractJpaProperties {
-        private static final long serialVersionUID = -6647373426301411768L;
-        private String credentialCriteria;
-        private String algorithmName;
-        private String sql;
-        private String passwordFieldName = "password";
-        private String saltFieldName = "salt";
-        private String expiredFieldName;
-        private String disabledFieldName;
-        private String numberOfIterationsFieldName = "numIterations";
-        private long numberOfIterations;
-        private String staticSalt;
-        private String name;
-
-        @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation =
-                new PrincipalTransformationProperties();
-
-        @NestedConfigurationProperty
-        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
-
-        private int order = Integer.MAX_VALUE;
-
-        public int getOrder() {
-            return order;
-        }
-
-        public void setOrder(final int order) {
-            this.order = order;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(final String name) {
-            this.name = name;
-        }
-
-        public PasswordEncoderProperties getPasswordEncoder() {
-            return passwordEncoder;
-        }
-
-        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-            this.passwordEncoder = passwordEncoder;
-        }
-
-        public String getAlgorithmName() {
-            return algorithmName;
-        }
-
-        public void setAlgorithmName(final String algorithmName) {
-            this.algorithmName = algorithmName;
-        }
-
-        public String getSql() {
-            return sql;
-        }
-
-        public void setSql(final String sql) {
-            this.sql = sql;
-        }
-
-        public String getPasswordFieldName() {
-            return passwordFieldName;
-        }
-
-        public void setPasswordFieldName(final String passwordFieldName) {
-            this.passwordFieldName = passwordFieldName;
-        }
-
-        public String getSaltFieldName() {
-            return saltFieldName;
-        }
-
-        public void setSaltFieldName(final String saltFieldName) {
-            this.saltFieldName = saltFieldName;
-        }
-
-        public String getExpiredFieldName() {
-            return expiredFieldName;
-        }
-
-        public void setExpiredFieldName(final String expiredFieldName) {
-            this.expiredFieldName = expiredFieldName;
-        }
-
-        public String getDisabledFieldName() {
-            return disabledFieldName;
-        }
-
-        public void setDisabledFieldName(final String disabledFieldName) {
-            this.disabledFieldName = disabledFieldName;
-        }
-
-        public String getNumberOfIterationsFieldName() {
-            return numberOfIterationsFieldName;
-        }
-
-        public void setNumberOfIterationsFieldName(final String numberOfIterationsFieldName) {
-            this.numberOfIterationsFieldName = numberOfIterationsFieldName;
-        }
-
-        public long getNumberOfIterations() {
-            return numberOfIterations;
-        }
-
-        public void setNumberOfIterations(final long numberOfIterations) {
-            this.numberOfIterations = numberOfIterations;
-        }
-
-        public String getStaticSalt() {
-            return staticSalt;
-        }
-
-        public void setStaticSalt(final String staticSalt) {
-            this.staticSalt = staticSalt;
-        }
-
-        public PrincipalTransformationProperties getPrincipalTransformation() {
-            return principalTransformation;
-        }
-
-        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-            this.principalTransformation = principalTransformation;
-        }
-
-        public String getCredentialCriteria() {
-            return credentialCriteria;
-        }
-
-        public void setCredentialCriteria(final String credentialCriteria) {
-            this.credentialCriteria = credentialCriteria;
-        }
     }
 }

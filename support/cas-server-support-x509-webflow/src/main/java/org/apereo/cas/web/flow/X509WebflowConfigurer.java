@@ -18,7 +18,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * The authenticationFailure outcome can happen when CAS got a valid certificate but
  * couldn't find entry for the certificate in an attribute repository and
  * falling back to principal from the certificate is turned off via:
- * <code>cas.authn.x509.principal.returnNull=true</code> provided by
+ * {@code cas.authn.x509.principal.returnNull=true} provided by
  * {@link PersonDirPrincipalResolverProperties#isReturnNull()}.
  * <p>
  * Credentials are cleared out at the end of the action in case the user

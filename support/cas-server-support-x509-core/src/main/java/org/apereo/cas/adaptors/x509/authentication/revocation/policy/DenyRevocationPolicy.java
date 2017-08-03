@@ -20,7 +20,6 @@ public class DenyRevocationPolicy implements RevocationPolicy<Void> {
      *
      * @throws GeneralSecurityException Thrown in all cases.
      *
-     * @see RevocationPolicy#apply(java.lang.Object)
      */
     @Override
     public void apply(final Void nothing) throws GeneralSecurityException {

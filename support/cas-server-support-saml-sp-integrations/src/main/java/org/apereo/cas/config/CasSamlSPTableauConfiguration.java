@@ -17,6 +17,6 @@ public class CasSamlSPTableauConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getTableau();
+        return casProperties.getSamlSp().getTableau();
     }
 }

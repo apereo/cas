@@ -41,3 +41,5 @@ webapp/resources/static/css/*
 etc/loadtests/loadtests/**
 etc/loadtests/locustfiles/**
 etc/loadtests/__pycache__/**
+webapp/resources/static/js/*-bundle.js
+**/k/

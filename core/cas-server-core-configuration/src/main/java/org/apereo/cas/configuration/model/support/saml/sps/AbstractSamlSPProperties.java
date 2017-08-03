@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +12,8 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractSamlSPProperties {
+public abstract class AbstractSamlSPProperties implements Serializable {
+    private static final long serialVersionUID = -5381463661659831898L;
     /**
      * The location of the metadata for this service provider.
      * Can be a URL or another form of resource.

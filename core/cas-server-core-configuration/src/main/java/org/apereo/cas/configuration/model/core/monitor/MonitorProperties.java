@@ -6,14 +6,17 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for cas.monitor.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class MonitorProperties {
+public class MonitorProperties implements Serializable {
 
+    private static final long serialVersionUID = -7047060071480971606L;
     /**
      * The free memory threshold for the memory monitor.
      * If the amount of free memory available reaches this point
@@ -110,7 +113,8 @@ public class MonitorProperties {
         this.ldap = ldap;
     }
 
-    public static class St {
+    public static class St implements Serializable {
+        private static final long serialVersionUID = -8167395674267219982L;
         @NestedConfigurationProperty
         private Warn warn = new Warn(5000);
 
@@ -123,8 +127,9 @@ public class MonitorProperties {
         }
     }
 
-    public static class Tgt {
+    public static class Tgt implements Serializable {
 
+        private static final long serialVersionUID = -2756454350350278724L;
         /**
          * Warning options for monitoring TGT production.
          */
@@ -140,8 +145,9 @@ public class MonitorProperties {
         }
     }
 
-    public static class Warn {
+    public static class Warn implements Serializable {
 
+        private static final long serialVersionUID = 2788617778375787703L;
         /**
          * The monitor threshold where if reached, CAS might generate a warning status for health checks.
          */

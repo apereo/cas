@@ -183,9 +183,9 @@ public class U2FConfiguration {
                             }
                         });
 
-        if (u2f.getJson().getConfig().getLocation() != null) {
+        if (u2f.getJson().getLocation() != null) {
             return new U2FJsonResourceDeviceRepository(requestStorage,
-                    u2f.getJson().getConfig().getLocation(),
+                    u2f.getJson().getLocation(),
                     u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
         }
 
@@ -211,8 +211,8 @@ public class U2FConfiguration {
             this.repository = repository;
         }
 
-        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.startDelay:PT20S}",
-                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.repeatInterval:PT15M}")
+        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.startDelay:PT20S}",
+                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.repeatInterval:PT15M}")
         public void run() {
             LOGGER.debug("Starting to clean expired U2F devices from repository");
             this.repository.clean();

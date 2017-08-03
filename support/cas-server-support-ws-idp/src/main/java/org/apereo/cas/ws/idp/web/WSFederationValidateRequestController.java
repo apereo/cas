@@ -1,6 +1,5 @@
 package org.apereo.cas.ws.idp.web;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -110,7 +109,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
             final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
             authenticationRedirectStrategy.redirect(request, response, initialUrl);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

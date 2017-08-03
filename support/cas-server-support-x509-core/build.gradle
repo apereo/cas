@@ -5,11 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-ldap-core")
     implementation libraries.bouncycastle
-    implementation libraries.ldaptive
-    implementation libraries.httpclient
-    implementation libraries.persondirectory
     implementation libraries.ehcache
-
     testImplementation project(":support:cas-server-support-generic")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testImplementation project(":core:cas-server-core-logout")

@@ -173,8 +173,9 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
         this.databaseName = databaseName;
     }
 
-    public static class Conns {
+    public static class Conns implements Serializable {
 
+        private static final long serialVersionUID = -2398415870062168474L;
         /**
          * Maximum number of connections to keep around.
          */

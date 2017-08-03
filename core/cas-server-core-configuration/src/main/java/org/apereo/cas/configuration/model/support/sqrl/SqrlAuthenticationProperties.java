@@ -1,14 +1,23 @@
 package org.apereo.cas.configuration.model.support.sqrl;
 
+import java.io.Serializable;
+
 /**
  * This is {@link SqrlAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SqrlAuthenticationProperties {
+public class SqrlAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7788819241628970358L;
+    /**
+     * Expiration timeout of the nut generated.
+     */
     private long nutExpirationSeconds = 200L;
-    private String sfn = "sqrl-example";
+    /**
+     * The server friendly name of the SQRL server.
+     */
+    private String sfn = "sqrl-cas";
 
     public String getSfn() {
         return sfn;
