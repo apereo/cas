@@ -10,4 +10,5 @@ dependencies {
     implementation libraries.springsecurity
     implementation libraries.caffein
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-authentication")
 }
