@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.util.RandomUtils;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -18,13 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.SecureRandom;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link SamlProfileSamlAssertionBuilder}.
@@ -75,7 +75,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         statements.add(this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
                 response, casAssertion, service, adaptor, binding));
 
-        final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
+        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceStrong().nextLong()));
         final Assertion assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
                 ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
