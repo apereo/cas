@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
@@ -55,7 +56,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
         } catch (final Exception e) {
             throw new IllegalStateException("Exception generating digest of source ID.", e);
         }
-        this.random = new SecureRandom();
+        this.random = RandomUtils.getInstanceStrong();
     }
 
     /**

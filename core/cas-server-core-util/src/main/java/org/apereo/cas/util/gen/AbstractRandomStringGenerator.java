@@ -1,5 +1,7 @@
 package org.apereo.cas.util.gen;
 
+import org.apereo.cas.util.RandomUtils;
+
 import java.security.SecureRandom;
 
 /**
@@ -14,7 +16,7 @@ import java.security.SecureRandom;
  */
 public abstract class AbstractRandomStringGenerator implements RandomStringGenerator{
     /** An instance of secure random to ensure randomness is secure. */
-    protected final SecureRandom randomizer = new SecureRandom();
+    protected final SecureRandom randomizer = RandomUtils.getInstanceStrong();
 
     /** Default string length before encoding. */
     protected final int defaultLength;
