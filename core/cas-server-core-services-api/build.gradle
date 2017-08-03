@@ -3,5 +3,6 @@ dependencies {
     compile project(":api:cas-server-core-api-services")
     implementation libraries.groovy
     compileOnly project(":core:cas-server-core-util")
+    compile project(":api:cas-server-core-api-events")
+    compile project(":core:cas-server-core-authentication-attributes")
 }
-
