@@ -19,7 +19,7 @@ public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlCompliantLogoutMessageCreator.class);
     
     /** A ticket Id generator. */
-    private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
+    private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator(18);
 
     /** The logout request template. */
     private static final String LOGOUT_REQUEST_TEMPLATE =

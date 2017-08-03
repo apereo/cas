@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.CasProtocolConstants;
@@ -31,6 +30,7 @@ import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
+import org.apereo.cas.util.EncodingUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.context.HttpConstants;
@@ -379,7 +379,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         if (basicAuth) {
             final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
-            final String value = Base64.encodeBase64String(auth.getBytes(StandardCharsets.UTF_8));
+            final String value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
             mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
         } else {
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);

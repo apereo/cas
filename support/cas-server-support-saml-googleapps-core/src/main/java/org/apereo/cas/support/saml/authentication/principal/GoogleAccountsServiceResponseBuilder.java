@@ -15,6 +15,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -33,7 +34,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -163,7 +163,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                 this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        final String sessionIndex = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
+        final String sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceStrong().nextLong()));
         final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
                 notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
