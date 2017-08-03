@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.security.SecureRandom;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class JsonConsentRepository implements ConsentRepository {
         if (consent != null) {
             this.consentDecisions.remove(decision);
         } else {
-            decision.setId(Math.abs(new SecureRandom().nextInt()));
+            decision.setId(Math.abs(RandomUtils.getInstanceStrong().nextInt()));
         }
         this.consentDecisions.add(decision);
         writeAccountToJsonResource();

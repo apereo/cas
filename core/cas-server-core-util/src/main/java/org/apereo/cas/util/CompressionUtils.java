@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -131,7 +130,7 @@ public final class CompressionUtils {
     public static String decompress(final String zippedBase64Str) {
         GZIPInputStream zi = null;
         try {
-            final byte[] bytes = Base64.decodeBase64(zippedBase64Str);
+            final byte[] bytes = EncodingUtils.decodeBase64(zippedBase64Str);
             zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
             return IOUtils.toString(zi, Charset.defaultCharset());
         } catch (final Exception e) {
@@ -156,7 +155,7 @@ public final class CompressionUtils {
             zos.write(srcTxt.getBytes());
             IOUtils.closeQuietly(zos);
             final byte[] bytes = rstBao.toByteArray();
-            final String base64 = StringUtils.remove(Base64.encodeBase64String(bytes), '\0');
+            final String base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
             return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);

@@ -8,6 +8,7 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -363,7 +364,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     @Override
     public String generateSecureRandomId() {
-        final SecureRandom generator = new SecureRandom();
+        final SecureRandom generator = RandomUtils.getInstanceStrong();
         final char[] charMappings = {
             'a', 'b', 'c', 'd', 'e', 'f', 'g',
             'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
