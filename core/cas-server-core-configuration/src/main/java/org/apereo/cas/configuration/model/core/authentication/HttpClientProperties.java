@@ -40,6 +40,12 @@ public class HttpClientProperties implements Serializable {
      */
     private Truststore truststore = new Truststore();
 
+    /**
+     * Whether CAS should accept local logout URLs.
+     * For example http(s)://localhost/logout
+     */    
+    private boolean allowLocalLogoutUrls;
+    
     public String getHostNameVerifier() {
         return hostNameVerifier;
     }
@@ -78,6 +84,14 @@ public class HttpClientProperties implements Serializable {
 
     public void setReadTimeout(final String readTimeout) {
         this.readTimeout = readTimeout;
+    }
+    
+    public boolean isAllowLocalLogoutUrls() {
+        return this.allowLocalLogoutUrls;
+    }
+    
+    public void setAllowLocalLogoutUrls(final boolean allowLocalLogoutUrls) {
+        this.allowLocalLogoutUrls = allowLocalLogoutUrls;
     }
 
     public static class Truststore implements Serializable {
