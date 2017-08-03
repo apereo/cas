@@ -28,7 +28,9 @@ export class AttributeReleaseFiltersComponent implements OnInit {
   ngOnInit() {
     if (!this.service.attributeReleasePolicy.attributeFilter ||
         Object.keys(this.service.attributeReleasePolicy.attributeFilter).length == 0) {
-      this.service.attributeReleasePolicy.attributeFilter = new RegisteredServiceRegexAttributeFilter();
+        let filter: RegisteredServiceRegexAttributeFilter = new RegisteredServiceRegexAttributeFilter();
+        filter.pattern = "";
+        this.service.attributeReleasePolicy.attributeFilter = filter;
     }
     this.attributeFilter = this.service.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
   }

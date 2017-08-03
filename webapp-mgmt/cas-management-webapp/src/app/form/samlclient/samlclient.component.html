@@ -1,5 +1,5 @@
 <!-- SAML Client -->
-<div class="saml-client-container" *ngIf="type=='saml'">
+<div class="saml-client-container">
   <div class="panel panel-warning">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -12,7 +12,6 @@
 
       <!--Metadata Location: text-->
       <div class="form-group">
-
         <label class="col-sm-4" for="samlMetadataLocation">
           <span style="float:right">
             <ng-container i18n="services.form.label.saml.metadata.location">
@@ -32,7 +31,7 @@
             </div>
 
             <input type="text" autocomplete="off" class="form-control" id="samlMetadataLocation"
-                   [(ngModel)]="service.saml.mdLoc">
+                   [(ngModel)]="service.metadataLocation">
           </div>
         </div>
 
@@ -51,7 +50,7 @@
         </label>
         <div class="col-sm-8">
           <input type="text" autocomplete="off" class="form-control" id="samlMetadataMaxValidity"
-                 [(ngModel)]="service.saml.mdMaxVal">
+                 [(ngModel)]="service.metadataMaxValidity">
         </div>
       </div>
 
@@ -68,7 +67,7 @@
         </label>
         <div class="col-sm-8">
           <input type="text" autocomplete="off" class="form-control" id="samlAuthContextClass"
-                 [(ngModel)]="service.saml.authCtxCls">
+                 [(ngModel)]="service.requiredAuthenticationContextClass">
         </div>
       </div>
 
@@ -85,7 +84,7 @@
         </label>
         <div class="col-sm-8">
           <input type="text" autocomplete="off" class="form-control" id="samlmetadatapublickeylocation"
-                 [(ngModel)]="service.saml.mdSigLoc">
+                 [(ngModel)]="service.metadataSignatureLocation">
         </div>
       </div>
 
@@ -95,7 +94,7 @@
           <div class="checkbox">
             <label for="samlSignAssertions">
               <input type="checkbox" id="samlSignAssertions"
-                     [(ngModel)]="service.saml.signAssert">
+                     [(ngModel)]="service.signAssertions">
               <ng-container i18n="services.form.label.saml.signassertions">
                 {{ messages.services_form_label_saml_signassertions }}
               </ng-container>
@@ -107,7 +106,7 @@
           <div class="checkbox">
             <label for="samlSignResponses">
               <input type="checkbox" id="samlSignResponses"
-                     [(ngModel)]="service.saml.signResp">
+                     [(ngModel)]="service.signResponses">
               <ng-container i18n="services.form.label.saml.signresponses">
                 {{ messages.services_form_label_saml_signresponses }}
               </ng-container>
@@ -119,7 +118,7 @@
           <div class="checkbox">
             <label for="samlEncryptAssertions">
               <input type="checkbox" id="samlEncryptAssertions"
-                     [(ngModel)]="service.saml.encAssert">
+                     [(ngModel)]="service.encryptAssertions">
               <ng-container i18n="services.form.label.saml.encryptassertions">
                 {{ messages.services_form_label_saml_encryptassertions }}
               </ng-container>
@@ -131,7 +130,7 @@
           <div class="checkbox">
             <label for="samlRemoveEmptyEntities">
               <input type="checkbox" id="samlRemoveEmptyEntities"
-                     [(ngModel)]="service.saml.removeEmptyEntities">
+                     [(ngModel)]="service.metadataCriteriaRemoveEmptyEntitesDescriptors">
               <ng-container i18n="services.form.saml.removeEmptyEntities">
                 {{ messages.services_form_label_saml_removeEmptyEntities }}
               </ng-container>
@@ -143,7 +142,7 @@
           <div class="checkbox">
             <label for="samlRemoveRoleless">
               <input type="checkbox" id="samlRemoveRoleless"
-                     [(ngModel)]="service.saml.removeRoleless">
+                     [(ngModel)]="service.metadataCriteriaRemoveRolelessEntityDescriptors">
               <ng-container i18n="services.form.label.saml.removeRoleless">
                 {{ messages.services_form_label_saml_removeRoleless }}
               </ng-container>
@@ -154,8 +153,6 @@
 
         </div>
       </div>
-
-
 
       <div class="form-group">
         <label class="col-sm-4" for="samlMetadataPattern">
@@ -169,7 +166,7 @@
         </label>
         <div class="col-sm-8">
           <input type="text" autocomplete="off" class="form-control" id="samlMetadataPattern"
-                 [(ngModel)]="service.saml.mdPattern">
+                 [(ngModel)]="service.metadataCriteriaPattern">
         </div>
       </div>
 
@@ -185,7 +182,7 @@
         </label>
         <div class="col-sm-8">
           <div class="input-group">
-            <select class="form-control" id="samlMetadataDirection" [(ngModel)]="service.saml.dir">
+            <select class="form-control" id="samlMetadataDirection" [(ngModel)]="service.metadataCriteriaDirection">
               <option *ngFor="let opt of selectOptions.samlDirectionList" [value]="opt.value">
                 {{ opt.name }}
               </option>
@@ -207,7 +204,7 @@
         <div class="col-sm-8">
           <div class="input-group">
             <select class="form-control" multiple="true" id="samlMetadataRole"
-                    [(ngModel)]="service.saml.roles">
+                    [(ngModel)]="service.metadataCriteriaRoles">
               <option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
                 {{ opt.name}}
               </option>

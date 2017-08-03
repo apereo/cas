@@ -6,6 +6,7 @@ import {SharedModule} from "../../shared/shared.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
 import {RegexRegisteredService} from "../../../domain/registered-service";
+import {SamlRegisteredService} from "../../../domain/saml-service";
 
 describe('SamlservicespaneComponent', () => {
   let component: SamlservicespaneComponent;
@@ -23,7 +24,7 @@ describe('SamlservicespaneComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SamlservicespaneComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
+    component.service = new SamlRegisteredService();
     fixture.detectChanges();
   });
 

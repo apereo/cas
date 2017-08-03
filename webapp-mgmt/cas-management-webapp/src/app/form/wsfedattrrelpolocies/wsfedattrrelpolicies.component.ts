@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormData} from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {WSFederationRegisterdService} from "../../../domain/wsed-service";
 
 @Component({
   selector: 'app-wsfedattrrelpolicies',
@@ -18,6 +19,9 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
 
   @Input()
   selectOptions;
+
+  wsFedOnly: boolean;
+
 
   constructor(public messages: Messages) { }
 
