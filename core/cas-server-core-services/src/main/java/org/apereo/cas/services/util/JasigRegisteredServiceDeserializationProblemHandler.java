@@ -1,4 +1,4 @@
-package org.apereo.cas.util.services;
+package org.apereo.cas.services.util;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -22,7 +22,7 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class JasigRegisteredServiceDeserializationProblemHandler extends DeserializationProblemHandler {
+class JasigRegisteredServiceDeserializationProblemHandler extends DeserializationProblemHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JasigRegisteredServiceDeserializationProblemHandler.class);
     private static final int TOKEN_COUNT_DURATION = 6;
     private static final int TOKEN_COUNT_EXPIRATION = 3;

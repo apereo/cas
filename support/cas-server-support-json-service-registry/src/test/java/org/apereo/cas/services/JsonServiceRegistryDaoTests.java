@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;

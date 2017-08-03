@@ -1,4 +1,4 @@
-package org.apereo.cas.util.services;
+package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;

@@ -1,8 +1,7 @@
-package org.apereo.cas.services;
+package org.apereo.cas.services.util;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 
 /**
  * This is {@link RegisteredServiceYamlSerializer}.

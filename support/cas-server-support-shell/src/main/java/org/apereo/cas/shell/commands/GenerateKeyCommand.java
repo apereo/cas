@@ -27,7 +27,7 @@ public class GenerateKeyCommand implements CommandMarker {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateKeyCommand.class);
 
     /**
-     * Find property.
+     * Generate key.
      *
      * @param name the name
      */
@@ -61,12 +61,12 @@ public class GenerateKeyCommand implements CommandMarker {
                         final Object obj = ClassUtils.getClass(k, true).newInstance();
                         if (obj instanceof EncryptionJwtSigningJwtCryptographyProperties) {
                             final EncryptionJwtSigningJwtCryptographyProperties crypto = (EncryptionJwtSigningJwtCryptographyProperties) obj;
-                            LOGGER.info(cryptoGroup.concat(".encryption.key=" + EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize())));
-                            LOGGER.info(cryptoGroup.concat(".signing.key=" + EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
+                            LOGGER.info(cryptoGroup.concat(".encryption.key="+EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize())));
+                            LOGGER.info(cryptoGroup.concat(".signing.key="+EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
                         } else if (obj instanceof EncryptionRandomizedSigningJwtCryptographyProperties) {
                             final EncryptionRandomizedSigningJwtCryptographyProperties crypto = (EncryptionRandomizedSigningJwtCryptographyProperties) obj;
                             LOGGER.info(cryptoGroup.concat(".encryption.key=" + RandomStringUtils.randomAlphanumeric(crypto.getEncryption().getKeySize())));
-                            LOGGER.info(cryptoGroup.concat(".signing.key=" + EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
+                            LOGGER.info(cryptoGroup.concat(".signing.key="+EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
                         }
                     }));
                 });
