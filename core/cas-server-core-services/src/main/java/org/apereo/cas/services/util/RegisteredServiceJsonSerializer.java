@@ -1,4 +1,4 @@
-package org.apereo.cas.util.services;
+package org.apereo.cas.services.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.services.RegisteredService;
