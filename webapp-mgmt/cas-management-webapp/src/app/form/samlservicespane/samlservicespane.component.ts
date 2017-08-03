@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {SamlRegisteredService} from "../../../domain/saml-service";
 
 @Component({
   selector: 'app-samlservicespane',
@@ -10,7 +11,7 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 export class SamlservicespaneComponent implements OnInit {
 
   @Input()
-  service: AbstractRegisteredService;
+  service: SamlRegisteredService;
 
   @Input()
   selectOptions;
@@ -31,7 +32,7 @@ export class SamlservicespaneComponent implements OnInit {
   addRow() {
     let p: any = {"name":this.addName, "value":this.addValue};
     let r: Row = new Row(p);
-    this.service.properties.set(p.name,p);
+    this.service.properties[p.name] = p;
     this.rows.push(r);
     this.isAdding = false;
     this.addName = null;

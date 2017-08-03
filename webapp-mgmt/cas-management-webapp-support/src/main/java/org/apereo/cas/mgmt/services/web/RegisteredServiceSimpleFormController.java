@@ -59,7 +59,6 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      */
     @PostMapping(value = "saveService", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveService(@RequestBody final RegisteredService service) {
-        //final RegisteredService svcToUse = this.registeredServiceFactory.createRegisteredService(service);
         final RegisteredService newSvc = this.servicesManager.save(service);
         LOGGER.info("Saved changes to service [{}]", service.getId());
         return new ResponseEntity<String>(String.valueOf(newSvc.getId()),HttpStatus.OK);
@@ -87,13 +86,6 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
 
     @GetMapping(value = "formData")
     public ResponseEntity<RegisteredServiceEditBean.FormData> getFormData() throws Exception {
-        RegisteredServiceEditBean.FormData data = new RegisteredServiceEditBean.FormData();
-        ArrayList<String> attrs = new ArrayList<String>();
-        attrs.add("uid");
-        attrs.add("givenName");
-        attrs.add("surName");
-        attrs.add("eppn");
-        data.setAvailableAttributes(attrs);
-        return new ResponseEntity<>(data,HttpStatus.OK);
+        return new ResponseEntity<>(this.registeredServiceFactory.createFormData(),HttpStatus.OK);
     }
 }

@@ -8,7 +8,7 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
   excludeDefaultAttributes: boolean;
   principalIdAttribute: String;
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
-    this.attributeFilter = (policy && policy.attributeFilter) || new RegisteredServiceRegexAttributeFilter();
+    this.attributeFilter = policy && policy.attributeFilter;
     this.principalAttributesRepository = policy && policy.principalAttributesRepository;
     this.authorizedToReleaseCredentialPassword = policy && policy.authorizedToReleaseCredentialPassword;
     this.authorizedToReleaseProxyGrantingTicket = policy && policy.authorizedToReleaseProxyGrantingTicket;

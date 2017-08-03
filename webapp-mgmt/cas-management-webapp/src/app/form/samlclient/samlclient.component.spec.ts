@@ -9,6 +9,7 @@ import {Messages} from "../../messages";
 import {SharedModule} from "../../shared/shared.module";
 import {SamlservicespaneComponent} from "../samlservicespane/samlservicespane.component";
 import {RegexRegisteredService} from "../../../domain/registered-service";
+import {SamlRegisteredService} from "../../../domain/saml-service";
 
 describe('SamlclientComponent', () => {
   let component: SamlclientComponent;
@@ -26,7 +27,7 @@ describe('SamlclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SamlclientComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
+    component.service = new SamlRegisteredService();
     fixture.detectChanges();
   });
 

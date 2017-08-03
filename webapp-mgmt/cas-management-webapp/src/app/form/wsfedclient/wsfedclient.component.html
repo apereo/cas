@@ -1,5 +1,4 @@
-<div class="oauth-only-options-container"
-     *ngIf="type == 'wsfed'">
+<div class="oauth-only-options-container">
   <div class="panel panel-warning">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -28,7 +27,7 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input type="text" autocomplete="off" class="form-control" id="wsfedRealm"
-                   [(ngModel)]="service.wsfed.realm"/>
+                   [(ngModel)]="service.realm"/>
           </div>
         </div>
       </div>
@@ -51,7 +50,7 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <input class="form-control" autocomplete="off" id="wsfedAppliesTo" type="text"
-                   [(ngModel)]="service.wsfed.appliesTo"/>
+                   [(ngModel)]="service.appliesTo"/>
           </div>
         </div>
       </div>

@@ -21,9 +21,6 @@ import {DefaultRegisteredServiceMultifactorPolicy} from "../../domain/multifacto
   styleUrls: ['./form.component.css']
 })
 export class FormComponent implements OnInit {
-
-  service: AbstractRegisteredService = new RegexRegisteredService();
-  formData: FormData = new FormData();
   radioWatchBypass: boolean = true;
   showOAuthSecret: boolean = false;
   active: String;
@@ -79,49 +76,46 @@ export class FormComponent implements OnInit {
   }
 
   newService() {
-    this.service = new RegexRegisteredService();
+    this.tabService.service = new RegexRegisteredService();
     this.radioWatchBypass = true;
 
     this.showOAuthSecret = false;
-    this.service.id = -1,
-    this.service.evaluationOrder = -1,
+    this.tabService.service.id = -1,
+    this.tabService.service.evaluationOrder = -1,
     //this.service.type = this.tabService.selectOptions.serviceTypeList[0].value;
-    this.service.logoutType = "BACK_CHANNEL";
-    this.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy();
-    this.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+    this.tabService.service.logoutType = "BACK_CHANNEL";
+    this.tabService.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy();
+    this.tabService.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
     //this.service.attributeReleasePolicy.attrOption = 'DEFAULT';
     //this.service.attributeReleasePolicy.attrPolicy = {};
     //this.service.attributeReleasePolicy.attrPolicy.type = 'all';
     //this.service.attributeReleasePolicy.cachedTimeUnit = this.tabService.selectOptions.timeUnitsList[0].value;
     //this.service.attributeReleasePolicy.mergingStrategy = this.tabService.selectOptions.mergeStrategyList[0].value;
 
-    this.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-    this.service.accessStrategy.enabled = true;
-    this.service.accessStrategy.ssoEnabled = true;
-    this.service.accessStrategy.caseInsensitive = true;
+    this.tabService.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+    this.tabService.service.accessStrategy.enabled = true;
+    this.tabService.service.accessStrategy.ssoEnabled = true;
+    this.tabService.service.accessStrategy.caseInsensitive = true;
     //this.service.accessStrategy.type = this.tabService.selectOptions.selectType[0].value;
-    this.service.publicKey = new RegisteredServicePublicKeyImpl();//new PublicKey();
-    this.service.usernameAttributeProvider =  new DefaultRegisteredServiceUsernameProvider();//UsernameAttributeProvider();
-    this.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();//new ProxyPolicy();
+    this.tabService.service.publicKey = new RegisteredServicePublicKeyImpl();//new PublicKey();
+    this.tabService.service.usernameAttributeProvider =  new DefaultRegisteredServiceUsernameProvider();//UsernameAttributeProvider();
+    this.tabService.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();//new ProxyPolicy();
     //this.service.proxyPolicy.type = 'REFUSE';
-    this.service.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
-    this.service.multifactorPolicy.failureMode = this.tabService.selectOptions.failureMode[1].value;
+    this.tabService.service.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+    this.tabService.service.multifactorPolicy.failureMode = this.tabService.selectOptions.failureMode[1].value;
 
     //this.showInstructions();
 
 
     this.fservice.formData().then(resp => {
-      this.formData = resp;
       this.tabService.formData = resp;
       this.radioWatchBypass = false;
     });
 
-    this.tabService.service = this.service;
-
   };
 
   loadService(form: AbstractRegisteredService, duplicate) {
-    this.service = form;
+    this.tabService.service = form;
     this.radioWatchBypass = true;
     this.showOAuthSecret = false;
     /*
@@ -134,7 +128,6 @@ export class FormComponent implements OnInit {
     }
     */
     this.fservice.formData().then(resp => {
-      this.formData = resp;
       this.tabService.formData = resp;
       this.radioWatchBypass = false;
     });
@@ -178,7 +171,7 @@ export class FormComponent implements OnInit {
       return;
     }
 
-    this.fservice.saveService(this.service)
+    this.fservice.saveService(this.tabService.service)
       .then(resp => this.handleSave(resp))
       .catch(e => this.handleNotSaved(e));
 
@@ -194,16 +187,18 @@ export class FormComponent implements OnInit {
   }
 
   handleSave(id: number) {
-    let hasIdAssignedAlready = (this.service.id != undefined &&
-    Number.parseInt(this.service.id.toString()) > 0);
-
+    //let hasIdAssignedAlready = (this.tabService.service.id != undefined &&
+    //Number.parseInt(this.tabService.service.id.toString()) > 0);
+    /*
     if (!hasIdAssignedAlready && id != null && id != 0) {
-      this.service.id = id;
+      this.tabService.service.id = id;
       this.alert.show(this.messages.services_form_alert_serviceAdded,'info');
     }
     else {
       this.alert.show(this.messages.services_form_alert_serviceUpdated,'info');
     }
+    */
+    this.tabService.service.id = id;
     this.location.back();
   }
 
@@ -225,7 +220,7 @@ export class FormComponent implements OnInit {
 
   validateForm() {
     let err = [],
-    data = this.service;
+    data = this.tabService.service;
 
     // Service Basics
     if (!data.serviceId) {

@@ -15,7 +15,7 @@
            [title]="messages.services_form_required">
         <i class="fa fa-exclamation-triangle"></i>
       </div>
-      <select class="form-control" id="serviceType" [(ngModel)]="service.type">
+      <select class="form-control" id="serviceType" [(ngModel)]="type" (change)="changeType()">
         <option *ngFor="let opt of selectOptions.serviceTypeList" [value]="opt.value">
           {{ opt.name }}
         </option>
@@ -23,3 +23,7 @@
     </div>
   </div>
 </div>
+
+<app-oauthclient *ngIf="oauth(service) || oidc(service)" [service]="service" [selectOptions]="selectOptions" [type]="type"></app-oauthclient>
+<app-samlclient *ngIf="saml(service)" [service]="service" [selectOptions]="selectOptions"></app-samlclient>
+<app-wsfedclient *ngIf="wsfed(service)" [service]="service" [selectOptions]="selectOptions"></app-wsfedclient>
