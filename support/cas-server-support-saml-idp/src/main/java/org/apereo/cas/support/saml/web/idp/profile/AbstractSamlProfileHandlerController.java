@@ -27,6 +27,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
@@ -47,17 +48,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * A parent controller to handle SAML requests.
@@ -241,7 +241,7 @@ public abstract class AbstractSamlProfileHandlerController {
             LOGGER.debug("Initializing callback service [{}]", callbackService);
 
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(new SecureRandom().nextLong()));
+            service.setId(Math.abs(RandomUtils.getInstanceStrong().nextLong()));
             service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("SAML Authentication Request");
