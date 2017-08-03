@@ -9,6 +9,7 @@ description = "Apereo CAS Shell Support via Spring"
 dependencies {
     compile project(":core:cas-server-core-configuration")
     compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-services-api")
     compile project(":api:cas-server-core-api-services")
     compile project(":core:cas-server-core-configuration-metadata-repository")
     compile libraries.springbootconfigmetadata
