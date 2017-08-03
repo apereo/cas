@@ -6,7 +6,7 @@ import {FormModule} from "../form.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
 import {FormData} from "../../../domain/service-view-bean";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('AttributeReleasePrincipalRepoComponent', () => {
@@ -27,7 +27,7 @@ describe('AttributeReleasePrincipalRepoComponent', () => {
     component = fixture.componentInstance;
     component.formData = new FormData;
     component.service= new RegexRegisteredService();
-    component.selectOptions = new TabService().selectOptions;
+    component.selectOptions = new Data().selectOptions;
     fixture.detectChanges();
   });
 

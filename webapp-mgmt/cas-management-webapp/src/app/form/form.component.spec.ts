@@ -9,7 +9,7 @@ import {AlertComponent} from "../alert/alert.component";
 import {SaveformtopComponent} from "./saveformtop/saveformtop.component";
 import {Messages} from "../messages";
 import {FormService} from "./form.service";
-import {TabService} from "./tab.service";
+import {Data} from "./data";
 import {ActivatedRouteStub} from "../../testing/router-stub";
 import {AbstractRegisteredService, RegexRegisteredService} from "../../domain/registered-service";
 
@@ -52,7 +52,7 @@ describe('FormComponent', () => {
       declarations: [ FormComponent, AlertComponent, SaveformtopComponent ],
       providers: [
         Messages,
-        TabService,
+        Data,
         {provide: FormService, useValue: formServicesStub},
         {provide: ActivatedRoute, useValue: activatedRoute},
         {provide: Location, useValue: stubLocation}

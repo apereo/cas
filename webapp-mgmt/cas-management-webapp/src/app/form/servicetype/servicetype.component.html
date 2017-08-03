@@ -24,6 +24,6 @@
   </div>
 </div>
 
-<app-oauthclient *ngIf="oauth(service) || oidc(service)" [service]="service" [selectOptions]="selectOptions" [type]="type"></app-oauthclient>
-<app-samlclient *ngIf="saml(service)" [service]="service" [selectOptions]="selectOptions"></app-samlclient>
-<app-wsfedclient *ngIf="wsfed(service)" [service]="service" [selectOptions]="selectOptions"></app-wsfedclient>
+<app-oauthclient *ngIf="type == 'oauth' || type == 'oidc'" [type]="type"></app-oauthclient>
+<app-samlclient *ngIf="type == 'saml'"></app-samlclient>
+<app-wsfedclient *ngIf="type == 'wsfed'"></app-wsfedclient>

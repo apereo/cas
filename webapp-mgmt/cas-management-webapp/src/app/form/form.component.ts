@@ -4,7 +4,7 @@ import {Messages} from "../messages";
 import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
 import {Location} from "@angular/common";
 import {FormService} from "./form.service";
-import {TabService} from "./tab.service";
+import {Data} from "./data";
 import {AlertComponent} from "../alert/alert.component";
 import {AbstractRegisteredService, RegexRegisteredService} from "../../domain/registered-service";
 import {DenyAllAttributeReleasePolicy} from "../../domain/attribute-release";
@@ -40,7 +40,7 @@ export class FormComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private fservice: FormService,
-              public tabService: TabService,
+              public data: Data,
               private location: Location) {
   }
 
@@ -76,46 +76,46 @@ export class FormComponent implements OnInit {
   }
 
   newService() {
-    this.tabService.service = new RegexRegisteredService();
+    this.data.service = new RegexRegisteredService();
     this.radioWatchBypass = true;
 
     this.showOAuthSecret = false;
-    this.tabService.service.id = -1,
-    this.tabService.service.evaluationOrder = -1,
-    //this.service.type = this.tabService.selectOptions.serviceTypeList[0].value;
-    this.tabService.service.logoutType = "BACK_CHANNEL";
-    this.tabService.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy();
-    this.tabService.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+    this.data.service.id = -1,
+    this.data.service.evaluationOrder = -1,
+    //this.service.type = this.data.selectOptions.serviceTypeList[0].value;
+    this.data.service.logoutType = "BACK_CHANNEL";
+    this.data.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy();
+    this.data.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
     //this.service.attributeReleasePolicy.attrOption = 'DEFAULT';
     //this.service.attributeReleasePolicy.attrPolicy = {};
     //this.service.attributeReleasePolicy.attrPolicy.type = 'all';
-    //this.service.attributeReleasePolicy.cachedTimeUnit = this.tabService.selectOptions.timeUnitsList[0].value;
-    //this.service.attributeReleasePolicy.mergingStrategy = this.tabService.selectOptions.mergeStrategyList[0].value;
+    //this.service.attributeReleasePolicy.cachedTimeUnit = this.data.selectOptions.timeUnitsList[0].value;
+    //this.service.attributeReleasePolicy.mergingStrategy = this.data.selectOptions.mergeStrategyList[0].value;
 
-    this.tabService.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-    this.tabService.service.accessStrategy.enabled = true;
-    this.tabService.service.accessStrategy.ssoEnabled = true;
-    this.tabService.service.accessStrategy.caseInsensitive = true;
-    //this.service.accessStrategy.type = this.tabService.selectOptions.selectType[0].value;
-    this.tabService.service.publicKey = new RegisteredServicePublicKeyImpl();//new PublicKey();
-    this.tabService.service.usernameAttributeProvider =  new DefaultRegisteredServiceUsernameProvider();//UsernameAttributeProvider();
-    this.tabService.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();//new ProxyPolicy();
+    this.data.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+    this.data.service.accessStrategy.enabled = true;
+    this.data.service.accessStrategy.ssoEnabled = true;
+    this.data.service.accessStrategy.caseInsensitive = true;
+    //this.service.accessStrategy.type = this.data.selectOptions.selectType[0].value;
+    this.data.service.publicKey = new RegisteredServicePublicKeyImpl();//new PublicKey();
+    this.data.service.usernameAttributeProvider =  new DefaultRegisteredServiceUsernameProvider();//UsernameAttributeProvider();
+    this.data.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();//new ProxyPolicy();
     //this.service.proxyPolicy.type = 'REFUSE';
-    this.tabService.service.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
-    this.tabService.service.multifactorPolicy.failureMode = this.tabService.selectOptions.failureMode[1].value;
+    this.data.service.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+    this.data.service.multifactorPolicy.failureMode = this.data.selectOptions.failureMode[1].value;
 
     //this.showInstructions();
 
 
     this.fservice.formData().then(resp => {
-      this.tabService.formData = resp;
+      this.data.formData = resp;
       this.radioWatchBypass = false;
     });
 
   };
 
   loadService(form: AbstractRegisteredService, duplicate) {
-    this.tabService.service = form;
+    this.data.service = form;
     this.radioWatchBypass = true;
     this.showOAuthSecret = false;
     /*
@@ -128,12 +128,12 @@ export class FormComponent implements OnInit {
     }
     */
     this.fservice.formData().then(resp => {
-      this.tabService.formData = resp;
+      this.data.formData = resp;
       this.radioWatchBypass = false;
     });
     //this.showInstructions();
 
-    this.tabService.service = form;
+    this.data.service = form;
 
   };
 
@@ -171,7 +171,7 @@ export class FormComponent implements OnInit {
       return;
     }
 
-    this.fservice.saveService(this.tabService.service)
+    this.fservice.saveService(this.data.service)
       .then(resp => this.handleSave(resp))
       .catch(e => this.handleNotSaved(e));
 
@@ -187,18 +187,18 @@ export class FormComponent implements OnInit {
   }
 
   handleSave(id: number) {
-    //let hasIdAssignedAlready = (this.tabService.service.id != undefined &&
-    //Number.parseInt(this.tabService.service.id.toString()) > 0);
+    //let hasIdAssignedAlready = (this.data.service.id != undefined &&
+    //Number.parseInt(this.data.service.id.toString()) > 0);
     /*
     if (!hasIdAssignedAlready && id != null && id != 0) {
-      this.tabService.service.id = id;
+      this.data.service.id = id;
       this.alert.show(this.messages.services_form_alert_serviceAdded,'info');
     }
     else {
       this.alert.show(this.messages.services_form_alert_serviceUpdated,'info');
     }
     */
-    this.tabService.service.id = id;
+    this.data.service.id = id;
     this.location.back();
   }
 
@@ -220,7 +220,7 @@ export class FormComponent implements OnInit {
 
   validateForm() {
     let err = [],
-    data = this.tabService.service;
+    data = this.data.service;
 
     // Service Basics
     if (!data.serviceId) {

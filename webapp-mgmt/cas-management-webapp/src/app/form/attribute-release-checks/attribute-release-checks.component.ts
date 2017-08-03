@@ -2,6 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {FormData} from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-attribute-release-checks',
@@ -9,22 +10,18 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
   styleUrls: ['./attribute-release-checks.component.css']
 })
 export class AttributeReleaseChecksComponent implements OnInit {
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
   formData: FormData;
-
-  @Input()
   selectOptions;
 
-  constructor(public messages: Messages) { }
-
-  ngOnInit() {
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+    this.formData = data.formData;
+    this.selectOptions = data.selectOptions;
   }
 
-  isEmpty(data: any[]) {
-    return data != null && data.length == 0;
+  ngOnInit() {
   }
 
 }

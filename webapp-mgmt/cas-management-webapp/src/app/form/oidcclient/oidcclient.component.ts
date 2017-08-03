@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {OidcRegisteredService} from "../../../domain/oauth-service";
 import {Messages} from "../../messages";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-oidcclient',
@@ -9,13 +10,14 @@ import {Messages} from "../../messages";
 })
 export class OidcclientComponent implements OnInit {
 
-  @Input()
   service: OidcRegisteredService;
-
-  @Input()
   selectOptions;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service as OidcRegisteredService;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
     if(!this.service.scopes) {

@@ -19,19 +19,32 @@ export abstract class RegisteredServiceAccessStrategy {
 }
 
 export class DefaultRegisteredServiceAccessStrategy extends RegisteredServiceAccessStrategy {
+  static cName: string = "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy";
+
   constructor(strat?: RegisteredServiceAccessStrategy) {
     super(strat);
-    this["@class"] = "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy";
+    this["@class"] = DefaultRegisteredServiceAccessStrategy.cName;
   }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === DefaultRegisteredServiceAccessStrategy.cName;
+  }
+
 }
 
 export class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
   endpointUrl: String;
   acceptableResponseCodes: String;
 
+  static cName: string = "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy";
+
   constructor(strat?: RegisteredServiceAccessStrategy) {
     super(strat);
-    this["@class"] = "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy";
+    this["@class"] = RemoteEndpointServiceAccessStrategy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === RemoteEndpointServiceAccessStrategy.cName;
   }
 }
 
@@ -39,17 +52,29 @@ export class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
   startingDateTime: String;
   endingDateTime: String;
 
+  static cName: string = "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy";
+
   constructor(strat?: RegisteredServiceAccessStrategy) {
     super(strat);
-    this["@class"] = "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy";
+    this["@class"] = TimeBasedRegisteredServiceAccessStrategy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === TimeBasedRegisteredServiceAccessStrategy.cName;
   }
 }
 
 export class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredServiceAccessStrategy {
   groupField: String;
 
+  static cName: string = "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy";
+
   constructor(strat?: RegisteredServiceAccessStrategy) {
     super(strat);
-    this["@class"] = "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy";
+    this["@class"] = GrouperRegisteredServiceAccessStrategy.cName
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === GrouperRegisteredServiceAccessStrategy.cName;
   }
 }

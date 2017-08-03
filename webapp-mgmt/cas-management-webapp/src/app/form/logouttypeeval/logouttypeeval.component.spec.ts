@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { LogouttypeevalComponent } from './logouttypeeval.component';
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {SharedModule} from "../../shared/shared.module";
 import {RegexRegisteredService} from "../../../domain/registered-service";
 
@@ -27,7 +27,7 @@ describe('LogouttypeevalComponent', () => {
     fixture = TestBed.createComponent(LogouttypeevalComponent);
     component = fixture.componentInstance;
     component.service = new RegexRegisteredService();
-    component.selectOptions = new TabService().selectOptions;
+    component.selectOptions = new Data().selectOptions;
     fixture.detectChanges();
   });
 

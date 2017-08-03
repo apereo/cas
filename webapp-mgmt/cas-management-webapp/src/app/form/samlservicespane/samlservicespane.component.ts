@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {SamlRegisteredService} from "../../../domain/saml-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-samlservicespane',
@@ -10,10 +11,7 @@ import {SamlRegisteredService} from "../../../domain/saml-service";
 })
 export class SamlservicespaneComponent implements OnInit {
 
-  @Input()
   service: SamlRegisteredService;
-
-  @Input()
   selectOptions;
 
   rows: Row[];
@@ -23,7 +21,11 @@ export class SamlservicespaneComponent implements OnInit {
 
   type: String;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service as SamlRegisteredService;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {
     //this.rows = this.service.properties.map((p) => new Row(p));

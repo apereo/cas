@@ -7,7 +7,7 @@ import { DebugElement } from '@angular/core';
 import { TabPropertiesComponent } from './tab-properties.component';
 import {PropertiespaneComponent} from "../propertiespane/propertiespane.component";
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {SharedModule} from "../../shared/shared.module";
 
 describe('TabPropertiesComponent', () => {
@@ -18,7 +18,7 @@ describe('TabPropertiesComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, SharedModule ],
       declarations: [ TabPropertiesComponent, PropertiespaneComponent ],
-      providers: [ Messages, TabService ]
+      providers: [ Messages, Data ]
     })
     .compileComponents();
   }));

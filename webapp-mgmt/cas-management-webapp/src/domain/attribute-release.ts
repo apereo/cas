@@ -7,6 +7,7 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
   authorizedToReleaseProxyGrantingTicket: boolean;
   excludeDefaultAttributes: boolean;
   principalIdAttribute: String;
+
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     this.attributeFilter = policy && policy.attributeFilter;
     this.principalAttributesRepository = policy && policy.principalAttributesRepository;
@@ -24,77 +25,108 @@ export abstract class AbstractRegisteredServiceAttributeReleasePolicy extends Re
 }
 
 export class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+
+  static cName = "org.apereo.cas.services.ReturnAllAttributeReleasePolicy";
+
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     super(policy);
-    this["@class"] = "org.apereo.cas.services.ReturnAllAttributeReleasePolicy";
+    this["@class"] = ReturnAllAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === this.cName;
   }
 }
 
 export class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+
+  static cName = "org.apereo.cas.services.DenyAllAttributeReleasePolicy";
+
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     super(policy);
-    this["@class"] = "org.apereo.cas.services.DenyAllAttributeReleasePolicy";
+    this["@class"] = DenyAllAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === DenyAllAttributeReleasePolicy.cName;
   }
 }
 
 export class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
   allowedAttributes: Map<String,any>;
+
+  static cName = "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy";
+
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     super(policy);
-    this["@class"] = "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy";
+    this["@class"] = ReturnMappedAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === ReturnMappedAttributeReleasePolicy.cName;
   }
 }
 
 export class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
   allowedAttributes: String[];
+
+  static cName = "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy";
+
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     super(policy);
-    this["@class"] = "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy";
+    this["@class"] = ReturnAllowedAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === ReturnAllowedAttributeReleasePolicy.cName;
   }
 }
 
 export class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
   scriptFile: String;
+
+  static cName = "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy";
+
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     super(policy);
-    this["@class"] = "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy";
+    this["@class"] = ScriptedRegisteredServiceAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === ScriptedRegisteredServiceAttributeReleasePolicy.cName;
   }
 }
 
 export class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
   groovyScript: String;
+
+  static cName =  "org.apereo.cas.services.GroovyScriptAttributeReleasePolicy";
+
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     super(policy);
-    this["@class"] = "org.apereo.cas.services.GroovyScriptAttributeReleasePolicy";
+    this["@class"] = GroovyScriptAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === GroovyScriptAttributeReleasePolicy.cName;
   }
 }
 
 export abstract class RegisteredServiceAttributeFilter {
   order: number;
+  pattern: String
 }
 
 export class RegisteredServiceRegexAttributeFilter extends RegisteredServiceAttributeFilter {
-  pattern: String;
+  static cName = "org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter";
+
   constructor() {
     super();
-    this["@class"] = "org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter";
+    this["@class"] = RegisteredServiceRegexAttributeFilter.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === RegisteredServiceRegexAttributeFilter.cName;
   }
 }
 
-export class RegisteredServiceScriptedAttributeFilter extends RegisteredServiceAttributeFilter {
-  script: String;
-  constructor() {
-    super();
-    this["@class"] = "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter";
-  }
-}
-
-export class RegisteredServiceMappedRegexAttributeFilter extends RegisteredServiceAttributeFilter {
-  patterns: Map<String, String>;
-  excludeUnmappedAttributes: boolean;
-  completeMatch: boolean
-  constructor() {
-    super();
-    this["@class"] = "org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter";
-  }
-}

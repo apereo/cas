@@ -2,8 +2,9 @@ import {Component, OnInit, Input} from '@angular/core';
 import {FormData} from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {isEmpty} from "rxjs/operator/isEmpty";
 import {RegisteredServiceRegexAttributeFilter} from "../../../domain/attribute-release";
+import {Data} from "../data";
+import {Util} from "../../util/util";
 
 @Component({
   selector: 'app-attribute-release-filters',
@@ -12,31 +13,33 @@ import {RegisteredServiceRegexAttributeFilter} from "../../../domain/attribute-r
 })
 
 export class AttributeReleaseFiltersComponent implements OnInit {
-  @Input()
-  service: AbstractRegisteredService;
-
-  @Input()
-  formData: FormData;
-
-  @Input()
-  selectOptions;
 
   attributeFilter: RegisteredServiceRegexAttributeFilter;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter
+  }
 
   ngOnInit() {
-    if (!this.service.attributeReleasePolicy.attributeFilter ||
-        Object.keys(this.service.attributeReleasePolicy.attributeFilter).length == 0) {
-        let filter: RegisteredServiceRegexAttributeFilter = new RegisteredServiceRegexAttributeFilter();
-        filter.pattern = "";
-        this.service.attributeReleasePolicy.attributeFilter = filter;
+
+  }
+
+  updateFilter(pattern: String) {
+    if (pattern && pattern != '') {
+      this.attributeFilter = new RegisteredServiceRegexAttributeFilter();
+      this.attributeFilter.pattern = pattern;
+      this.data.service.attributeReleasePolicy.attributeFilter = this.attributeFilter;
+    } else {
+      this.attributeFilter = null;
+      this.data.service.attributeReleasePolicy.attributeFilter = null;
     }
-    this.attributeFilter = this.service.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
   }
 
-  isEmpty(data: any[]) {
-    return data != null && data.length == 0;
+  getPattern(): String {
+    if (this.attributeFilter) {
+      return this.attributeFilter.pattern;
+    }
+    return '';
   }
-
 }

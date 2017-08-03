@@ -6,7 +6,7 @@ import {SharedModule} from "../../shared/shared.module";
 import {FormModule} from "../form.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('AttributeReleasePoliciesComponent', () => {
@@ -25,7 +25,7 @@ describe('AttributeReleasePoliciesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleasePoliciesComponent);
     component = fixture.componentInstance;
-    component.selectOptions = new TabService().selectOptions;
+    component.selectOptions = new Data().selectOptions;
     component.formData = new FormData();
     component.service = new RegexRegisteredService();
     fixture.detectChanges();

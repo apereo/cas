@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {Messages} from "../../messages";
 import {Location} from "@angular/common";
-import {TabService} from "../tab.service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-saveformtop',
@@ -16,7 +16,7 @@ export class SaveformtopComponent implements OnInit {
 
   constructor(public messages: Messages,
               private location: Location,
-              private tabService: TabService) {
+              private tabService: Data) {
   }
 
   ngOnInit() {

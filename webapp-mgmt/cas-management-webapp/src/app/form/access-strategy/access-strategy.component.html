@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <app-rejectedattributes [service]="service"></app-rejectedattributes>
+    <app-rejectedattributes></app-rejectedattributes>
 
     <!-- Select Type -->
     <div class="form-group">
@@ -122,17 +122,17 @@
     </div>
 
     <div class="form-group" *ngIf="type == 'REMOTE'">
-      <app-remote [accessStrategy]="service.accessStrategy"></app-remote>
+      <app-remote></app-remote>
     </div>
 
     <div id="accessDateTime"
          *ngIf="type != 'DEFAULT' && type != 'REMOTE'">
-      <app-time [accessStrategy]="service.accessStrategy"></app-time>
+      <app-time></app-time>
     </div>
 
 
     <div id="grouperOptions" *ngIf="type == 'GROUPER'">
-      <app-grouper [accessStrategy]="service.accessStrategy" [selectOptions]="selectOptions"></app-grouper>
+      <app-grouper></app-grouper>
     </div>
   </div>
 </div>

@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormData} from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {WSFederationRegisterdService} from "../../../domain/wsed-service";
+import {Data} from "../data";
 
 @Component({
   selector: 'app-wsfedattrrelpolicies',
@@ -11,24 +11,23 @@ import {WSFederationRegisterdService} from "../../../domain/wsed-service";
 })
 export class WsfedattrrelpoliciesComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
   formData: FormData;
-
-  @Input()
   selectOptions;
-
   wsFedOnly: boolean;
 
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              private data: Data) {
+    this.service = data.service;
+    this.formData = data.formData;
+    this.selectOptions = data.selectOptions;
+  }
 
   ngOnInit() {}
 
-  isEmpty(data: any[]) {
-    return data != null && data.length == 0;
+  isEmpty(data: any[]): boolean {
+    return !data || data.length == 0;
   }
 
 }
