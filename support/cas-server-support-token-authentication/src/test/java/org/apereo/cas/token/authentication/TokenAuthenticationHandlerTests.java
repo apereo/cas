@@ -3,7 +3,6 @@ package org.apereo.cas.token.authentication;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -22,7 +21,8 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.token.TokenConstants;
-import org.apereo.cas.util.gen.Base64RandomStringGenerator;
+import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.core.profile.CommonProfile;
@@ -64,9 +64,9 @@ import static org.junit.Assert.*;
         TokenAuthenticationConfiguration.class})
 public class TokenAuthenticationHandlerTests {
 
-    private static final Base64RandomStringGenerator base64RandomStringGenerator = new Base64RandomStringGenerator();
-    private static final String SIGNING_SECRET = base64RandomStringGenerator.getNewString(256);
-    private static final String ENCRYPTION_SECRET = base64RandomStringGenerator.getNewString(48);
+    private static final RandomStringGenerator generator = new DefaultRandomStringGenerator();
+    private static final String SIGNING_SECRET = generator.getNewString(256);
+    private static final String ENCRYPTION_SECRET = generator.getNewString(48);
 
     @Autowired
     @Qualifier("tokenAuthenticationHandler")

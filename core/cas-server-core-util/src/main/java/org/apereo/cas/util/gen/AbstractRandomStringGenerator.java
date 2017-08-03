@@ -3,6 +3,8 @@ package org.apereo.cas.util.gen;
 import java.security.SecureRandom;
 
 /**
+ * This is {@link AbstractRandomStringGenerator}.
+ *
  * Implementation of the RandomStringGenerator that allows you to define the
  * length of the random part.
  *
@@ -37,6 +39,11 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
     @Override
     public int getDefaultLength() {
         return defaultLength;
+    }
+
+    @Override
+    public String getAlgorithm() {
+        return randomizer.getAlgorithm();
     }
 
     /**

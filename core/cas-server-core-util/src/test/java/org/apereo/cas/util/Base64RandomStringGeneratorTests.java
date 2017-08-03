@@ -7,8 +7,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
+ * Tests for {@link Base64RandomStringGenerator}.
+ *
  * @author Timur Duehr
-
+ *
  * @since 5.2.0
  */
 public class Base64RandomStringGeneratorTests {

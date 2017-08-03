@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
@@ -32,7 +32,6 @@ import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.List;
 import javax.xml.XMLConstants;
@@ -171,14 +170,12 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     public String generateSecureRandomId() {
         try {
-            final SecureRandom random = new SecureRandom();
-            final byte[] buf = new byte[RANDOM_ID_SIZE];
-            random.nextBytes(buf);
-            final String hex = EncodingUtils.hexEncode(buf);
+            final HexRandomStringGenerator random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
+            final String hex = random.getNewString();
             if (StringUtils.isBlank(hex)) {
                 throw new IllegalArgumentException("Could not generate a secure random id based on " + random.getAlgorithm());
             }
-            return "_".concat(hex);
+            return "_" + hex;
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
         }

@@ -17,6 +17,8 @@ import java.util.Map;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
+ * This is {@link BaseBinaryCipherExecutor}.
+ *
  * A implementation that is based on algorithms
  * provided by the default platform's JCE. By default AES encryption is
  * used.
@@ -74,8 +76,12 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             if (base64 && key.length == encryptionKeySize) {
                 LOGGER.info("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
                 encryptionKey = key;
+            } else if (encryptionSecretKey.length() != encryptionKeySize) {
+                LOGGER.warn("Secret key for encryption defined under [{}] is Base64 encoded but the size does not match the key size [{}].",
+                    getEncryptionKeySetting(), encryptionKeySize);
+                encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
             } else {
-                LOGGER.info("Secret key for encryption defined under [{}] is not Base64 encoded. Clear the setting to regenerate (Recommended) or replace with"
+                LOGGER.warn("Secret key for encryption defined under [{}] is not Base64 encoded. Clear the setting to regenerate (Recommended) or replace with"
                     + " [{}].", getEncryptionKeySetting(), EncodingUtils.encodeBase64(encryptionSecretKey));
                 encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
             }

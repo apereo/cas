@@ -18,6 +18,11 @@ public interface RandomStringGenerator {
     int getDefaultLength();
 
     /**
+     * @return the algorithm used by the generator's SecureRandom instance.
+     */
+    String getAlgorithm();
+
+    /**
      * @param size length of random string before encoding
      * @return a new random string of specified initial size
      */
