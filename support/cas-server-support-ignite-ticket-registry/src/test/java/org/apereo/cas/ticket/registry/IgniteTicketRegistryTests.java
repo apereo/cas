@@ -13,9 +13,11 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -54,7 +56,9 @@ import java.util.Collection;
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class
+        CasCoreLogoutConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
 public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
