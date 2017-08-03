@@ -57,7 +57,7 @@ public class CommandLineOptions {
      * Command line option that indicates banner should be skipped.
      */
     public static final Option OPTION_GENERATE_KEY = Option.builder("gk")
-            .desc("Generate signing/encryption keys for CAS settings.")
+            .desc("Generate signing/encryption keys for the specified CAS property group (i.e. cas.webflow). The group must have a child category of 'crypto'.")
             .longOpt("generate-key")
             .build();
 
