@@ -63,7 +63,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
                     getEncryptionKeySetting());
-            final String key = (new Base64RandomStringGenerator(encryptionKeySize)).getNewString();
+            final String key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 key, encryptionKeySize, getEncryptionKeySetting());
             encryptionKey = EncodingUtils.decodeBase64(key);
