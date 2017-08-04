@@ -34,7 +34,7 @@ need compile-time access to the components within.</p></div>
 
 | Endpoint               | Description
 |------------------------|----------------------------------------------------------------------------------------------------------------------
-| `/cas/ws/sts`          | Presents the list of available SOAP services and their WSDL configuration for each REALM defined in the configuration.
+| `/ws/sts`          | Presents the list of available SOAP services and their WSDL configuration for each REALM defined in the configuration.
 
 
 ### Security Tokens
@@ -68,8 +68,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 | Endpoint                        | Description
 |---------------------------------|--------------------------------------------------------------------------------------------------------
-| `/cas/ws/idp/metadata`          | Displays the current federation metadata based on the configuration realm for the identity provider.
-| `/cas/ws/idp/federation`        | Endpoint to receive initial `GET` authentication requests from clients, typically identified as the `issuer`.
+| `/ws/idp/metadata`          | Displays the current federation metadata based on the configuration realm for the identity provider.
+| `/ws/idp/federation`        | Endpoint to receive initial `GET` authentication requests from clients, typically identified as the `issuer`.
 
 ## Realms
 
