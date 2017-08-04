@@ -40,10 +40,12 @@ import java.util.Set;
 /**
  * This class represents an action to put at the beginning of the webflow.
  * <p>
- * Before any authentication, redirection urls are computed for the different clients defined as well as the theme,
- * locale, method and service are saved into the web session.</p>
- * After authentication, appropriate information are expected on this callback url to finish the authentication
- * process with the provider.
+ * Before any authentication, redirection urls are computed for the different
+ * clients defined as well as the theme, locale, method and service are saved
+ * into the web session.
+ * </p>
+ * After authentication, appropriate information are expected on this callback
+ * url to finish the authentication process with the provider.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -83,9 +85,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final String localParamName;
     private final boolean autoRedirect;
 
-    public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
-                                               final String localParamName, final boolean autoRedirect) {
+    public DelegatedClientAuthenticationAction(final Clients clients,
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
+            final String localParamName, final boolean autoRedirect) {
         this.clients = clients;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -113,7 +116,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
             // get client
-            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients
+                    .findClient(clientName);
             LOGGER.debug("Client: [{}]", client);
 
             // get credentials
@@ -140,10 +144,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                final AuthenticationResult authenticationResult =
-                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, new ClientCredential(credentials));
+                final AuthenticationResult authenticationResult = this.authenticationSystemSupport
+                        .handleAndFinalizeSingleAuthenticationTransaction(service, new ClientCredential(credentials));
 
-                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+                final TicketGrantingTicket tgt = this.centralAuthenticationService
+                        .createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
             }
@@ -172,8 +177,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Prepare the data for the login page.
      *
-     * @param context The current webflow context
-     * @throws HttpAction the http action
+     * @param context
+     *            The current webflow context
+     * @throws HttpAction
+     *             the http action
      */
     protected void prepareForLoginPage(final RequestContext context) throws HttpAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -231,11 +238,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Restore an attribute in web session as an attribute in request.
      *
-     * @param request The HTTP request
-     * @param session The HTTP session
-     * @param name    The name of the parameter
+     * @param request
+     *            The HTTP request
+     * @param session
+     *            The HTTP session
+     * @param name
+     *            The name of the parameter
      */
-    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
+    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
+            final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -243,11 +254,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Save a request parameter in the web session.
      *
-     * @param request The HTTP request
-     * @param session The HTTP session
-     * @param name    The name of the parameter
+     * @param request
+     *            The HTTP request
+     * @param session
+     *            The HTTP session
+     * @param name
+     *            The name of the parameter
      */
-    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
+    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
+            final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
@@ -261,11 +276,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Determine if request has errors.
      *
-     * @param request the request
-     * @param status  the status
+     * @param request
+     *            the request
+     * @param status
+     *            the status
      * @return the optional model and view, if request is an error.
      */
-    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
+    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request,
+            final int status) {
         final Map<String, String[]> params = request.getParameterMap();
         if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description")
                 || params.containsKey("error_message")) {
@@ -283,7 +301,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             } else if (params.containsKey("error_message")) {
                 model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
             }
-            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
+            model.put(CasProtocolConstants.PARAMETER_SERVICE,
+                    request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
 
             LOGGER.debug("Delegation request has failed. Details are [{}]", model);
@@ -305,10 +324,22 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         /**
          * Instantiates a new Provider ui configuration.
          *
+<<<<<<< HEAD
          * @param name        the name
          * @param redirectUrl the redirect url
          * @param type the type
          * @param cssClass for SAML clients, the class name used for custom styling of the redirect link
+=======
+         * @param name
+         *            the name
+         * @param redirectUrl
+         *            the redirect url
+         * @param type
+         *            the type
+         * @param cssClass
+         *            for SAML clients, the class name used for custom styling
+         *            of the redirect link
+>>>>>>> 1593e8bbf6909ad378722f98632b2fe3f041814b
          */
         ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type,
                 final String cssClass) {
