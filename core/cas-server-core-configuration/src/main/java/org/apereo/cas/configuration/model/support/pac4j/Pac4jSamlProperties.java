@@ -44,7 +44,9 @@ public class Pac4jSamlProperties implements Serializable {
     private String serviceProviderMetadataPath;
 
     /**
-     * Name of the SAML client mostly for UI purposes and uniqueness.
+     * Name of the SAML client mostly for UI purposes and uniqueness.  
+     * This name, with 'nonword' characters converted to '-' (e.g. "This Org (New)" becomet "This-Org--New-")
+     *  is added to the "class" attribute of the redirect link, to allow for custom styling of individual IdPs.
      */
     private String clientName;
 
