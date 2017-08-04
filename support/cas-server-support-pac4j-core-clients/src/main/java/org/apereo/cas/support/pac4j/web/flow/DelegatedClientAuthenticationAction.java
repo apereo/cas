@@ -177,10 +177,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Prepare the data for the login page.
      *
-     * @param context
-     *            The current webflow context
-     * @throws HttpAction
-     *             the http action
+     * @param context The current webflow context
+     * @throws HttpAction the http action
      */
     protected void prepareForLoginPage(final RequestContext context) throws HttpAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -238,12 +236,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Restore an attribute in web session as an attribute in request.
      *
-     * @param request
-     *            The HTTP request
-     * @param session
-     *            The HTTP session
-     * @param name
-     *            The name of the parameter
+     * @param request The HTTP request
+     * @param session The HTTP session
+     * @param name The name of the parameter
      */
     private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
             final String name) {
@@ -254,12 +249,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Save a request parameter in the web session.
      *
-     * @param request
-     *            The HTTP request
-     * @param session
-     *            The HTTP session
-     * @param name
-     *            The name of the parameter
+     * @param request The HTTP request
+     * @param session The HTTP session
+     * @param name The name of the parameter
      */
     private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
             final String name) {
@@ -276,10 +268,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Determine if request has errors.
      *
-     * @param request
-     *            the request
-     * @param status
-     *            the status
+     * @param request the request
+     * @param status  the status
      * @return the optional model and view, if request is an error.
      */
     public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request,
@@ -324,22 +314,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         /**
          * Instantiates a new Provider ui configuration.
          *
-<<<<<<< HEAD
          * @param name        the name
          * @param redirectUrl the redirect url
-         * @param type the type
-         * @param cssClass for SAML clients, the class name used for custom styling of the redirect link
-=======
-         * @param name
-         *            the name
-         * @param redirectUrl
-         *            the redirect url
-         * @param type
-         *            the type
-         * @param cssClass
-         *            for SAML clients, the class name used for custom styling
-         *            of the redirect link
->>>>>>> 1593e8bbf6909ad378722f98632b2fe3f041814b
+         * @param type        the type
+         * @param cssClass    for SAML clients, the class name used for custom styling of the redirect link
          */
         ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type,
                 final String cssClass) {
