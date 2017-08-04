@@ -11,8 +11,8 @@ dependencies {
     implementation libraries.caffein
     runtimeOnly libraries.groovy
 
-    testCompileOnly libraries.metrics
-    testCompileOnly libraries.log4j
+    
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(":core:cas-server-core-services")
