@@ -103,7 +103,7 @@
                 [myTooltip]="messages.services_form_tooltip_oauthJsonFormat"></i>
             </label>
           </div>
-          <div *ngIf="type == 'oidc'">
+          <div *ngIf="isOidc()">
             <app-oidcclient></app-oidcclient>
           </div>
         </div>

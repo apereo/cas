@@ -4,6 +4,8 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {FormData} from "../../../domain/service-view-bean";
 import {RegisteredServiceRegexAttributeFilter} from "../../../domain/attribute-release";
 import {Data} from "../data";
+import {OidcRegisteredService} from "../../../domain/oauth-service";
+import {WSFederationRegisterdService} from "../../../domain/wsed-service";
 
 @Component({
   selector: 'app-attribute-release',
@@ -13,19 +15,17 @@ import {Data} from "../data";
 export class AttributeReleaseComponent implements OnInit {
 
   service: AbstractRegisteredService;
-  formData: FormData;
-  selectOptions;
-  type: String;
+  isOidc: boolean;
+  isWsFed: boolean;
 
   constructor(public messages: Messages,
               private data: Data) {
     this.service = data.service;
-    this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
-
+    this.isOidc = OidcRegisteredService.instanceOf(this.service);
+    this.isWsFed = WSFederationRegisterdService.instanceOf(this.service);
   }
 
 }

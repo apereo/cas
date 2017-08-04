@@ -113,25 +113,25 @@
       <div class="col-sm-8">
         <select class="form-control" id="selectType" [(ngModel)]="type" (change)="changeType()">
           <option
-            *ngFor="let opt of selectOptions.selectType"
-            [value]="opt.value">
-            {{ opt.name }}
+            *ngFor="let opt of types"
+            [value]="opt">
+            {{ TYPE[opt] }}
           </option>
         </select>
       </div>
     </div>
 
-    <div class="form-group" *ngIf="type == 'REMOTE'">
+    <div class="form-group" *ngIf="type == TYPE.REMOTE">
       <app-remote></app-remote>
     </div>
 
     <div id="accessDateTime"
-         *ngIf="type != 'DEFAULT' && type != 'REMOTE'">
+         *ngIf="type != TYPE.DEFAULT && type != TYPE.REMOTE">
       <app-time></app-time>
     </div>
 
 
-    <div id="grouperOptions" *ngIf="type == 'GROUPER'">
+    <div id="grouperOptions" *ngIf="type == TYPE.GROUPER">
       <app-grouper></app-grouper>
     </div>
   </div>
