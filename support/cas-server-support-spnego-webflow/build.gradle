@@ -15,5 +15,5 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-cookie")
-    testCompileOnly libraries.log4j
+    
 }

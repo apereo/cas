@@ -5,8 +5,8 @@ dependencies {
     compile project(":support:cas-server-support-saml-mdui-core")
 
     implementation libraries.opensaml
-    testCompileOnly libraries.log4j
-    testCompileOnly libraries.metrics
+    
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
