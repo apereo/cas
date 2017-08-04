@@ -6,4 +6,5 @@ dependencies {
     implementation libraries.groovy
     implementation libraries.caffein
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-authentication")
 }
