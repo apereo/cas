@@ -18,9 +18,9 @@
       <select class="form-control" id="groupField"
               [(ngModel)]="accessStrategy.groupField">
         <option
-          *ngFor="let opt of selectOptions.groupField"
-          [value]="opt.value">
-          {{ opt.name }}
+          *ngFor="let opt of groupFields"
+          [value]="opt">
+          {{ opt }}
         </option>
       </select>
     </div>

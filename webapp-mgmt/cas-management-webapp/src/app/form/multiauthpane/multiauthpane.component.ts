@@ -9,16 +9,12 @@ import {Data} from "../data";
 })
 export class MultiauthpaneComponent implements OnInit {
 
-  @Input()
   service: AbstractRegisteredService;
-
-  @Input()
-  selectOptions;
+  failureModes = ["NONE","OPEN","CLOSED","PHANTOM"];
 
   constructor(public messages: Messages,
               private data: Data) {
     this.service = data.service;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {

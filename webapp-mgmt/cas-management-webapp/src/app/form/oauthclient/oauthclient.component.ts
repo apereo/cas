@@ -12,9 +12,6 @@ export class OauthclientComponent implements OnInit {
 
   service: OAuthRegisteredService;
   selectOptions;
-  @Input()
-  type: String;
-
   showOAuthSecret: boolean;
 
   constructor(public messages: Messages,
@@ -24,6 +21,10 @@ export class OauthclientComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
+  isOidc() {
+    return OidcRegisteredService.instanceOf(this.data.service);
+  }
 }

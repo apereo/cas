@@ -8,6 +8,11 @@ import {
 } from "../../../domain/attribute-repo";
 import {Data} from "../data";
 
+enum Type {
+  DEFAULT,
+  CACHING,
+}
+
 @Component({
   selector: 'app-attribute-release-principal-repo',
   templateUrl: './attribute-release-principal-repo.component.html',
@@ -16,30 +21,31 @@ import {Data} from "../data";
 export class AttributeReleasePrincipalRepoComponent implements OnInit {
   service: AbstractRegisteredService;
   formData: FormData;
-  selectOptions;
-  type: String;
+  type: Type;
+  TYPE = Type;
+  timeUnits = ["MILLISECONDS","SECONDS","MINUTES","HOURS","DAYS"];
+  mergeStrategies = ["NONE","ADD","MULTIVALUED","REPLACE"];
 
   constructor(public messages: Messages,
               private data: Data) {
     this.service = data.service;
     this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
     if (DefaultPrincipalAttributesRepository.instanceOf(this.service.attributeReleasePolicy.principalAttributesRepository)) {
-      this.type = "DEFAULT";
+      this.type = Type.DEFAULT;
     } else if (CachingPrincipalAttributesRepository.instanceOf(this.service.attributeReleasePolicy.principalAttributesRepository)) {
-      this.type = "CACHED";
+      this.type = Type.CACHING;
     }
   }
 
   changeType() {
-    switch(this.type) {
-      case 'DEFAULT' :
+    switch(+this.type) {
+      case Type.DEFAULT :
         this.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
         break;
-      case 'CACHED' :
+      case Type.CACHING :
         this.service.attributeReleasePolicy.principalAttributesRepository = new CachingPrincipalAttributesRepository();
         break;
     }

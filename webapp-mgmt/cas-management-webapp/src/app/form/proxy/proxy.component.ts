@@ -7,6 +7,11 @@ import {
 } from "../../../domain/proxy-policy,ts";
 import {Data} from "../data";
 
+enum Type {
+  REGEX,
+  REFUSE
+}
+
 @Component({
   selector: 'app-proxy',
   templateUrl: './proxy.component.html'
@@ -14,7 +19,8 @@ import {Data} from "../data";
 export class ProxyComponent implements OnInit {
 
   service: AbstractRegisteredService;
-  type: String;
+  type: Type;
+  TYPE = Type;
 
   constructor(public messages: Messages,
               private data: Data) {
@@ -23,18 +29,18 @@ export class ProxyComponent implements OnInit {
 
   ngOnInit() {
     if (RefuseRegisteredServiceProxyPolicy.instanceOf(this.service.proxyPolicy)) {
-      this.type = "REFUSE";
+      this.type = Type.REFUSE;
     } else if (RegexMatchingRegisteredServiceProxyPolicy.instanceOf(this.service.proxyPolicy)) {
-      this.type = "REGEX";
+      this.type = Type.REGEX;
     }
   }
 
   changeType() {
-    switch(this.type) {
-      case "REFUSE" :
+    switch(+this.type) {
+      case Type.REFUSE :
         this.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
         break;
-      case "REGEX" :
+      case Type.REGEX :
         this.service.proxyPolicy = new RegexMatchingRegisteredServiceProxyPolicy();
         break;
     }

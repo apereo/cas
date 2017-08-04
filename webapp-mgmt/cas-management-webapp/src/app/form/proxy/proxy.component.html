@@ -12,8 +12,10 @@
 
         <!-- Proxy Policy Radio Button - Refuse -->
         <label class="radio-inline">
-          <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="REFUSE"
-                 [(ngModel)]="type" (change)="changeType()" checked="true">
+          <input type="radio" name="proxyPolicyRadio"
+                 [value]="TYPE.REFUSE"
+                 [(ngModel)]="type"
+                 (change)="changeType()">
           <ng-container i18n="services.form.label.proxyPolicy.refuse">
             {{ messages.services_form_label_proxyPolicy_refuse }}
           </ng-container>
@@ -21,8 +23,10 @@
 
         <!-- Proxy Policy Radio Button - Regex -->
         <label class="radio-inline">
-          <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="REGEX"
-                 [(ngModel)]="type" (change)="changeType()">
+          <input type="radio" name="proxyPolicyRadio"
+                 [value]="TYPE.REGEX"
+                 [(ngModel)]="type"
+                 (change)="changeType()">
           <ng-container i18n="services.form.label.proxyPolicy.regex">
             {{ messages.services_form_label_proxyPolicy_regex }}
           </ng-container>
@@ -30,14 +34,14 @@
       </div>
 
       <!-- Proxy Policy Refuse Options -->
-      <div class="well well-sm" *ngIf="type === 'REFUSE'">
+      <div class="well well-sm" *ngIf="type == TYPE.REFUSE">
         <ng-container i18n="management.services.service.noAction">
           {{ messages.management_services_service_noAction }}
         </ng-container>
       </div>
 
       <!-- Proxy Policy Regex Options -->
-      <div class="form-group" *ngIf="type === 'REGEX'">
+      <div class="form-group" *ngIf="type == TYPE.REGEX">
         <label class="col-sm-3" for="proxyPolicyRegex">
           <span style="float:right">
             <ng-container i18n="services.form.label.proxyPolicy.regex">
