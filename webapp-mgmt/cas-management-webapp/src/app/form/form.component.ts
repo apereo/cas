@@ -102,7 +102,7 @@ export class FormComponent implements OnInit {
     this.data.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();//new ProxyPolicy();
     //this.service.proxyPolicy.type = 'REFUSE';
     this.data.service.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
-    this.data.service.multifactorPolicy.failureMode = this.data.selectOptions.failureMode[1].value;
+    this.data.service.multifactorPolicy.failureMode = "OPEN";
 
     //this.showInstructions();
 

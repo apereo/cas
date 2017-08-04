@@ -16,7 +16,6 @@ export class FormService {
       .toPromise()
       .then(resp => {
         let as: AbstractRegisteredService = resp.json() as AbstractRegisteredService;
-        console.log("id = "+JSON.stringify(as.accessStrategy));
         return as;
       })
       .catch(this.handleError)

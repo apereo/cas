@@ -9,6 +9,12 @@ import {
 } from "../../../domain/attribute-provider";
 import {Data} from "../data";
 
+enum Type {
+  DEFAULT,
+  PRINCIPAL_ATTRIBUTE,
+  ANONYMOUS
+}
+
 @Component({
   selector: 'app-uidattrs',
   templateUrl: './uidattrs.component.html'
@@ -18,7 +24,9 @@ export class UidattrsComponent implements OnInit {
   service: AbstractRegisteredService;
   formData: FormData;
   selectOptions;
-  type: String;
+  type: Type;
+  TYPE = Type;
+  canonicalizations = ["NONE","UPPER","LOWER"];
 
   constructor(public messages: Messages,
               private data: Data) {
@@ -28,33 +36,27 @@ export class UidattrsComponent implements OnInit {
   }
 
   ngOnInit() {
-    switch(this.service.usernameAttributeProvider["@class"]) {
-      case "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider" :
-        this.type = 'default';
-        break;
-      case "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider" :
-        this.type = 'attr';
-        break;
-      case "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" :
-        this.type = 'anon';
-        break;
+    if (DefaultRegisteredServiceUsernameProvider.instanceOf(this.service.usernameAttributeProvider)) {
+      this.type = Type.DEFAULT;
+    } else if (PrincipalAttributeRegisteredServiceUsernameProvider.instanceOf(this.service.usernameAttributeProvider)) {
+      this.type = Type.PRINCIPAL_ATTRIBUTE;
+    } else if (AnonymousRegisteredServiceUsernameProvider.instanceOf(this.service.usernameAttributeProvider)) {
+      this.type = Type.ANONYMOUS;
     }
   }
 
   changeType() {
-    if (true) {
-      switch(this.type) {
-        case 'default' :
+      switch(+this.type) {
+        case Type.DEFAULT :
           this.service.usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
           break;
-        case 'attr' :
+        case Type.PRINCIPAL_ATTRIBUTE :
           this.service.usernameAttributeProvider = new PrincipalAttributeRegisteredServiceUsernameProvider();
           break;
-        case 'anon' :
+        case Type.ANONYMOUS :
           this.service.usernameAttributeProvider = new AnonymousRegisteredServiceUsernameProvider();
           break;
       }
-    }
   }
 
 }
