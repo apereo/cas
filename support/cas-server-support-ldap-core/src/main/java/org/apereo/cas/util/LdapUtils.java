@@ -111,16 +111,16 @@ public final class LdapUtils {
      * Default parameter name in search filters for ldap.
      */
     public static final String LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME = "user";
-    
+
     /**
      * The objectClass attribute.
      */
-    public static final String OBJECTCLASS_ATTRIBUTE = "objectClass";
+    public static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
 
     private static final String LDAP_PREFIX = "ldap";
-    
+
     /**
      * Instantiates a new ldap utils.
      */
@@ -748,8 +748,11 @@ public final class LdapUtils {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
             cc.setSslConfig(new SslConfig());
         }
-        if (l.getSaslMechanism() != null) {
+        if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
+            if (StringUtils.isBlank(l.getSaslMechanism())) {
+                throw new IllegalArgumentException("Undefined SASL mechanism");
+            }
 
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
@@ -765,11 +768,10 @@ public final class LdapUtils {
                     sc = new ExternalConfig();
                     break;
                 case GSSAPI:
+                default:
                     sc = new GssApiConfig();
                     ((GssApiConfig) sc).setRealm(l.getSaslRealm());
                     break;
-                default:
-                    throw new IllegalArgumentException("Unknown SASL mechanism " + l.getSaslMechanism());
             }
             sc.setAuthorizationId(l.getSaslAuthorizationId());
             sc.setMutualAuthentication(l.getSaslMutualAuth());

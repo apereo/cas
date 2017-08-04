@@ -241,7 +241,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The SASL mechanism.
      */
-    private String saslMechanism;
+    private String saslMechanism = "GSSAPI";
     /**
      * SASL authorization id.
      */
