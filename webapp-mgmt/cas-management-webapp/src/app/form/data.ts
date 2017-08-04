@@ -11,6 +11,7 @@ export class Data {
   isAdmin: boolean;
   service: AbstractRegisteredService;
   formData: FormData;
+
   roles = [
     {id: 1, text: "guest"},
     {id: 2, text: "user"},
@@ -38,42 +39,6 @@ export class Data {
       {name: "SAML2 Service Provider", value: "saml"},
       {name: "OpenID Connect Client", value: "oidc"}
     ],
-    logoutTypeList: [
-      {name: "NONE", value: "NONE"},
-      {name: "BACK_CHANNEL", value: "BACK_CHANNEL"},
-      {name: "FRONT_CHANNEL", value: "FRONT_CHANNEL"}
-    ],
-    timeUnitsList: [
-      {name: "MILLISECONDS", value: "MILLISECONDS"},
-      {name: "SECONDS", value: "SECONDS"},
-      {name: "MINUTES", value: "MINUTES"},
-      {name: "HOURS", value: "HOURS"},
-      {name: "DAYS", value: "DAYS"}
-    ],
-    mergeStrategyList: [
-      {name: "NONE", value: "NONE"},
-      {name: "ADD", value: "ADD"},
-      {name: "MULTIVALUED", value: "MULTIVALUED"},
-      {name: "REPLACE", value: "REPLACE"}
-    ],
-    selectType: [
-      {name: "DEFAULT", value: "DEFAULT"},
-      {name: "TIME", value: "TIME"},
-      {name: "GROUPER", value: "GROUPER"},
-      {name: "REMOTE", value: "REMOTE"}
-    ],
-    groupField: [
-      {name: "NAME", value: "NAME"},
-      {name: "DISPLAY_NAME", value: "DISPLAY_NAME"},
-      {name: "EXTENSION", value: "EXTENSION"},
-      {name: "DISPLAY_EXTENSION", value: "DISPLAY_EXTENSION"}
-    ],
-    failureMode: [
-      {name: "NONE", value: "NONE"},
-      {name: "OPEN", value: "OPEN"},
-      {name: "CLOSED", value: "CLOSED"},
-      {name: "PHANTOM", value: "PHANTOM"}
-    ],
     samlRoleList: [
       {name: "SPSSODescriptor", value: "SPSSODescriptor"},
       {name: "IDPSSODescriptor", value: "IDPSSODescriptor"}
@@ -81,11 +46,6 @@ export class Data {
     samlDirectionList: [
       {name: "INCLUDE", value: "INCLUDE"},
       {name: "EXCLUDE", value: "EXCLUDE"}
-    ],
-    canonicalizationList : [
-      {name: "NONE", value: "NONE"},
-      {name: "UPPER", value: "UPPER"},
-      {name: "LOWER", value: "LOWER"}
     ],
     nameIdList : [
       {name: "BASIC", value: "Basic"},
@@ -117,5 +77,6 @@ export class Data {
       {name: "PUID", value: "PUID"}
     ]
   };
-
 }
+
+

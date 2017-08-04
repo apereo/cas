@@ -16,14 +16,14 @@
         <i class="fa fa-exclamation-triangle"></i>
       </div>
       <select class="form-control" id="serviceType" [(ngModel)]="type" (change)="changeType()">
-        <option *ngFor="let opt of selectOptions.serviceTypeList" [value]="opt.value">
-          {{ opt.name }}
+        <option *ngFor="let opt of types; let i = index" [value]="opt">
+          {{ display[i] }}
         </option>
       </select>
     </div>
   </div>
 </div>
 
-<app-oauthclient *ngIf="type == 'oauth' || type == 'oidc'" [type]="type"></app-oauthclient>
-<app-samlclient *ngIf="type == 'saml'"></app-samlclient>
-<app-wsfedclient *ngIf="type == 'wsfed'"></app-wsfedclient>
+<app-oauthclient *ngIf="type == TYPE.OAUTH || type == TYPE.OIDC"></app-oauthclient>
+<app-samlclient *ngIf="type == TYPE.SAML"></app-samlclient>
+<app-wsfedclient *ngIf="type == TYPE.WS_Fed"></app-wsfedclient>

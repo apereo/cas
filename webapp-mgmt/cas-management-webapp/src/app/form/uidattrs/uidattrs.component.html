@@ -12,7 +12,8 @@
       <div class="radio-group">
         <!-- Username Attribute Provider Radio Button - Default -->
         <label class="radio-inline">
-          <input type="radio" name="uapRadio" id="uapDefault" value="default"
+          <input type="radio" name="uapRadio"
+                 [value]="TYPE.DEFAULT"
                  [(ngModel)]="type"
                  (change)="changeType()">
           <ng-container i18n="services.form.label.uap.default">
@@ -21,7 +22,8 @@
         </label>
         <!-- Username Attribute Provider Radio Button - Anonymous -->
         <label class="radio-inline">
-          <input type="radio" name="uapRadio" id="uapAnon" value="anon"
+          <input type="radio" name="uapRadio"
+                 [value]="TYPE.ANONYMOUS"
                  [(ngModel)]="type"
                  (change)="changeType()">
           <ng-container i18n="services.form.label.uap.anon">
@@ -30,7 +32,8 @@
         </label>
         <!-- Username Attribute Provider Radio Button - Principle Attribute -->
         <label class="radio-inline">
-          <input type="radio" name="uapRadio" id="uapAtt" value="attr"
+          <input type="radio" name="uapRadio"
+                 [value]="TYPE.PRINCIPAL_ATTRIBUTE"
                  [(ngModel)]="type"
                  (change)="changeType()">
           <ng-container i18n="services.form.label.uap.principleAtt">
@@ -40,13 +43,13 @@
       </div>
 
       <!-- Username Attribute Provider Default Options -->
-      <div class="well well-sm" *ngIf="type === 'default'">
+      <div class="well well-sm" *ngIf="type == TYPE.DEFAULT">
         <ng-container i18n="management.services.service.noAction">
           {{ messages.management_services_service_noAction }}
         </ng-container>
       </div>
       <!-- Username Attribute Provider Anonymous Options -->
-      <div class="form-group" *ngIf="type === 'anon'">
+      <div class="form-group" *ngIf="type == TYPE.ANONYMOUS">
         <label class="col-sm-4" for="uapSaltSetting">
           <span style="float:right">
             <ng-container i18n="services.form.label.uap.saltSetting">
@@ -69,7 +72,7 @@
         </div>
       </div>
       <!-- Username Attribute Provider Principle Attribute Options -->
-      <div class="form-group" *ngIf="type === 'attr'">
+      <div class="form-group" *ngIf="type == TYPE.PRINCIPAL_ATTRIBUTE">
         <label class="col-sm-4" for="uapUsernameAttribute">
           <span style="float:right">
             <ng-container i18n="services.form.label.uap.usernameAttribute">
@@ -94,7 +97,7 @@
           </div>
         </div>
       </div>
-      <div class="form-group" *ngIf="type == 'attr'">
+      <div class="form-group" *ngIf="type == TYPE.PRINCIPAL_ATTRIBUTE">
         <div class="col-sm-4">
           <div class="checkbox" style="float:right">
             <label for="canonicalizationMode">
@@ -110,9 +113,8 @@
         </div>
         <div class="col-sm-8" *ngIf="service.usernameAttributeProvider.canonicalizationMode">
           <select class="form-control" id="canonicalizationType" [(ngModel)]="service.usernameAttributeProvider.canonicalizationMode">
-            <option *ngFor="let opt of selectOptions.canonicalizationList"
-                    [value]="opt.value"
-                    [selected]="opt === service.usernameAttributeProvider.canonicalizationMode">{{ opt.name }}</option>
+            <option *ngFor="let opt of canonicalizations"
+                    [value]="opt">{{ opt }}</option>
           </select>
         </div>
       </div>

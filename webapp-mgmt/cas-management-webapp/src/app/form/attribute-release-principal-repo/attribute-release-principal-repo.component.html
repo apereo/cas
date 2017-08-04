@@ -8,7 +8,8 @@
     <div class="radio-group">
       <!-- Principle Repository Radio Button - Default -->
       <label class="radio-inline">
-        <input type="radio" name="prinFilterDefault" id="prinFilterDefault" value="DEFAULT"
+        <input type="radio" name="prinFilter"
+               [value]="TYPE.DEFAULT"
                [(ngModel)]="type"
                (change)="changeType()"/>
         <ng-container i18n="services.form.label.attrRelease.principleAttRepo.default">
@@ -17,7 +18,8 @@
       </label>
       <!-- Principle Filter Radio Button - Cached -->
       <label class="radio-inline">
-        <input type="radio" name="prinFilterCached" id="prinFilterCached" value="CACHED"
+        <input type="radio" name="prinFilter"
+               [value]="TYPE.CACHING"
                [(ngModel)]="type"
                (change)="changeType()"/>
         <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached">
@@ -27,7 +29,7 @@
     </div>
 
     <!-- Principle Attribute Repo Default Options -->
-    <div class="well well-sm" *ngIf="type == 'DEFAULT'">
+    <div class="well well-sm" *ngIf="type == TYPE.DEFAULT">
       <ng-container i18n="services.service.noAction">
         {{ messages.management_services_service_noAction }}
       </ng-container>
@@ -35,7 +37,7 @@
 
     <!-- Principle Attribute Repo Cached Options -->
     <div class="principle-attribute-cached-container"
-         *ngIf="type == 'CACHED'">
+         *ngIf="type == TYPE.CACHING">
       <!-- Principle Attribute Repo Cached Time -->
       <div class="form-group">
         <label class="col-sm-4" for="cachedTime">
@@ -55,8 +57,8 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <select class="form-control" id="cachedTime" [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
-              <option *ngFor="let opt of selectOptions.timeUnitsList" [value]="opt.value">
-                {{ opt.name }}
+              <option *ngFor="let opt of timeUnits" [value]="opt">
+                {{ opt }}
               </option>
             </select>
           </div>
@@ -97,8 +99,8 @@
               <i class="fa fa-exclamation-triangle"></i>
             </div>
             <select class="form-control" id="mergingStrategy" [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
-              <option *ngFor="let opt of selectOptions.mergeStrategyList" [value]="opt.value">
-                {{ opt.name }}
+              <option *ngFor="let opt of mergeStrategies" [value]="opt">
+                {{ opt }}
               </option>
             </select>
           </div>

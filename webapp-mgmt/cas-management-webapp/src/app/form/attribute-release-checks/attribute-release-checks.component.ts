@@ -11,14 +11,10 @@ import {Data} from "../data";
 })
 export class AttributeReleaseChecksComponent implements OnInit {
   service: AbstractRegisteredService;
-  formData: FormData;
-  selectOptions;
 
   constructor(public messages: Messages,
               private data: Data) {
     this.service = data.service;
-    this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {

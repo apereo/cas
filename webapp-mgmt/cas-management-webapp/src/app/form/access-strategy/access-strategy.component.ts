@@ -9,16 +9,24 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {Util} from "../../util/util";
 import {Data} from "../data";
 
+enum Type{
+  DEFAULT,TIME,GROUPER,REMOTE
+}
+
 @Component({
   selector: 'app-access-strategy',
   templateUrl: './access-strategy.component.html',
 })
+
+
 export class AccessStrategyComponent implements OnInit {
 
   formData: FormData;
   service: AbstractRegisteredService;
   selectOptions;
-  type: String;
+  type: Type;
+  TYPE = Type;
+  types = [Type.DEFAULT,Type.TIME,Type.GROUPER,Type.REMOTE];
 
   constructor(public messages: Messages,
               private data: Data) {
@@ -37,28 +45,29 @@ export class AccessStrategyComponent implements OnInit {
     });
 
     if (RemoteEndpointServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
-      this.type = "REMOTE";
+      this.type = Type.REMOTE;
     } else if (TimeBasedRegisteredServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
-      this.type = "TIME";
+      this.type = Type.TIME;
     } else if (GrouperRegisteredServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
-      this.type = "GROUPER";
+      this.type = Type.GROUPER;
     } else {
-      this.type = "DEFAULT";
+      this.type = Type.DEFAULT;
     }
   }
 
   changeType() {
-    switch(this.type) {
-      case "DEFAULT" :
+    switch(+this.type) {
+      case Type.DEFAULT :
         this.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy(this.service.accessStrategy);
         break;
-      case "REMOTE" :
+      case Type.REMOTE :
         this.service.accessStrategy = new RemoteEndpointServiceAccessStrategy(this.service.accessStrategy);
         break;
-      case "TIME" :
+      case Type.TIME :
+        console.log("Createing TimeBASEd");
         this.service.accessStrategy = new TimeBasedRegisteredServiceAccessStrategy(this.service.accessStrategy);
         break;
-      case "GROUPER" :
+      case Type.GROUPER :
         this.service.accessStrategy = new GrouperRegisteredServiceAccessStrategy(this.service.accessStrategy);
         break;
       default:

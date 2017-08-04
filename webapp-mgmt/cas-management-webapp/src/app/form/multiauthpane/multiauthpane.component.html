@@ -49,9 +49,9 @@ Providers: CSV list
 
           <select class="form-control" id="multiAuthFailureMode" [(ngModel)]="service.multifactorPolicy.failureMode">
             <option
-              *ngFor="let opt of selectOptions.failureMode"
-              [value]="opt.value">
-              {{ opt.name }}
+              *ngFor="let opt of failureModes"
+              [value]="opt">
+              {{ opt }}
             </option>
           </select>
 

@@ -1,5 +1,5 @@
 <div class="attribute-release-policy-container"
-     *ngIf="type != 'oidc'">
+     *ngIf="!isOidc">
 
   <div class="panel panel-success">
     <div class="panel-heading">
@@ -21,7 +21,7 @@
 
 
 <div class="attribute-release-policy-container"
-     *ngIf="type == 'oidc'">
+     *ngIf="isOidc">
 
   <div class="well well-sm">
     <ng-container i18n="management.services.service.noAction">
@@ -31,7 +31,7 @@
 </div>
 
 <div class="attribute-release-policy-container" id="attribute-release-policy-container"
-     *ngIf="type == 'wsfed'">
+     *ngIf="isWsFed">
 
   <h1>{{type}}</h1>
   <div class="panel panel-info">

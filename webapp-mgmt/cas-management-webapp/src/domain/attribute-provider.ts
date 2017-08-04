@@ -8,42 +8,46 @@ export abstract class BaseRegisteredServiceUsernameAtttributeProvider extends Re
 }
 
 export class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAtttributeProvider {
+  static cName = "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider";
+
   constructor() {
     super();
-    this["@class"] = "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider";
+    this["@class"] = DefaultRegisteredServiceUsernameProvider.cName;
   }
-}
 
-export class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAtttributeProvider {
-  groovyScript: String;
-  constructor(){
-    super();
-    this["@class"] = "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider";
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === DefaultRegisteredServiceUsernameProvider.cName;
   }
 }
 
 export class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAtttributeProvider {
   usernameAttribute: String;
+
+  static cName = "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider";
+
   constructor(){
     super();
-    this["@class"] = "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider";
+    this["@class"] = PrincipalAttributeRegisteredServiceUsernameProvider.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === PrincipalAttributeRegisteredServiceUsernameProvider.cName;
   }
 }
 
 export class AnonymousRegisteredServiceUsernameProvider extends RegisteredServiceUsernameAttributeProvider {
   persistentIdGenerator: ShibbolethCompatiblePersistentIdGenerator;
+
+  static cName = "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider";
+
   constructor(){
     super();
-    this["@class"] = "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider";
+    this["@class"] = AnonymousRegisteredServiceUsernameProvider.cName;
     this.persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
   }
-}
 
-export class ScriptRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAtttributeProvider {
-  script: String;
-  constructor(){
-    super();
-    this["@class"] = "org.apereo.cas.services.ScriptRegisteredServiceUsernameProvider";
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === AnonymousRegisteredServiceUsernameProvider.cName;
   }
 }
 

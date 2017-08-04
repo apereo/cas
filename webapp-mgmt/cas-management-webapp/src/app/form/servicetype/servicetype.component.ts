@@ -6,6 +6,14 @@ import {SamlRegisteredService} from "../../../domain/saml-service";
 import {WSFederationRegisterdService} from "../../../domain/wsed-service";
 import {Data} from "../data";
 
+enum Type {
+  CAS,
+  OAUTH,
+  OIDC,
+  SAML,
+  WS_Fed,
+}
+
 @Component({
   selector: 'app-servicetype',
   templateUrl: './servicetype.component.html'
@@ -14,7 +22,10 @@ export class ServicetypeComponent implements OnInit {
 
   service: AbstractRegisteredService;
   selectOptions;
-  type: String;
+  type: Type;
+  TYPE = Type;
+  types = [Type.CAS,Type.OAUTH,Type.OIDC,Type.SAML,Type.WS_Fed];
+  display = ["CAS Client","OAuth2 Client","OpenID Connect Client","SAML2 Service Provider","WS Federation"];
 
   constructor(public messages: Messages,
               private data: Data) {
@@ -24,34 +35,33 @@ export class ServicetypeComponent implements OnInit {
 
   ngOnInit() {
     if (OAuthRegisteredService.instanceOf(this.service)) {
-      this.type = this.selectOptions.serviceTypeList[1].value;
+      this.type = Type.OAUTH;
     } else if (WSFederationRegisterdService.instanceOf(this.service)) {
-      this.type = this.selectOptions.serviceTypeList[5].value;
+      this.type = Type.WS_Fed;
     } else if (OidcRegisteredService.instanceOf(this.service)) {
-      this.type = this.selectOptions.serviceTypeList[4].value;
+      this.type = Type.OIDC;
     } else if (SamlRegisteredService.instanceOf(this.service)) {
-      this.type = this.selectOptions.serviceTypeList[3].value;
+      this.type = Type.SAML;
     } else {
-      this.type = this.selectOptions.serviceTypeList[0].value;
+      this.type = Type.CAS;
     }
-
   }
 
   changeType() {
-    switch(this.type) {
-      case this.selectOptions.serviceTypeList[0].value :
+    switch(+this.type) {
+      case Type.CAS :
         this.service = new RegexRegisteredService(this.service);
         break;
-      case this.selectOptions.serviceTypeList[1].value :
+      case Type.OAUTH :
         this.service = new OAuthRegisteredService(this.service);
         break;
-      case this.selectOptions.serviceTypeList[4].value :
+      case Type.OIDC :
         this.service = new OidcRegisteredService(this.service);
         break;
-      case this.selectOptions.serviceTypeList[3].value :
+      case Type.SAML :
         this.service = new SamlRegisteredService(this.service);
         break;
-      case this.selectOptions.serviceTypeList[5].value :
+      case Type.WS_Fed:
         this.service = new WSFederationRegisterdService(this.service);
         break;
     }

@@ -49,6 +49,6 @@ export class OidcRegisteredService extends OAuthRegisteredService {
   }
 
   static instanceOf(service: RegisteredService): boolean {
-    return OidcRegisteredService.cName == service["@class"];
+    return OidcRegisteredService.cName === service["@class"];
   }
 }
