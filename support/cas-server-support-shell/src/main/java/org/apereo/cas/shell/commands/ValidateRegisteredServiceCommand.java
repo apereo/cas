@@ -22,7 +22,8 @@ import java.io.File;
 @Service
 public class ValidateRegisteredServiceCommand implements CommandMarker {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateRegisteredServiceCommand.class);
-
+    private static final int SEP_LINE_LENGTH = 70;
+    
     /**
      * Validate service.
      *
@@ -68,12 +69,15 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
             final RegisteredServiceJsonSerializer validator = new RegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 final RegisteredService svc = validator.from(filePath);
-                LOGGER.info("Service [{}] is valid.", svc.getName());
+                LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
             }
         } catch (final Exception e) {
             LOGGER.error("Could not understand and validate [{}]: [{}]", filePath.getPath(), e.getMessage());
+        } finally {
+            LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
         }
+        
     }
 }
