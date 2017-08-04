@@ -238,7 +238,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name    The name of the parameter
+     * @param name The name of the parameter
      */
     private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = (String) session.getAttribute(name);
@@ -250,7 +250,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name    The name of the parameter
+     * @param name The name of the parameter
      */
     private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = request.getParameter(name);
