@@ -148,7 +148,7 @@ public final class SamlSPUtils {
         servicesManager.load();
 
         if (servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService
-                && registeredService.getServiceId().equals(service.getServiceId())) != null) {
+                && registeredService.getServiceId().equals(service.getServiceId())).size() == 0) {
             LOGGER.info("Service [{}] does not exist in the registry and will be added.", service.getServiceId());
             servicesManager.save(service);
             servicesManager.load();
