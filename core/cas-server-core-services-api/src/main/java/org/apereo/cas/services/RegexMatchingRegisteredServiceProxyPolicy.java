@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.util.RegexUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.regex.Pattern;
 
 /**
  * A proxy policy that only allows proxying to pgt urls
@@ -17,10 +19,11 @@ import java.util.regex.Pattern;
  * @since 4.1.0
  */
 public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegexMatchingRegisteredServiceProxyPolicy.class);
+    
     private static final long serialVersionUID = -211069319543047324L;
     
-    private Pattern pattern;
+    private String pattern;
 
     /**
      * Instantiates a new Regex matching registered service proxy policy.
@@ -38,11 +41,16 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
      */
     @JsonCreator
     public RegexMatchingRegisteredServiceProxyPolicy(@JsonProperty("pattern") final String pgtUrlPattern) {
-        this.pattern = Pattern.compile(pgtUrlPattern, Pattern.CASE_INSENSITIVE);
+        if (RegexUtils.isValidRegex(pgtUrlPattern)) {
+            this.pattern = pgtUrlPattern;
+        } else {
+            LOGGER.warn("Pattern specified [{}] is not a valid regular expression", pgtUrlPattern);
+            this.pattern = RegexUtils.MATCH_NOTHING_PATTERN.pattern();
+        }
     }
 
     public String getPattern() {
-        return this.pattern.toString();
+        return this.pattern;
     }
 
     @JsonIgnore
@@ -53,7 +61,7 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 117).append(this.pattern.pattern()).toHashCode();
+        return new HashCodeBuilder(13, 117).append(this.pattern).toHashCode();
     }
 
     @Override
@@ -68,16 +76,16 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
             return false;
         }
         final RegexMatchingRegisteredServiceProxyPolicy rhs = (RegexMatchingRegisteredServiceProxyPolicy) obj;
-        return new EqualsBuilder().append(this.pattern.pattern(), rhs.pattern.pattern()).isEquals();
+        return new EqualsBuilder().append(this.pattern, rhs.pattern).isEquals();
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(this.pattern.pattern()).toString();
+        return new ToStringBuilder(this).append(this.pattern).toString();
     }
 
     @Override
     public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
-        return this.pattern.matcher(pgtUrl.toExternalForm()).find();
+        return RegexUtils.find(this.pattern, pgtUrl.toExternalForm());
     }
 }
