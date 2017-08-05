@@ -750,10 +750,7 @@ public final class LdapUtils {
         }
         if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
-            if (StringUtils.isBlank(l.getSaslMechanism())) {
-                throw new IllegalArgumentException("Undefined SASL mechanism");
-            }
-
+            
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
             switch (Mechanism.valueOf(l.getSaslMechanism())) {
