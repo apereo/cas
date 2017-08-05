@@ -892,7 +892,7 @@ to be a JSON map as such:
 }
 ```
 
-### Python/Javascript/Groovy
+### Ruby/Python/Javascript/Groovy
 
 Similiar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
 
