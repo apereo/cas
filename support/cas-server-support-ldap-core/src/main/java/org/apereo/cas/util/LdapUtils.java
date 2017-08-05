@@ -770,10 +770,16 @@ public final class LdapUtils {
                     ((GssApiConfig) sc).setRealm(l.getSaslRealm());
                     break;
             }
-            sc.setAuthorizationId(l.getSaslAuthorizationId());
+            if (StringUtils.isNotBlank(l.getSaslAuthorizationId())) {
+                sc.setAuthorizationId(l.getSaslAuthorizationId());
+            }
             sc.setMutualAuthentication(l.getSaslMutualAuth());
-            sc.setQualityOfProtection(QualityOfProtection.valueOf(l.getSaslQualityOfProtection()));
-            sc.setSecurityStrength(SecurityStrength.valueOf(l.getSaslSecurityStrength()));
+            if (StringUtils.isNotBlank(l.getSaslQualityOfProtection())) {
+                sc.setQualityOfProtection(QualityOfProtection.valueOf(l.getSaslQualityOfProtection()));
+            }
+            if (StringUtils.isNotBlank(l.getSaslSecurityStrength())) {
+                sc.setSecurityStrength(SecurityStrength.valueOf(l.getSaslSecurityStrength()));
+            }
             bc.setBindSaslConfig(sc);
             cc.setConnectionInitializer(bc);
         } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
