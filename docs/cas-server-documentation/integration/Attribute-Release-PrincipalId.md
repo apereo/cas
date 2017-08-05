@@ -102,7 +102,7 @@ is not available, the default principal id will be used.
 }
 ```
 
-## Javascript/Python/Groovy Script
+## Javascript/Python/Ruby/Groovy Script
 
 Let an external javascript, groovy or python script decide how the principal id attribute should be determined.
 This approach takes advantage of scripting functionality built into the Java platform.
