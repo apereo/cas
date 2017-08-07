@@ -18,11 +18,12 @@
                 </ds:X509Data>
             </ds:KeyInfo>
         </KeyDescriptor>
-
+        
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="${idpEndpointUrl}/profile/SAML2/POST/SLO"/>
+        
         <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
-
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="${idpEndpointUrl}/profile/SAML2/POST/SLO"/>
+        
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="${idpEndpointUrl}/profile/SAML2/POST/SSO"/>
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="${idpEndpointUrl}/profile/SAML2/Redirect/SSO"/>
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="${idpEndpointUrl}/profile/SAML2/SOAP/ECP"/>
