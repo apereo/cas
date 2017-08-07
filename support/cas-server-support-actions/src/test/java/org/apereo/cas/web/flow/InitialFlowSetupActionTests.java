@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @TestPropertySource(locations = {"classpath:/core.properties"})
-@ContextConfiguration(locations = "classpath:/core-context.xml")
 @Import(CasSupportActionsConfiguration.class)
 public class InitialFlowSetupActionTests extends AbstractCentralAuthenticationServiceTests {
     @Autowired

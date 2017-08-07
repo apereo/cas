@@ -7,7 +7,8 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
-
+    enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
+    enableJRebelAgent = Boolean.getBoolean("enableJRebelAgent")
     /*
     Open the Git repository in the current directory.
     Get commit id of HEAD.
@@ -299,11 +300,12 @@ subprojects {
 
         testImplementation libraries.tests
     }
-
-
-    generateRebel.enabled = Boolean.getBoolean("enableJRebelAgent")
-    if (Boolean.getBoolean("enableJRebelAgent")) {
+    
+    if (rootProject.enableJRebelAgent) {
+        generateRebel.enabled = true
         jar.dependsOn(generateRebel)
+    } else {
+        generateRebel.enabled = false 
     }
 }
 
