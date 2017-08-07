@@ -1,4 +1,4 @@
-import {PrincipalAttributesRepository} from "./attribute-repo";
+import {DefaultPrincipalAttributesRepository, PrincipalAttributesRepository} from "./attribute-repo";
 
 export abstract class RegisteredServiceAttributeReleasePolicy {
   attributeFilter: RegisteredServiceAttributeFilter;
@@ -9,8 +9,8 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
   principalIdAttribute: String;
 
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
-    this.attributeFilter = policy && policy.attributeFilter;
-    this.principalAttributesRepository = policy && policy.principalAttributesRepository;
+    this.attributeFilter = (policy && policy.attributeFilter) || new RegisteredServiceRegexAttributeFilter();
+    this.principalAttributesRepository = (policy && policy.principalAttributesRepository) || new DefaultPrincipalAttributesRepository();
     this.authorizedToReleaseCredentialPassword = policy && policy.authorizedToReleaseCredentialPassword;
     this.authorizedToReleaseProxyGrantingTicket = policy && policy.authorizedToReleaseProxyGrantingTicket;
     this.excludeDefaultAttributes = policy && policy.excludeDefaultAttributes;

@@ -1,14 +1,14 @@
 export abstract class RegisteredServiceAccessStrategy {
-  enabled: boolean;
-  ssoEnabled: boolean;
+  enabled: boolean = true;
+  ssoEnabled: boolean = false;
   unauthorizedRedirectUrl: String;
-  requireAllAttributes: boolean;
+  requireAllAttributes: boolean = false;
   requiredAttributes: Map<String, String[]>;
   rejectedAttributes: Map<String, String[]>;
   caseInsensitive: boolean;
 
   constructor(strat?: RegisteredServiceAccessStrategy) {
-    this.enabled = strat && strat.enabled;
+    this.enabled = (strat && strat.enabled) || true;
     this.ssoEnabled = strat && strat.ssoEnabled;
     this.unauthorizedRedirectUrl = strat && strat.unauthorizedRedirectUrl;
     this.requiredAttributes = strat && strat.requiredAttributes;

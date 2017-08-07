@@ -36,9 +36,7 @@ describe('AttributeReleaseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleaseComponent);
     component = fixture.componentInstance;
-    component.formData = new FormData();
     component.service = new RegexRegisteredService();
-    component.selectOptions = "";
     fixture.detectChanges();
   });
 

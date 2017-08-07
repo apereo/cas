@@ -4,8 +4,6 @@ import { AttributeReleaseChecksComponent } from './attribute-release-checks.comp
 import {SharedModule} from "../../shared/shared.module";
 import {FormsModule} from "@angular/forms";
 import {Messages} from "../../messages";
-import {Data} from "../data";
-import {FormData} from "../../../domain/service-view-bean";
 import {RegexRegisteredService} from "../../../domain/registered-service";
 
 describe('AttributeReleaseChecksComponent', () => {
@@ -24,9 +22,7 @@ describe('AttributeReleaseChecksComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleaseChecksComponent);
     component = fixture.componentInstance;
-    component.formData = new FormData();
     component.service = new RegexRegisteredService();
-    component.selectOptions = new Data().selectOptions;
     fixture.detectChanges();
   });
 
