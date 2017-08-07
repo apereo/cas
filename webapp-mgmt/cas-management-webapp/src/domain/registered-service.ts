@@ -1,9 +1,12 @@
 
-import {RegisteredServiceAccessStrategy} from "./access-strategy";
-import {RegisteredServiceMultifactorPolicy} from "./multifactor";
-import {RegisteredServiceProxyPolicy} from "./proxy-policy,ts";
-import {RegisteredServiceUsernameAttributeProvider} from "./attribute-provider";
-import {RegisteredServiceAttributeReleasePolicy} from "./attribute-release";
+import {DefaultRegisteredServiceAccessStrategy, RegisteredServiceAccessStrategy} from "./access-strategy";
+import {DefaultRegisteredServiceMultifactorPolicy, RegisteredServiceMultifactorPolicy} from "./multifactor";
+import {RefuseRegisteredServiceProxyPolicy, RegisteredServiceProxyPolicy} from "./proxy-policy,ts";
+import {
+  DefaultRegisteredServiceUsernameProvider,
+  RegisteredServiceUsernameAttributeProvider
+} from "./attribute-provider";
+import {RegisteredServiceAttributeReleasePolicy, ReturnAllAttributeReleasePolicy} from "./attribute-release";
 import {RegisteredServicePublicKey} from "./public-key";
 import {DefaultRegisteredServiceProperty} from "./property";
 
@@ -34,18 +37,18 @@ export abstract class RegisteredService {
     this.theme = service && service.theme;
     this.informationUrl = service && service.informationUrl;
     this.privacyUrl = service && service.privacyUrl;
-    this.id = service && service.id;
+    this.id = (service && service.id) || -1;
     this.description = service && service.description;
-    this.proxyPolicy = service && service.proxyPolicy;
-    this.evaluationOrder = service && service.evaluationOrder;
-    this.usernameAttributeProvider = service && service.usernameAttributeProvider;
+    this.proxyPolicy = (service && service.proxyPolicy) || new RefuseRegisteredServiceProxyPolicy();
+    this.evaluationOrder = (service && service.evaluationOrder) || -1;
+    this.usernameAttributeProvider = (service && service.usernameAttributeProvider) || new DefaultRegisteredServiceUsernameProvider();
     this.requiredHandlers = service && service.requiredHandlers;
-    this.attributeReleasePolicy = service && service.attributeReleasePolicy;
-    this.multifactorPolicy = service && service.multifactorPolicy;
+    this.attributeReleasePolicy = (service && service.attributeReleasePolicy) || new ReturnAllAttributeReleasePolicy();
+    this.multifactorPolicy = (service && service.multifactorPolicy) || new DefaultRegisteredServiceMultifactorPolicy();
     this.logo = service && service.logo;
     this.logoutUrl = service && service.logoutUrl;
     this.logoutType = service && service.logoutType;
-    this.accessStrategy = service && service.accessStrategy;
+    this.accessStrategy = (service && service.accessStrategy) || new DefaultRegisteredServiceAccessStrategy();
     this.publicKey = service && service.publicKey;
     this.properties = service && service.properties;
   }
