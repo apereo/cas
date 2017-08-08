@@ -46,7 +46,7 @@ public class CasRegisteredServicesTestConfiguration {
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
         final RegisteredServicePublicKeyImpl publicKey = new RegisteredServicePublicKeyImpl();
-        publicKey.setLocation("classpath:RSA1024Public.key");
+        publicKey.setLocation("classpath:keys/RSA1024Public.key");
         svc.setPublicKey(publicKey);
         svc.setAttributeReleasePolicy(policy);
         l.add(svc);
