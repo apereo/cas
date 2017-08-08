@@ -137,7 +137,7 @@ The `thekeystore` file must include the SSL private/public keys that are issued 
 The following commands may serve as an example:
 
 ```bash
-keytool -genkey -alias cas -keyalg RSA -validity 999 -keystore /etc/cas/thekeystore
+keytool -genkey -alias cas -keyalg RSA -validity 999 -keystore /etc/cas/thekeystore -ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME
 ```
 
 Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need to delete the old one and then follow these instructions again. You may also need to provide the *Subject Alternative Name* field, which can be done with `keytool` via `-ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME`.
