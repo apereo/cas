@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-documentation</artifactId>
-  <version>5.2.0-RC2-SNAPSHOT</version>
+  <version>5.2.0-RC3-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -1665,7 +1665,7 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
-      <version>1.10.4.RELEASE</version>
+      <version>1.10.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1749,7 +1749,7 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-commons</artifactId>
-      <version>1.13.5.RELEASE</version>
+      <version>1.13.6.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
