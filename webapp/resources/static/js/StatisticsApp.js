@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
+import moment from 'moment'
 import AuthnAttemptsGraph from './components/authnaudit/AuthnAttemptsGraph'
-const {string} = React.PropTypes
 
 let refreshButtonStyle = {
   position: 'absolute',
@@ -17,7 +17,9 @@ class StatisticsApp extends React.Component {
     this.state = {
       start: '',
       graphData: [],
-      refreshing: false
+      refreshing: false,
+      scale: 'PT01M',
+      range: 'PT03H'
     }
 
     this.getData = this.getData.bind(this)
@@ -32,11 +34,10 @@ class StatisticsApp extends React.Component {
   getData () {
     let d = new Date()
     const startTime = d.setHours(d.getHours() - 2)
-    axios.get(`/cas/status/stats/getAuthnAudit/summary?start=${startTime}&range=${this.props.range}&scale=${this.props.scale}`)
+    axios.get(`/cas/status/stats/getAuthnAudit/summary?start=${startTime}&range=${this.state.range}&scale=${this.state.scale}`)
     .then(res => {
       res.data.forEach(function (value) {
-        let newDate = new Date(value.time)
-        value.time = (newDate.getHours() - (newDate.getHours() >= 12 ? 12 : 0)) + ':' + newDate.getMinutes()
+        value.time = moment(value.time).utc().format('h:mm')
       })
       const graphData = res.data
       this.setState({graphData, refreshing: false})
@@ -46,6 +47,7 @@ class StatisticsApp extends React.Component {
   componentDidMount () {
     this.getData()
   }
+
   render () {
     const refreshIcon = {
       fa: true,
@@ -71,17 +73,7 @@ class StatisticsApp extends React.Component {
   }
 }
 
-StatisticsApp.propTypes = {
-  scale: string,
-  range: string
-}
-
-StatisticsApp.defaultProps = {
-  range: 'PT03H',
-  scale: 'PT05M'
-}
-
 ReactDOM.render(
-  <StatisticsApp range='PT03H' scale='PT05M' />,
+  <StatisticsApp />,
   document.getElementById('statistics-app')
 )
