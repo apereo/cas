@@ -260,11 +260,6 @@ ext.libraries = [
         cassecurityfilter       : dependencies.create("org.apereo.cas:cas-server-security-filter:$casSecurityFilterVersion") {
             force = true
         },
-        apachegeode : [
-                dependencies.create("org.apache.geode:geode-core::$apacheGeodeVersion") {
-                    force = true
-                }
-        ],
         commons                 : [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
