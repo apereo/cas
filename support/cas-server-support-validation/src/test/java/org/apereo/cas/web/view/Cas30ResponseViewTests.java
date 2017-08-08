@@ -134,7 +134,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         try {
             final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
             factory.setAlgorithm("RSA");
-            factory.setLocation(new ClassPathResource("keys/RSA1024Private.p8"));
+            factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
             factory.setSingleton(false);
             final PrivateKey privateKey = factory.getObject();
 
