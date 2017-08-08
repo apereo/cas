@@ -34,8 +34,6 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
     public void validateService(
             @CliOption(key = {"file"},
                     help = "Path to the JSON/YAML service definition file",
-                    specifiedDefaultValue = "",
-                    unspecifiedDefaultValue = "",
                     optionContext = "Path to the JSON/YAML service definition") final String file,
 
             @CliOption(key = {"directory"},

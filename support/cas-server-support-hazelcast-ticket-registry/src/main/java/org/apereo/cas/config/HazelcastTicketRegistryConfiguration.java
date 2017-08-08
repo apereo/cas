@@ -57,10 +57,9 @@ public class HazelcastTicketRegistryConfiguration {
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
     }
-
-    @Autowired
+    
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistryCleaner ticketRegistryCleaner() {
         return new NoOpTicketRegistryCleaner();
     }
 
