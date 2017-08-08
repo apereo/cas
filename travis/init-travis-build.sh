@@ -29,7 +29,7 @@ sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
 echo -e "Configuring Gradle wrapper...\n"
 chmod -R 777 ./gradlew
 
-echo -e "Installing NPM and Gulp...\n"
+echo -e "Installing NPM...\n"
 sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get update
 sudo apt-get install -y nodejs

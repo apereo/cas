@@ -22,6 +22,8 @@ import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
@@ -39,9 +41,11 @@ import static org.junit.Assert.*;
  */
 @Import({CasProtocolViewsConfiguration.class, CasValidationConfiguration.class, ThymeleafAutoConfiguration.class})
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceValidateControllerTests.class);
+    
     private static final Service SERVICE = CoreAuthenticationTestUtils.getService();
     private static final String SUCCESS = "Success";
+    private static final String GITHUB_URL = "https://www.github.com";
     private static final String SERVICE_PARAM = "service";
     private static final String TICKET_PARAM = "ticket";
     private static final String PGT_URL_PARAM = "pgtUrl";
@@ -333,7 +337,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(SERVICE_PARAM, SERVICE.getId());
         request.addParameter(TICKET_PARAM, sId.getId());
-        request.addParameter(PGT_URL_PARAM, SERVICE.getId());
+        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
 
         return this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
     }

@@ -74,6 +74,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     private Map<?, ?> renderView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        LOGGER.warn("Retrieved model and view [{}]", modelAndView.getModel());
+        
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
@@ -86,6 +88,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
             @Override
             public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+                LOGGER.warn("Setting attribute [{}]", map.keySet());
                 map.forEach(request::setAttribute);
             }
         };
@@ -119,6 +122,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Test
     public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
         final Map<?, ?> attributes = renderView();
+        LOGGER.warn("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
 
         final String encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);

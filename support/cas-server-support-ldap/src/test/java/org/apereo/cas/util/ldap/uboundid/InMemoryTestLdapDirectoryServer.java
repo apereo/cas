@@ -114,7 +114,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
                     }
                     retryCount = 0;
                 } catch (final Exception e) {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                     retryCount--;
                 }
             }
