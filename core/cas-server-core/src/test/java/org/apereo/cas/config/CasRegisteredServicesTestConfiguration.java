@@ -75,7 +75,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc = RegisteredServiceTestUtils.getRegisteredService("(https://)*google.com$");
         svc.setEvaluationOrder(1);
         svc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
-        svc.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA"));
+        svc.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
         final ReturnAllowedAttributeReleasePolicy policy1 = new ReturnAllowedAttributeReleasePolicy();
         policy1.setAuthorizedToReleaseCredentialPassword(true);
         policy1.setAuthorizedToReleaseProxyGrantingTicket(true);

@@ -56,6 +56,9 @@ openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 ```
 
+Note that while `1024` is perfectly fine, you may need to adjust the key size to larger values such
+as `4096` in order to allow CAS to encrypt credentials that are too long in length.
+
 ## Register Public Key
 
 Once you have received the public key from the client application owner, it must be first
