@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
-import org.apereo.cas.configuration.model.support.geode.GeodeTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
@@ -26,11 +25,6 @@ import java.io.Serializable;
 public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
-    /**
-     * Apache Geode registry settings.
-     */
-    @NestedConfigurationProperty
-    private GeodeTicketRegistryProperties geode = new GeodeTicketRegistryProperties();
     
     /**
      * DynamoDb registry settings.
@@ -198,15 +192,7 @@ public class TicketRegistryProperties implements Serializable {
     public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
         this.dynamoDb = dynamoDb;
     }
-
-    public GeodeTicketRegistryProperties getGeode() {
-        return geode;
-    }
-
-    public void setGeode(final GeodeTicketRegistryProperties geode) {
-        this.geode = geode;
-    }
-
+    
     public static class InMemory implements Serializable {
 
         private static final long serialVersionUID = -2600525447128979994L;
