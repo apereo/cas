@@ -169,6 +169,18 @@ In your `/etc/hosts` file (on Windows: `C:\Windows\System32\Drivers\etc\hosts`),
 127.0.0.1 mymachine.domain.edu
 ```
 
+The certificate exported out of your keystore needs to also be imported into the Java platform's global keystore:
+
+```bash
+# Export the certificate into a file
+keytool -export -file /etc/cas/config/cas.crt -keystore /etc/cas/thekeystore -alias cas
+
+# Import the certificate into the global keystore
+sudo keytool -import -file /etc/cas/config/cas.crt -alias cas -keystore $JAVA_HOME/jre/lib/security/cacerts
+```
+
+...where `JAVA_HOME` is where you have the JDK installed (i.e `/Library/Java/JavaVirtualMachines/jdk[version].jdk/Contents/Home`).
+
 ### Deploy
 
 Execute the following command:
