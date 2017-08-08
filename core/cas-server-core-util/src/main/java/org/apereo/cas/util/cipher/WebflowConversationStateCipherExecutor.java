@@ -34,11 +34,11 @@ public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExec
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.webflow.encryption.key";
+        return "cas.webflow.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.webflow.signing.key";
+        return "cas.webflow.crypto.signing.key";
     }
 }

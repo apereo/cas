@@ -4,12 +4,14 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
+import java.security.Security;
 
 /**
  * Default cipher implementation based on public keys.
@@ -21,6 +23,10 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceCipherExecutor.class);
 
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+    
     /**
      * Encrypt using the given cipher associated with the service,
      * and encode the data in base 64.
