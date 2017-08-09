@@ -11,7 +11,4 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     compileOnly project(":support:cas-server-support-saml")
-    
-    testCompileOnly libraries.metrics
-
 }

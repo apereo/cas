@@ -59,7 +59,7 @@ public class TicketEncryptionDecryptionTests {
 
     private static class TestBinaryCipherExecutor extends BaseBinaryCipherExecutor {
         TestBinaryCipherExecutor(final String encKey, final String signingKey, final int sKey, final int eKey) {
-            super(encKey, signingKey, sKey, eKey);
+            super(encKey, signingKey, sKey, eKey, "Test");
         }
 
         @Override

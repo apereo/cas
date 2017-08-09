@@ -13,7 +13,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 
 /**
  * This is {@link CasManagementWebApplication}.
@@ -21,7 +20,6 @@ import org.springframework.context.annotation.ImportResource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ImportResource(locations = {"classpath:/managementConfigContext.xml"})
 @SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,

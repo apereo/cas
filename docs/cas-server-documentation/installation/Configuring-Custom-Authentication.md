@@ -15,7 +15,7 @@ The overall tasks may be categorized as such:
 
 1. Design the authentication handler.
 2. Register the authentication handler with the CAS authentication engine.
-3. Ley CAS to recognize the authentication configuration.
+3. Let CAS to recognize the authentication configuration.
 
 ## Design
 

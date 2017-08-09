@@ -44,7 +44,7 @@ public class DynamoDbTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final DynamoDbTicketRegistryProperties db = casProperties.getTicket().getRegistry().getDynamoDb();
         final EncryptionRandomizedSigningJwtCryptographyProperties crypto = db.getCrypto();
-        return new DynamoDbTicketRegistry(Beans.newTicketRegistryCipherExecutor(crypto),
+        return new DynamoDbTicketRegistry(Beans.newTicketRegistryCipherExecutor(crypto, "dynamoDb"),
                 dynamoDbTicketRegistryFacilitator(ticketCatalog));
     }
 

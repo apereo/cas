@@ -45,7 +45,7 @@ public class CouchbaseTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
         final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketRegistryCouchbaseClientFactory(), couchbase.isQueryEnabled());
-        c.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(couchbase.getCrypto()));
+        c.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
         return c;
     }
 

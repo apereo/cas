@@ -19,6 +19,10 @@ public class Pac4jCasProperties implements Serializable {
      * Acceptable values are {@code CAS10, CAS20, CAS20_PROXY, CAS30, CAS30_PROXY, SAML}.
      */
     private String protocol;
+    /**
+     * Name of the client mostly for UI purposes and uniqueness.
+     */
+    private String clientName;
 
     public String getLoginUrl() {
         return this.loginUrl;
@@ -34,5 +38,13 @@ public class Pac4jCasProperties implements Serializable {
 
     public void setProtocol(final String protocol) {
         this.protocol = protocol;
+    }
+
+    public String getClientName() {
+        return this.clientName;
+    }
+
+    public void setClientName(final String clientName) {
+        this.clientName = clientName;
     }
 }

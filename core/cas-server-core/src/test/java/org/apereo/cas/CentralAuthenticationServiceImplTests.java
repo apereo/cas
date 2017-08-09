@@ -287,8 +287,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final UsernamePasswordCredential cred = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-
-
+        
         final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
 
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);

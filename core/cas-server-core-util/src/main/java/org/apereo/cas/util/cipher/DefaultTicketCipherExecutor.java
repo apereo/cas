@@ -8,13 +8,10 @@ package org.apereo.cas.util.cipher;
  * @since 5.0.0
  */
 public class DefaultTicketCipherExecutor extends BaseBinaryCipherExecutor {
-    public DefaultTicketCipherExecutor(
-            final String encryptionSecretKey,
-            final String signingSecretKey,
-            final String secretKeyAlg,
-            final int signingKeySize,
-            final int encryptionKeySize) {
-        super(encryptionSecretKey, signingSecretKey, signingKeySize, encryptionKeySize);
+    public DefaultTicketCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
+                                       final String secretKeyAlg, final int signingKeySize,
+                                       final int encryptionKeySize, final String cipherName) {
+        super(encryptionSecretKey, signingSecretKey, signingKeySize, encryptionKeySize, cipherName);
         setSecretKeyAlgorithm(secretKeyAlg);
     }
 
@@ -25,11 +22,11 @@ public class DefaultTicketCipherExecutor extends BaseBinaryCipherExecutor {
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.ticket.registry.[registry-name].encryption.key";
+        return "cas.ticket.registry." + this.cipherName + ".encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.ticket.registry.[registry-name].signing.key";
+        return "cas.ticket.registry." + this.cipherName + ".signing.key";
     }
 }

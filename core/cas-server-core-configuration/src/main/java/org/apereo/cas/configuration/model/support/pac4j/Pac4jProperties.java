@@ -271,6 +271,10 @@ public class Pac4jProperties implements Serializable {
          */
         private String fields;
 
+        public LinkedIn() {
+            setClientName("LinkedIn");
+        }
+        
         public String getScope() {
             return this.scope;
         }
@@ -299,6 +303,10 @@ public class Pac4jProperties implements Serializable {
          */
         private String fields;
 
+        public Facebook() {
+            setClientName("Facebook");
+        }
+        
         public String getScope() {
             return this.scope;
         }
@@ -318,42 +326,73 @@ public class Pac4jProperties implements Serializable {
 
     public static class Bitbucket extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -6189494666598669078L;
+
+        public Bitbucket() { 
+            setClientName("Bitbucket");
+        }
     }
 
     public static class Wordpress extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 4636855941699435914L;
+        public Wordpress() {
+            setClientName("Wordpress");
+        }
     }
 
     public static class Paypal extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -5663033494303169583L;
+        public Paypal() {
+            setClientName("Paypal");
+        }
     }
 
     public static class Twitter extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 6906343970517008092L;
+        public Twitter() {
+            setClientName("Twitter");
+        }
     }
     
     public static class Github extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 9217581995885784515L;
+        public Github() {
+            setClientName("Github");
+        }
     }
 
     public static class Yahoo extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 8011580257047982361L;
+        public Yahoo() {
+            setClientName("Yahoo");
+        }
     }
 
     public static class Foursquare extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -1784820695301605307L;
+        public Foursquare() {
+            setClientName("Foursquare");
+        }
     }
 
     public static class Dropbox extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -1508055128010569953L;
+        public Dropbox() {
+            setClientName("Dropbox");
+        }
     }
 
     public static class Orcid extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 1337923364401817796L;
+        public Orcid() {
+            setClientName("ORCID");
+        }
     }
 
     public static class WindowsLive extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -1816309711278174847L;
+        public WindowsLive() {
+            setClientName("Windows Live");
+        }
     }
 
     public static class Google extends Pac4jGenericClientProperties {
@@ -363,6 +402,10 @@ public class Pac4jProperties implements Serializable {
          */
         private String scope;
 
+        public Google() {
+            setClientName("Google");
+        }
+        
         public String getScope() {
             return scope;
         }

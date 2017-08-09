@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
@@ -68,6 +69,7 @@ import javax.annotation.PostConstruct;
                 CasCoreAuthenticationHandlersConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasCoreConfiguration.class,
+                CasRegisteredServicesTestConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
@@ -80,7 +82,7 @@ import javax.annotation.PostConstruct;
                 CasPersonDirectoryTestConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreValidationConfiguration.class})
-@ContextConfiguration(locations = {"classpath:/core-context.xml"}, initializers = EnvironmentConversionServiceInitializer.class)
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
 @TestPropertySource(locations = {"classpath:/core.properties"})

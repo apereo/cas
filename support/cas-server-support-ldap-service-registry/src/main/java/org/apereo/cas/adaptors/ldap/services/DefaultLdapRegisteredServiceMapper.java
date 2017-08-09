@@ -20,7 +20,7 @@ import java.util.Collection;
  * Default implementation of {@link LdapRegisteredServiceMapper} that is able
  * to map ldap entries to {@link RegisteredService} instances based on
  * certain attributes names. This implementation also respects the object class
- * attribute of LDAP entries via {@link LdapUtils#OBJECTCLASS_ATTRIBUTE}.
+ * attribute of LDAP entries via {@link LdapUtils#OBJECT_CLASS_ATTRIBUTE}.
  *
  * @author Misagh Moayyed
  * @since 4.1.0
@@ -52,7 +52,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
             final StringWriter writer = new StringWriter();
             this.jsonSerializer.to(writer, svc);
             attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), writer.toString()));
-            attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
+            attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
 
             return new LdapEntry(newDn, attrs);
         } catch (final Exception e) {

@@ -78,15 +78,14 @@ public class DelegatedClientAuthenticationActionTests {
 
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
-        mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE,
-                RegisteredServiceTestUtils.getService(MY_SERVICE));
+        mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
                 null, mock(CentralAuthenticationService.class),
-                "theme", "locale", false);
+                ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME, false);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -95,7 +94,8 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls = 
-                (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>) flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
+                (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>) 
+                        flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
 
         assertFalse(urls.isEmpty());
         assertSame(2, urls.size());

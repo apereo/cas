@@ -81,7 +81,7 @@ public class JpaTicketRegistryConfiguration {
                                             final TicketCatalog ticketCatalog) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
         final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog);
-        bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto()));
+        bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
         return bean;
     }
 

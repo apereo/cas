@@ -8,25 +8,27 @@ import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
+import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link FindCommand}.
+ * This is {@link FindPropertiesCommand}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Service
-public class FindCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FindCommand.class);
+public class FindPropertiesCommand implements CommandMarker {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FindPropertiesCommand.class);
     private static final int SEP_LINE_LENGTH = 70;
 
     /**
@@ -62,7 +64,34 @@ public class FindCommand implements CommandMarker {
                     unspecifiedDefaultValue = "false",
                     specifiedDefaultValue = "true") final boolean summary) {
 
-        find(strict, summary, RegexUtils.createPattern(group), RegexUtils.createPattern(name));
+        final Map<String, ConfigurationMetadataProperty> results = find(strict, summary, RegexUtils.createPattern(group), RegexUtils.createPattern(name));
+
+        if (results.isEmpty()) {
+            LOGGER.info("Could not find any results matching the criteria");
+            return;
+        }
+
+        results.forEach((k, v) -> {
+            if (summary) {
+                LOGGER.info("{}={}", k, v.getDefaultValue());
+                LOGGER.info("{}", StringUtils.normalizeSpace(v.getShortDescription()));
+            } else {
+                LOGGER.info("Property: {}", k);
+                /*
+                final String relaxedName = StreamSupport.stream(RelaxedNames.forCamelCase(k).spliterator(), false)
+                        .map(Object::toString)
+                        .collect(Collectors.joining(","));
+                LOGGER.info("Synonyms: {}", relaxedName);
+                */
+                LOGGER.info("Group: {}", StringUtils.substringBeforeLast(k, "."));
+                LOGGER.info("Default Value: {}", ObjectUtils.defaultIfNull(v.getDefaultValue(), "[blank]"));
+                LOGGER.info("Type: {}", v.getType());
+                LOGGER.info("Summary: {}", StringUtils.normalizeSpace(v.getShortDescription()));
+                LOGGER.info("Description: {}", StringUtils.normalizeSpace(v.getDescription()));
+                LOGGER.info("Deprecated: {}", BooleanUtils.toStringYesNo(v.isDeprecated()));
+            }
+            LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
+        });
     }
 
     /**
@@ -72,9 +101,12 @@ public class FindCommand implements CommandMarker {
      * @param summary         the summary
      * @param groupPattern    the group pattern
      * @param propertyPattern the property pattern
+     * @return the map
      */
-    public void find(final boolean strict, final boolean summary,
-                     final Pattern groupPattern, final Pattern propertyPattern) {
+    public Map<String, ConfigurationMetadataProperty> find(final boolean strict, final boolean summary,
+                                                           final Pattern groupPattern, final Pattern propertyPattern) {
+        final Map<String, ConfigurationMetadataProperty> results = new LinkedHashMap<>();
+
         final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
         final Collection<ConfigurationMetadataGroup> groups = repository.getRepository().getAllGroups()
                 .entrySet()
@@ -83,33 +115,23 @@ public class FindCommand implements CommandMarker {
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
 
-        if (groups.isEmpty()) {
-            LOGGER.info("Could not find any groups matching the criteria [{}]", groupPattern.pattern());
-            return;
-        }
         groups.forEach(g -> g.getProperties().forEach((k, v) -> {
             final boolean matched = strict ? RegexUtils.matches(propertyPattern, k) : RegexUtils.find(propertyPattern, k);
             if (matched) {
-                if (summary) {
-                    LOGGER.info("{}={}", k, v.getDefaultValue());
-                    LOGGER.info("{}", StringUtils.normalizeSpace(v.getShortDescription()));
-                } else {
-                    LOGGER.info("Property: {}", k);
-                    /*
-                    final String relaxedName = StreamSupport.stream(RelaxedNames.forCamelCase(k).spliterator(), false)
-                            .map(Object::toString)
-                            .collect(Collectors.joining(","));
-                    LOGGER.info("Synonyms: {}", relaxedName);
-                    */
-                    LOGGER.info("Group: {}", StringUtils.substringBeforeLast(k, "."));
-                    LOGGER.info("Default Value: {}", ObjectUtils.defaultIfNull(v.getDefaultValue(), "[blank]"));
-                    LOGGER.info("Type: {}", v.getType());
-                    LOGGER.info("Summary: {}", StringUtils.normalizeSpace(v.getShortDescription()));
-                    LOGGER.info("Description: {}", StringUtils.normalizeSpace(v.getDescription()));
-                    LOGGER.info("Deprecated: {}", BooleanUtils.toStringYesNo(v.isDeprecated()));
-                }
-                LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
+                results.put(k, v);
             }
         }));
+
+        return results;
+    }
+
+    /**
+     * Find by group.
+     *
+     * @param name the name
+     * @return the map
+     */
+    public Map<String, ConfigurationMetadataProperty> findByProperty(final String name) {
+        return find(false, false, RegexUtils.createPattern(".+"), RegexUtils.createPattern(name));
     }
 }
