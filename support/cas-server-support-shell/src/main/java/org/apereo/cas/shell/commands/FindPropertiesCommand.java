@@ -19,14 +19,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link FindCommand}.
+ * This is {@link FindPropertiesCommand}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Service
-public class FindCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FindCommand.class);
+public class FindPropertiesCommand implements CommandMarker {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FindPropertiesCommand.class);
     private static final int SEP_LINE_LENGTH = 70;
 
     /**
