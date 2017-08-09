@@ -18,13 +18,16 @@ public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExec
      * @param signingKeySize      the signing key size
      * @param encryptionKeySize   the encryption key size
      */
-    public WebflowConversationStateCipherExecutor(final String secretKeyEncryption,
-                                                  final String secretKeySigning,
-                                                  final String secretKeyAlg,
-                                                  final int signingKeySize,
-                                                  final int encryptionKeySize){
-        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
+    public WebflowConversationStateCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                                  final String secretKeyAlg, final int signingKeySize,
+                                                  final int encryptionKeySize, final String cipherName){
+        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize, cipherName);
         setSecretKeyAlgorithm(secretKeyAlg);
+    }
+
+    public WebflowConversationStateCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
+                                                  final String secretKeyAlg, final int signingKeySize, final int encryptionKeySize) {
+        this(encryptionSecretKey, signingSecretKey, secretKeyAlg, signingKeySize, encryptionKeySize, "webflow");
     }
 
     @Override
@@ -34,11 +37,11 @@ public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExec
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.webflow.crypto.encryption.key";
+        return "cas." + this.cipherName + ".crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.webflow.crypto.signing.key";
+        return "cas." + this.cipherName + ".crypto.signing.key";
     }
 }
