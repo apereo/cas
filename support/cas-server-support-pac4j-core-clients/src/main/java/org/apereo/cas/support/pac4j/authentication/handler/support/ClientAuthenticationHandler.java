@@ -34,7 +34,8 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     
     private final Clients clients;
 
-    public ClientAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public ClientAuthenticationHandler(final String name, final ServicesManager servicesManager, 
+                                       final PrincipalFactory principalFactory,
                                        final Clients clients) {
         super(name, servicesManager, principalFactory, null);
         this.clients = clients;

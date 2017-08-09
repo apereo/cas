@@ -221,7 +221,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
                 mem.getInitialCapacity(),
                 mem.getLoadFactor(),
                 mem.getConcurrency(),
-                Beans.newTicketRegistryCipherExecutor(mem.getCrypto()));
+                Beans.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory"));
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")

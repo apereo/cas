@@ -7,5 +7,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":support:cas-server-support-person-directory")
-    testCompileOnly libraries.metrics
+    
 }

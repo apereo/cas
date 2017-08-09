@@ -289,11 +289,13 @@ public final class Beans {
     /**
      * New ticket registry cipher executor cipher executor.
      *
-     * @param registry the registry
+     * @param registry     the registry
+     * @param registryName the registry name
      * @return the cipher executor
      */
-    public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry) {
-        return newTicketRegistryCipherExecutor(registry, false);
+    public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
+                                                                 final String registryName) {
+        return newTicketRegistryCipherExecutor(registry, false, registryName);
     }
 
     /**
@@ -301,10 +303,12 @@ public final class Beans {
      *
      * @param registry         the registry
      * @param forceIfBlankKeys the force if blank keys
+     * @param registryName     the registry name
      * @return the cipher executor
      */
     public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
-                                                                 final boolean forceIfBlankKeys) {
+                                                                 final boolean forceIfBlankKeys,
+                                                                 final String registryName) {
         if (StringUtils.isNotBlank(registry.getEncryption().getKey())
                 && StringUtils.isNotBlank(registry.getEncryption().getKey())
                 || forceIfBlankKeys) {
@@ -313,7 +317,8 @@ public final class Beans {
                     registry.getSigning().getKey(),
                     registry.getAlg(),
                     registry.getSigning().getKeySize(),
-                    registry.getEncryption().getKeySize());
+                    registry.getEncryption().getKeySize(),
+                    registryName);
         }
         LOGGER.debug("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "

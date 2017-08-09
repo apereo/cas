@@ -41,7 +41,8 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasCoreServicesConfiguration.class,
+@SpringBootTest(classes = {
+        CasCoreServicesConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
@@ -50,6 +51,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class})

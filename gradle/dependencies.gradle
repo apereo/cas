@@ -17,6 +17,7 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "javax.validation", module: "validation-api")
                     force = true
                 },
                 dependencies.create("io.swagger:swagger-core:$swaggerVersion") {
@@ -25,6 +26,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "javax.validation", module: "validation-api")
                     force = true
                 },
                 dependencies.create("io.swagger:swagger-jaxrs:$swaggerVersion") {
@@ -33,6 +35,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "javax.validation", module: "validation-api")
                     force = true
                 },
                 dependencies.create("io.swagger:swagger-models:$swaggerVersion") {
@@ -41,6 +44,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "javax.validation", module: "validation-api")
                     force = true
                 }
         ],
@@ -55,6 +59,7 @@ ext.libraries = [
                     exclude(group: "io.swagger", module: "swagger-core")
                     exclude(group: "io.swagger", module: "swagger-models")
                     exclude(group: "io.swagger", module: "swagger-jaxrs")
+                    exclude(group: "javax.validation", module: "validation-api")
                     force = true
                 }
         ],
@@ -65,6 +70,7 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
+                    exclude(group: "javax.validation", module: "validation-api")
                     force = true
                 }
         ],
@@ -502,10 +508,12 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("javax.el:el-api:2.2") {
+                dependencies.create("javax.el:javax.el-api:3.0.0") {
                     force = true
                 },
                 dependencies.create("org.glassfish.web:el-impl:2.2") {
+                    exclude(group: "javax.el", module: "javax.el-api")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
@@ -530,6 +538,7 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],

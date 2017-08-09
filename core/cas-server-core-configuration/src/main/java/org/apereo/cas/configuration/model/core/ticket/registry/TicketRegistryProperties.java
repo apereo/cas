@@ -25,6 +25,7 @@ import java.io.Serializable;
 public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
+    
     /**
      * DynamoDb registry settings.
      */
@@ -191,7 +192,7 @@ public class TicketRegistryProperties implements Serializable {
     public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
         this.dynamoDb = dynamoDb;
     }
-
+    
     public static class InMemory implements Serializable {
 
         private static final long serialVersionUID = -2600525447128979994L;

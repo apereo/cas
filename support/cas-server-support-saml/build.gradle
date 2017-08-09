@@ -4,10 +4,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
-    testCompileOnly libraries.log4j
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":support:cas-server-support-person-directory")
-    testCompileOnly libraries.metrics
+    
 }
