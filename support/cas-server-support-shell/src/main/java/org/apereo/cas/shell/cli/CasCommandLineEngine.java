@@ -1,8 +1,8 @@
 package org.apereo.cas.shell.cli;
 
 import org.apache.commons.cli.CommandLine;
-import org.apereo.cas.shell.commands.FindCommand;
-import org.apereo.cas.shell.commands.GenerateKeyCommand;
+import org.apereo.cas.shell.commands.FindPropertiesCommand;
+import org.apereo.cas.shell.commands.GenerateCryptoKeysCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +35,10 @@ public class CasCommandLineEngine {
         final Pattern propertyPattern = parser.getProperty(line);
         
         if (parser.isGeneratingKey(line)) {
-            final GenerateKeyCommand cmd = new GenerateKeyCommand();
+            final GenerateCryptoKeysCommand cmd = new GenerateCryptoKeysCommand();
             cmd.generateKey(parser.getPropertyValue(line));
         } else {
-            final FindCommand cmd = new FindCommand();
+            final FindPropertiesCommand cmd = new FindPropertiesCommand();
             cmd.find(strict, parser.isSummary(line), groupPattern, propertyPattern);
         }
     }

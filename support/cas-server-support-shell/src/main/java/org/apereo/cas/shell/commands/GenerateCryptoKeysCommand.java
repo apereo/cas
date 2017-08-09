@@ -17,14 +17,14 @@ import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Service;
 
 /**
- * This is {@link GenerateKeyCommand}.
+ * This is {@link GenerateCryptoKeysCommand}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Service
-public class GenerateKeyCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateKeyCommand.class);
+public class GenerateCryptoKeysCommand implements CommandMarker {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateCryptoKeysCommand.class);
 
     /**
      * Generate key.
