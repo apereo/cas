@@ -36,6 +36,7 @@ import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -104,7 +105,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     }
 
     /**
-     * Handle request internal model and view.
+     * Handle request via GET.
      *
      * @param request  the request
      * @param response the response
@@ -117,7 +118,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
-            LOGGER.error("Authorize request verification failed. Either the authorization request is misssing required parameters, "
+            LOGGER.error("Authorize request verification failed. Either the authorization request is missing required parameters, "
                     + "or the request is not authenticated and contains no authenticated profile/principal.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
@@ -139,6 +140,19 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
     }
 
+    /**
+     * Handle request post.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
+    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handleRequest(request, response);
+    }
+    
     /**
      * Gets registered service by client id.
      *

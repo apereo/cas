@@ -11,8 +11,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
 
-import java.nio.charset.Charset;
-
 /**
  * Default mapper for converting {@link RegisteredServiceUsernameAttributeProvider} to/from {@link ServiceData}.
  *
@@ -33,14 +31,7 @@ public class DefaultUsernameAttributeProviderMapper implements UsernameAttribute
             final PersistentIdGenerator generator = anonymous.getPersistentIdGenerator();
             if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
                 final ShibbolethCompatiblePersistentIdGenerator sh = (ShibbolethCompatiblePersistentIdGenerator) generator;
-
-                final byte[] salt1 = sh.getSalt();
-                if (salt1 != null) {
-                    final String salt = new String(salt1, Charset.defaultCharset());
-                    uBean.setValue(salt);
-                } else {
-                    throw new IllegalArgumentException("Salt cannot be null");
-                }
+                uBean.setValue(sh.getSalt());
             }
         } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
             final PrincipalAttributeRegisteredServiceUsernameProvider p = (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
