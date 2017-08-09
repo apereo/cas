@@ -4,7 +4,6 @@ import com.authy.AuthyApiClient;
 import com.authy.api.Tokens;
 import com.authy.api.User;
 import com.authy.api.Users;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 
@@ -41,7 +40,7 @@ public class AuthyClientInstance {
             this.authyUsers = this.authyClient.getUsers();
             this.authyTokens = this.authyClient.getTokens();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

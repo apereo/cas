@@ -17,6 +17,6 @@ public class CasSamlSPZendeskConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getZendesk();
+        return casProperties.getSamlSp().getZendesk();
     }
 }

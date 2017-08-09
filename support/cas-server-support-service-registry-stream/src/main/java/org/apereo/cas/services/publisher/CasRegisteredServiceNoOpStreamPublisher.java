@@ -16,7 +16,7 @@ public class CasRegisteredServiceNoOpStreamPublisher implements CasRegisteredSer
 
     @Override
     public void publish(final RegisteredService service, final ApplicationEvent event) {
-        LOGGER.warn("CAS is not configured to stream and broadcast registered services over a queue. "
-                + "This generally points to a configuration issuer where a publisher instance is missing from the CAS runtime.");
+        LOGGER.warn("CAS is NOT configured to stream and broadcast registered services over a queue. "
+                + "This generally points to a configuration issue where a publisher instance is missing from the CAS runtime.");
     }
 }

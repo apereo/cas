@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
@@ -85,7 +84,7 @@ public class CoreSamlConfiguration {
             final Class clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
             attributes.put("http://apache.org/xml/properties/security-manager", clazz.newInstance());
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         pool.setBuilderAttributes(attributes);
 

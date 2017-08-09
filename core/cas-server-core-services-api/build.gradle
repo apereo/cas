@@ -1,0 +1,13 @@
+description = "Apereo CAS Core Services API"
+dependencies {
+    compile project(":api:cas-server-core-api-services")
+    implementation libraries.groovy
+    implementation libraries.bouncycastle
+    compileOnly project(":core:cas-server-core-util")
+    compile project(":api:cas-server-core-api-events")
+    compile project(":core:cas-server-core-authentication-attributes")
+
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

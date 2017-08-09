@@ -17,6 +17,6 @@ public class CasSamlSPOffice365Configuration extends BaseCasSamlSPConfiguration 
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getOffice365();
+        return casProperties.getSamlSp().getOffice365();
     }
 }

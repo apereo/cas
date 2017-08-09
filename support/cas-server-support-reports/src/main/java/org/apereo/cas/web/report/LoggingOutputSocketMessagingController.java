@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -70,7 +69,7 @@ public class LoggingOutputSocketMessagingController {
                 registerLogFileTailThreads();
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

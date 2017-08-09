@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.core.metrics;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link MetricsProperties}.
  *
@@ -9,8 +11,9 @@ import org.apereo.cas.configuration.support.Beans;
  * @since 5.0.0
  */
 
-public class MetricsProperties {
+public class MetricsProperties implements Serializable {
 
+    private static final long serialVersionUID = 345002357523418414L;
     /**
      * String representation of refresh interval for metrics collection.
      */

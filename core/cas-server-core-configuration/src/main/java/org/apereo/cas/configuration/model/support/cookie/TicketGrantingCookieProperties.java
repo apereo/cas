@@ -13,8 +13,15 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 public class TicketGrantingCookieProperties extends CookieProperties {
 
+    private static final long serialVersionUID = 7392972818105536350L;
+    /**
+     * If remember-me is enabled, specifies the maximum age of the cookie.
+     */
     private String rememberMeMaxAge = "P14D";
 
+    /**
+     * Crypto settings that determine how the cookie should be signed and encrypted.
+     */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 

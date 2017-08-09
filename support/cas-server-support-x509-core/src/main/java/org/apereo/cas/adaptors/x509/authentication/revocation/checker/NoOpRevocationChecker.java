@@ -18,7 +18,6 @@ public class NoOpRevocationChecker implements RevocationChecker {
      *
      * @throws GeneralSecurityException Never thrown.
      *
-     * @see RevocationChecker#check(java.security.cert.X509Certificate)
      */
     @Override
     public void check(final X509Certificate certificate) throws GeneralSecurityException {

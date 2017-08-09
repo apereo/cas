@@ -31,16 +31,19 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
     private final GeoApiContext context;
 
     public GoogleMapsGeoLocationService(final GoogleMapsProperties properties) {
+        final GeoApiContext.Builder builder = new GeoApiContext.Builder();
+        
         if (properties.isGoogleAppsEngine()) {
-            context = new GeoApiContext(new GaeRequestHandler());
-        } else {
-            context = new GeoApiContext();
-        }
+            builder.requestHandlerBuilder(new GaeRequestHandler.Builder());
+        } 
+        
         if (StringUtils.isNotBlank(properties.getClientId()) && StringUtils.isNotBlank(properties.getClientSecret())) {
-            context.setEnterpriseCredentials(properties.getClientId(), properties.getClientSecret());
+            builder.enterpriseCredentials(properties.getClientId(), properties.getClientSecret());
         }
-        context.setApiKey(properties.getApiKey());
-        context.setConnectTimeout(properties.getConnectTimeout(), TimeUnit.MILLISECONDS);
+        builder.apiKey(properties.getApiKey())
+                .connectTimeout(properties.getConnectTimeout(), TimeUnit.MILLISECONDS);
+        
+        this.context = builder.build();
     }
     
     @Override

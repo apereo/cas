@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
-import com.google.common.base.Throwables;
 import groovy.lang.GroovyClassLoader;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -81,7 +80,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
                         .findFirst()
                         .isPresent());
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

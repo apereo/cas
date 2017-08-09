@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 
+import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
