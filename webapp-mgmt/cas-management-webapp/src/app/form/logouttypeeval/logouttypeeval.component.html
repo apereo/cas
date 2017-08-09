@@ -1,21 +1,12 @@
-<div class="row">
-  <div class="col-sm-6">
-    <!-- Logout Type -->
-    <div class="form-group">
-      <label class="col-sm-6" for="logoutType">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.logoutType">
-            {{ messages.services_form_label_logoutType }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.logoutType"
-            [myTooltip]="messages.services_form_tooltip_logoutType"></i>
-        </span>
-      </label>
-      <div class="col-sm-6">
-        <select class="form-control" id="logoutType" [(ngModel)]="service.logoutType">
-          <option *ngFor="let opt of logoutType" [value]="opt">{{ opt }}</option>
-        </select>
-      </div>
-    </div>
-  </div>
+<div>
+  <md-select style="width:300px;padding-top: 25px;"
+             i18n-placeholder="services.form.label.logoutType"
+             [placeholder]="messages.services_form_label_logoutType"
+             [(ngModel)]="service.logoutType">
+    <md-option *ngFor="let opt of logoutType" [value]="opt">{{ opt }}</md-option>
+  </md-select>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.logoutType"
+           [mdTooltip]="messages.services_form_tooltip_logoutType">help
+  </md-icon>
 </div>

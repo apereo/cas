@@ -1,22 +1,13 @@
-<!-- Service Description -->
-<div class="form-group">
-  <label class="col-sm-3" for="serviceDesc">
-    <span style="float:right">
-      <ng-container i18n="services.form.label.description">
-        {{ messages.services_form_label_description }}
-      </ng-container>
-      <i i18n-myTooltip="servcies.form.tooltip.description"
-        [myTooltip]="messages.services_form_tooltip_description"></i>
-    </span>
-  </label>
-  <div class="col-sm-9">
-    <div class="input-group">
-      <div class="input-group-addon input-group-required"
-           i18n-title="services.form.required"
-           [title]="messages.services_form_required">
-        <i class="fa fa-exclamation-triangle"></i>
-      </div>
-      <textarea class="form-control" rows="5" id="serviceDesc" [(ngModel)]="service.description"></textarea>
-    </div>
-  </div>
+<div>
+  <md-input-container class="textInput">
+    <textarea mdInput required rows="5"
+              i18n-placeholder="services.form.label.description"
+              [placeholder]="messages.services_form_label_description"
+              [(ngModel)]="service.description">
+    </textarea>
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="servcies.form.tooltip.description"
+          [mdTooltip]="messages.services_form_tooltip_description">help
+  </md-icon>
 </div>

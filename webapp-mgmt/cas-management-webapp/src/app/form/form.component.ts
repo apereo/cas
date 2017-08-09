@@ -16,6 +16,19 @@ import {
 } from "../../domain/proxy-policy,ts";
 import {OAuthRegisteredService} from "../../domain/oauth-service";
 
+enum Tabs {
+  BASICS,
+  TYPE,
+  LOGOUT,
+  ACCESS_STRATEGY,
+  MULTIFACTOR,
+  PROXY,
+  USERNAME_ATTRIBUTE,
+  ATTRIBUTE_RELEASE,
+  PROPERTIES,
+  ADVANCED
+}
+
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
@@ -50,15 +63,15 @@ export class FormComponent implements OnInit {
       this.path = url[0].path;
       this.route.params.subscribe((params) => {
         this.id = params['id'];
-        this.goto('basics');
+        this.goto(Tabs.BASICS);
       });
     });
 
   }
 
-  goto(tab: String) {
+  goto(tab:Tabs) {
     let route: any[] = [this.path,this.id];
-    route.push({outlets: {form: [tab]}});
+    route.push({outlets: {form: [this.tabRoute(tab)]}});
     this.router.navigate(route,{skipLocationChange: true} );
   }
 
@@ -69,6 +82,31 @@ export class FormComponent implements OnInit {
       this.data.formData = resp;
     });
   };
+
+  tabRoute(tab: Tabs): String {
+    switch(+tab) {
+      case Tabs.BASICS :
+        return 'basics';
+      case Tabs.TYPE :
+        return 'servicetype';
+      case Tabs.LOGOUT :
+        return 'logout';
+      case Tabs.ACCESS_STRATEGY :
+        return 'accessstrategy';
+      case Tabs.MULTIFACTOR :
+        return 'multiauth';
+      case Tabs.PROXY :
+        return 'proxy';
+      case Tabs.USERNAME_ATTRIBUTE :
+        return 'userattr';
+      case Tabs.ATTRIBUTE_RELEASE :
+        return 'attrRelease';
+      case Tabs.PROPERTIES :
+        return 'properties'
+      case Tabs.ADVANCED :
+        return 'advanced';
+    }
+  }
 
   textareaArrParse(dir, value) {
     var newValue;

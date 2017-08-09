@@ -2,6 +2,7 @@
 @import "main/resources/static/css/cas-management.css";
 @import "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css";
 @import "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 .menuCell {
   border: 1px solid grey;
@@ -17,4 +18,21 @@
 
 .checkCell {
   margin:5px;
+}
+
+.textInput {
+  width:500px;
+}
+
+.tabCard {
+  margin-right:auto;
+  margin-left:auto;
+  width:650px;
+  margin-top:5px
+}
+
+.cardContent {
+  margin-right:auto;
+  margin-left:auto;
+  width:550px;
 }

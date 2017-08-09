@@ -1,23 +1,11 @@
-<!-- Service ID -->
-<div class="form-group">
-  <label class="col-sm-3" for="serviceId">
-    <span style="float:right">
-      <ng-container i18n="services.form.label.serviceId">
-        {{ messages.services_form_label_serviceId }}
-      </ng-container>
-      <i i18n-myTooltip="services.form.tooltip.serviceId"
-        [myTooltip]="messages.services_form_tooltip_serviceId"></i>
-    </span>
-  </label>
-
-  <div class="col-sm-9">
-    <div class="input-group">
-      <div class="input-group-addon input-group-required"
-           i18n-title="services.form.required"
-           [title]="messages.services_form_required">
-        <i class="fa fa-exclamation-triangle"></i>
-      </div>
-      <input type="text" class="form-control" id="serviceId" [(ngModel)]="service.serviceId">
-    </div>
-  </div>
+<div>
+  <md-input-container class="textInput">
+    <input mdInput i18n-placeholder required
+           [placeholder]="messages.services_form_label_serviceId"
+           [(ngModel)]="service.serviceId">
+  </md-input-container>
+  <md-icon style="font-size: medium;"
+           i18n-mdTooltip="services.form.label.serviceId"
+           [mdTooltip]="messages.services_form_tooltip_serviceId">help
+  </md-icon>
 </div>

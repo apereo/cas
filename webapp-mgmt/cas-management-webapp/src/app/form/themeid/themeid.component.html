@@ -1,38 +1,12 @@
-<div class="row">
-  <div class="col-sm-6">
-    <!-- Service Theme -->
-    <div class="form-group">
-      <label class="col-sm-6" for="serviceTheme">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.theme">
-            {{ messages.services_form_label_theme }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.theme"
-            [myTooltip]="messages.services_form_tooltip_theme"></i>
-        </span>
-      </label>
-      <div class="col-sm-6">
-        <input type="text" class="form-control" id="serviceTheme" [(ngModel)]="service.theme">
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6">
-    <!-- Assigned ID -->
-    <div class="form-group">
-      <label class="col-sm-5" for="assignedId">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.assignedId">
-            {{ messages.services_form_label_assignedId }}
-          </ng-container>
-          <i i18n-myTooltip="servcies.form.tooltip.assignedId"
-            [myTooltip]="messages.services_form_tooltip_assignedId"></i>
-        </span>
-      </label>
-      <div class="col-sm-7">
-        <input type="text" class="form-control" id="assignedId"
-               [disabled]="service.id != -1"
-               [(ngModel)]="service.id">
-      </div>
-    </div>
-  </div>
+<div>
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.theme"
+           [placeholder]="messages.services_form_label_theme"
+           [(ngModel)]="service.theme">
+  </md-input-container>
+  <md-icon style="font-size: medium;"
+           i18n-mdTooltip="services.form.tooltip.theme"
+           [mdTooltip]="messages.services_form_tooltip_theme">help
+  </md-icon>
 </div>

@@ -1,59 +1,32 @@
-<div class="oauth-only-options-container">
-  <div class="panel panel-warning">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <ng-container i18n="services.form.header.wsfedOptions">
-          {{ messages.services_form_header_wsfedOptions }}
-        </ng-container>
-      </h3>
-    </div>
-    <div class="panel-body">
-      <!-- WS Federation Realm -->
-      <div class="form-group">
-        <label class="col-sm-4" for="wsfedRealm">
-          <ng-container i18n="services.form.label.wsfed.realm">
-            {{ messages.services_form_label_wsfed_realm }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.wsfed.realm"
-             [myTooltip]="messages.services_form_tooltip_wsfed_realm">
-          </i>
-        </label>
-
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <input type="text" autocomplete="off" class="form-control" id="wsfedRealm"
-                   [(ngModel)]="service.realm"/>
-          </div>
-        </div>
-      </div>
-
-      <!-- WS Federation appliesTo -->
-      <div class="form-group">
-        <label class="col-sm-4" for="wsfedAppliesTo">
-          <ng-container i18n="services.form.label.wsfed.appliesTo">
-            {{ messages.services_form_label_wsfed_appliesTo }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.wsfed.appliesTo"
-             [myTooltip]="messages.services_form_tooltip_wsfed_appliesTo">
-          </i>
-        </label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <input class="form-control" autocomplete="off" id="wsfedAppliesTo" type="text"
-                   [(ngModel)]="service.appliesTo"/>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<md-card class="tabCard">
+  <md-card-title>
+    <h5>WS Federation Options</h5>
+  </md-card-title>
+  <div class="cardContent">
+    <div>
+  <md-input-container class="textInput">
+    <input mdInput required
+           i18n-placeholder="services.form.label.wsfed.realm"
+           [placeholder]="messages.services_form_label_wsfed_realm"
+           [(ngModel)]="service.realm">
+  </md-input-container>
+  <md-icon style="font-size: medium;"
+           i18n-mdTooltip="services.form.tooltip.wsfed.realm"
+           [mdTooltip]="messages.services_form_tooltip_wsfed_realm">help
+  </md-icon>
 </div>
+
+<div>
+  <md-input-container class="textInput">
+    <input mdInput required
+           i18n-placeholder="services.form.label.wsfed.appliesTo"
+           [placeholder]="messages.services_form_label_wsfed_appliesTo"
+           [(ngModel)]="service.appliesTo">
+  </md-input-container>
+  <md-icon i18n-mdTooltip="services.form.tooltip.wsfed.appliesTo"
+           [mdTooltip]="messages.services_form_tooltip_wsfed_appliesTo">help
+  </md-icon>
+</div>
+  </div>
+</md-card>
+

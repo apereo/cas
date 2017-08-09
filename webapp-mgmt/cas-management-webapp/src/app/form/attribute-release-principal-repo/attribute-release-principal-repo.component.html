@@ -1,113 +1,68 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <ng-container i18n="services.form.header.principleAttRepo">
-      {{ messages.services_form_header_principleAttRepo }}
-    </ng-container>
-  </div>
-  <div class="panel-body">
-    <div class="radio-group">
-      <!-- Principle Repository Radio Button - Default -->
-      <label class="radio-inline">
-        <input type="radio" name="prinFilter"
-               [value]="TYPE.DEFAULT"
-               [(ngModel)]="type"
-               (change)="changeType()"/>
-        <ng-container i18n="services.form.label.attrRelease.principleAttRepo.default">
-          {{ messages.services_form_label_attrRelease_principleAttRepo_default }}
-        </ng-container>
-      </label>
-      <!-- Principle Filter Radio Button - Cached -->
-      <label class="radio-inline">
-        <input type="radio" name="prinFilter"
-               [value]="TYPE.CACHING"
-               [(ngModel)]="type"
-               (change)="changeType()"/>
-        <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached">
-          {{ messages.services_form_label_attrRelease_principleAttRepo_cached }}
-        </ng-container>
-      </label>
-    </div>
+<div>
+  <md-radio-group [(ngModel)]="type" (change)="changeType()">
 
-    <!-- Principle Attribute Repo Default Options -->
-    <div class="well well-sm" *ngIf="type == TYPE.DEFAULT">
-      <ng-container i18n="services.service.noAction">
-        {{ messages.management_services_service_noAction }}
+    <md-radio-button [value]="TYPE.DEFAULT">
+      <ng-container i18n="services.form.label.attrRelease.principleAttRepo.default">
+        {{ messages.services_form_label_attrRelease_principleAttRepo_default }}
       </ng-container>
-    </div>
+    </md-radio-button>
 
-    <!-- Principle Attribute Repo Cached Options -->
-    <div class="principle-attribute-cached-container"
-         *ngIf="type == TYPE.CACHING">
-      <!-- Principle Attribute Repo Cached Time -->
-      <div class="form-group">
-        <label class="col-sm-4" for="cachedTime">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached.timeUnit">
-              {{ messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit"
-               [myTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit"></i>
-          </span>
-        </label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <select class="form-control" id="cachedTime" [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
-              <option *ngFor="let opt of timeUnits" [value]="opt">
-                {{ opt }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <md-radio-button [value]="TYPE.CACHING">
+      <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached">
+        {{ messages.services_form_label_attrRelease_principleAttRepo_cached }}
+      </ng-container>
+    </md-radio-button>
 
-      <!-- Principle Attribute Repo Cached Expiration -->
-      <div class="form-group">
-        <label class="col-sm-4" for="cachedExp">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached.expiration">
-              {{ messages.services_form_label_attrRelease_principleAttRepo_cached_expiration }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration"
-               [myTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_expiration"></i>
-          </span>
-        </label>
-        <div class="col-sm-8">
-          <input type="number" min="0" class="form-control" id="cachedExp"
-                 [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.expiration"/>
-        </div>
+  </md-radio-group>
+</div>
 
-        <!-- Principle Attribute Repo Merging Strategy -->
+<div *ngIf="type == TYPE.DEFAULT">
+  <ng-container i18n="services.service.noAction">
+    {{ messages.management_services_service_noAction }}
+  </ng-container>
+</div>
 
-        <label class="col-sm-4" for="mergingStrategy">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy">
-              {{ messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy"
-               [myTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy"></i>
-          </span>
-        </label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required" [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <select class="form-control" id="mergingStrategy" [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
-              <option *ngFor="let opt of mergeStrategies" [value]="opt">
-                {{ opt }}
-              </option>
-            </select>
-          </div>
-        </div>
+<div *ngIf="type == TYPE.CACHING">
+  <div>
+    <md-select required style="width:400px;padding-top:25px;padding-bottom: 25px;"
+               i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.timeUnit"
+               [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit"
+               [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
+      <md-option *ngFor="let opt of timeUnits" [value]="opt">
+        {{ opt }}
+      </md-option>
+    </md-select>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit">help
+    </md-icon>
+  </div>
 
-      </div>
-    </div>
+  <div>
+    <md-input-container class="textInput">
+      <input mdInput
+             i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.expiration"
+             [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_expiration"
+             [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.expiration">
+    </md-input-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_expiration">help
+    </md-icon>
+  </div>
 
+  <div>
+    <md-select required style="width: 400px;padding-top:25px;padding-bottom: 25px;"
+               i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy"
+               [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy"
+               [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
+      <md-option *ngFor="let opt of mergeStrategies" [value]="opt">
+        {{ opt }}
+      </md-option>
+    </md-select>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy">help
+    </md-icon>
   </div>
 </div>
