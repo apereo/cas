@@ -13,14 +13,14 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * This is {@link ListUndocumentedCommand}.
+ * This is {@link ListUndocumentedPropertiesCommand}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Service
-public class ListUndocumentedCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListUndocumentedCommand.class);
+public class ListUndocumentedPropertiesCommand implements CommandMarker {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ListUndocumentedPropertiesCommand.class);
 
     /**
      * List undocumented settings.

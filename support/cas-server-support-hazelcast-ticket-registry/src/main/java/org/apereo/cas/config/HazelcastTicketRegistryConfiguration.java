@@ -54,13 +54,12 @@ public class HazelcastTicketRegistryConfiguration {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
                 ticketCatalog,
                 hz.getPageSize());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
     }
-
-    @Autowired
+    
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistryCleaner ticketRegistryCleaner() {
         return new NoOpTicketRegistryCleaner();
     }
 

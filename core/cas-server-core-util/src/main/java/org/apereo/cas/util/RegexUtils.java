@@ -99,7 +99,7 @@ public final class RegexUtils {
     }
 
     /**
-     * Attempts to find the next subsequence of the input sequence that matches the pattern.
+     * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
      * @param string  the string
@@ -109,4 +109,16 @@ public final class RegexUtils {
     public static boolean find(final Pattern pattern, final String string) {
         return pattern.matcher(string).find();
     }
+
+    /**
+     * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
+     *
+     * @param pattern the pattern
+     * @param string  the string
+     * @return the boolean
+     */
+    public static boolean find(final String pattern, final String string) {
+        return createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
+    }
+    
 }

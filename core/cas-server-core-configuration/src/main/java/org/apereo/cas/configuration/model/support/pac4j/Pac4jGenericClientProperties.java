@@ -18,6 +18,10 @@ public class Pac4jGenericClientProperties implements Serializable {
      * The client secret.
      */
     private String secret;
+    /**
+     * Name of the client mostly for UI purposes and uniqueness.
+     */
+    private String clientName;
 
     public String getId() {
         return this.id;
@@ -33,5 +37,13 @@ public class Pac4jGenericClientProperties implements Serializable {
 
     public void setSecret(final String secret) {
         this.secret = secret;
+    }
+
+    public String getClientName() {
+        return this.clientName;
+    }
+
+    public void setClientName(final String clientName) {
+        this.clientName = clientName;
     }
 }

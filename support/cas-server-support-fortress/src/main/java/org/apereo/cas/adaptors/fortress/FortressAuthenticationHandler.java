@@ -61,7 +61,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         Session fortressSession = null;
         try {
             LOGGER.debug("Trying to delegate authentication for [{}] to fortress", new Object[]{username});
-            final User user = new User(username, password.toCharArray());
+            final User user = new User(username, password);
             fortressSession = accessManager.createSession(user, false);
             if (fortressSession != null && fortressSession.isAuthenticated()) {
                 final StringWriter writer = new StringWriter();

@@ -38,7 +38,9 @@ task runWebpack(type: NpmTask) {
 }
 
 
-processResources.dependsOn npmLint
+if (!rootProject.publishReleases) {
+    processResources.dependsOn npmLint
+}
 processResources.dependsOn compileSass
 processResources.dependsOn runWebpack
 
