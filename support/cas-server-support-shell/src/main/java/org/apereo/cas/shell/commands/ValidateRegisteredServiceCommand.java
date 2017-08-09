@@ -22,12 +22,14 @@ import java.io.File;
 @Service
 public class ValidateRegisteredServiceCommand implements CommandMarker {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateRegisteredServiceCommand.class);
+    private static final int SEP_LINE_LENGTH = 70;
 
     /**
      * Validate service.
      *
      * @param file      the file
      * @param directory the directory
+     * @throws Exception the exception
      */
     @CliCommand(value = "validate-service", help = "Validate a given JSON/YAML service definition by path or directory")
     public void validateService(
@@ -36,12 +38,11 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
                     specifiedDefaultValue = "",
                     unspecifiedDefaultValue = "",
                     optionContext = "Path to the JSON/YAML service definition") final String file,
-
             @CliOption(key = {"directory"},
                     help = "Path to the JSON/YAML service definitions directory",
                     specifiedDefaultValue = "/etc/cas/services",
                     unspecifiedDefaultValue = "/etc/cas/services",
-                    optionContext = "Path to the JSON/YAML service definitions directory") final String directory) {
+                    optionContext = "Path to the JSON/YAML service definitions directory") final String directory) throws Exception {
 
         if (StringUtils.isBlank(file) && StringUtils.isBlank(directory)) {
             LOGGER.warn("Either file or directory must be specified");
@@ -68,12 +69,15 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
             final RegisteredServiceJsonSerializer validator = new RegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
                 final RegisteredService svc = validator.from(filePath);
-                LOGGER.info("Service [{}] is valid.", svc.getName());
+                LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
             }
         } catch (final Exception e) {
             LOGGER.error("Could not understand and validate [{}]: [{}]", filePath.getPath(), e.getMessage());
+        } finally {
+            LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
         }
+        
     }
 }

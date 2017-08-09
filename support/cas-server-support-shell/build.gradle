@@ -11,6 +11,10 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-services-api")
     compile project(":api:cas-server-core-api-services")
+    compile project(":support:cas-server-support-oauth-services")
+    compile project(":support:cas-server-support-oidc-services")
+    compile project(":support:cas-server-support-saml-idp-core")
+    compile project(":support:cas-server-support-ws-idp-api")
     compile project(":core:cas-server-core-configuration-metadata-repository")
     compile libraries.springbootconfigmetadata
 }
@@ -27,7 +31,7 @@ bootRepackage {
 bootRun {
     systemProperties = System.properties
     def list = []
-    if (Boolean.getBoolean("enableRemoteDebugging")) {
+    if (rootProject.enableRemoteDebugging) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
     }
     jvmArgs = list
