@@ -1,56 +1,43 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <ng-container i18n="services.form.header.attrPolicy">
-      {{ messages.services_form_header_attrPolicy }}
+<div>
+  <md-checkbox [(ngModel)]="wsFedOnly" [disabled]="isEmpty(formData.availableAttributes )">
+    <ng-container i18n="services.form.label.wsfed.wsFederationOnly">
+      {{ messages.services_form_label_wsfed_wsFederationOnly }}
     </ng-container>
-  </div>
-  <div class="panel-body">
-    <div class="radio-group">
+  </md-checkbox>
+</div>
 
-      <!-- Filter Policies Radio Button - Return Allowed -->
-      <label class="radio-inline">
-        <input type="checkbox" name="policiesReturnMapped" id="policiesReturnMapped"
-               [(ngModel)]="wsFedOnly"
-               [disabled]="isEmpty(formData.availableAttributes )" />
-        <ng-container i18n="services.form.label.wsfed.wsFederationOnly">
-          {{ messages.services_form_label_wsfed_wsFederationOnly }}
+<div class="panel panel-default" *ngIf="wsFedOnly && !isEmpty(formData.availableAttributes )">
+  <md-table [dataSource]="dataSource">
+
+    <ng-container cdkColumnDef="source">
+      <md-header-cell *cdkHeaderCellDef>
+        <ng-container i18n="services.form.label.attrRelease.policies.sourceAttribute">
+          {{ messages.services_form_label_attrRelease_policies_sourceAttribute }}
         </ng-container>
-      </label>
-    </div>
+      </md-header-cell>
+      <md-cell *cdkCellDef="let row"> {{ row.key }}</md-cell>
+    </ng-container>
 
-    <!-- Attribute Release Policies Return Mapped Option -->
-    <div class="panel panel-default" *ngIf="wsFedOnly && !isEmpty(formData.availableAttributes )">
-      <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed" >
-        <thead>
-        <tr>
-          <th class="col-md-4">
-            <ng-container i18n="services.form.label.attrRelease.policies.sourceAttribute">
-              {{ messages.services_form_label_attrRelease_policies_sourceAttribute }}
-            </ng-container>
-          </th>
-          <th class="col-md-8">
-            <ng-container i18n="services.form.label.attrRelease.policies.casAttribute">
-              {{ messages.services_form_label_attrRelease_policies_casAttribute }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.attrRelease.policies.returnMapped"
-               [myTooltip]="messages.services_form_tooltip_attrRelease_policies_returnMapped">
-            </i>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let mappedValue of formData.availableAttributes">
-          <td class="va-middle">{{ mappedValue }}</td>
-          <td>
-            <select class="form-control"
-                    [(ngModel)]="service.attributeReleasePolicy.attrPolicy.wsfed.claim[mappedValue]">
-              <option *ngFor="let item of selectOptions.wsfedClaimList" [value]="item">{{ item.name }}</option>
-            </select>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+    <ng-container cdkColumnDef="mapped">
+      <md-header-cell *cdkHeaderCellDef>
+        <ng-container i18n="services.form.label.attrRelease.policies.casAttribute">
+          {{ messages.services_form_label_attrRelease_policies_casAttribute }}
+        </ng-container>
+        <md-icon style="font-size: medium;"
+                 i18n-mdTooltip="services.form.tooltip.attrRelease.policies.returnMapped"
+                 [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_returnMapped">help
+        </md-icon>
+      </md-header-cell>
+      <md-cell *cdkCellDef="let row">
+        <md-select class="form-control"
+                   [(ngModel)]="attrPolicy.allowedAttributes[row.key]">
+          <md-option *ngFor="let item of selectOptions.wsfedClaimList" [value]="item.name">{{ item.name }}</md-option>
+        </md-select>
+      </md-cell>
+    </ng-container>
 
-  </div>
+    <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+    <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+
+  </md-table>
 </div>

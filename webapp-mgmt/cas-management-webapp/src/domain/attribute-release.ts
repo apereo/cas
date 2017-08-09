@@ -130,3 +130,18 @@ export class RegisteredServiceRegexAttributeFilter extends RegisteredServiceAttr
   }
 }
 
+export class WsFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+  allowedAttributes: Map<String,String>
+
+  static cName = "org.apereo.cas.ws.idp.services.WsFederationClaimsReleasePolicy";
+
+  constructor(policy?: AbstractRegisteredServiceAttributeReleasePolicy) {
+    super(policy);
+    this["@class"] = WsFederationClaimsReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === WsFederationClaimsReleasePolicy.cName;
+  }
+}
+

@@ -25,7 +25,6 @@ describe('WsfedattrrelpoliciesComponent', () => {
     fixture = TestBed.createComponent(WsfedattrrelpoliciesComponent);
     component = fixture.componentInstance;
     component.formData = new FormData();
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

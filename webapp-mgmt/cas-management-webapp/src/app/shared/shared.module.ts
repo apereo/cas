@@ -7,11 +7,41 @@ import {FormsModule} from "@angular/forms"
 import {AlertComponent} from "../alert/alert.component";
 import 'hammerjs';
 import {MyTooltipDirective} from "../my-tooltip.directive";
+import {
+  MdButtonModule, MdCardModule,
+  MdCheckboxModule, MdDatepickerModule, MdDialogModule, MdExpansionModule, MdCard, MdIcon, MdIconModule, MdInputModule,
+  MdNativeDateModule,
+  MdRadioModule, MdRippleModule,
+  MdSelectModule, MdTableModule,
+  MdTabsModule,
+  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule
+} from "@angular/material";
+import {CdkTableModule} from "@angular/cdk";
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    MdTabsModule,
+    MdCheckboxModule,
+    MdInputModule,
+    MdIconModule,
+    MdTooltipModule,
+    MdSelectModule,
+    MdDatepickerModule,
+    MdNativeDateModule,
+    MdDialogModule,
+    MdTableModule,
+    CdkTableModule,
+    MdButtonModule,
+    MdRadioModule,
+    MdRippleModule,
+    MdCardModule,
+    MdExpansionModule,
+    MdListModule,
+    MdCoreModule,
+    MdMenuModule,
+    MdChipsModule
   ],
   declarations: [
     AlertComponent,
@@ -22,6 +52,26 @@ import {MyTooltipDirective} from "../my-tooltip.directive";
   exports: [
     AlertComponent,
     MyTooltipDirective,
+    MdTabsModule,
+    MdCheckboxModule,
+    MdInputModule,
+    MdIconModule,
+    MdTooltipModule,
+    MdSelectModule,
+    MdDatepickerModule,
+    MdNativeDateModule,
+    MdDialogModule,
+    MdTableModule,
+    CdkTableModule,
+    MdButtonModule,
+    MdRadioModule,
+    MdRippleModule,
+    MdCardModule,
+    MdExpansionModule,
+    MdListModule,
+    MdCoreModule,
+    MdMenuModule,
+    MdChipsModule
   ]
 })
 export class SharedModule {

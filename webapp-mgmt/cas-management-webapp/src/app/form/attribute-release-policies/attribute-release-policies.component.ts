@@ -32,6 +32,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
   selectOptions;
   type: Type;
   TYPE = Type;
+  types = [Type.SCRIPT,Type.GROOVY,Type.RETURN_ALL,Type.DENY_ALL,Type.RETURN_ALLOWED,Type.RETURN_MAPPED];
+  display = ["Script Engine", "Groovy Script", "Return All", "Deny All","Return Allowed","Return Mapped"];
   isSaml: boolean;
 
   constructor(public messages: Messages,
@@ -47,6 +49,10 @@ export class AttributeReleasePoliciesComponent implements OnInit {
     } else if (DenyAllAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
       this.type = Type.DENY_ALL;
     } else if (ReturnMappedAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
+      let mapped: ReturnMappedAttributeReleasePolicy = this.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
+      this.formData.availableAttributes.forEach((item: any) => {
+        mapped.allowedAttributes[item] = mapped.allowedAttributes[item] || [item];
+      });
       this.type = Type.RETURN_MAPPED;
     } else if (ReturnAllowedAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
       this.type = Type.RETURN_ALLOWED;
@@ -59,20 +65,25 @@ export class AttributeReleasePoliciesComponent implements OnInit {
   }
 
   changeType() {
+    console.log("Changed Type : "+this.type)
     switch(+this.type) {
       case Type.RETURN_ALL:
+        console.log("Changed to return all");
         this.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.service.attributeReleasePolicy);
         break;
       case Type.DENY_ALL :
         this.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy(this.service.attributeReleasePolicy);
         break;
       case Type.RETURN_MAPPED :
-        let mapped: ReturnMappedAttributeReleasePolicy = new ReturnMappedAttributeReleasePolicy(this.service.attributeReleasePolicy);
+        let mapped: ReturnMappedAttributeReleasePolicy = this.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
         mapped.allowedAttributes = new Map();
         this.formData.availableAttributes.forEach((item: any) => {
           mapped.allowedAttributes[item] = [item];
         });
         this.service.attributeReleasePolicy = mapped;
+        break;
+      case Type.RETURN_ALLOWED :
+        this.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.service.attributeReleasePolicy);
         break;
       case Type.SCRIPT :
         this.service.attributeReleasePolicy = new ScriptedRegisteredServiceAttributeReleasePolicy(this.service.attributeReleasePolicy);

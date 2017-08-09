@@ -1,114 +1,66 @@
-<!--
-Todo: New pane to configure Multifactor Authentication Policy. Fields are:
+<div>
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.multiauth.providers"
+           [placeholder]="messages.services_form_label_multiauth_providers"
+           [ngModel]="service.multifactorPolicy.multifactorAuthenticationProviders"
+           (ngModelChange)="saveProviders($event)">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.multiauth_providers"
+           [mdTooltip]="messages.services_form_tooltip_multiauth_providers">help
+  </md-icon>
+</div>
 
+<div>
+  <md-select style="width:400px;padding-top:25px;padding-bottom:25px;"
+             i18n-placeholder="services.form.label.multiauth.failuremode"
+             [placeholder]="messages.services_form_label_multiauth_failuremode"
+             [(ngModel)]="service.multifactorPolicy.failureMode">
+    <md-option *ngFor="let opt of failureModes" [value]="opt">
+      {{ opt }}
+    </md-option>
+  </md-select>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.multiauth.failuremode"
+           [mdTooltip]="messages.services_form_tooltip_multiauth_failuremode">help
+  </md-icon>
+</div>
 
-Todo: Add properties table
-Providers: CSV list
+<div>
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.multiauth.principalattribute.nametrigger"
+           [placeholder]="messages.services_form_label_multiauth_principalattribute_nametrigger"
+           [(ngModel)]="service.multifactorPolicy.principalAttributeNameTrigger">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.multiauth.principalattribute.nametrigger"
+           [mdTooltip]="messages.services_form_tooltip_multiauth_principalattribute_nametrigger">help
+  </md-icon>
+</div>
 
--->
-<div class="multiauth-container">
-  <div class="panel panel-success">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <ng-container i18n="services.form.header.multiauth">
-          {{ messages.services_form_header_multiauth }}
-        </ng-container>
-      </h3>
-    </div> <!-- end .panel-header div -->
-    <div class="panel-body">
-      <!-- Providers -->
-      <div class="form-group">
-        <label class="col-sm-5" for="multiAuthProviders">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.multiauth.providers">
-              {{ messages.services_form_label_multiauth_providers }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.multiauth_providers"
-              [myTooltip]="messages.services_form_tooltip_multiauth_providers"></i>
-          </span>
-        </label>
-        <div class="col-sm-7">
-          <input type="text" class="form-control" id="multiAuthProviders"
-                 [ngModel]="service.multifactorPolicy.multifactorAuthenticationProviders"
-                 (ngModelChange)="saveProviders($event)">
-        </div>
-      </div>
+<div>
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.multiauth.principalattribute.valuetomatch"
+           [placeholder]="messages.services_form_label_multiauth_principalattribute_valuetomatch"
+           [(ngModel)]="service.multifactorPolicy.principalAttributeValueToMatch">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-myTooltip="services.form.tooltip.multiauth.principalattribute.valuetomatch"
+           [mdTooltip]="messages.services_form_tooltip_multiauth_principalattribute_valuetomatch">help
+  </md-icon>
+</div>
 
-      <!-- Failure Mode-->
-      <div class="form-group">
-        <label class="col-sm-5" for="multiAuthFailureMode">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.multiauth.failuremode">
-              {{ messages.services_form_label_multiauth_failuremode }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.multiauth.failuremode"
-              [myTooltip]="messages.services_form_tooltip_multiauth_failuremode"></i>
-          </span>
-        </label>
-        <div class="col-sm-7">
-
-          <select class="form-control" id="multiAuthFailureMode" [(ngModel)]="service.multifactorPolicy.failureMode">
-            <option
-              *ngFor="let opt of failureModes"
-              [value]="opt">
-              {{ opt }}
-            </option>
-          </select>
-
-        </div>
-      </div>
-
-      <!-- Principal Attribute Name Trigger -->
-      <div class="form-group">
-        <label class="col-sm-5" for="multiAuthAttrNameTrigger">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.multiauth.principalattribute.nametrigger">
-              {{ messages.services_form_label_multiauth_principalattribute_nametrigger }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.multiauth.principalattribute.nametrigger"
-              [myTooltip]="messages.services_form_tooltip_multiauth_principalattribute_nametrigger"></i>
-          </span>
-        </label>
-        <div class="col-sm-7">
-          <input type="text" class="form-control" id="multiAuthAttrNameTrigger"
-                 [(ngModel)]="service.multifactorPolicy.principalAttributeNameTrigger">
-        </div>
-      </div>
-
-      <!-- Principal Attribute Value to Match -->
-      <div class="form-group">
-        <label class="col-sm-5" for="multiAuthAttrValueMatch">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.multiauth.principalattribute.valuetomatch">
-              {{ messages.services_form_label_multiauth_principalattribute_valuetomatch }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.multiauth.principalattribute.valuetomatch"
-              [myTooltip]="messages.services_form_tooltip_multiauth_principalattribute_valuetomatch"></i>
-          </span>
-        </label>
-        <div class="col-sm-7">
-          <input type="text" class="form-control" id="multiAuthAttrValueMatch"
-                 [(ngModel)]="service.multifactorPolicy.principalAttributeValueToMatch">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="col-sm-5" for="bypassEnabled">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.multiauth.bypassenabled">
-              {{ messages.services_form_label_multiauth_bypassenabled }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.multiauth.bypassenabled"
-              [myTooltip]="messages.services_form_tooltip_multiauth_bypassenabled"></i>
-          </span>
-        </label>
-        <div class="col-sm-7">
-          <div class="checkbox checkbox-inline">
-            <input type="checkbox" id="bypassEnabled" [(ngModel)]="service.multifactorPolicy.bypassEnabled">
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<div>
+  <md-checkbox [(ngModel)]="service.multifactorPolicy.bypassEnabled">
+    <ng-container i18n="services.form.label.multiauth.bypassenabled">
+      {{ messages.services_form_label_multiauth_bypassenabled }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.multiauth.bypassenabled"
+             [mdTooltip]="messages.services_form_tooltip_multiauth_bypassenabled">help
+    </md-icon>
+  </md-checkbox>
 </div>

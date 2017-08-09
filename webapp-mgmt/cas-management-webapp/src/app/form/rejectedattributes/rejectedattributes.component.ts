@@ -2,19 +2,26 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {Data} from "../data";
+import {DataSource} from "@angular/cdk";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Observable} from "rxjs/Observable";
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/observable/merge';
+import 'rxjs/add/operator/map';
+import {Util} from "../../util/util";
 
 @Component({
   selector: 'app-rejectedattributes',
-  templateUrl: './rejectedattributes.component.html'
+  templateUrl: './rejectedattributes.component.html',
+  styleUrls: ['./rejectedattributes.component.css']
 })
 export class RejectedattributesComponent implements OnInit {
 
   service: AbstractRegisteredService;
+  displayedColumns = ['source', 'mapped', "delete"];
+  attributeDatabase = new AttributeDatabase();
+  dataSource: AttributeDataSource | null;
 
-  rows: Row[];
-  addName: String;
-  addValue: String[];
-  isAdding: boolean;
 
   constructor(public messages: Messages,
               private data: Data) {
@@ -23,58 +30,67 @@ export class RejectedattributesComponent implements OnInit {
 
   ngOnInit() {
 
-    this.rows = [];
-    if (!this.service.accessStrategy.rejectedAttributes || Object.keys(this.service.accessStrategy.rejectedAttributes).length == 0) {
+    if (Util.isEmpty(this.service.accessStrategy.rejectedAttributes)) {
       this.service.accessStrategy.rejectedAttributes = new Map();
     }
     for (let p of Array.from(Object.keys(this.service.accessStrategy.rejectedAttributes))) {
-      this.rows.push(new Row(p,this.service.accessStrategy.rejectedAttributes[p]));
+      this.attributeDatabase.addRow(new Row(p));
     }
+    this.dataSource = new AttributeDataSource(this.attributeDatabase);
   }
 
-  addRow() {
-    let r: Row = new Row(this.addName, this.addValue);
-    this.service.accessStrategy.rejectedAttributes[this.addName as string] = this.addValue;
-    this.rows.push(r);
-    this.isAdding = false;
-    this.addName = null;
-    this.addValue = null;
+  addRow(){
+    this.attributeDatabase.addRow(new Row(""));
   }
 
-  cancelAdd() {
-    this.isAdding = false;
-    this.addValue = null;
-    this.addName = null;
+  doChange(row: Row, val: string) {
+    this.service.accessStrategy.rejectedAttributes[val] = this.service.accessStrategy.rejectedAttributes[row.key as string];
+    delete this.service.accessStrategy.rejectedAttributes[row.key as string];
+    row.key = val;
   }
 
-  save(r: Row) {
-    r.property.name = r.tmpName;
-    r.property.value = r.tmpValue;
-    r.isEditing = false;
+  delete(row: Row) {
+   delete this.service.accessStrategy.rejectedAttributes[row.key as string];
+   this.attributeDatabase.removeRow(row);
   }
-
-  cancel(r: Row) {
-    r.tmpName = r.property.name;
-    r.tmpValue = r.property.value;
-    r.isEditing = false;
-  }
-
-  delete(r: Row) {
-    //this.serviceData.properties.splice(this.serviceData.properties.indexOf(r.property),1);
-    this.rows.splice(this.rows.indexOf(r),1);
-  }
-
 }
 
-class Row {
+export class Row {
+  key: String;
 
-  constructor(k: String, v: String[]) {
-    this.tmpName = k;
-    this.tmpValue = v;
-    this.property = {"name":k,"value":v};
+  constructor(source: String) {
+    this.key = source;
   }
-  isEditing: boolean;
-  property: any;
-  tmpName: String;
-  tmpValue: String[];
+}
+
+export class AttributeDatabase {
+  dataChange: BehaviorSubject<Row[]> = new BehaviorSubject<Row[]>([]);
+  get data(): Row[] { return this.dataChange.value; }
+
+  constructor() {
+  }
+
+  addRow(row: Row) {
+    const copiedData = this.data.slice();
+    copiedData.push(row);
+    this.dataChange.next(copiedData);
+  }
+
+  removeRow(row: Row) {
+    const copiedData = this.data.slice();
+    copiedData.splice(copiedData.indexOf(row),1);
+    this.dataChange.next(copiedData);
+  }
+}
+
+export class AttributeDataSource extends DataSource<any> {
+  constructor(private _attributeDatabase: AttributeDatabase) {
+    super();
+  }
+
+  connect(): Observable<Row[]> {
+    return this._attributeDatabase.dataChange;
+  }
+
+  disconnect() {}
 }

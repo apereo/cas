@@ -1,114 +1,84 @@
-<div class="oauth-only-options-container">
-  <div class="panel panel-warning">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <ng-container i18n="services.form.header.oauthOptions">
-          {{ messages.services_form_header_oauthOptions }}
-        </ng-container>
-      </h3>
-    </div>
-    <div class="panel-body">
+<md-card class="tabCard">
+  <md-card-title>
+    <h5>OAuth Client Options</h5>
+  </md-card-title>
+  <div class="cardContent">
+<div>
+  <md-input-container class="textInput">
+    <input mdInput required
+           i18n-placeholder="services.form.label.oauthClientId"
+           [placeholder]="messages.services_form_label_oauthClientId"
+           [(ngModel)]="service.clientId">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.oauthClientId"
+           [mdTooltip]="messages.services_form_tooltip_oauthClientId">help
+  </md-icon>
+</div>
 
-      <div class="form-group">
-        <label class="col-sm-4" for="oauthClientId">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.oauthClientId">
-              {{ messages.services_form_label_oauthClientId }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.oauthClientId"
-              [myTooltip]="messages.services_form_tooltip_oauthClientId"></i>
-          </span>
-        </label>
+<div>
+  <md-input-container class="textInput">
+    <input mdInput required [type]="showOAuthSecret ? 'text' : 'password'"
+           i18n-placeholder="services.form.label.oauthClientSecret"
+           [placeholder]="messages.services_form_label_oauthClientSecret"
+           [(ngModel)]="service.clientSecret">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.oauthClientSecret"
+           [mdTooltip]="messages.services_form_tooltip_oauthClientSecret">help
+  </md-icon>
+</div>
 
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <input type="text" autocomplete="off" class="form-control" id="oauthClientId"
-                   [(ngModel)]="service.clientId">
-          </div>
-        </div>
-      </div>
+<div>
+  <md-checkbox [(ngModel)]="showOAuthSecret">
+    <ng-container i18n="services.form.label.oauthShowSecret">
+      {{ messages.services_form_label_oauthShowSecret }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.oauthShowSecret"
+             [mdTooltip]="messages.services_form_tooltip_oauthShowSecret">help
+    </md-icon>
+  </md-checkbox>
+</div>
 
-      <!-- OAuth Client Secret -->
-      <div class="form-group">
-        <label class="col-sm-4" for="oauthClientSecret">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.oauthClientSecret">
-              {{ messages.services_form_label_oauthClientSecret }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.oauthClientSecret"
-              [myTooltip]="messages.services_form_tooltip_oauthClientSecret"></i>
-          </span>
-        </label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <div class="input-group-addon input-group-required"
-                 i18n-title="services.form.required"
-                 [title]="messages.services_form_required">
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-            <input class="form-control" autocomplete="off" id="oauthClientSecret" type="text"
-                   [(ngModel)]="service.clientSecret" *ngIf="showOAuthSecret">
-            <input class="form-control" autocomplete="off" id="oauthClientSecret" type="password"
-                   [(ngModel)]="service.clientSecret" *ngIf="!showOAuthSecret">
-          </div>
-        </div>
+<div>
+  <md-checkbox [(ngModel)]="service.bypassApprovalPrompt">
+    <ng-container i18n="services.form.label.oauthBypass">
+      {{ messages.services_form_label_oauthBypass }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.oauthBypass"
+             [mdTooltip]="messages.services_form_tooltip_oauthBypass">help
+    </md-icon>
+  </md-checkbox>
+</div>
 
-        <div class="col-md-8 col-md-offset-4">
-          <!-- OAuth Show/Hide Client Secret -->
-          <div class="checkbox">
-            <label for="oauthShowSecret">
-              <input type="checkbox" id="oauthShowSecret" [(ngModel)]="showOAuthSecret">
-              <ng-container i18n="services.form.label.oauthShowSecret">
-                {{ messages.services_form_label_oauthShowSecret }}
-              </ng-container>
-              <i i18n-myTooltip="services.form.tooltip.oauthShowSecret"
-                [myTooltip]="messages.services_form_tooltip_oauthShowSecret"></i>
-            </label>
-          </div>
-          <!-- OAuth Bypass Approval Prompt -->
-          <div class="checkbox">
-            <label for="oauthBypass">
-              <input type="checkbox" id="oauthBypass" [(ngModel)]="service.bypassApprovalPrompt">
-              <ng-container i18n="services.form.label.oauthBypass">
-                {{ messages.services_form_label_oauthBypass }}
-              </ng-container>
-              <i i18n="services.form.tooltip.oauthBypass"
-                [myTooltip]="messages.services_form_tooltip_oauthBypass"></i>
-            </label>
-          </div>
-          <!-- OAuth Refresh token generation -->
-          <div class="checkbox">
-            <label for="oauthRefreshToken">
-              <input type="checkbox" id="oauthRefreshToken" [(ngModel)]="service.generateRefreshToken">
-              <ng-container i18n="services.form.label.oauthRefreshToken">
-                {{ messages.services_form_label_oauthRefreshToken }}
-              </ng-container>
-              <i i18n="services.form.tooltip.oauthRefreshToken"
-                [myTooltip]="messages.services_form_tooltip_oauthRefreshToken"></i>
-            </label>
-          </div>
-          <!-- OAuth JSON format -->
-          <div class="checkbox">
-            <label for="oauthJsonFormat">
-              <input type="checkbox" id="oauthJsonFormat" [(ngModel)]="service.jsonFormat">
-              <ng-container i18n="services.form.label.oauthJsonFormat">
-                {{ messages.services_form_label_oauthJsonFormat }}
-              </ng-container>
-              <i i18n-myTooltip="services.form.tooltip.oauthJsonFormat"
-                [myTooltip]="messages.services_form_tooltip_oauthJsonFormat"></i>
-            </label>
-          </div>
-          <div *ngIf="isOidc()">
-            <app-oidcclient></app-oidcclient>
-          </div>
-        </div>
-    </div>
-    </div>
+<div>
+  <md-checkbox [(ngModel)]="service.generateRefreshToken">
+    <ng-container i18n="services.form.label.oauthRefreshToken">
+      {{ messages.services_form_label_oauthRefreshToken }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.oauthRefreshToken"
+             [mdTooltip]="messages.services_form_tooltip_oauthRefreshToken">help
+    </md-icon>
+  </md-checkbox>
+</div>
+
+<div>
+  <md-checkbox  [(ngModel)]="service.jsonFormat">
+    <ng-container i18n="services.form.label.oauthJsonFormat">
+      {{ messages.services_form_label_oauthJsonFormat }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.oauthJsonFormat"
+             [mdTooltip]="messages.services_form_tooltip_oauthJsonFormat">help
+    </md-icon>
+  </md-checkbox>
+</div>
   </div>
+</md-card>
 
+<div *ngIf="isOidc()">
+  <app-oidcclient></app-oidcclient>
 </div>

@@ -1,93 +1,40 @@
-<!-- Rejected Attributes Table-->
+<div>
+  <md-table [dataSource]="dataSource">
 
-<div class="form-group">
-  <label class="col-sm-12">
-    <ng-container i18n="services.form.label.sas.rejectedattributes">
-      {{ messages.services_form_label_sas_rejectedattributes }}
+    <ng-container cdkColumnDef="source">
+      <md-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</md-header-cell>
+      <md-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
+        <md-input-container>
+          <input mdInput #text
+                 [ngModel]="row.key"
+                 (change)="doChange(row,$event.target.value)">
+        </md-input-container>
+      </md-cell>
     </ng-container>
-    <i i18n-myTooltip="services.form.tooltip.sas.rejectedattributes"
-      [myTooltip]="messages.services_form_tooltip_sas_rejectedattributes"></i>
-  </label>
-</div>
 
-<div id="rejectedAttributes" class="panel panel-default">
-  <table class="table table-striped table-responsive table-condensed editable-table">
-    <colgroup>
-      <col width="45%"/>
-      <col width="45%"/>
-      <col width="10%"/>
-    </colgroup>
-    <tr *ngFor="let row of rows">
-      <td [title]="messages.services_form_header_properties_name">
-        <span *ngIf="!row.isEditing" class="editable-text">{{row.property.name}}</span>
-        <div *ngIf="row.isEditing" class="controls">
-          <input class="form-control noresize editable-text"
-                 [(ngModel)]="row.tmpName">
-        </div>
-      </td>
-      <td [title]="messages.services_form_header_properties_value">
-        <span *ngIf="!row.isEditing" class="editable-text">{{row.property.value}}</span>
-        <div *ngIf="row.isEditing" class="controls">
-          <input class="form-control noresize editable-text"
-                 [(ngModel)]="row.tmpValue">
-        </div>
-      </td>
+    <ng-container cdkColumnDef="mapped">
+      <md-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</md-header-cell>
+      <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
+        <md-input-container>
+          <input mdInput
+                 [ngModel]="service.accessStrategy.rejectedAttributes[row.key]"
+                 (ngModelChange)="service.accessStrategy.rejectedAttributes[row.key] = $event.split(',')">
+        </md-input-container>
+      </md-cell>
+    </ng-container>
 
-      <td>
-        <!-- Save button -->
-        <button class="btn btn-primary btn-sm"
-                (click)="save(row)"
-                *ngIf="row.isEditing"><span
-          class="glyphicon glyphicon-ok"></span></button>
+    <ng-container cdkColumnDef="delete">
+      <md-header-cell *cdkHeaderCellDef [ngClass]="'actionWidth'"></md-header-cell>
+      <md-cell *cdkCellDef="let row" [ngClass]="'actionWidth'">
+        <button md-icon-button (click)="delete(row)"><md-icon style="font-size: medium">delete</md-icon></button>
+      </md-cell>
+    </ng-container>
 
-        <!--Cancel Button-->
-        <button class="btn btn-default btn-sm"
-                (click)="cancel(row)"
-                *ngIf="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+    <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+    <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
 
-        <!--Edit button-->
-        <button class="btn btn-default btn-sm" (click)="row.isEditing = true"
-                *ngIf="!row.isEditing">
-          <span class="glyphicon glyphicon-pencil"></span>
-        </button>
-
-        <!--Delete button-->
-        <button class="btn btn-danger btn-sm" (click)="delete(row)" *ngIf="!row.isEditing"><span
-          class="glyphicon glyphicon-trash"></span></button>
-      </td>
-    </tr>
-    <tr *ngIf="isAdding">
-      <td><input name="addPropertyName" class="form-control noresize editable-text" rows="2"
-                 i18n-placeholder
-                 placeholder="New property name"
-                 [(ngModel)]="addName" required="required"></td>
-      <td><input name="addPropertyValue" class="form-control noresize editable-text" rows="2"
-                 i18n-placeholder
-                 placeholder="New property value"
-                 [ngModel]="addValue"
-                 (ngModelChange)="addValue = $event.split(',')" required="required"></td>
-      <td>
-        <!-- Add Row toggle -->
-        <button class="btn btn-success btn-sm"
-                (click)="addRow()"
-                *ngIf="isAdding">
-          <span class="glyphicon glyphicon-plus"></span>
-        </button>
-        <!-- cancel add row -->
-        <button class="btn btn-default btn-sm"
-                (click)="cancelAdd( )">
-          <span class="glyphicon glyphicon-remove"></span>
-        </button>
-      </td>
-    </tr>
-    <tr class="addRow" *ngIf="!isAdding">
-      <td>
-        <button class="btn btn-default btn-sm" (click)="isAdding = true">
-          <span class="glyphicon glyphicon-plus text-success"></span>
-        </button>
-      </td>
-      <td></td>
-      <td></td>
-    </tr>
-  </table>
+  </md-table>
+  <div style="height:25px;padding-top: 5px;">
+    <button md-mini-fab (click)="addRow()" style="float:right;">+</button>
+  </div>
 </div>

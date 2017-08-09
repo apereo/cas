@@ -4,66 +4,59 @@
   <app-saveformtop (save)="saveForm()"></app-saveformtop>
   <app-alert #alert></app-alert>
 
-  <div id="exTab1">
-    <ul class="nav nav-tabs nav-justified">
-      <li [ngClass]="{'active' : active === 'basics'}">
-        <a (click)="goto('basics')"><br>
+  <md-tab-group (selectedIndexChange)="goto($event)">
+    <md-tab>
+      <ng-template md-tab-label>
           <ng-container i18n>Basics</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'servicetype'}">
-        <a (click)="goto('servicetype')">
-          <ng-container i18n>Service</ng-container><br>
-          <ng-container i18n>Type</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'logout'}">
-        <a (click)="goto('logout')"><br>
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
+          <ng-container i18n>Service Type</ng-container>
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
           <ng-container i18n>Logout</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'accessstrategy'}">
-        <a (click)="goto('accessstrategy')">
-          <ng-container i18n>Access</ng-container><br>
-          <ng-container i18n>Strategy</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'multiauth'}">
-        <a (click)="goto('multiauth')">
-          <ng-container i18n>Multifactor</ng-container><br>
-          <ng-container i18n>Authentication</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'proxy'}">
-        <a (click)="goto('proxy')">
-          <ng-container i18n>Proxy</ng-container><br>
-          <ng-container i18n>Authentication</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'userattr'}">
-        <a (click)="goto('userattr')">
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
+          <ng-container i18n>Access Strategy</ng-container>
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
+          <ng-container i18n>Multifactor Authentication</ng-container>
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
+          <ng-container i18n>Proxy Authentication</ng-container>
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
           <ng-container i18n>Username Attribute</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'attrRelease'}">
-        <a (click)="goto('attrRelease')">
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
           <ng-container i18n>Attribute Release</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'properties'}">
-        <a (click)="goto('properties')"><br>
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
           <ng-container i18n>Properties</ng-container>
-        </a>
-      </li>
-      <li [ngClass]="{'active' : active === 'advanced'}">
-        <a (click)="goto('advanced')"><br>
+      </ng-template>
+    </md-tab>
+    <md-tab>
+      <ng-template md-tab-label>
           <ng-container>Advanced</ng-container>
-        </a>
-      </li>
-    </ul>
+      </ng-template>
+    </md-tab>
+  </md-tab-group>
 
-    <div class="tab-content clearfix" style="margin-right:auto;margin-left:auto; width:800px;">
-      <router-outlet name="form"></router-outlet>
-    </div>
-  </div>
+  <router-outlet name="form"></router-outlet>
+
 </div>

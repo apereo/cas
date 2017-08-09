@@ -1,21 +1,27 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {DefaultRegisteredServiceProperty} from "../../../domain/property";
 import {Data} from "../data";
+import {DataSource} from "@angular/cdk";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Observable} from "rxjs/Observable";
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/observable/merge';
+import 'rxjs/add/operator/map';
+import {Util} from "../../util/util";
+import {DefaultRegisteredServiceProperty} from "../../../domain/property";
 
 @Component({
   selector: 'app-propertiespane',
-  templateUrl: './propertiespane.component.html'
+  templateUrl: './propertiespane.component.html',
+  styleUrls: ['./propertiespane.component.css']
 })
 export class PropertiespaneComponent implements OnInit {
-
   service: AbstractRegisteredService;
+  displayedColumns = ['source', 'mapped', "delete"];
+  attributeDatabase = new AttributeDatabase();
+  dataSource: AttributeDataSource | null;
 
-  rows: Row[];
-  addName: String;
-  addValue: String[];
-  isAdding: boolean;
 
   constructor(public messages: Messages,
               private data: Data) {
@@ -23,62 +29,72 @@ export class PropertiespaneComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.rows = [];
-    if (!this.service.properties || Object.keys(this.service.properties).length == 0) {
+
+    if (Util.isEmpty(this.service.properties)) {
       this.service.properties = new Map();
     }
-
-    for( let entry of Array.from(Object.keys(this.service.properties))) {
-      this.rows.push(new Row(entry,this.service.properties[entry].values));
+    for (let p of Array.from(Object.keys(this.service.properties))) {
+      this.attributeDatabase.addRow(new Row(p));
     }
+    this.dataSource = new AttributeDataSource(this.attributeDatabase);
   }
 
-  addRow() {
-    let p: DefaultRegisteredServiceProperty = new DefaultRegisteredServiceProperty();
-    p.values = this.addValue;
-    let r: Row = new Row(this.addName, this.addValue);
-    this.service.properties[this.addName as string] = p;
-    this.rows.push(r);
-    this.isAdding = false;
-    this.addName = null;
-    this.addValue = null;
+  addRow(){
+    this.attributeDatabase.addRow(new Row(""));
   }
 
-  cancelAdd() {
-    this.isAdding = false;
-    this.addValue = null;
-    this.addName = null;
+  doChange(row: Row, val: string) {
+    if(Object.keys(this.service.properties).indexOf(row.key as string) > -1) {
+      this.service.properties[val] = this.service.properties[row.key as string];
+      delete this.service.properties[row.key as string];
+    } else {
+      this.service.properties[val] = new DefaultRegisteredServiceProperty();
+    }
+    row.key = val;
   }
 
-  save(r: Row) {
-    r.property.name = r.tmpName;
-    r.property.value = r.tmpValue;
-    r.isEditing = false;
+  delete(row: Row) {
+    delete this.service.properties[row.key as string];
+    this.attributeDatabase.removeRow(row);
   }
-
-  cancel(r: Row) {
-    r.tmpName = r.property.name;
-    r.tmpValue = r.property.value;
-    r.isEditing = false;
-  }
-
-  delete(r: Row) {
-    this.service.properties.delete(r.tmpName);
-    this.rows.splice(this.rows.indexOf(r),1);
-  }
-
 }
 
-class Row {
+export class Row {
+  key: String;
 
-  constructor(k: String, v: String[]) {
-    this.property = {"name":k,"value":v};
-    this.tmpName = k;
-    this.tmpValue = v;
-
+  constructor(source: String) {
+    this.key = source;
   }
-  isEditing: boolean;
-  property: any;
-  tmpName: String;
-  tmpValue: String[];
+}
+
+export class AttributeDatabase {
+  dataChange: BehaviorSubject<Row[]> = new BehaviorSubject<Row[]>([]);
+  get data(): Row[] { return this.dataChange.value; }
+
+  constructor() {
+  }
+
+  addRow(row: Row) {
+    const copiedData = this.data.slice();
+    copiedData.push(row);
+    this.dataChange.next(copiedData);
+  }
+
+  removeRow(row: Row) {
+    const copiedData = this.data.slice();
+    copiedData.splice(copiedData.indexOf(row),1);
+    this.dataChange.next(copiedData);
+  }
+}
+
+export class AttributeDataSource extends DataSource<any> {
+  constructor(private _attributeDatabase: AttributeDatabase) {
+    super();
+  }
+
+  connect(): Observable<Row[]> {
+    return this._attributeDatabase.dataChange;
+  }
+
+  disconnect() {}
 }

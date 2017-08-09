@@ -56,6 +56,7 @@ import { RemoteComponent } from './access-strategy/remote/remote.component';
 import { TimeComponent } from './access-strategy/time/time.component';
 import { GrouperComponent } from './access-strategy/grouper/grouper.component';
 import { OidcclientComponent } from './oidcclient/oidcclient.component';
+import { MappedattributesComponent } from './mappedattributes/mappedattributes.component';
 
 @NgModule({
   imports: [
@@ -112,6 +113,7 @@ import { OidcclientComponent } from './oidcclient/oidcclient.component';
     TimeComponent,
     GrouperComponent,
     OidcclientComponent,
+    MappedattributesComponent,
   ],
   providers: [
     FormResolve,

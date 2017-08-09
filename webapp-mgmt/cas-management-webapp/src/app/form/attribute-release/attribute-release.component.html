@@ -1,50 +1,57 @@
-<div class="attribute-release-policy-container"
-     *ngIf="!isOidc">
 
-  <div class="panel panel-success">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <ng-container i18n="services.form.header.attrRelPolicy">
-        {{ messages.services_form_header_attrRelPolicy }}
-        </ng-container>
-      </h3>
-    </div>
-    <div class="panel-body">
+
+<div *ngIf="!isOidc && !isWsFed">
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Release Options</h5>
+    </md-card-title>
+    <div class="cardContent">
       <app-attribute-release-checks></app-attribute-release-checks>
       <app-attribute-release-filters></app-attribute-release-filters>
+    </div>
+  </md-card>
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Principal Attribute Repository</h5>
+    </md-card-title>
+    <div class="cardContent">
       <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
     </div>
-  </div>
-
-  <app-attribute-release-policies></app-attribute-release-policies>
+  </md-card>
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Policy</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <app-attribute-release-policies></app-attribute-release-policies>
+    </div>
+  </md-card>
 </div>
 
 
-<div class="attribute-release-policy-container"
-     *ngIf="isOidc">
-
-  <div class="well well-sm">
-    <ng-container i18n="management.services.service.noAction">
-      {{ messages.management_services_service_noAction }}
-    </ng-container>
-  </div>
+<div *ngIf="isOidc">
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Release Options</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <div class="well well-sm">
+        <ng-container i18n="management.services.service.noAction">
+          {{ messages.management_services_service_noAction }}
+        </ng-container>
+      </div>
+    </div>
+  </md-card>
 </div>
 
-<div class="attribute-release-policy-container" id="attribute-release-policy-container"
-     *ngIf="isWsFed">
-
-  <h1>{{type}}</h1>
-  <div class="panel panel-info">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <ng-container i18n="services.form.header.attrRelPolicy">
-          {{ messages.services_form_header_attrRelPolicy }}
-        </ng-container></h3>
-    </div>
-    <div class="panel-body">
+<div *ngIf="isWsFed">
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Release Options</h5>
+    </md-card-title>
+    <div class="cardContent">
       <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
+      <app-wsfedattrrelpolicies></app-wsfedattrrelpolicies>
     </div>
-  </div>
-
-  <app-wsfedattrrelpolicies></app-wsfedattrrelpolicies>
+  </md-card>
 </div>

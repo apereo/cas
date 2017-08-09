@@ -1,8 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {SamlRegisteredService} from "../../../domain/saml-service";
 import {Data} from "../data";
+import {DataSource} from "@angular/cdk";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Observable} from "rxjs/Observable";
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/observable/merge';
+import 'rxjs/add/operator/map';
+import {Util} from "../../util/util";
 
 @Component({
   selector: 'app-samlservicespane',
@@ -13,11 +19,9 @@ export class SamlservicespaneComponent implements OnInit {
 
   service: SamlRegisteredService;
   selectOptions;
-
-  rows: Row[];
-  addName: String;
-  addValue: String;
-  isAdding: boolean;
+  displayedColumns = ['source', 'mapped', "delete"];
+  attributeDatabase = new AttributeDatabase();
+  dataSource: AttributeDataSource | null;
 
   type: String;
 
@@ -28,61 +32,67 @@ export class SamlservicespaneComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.rows = this.service.properties.map((p) => new Row(p));
-  }
-
-  addRow() {
-    let p: any = {"name":this.addName, "value":this.addValue};
-    let r: Row = new Row(p);
-    this.service.properties[p.name] = p;
-    this.rows.push(r);
-    this.isAdding = false;
-    this.addName = null;
-    this.addValue = null;
-  }
-
-  cancelAdd() {
-    this.isAdding = false;
-    this.addValue = null;
-    this.addName = null;
-  }
-
-  save(r: Row) {
-    r.property.name = r.tmpName;
-    r.property.value = r.tmpValue;
-    r.isEditing = false;
-  }
-
-  cancel(r: Row) {
-    r.tmpName = r.property.name;
-    r.tmpValue = r.property.value;
-    r.isEditing = false;
-  }
-
-  delete(r: Row) {
-    //this.serviceData.properties.splice(this.serviceData.properties.indexOf(r.property),1);
-    this.rows.splice(this.rows.indexOf(r),1);
-  }
-
-  populateInputField(r: Row, value: any) {
-    if (r.isEditing) {
-      r.tmpValue = value;
-    } else {
-      this.addValue = value;
+    if (Util.isEmpty(this.service.attributeNameFormats)) {
+      this.service.attributeNameFormats = new Map();
     }
+    for (let p of Array.from(Object.keys(this.service.attributeNameFormats))) {
+      this.attributeDatabase.addRow(new Row(p));
+    }
+    this.dataSource = new AttributeDataSource(this.attributeDatabase);
   }
 
+  addRow(){
+    this.attributeDatabase.addRow(new Row(""));
+  }
+
+  doChange(row: Row, val: string) {
+    this.service.properties[val] = this.service.properties[row.key as string];
+    delete this.service.properties[row.key as string];
+    row.key = val;
+  }
+
+  delete(row: Row) {
+    delete this.service.properties[row.key as string];
+    this.attributeDatabase.removeRow(row);
+  }
 }
 
-class Row {
+export class Row {
+  key: String;
 
-  constructor(p: any) {
-    this.property = p;
-    this.tmpName = p.name;
-    this.tmpValue = p.value;
+  constructor(source: String) {
+    this.key = source;
   }
-  isEditing: boolean;
-  property: any;
-  tmpName: String;
-  tmpValue: String;
+}
+
+export class AttributeDatabase {
+  dataChange: BehaviorSubject<Row[]> = new BehaviorSubject<Row[]>([]);
+  get data(): Row[] { return this.dataChange.value; }
+
+  constructor() {
+  }
+
+  addRow(row: Row) {
+    const copiedData = this.data.slice();
+    copiedData.push(row);
+    this.dataChange.next(copiedData);
+  }
+
+  removeRow(row: Row) {
+    const copiedData = this.data.slice();
+    copiedData.splice(copiedData.indexOf(row),1);
+    this.dataChange.next(copiedData);
+  }
+}
+
+export class AttributeDataSource extends DataSource<any> {
+  constructor(private _attributeDatabase: AttributeDatabase) {
+    super();
+  }
+
+  connect(): Observable<Row[]> {
+    return this._attributeDatabase.dataChange;
+  }
+
+  disconnect() {}
 }

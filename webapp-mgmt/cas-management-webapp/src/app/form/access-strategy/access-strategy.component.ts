@@ -9,6 +9,7 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {Util} from "../../util/util";
 import {Data} from "../data";
 
+
 enum Type{
   DEFAULT,TIME,GROUPER,REMOTE
 }
@@ -18,8 +19,8 @@ enum Type{
   templateUrl: './access-strategy.component.html',
 })
 
-
 export class AccessStrategyComponent implements OnInit {
+
 
   formData: FormData;
   service: AbstractRegisteredService;
@@ -36,8 +37,9 @@ export class AccessStrategyComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (Util.isEmpty(this.service.accessStrategy.rejectedAttributes)) {
-      this.service.accessStrategy.requiredAttributes = new Map();
+
+    if (Util.isEmpty(this.service.accessStrategy.rejectedAttributes)) {;
+      this.service.accessStrategy.rejectedAttributes = new Map();
     }
 
     this.formData.availableAttributes.forEach((item: any) => {
@@ -64,7 +66,6 @@ export class AccessStrategyComponent implements OnInit {
         this.service.accessStrategy = new RemoteEndpointServiceAccessStrategy(this.service.accessStrategy);
         break;
       case Type.TIME :
-        console.log("Createing TimeBASEd");
         this.service.accessStrategy = new TimeBasedRegisteredServiceAccessStrategy(this.service.accessStrategy);
         break;
       case Type.GROUPER :
@@ -73,5 +74,4 @@ export class AccessStrategyComponent implements OnInit {
       default:
     }
   }
-
 }

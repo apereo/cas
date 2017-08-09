@@ -1,198 +1,116 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <ng-container i18n="services_form_header_attrPolicy">
-      {{ messages.services_form_header_attrPolicy }}
-    </ng-container>
-  </div>
-  <div class="panel-body">
-    <div class="radio-group">
+<!--
+<div>
+  <md-radio-group [(ngModel)]="type" (change)="changeType()">
 
-      <!-- Filter Policies Radio Button - Return Script -->
-      <label class="radio-inline">
-        <input type="radio" name="policies"
-               [value]="TYPE.SCRIPT"
-               [(ngModel)]="type"
-               (change)="changeType()" />
-        <ng-container i18n="services.form.label.attrRelease.policies.script">
-          {{ messages.services_form_label_attrRelease_policies_script }}
-        </ng-container>
-      </label>
-
-      <!-- Filter Policies Radio Button - Return Groovy Script -->
-      <label class="radio-inline">
-        <input type="radio" name="policies"
-               [value]="TYPE.GROOVY"
-               [(ngModel)]="type"
-               (change)="changeType()" />
-        <ng-container i18n="services.form.label.attrRelease.policies.groovy">
-          {{ messages.services_form_label_attrRelease_policies_groovy }}
-        </ng-container>
-      </label>
-
-      <!-- Filter Policies Radio Button - Return All -->
-      <label class="radio-inline">
-        <input type="radio" name="policies"
-               [value]="TYPE.RETURN_ALL"
-               [(ngModel)]="type"
-               (change)="changeType()" />
-        <ng-container i18n="services.form.label.attrRelease.policies.returnAll">
-          {{ messages.services_form_label_attrRelease_policies_returnAll }}
-        </ng-container>
-      </label>
-
-      <!-- Filter Policies Radio Button - Deny All -->
-      <label class="radio-inline">
-        <input type="radio" name="policies"
-               [value]="TYPE.DENY_ALL"
-               [(ngModel)]="type"
-               (change)="changeType()"/>
-        <ng-container i18n="services.form.label.attrRelease.policies.denyAll">
-          {{ messages.services_form_label_attrRelease_policies_denyAll }}
-        </ng-container>
-      </label>
-
-      <!-- Filter Policies Radio Button - Return Allowed -->
-      <label class="radio-inline">
-        <input type="radio" name="policies"
-               [value]="TYPE.RETURN_ALLOWED"
-               [(ngModel)]="type"
-               (change)="changeType()"
-               [disabled]="isEmpty( formData.availableAttributes )" />
-        <ng-container i18n="services.form.label.attrRelease.policies.returnAllowed">
-          {{ messages.services_form_label_attrRelease_policies_returnAllowed }}
-        </ng-container>
-      </label>
-
-      <!-- Filter Policies Radio Button - Return Mapped -->
-      <label class="radio-inline">
-        <input type="radio" name="policies"
-               [value]="TYPE.RETURN_MAPPED"
-               [(ngModel)]="type"
-               (change)="changeType()"
-               [disabled]="isEmpty( formData.availableAttributes )" />
-        <ng-container i18n="services.form.label.attrRelease.policies.returnMapped">
-            {{ messages.services_form_label_attrRelease_policies_returnMapped }}
-        </ng-container>
-      </label>
-
-      <!-- Filter Policies Radio Button - Pattern Matching -->
-      <label class="radio-inline" *ngIf="isSaml">
-        <input type="radio" name="policies"
-               [value]="TYPE.MATCHING"
-               [(ngModel)]="type"
-               (change)="changeType()"
-               [disabled]="isEmpty( formData.availableAttributes )" />
-        <ng-container i18n="services.form.label.attrRelease.policies.patternMatching">
-          {{ messaes.services_form_label_attrRelease_policies_patternMatching }}
-        </ng-container>
-      </label>
-
-      <!-- Filter Policies Radio Button - Release InCommon -->
-      <label class="radio-inline" *ngIf="isSaml">
-        <input type="radio" name="policies"
-               [value]="TYPE.INCOMMON"
-               [(ngModel)]="type"
-               (change)="changeType()"/>
-        <ng-container i18n="services.form.label.attrRelease.policies.releaseIncommon">
-          {{ messages.services_form_label_attrRelease_policies_releaseInCommon }}
-        </ng-container>
-      </label>
-    </div>
-
-
-    <!-- Attribute Release Policies Return Script Option -->
-    <div class="form-group" *ngIf="type == TYPE.SCRIPT">
-      <label class="col-sm-4" for="scriptFile">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.attrRelease.policies.scriptFile">
-            {{ messages.services_form_label_attrRelease_policies_scriptFile }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
-             [myTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile"></i>
-        </span>
-      </label>
-
-      <div class="col-sm-8">
-        <input type="text" autocomplete="off" class="form-control" id="scriptFile"
-               [(ngModel)]="service.attributeReleasePolicy.scriptFile"/>
-      </div>
-    </div>
-
-
-    <!-- Attribute Release Policies Return Groovy Option -->
-    <div class="form-group" *ngIf="type == TYPE.GROOVY">
-      <label class="col-sm-4" for="groovyFile">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.attrRelease.policies.scriptFile">
-            {{ messages.services_form_label_attrRelease_policies_scriptFile }}
-          </ng-container>
-          <i i18n="services.form.tooltip.attrRelease.policies.scriptFile"
-             [myTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile"></i>
-        </span>
-      </label>
-
-      <div class="col-sm-8">
-        <input type="text" autocomplete="off" class="form-control" id="groovyFile"
-               [(ngModel)]="service.attributeReleasePolicy.groovyScript"/>
-      </div>
-    </div>
-
-
-    <!-- Attribute Release Policies Return All Option -->
-    <div class="well well-sm" *ngIf="type == TYPE.RETURN_ALL || type == TYPE.DENY_ALL || isEmpty( formData.availableAttributes )">
-      <ng-container i18n="management.services.service.noAction">
-        {{ messages.management_services_service_noAction }}
+    <md-radio-button [value]="TYPE.SCRIPT">
+      <ng-container i18n="services.form.label.attrRelease.policies.script">
+        {{ messages.services_form_label_attrRelease_policies_script }}
       </ng-container>
-    </div>
+    </md-radio-button>
 
-    <!-- Attribute Release Policies Return Allowed Option -->
-    <div class="form-group" *ngIf="type == TYPE.RETURN_ALLOWED && !isEmpty( formData.availableAttributes )">
-      <label class="col-sm-3" for="returnAllowed">
-        <span style="float:right">
-          <ng-container i18n="services.form.label.attrRelease.policies.returnAllowed">
-            {{ messages.services_form_label_attrRelease_policies_returnAllowed }}
-          </ng-container>
-          <i i18n-myTooltip="services.form.tooltip.attrRelease.policies.returnAllowed"
-             [myTooltip]="messages.services_form_tooltip_attrRelease_policies_returnAllowed"></i>
-        </span>
-      </label>
-      <div class="col-sm-9">
-        <select class="form-control" multiple="true" id="returnedAllowed"
-                [(ngModel)]="service.attributeReleasePolicy.allowedAttributes">
-          <option *ngFor="let opt of formData.availableAttributes" [value]="opt">
-            {{ opt }}
-          </option>
-        </select>
-      </div>
-    </div>
+    <md-radio-button  [value]="TYPE.GROOVY">
+      <ng-container i18n="services.form.label.attrRelease.policies.groovy">
+        {{ messages.services_form_label_attrRelease_policies_groovy }}
+      </ng-container>
+    </md-radio-button>
 
-    <!-- Attribute Release Policies Return Mapped Option -->
-    <div class="panel panel-default" *ngIf="type == TYPE.RETURN_MAPPED && !isEmpty( formData.availableAttributes )">
-      <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed" >
-        <thead>
-        <tr>
-          <th class="col-md-4">
-            <ng-container i18n="services.form.label.attrRelease.policies.sourceAttribute">
-              {{ messages.services_form_label_attrRelease_policies_sourceAttribute }}
-            </ng-container>
-          </th>
-          <th class="col-md-8">
-            <ng-container i18n="services.form.label.attrRelease.policies.casAttribute">
-              {{ messages.services_form_label_attrRelease_policies_casAttribute }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.attrRelease.policies.returnMapped"
-               [myTooltip]="messages.services_form_tooltip_attrRelease_policies_returnMapped"></i>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let mappedValue of formData.availableAttributes">
-          <td class="va-middle">{{ mappedValue }}</td>
-          <td><input [(ngModel)]="service.attributeReleasePolicy.allowedAttributes[ mappedValue ]" type="text" class="form-control input-sm" /></td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+    <md-radio-button [value]="TYPE.RETURN_ALL">
+      <ng-container i18n="services.form.label.attrRelease.policies.returnAll">
+        {{ messages.services_form_label_attrRelease_policies_returnAll }}
+      </ng-container>
+    </md-radio-button>
 
-  </div>
+    <md-radio-button [value]="TYPE.DENY_ALL">
+      <ng-container i18n="services.form.label.attrRelease.policies.denyAll">
+        {{ messages.services_form_label_attrRelease_policies_denyAll }}
+      </ng-container>
+    </md-radio-button>
+
+    <md-radio-button [value]="TYPE.RETURN_ALLOWED"  [disabled]="isEmpty( formData.availableAttributes )">
+      <ng-container i18n="services.form.label.attrRelease.policies.returnAllowed">
+        {{ messages.services_form_label_attrRelease_policies_returnAllowed }}
+      </ng-container>
+    </md-radio-button>
+
+    <md-radio-button  [value]="TYPE.RETURN_MAPPED" [disabled]="isEmpty( formData.availableAttributes )">
+      <ng-container i18n="services.form.label.attrRelease.policies.returnMapped">
+        {{ messages.services_form_label_attrRelease_policies_returnMapped }}
+      </ng-container>
+    </md-radio-button>
+
+    <md-radio-button *ngIf="isSaml" [value]="TYPE.MATCHING" [disabled]="isEmpty( formData.availableAttributes )">
+      <ng-container i18n="services.form.label.attrRelease.policies.patternMatching">
+        {{ messaes.services_form_label_attrRelease_policies_patternMatching }}
+      </ng-container>
+    </md-radio-button>
+
+    <md-radio-button *ngIf="isSaml" [value]="TYPE.INCOMMON">
+      <ng-container i18n="services.form.label.attrRelease.policies.releaseIncommon">
+        {{ messages.services_form_label_attrRelease_policies_releaseInCommon }}
+      </ng-container>
+    </md-radio-button>
+
+  </md-radio-group>
+</div>
+-->
+<div>
+  <md-select style="width:500px;padding-top: 25px;padding-bottom: 25px;"
+             placeholder="Policy"
+             [(ngModel)]="type"
+             (change)="changeType()">
+    <md-option *ngFor="let opt of types; let i = index" [value]="opt">
+      {{ display[i] }}
+    </md-option>
+  </md-select>
+</div>
+
+<div *ngIf="type == TYPE.SCRIPT">
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
+           [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
+           [(ngModel)]="service.attributeReleasePolicy.scriptFile">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
+           [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
+  </md-icon>
+</div>
+
+<div *ngIf="type == TYPE.GROOVY">
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
+           [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
+           [(ngModel)]="service.attributeReleasePolicy.groovyScript">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
+           [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
+  </md-icon>
+</div>
+
+<div *ngIf="type == TYPE.RETURN_ALL || type == TYPE.DENY_ALL || isEmpty( formData.availableAttributes )">
+  <ng-container i18n="management.services.service.noAction">
+    {{ messages.management_services_service_noAction }}
+  </ng-container>
+</div>
+
+<div *ngIf="type == TYPE.RETURN_ALLOWED && !isEmpty( formData.availableAttributes )">
+  <md-select multiple style="width:400px;padding-top:25px;"
+             i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
+             [placeholder]="messages.services_form_label_attrRelease_policies_returnAllowed"
+             [(ngModel)]="service.attributeReleasePolicy.allowedAttributes">
+    <md-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+      {{ opt }}
+    </md-option>
+  </md-select>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.attrRelease.policies.returnAllowed"
+           [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_returnAllowed">help
+  </md-icon>
+</div>
+
+<div *ngIf="type == TYPE.RETURN_MAPPED && !isEmpty( formData.availableAttributes )">
+  <app-mappedattributes [attributes]="service.attributeReleasePolicy.allowedAttributes"></app-mappedattributes>
 </div>
