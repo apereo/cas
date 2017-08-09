@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
@@ -234,7 +233,7 @@ public class SamlObjectSignatureValidator {
 
             return kekCredentialResolver.resolveSingle(criteriaSet);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

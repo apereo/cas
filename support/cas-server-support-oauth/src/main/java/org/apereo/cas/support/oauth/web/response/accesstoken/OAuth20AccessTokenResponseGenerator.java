@@ -3,7 +3,6 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -65,7 +64,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                 jsonGenerator.writeEndObject();
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         } else {
             generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);

@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.commons.io.FileUtils;
@@ -141,7 +140,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
-        assertEquals(new String(ss.getSalt()), "helloworld");
+        assertEquals(ss.getSalt(), "helloworld");
         assertEquals(r2, r3);
     }
 
@@ -288,7 +287,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 this.dao.delete(r2);
                 Thread.sleep(2000);
             } catch (final InterruptedException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
             assertNull(this.dao.findServiceById(r2.getId()));
         });

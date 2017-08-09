@@ -2,8 +2,12 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
+apply plugin: "application"
+
+def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 
 description = "Apereo CAS Web Application"
+mainClassName = MAIN_CLASS
 
 sourceSets {
     main {
@@ -18,16 +22,16 @@ javadoc {
 }
 
 
-if (Boolean.getBoolean("enableJRebelAgent")) {
+if (rootProject.enableJRebelAgent) {
     war.dependsOn(generateRebel)
 }
 
 springBoot  {
-    mainClass = "org.apereo.cas.web.CasWebApplication"
+    mainClass = MAIN_CLASS
 }
 
 bootRepackage {
-    mainClass = "org.apereo.cas.web.CasWebApplication"
+    mainClass = MAIN_CLASS
     enabled = !rootProject.publishReleases
 }
 
@@ -44,10 +48,10 @@ bootRun {
     systemProperties = System.properties
 
     def list = []
-    if (Boolean.getBoolean("enableRemoteDebugging")) {
+    if (rootProject.enableRemoteDebugging) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
     }
-    if (Boolean.getBoolean("enableJRebelAgent")) {
+    if (rootProject.enableJRebelAgent) {
         def lib = System.getProperty("JREBEL_LIB_PATH")
         list.add("-agentpath:$lib")
         list.add("-Drebel.remoting_plugin=true")
@@ -85,9 +89,10 @@ dependencies {
     compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-events-configuration")
     compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-configuration-metadata-server")
+    compile project(":core:cas-server-core-configuration-metadata-repository")
 
     compile project(":support:cas-server-support-throttle")
+    compile project(":support:cas-server-support-person-directory")
     compile project(":support:cas-server-support-configuration")
     compile project(":support:cas-server-support-geolocation")
     compile project(":support:cas-server-support-actions")

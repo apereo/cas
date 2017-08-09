@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
@@ -134,7 +133,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
             final Collection<X509CRL> results = this.fetcher.fetch(getResources());
             ResourceCRLRevocationChecker.this.addCrls(results);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         // Set up the scheduler to fetch periodically to implement refresh
@@ -154,7 +153,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
                     this.refreshInterval,
                     TimeUnit.SECONDS);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.support;
 
-import com.google.common.base.Throwables;
 import org.apache.shiro.util.ClassUtils;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -196,7 +195,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 final Class<LoginException> clazz = this.attributesToErrorMap.get(attr.getName());
                 final LoginException ex = (LoginException) ClassUtils.newInstance(clazz);
                 if (ex != null) {
-                    throw Throwables.propagate(ex);
+                    throw new RuntimeException(ex.getMessage(), ex);
                 }
             }
         }

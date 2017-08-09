@@ -3,6 +3,8 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for http.client.truststore.
  *
@@ -10,17 +12,18 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class HttpClientProperties {
+public class HttpClientProperties implements Serializable {
+    private static final long serialVersionUID = -7494946569869245770L;
     /**
      * Connection timeout for all operations that reach out to URL endpoints.
      */
     private String connectionTimeout = "PT5S";
-    
+
     /**
      * Read timeout for all operations that reach out to URL endpoints.
      */
     private String readTimeout = "PT5S";
-    
+
     /**
      * Indicates timeout for async operations.
      */
@@ -28,7 +31,7 @@ public class HttpClientProperties {
 
     /**
      * Enable hostname verification when attempting to contact URL endpoints.
-     * May also be set to <code>none</code> to disable verification.
+     * May also be set to {@code none} to disable verification.
      */
     private String hostNameVerifier = "default";
 
@@ -37,6 +40,12 @@ public class HttpClientProperties {
      */
     private Truststore truststore = new Truststore();
 
+    /**
+     * Whether CAS should accept local logout URLs.
+     * For example http(s)://localhost/logout
+     */    
+    private boolean allowLocalLogoutUrls;
+    
     public String getHostNameVerifier() {
         return hostNameVerifier;
     }
@@ -52,7 +61,7 @@ public class HttpClientProperties {
     public void setAsyncTimeout(final String asyncTimeout) {
         this.asyncTimeout = asyncTimeout;
     }
-    
+
     public Truststore getTruststore() {
         return truststore;
     }
@@ -76,9 +85,18 @@ public class HttpClientProperties {
     public void setReadTimeout(final String readTimeout) {
         this.readTimeout = readTimeout;
     }
+    
+    public boolean isAllowLocalLogoutUrls() {
+        return this.allowLocalLogoutUrls;
+    }
+    
+    public void setAllowLocalLogoutUrls(final boolean allowLocalLogoutUrls) {
+        this.allowLocalLogoutUrls = allowLocalLogoutUrls;
+    }
 
-    public static class Truststore {
+    public static class Truststore implements Serializable {
 
+        private static final long serialVersionUID = -1357168622083627654L;
         /**
          * The CAS local truststore resource to contain certificates to the CAS deployment.
          * In the event that local certificates are to be imported into the CAS running environment,

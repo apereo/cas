@@ -4,32 +4,81 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipal
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link WsFederationDelegationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+public class WsFederationDelegationProperties implements Serializable {
 
-public class WsFederationDelegationProperties {
-
+    private static final long serialVersionUID = 5743971334977239938L;
+    /**
+     * The attribute extracted from the assertion and used to construct the CAS principal id.
+     */
     private String identityAttribute = "upn";
+    /**
+     * The entity id or the identifier of the Wsfed instance.
+     */
     private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
+    /**
+     * Wsfed identity provider url.
+     */
     private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
+    /**
+     * Locations of signing certificates used to verify assertions.
+     */
     private String signingCertificateResources = "classpath:adfs-signing.crt";
+    /**
+     * The identifier for CAS (RP) registered with wsfed.
+     */
     private String relyingPartyIdentifier = "urn:cas:localhost";
+    /**
+     * Tolerance value used to skew assertions to support clock drift.
+     */
     private String tolerance = "PT10S";
+    /**
+     * Indicates how attributes should be recorded into the principal object. 
+     * Useful if you wish to additionally resolve attributes on top of what wsfed provides.
+     * Accepted values are {@code CAS,WSFED,BOTH}.
+     */
     private String attributesType = "WSFED";
+
+    /**
+     * Whether CAS should enable its own attribute resolution machinery
+     * after having received a response from wsfed.
+     */
     private boolean attributeResolverEnabled = true;
+
+    /**
+     * Whether CAS should auto redirect to this wsfed instance.
+     */
     private boolean autoRedirect = true;
 
+    /**
+     * The path to the private key used to handle and verify encrypted assertions.
+     */
     private String encryptionPrivateKey = "classpath:private.key";
+    /**
+     * The path to the public key/certificate used to handle and verify encrypted assertions.
+     */
     private String encryptionCertificate = "classpath:certificate.crt";
+    /**
+     * The private key password.
+     */
     private String encryptionPrivateKeyPassword = "NONE";
 
+    /**
+     * Principal resolution settings.
+     */
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
 
+    /**
+     * Name of the authentication handler.
+     */
     private String name;
 
     public String getName() {
