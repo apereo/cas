@@ -44,7 +44,8 @@ public class UsernamePasswordWrapperAuthenticationHandler
      */
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, 
+                                                        final PrincipalFactory principalFactory,
                                                         final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
@@ -77,19 +78,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     protected Class<UsernamePasswordCredential> getCasCredentialsType() {
         return UsernamePasswordCredential.class;
     }
-
-    public PasswordEncoder getPasswordEncoder() {
-        return this.passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public PrincipalNameTransformer getPrincipalNameTransformer() {
-        return this.principalNameTransformer;
-    }
-
+    
     public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
