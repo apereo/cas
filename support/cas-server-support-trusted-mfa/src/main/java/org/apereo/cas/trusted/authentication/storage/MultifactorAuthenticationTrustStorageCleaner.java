@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
@@ -24,10 +24,10 @@ public class MultifactorAuthenticationTrustStorageCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationTrustStorageCleaner.class);
 
-    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
+    private final TrustedDevicesMultifactorProperties trustedProperties;
     private final MultifactorAuthenticationTrustStorage storage;
 
-    public MultifactorAuthenticationTrustStorageCleaner(final MultifactorAuthenticationProperties.Trusted trustedProperties,
+    public MultifactorAuthenticationTrustStorageCleaner(final TrustedDevicesMultifactorProperties trustedProperties,
                                                         final MultifactorAuthenticationTrustStorage storage) {
         this.trustedProperties = trustedProperties;
         this.storage = storage;
@@ -36,11 +36,11 @@ public class MultifactorAuthenticationTrustStorageCleaner {
     /**
      * Clean up expired records.
      */
-    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.startDelay:PT10S}",
-               fixedDelayString = "${cas.authn.mfa.trusted.cleaner.repeatInterval:PT60S}")
+    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.startDelay:PT10S}",
+               fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeatInterval:PT60S}")
     public void clean() {
 
-        if (!trustedProperties.getCleaner().isEnabled()) {
+        if (!trustedProperties.getCleaner().getSchedule().isEnabled()) {
             LOGGER.debug("[{}] is disabled. Expired trusted authentication records will not automatically be cleaned up by CAS",
                     getClass().getName());
             return;

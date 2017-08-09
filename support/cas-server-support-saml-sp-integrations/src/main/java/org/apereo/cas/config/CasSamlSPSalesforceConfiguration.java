@@ -17,6 +17,6 @@ public class CasSamlSPSalesforceConfiguration extends BaseCasSamlSPConfiguration
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getSalesforce();
+        return casProperties.getSamlSp().getSalesforce();
     }
 }

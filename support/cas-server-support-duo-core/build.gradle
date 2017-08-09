@@ -1,4 +1,10 @@
 description = "Apereo CAS DuoSecurity Support"
+
+repositories {
+    maven { url "https://dl.bintray.com/uniconiam/maven" }
+    jcenter()
+}
+
 dependencies {
     api libraries.duojava
     compile files("./lib/duo-client-0.2.1-jar-with-dependencies.jar")

@@ -3,11 +3,10 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     /**
      * Duo Properties.
      */
-    protected final MultifactorAuthenticationProperties.Duo duoProperties;
+    protected final DuoSecurityMultifactorProperties duoProperties;
 
     private final transient HttpClient httpClient;
 
@@ -47,7 +46,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
      * @param duoProperties the duo properties
      * @param httpClient    the http client
      */
-    public BaseDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties, final HttpClient httpClient) {
+    public BaseDuoAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
     }
@@ -185,7 +184,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                     duoProperties.getDuoSecretKey());
             return request;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -202,7 +201,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                     duoProperties.getDuoSecretKey());
             return request;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

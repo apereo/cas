@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.ByteArrayOutputStream;
 
@@ -26,14 +25,11 @@ public class StaticUserGraphicalAuthenticationRepository implements UserGraphica
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @Override
     public ByteSource getGraphics(final String username) {
         try {
             final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-            final Resource resource = resourceLoader.getResource(gua.getResource().getLocation());
+            final Resource resource = gua.getResource().getLocation();
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copy(resource.getInputStream(), bos);
             return ByteSource.wrap(bos.toByteArray());

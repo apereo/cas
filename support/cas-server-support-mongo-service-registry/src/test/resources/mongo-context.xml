@@ -28,37 +28,37 @@
     <mongo:mapping-converter>
         <mongo:custom-converters>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.LoggerConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.LoggerConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.ClassConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.ClassConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.CommonsLogConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.CommonsLogConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.PersonAttributesConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.PersonAttributesConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.CacheLoaderConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.CacheLoaderConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.RunnableConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.RunnableConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.ReferenceQueueConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.ReferenceQueueConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.ThreadLocalConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.ThreadLocalConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.CertPathConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.CertPathConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.CacheBuilderConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.CacheBuilderConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.apereo.cas.services.convert.BaseConverters.CacheConverter"/>
+                <bean class="org.apereo.cas.mongo.BaseConverters.CacheConverter"/>
             </mongo:converter>
         </mongo:custom-converters>
     </mongo:mapping-converter>

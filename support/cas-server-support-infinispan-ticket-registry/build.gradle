@@ -1,10 +1,7 @@
 description = "Apereo CAS Infinispan Integration"
 dependencies {
-    
-    
-    
-
     implementation libraries.infinispan
+    implementation libraries.caffein
     compile project(":api:cas-server-core-api")
     compile project(":core:cas-server-core-tickets")
 

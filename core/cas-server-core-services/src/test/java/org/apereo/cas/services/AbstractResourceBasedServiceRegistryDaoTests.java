@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.BeforeClass;
@@ -140,7 +140,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
-        assertEquals(new String(ss.getSalt()), "helloworld");
+        assertEquals(ss.getSalt(), "helloworld");
         assertEquals(r2, r3);
     }
 
@@ -287,7 +287,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 this.dao.delete(r2);
                 Thread.sleep(2000);
             } catch (final InterruptedException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
             assertNull(this.dao.findServiceById(r2.getId()));
         });
@@ -384,6 +384,24 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         assertNotNull(s.getAccessStrategy());
     }
 
+    @Test
+    public void verifyMappedRegexAttributeFilter() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("something");
+        r.setName("verifyMappedRegexAttributeFilter");
+        r.setId(4245);
+
+        final ReturnAllowedAttributeReleasePolicy p = new ReturnAllowedAttributeReleasePolicy();
+        final RegisteredServiceMappedRegexAttributeFilter filter = new RegisteredServiceMappedRegexAttributeFilter();
+        filter.setCompleteMatch(true);
+        filter.setPatterns(CollectionUtils.wrap("one", "two"));
+        p.setAttributeFilter(filter);
+
+        r.setAttributeReleasePolicy(p);
+        this.dao.save(r);
+        this.dao.load();
+    }
+    
     @Test
     public void persistCustomServiceProperties() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();

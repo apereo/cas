@@ -1,6 +1,5 @@
 package org.apereo.cas.ws.idp.services;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.fediz.core.exception.ProcessingException;
@@ -66,7 +65,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             t.transform(new DOMSource(rpToken), new StreamResult(sw));
             return sw.toString();
         } catch (final TransformerException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -129,7 +128,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             }
             throw ex;
         } catch (final Exception ex) {
-            throw Throwables.propagate(ex);
+            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 }

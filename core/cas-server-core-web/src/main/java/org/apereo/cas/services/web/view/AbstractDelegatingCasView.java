@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web.view;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
@@ -50,7 +49,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
                 LOGGER.warn("No view is available to render the output for [{}]", this.getClass().getName());
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

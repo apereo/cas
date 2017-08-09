@@ -17,6 +17,7 @@ import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     private HttpClient httpClient;
 
     @Autowired
+    private UrlValidator urlValidator;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
@@ -62,7 +66,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
-        return new DefaultSingleLogoutServiceLogoutUrlBuilder();
+        return new DefaultSingleLogoutServiceLogoutUrlBuilder(this.urlValidator);
     }
 
     @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")

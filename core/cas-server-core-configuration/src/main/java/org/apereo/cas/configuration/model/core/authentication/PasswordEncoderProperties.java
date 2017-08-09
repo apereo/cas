@@ -23,6 +23,8 @@ public class PasswordEncoderProperties implements Serializable {
         DEFAULT,
         /**
          * Uses {@link org.springframework.security.crypto.password.StandardPasswordEncoder}.
+         * A standard {@code PasswordEncoder} implementation that uses SHA-256 hashing with 1024
+         * iterations and a random 8-byte random salt value.
          */
         STANDARD,
         /**
@@ -38,11 +40,39 @@ public class PasswordEncoderProperties implements Serializable {
          */
         PBKDF2
     }
+
+    /**
+     * Define the password encoder type to use.
+     * Type may be specified as blank or 'NONE' to disable password encoding.
+     * It may also refer to a fully-qualified class name that implements
+     * the {@link org.springframework.security.crypto.password.PasswordEncoder} interface
+     * if you wish you define your own encoder.
+     * @see PasswordEncoderTypes
+     */
     private String type = "NONE";
-    
+
+    /**
+     * The encoding algorithm to use such as 'MD5'.
+     * Relevant when the type used is 'DEFAULT'.
+     */
     private String encodingAlgorithm;
+
+    /**
+     * The encoding algorithm to use such as 'UTF-8'.
+     * Relevant when the type used is 'DEFAULT'.
+     */
     private String characterEncoding;
+
+    /**
+     * Secret to use with STANDARD, PBKDF2, BCRYPT password encoders.
+     * Secret usually is an optional setting.
+     */
     private String secret;
+
+    /**
+     * Strength or number of iterations to use for password hashing.
+     * Usually relevant when dealing with PBKDF2 or BCRYPT encoders.
+     */
     private int strength = 16;
 
     public int getStrength() {

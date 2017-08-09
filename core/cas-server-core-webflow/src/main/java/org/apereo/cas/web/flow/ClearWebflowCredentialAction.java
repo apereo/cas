@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ public class ClearWebflowCredentialAction extends AbstractAction {
                 final FlowVariable var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
                 var.create(requestContext);
             } catch (final Exception e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         } 
         return null;

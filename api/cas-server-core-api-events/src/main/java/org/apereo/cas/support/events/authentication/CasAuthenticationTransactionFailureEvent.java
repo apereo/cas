@@ -15,7 +15,7 @@ import java.util.Map;
 public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 8059647975948452375L;
 
-    private final Map<String, Class<? extends Exception>> failures;
+    private final Map<String, Class<? extends Throwable>> failures;
     private final Collection<Credential> credential;
 
     /**
@@ -26,7 +26,7 @@ public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
      * @param credential the credential
      */
     public CasAuthenticationTransactionFailureEvent(final Object source, 
-                                                    final Map<String, Class<? extends Exception>> failures,
+                                                    final Map<String, Class<? extends Throwable>> failures,
                                                     final Collection<Credential> credential) {
         super(source);
         this.failures = failures;
@@ -37,7 +37,7 @@ public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
         return credential.iterator().next();
     }
 
-    public Map<String, Class<? extends Exception>> getFailures() {
+    public Map<String, Class<? extends Throwable>> getFailures() {
         return failures;
     }
 }

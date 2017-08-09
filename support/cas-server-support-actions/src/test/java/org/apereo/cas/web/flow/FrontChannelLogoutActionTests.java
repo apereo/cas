@@ -9,6 +9,8 @@ import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowExecutionKey;
 
-import java.util.Collections;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -48,8 +50,10 @@ public class FrontChannelLogoutActionTests {
 
     @Before
     public void onSetUp() throws Exception {
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(false).getObject(); 
+        
         final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
-                new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(), false,
+                new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         final DefaultLogoutManager logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
                 handler, false, mock(LogoutExecutionPlan.class));
@@ -73,7 +77,7 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutNoIndex() throws Exception {
-        WebUtils.putLogoutRequests(this.requestContext, Collections.emptyList());
+        WebUtils.putLogoutRequests(this.requestContext, new ArrayList<>(0));
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }    

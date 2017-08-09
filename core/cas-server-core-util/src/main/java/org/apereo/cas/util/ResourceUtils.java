@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -51,15 +50,15 @@ public final class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getRawResourceFrom(final String location) throws IOException {
-        final AbstractResource metadataLocationResource;
+        final AbstractResource res;
         if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
-            metadataLocationResource = new UrlResource(location);
+            res = new UrlResource(location);
         } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
-            metadataLocationResource = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
+            res = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         } else {
-            metadataLocationResource = new FileSystemResource(location);
+            res = new FileSystemResource(StringUtils.remove(location, "file:"));
         }
-        return metadataLocationResource;
+        return res;
     }
 
     /**
@@ -190,7 +189,7 @@ public final class ResourceUtils {
             }
             return new FileSystemResource(destination);
         } catch (final IOException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

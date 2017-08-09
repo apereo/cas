@@ -24,9 +24,9 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -159,7 +159,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             messageList = accountStateHandler.handle(response, ldapPasswordPolicyConfiguration);
         } else {
             LOGGER.debug("No ldap password policy configuration is defined");
-            messageList = Collections.emptyList();
+            messageList = new ArrayList<>(0);
         }
 
         if (response.getResult()) {

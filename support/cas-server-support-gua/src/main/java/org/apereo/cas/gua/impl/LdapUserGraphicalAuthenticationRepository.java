@@ -3,7 +3,7 @@ package org.apereo.cas.gua.impl;
 import com.google.common.io.ByteSource;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
+
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.LdapAttribute;
@@ -52,11 +52,11 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
 
     private Response<SearchResult> searchForId(final String id) throws LdapException {
         final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-        final SearchFilter filter = Beans.newLdaptiveSearchFilter(gua.getLdap().getUserFilter(),
-                Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getUserFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id));
         return LdapUtils.executeSearchOperation(
-                Beans.newLdaptiveConnectionFactory(gua.getLdap()),
+                LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
                 gua.getLdap().getBaseDn(), filter,
                 new String[]{gua.getLdap().getImageAttribute()},
                 ReturnAttributes.NONE.value());

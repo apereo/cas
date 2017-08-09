@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
@@ -12,11 +11,14 @@ import org.apache.http.protocol.HttpContext;
 import org.apereo.cas.adaptors.rest.RestAuthenticationApi;
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,6 +45,10 @@ import java.net.URI;
 public class CasRestAuthenticationConfiguration {
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
+    @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
@@ -58,10 +64,17 @@ public class CasRestAuthenticationConfiguration {
             final ClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactoryBasicAuth(host);
             return new RestTemplate(factory);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
-
+    
+    @ConditionalOnMissingBean(name = "restAuthenticationPrincipalFactory")
+    @Bean
+    @RefreshScope
+    public PrincipalFactory restAuthenticationPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+    
     @ConditionalOnMissingBean(name = "restAuthenticationApi")
     @Bean
     @RefreshScope
@@ -73,7 +86,8 @@ public class CasRestAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler restAuthenticationHandler() {
         final RestAuthenticationProperties rest = casProperties.getAuthn().getRest();
-        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi());
+        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(), 
+                servicesManager, restAuthenticationPrincipalFactory());
         r.setPasswordEncoder(Beans.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;
     }

@@ -7,7 +7,8 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
-
+    enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
+    enableJRebelAgent = Boolean.getBoolean("enableJRebelAgent")
     /*
     Open the Git repository in the current directory.
     Get commit id of HEAD.
@@ -48,8 +49,8 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.1"
-        classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
+        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.5"
+        classpath "org.standardout:gradle-versioneye-plugin:1.5.0"
         classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
         classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.7.2"
@@ -126,22 +127,12 @@ subprojects {
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
-
-
+    
     repositories {
         mavenLocal()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
-        maven { url "https://repo.maven.apache.org/maven2" }
-        maven { url "https://jitpack.io" }
-        maven { url "https://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "https://files.couchbase.com/maven2" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/libs-snapshot" }
-        maven { url "https://dl.bintray.com/uniconiam/maven" }
         jcenter()
     }
 
@@ -149,6 +140,7 @@ subprojects {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()
         scanForTestClasses = false
+        maxParallelForks = 10
 
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
@@ -175,8 +167,17 @@ subprojects {
             preferProjectModules()
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
-        }
 
+            /**
+             * Required for all JRadius modules
+             */
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == "gnu-getopt") {
+                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
+                }
+            }
+        }
+        
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
@@ -279,8 +280,11 @@ subprojects {
         api libraries.commons
         api libraries.jodatime
         api libraries.inspektr
+        api libraries.persondirectory
         api libraries.spring
         api libraries.jackson
+        api libraries.httpclient
+        api libraries.quartz
         api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
@@ -297,11 +301,12 @@ subprojects {
 
         testImplementation libraries.tests
     }
-
-
-    generateRebel.enabled = Boolean.getBoolean("enableJRebelAgent")
-    if (Boolean.getBoolean("enableJRebelAgent")) {
+    
+    if (rootProject.enableJRebelAgent) {
+        generateRebel.enabled = true
         jar.dependsOn(generateRebel)
+    } else {
+        generateRebel.enabled = false 
     }
 }
 

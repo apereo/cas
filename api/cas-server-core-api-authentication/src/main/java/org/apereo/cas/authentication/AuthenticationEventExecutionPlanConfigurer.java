@@ -6,7 +6,7 @@ package org.apereo.cas.authentication;
  * to register authentication handlers, etc.
  * <p>
  * Since this interface conforms to a functional interface requirement, typical implementors
- * are <code>@Conditional</code> beans expressed as compact lambda expressions inside of various CAS modules that
+ * are {@code @Conditional} beans expressed as compact lambda expressions inside of various CAS modules that
  * contribute to the overall CAS authentication subsystem.
  * <p>
  * Note: Existing configuration classes that are injected authentication-related functionality

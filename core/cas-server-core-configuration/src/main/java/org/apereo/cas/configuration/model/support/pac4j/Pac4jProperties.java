@@ -1,9 +1,8 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link Pac4jProperties}.
@@ -11,37 +10,100 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+public class Pac4jProperties implements Serializable {
 
-public class Pac4jProperties {
-
+    private static final long serialVersionUID = 4388567744591488495L;
+    /**
+     * When constructing the final user profile from
+     * the delegated provider, determines if the provider id
+     * should be combined with the principal id.
+     */
     private boolean typedIdUsed;
+    /**
+     * Whether CAS should auto-redirect to the provider.
+     */
     private boolean autoRedirect;
-
+    /**
+     * Settings that deal with having Facebook as an external delegated-to authentication provider.
+     */
     private Facebook facebook = new Facebook();
+    /**
+     * Settings that deal with having Twitter as an external delegated-to authentication provider.
+     */
     private Twitter twitter = new Twitter();
-    private List<Saml> saml = new ArrayList<>();
-    private List<Oidc> oidc = new ArrayList<>();
-    private List<OAuth20> oauth2 = new ArrayList<>();
-    private List<Cas> cas = new ArrayList<>();
+    /**
+     * Settings that deal with having SAML2 IdPs as an external delegated-to authentication provider.
+     */
+    private List<Pac4jSamlProperties> saml = new ArrayList<>();
+    /**
+     * Settings that deal with having OpenID Connect Providers as an external delegated-to authentication provider.
+     */
+    private List<Pac4jOidcProperties> oidc = new ArrayList<>();
+    /**
+     * Settings that deal with having OAuth2-capable providers as an external delegated-to authentication provider.
+     */
+    private List<Pac4jOAuth20Properties> oauth2 = new ArrayList<>();
 
+    /**
+     * Settings that deal with having CAS Servers as an external delegated-to authentication provider.
+     */
+    private List<Pac4jCasProperties> cas = new ArrayList<>();
+
+    /**
+     * Settings that deal with having LinkedIn as an external delegated-to authentication provider.
+     */
     private LinkedIn linkedIn = new LinkedIn();
+    /**
+     * Settings that deal with having Dropbox as an external delegated-to authentication provider.
+     */
     private Dropbox dropbox = new Dropbox();
+    /**
+     * Settings that deal with having Orcid as an external delegated-to authentication provider.
+     */
+    private Orcid orcid = new Orcid();
+    /**
+     * Settings that deal with having Github as an external delegated-to authentication provider.
+     */
     private Github github = new Github();
+    /**
+     * Settings that deal with having Google as an external delegated-to authentication provider.
+     */
     private Google google = new Google();
+    /**
+     * Settings that deal with having Yahoo as an external delegated-to authentication provider.
+     */
     private Yahoo yahoo = new Yahoo();
+    /**
+     * Settings that deal with having FourSquare as an external delegated-to authentication provider.
+     */
     private Foursquare foursquare = new Foursquare();
+    /**
+     * Settings that deal with having WindowsLive as an external delegated-to authentication provider.
+     */
     private WindowsLive windowsLive = new WindowsLive();
+    /**
+     * Settings that deal with having Paypal as an external delegated-to authentication provider.
+     */
     private Paypal paypal = new Paypal();
+    /**
+     * Settings that deal with having WordPress as an external delegated-to authentication provider.
+     */
     private Wordpress wordpress = new Wordpress();
+    /**
+     * Settings that deal with having BitBucket as an external delegated-to authentication provider.
+     */
     private Bitbucket bitbucket = new Bitbucket();
 
+    /**
+     * The name of the authentication handler in CAS used for delegation.
+     */
     private String name;
 
-    public List<OAuth20> getOauth2() {
+    public List<Pac4jOAuth20Properties> getOauth2() {
         return oauth2;
     }
 
-    public void setOauth2(final List<OAuth20> oauth2) {
+    public void setOauth2(final List<Pac4jOAuth20Properties> oauth2) {
         this.oauth2 = oauth2;
     }
 
@@ -157,27 +219,27 @@ public class Pac4jProperties {
         this.twitter = twitter;
     }
 
-    public void setSaml(final List<Saml> saml) {
+    public void setSaml(final List<Pac4jSamlProperties> saml) {
         this.saml = saml;
     }
 
-    public void setOidc(final List<Oidc> oidc) {
+    public void setOidc(final List<Pac4jOidcProperties> oidc) {
         this.oidc = oidc;
     }
 
-    public void setCas(final List<Cas> cas) {
+    public void setCas(final List<Pac4jCasProperties> cas) {
         this.cas = cas;
     }
 
-    public List<Cas> getCas() {
+    public List<Pac4jCasProperties> getCas() {
         return this.cas;
     }
 
-    public List<Saml> getSaml() {
+    public List<Pac4jSamlProperties> getSaml() {
         return this.saml;
     }
 
-    public List<Oidc> getOidc() {
+    public List<Pac4jOidcProperties> getOidc() {
         return this.oidc;
     }
 
@@ -189,28 +251,30 @@ public class Pac4jProperties {
         return this.twitter;
     }
 
-    public static class LinkedIn {
-        private String id;
-        private String secret;
+    public Orcid getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(final Orcid orcid) {
+        this.orcid = orcid;
+    }
+
+    public static class LinkedIn extends Pac4jGenericClientProperties {
+
+        private static final long serialVersionUID = 4633395854143281872L;
+        /**
+         * The requested scope.
+         */
         private String scope;
+        /**
+         * Custom fields to include in the request.
+         */
         private String fields;
 
-        public String getId() {
-            return this.id;
+        public LinkedIn() {
+            setClientName("LinkedIn");
         }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-
+        
         public String getScope() {
             return this.scope;
         }
@@ -228,28 +292,21 @@ public class Pac4jProperties {
         }
     }
 
-    public static class Facebook {
-        private String id;
-        private String secret;
+    public static class Facebook extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -2737594266552466076L;
+        /**
+         * The requested scope.
+         */
         private String scope;
+        /**
+         * Custom fields to include in the request.
+         */
         private String fields;
 
-        public String getId() {
-            return this.id;
+        public Facebook() {
+            setClientName("Facebook");
         }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-
+        
         public String getScope() {
             return this.scope;
         }
@@ -267,533 +324,94 @@ public class Pac4jProperties {
         }
     }
 
-    public static class Bitbucket {
-        private String id;
-        private String secret;
+    public static class Bitbucket extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -6189494666598669078L;
 
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
+        public Bitbucket() { 
+            setClientName("Bitbucket");
         }
     }
 
-    public static class Wordpress {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
+    public static class Wordpress extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 4636855941699435914L;
+        public Wordpress() {
+            setClientName("Wordpress");
         }
     }
 
-    public static class Paypal {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
+    public static class Paypal extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -5663033494303169583L;
+        public Paypal() {
+            setClientName("Paypal");
         }
     }
 
-    public static class OAuth20 {
-        private String id;
-        private String secret;
-
-        private String authUrl;
-        private String tokenUrl;
-        private String profileUrl;
-        private String profilePath;
-        private String profileVerb = "POST";
-        private Map<String, String> profileAttrs;
-        private Map<String, String> customParams;
-
-        public String getAuthUrl() {
-            return authUrl;
+    public static class Twitter extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 6906343970517008092L;
+        public Twitter() {
+            setClientName("Twitter");
         }
-
-        public void setAuthUrl(final String authUrl) {
-            this.authUrl = authUrl;
-        }
-
-        public String getTokenUrl() {
-            return tokenUrl;
-        }
-
-        public void setTokenUrl(final String tokenUrl) {
-            this.tokenUrl = tokenUrl;
-        }
-
-        public String getProfileUrl() {
-            return profileUrl;
-        }
-
-        public void setProfileUrl(final String profileUrl) {
-            this.profileUrl = profileUrl;
-        }
-
-        public String getProfilePath() {
-            return profilePath;
-        }
-
-        public void setProfilePath(final String profilePath) {
-            this.profilePath = profilePath;
-        }
-
-        public String getProfileVerb() {
-            return profileVerb;
-        }
-
-        public void setProfileVerb(final String profileVerb) {
-            this.profileVerb = profileVerb;
-        }
-
-        public Map<String, String> getProfileAttrs() {
-            return profileAttrs;
-        }
-
-        public void setProfileAttrs(final Map<String, String> profileAttrs) {
-            this.profileAttrs = profileAttrs;
-        }
-
-        public Map<String, String> getCustomParams() {
-            return customParams;
-        }
-
-        public void setCustomParams(final Map<String, String> customParams) {
-            this.customParams = customParams;
-        }
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
+    }
+    
+    public static class Github extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 9217581995885784515L;
+        public Github() {
+            setClientName("Github");
         }
     }
 
-
-    public static class Twitter {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
+    public static class Yahoo extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 8011580257047982361L;
+        public Yahoo() {
+            setClientName("Yahoo");
         }
     }
 
-    public static class Saml {
-        private String keystorePassword;
-        private String privateKeyPassword;
-        private String keystorePath;
-        private String identityProviderMetadataPath;
-        private int maximumAuthenticationLifetime = 600;
-        private String serviceProviderEntityId;
-        private String serviceProviderMetadataPath;
-        private String clientName;
-        private boolean forceAuth;
-        private String authnContextClassRef;
-        private String keystoreAlias;
-        private String nameIdPolicyFormat;
-        private boolean wantsAssertionsSigned;
-
-        public boolean isForceAuth() {
-            return forceAuth;
-        }
-
-        public void setForceAuth(final boolean forceAuth) {
-            this.forceAuth = forceAuth;
-        }
-
-        public String getAuthnContextClassRef() {
-            return authnContextClassRef;
-        }
-
-        public void setAuthnContextClassRef(final String authnContextClassRef) {
-            this.authnContextClassRef = authnContextClassRef;
-        }
-
-        public String getKeystoreAlias() {
-            return keystoreAlias;
-        }
-
-        public void setKeystoreAlias(final String keystoreAlias) {
-            this.keystoreAlias = keystoreAlias;
-        }
-
-        public String getNameIdPolicyFormat() {
-            return nameIdPolicyFormat;
-        }
-
-        public void setNameIdPolicyFormat(final String nameIdPolicyFormat) {
-            this.nameIdPolicyFormat = nameIdPolicyFormat;
-        }
-
-        public boolean isWantsAssertionsSigned() {
-            return wantsAssertionsSigned;
-        }
-
-        public void setWantsAssertionsSigned(final boolean wantsAssertionsSigned) {
-            this.wantsAssertionsSigned = wantsAssertionsSigned;
-        }
-
-        public String getKeystorePassword() {
-            return this.keystorePassword;
-        }
-
-        public void setKeystorePassword(final String keystorePassword) {
-            this.keystorePassword = keystorePassword;
-        }
-
-        public String getPrivateKeyPassword() {
-            return this.privateKeyPassword;
-        }
-
-        public void setPrivateKeyPassword(final String privateKeyPassword) {
-            this.privateKeyPassword = privateKeyPassword;
-        }
-
-        public String getKeystorePath() {
-            return this.keystorePath;
-        }
-
-        public void setKeystorePath(final String keystorePath) {
-            this.keystorePath = keystorePath;
-        }
-
-        public String getIdentityProviderMetadataPath() {
-            return this.identityProviderMetadataPath;
-        }
-
-        public void setIdentityProviderMetadataPath(final String identityProviderMetadataPath) {
-            this.identityProviderMetadataPath = identityProviderMetadataPath;
-        }
-
-        public int getMaximumAuthenticationLifetime() {
-            return this.maximumAuthenticationLifetime;
-        }
-
-        public void setMaximumAuthenticationLifetime(final int maximumAuthenticationLifetime) {
-            this.maximumAuthenticationLifetime = maximumAuthenticationLifetime;
-        }
-
-        public String getServiceProviderEntityId() {
-            return this.serviceProviderEntityId;
-        }
-
-        public void setServiceProviderEntityId(final String serviceProviderEntityId) {
-            this.serviceProviderEntityId = serviceProviderEntityId;
-        }
-
-        public String getServiceProviderMetadataPath() {
-            return serviceProviderMetadataPath;
-        }
-
-        public void setServiceProviderMetadataPath(final String serviceProviderMetadataPath) {
-            this.serviceProviderMetadataPath = serviceProviderMetadataPath;
-        }
-
-        public String getClientName() {
-            return clientName;
-        }
-
-        public void setClientName(final String clientName) {
-            this.clientName = clientName;
+    public static class Foursquare extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -1784820695301605307L;
+        public Foursquare() {
+            setClientName("Foursquare");
         }
     }
 
-    public static class Cas {
-        private String loginUrl;
-        private String protocol;
-
-        public String getLoginUrl() {
-            return this.loginUrl;
-        }
-
-        public void setLoginUrl(final String loginUrl) {
-            this.loginUrl = loginUrl;
-        }
-
-        public String getProtocol() {
-            return this.protocol;
-        }
-
-        public void setProtocol(final String protocol) {
-            this.protocol = protocol;
+    public static class Dropbox extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -1508055128010569953L;
+        public Dropbox() {
+            setClientName("Dropbox");
         }
     }
 
-    public static class Oidc {
-        private String type = "generic";
-        private String id;
-        private String secret;
-        private String discoveryUri;
-        private boolean useNonce;
+    public static class Orcid extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = 1337923364401817796L;
+        public Orcid() {
+            setClientName("ORCID");
+        }
+    }
+
+    public static class WindowsLive extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -1816309711278174847L;
+        public WindowsLive() {
+            setClientName("Windows Live");
+        }
+    }
+
+    public static class Google extends Pac4jGenericClientProperties {
+        private static final long serialVersionUID = -3023053058552426312L;
+        /**
+         * The requested scope from the provider.
+         */
         private String scope;
-        private String preferredJwsAlgorithm;
-        private int maxClockSkew;
-        private Map<String, String> customParams = new HashMap<>();
 
-        public Map<String, String> getCustomParams() {
-            return customParams;
+        public Google() {
+            setClientName("Google");
         }
-
-        public void setCustomParams(final Map<String, String> customParams) {
-            this.customParams = customParams;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(final String type) {
-            this.type = type;
-        }
-
+        
         public String getScope() {
             return scope;
         }
 
         public void setScope(final String scope) {
             this.scope = scope;
-        }
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-
-        public String getDiscoveryUri() {
-            return this.discoveryUri;
-        }
-
-        public void setDiscoveryUri(final String discoveryUri) {
-            this.discoveryUri = discoveryUri;
-        }
-
-        public boolean isUseNonce() {
-            return useNonce;
-        }
-
-        public void setUseNonce(final boolean useNonce) {
-            this.useNonce = useNonce;
-        }
-
-        public String getPreferredJwsAlgorithm() {
-            return this.preferredJwsAlgorithm;
-        }
-
-        public void setPreferredJwsAlgorithm(final String preferredJwsAlgorithm) {
-            this.preferredJwsAlgorithm = preferredJwsAlgorithm;
-        }
-
-        public int getMaxClockSkew() {
-            return this.maxClockSkew;
-        }
-
-        public void setMaxClockSkew(final int maxClockSkew) {
-            this.maxClockSkew = maxClockSkew;
-        }
-    }
-
-    public static class Github {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-    }
-
-    public static class Yahoo {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-    }
-
-    public static class Foursquare {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-    }
-
-    public static class Dropbox {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-    }
-
-    public static class WindowsLive {
-        private String id;
-        private String secret;
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
-        }
-    }
-
-    public static class Google {
-        private String id;
-        private String secret;
-        private String scope;
-
-        public String getScope() {
-            return scope;
-        }
-
-        public void setScope(final String scope) {
-            this.scope = scope;
-        }
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        public String getSecret() {
-            return this.secret;
-        }
-
-        public void setSecret(final String secret) {
-            this.secret = secret;
         }
     }
 }

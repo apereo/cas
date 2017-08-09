@@ -3,7 +3,7 @@ dependencies {
 
     compile project(":core:cas-server-core-authentication")
     
-    implementation libraries.quartz
+    
     implementation libraries.shiro
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")

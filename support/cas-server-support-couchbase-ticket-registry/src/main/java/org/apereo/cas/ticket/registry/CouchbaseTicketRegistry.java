@@ -6,7 +6,6 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
-import com.google.common.base.Throwables;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -25,11 +24,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.function.Consumer;
 
 /**
  * A Ticket Registry storage backend which uses the memcached protocol.
@@ -54,7 +50,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
-
 
     /**
      * Views available.
@@ -142,14 +137,14 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Shutting down Couchbase");
             this.couchbase.shutdown();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
     @Override
     public Collection<Ticket> getTickets() {
         LOGGER.debug("getTickets() isn't supported. Returning empty list");
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -192,26 +187,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
                 + getViewRowCountFromViewResultIterator(oauthcodeIt)
                 + getViewRowCountFromViewResultIterator(refreshTokenIt);
 
-        Stream<ViewRow> tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(grantingTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
+        final Consumer<? super ViewRow> remove = t -> this.couchbase.getBucket().remove(t.document());
 
-        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(serviceTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
-
-        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(proxyTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
-
-        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(proxyGrantingTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
-
-        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(accessTokenIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
-
-        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(oauthcodeIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
-
-        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(refreshTokenIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
+        grantingTicketsIt.forEachRemaining(remove);
+        serviceTicketsIt.forEachRemaining(remove);
+        proxyTicketsIt.forEachRemaining(remove);
+        proxyGrantingTicketsIt.forEachRemaining(remove);
+        accessTokenIt.forEachRemaining(remove);
+        oauthcodeIt.forEachRemaining(remove);
+        refreshTokenIt.forEachRemaining(remove);
 
         return count;
     }

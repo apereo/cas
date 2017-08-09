@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry.support;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -11,9 +10,11 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -79,7 +80,9 @@ import static org.junit.Assert.*;
         CasCoreTicketCatalogConfiguration.class,
         JpaTicketRegistryTicketCatalogConfiguration.class,
         CasPersonDirectoryConfiguration.class,
-        JpaTicketRegistryConfiguration.class})
+        JpaTicketRegistryConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class JpaLockingStrategyTests {
     /**
@@ -248,7 +251,7 @@ public class JpaLockingStrategyTests {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
@@ -260,7 +263,7 @@ public class JpaLockingStrategyTests {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
         assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);

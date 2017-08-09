@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.sso;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for {@code create.sso}.
  *
@@ -7,10 +9,17 @@ package org.apereo.cas.configuration.model.core.sso;
  * @since 5.0.0
  */
 
-public class SsoProperties {
+public class SsoProperties implements Serializable {
 
+    private static final long serialVersionUID = -8777647966370741733L;
+    /**
+     * Flag that indicates whether to create SSO session on re-newed authentication event.
+     */
     private boolean renewedAuthn = true;
 
+    /**
+     * Flag that indicates whether to allow SSO session with a missing target service.
+     */
     private boolean missingService = true;
 
     public boolean isRenewedAuthn() {

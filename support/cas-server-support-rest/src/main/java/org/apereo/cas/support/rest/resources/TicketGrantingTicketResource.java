@@ -3,6 +3,7 @@ package org.apereo.cas.support.rest.resources;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -121,14 +122,24 @@ public class TicketGrantingTicketResource {
         final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
         final HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ticketReference);
-        headers.setContentType(MediaType.TEXT_HTML);
-        final String tgtUrl = ticketReference.toString();
-        final String response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
-                .append(DOCTYPE_AND_OPENING_FORM)
-                .append(tgtUrl)
-                .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
-                .toString();
+        final String response;
+        if (isDefaultContentType(request)) {
+            headers.setContentType(MediaType.TEXT_HTML);
+            final String tgtUrl = ticketReference.toString();
+            response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
+                    .append(DOCTYPE_AND_OPENING_FORM)
+                    .append(tgtUrl)
+                    .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
+                    .toString();
+        } else {
+            response = tgtId.getId();
+        }
         return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
+    }
+
+    private boolean isDefaultContentType(final HttpServletRequest request) {
+        final String accept = request.getHeader(HttpHeaders.ACCEPT) == null ? null : request.getHeader(HttpHeaders.ACCEPT).trim();
+        return StringUtils.isBlank(accept) || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE);
     }
 
     private TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,

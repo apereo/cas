@@ -1,29 +1,60 @@
 package org.apereo.cas.configuration.model.support.consent;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link ConsentProperties}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.2.0
  */
-public class ConsentProperties {
+public class ConsentProperties implements Serializable {
+    private static final long serialVersionUID = 5201308051524438384L;
+    /**
+     * Global reminder time unit, to reconfirm consent
+     * in cases no changes are detected.
+     */
     private int reminder = 30;
-    private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
+    /**
+     * Global reminder time unit of measure, to reconfirm consent
+     * in cases no changes are detected.
+     */
+    private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
+    /**
+     * Keep consent decisions stored via REST.
+     */
     private Rest rest = new Rest();
+
+    /**
+     * Keep consent decisions stored via JDBC resources.
+     */
     private Jpa jpa = new Jpa();
+
+    /**
+     * Keep consent decisions stored via a static JSON resource.
+     */
     private Json json = new Json();
     
-    private String encryptionKey = StringUtils.EMPTY;
-    private String signingKey = StringUtils.EMPTY;
-    private boolean cipherEnabled = true;
+    /**
+     * Signing/encryption settings.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+    
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
 
     public Json getJson() {
         return json;
@@ -49,11 +80,11 @@ public class ConsentProperties {
         this.reminder = reminder;
     }
 
-    public TimeUnit getReminderTimeUnit() {
+    public ChronoUnit getReminderTimeUnit() {
         return reminderTimeUnit;
     }
 
-    public void setReminderTimeUnit(final TimeUnit reminderTimeUnit) {
+    public void setReminderTimeUnit(final ChronoUnit reminderTimeUnit) {
         this.reminderTimeUnit = reminderTimeUnit;
     }
 
@@ -65,34 +96,10 @@ public class ConsentProperties {
         this.rest = rest;
     }
 
-    public String getEncryptionKey() {
-        return encryptionKey;
-    }
-
-    public void setEncryptionKey(final String encryptionKey) {
-        this.encryptionKey = encryptionKey;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(final String signingKey) {
-        this.signingKey = signingKey;
-    }
-
-    public boolean isCipherEnabled() {
-        return cipherEnabled;
-    }
-
-    public void setCipherEnabled(final boolean cipherEnabled) {
-        this.cipherEnabled = cipherEnabled;
-    }
-
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
-    
+
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 1646689616653363554L;
     }
@@ -100,6 +107,9 @@ public class ConsentProperties {
     public static class Rest implements Serializable {
         private static final long serialVersionUID = -6909617495470495341L;
 
+        /**
+         * REST endpoint to use to which consent decision records will be submitted.
+         */
         private String endpoint;
 
         public String getEndpoint() {

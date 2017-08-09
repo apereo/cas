@@ -135,8 +135,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public IssueOperation transportIssueDelegate() {
-        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();
 
         final ClaimsManager claimsManager = new ClaimsManager();
         claimsManager.setClaimHandlers(Arrays.asList(new WrappingSecurityTokenServiceClaimsHandler(
@@ -186,8 +186,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public RealmProperties casRealm() {
-        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
 
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
@@ -203,7 +202,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public Map<String, RealmProperties> realms() {
-        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();
         final Map<String, RealmProperties> realms = new HashMap<>();
         realms.put(idp.getRealmName(), casRealm());
         return realms;
@@ -212,7 +211,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
-        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
 
         final DefaultSubjectProvider s = new DefaultSubjectProvider();
         switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
@@ -246,7 +245,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Bean
     public TokenValidator transportSamlTokenValidator() {
-        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();
         final SAMLTokenValidator v = new SAMLTokenValidator();
         return v;
     }
@@ -269,8 +268,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @ConditionalOnMissingBean(name = "transportSTSProperties")
     @Bean
     public STSPropertiesMBean transportSTSProperties() {
-        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();
 
         final StaticSTSProperties s = new StaticSTSProperties();
         s.setIssuer(getClass().getSimpleName());
@@ -290,7 +289,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
-        return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdP(),
+        return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
                 casProperties.getServer().getPrefix());
     }
 
@@ -306,8 +305,10 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
-        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getEncryptionKey(), wsfed.getSigningKey());
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),
+                wsfed.getCrypto().getSigning().getKey(),
+                wsfed.getCrypto().getAlg());
     }
 
     @Bean

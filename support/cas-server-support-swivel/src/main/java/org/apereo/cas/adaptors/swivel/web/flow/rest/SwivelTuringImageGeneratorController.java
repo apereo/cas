@@ -1,9 +1,8 @@
 package org.apereo.cas.adaptors.swivel.web.flow.rest;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,9 +21,9 @@ import java.net.URL;
  */
 @RestController
 public class SwivelTuringImageGeneratorController {
-    private final MultifactorAuthenticationProperties.Swivel swivel;
+    private final SwivelMultifactorProperties swivel;
 
-    public SwivelTuringImageGeneratorController(final MultifactorAuthenticationProperties.Swivel swivel) {
+    public SwivelTuringImageGeneratorController(final SwivelMultifactorProperties swivel) {
         this.swivel = swivel;
     }
 
@@ -55,7 +54,7 @@ public class SwivelTuringImageGeneratorController {
             final BufferedImage image = ImageIO.read(url);
             ImageIO.write(image, "png", stream);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

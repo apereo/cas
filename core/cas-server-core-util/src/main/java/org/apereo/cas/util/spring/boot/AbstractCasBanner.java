@@ -1,7 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import com.vdurmont.semver4j.Semver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -70,8 +69,8 @@ public abstract class AbstractCasBanner implements Banner {
         }
 
         try (Formatter formatter = new Formatter()) {
-            formatter.format("CAS Version: %s%n", CasVersion.getVersion());
-            formatter.format("CAS Commit Id: %s%n", CasVersion.getSpecificationVersion());
+            formatter.format("CAS Version: %s%n", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
+            formatter.format("CAS Commit Id: %s%n", StringUtils.defaultString(CasVersion.getSpecificationVersion(), "Not Available"));
             formatter.format("CAS Build Date/Time: %s%n", CasVersion.getDateTime());
             formatter.format("Spring Boot Version: %s%n", SpringBootVersion.getVersion());
             formatter.format("%s%n", LINE_SEPARATOR);
@@ -135,7 +134,7 @@ public abstract class AbstractCasBanner implements Banner {
             }
 
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
     }

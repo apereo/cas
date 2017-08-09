@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.redis;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties for Redis.
@@ -9,8 +11,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author serv
  * @since 5.1.0
  */
-public class RedisTicketRegistryProperties {
+public class RedisTicketRegistryProperties implements Serializable {
 
+    private static final long serialVersionUID = -2600996050439638782L;
     /**
      * Database index used by the connection factory.
      */
@@ -36,16 +39,22 @@ public class RedisTicketRegistryProperties {
      */
     private int timeout;
 
+    /**
+     * Radius connection pool settings.
+     */
     private Pool pool;
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
-    public CryptographyProperties getCrypto() {
+    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final CryptographyProperties crypto) {
+    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
     
@@ -100,8 +109,9 @@ public class RedisTicketRegistryProperties {
     /**
      * Pool properties.
      */
-    public static class Pool {
+    public static class Pool implements Serializable {
 
+        private static final long serialVersionUID = 8534823157764550894L;
         /**
          * Max number of "idle" connections in the pool. Use a negative value to indicate
          * an unlimited number of idle connections.

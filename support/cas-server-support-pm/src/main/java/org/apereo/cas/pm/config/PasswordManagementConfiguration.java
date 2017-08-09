@@ -2,6 +2,7 @@ package org.apereo.cas.pm.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
@@ -35,7 +36,7 @@ import java.io.Serializable;
 public class PasswordManagementConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -48,10 +49,12 @@ public class PasswordManagementConfiguration {
     @Bean
     public CipherExecutor<Serializable, String> passwordManagementCipherExecutor() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        if (pm.isEnabled()) {
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = pm.getReset().getCrypto();
+        if (pm.isEnabled() && crypto.isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
-                    pm.getReset().getSecurity().getEncryptionKey(),
-                    pm.getReset().getSecurity().getSigningKey());
+                    crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg());
         }
         return NoOpCipherExecutor.getInstance();
     }
@@ -62,7 +65,7 @@ public class PasswordManagementConfiguration {
     public PasswordManagementService passwordChangeService() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            final Resource location = pm.getJson().getConfig().getLocation();
+            final Resource location = pm.getJson().getLocation();
             if (location != null) {
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                 return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor(),
@@ -73,7 +76,7 @@ public class PasswordManagementConfiguration {
                     + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
                     + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
         } else {
-            LOGGER.info("Password management is disabled. To enabled the password management functionality, "
+            LOGGER.info("Password management is disabled. To enable the password management functionality, "
                     + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),

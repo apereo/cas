@@ -5,6 +5,7 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 /**
  * This is {@link SLOPostProfileHandlerController}, responsible for
@@ -43,14 +43,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlSLOProfileHandl
      * @param samlRegisteredServiceCachingMetadataResolver the saml registered service caching metadata resolver
      * @param configBean                                   the config bean
      * @param responseBuilder                              the response builder
-     * @param authenticationContextClassMappings           the authentication context class mappings
-     * @param serverPrefix                                 the server prefix
-     * @param serverName                                   the server name
-     * @param authenticationContextRequestParameter        the authentication context request parameter
-     * @param loginUrl                                     the login url
-     * @param logoutUrl                                    the logout url
-     * @param forceSignedLogoutRequests                    the force signed logout requests
-     * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
+     * @param casProperties                                the cas properties
      * @param samlObjectSignatureValidator                 the saml object signature validator
      */
     public SLOPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
@@ -61,14 +54,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlSLOProfileHandl
                                            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                            final OpenSamlConfigBean configBean,
                                            final SamlProfileObjectBuilder<Response> responseBuilder,
-                                           final Set<String> authenticationContextClassMappings,
-                                           final String serverPrefix,
-                                           final String serverName,
-                                           final String authenticationContextRequestParameter,
-                                           final String loginUrl,
-                                           final String logoutUrl,
-                                           final boolean forceSignedLogoutRequests,
-                                           final boolean singleLogoutCallbacksDisabled,
+                                           final CasConfigurationProperties casProperties,
                                            final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner,
                 parserPool,
@@ -78,14 +64,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlSLOProfileHandl
                 samlRegisteredServiceCachingMetadataResolver,
                 configBean,
                 responseBuilder,
-                authenticationContextClassMappings,
-                serverPrefix,
-                serverName,
-                authenticationContextRequestParameter,
-                loginUrl,
-                logoutUrl,
-                forceSignedLogoutRequests,
-                singleLogoutCallbacksDisabled,
+                casProperties,
                 samlObjectSignatureValidator);
     }
 
