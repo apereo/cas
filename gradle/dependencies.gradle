@@ -508,10 +508,12 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("javax.el:el-api:2.2") {
+                dependencies.create("javax.el:javax.el-api:3.0.0") {
                     force = true
                 },
                 dependencies.create("org.glassfish.web:el-impl:2.2") {
+                    exclude(group: "javax.el", module: "javax.el-api")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
@@ -536,6 +538,7 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
