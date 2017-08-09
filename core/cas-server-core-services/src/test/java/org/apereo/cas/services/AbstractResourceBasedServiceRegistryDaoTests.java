@@ -140,7 +140,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
-        assertEquals(new String(ss.getSalt()), "helloworld");
+        assertEquals(ss.getSalt(), "helloworld");
         assertEquals(r2, r3);
     }
 
