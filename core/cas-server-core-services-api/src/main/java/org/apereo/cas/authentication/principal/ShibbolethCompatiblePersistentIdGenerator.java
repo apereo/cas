@@ -1,20 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.io.ByteSource;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.util.Map;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -38,19 +34,19 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
     @JsonProperty
-    private final String salt;
+    private String salt;
 
     @JsonProperty
     private String attribute;
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
-     * The salt is initialized to a random 16-digit alphanumeric string.
+     * The salt is initialized to a random alphanumeric string with length {@link #CONST_DEFAULT_SALT_COUNT}.
      * The generated id is pseudo-anonymous which allows it to be continually uniquely
      * identified by for a particular service.
      */
     public ShibbolethCompatiblePersistentIdGenerator() {
-        this.salt = RandomStringUtils.randomAlphanumeric(CONST_DEFAULT_SALT_COUNT);
+        this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
     }
 
     public ShibbolethCompatiblePersistentIdGenerator(final String salt) {
@@ -65,35 +61,27 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         this.attribute = attribute;
     }
 
-    /**
-     * Get salt.
-     *
-     * @return the byte[] for the salt or null
-     */
-    @JsonIgnore
-    public byte[] getSalt() {
-        try {
-            return ByteSource.wrap(this.salt.getBytes(Charset.defaultCharset())).read();
-        } catch (final IOException e) {
-            LOGGER.warn("Salt cannot be read because the byte array from source could not be consumed");
-        }
-        return null;
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(final String salt) {
+        this.salt = salt;
     }
 
     @Override
     public String generate(final String principal, final String service) {
         final String data = String.join(CONST_SEPARATOR, service, principal);
-        final Charset charset = Charset.defaultCharset();
-        String result = EncodingUtils.encodeBase64(DigestUtils.sha(data.getBytes(charset)));
-        result = result.replaceAll(System.getProperty("line.separator"), StringUtils.EMPTY);
-        LOGGER.debug("Generated persistent id is [{}]", result);
+        final String result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data), System.getProperty("line.separator"));
+        LOGGER.debug("Generated persistent id for [{}] is [{}]", data, result);
         return result;
     }
 
     @Override
     public String generate(final Principal principal, final Service service) {
-        final String principalId = StringUtils.isNotBlank(this.attribute) && principal.getAttributes().containsKey(this.attribute)
-                ? principal.getAttributes().get(this.attribute).toString() : principal.getId();
+        final Map<String, Object> attributes = principal.getAttributes();
+        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)
+                ? attributes.get(this.attribute).toString() : principal.getId();
         return generate(principalId, service.getId());
     }
 
@@ -127,6 +115,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     public String toString() {
         return new ToStringBuilder(this)
                 .append("attribute", attribute)
+                .append("salt", StringUtils.abbreviate(salt, 2))
                 .toString();
     }
+    
 }
