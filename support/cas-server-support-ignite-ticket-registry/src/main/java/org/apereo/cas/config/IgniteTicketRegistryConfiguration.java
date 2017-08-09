@@ -103,7 +103,7 @@ public class IgniteTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final IgniteProperties igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
         final IgniteTicketRegistry r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration(ticketCatalog), igniteProperties);
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(igniteProperties.getCrypto()));
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
         return r;
     }
 }
