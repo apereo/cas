@@ -2,18 +2,16 @@ package org.apereo.cas.authentication.config;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.mongo.profile.service.MongoProfileService;
 import org.slf4j.Logger;
@@ -73,13 +71,12 @@ public class CasMongoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoAuthenticatorProfileService")
     @Bean
-    public Authenticator<UsernamePasswordCredentials> mongoAuthenticatorProfileService() {
+    public MongoProfileService mongoAuthenticatorProfileService() {
         final MongoAuthenticationProperties mongo = casProperties.getAuthn().getMongo();
         
         final MongoClientURI uri = new MongoClientURI(mongo.getMongoHostUri());
         final MongoClient client = new MongoClient(uri);
-        LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]",
-                uri.getHosts(), uri.getDatabase());
+        LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]", uri.getHosts(), uri.getDatabase());
 
         final SpringSecurityPasswordEncoder mongoPasswordEncoder = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder()));
         final MongoProfileService mongoAuthenticator = new MongoProfileService(client, mongo.getAttributes());
