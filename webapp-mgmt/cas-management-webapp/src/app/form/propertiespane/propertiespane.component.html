@@ -1,98 +1,45 @@
-<div id="properties-container">
-  <div class="panel panel-success">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <ng-container i18n="services.form.header.properties">
-          {{ messages.services_form_header_properties }}
-        </ng-container>
-      </h3>
-    </div> <!-- end .panel-header div -->
-    <div class="panel-body">
-      <table class="table table-striped table-responsive table-condensed editable-table">
-        <colgroup>
-          <col width="45%"/>
-          <col width="45%"/>
-          <col width="10%"/>
-        </colgroup>
+<md-card class="tabCard">
+  <md-card-title>
+    <h5>Properties</h5>
+  </md-card-title>
+  <div class="cardContent">
+    <md-table [dataSource]="dataSource">
 
-        <tr *ngFor="let row of rows">
-          <td i18n-title="services.form.header.properties.name"
-              [title]="messages.services_form_header_properties_name"
-              [ngSwitch]="row.isEditing">
-            <span *ngSwitchDefault class="editable-text">{{row.property.name}}</span>
-            <div *ngSwitchCase="true" class="controls">
-              <input class="form-control noresize editable-text"
-                     [(ngModel)]="row.tmpName">
-            </div>
-          </td>
-          <td i18n-title="services.form.header.properties.value"
-              [title]="messages.services_form_header_properties_value"
-              [ngSwitch]="row.isEditing">
-            <span *ngSwitchDefault class="editable-text">{{row.property.value}}</span>
-            <div *ngIf="row.isEditing" class="controls">
-              <input class="form-control noresize editable-text"
-                     [(ngModel)]="row.tmpValue">
-            </div>
-          </td>
+      <ng-container cdkColumnDef="source">
+        <md-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</md-header-cell>
+        <md-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
+          <md-input-container>
+            <input mdInput #text
+                   [ngModel]="row.key"
+                   (change)="doChange(row,$event.target.value)">
+          </md-input-container>
+        </md-cell>
+      </ng-container>
 
-          <td>
-            <!-- Save button -->
-            <button class="btn btn-primary btn-sm"
-                    (click)="save(row)"
-                    *ngIf="row.isEditing"><span
-              class="glyphicon glyphicon-ok"></span></button>
+      <ng-container cdkColumnDef="mapped">
+        <md-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</md-header-cell>
+        <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
+          <md-input-container>
+            <input mdInput [disabled]="row.key == ''"
+                   [ngModel]="service.properties[row.key] ?  service.properties[row.key].values : ''"
+                   (ngModelChange)="service.properties[row.key].values = $event.split(',')">
+          </md-input-container>
+        </md-cell>
+      </ng-container>
 
-            <!--Cancel Button-->
-            <button class="btn btn-default btn-sm"
-                    (click)="cancel(row)"
-                    *ngIf="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+      <ng-container cdkColumnDef="delete">
+        <md-header-cell *cdkHeaderCellDef [ngClass]="'actionWidth'"></md-header-cell>
+        <md-cell *cdkCellDef="let row" [ngClass]="'actionWidth'">
+          <button md-icon-button (click)="delete(row)"><md-icon style="font-size: medium">delete</md-icon></button>
+        </md-cell>
+      </ng-container>
 
-            <!--Edit button-->
-            <button class="btn btn-default btn-sm" (click)="row.isEditing = true"
-                    *ngIf="!row.isEditing">
-              <span class="glyphicon glyphicon-pencil"></span>
-            </button>
+      <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+      <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
 
-            <!--Delete button-->
-            <button class="btn btn-danger btn-sm" (click)="delete(row)" *ngIf="!row.isEditing"><span
-              class="glyphicon glyphicon-trash"></span></button>
-          </td>
-        </tr>
-        <tr *ngIf="isAdding">
-          <td><input name="addPropertyName" class="form-control noresize editable-text" rows="2"
-                     i18n-placeholder
-                     placeholder="New property name"
-                     [(ngModel)]="addName" required="required"></td>
-          <td><input name="addPropertyValue" class="form-control noresize editable-text" rows="2"
-                     i18n-placeholder
-                     placeholder="New property value"
-                     [ngModel]="addValue"
-                     (ngModelChange)="addValue = $event.split(',')" required="required"></td>
-          <td>
-            <!-- Add Row toggle -->
-            <button class="btn btn-success btn-sm"
-                    (click)="addRow()"
-                    *ngIf="isAdding">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <!-- cancel add row -->
-            <button class="btn btn-default btn-sm"
-                    (click)="cancelAdd( )">
-              <span class="glyphicon glyphicon-remove"></span>
-            </button>
-          </td>
-        </tr>
-        <tr class="addRow" *ngIf="!isAdding">
-          <td>
-            <button class="btn btn-default btn-sm" (click)="isAdding = true">
-              <span class="glyphicon glyphicon-plus text-success"></span>
-            </button>
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-      </table>
+    </md-table>
+    <div style="height:25px;padding-top: 5px;">
+      <button md-mini-fab (click)="addRow()" style="float:right;">+</button>
     </div>
   </div>
-</div>
-
+</md-card>

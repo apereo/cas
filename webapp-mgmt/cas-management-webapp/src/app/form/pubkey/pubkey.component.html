@@ -1,47 +1,26 @@
-<div class="public-key-container">
-  <div class="panel panel-success">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        <ng-container i18n="services.form.header.pubKey">
-          {{ messages.services_form_header_pubKey }}
-        </ng-container>
-      </h3>
-    </div> <!-- end .panel-header div -->
-    <div class="panel-body">
 
-      <!-- Public Key Location -->
-      <div class="form-group">
-        <label class="col-sm-3" for="publicKeyLocation">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.pubKey.location">
-              {{ messages.services_form_label_pubKey_location }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.pubKey.location"
-              [myTooltip]="messages.services_form_tooltip_pubKey_location"></i>
-          </span>
-        </label>
-        <div class="col-sm-7">
-          <input type="text" class="form-control" id="publicKeyLocation" [(ngModel)]="service.publicKey.location">
-        </div>
-      </div>
-      <!-- Public Key Algorithm -->
-      <div class="form-group">
-        <label class="col-sm-3" for="publicKeyAlgorithm">
-          <span style="float:right">
-            <ng-container i18n="services.form.label.pubKey.algorithm">
-              {{ messages.services_form_label_pubKey_algorithm }}
-            </ng-container>
-            <i i18n-myTooltip="services.form.tooltip.pubKey.algorithm"
-              [myTooltip]="messages.services_form_tooltip_pubKey_algorithm"></i>
-          </span>
-        </label>
-        <div class="col-sm-7">
-          <select class="form-control" id="publicKeyAlgorithm" [(ngModel)]="service.publicKey.algorithm">
-            <option value="RSA">RSA</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
+<div>
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.pubKey.location"
+           [placeholder]="messages.services_form_label_pubKey_location"
+           [(ngModel)]="service.publicKey.location">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.pubKey.location"
+           [mdTooltip]="messages.services_form_tooltip_pubKey_location">help
+  </md-icon>
 </div>
 
+<div>
+  <md-select style="width: 400px;padding-top:25px;"
+             i18n-placeholder="services.form.label.pubKey.algorithm"
+             [placeholder]="messages.services_form_label_pubKey_algorithm"
+             [(ngModel)]="service.publicKey.algorithm">
+    <md-option value="RSA">RSA</md-option>
+  </md-select>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.pubKey.algorithm"
+           [mdTooltip]="messages.services_form_tooltip_pubKey_algorithm">help
+  </md-icon>
+</div>

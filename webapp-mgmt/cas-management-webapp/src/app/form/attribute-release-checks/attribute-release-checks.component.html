@@ -1,37 +1,35 @@
-<div class="checkbox-group">
-  <div class="checkbox">
-    <label>
-      <input type="checkbox"
-             [(ngModel)]="service.attributeReleasePolicy.excludeDefaultAttributes"/>
-      <ng-container i18n="services.form.label.attrRelease.excludeDefault">
-        {{ messages.services_form_label_attrRelease_excludeDefault }}
-      </ng-container>
-      <i i18n-myTooltip="services.form.tooltip.attrRelease.excludeDefault"
-         [myTooltip]="messages.services_form_tooltip_attrRelease_excludeDefault"></i>
-    </label>
-  </div>
+<div>
+  <md-checkbox [(ngModel)]="service.attributeReleasePolicy.excludeDefaultAttributes">
+    <ng-container i18n="services.form.label.attrRelease.excludeDefault">
+      {{ messages.services_form_label_attrRelease_excludeDefault }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.excludeDefault"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_excludeDefault">help
+    </md-icon>
+  </md-checkbox>
+</div>
 
-  <div class="checkbox">
-    <label>
-      <input type="checkbox"
-             [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseCredentialPassword"/>
-      <ng-container i18n="services.form.label.attrRelease.releaseCredPassword">
-        {{ messages.services_form_label_attrRelease_releaseCredPassword }}
-      </ng-container>
-      <i i18n-myTooltip="services.form.tooltip.attrRelease.releaseCredPassword"
-         [myTooltip]="messages.services_form_tooltip_attrRelease_releaseCredPassword"></i>
-    </label>
-  </div>
+<div>
+  <md-checkbox [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseCredentialPassword">
+    <ng-container i18n="services.form.label.attrRelease.releaseCredPassword">
+      {{ messages.services_form_label_attrRelease_releaseCredPassword }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.releaseCredPassword"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_releaseCredPassword">help
+    </md-icon>
+  </md-checkbox>
+</div>
 
-  <div class="checkbox">
-    <label>
-      <input type="checkbox"
-             [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket"/>
-      <ng-container i18n="services.form.label.attrRelease.releaseProxyTicket">
-        {{ messages.services_form_label_attrRelease_releaseProxyTicket }}
-      </ng-container>
-      <i i18n-myTooltip="services.form.tooltip.attrRelease.releaseProxyTicket"
-         [myTooltip]="messages.services_form_tooltip_attrRelease_releaseProxyTicket"></i>
-    </label>
-  </div>
+<div>
+  <md-checkbox [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket">
+    <ng-container i18n="services.form.label.attrRelease.releaseProxyTicket">
+      {{ messages.services_form_label_attrRelease_releaseProxyTicket }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.releaseProxyTicket"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_releaseProxyTicket">help
+    </md-icon>
+  </md-checkbox>
 </div>

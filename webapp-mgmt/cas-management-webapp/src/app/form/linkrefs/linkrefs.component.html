@@ -1,29 +1,25 @@
-<div class="form-group">
-  <label class="col-sm-3" for="informationUrl">
-    <span style="float:right">
-      <ng-container i18n="services.form.label.informationUrl">
-        {{ messages.services_form_label_informationUrl }}
-      </ng-container>
-      <i i18n-myTooltip="services.form.tooltip.informationUrl"
-        [myTooltip]="messages.services_form_tooltip_informationUrl"></i>
-    </span>
-  </label>
-  <div class="col-sm-9">
-    <input type="text" class="form-control" id="informationUrl" [(ngModel)]="service.informationUrl">
-  </div>
+<div>
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.informationUrl"
+           [placeholder]="messages.services_form_label_informationUrl"
+           [(ngModel)]="service.informationUrl">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.informationUrl"
+           [mdTooltip]="messages.services_form_tooltip_informationUrl">help
+  </md-icon>
 </div>
 
-<div class="form-group">
-  <label class="col-sm-3" for="privacyUrl">
-    <span style="float:right">
-      <ng-container i18n="services.form.label.privacyUrl">
-        {{ messages.services_form_label_privacyUrl }}
-      </ng-container>
-      <i i18n-myTooltip="services.form.tooltip.privacyUrl"
-        [myTooltip]="messages.services_form_tooltip_privacyUrl"></i>
-    </span>
-  </label>
-  <div class="col-sm-9">
-    <input type="text" class="form-control" id="privacyUrl" [(ngModel)]="service.privacyUrl">
-  </div>
+<div>
+  <md-input-container class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.privacyUrl"
+           [placeholder]="messages.services_form_label_privacyUrl"
+           [(ngModel)]="service.privacyUrl">
+  </md-input-container>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.privacyUrl"
+           [mdTooltip]="messages.services_form_tooltip_privacyUrl">help
+  </md-icon>
 </div>
