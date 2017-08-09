@@ -44,7 +44,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
      * @param group the group
      * @throws Exception the exception
      */
-    @CliCommand(value = "add-properties", help = "Look up properties associated with a CAS group/module.")
+    @CliCommand(value = "add-properties", help = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
     public void add(@CliOption(key = {"file"},
             help = "Path to the CAS configuration file",
             unspecifiedDefaultValue = "/etc/cas/config/cas.properties",
