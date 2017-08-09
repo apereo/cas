@@ -17,7 +17,7 @@ public interface ContextualAuthenticationPolicy<T> extends AuthenticationPolicy 
     T getContext();
 
     /**
-     * Return an optional message code to use when this {@link ContextualAuthenticationPolicy} is unsatisfied.
+     * Return an optional message code to use when this is unsatisfied.
      *
      * @return Optional message code
      */

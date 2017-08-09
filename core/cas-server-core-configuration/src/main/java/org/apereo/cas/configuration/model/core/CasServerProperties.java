@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -14,8 +15,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CasServerProperties {
+public class CasServerProperties implements Serializable {
 
+    private static final long serialVersionUID = 7876382696803430817L;
     /**
      * Location of a rewrite valve specifically by Apache Tomcat
      * to activate URL rewriting.
@@ -35,15 +37,26 @@ public class CasServerProperties {
      */
     private String prefix = name.concat("/cas");
 
+    /**
+     * Embedded container AJP settings.
+     */
     private Ajp ajp = new Ajp();
 
+    /**
+     * Embedded container HTTP port settings as an additional option.
+     */
     private Http http = new Http();
 
     /**
      * Http proxy configuration properties.
+     * In the event that you decide to run CAS without any SSL configuration in the embedded Tomcat container and on a non-secure
+     * port yet wish to customize the connector configuration that is linked to the running port (i.e. 8080), this setting may apply.
      */
     private HttpProxy httpProxy = new HttpProxy();
 
+    /**
+     * Embedded container's SSL valve setting.
+     */
     private SslValve sslValve = new SslValve();
 
     /**
@@ -123,8 +136,9 @@ public class CasServerProperties {
         return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
     }
 
-    public static class Ajp {
+    public static class Ajp implements Serializable {
 
+        private static final long serialVersionUID = -32143821503580896L;
         /**
          * Sets the protocol to handle incoming traffic.
          */
@@ -161,7 +175,15 @@ public class CasServerProperties {
          * Enable AJP support in CAS for the embedded Apache Tomcat container.
          */
         private boolean enabled;
+        /**
+         * The default timeout for asynchronous requests in milliseconds. If not specified, this attribute is set to 10000 (10 seconds).
+         */
         private String asyncTimeout = "PT5S";
+        /**
+         * Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.
+         * Set to false to skip the DNS lookup and return the IP address in String form instead (thereby improving performance).
+         * By default, DNS lookups are disabled.
+         */
         private boolean enableLookups;
         /**
          * The maximum size in bytes of the POST which will be handled by the container
@@ -183,39 +205,38 @@ public class CasServerProperties {
         /**
          * Additional attributes to be set on the AJP connector in form of key-value pairs.
          * Examples include:
-         * <p>
          * <ul>
-         * <li><code>tomcatAuthentication</code>: If set to true, the authentication will be done in Tomcat.
+         * <li>{@code tomcatAuthentication}: If set to true, the authentication will be done in Tomcat.
          * Otherwise, the authenticated principal will be propagated from the native webserver
          * and used for authorization in Tomcat.
          * Note that this principal will have no roles associated with it. The default value is true.</li>
-         * <li><code>maxThreads</code>: The maximum number of request processing threads to be created
+         * <li>{@code maxThreads}: The maximum number of request processing threads to be created
          * by this Connector, which therefore determines the maximum number of simultaneous
          * requests that can be handled. If not specified, this attribute is set to 200.
          * If an executor is associated with this connector, this attribute is
          * ignored as the connector will execute tasks using the executor rather than an internal thread pool.</li>
-         * <li><code>keepAliveTimeout</code>: The number of milliseconds this Connector
+         * <li>{@code keepAliveTimeout}: The number of milliseconds this Connector
          * will wait for another AJP request before closing the connection.
          * The default value is to use the value that has been set for the connectionTimeout attribute.</li>
-         * <li><code>maxCookieCount</code>: The maximum number of cookies that are permitted for a request.
+         * <li>{@code maxCookieCount}: The maximum number of cookies that are permitted for a request.
          * A value of less than zero means no limit. If not specified, a default value of 200 will be used.</li>
-         * <li><code>bufferSize</code>: The size of the output buffer to use. If less than or equal to zero,
+         * <li>{@code bufferSize}: The size of the output buffer to use. If less than or equal to zero,
          * then output buffering is disabled. The default value is -1 (i.e. buffering disabled)</li>
-         * <li><code>clientCertProvider</code>: When client certificate information is presented in a
+         * <li>{@code clientCertProvider}: When client certificate information is presented in a
          * form other than instances of java.security.cert.X509Certificate it needs to be converted
          * before it can be used and this property controls which JSSE provider is used to perform
          * the conversion. For example it is used with the AJP connectors,
          * the HTTP APR connector and with the org.apache.catalina.valves.SSLValve.If not specified,
          * the default provider will be used.</li>
-         * <li><code>connectionTimeout</code>: The number of milliseconds this Connector
+         * <li>{@code connectionTimeout}: The number of milliseconds this Connector
          * will wait, after accepting a connection,
          * for the request URI line to be presented. The default value is infinite (i.e. no timeout).</li>
-         * <li><code>address</code>: For servers with more than one IP address,
+         * <li>{@code address}: For servers with more than one IP address,
          * this attribute specifies which address will be used for listening on
          * the specified port. By default, this port will be used on all IP addresses associated with the server.
          * A value of 127.0.0.1 indicates that the Connector will only listen on the loopback interface.</li>
          * </ul>
-         *
+         * <p>
          * See the Apache Tomcat documentation for a full list.
          */
         private Map<String, Object> attributes = new LinkedHashMap<>();
@@ -285,6 +306,7 @@ public class CasServerProperties {
         }
 
         public boolean isEnableLookups() {
+
             return enableLookups;
         }
 
@@ -317,8 +339,9 @@ public class CasServerProperties {
         }
     }
 
-    public static class ExtendedAccessLog {
+    public static class ExtendedAccessLog implements Serializable {
 
+        private static final long serialVersionUID = 6738161402499196038L;
         /**
          * Flag to indicate whether extended log facility is enabled.
          */
@@ -385,13 +408,35 @@ public class CasServerProperties {
         }
     }
 
-    public static class HttpProxy {
+    public static class HttpProxy implements Serializable {
+        private static final long serialVersionUID = 9129851352067677264L;
+        /**
+         * Enable the container running in proxy mode.
+         */
         private boolean enabled;
+        /**
+         * Scheme used for the proxy.
+         */
         private String scheme = "https";
+        /**
+         * Whether proxy should run in secure mode.
+         */
         private boolean secure = true;
+        /**
+         * Redirect port for the proxy.
+         */
         private int redirectPort;
+        /**
+         * Proxy port for the proxy.
+         */
         private int proxyPort;
+        /**
+         * Proxy protocol to use.
+         */
         private String protocol = "AJP/1.3";
+        /**
+         * Custom attributes to set on the proxy connector.
+         */
         private Map<String, Object> attributes = new LinkedHashMap<>();
 
         public Map<String, Object> getAttributes() {
@@ -451,8 +496,9 @@ public class CasServerProperties {
         }
     }
 
-    public static class Http {
+    public static class Http implements Serializable {
 
+        private static final long serialVersionUID = -8809922027350085888L;
         /**
          * Enable a separate port for the embedded container for HTTP access.
          */
@@ -506,7 +552,8 @@ public class CasServerProperties {
         }
     }
 
-    public static class SslValve {
+    public static class SslValve implements Serializable {
+        private static final long serialVersionUID = 3164446071136700242L;
         /**
          * Enable the SSL valve for apache tomcat.
          */

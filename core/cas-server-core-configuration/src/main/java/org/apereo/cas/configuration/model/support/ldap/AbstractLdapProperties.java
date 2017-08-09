@@ -1,10 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ldaptive.SearchScope;
-import org.ldaptive.sasl.Mechanism;
-import org.ldaptive.sasl.QualityOfProtection;
-import org.ldaptive.sasl.SecurityStrength;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -101,7 +97,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      */
     private String keystorePassword;
     /**
-     * The type of keystore. <code>PKCS12</code> or <code>JKS</code>.
+     * The type of keystore. {@code PKCS12} or {@code JKS}.
      * If left blank, defaults to the default keystore type indicated
      * by the underlying Java platform.
      */
@@ -180,11 +176,11 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
      * <ul>
-     * <li><code>DEFAULT</code> The default JNDI provider behavior will be used. </li>
-     * <li><code>ACTIVE_PASSIVE</code> First LDAP will be used for every request unless it fails and then the next shall be used.</li>
-     * <li><code>ROUND_ROBIN</code> For each new connection the next url in the list will be used.</li>
-     * <li><code>RANDOM</code> For each new connection a random LDAP url will be selected.</li>
-     * <li><code>DNS_SRV</code> LDAP urls based on DNS SRV records of the configured/given LDAP url will be used. </li>
+     * <li>{@code DEFAULT} The default JNDI provider behavior will be used. </li>
+     * <li>{@code ACTIVE_PASSIVE} First LDAP will be used for every request unless it fails and then the next shall be used.</li>
+     * <li>{@code ROUND_ROBIN} For each new connection the next url in the list will be used.</li>
+     * <li>{@code RANDOM} For each new connection a random LDAP url will be selected.</li>
+     * <li>{@code DNS_SRV} LDAP urls based on DNS SRV records of the configured/given LDAP url will be used. </li>
      * </ul>
      */
     private String connectionStrategy;
@@ -213,11 +209,12 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * LDAP operations are delegated to what we call a provider. This allows developers and deployers to change the underlying library
      * that provides the LDAP implementation without modifying any code. By default the JNDI provider is used, though
-     * it may be swapped out for <code>org.ldaptive.provider.unboundid.UnboundIDProvider</code>.
+     * it may be swapped out for {@code org.ldaptive.provider.unboundid.UnboundIDProvider}.
      */
     private String providerClass;
     /**
-     *
+     * Whether search/query results are allowed to match on multiple DNs,
+     * or whether a single unique DN is expected for the result.
      */
     private boolean allowMultipleDns;
 
@@ -225,9 +222,9 @@ public abstract class AbstractLdapProperties implements Serializable {
      * The bind DN to use when connecting to LDAP.
      * LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
      * <ul>
-     * <li><code>bindDn/bindCredential</code> provided - Use the provided credentials to bind when initializing connections.</li>
-     * <li><code>bindDn/bindCredential</code>  set to <code>*</code> - Use a fast-bind strategy to initialize the pool.</li>
-     * <li><code>bindDn/bindCredential</code>  set to blank - Skip connection initializing; perform operations anonymously. </li>
+     * <li>{@code bindDn/bindCredential} provided - Use the provided credentials to bind when initializing connections.</li>
+     * <li>{@code bindDn/bindCredential}  set to {@code *} - Use a fast-bind strategy to initialize the pool.</li>
+     * <li>{@code bindDn/bindCredential}  set to blank - Skip connection initializing; perform operations anonymously. </li>
      * <li>SASL mechanism provided - Use the given SASL mechanism to bind when initializing connections. </li>
      * </ul>
      */
@@ -244,7 +241,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The SASL mechanism.
      */
-    private Mechanism saslMechanism;
+    private String saslMechanism;
     /**
      * SASL authorization id.
      */
@@ -252,7 +249,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * SASL security strength.
      */
-    private SecurityStrength saslSecurityStrength;
+    private String saslSecurityStrength;
     /**
      * SASL mutual auth is enabled?
      */
@@ -260,7 +257,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * SASL quality of protected.
      */
-    private QualityOfProtection saslQualityOfProtection;
+    private String saslQualityOfProtection;
 
     /**
      * LDAP connection validator settings.
@@ -488,11 +485,11 @@ public abstract class AbstractLdapProperties implements Serializable {
         this.saslRealm = saslRealm;
     }
 
-    public Mechanism getSaslMechanism() {
+    public String getSaslMechanism() {
         return saslMechanism;
     }
 
-    public void setSaslMechanism(final Mechanism saslMechanism) {
+    public void setSaslMechanism(final String saslMechanism) {
         this.saslMechanism = saslMechanism;
     }
 
@@ -504,19 +501,19 @@ public abstract class AbstractLdapProperties implements Serializable {
         this.saslAuthorizationId = saslAuthorizationId;
     }
 
-    public SecurityStrength getSaslSecurityStrength() {
+    public String getSaslSecurityStrength() {
         return saslSecurityStrength;
     }
 
-    public void setSaslSecurityStrength(final SecurityStrength saslSecurityStrength) {
+    public void setSaslSecurityStrength(final String saslSecurityStrength) {
         this.saslSecurityStrength = saslSecurityStrength;
     }
 
-    public QualityOfProtection getSaslQualityOfProtection() {
+    public String getSaslQualityOfProtection() {
         return saslQualityOfProtection;
     }
 
-    public void setSaslQualityOfProtection(final QualityOfProtection saslQualityOfProtection) {
+    public void setSaslQualityOfProtection(final String saslQualityOfProtection) {
         this.saslQualityOfProtection = saslQualityOfProtection;
     }
 
@@ -536,15 +533,16 @@ public abstract class AbstractLdapProperties implements Serializable {
         this.responseTimeout = responseTimeout;
     }
 
-    public static class Validator {
+    public static class Validator implements Serializable {
 
+        private static final long serialVersionUID = 1150417354213235193L;
         /**
          * The following LDAP validators can be used to test connection health status:
          * <ul>
-         *     <li><code>search</code>: Validates a connection is healthy by performing a search operation.
+         *     <li>{@code search}: Validates a connection is healthy by performing a search operation.
          *     Validation is considered successful if the search result size is greater than zero.</li>
-         *     <li><code>none</code>: No validation takes place.</li>
-         *     <li><code>compare</code>: Validates a connection is healthy by performing a compare operation.</li>
+         *     <li>{@code none}: No validation takes place.</li>
+         *     <li>{@code compare}: Validates a connection is healthy by performing a compare operation.</li>
          * </ul>
          */
         private String type = "search";
@@ -559,7 +557,7 @@ public abstract class AbstractLdapProperties implements Serializable {
         /**
          * Search scope to use for the search request of the search validator.
          */
-        private SearchScope scope = SearchScope.OBJECT;
+        private String scope = "OBJECT";
         /**
          * Attribute name to use for the compare validator.
          */
@@ -621,11 +619,11 @@ public abstract class AbstractLdapProperties implements Serializable {
             this.searchFilter = searchFilter;
         }
 
-        public SearchScope getScope() {
+        public String getScope() {
             return scope;
         }
 
-        public void setScope(final SearchScope scope) {
+        public void setScope(final String scope) {
             this.scope = scope;
         }
     }

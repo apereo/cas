@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +17,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ManagementWebappProperties {
+public class ManagementWebappProperties implements Serializable {
+    private static final long serialVersionUID = -7686426966125636166L;
+    /**
+     * List of roles required to accept the web application.
+     */
     private List<String> adminRoles = Arrays.asList("ROLE_ADMIN");
 
     /**
@@ -30,7 +35,7 @@ public class ManagementWebappProperties {
 
     /**
      * Collection of attributes the authorized user must have in order to authenticate into the app.
-     * Th attribute value(s) must match the expected role. To permit everything, you may use <code>*</code>.
+     * Th attribute value(s) must match the expected role. To permit everything, you may use {@code *}.
      */
     private List<String> authzAttributes = new ArrayList<>();
 
@@ -43,7 +48,7 @@ public class ManagementWebappProperties {
      * Location of the resource that contains the authorized accounts.
      * This file lists the set of users that are allowed access to the CAS sensitive/admin endpoints.
      * The syntax of each entry should be in the form of:
-     * <code>username=notused,grantedAuthority[,grantedAuthority][,enabled|disabled]</code>
+     * {@code username=notused,grantedAuthority[,grantedAuthority][,enabled|disabled]}
      */
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
 

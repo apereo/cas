@@ -1,6 +1,5 @@
 package org.apereo.cas.util.ldap.uboundid;
 
-import com.google.common.base.Throwables;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -115,12 +114,12 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
                     }
                     retryCount = 0;
                 } catch (final Exception e) {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                     retryCount--;
                 }
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

@@ -2,7 +2,7 @@ package org.apereo.cas.config.pm;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class JdbcPasswordManagementConfiguration {
 
     @Bean
     public DataSource jdbcPasswordManagementDataSource() {
-        return Beans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
+        return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
     }
     
     @RefreshScope

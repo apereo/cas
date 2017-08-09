@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
 
-import com.google.common.base.Throwables;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -155,7 +154,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                     } catch (final Exception e) {
                         LOGGER.error("Error fetching CRL at [{}]", url, e);
                         if (this.throwOnFetchFailure) {
-                            throw Throwables.propagate(e);
+                            throw new RuntimeException(e.getMessage(), e);
                         }
                     }
                 }
@@ -166,7 +165,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 }
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         LOGGER.debug("Found [{}] CRLs", listOfLocations.size());
@@ -186,7 +185,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
         } catch (final Exception e) {
             LOGGER.warn("Failed to add the crl entry [{}] to the cache", crl);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

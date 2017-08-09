@@ -1,7 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
@@ -73,7 +71,7 @@ public final class QRUtils {
             
             ImageIO.write(image, "png", stream);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

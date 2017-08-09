@@ -71,7 +71,7 @@ public class RedisTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
         final RedisTicketRegistry r = new RedisTicketRegistry(ticketRedisTemplate());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(redis.getCrypto()));
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
         return r;
     }
 }

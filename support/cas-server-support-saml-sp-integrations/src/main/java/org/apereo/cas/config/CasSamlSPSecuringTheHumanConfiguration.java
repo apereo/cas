@@ -17,6 +17,6 @@ public class CasSamlSPSecuringTheHumanConfiguration extends BaseCasSamlSPConfigu
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getSansSth();
+        return casProperties.getSamlSp().getSansSth();
     }
 }

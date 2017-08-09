@@ -63,7 +63,7 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration {
         final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory(),
                 shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
-        h.loadShiroConfiguration(shiro.getConfig().getLocation());
+        h.loadShiroConfiguration(shiro.getLocation());
         h.setPasswordEncoder(Beans.newPasswordEncoder(shiro.getPasswordEncoder()));
         if (shiroPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
@@ -76,7 +76,7 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final Resource shiroConfigFile = casProperties.getAuthn().getShiro().getConfig().getLocation();
+            final Resource shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
             if (shiroConfigFile != null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);

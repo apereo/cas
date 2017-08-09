@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +43,13 @@ public class CasConsentJdbcConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaConsentVendorAdapter() {
-        return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
     @Bean
     public DataSource dataSourceConsent() {
-        return Beans.newDataSource(casProperties.getConsent().getJpa());
+        return JpaBeans.newDataSource(casProperties.getConsent().getJpa());
     }
 
     @Bean
@@ -61,7 +61,7 @@ public class CasConsentJdbcConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newHibernateEntityManagerFactoryBean(
+                JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaConsentVendorAdapter(),
                                 "jpaConsentContext",

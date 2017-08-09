@@ -7,7 +7,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.google.common.base.Throwables;
 
 /**
  * Kryo serializer for {@link URL}.
@@ -23,7 +22,7 @@ public class URLSerializer extends Serializer<URL> {
         try {
             return new URL(url);
         } catch (final MalformedURLException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

@@ -12,4 +12,5 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-validation")
 
+    testImplementation project(":support:cas-server-support-person-directory")
 }

@@ -2,8 +2,8 @@ package org.apereo.cas.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
-import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 
@@ -19,7 +19,7 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
  * @since 3.0.0
  */
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
-    
+
     /**
      * The numeric generator to generate the static part of the id.
      */
@@ -35,7 +35,6 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * values.
      */
     private String suffix;
-    private int initialCapacity;
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
@@ -43,7 +42,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * 1.
      */
     public DefaultUniqueTicketIdGenerator() {
-        this(DefaultRandomStringGenerator.DEFAULT_MAX_RANDOM_LENGTH);
+        this(TICKET_SIZE);
     }
 
     /**
@@ -92,15 +91,8 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     @Override
     public String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
-        final int capacity = prefix.length() + initialCapacity + number.length();
-        return new StringBuilder(capacity)
-                .append(prefix)
-                .append('-')
-                .append(number)
-                .append('-')
-                .append(this.randomStringGenerator.getNewString())
-                .append(this.suffix)
-                .toString();
+        return prefix + '-' + number + '-'
+            + this.randomStringGenerator.getNewString() + this.suffix;
     }
 
     /**
@@ -110,7 +102,6 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      */
     public void setSuffix(final String suffix) {
         this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : StringUtils.EMPTY;
-        initialCapacity = 2 + this.suffix.length() + this.randomStringGenerator.getMaxLength();
     }
 
     /**
@@ -119,7 +110,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * @param maxLength the max length
      */
     public void setMaxLength(final int maxLength) {
-        this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
+        this.randomStringGenerator = new Base64RandomStringGenerator(maxLength);
         this.numericGenerator = new DefaultLongNumericGenerator(1);
     }
 }

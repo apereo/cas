@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
  * This is {@link SamlRegisteredServiceCachingMetadataResolver}
@@ -20,5 +20,5 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
      * @param service the service
      * @return the chaining metadata resolver
      */
-    ChainingMetadataResolver resolve(SamlRegisteredService service);
+    MetadataResolver resolve(SamlRegisteredService service);
 }

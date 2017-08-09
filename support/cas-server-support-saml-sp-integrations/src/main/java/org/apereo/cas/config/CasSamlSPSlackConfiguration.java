@@ -17,6 +17,6 @@ public class CasSamlSPSlackConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getSlack();
+        return casProperties.getSamlSp().getSlack();
     }
 }

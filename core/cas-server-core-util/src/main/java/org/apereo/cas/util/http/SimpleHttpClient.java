@@ -17,7 +17,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -77,8 +76,6 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     @Override
     public boolean sendMessageToEndPoint(final HttpMessage message) {
-        Assert.notNull(this.httpClient);
-
         try {
             final HttpPost request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Type", message.getContentType());
@@ -104,8 +101,6 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     @Override
     public HttpMessage sendMessageToEndPoint(final URL url) {
-        Assert.notNull(this.httpClient);
-
         HttpEntity entity = null;
 
         try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
@@ -149,8 +144,6 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     @Override
     public boolean isValidEndPoint(final URL url) {
-        Assert.notNull(this.httpClient);
-
         HttpEntity entity = null;
 
         try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {

@@ -7,4 +7,5 @@ dependencies {
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-yubikey")
+    compile project(":support:cas-server-support-mongo-core")
 }

@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -50,7 +50,8 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Settings that control the background cleaner process.
      */
-    private Cleaner cleaner = new Cleaner();
+    @NestedConfigurationProperty
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
     /**
      * Store devices records inside MongoDb.
      */
@@ -123,11 +124,11 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
         this.deviceRegistrationEnabled = deviceRegistrationEnabled;
     }
 
-    public Cleaner getCleaner() {
+    public ScheduledJobProperties getCleaner() {
         return cleaner;
     }
 
-    public void setCleaner(final Cleaner cleaner) {
+    public void setCleaner(final ScheduledJobProperties cleaner) {
         this.cleaner = cleaner;
     }
 
@@ -156,49 +157,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
         public MongoDb() {
             setCollection("MongoDbCasTrustedAuthnMfaRepository");
-        }
-    }
-
-    public static class Cleaner implements Serializable {
-        /**
-         * This enabled a background cleaner process.
-         * A background cleaner process is automatically
-         * scheduled to scan the chosen repository/database/registry periodically and remove
-         * expired records based on configured threshold parameters.
-         */
-        private boolean enabled = true;
-        /**
-         * Cleaner startup delay.
-         */
-        private String startDelay = "PT15S";
-
-        /**
-         * Cleaner repeat interval. Indicates how often should the cleaner run.
-         */
-        private String repeatInterval = "PT2M";
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public long getStartDelay() {
-            return Beans.newDuration(startDelay).toMillis();
-        }
-
-        public void setStartDelay(final String startDelay) {
-            this.startDelay = startDelay;
-        }
-
-        public long getRepeatInterval() {
-            return Beans.newDuration(repeatInterval).toMillis();
-        }
-
-        public void setRepeatInterval(final String repeatInterval) {
-            this.repeatInterval = repeatInterval;
         }
     }
 }

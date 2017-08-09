@@ -7,7 +7,7 @@ import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorA
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +47,13 @@ public class GoogleAuthenticatorJpaConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter() {
-        return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
     @Bean
     public DataSource dataSourceGoogleAuthenticator() {
-        return Beans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
+        return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
     }
 
     @Bean
@@ -66,7 +66,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newHibernateEntityManagerFactoryBean(
+                JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaGoogleAuthenticatorVendorAdapter(),
                                 "jpaGoogleAuthenticatorContext",

@@ -2,13 +2,16 @@ package org.apereo.cas.configuration.model.core.util;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * This is {@link EncryptionRandomizedCryptoProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class EncryptionRandomizedCryptoProperties {
+public class EncryptionRandomizedCryptoProperties implements Serializable {
+    private static final long serialVersionUID = -6945916782426505112L;
     /**
      * The encryption key.
      * The encryption key by default and unless specified otherwise

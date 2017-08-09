@@ -13,13 +13,14 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
@@ -68,19 +69,20 @@ import javax.annotation.PostConstruct;
                 CasCoreAuthenticationHandlersConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasCoreConfiguration.class,
+                CasRegisteredServicesTestConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
                 CasCookieConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 AopAutoConfiguration.class,
+                CasPersonDirectoryTestConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreValidationConfiguration.class})
-@ContextConfiguration(locations = {"classpath:/core-context.xml"}, initializers = EnvironmentConversionServiceInitializer.class)
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
 @TestPropertySource(locations = {"classpath:/core.properties"})
@@ -157,4 +159,5 @@ public abstract class AbstractCentralAuthenticationServiceTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
+
 }
