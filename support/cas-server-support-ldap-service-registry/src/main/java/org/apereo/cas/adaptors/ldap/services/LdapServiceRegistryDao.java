@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.ldap.services;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
+
 import org.apereo.cas.services.AbstractServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
@@ -156,7 +156,7 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private Response<SearchResult> getSearchResultResponse() throws LdapException {
         return LdapUtils.executeSearchOperation(this.connectionFactory,
-                this.baseDn, Beans.newLdaptiveSearchFilter(this.loadFilter));
+                this.baseDn, LdapUtils.newLdaptiveSearchFilter(this.loadFilter));
     }
 
     @Override
@@ -185,8 +185,8 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
-        final SearchFilter filter = Beans.newLdaptiveSearchFilter(this.searchFilter,
-                Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }

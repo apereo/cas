@@ -31,9 +31,9 @@ After enabling OAuth support, the following endpoints will be available:
 
 | Endpoint                        | Description                                                               | Method
 |---------------------------------|--------------------------------------------------------------------------------------------------------------------
-| `/cas/oauth2.0/authorize`       | Authorize the user and start the CAS authentication flow.                 | `GET`
-| `/cas/oauth2.0/accessToken`     | Get an access token in plain-text or JSON                                 | `POST`
-| `/cas/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
+| `/oauth2.0/authorize`       | Authorize the user and start the CAS authentication flow.                 | `GET`
+| `/oauth2.0/accessToken`     | Get an access token in plain-text or JSON                                 | `POST`
+| `/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
 
 ## Response/Grant Types

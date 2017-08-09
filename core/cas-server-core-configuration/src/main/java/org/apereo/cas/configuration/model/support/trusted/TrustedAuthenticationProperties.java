@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipal
  * @since 5.0.0
  */
 public class TrustedAuthenticationProperties extends PersonDirPrincipalResolverProperties {
+    private static final long serialVersionUID = 279410895614233349L;
     /**
      * Indicates the name of the authentication handler.
      */

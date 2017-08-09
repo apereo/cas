@@ -152,6 +152,6 @@ public class EhcacheTicketRegistryConfiguration {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("The following caches are available: [{}]", (Object[]) manager.getCacheNames());
         }
-        return new EhCacheTicketRegistry(ticketCatalog, manager, Beans.newTicketRegistryCipherExecutor(crypto));
+        return new EhCacheTicketRegistry(ticketCatalog, manager, Beans.newTicketRegistryCipherExecutor(crypto, "ehcache"));
     }
 }

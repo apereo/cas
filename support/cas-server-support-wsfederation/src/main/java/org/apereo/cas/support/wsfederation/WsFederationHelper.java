@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation;
 
-import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -317,7 +316,7 @@ public class WsFederationHelper {
 
             return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -363,7 +362,7 @@ public class WsFederationHelper {
             LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
             return new BasicX509Credential(cert, kp.getPrivate());
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

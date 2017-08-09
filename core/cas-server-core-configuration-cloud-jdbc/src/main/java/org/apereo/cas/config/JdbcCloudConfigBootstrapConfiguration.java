@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -33,7 +33,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
 
         try {
             final JdbcCloudConnection connection = new JdbcCloudConnection(environment);
-            final DataSource dataSource = Beans.newDataSource(connection);
+            final DataSource dataSource = JpaBeans.newDataSource(connection);
             final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             final List<Map<String, Object>> rows = jdbcTemplate.queryForList(connection.getSql());
             for (final Map row : rows) {

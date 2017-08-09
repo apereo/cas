@@ -74,7 +74,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             throw new FailedLoginException("Swivel credentials are not specified can cannot be blank");
         }
 
-        /**
+        /*
          * Create a new session with the Swivel server. We do not support
          * the user having a password on his/her Swivel account, just the
          * one-time code.
@@ -90,7 +90,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             LOGGER.error(e.getMessage(), e);
         }
 
-        /**
+        /*
          * Send the request. It will return either PASS (user authenticated)
          * or FAIL (user not authenticated).
          */
@@ -104,7 +104,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             return createHandlerResult(swivelCredential, this.principalFactory.createPrincipal(uid), null);
         }
 
-        /**
+        /*
          * A "normal" authentication failure (wrong one-time code)
          * doesn't produce an agent error, so we fake one here to
          * give us something to throw.

@@ -10,7 +10,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,13 +44,13 @@ public class U2FJpaConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaU2fVendorAdapter() {
-        return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
     @Bean
     public DataSource dataSourceU2f() {
-        return Beans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
+        return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
     public String[] jpaU2fPackagesToScan() {
@@ -61,7 +61,7 @@ public class U2FJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newHibernateEntityManagerFactoryBean(
+                JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaU2fVendorAdapter(),
                                 "jpaU2fRegistryContext",

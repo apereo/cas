@@ -58,7 +58,7 @@ public class GraphicalUserAuthenticationConfiguration {
     public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
 
         final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-        if (gua.getResource().getConfig().getLocation() != null) {
+        if (gua.getResource().getLocation() != null) {
             return new StaticUserGraphicalAuthenticationRepository();
         }
 

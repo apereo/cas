@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipal
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,10 +15,10 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
-public class X509Properties {
+public class X509Properties implements Serializable {
 
     private static final String DENY = "DENY";
+    private static final long serialVersionUID = -9032744084671270366L;
 
     /**
      * The  Principal types.
@@ -44,7 +45,7 @@ public class X509Properties {
          */
         SUBJECT_ALT_NAME
     }
-    
+
     /**
      * Default setting to limit the number of intermediate certificates.
      */
@@ -65,36 +66,163 @@ public class X509Properties {
      */
     private static final boolean DEFAULT_REQUIRE_KEYUSAGE = false;
 
+    /**
+     * The serial number prefix used for principal resolution
+     * when type is set to {@link PrincipalTypes#SERIAL_NO_DN}.
+     */
     private String serialNumberPrefix = "SERIALNUMBER=";
+    /**
+     * Value delimiter used for principal resolution
+     * when type is set to {@link PrincipalTypes#SERIAL_NO_DN}.
+     */
     private String valueDelimiter = ", ";
+    /**
+     * Threshold value if expired CRL revocation policy is to be handled via threshold.
+     */
     private int revocationPolicyThreshold = 172_800;
+    /**
+     * Whether revocation checking should check all resources, or stop at first one.
+     */
     private boolean checkAll;
+    /**
+     * The refresh interval of the internal scheduler in cases where CRL revocation checking
+     * is done via resources.
+     */
     private int refreshIntervalSeconds = 3_600;
+    /**
+     * The principal descriptor used for principal resolution
+     * when type is set to {@link PrincipalTypes#SUBJECT}.
+     */
     private String principalDescriptor;
+    /**
+     * When CRL revocation checking is done via distribution points,
+     * decide if fetch failures should throw errors.
+     */
     private boolean throwOnFetchFailure;
+    /**
+     * Indicates the type of principal resolution for X509.
+     * <ul>
+     * <li>{@code SERIAL_NO}: Resolve the principal by the serial number with a configurable radix,
+     * ranging from 2 to 36. If radix is 16, then the serial number could be filled with leading zeros to even the number of digits.</li>
+     * <li>{@code SERIAL_NO_DN}: Resolve the principal by serial number and issuer dn.</li>
+     * <li>{@code SUBJECT}: Resolve the principal by extracting one or more attribute values from the
+     * certificate subject DN and combining them with intervening delimiters.</li>
+     * <li>{@code SUBJECT_ALT_NAME}: Resolve the principal by the subject alternative name extension.</li>
+     * <li>{@code SUBJECT_DN}: The default type; Resolve the principal by the certificate’s subject dn.</li>
+     * </ul>
+     */
     private PrincipalTypes principalType;
+    /**
+     * Revocation certificate checking can be carried out in one of the following ways:
+     * <ul>
+     * <li>{@code NONE}: No revocation is performed.</li>
+     * <li>{@code CRL}: The CRL URI(s) mentioned in the certificate cRLDistributionPoints extension field.
+     * Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.</li>
+     * <li>{@code RESOURCE}: A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.</li>
+     * </ul>
+     */
     private String revocationChecker = "NONE";
+    /**
+     * To fetch CRLs, the following options are available:
+     * <ul>
+     * <li>{@code RESOURCE}: By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.</li>
+     * <li>{@code LDAP}: A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.</li>
+     * </ul>
+     */
     private String crlFetcher = "RESOURCE";
+    /**
+     * List of CRL resources to use for fetching.
+     */
     private List<String> crlResources = new ArrayList<>();
+    /**
+     * When CRLs are cached, indicate maximum number of elements kept in memory.
+     */
     private int cacheMaxElementsInMemory = 1_000;
+    /**
+     * When CRLs are cached, indicate whether cache should overflow to disk.
+     */
     private boolean cacheDiskOverflow;
+    /**
+     * When CRLs are cached, indicate if cache items should be eternal.
+     */
     private boolean cacheEternal;
+    /**
+     * When CRLs are cached, indicate the time-to-live of cache items.
+     */
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
+    /**
+     * When CRLs are cached, indicate the idle timeout of cache items.
+     */
     private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
-
+    /**
+     * If the CRL resource is unavailable, activate the this policy.
+     * Activated if {@link #revocationChecker} is {@code RESOURCE}.
+     * Accepted values are:
+     * <ul>
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
+     * data is permitted up to a threshold period of time but not afterward.</li>
+     * </ul>
+     */
     private String crlResourceUnavailablePolicy = DENY;
+    /**
+     * If the CRL resource has expired, activate the this policy.
+     * Activated if {@link #revocationChecker} is {@code RESOURCE}.
+     * Accepted values are:
+     * <ul>
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
+     * data is permitted up to a threshold period of time but not afterward.</li>
+     * </ul>
+     */
     private String crlResourceExpiredPolicy = DENY;
+    /**
+     * If the CRL is unavailable, activate the this policy.
+     * Activated if {@link #revocationChecker} is {@code CRL}.
+     * Accepted values are:
+     * <ul>
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
+     * data is permitted up to a threshold period of time but not afterward.</li>
+     * </ul>
+     */
     private String crlUnavailablePolicy = DENY;
+    /**
+     * If the CRL has expired, activate the this policy.
+     * Activated if {@link #revocationChecker} is {@code CRL}.
+     * Accepted values are:
+     * <ul>
+     * <li>{@code ALLOW}: Allow authentication to proceed.</li>
+     * <li>{@code DENY}: Deny authentication and block.</li>
+     * <li>{@code THRESHOLD}: Applicable to CRL expiration, throttle the request whereby expired
+     * data is permitted up to a threshold period of time but not afterward.</li>
+     * </ul>
+     */
     private String crlExpiredPolicy = DENY;
 
+    /**
+     * Radix used when {@link #principalType} is {@link PrincipalTypes#SERIAL_NO}.
+     */
     private int principalSNRadix;
+    /**
+     * If radix hex padding should be used when {@link #principalType} is {@link PrincipalTypes#SERIAL_NO}.
+     */
     private boolean principalHexSNZeroPadding;
-    
+
+    /**
+     * Principal resolution properties.
+     */
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
-    
+
+    /**
+     * LDAP settings when fetching CRLs from LDAP.
+     */
     private Ldap ldap = new Ldap();
-    
+
     /**
      * The compiled pattern supplied by the deployer.
      */
@@ -123,22 +251,17 @@ public class X509Properties {
      */
     private boolean requireKeyUsage = DEFAULT_REQUIRE_KEYUSAGE;
 
+    /**
+     * The pattern that authorizes an acceptable certificate by its subject dn.
+     */
     private String regExSubjectDnPattern = ".+";
 
-    private String trustedIssuerDnPattern = ".+";
-
+    /**
+     * The authentication handler name.
+     */
     private String name;
-
-    private String certificateAttribute = "certificateRevocationList";
-
-    public String getCertificateAttribute() {
-        return certificateAttribute;
-    }
-
-    public void setCertificateAttribute(final String certificateAttribute) {
-        this.certificateAttribute = certificateAttribute;
-    }
     
+
     public String getName() {
         return name;
     }
@@ -206,17 +329,9 @@ public class X509Properties {
     public PersonDirPrincipalResolverProperties getPrincipal() {
         return principal;
     }
-    
+
     public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
         this.principal = principal;
-    }
-    
-    public String getTrustedIssuerDnPattern() {
-        return trustedIssuerDnPattern;
-    }
-
-    public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {
-        this.trustedIssuerDnPattern = trustedIssuerDnPattern;
     }
 
     public String getRegExTrustedIssuerDnPattern() {
@@ -397,8 +512,27 @@ public class X509Properties {
 
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -1655068554291000206L;
+        /**
+         * The LDAP base dn to start the search.
+         */
         private String baseDn;
+        /**
+         * The search filter. Example: {@code cn={user}}.
+         */
         private String searchFilter;
+
+        /**
+         * The LDAP attribute that holds the certificate revocation list.
+         */
+        private String certificateAttribute = "certificateRevocationList";
+
+        public String getCertificateAttribute() {
+            return certificateAttribute;
+        }
+
+        public void setCertificateAttribute(final String certificateAttribute) {
+            this.certificateAttribute = certificateAttribute;
+        }
         
         public String getBaseDn() {
             return baseDn;

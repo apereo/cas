@@ -17,6 +17,6 @@ public class CasSamlSPBenefitFocusConfiguration extends BaseCasSamlSPConfigurati
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getBenefitFocus();
+        return casProperties.getSamlSp().getBenefitFocus();
     }
 }

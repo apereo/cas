@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class DynamoDbTicketRegistryProperties extends AbstractDynamoDbProperties {
     private static final long serialVersionUID = 699497009058965681L;
+
     /**
      * Crypto settings for the registry.
      */

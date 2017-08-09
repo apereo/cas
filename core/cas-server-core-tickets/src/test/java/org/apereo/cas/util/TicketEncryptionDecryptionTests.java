@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class TicketEncryptionDecryptionTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
-    private final BaseBinaryCipherExecutor cipher = new TestBinaryCipherExecutor("1234567890123456",
+    private final BaseBinaryCipherExecutor cipher = new TestBinaryCipherExecutor("MTIzNDU2Nzg5MDEyMzQ1Ng==",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512, 16) {};
 
@@ -59,7 +59,7 @@ public class TicketEncryptionDecryptionTests {
 
     private static class TestBinaryCipherExecutor extends BaseBinaryCipherExecutor {
         TestBinaryCipherExecutor(final String encKey, final String signingKey, final int sKey, final int eKey) {
-            super(encKey, signingKey, sKey, eKey);
+            super(encKey, signingKey, sKey, eKey, "Test");
         }
 
         @Override

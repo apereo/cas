@@ -2,10 +2,9 @@ description = "Apereo CAS Rest Authentication Support"
 dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-util")
-    implementation libraries.httpclient   
-    
     implementation libraries.pac4j
-
+    
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

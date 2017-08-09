@@ -2,6 +2,7 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.JdbcUserDetailsManagerConfigurer;
 
@@ -22,7 +23,7 @@ public class CasJdbcUserDetailsManagerConfigurer extends JdbcUserDetailsManagerC
     public void configure(final AuthenticationManagerBuilder auth) throws Exception {
         usersByUsernameQuery(adminPagesSecurityProperties.getJdbc().getQuery());
         rolePrefix(adminPagesSecurityProperties.getJdbc().getRolePrefix());
-        dataSource(Beans.newDataSource(adminPagesSecurityProperties.getJdbc()));
+        dataSource(JpaBeans.newDataSource(adminPagesSecurityProperties.getJdbc()));
         passwordEncoder(Beans.newPasswordEncoder(adminPagesSecurityProperties.getJdbc().getPasswordEncoder()));
         super.configure(auth);
     }

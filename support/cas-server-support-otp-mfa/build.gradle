@@ -4,6 +4,7 @@ dependencies {
     compile project(":core:cas-server-core-webflow")
 
     implementation libraries.zxingbarcode
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

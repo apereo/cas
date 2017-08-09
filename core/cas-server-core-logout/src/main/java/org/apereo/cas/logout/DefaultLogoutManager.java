@@ -3,14 +3,16 @@ package org.apereo.cas.logout;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -56,8 +58,7 @@ public class DefaultLogoutManager implements LogoutManager {
             LOGGER.info("Single logout callbacks are disabled");
             return new ArrayList<>(0);
         }
-        final List<LogoutRequest> logoutRequests = new ArrayList<>();
-        performLogoutForTicket(ticket, logoutRequests);
+        final List<LogoutRequest> logoutRequests = performLogoutForTicket(ticket);
         this.logoutExecutionPlan.getLogoutHandlers().forEach(h -> {
             LOGGER.debug("Invoking logout handler [{}] to process ticket [{}]", h.getClass().getSimpleName(), ticket.getId());
             h.handle(ticket);
@@ -66,26 +67,18 @@ public class DefaultLogoutManager implements LogoutManager {
         return logoutRequests;
     }
 
-    private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
-        ticket.getServices().entrySet()
-                .stream()
+    private List<LogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
+        return Stream.concat(Stream.of(ticketToBeLoggedOut), ticketToBeLoggedOut.getProxyGrantingTickets().stream())
+                .map(ticket -> ticket.getServices().entrySet())
+                .flatMap(Set::stream)
                 .filter(entry -> entry.getValue() instanceof WebApplicationService)
-                .forEach(entry -> {
+                .map(entry -> {
                     final Service service = entry.getValue();
                     LOGGER.debug("Handling single logout callback for [{}]", service);
-                    final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service, entry.getKey());
-                    if (logoutRequest != null) {
-                        LOGGER.debug("Captured logout request [{}]", logoutRequest);
-                        logoutRequests.add(logoutRequest);
-                    }
-                });
-
-        final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
-        if (proxyGrantingTickets.isEmpty()) {
-            LOGGER.debug("There are no proxy-granting tickets associated with [{}] to process for single logout", ticket.getId());
-        } else {
-            proxyGrantingTickets.forEach(proxyGrantingTicket -> performLogoutForTicket(proxyGrantingTicket, logoutRequests));
-        }
+                    return this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service, entry.getKey());
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**

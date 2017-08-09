@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryPro
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -52,9 +53,9 @@ public class JpaTicketRegistryConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
-        return Beans.newHibernateEntityManagerFactoryBean(
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
-                        Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                        JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaTicketRegistryContext",
                         ticketPackagesToScan(),
                         dataSourceTicket()),
@@ -71,7 +72,7 @@ public class JpaTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
-        return Beans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
+        return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
     @Bean
@@ -80,7 +81,7 @@ public class JpaTicketRegistryConfiguration {
                                             final TicketCatalog ticketCatalog) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
         final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog);
-        bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto()));
+        bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
         return bean;
     }
 
@@ -88,6 +89,6 @@ public class JpaTicketRegistryConfiguration {
     public LockingStrategy lockingStrategy() {
         final TicketRegistryProperties registry = casProperties.getTicket().getRegistry();
         final String uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
-        return new JpaLockingStrategy(registry.getCleaner().getAppId(), uniqueId, registry.getJpa().getJpaLockingTimeout());
+        return new JpaLockingStrategy("cas-ticket-registry-cleaner", uniqueId, registry.getJpa().getJpaLockingTimeout());
     }
 }

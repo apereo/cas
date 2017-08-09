@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.template.TemplateLocation;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.spring4.view.AbstractThymeleafView;
@@ -41,6 +42,8 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     private final String prefix;
     private final String suffix;
 
+    private String defaultThemeName;
+
     public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager,
                                                    final ArgumentExtractor argumentExtractor,
                                                    final String prefix,
@@ -49,6 +52,27 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         this.argumentExtractor = argumentExtractor;
         this.prefix = prefix;
         this.suffix = suffix;
+        this.defaultThemeName = AbstractThemeResolver.ORIGINAL_DEFAULT_THEME_NAME;
+    }
+
+
+    /**
+     * Set the name of the default theme, if set to {@code null} or empty string no default theme will be used.
+     * The initial value is {@link AbstractThemeResolver}.ORIGINAL_DEFAULT_THEME_NAME.
+     *
+     * @param defaultThemeName the name of the default theme
+     */
+    public void setDefaultThemeName(final String defaultThemeName) {
+        this.defaultThemeName = defaultThemeName;
+    }
+
+    /**
+     * Return the name of the default theme.
+     *
+     * @return the name of the default theme, may be null.
+     */
+    public String getDefaultThemeName() {
+        return this.defaultThemeName;
     }
 
     @Override
@@ -60,7 +84,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final HttpServletResponse response;
         final List<ArgumentExtractor> argumentExtractorList = CollectionUtils.wrap(this.argumentExtractor);
-        
+
         if (requestContext != null) {
             response = WebUtils.getHttpServletResponse(requestContext);
             service = WebUtils.getService(argumentExtractorList, requestContext);
@@ -71,9 +95,14 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         }
 
         if (service == null) {
+            applyDefaultThemeToTemplateName(view);
             return view;
         }
+        applyServiceThemeToTemplateName(view, service, response);
+        return view;
+    }
 
+    private void applyServiceThemeToTemplateName(final View view, final WebApplicationService service, final HttpServletResponse response) {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null) {
             try {
@@ -90,16 +119,33 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
             final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
             final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
 
-            final String viewLocationUrl = prefix.concat(viewUrl).concat(suffix);
-            LOGGER.debug("Attempting to locate view at [{}]", viewLocationUrl);
-            final TemplateLocation location = new TemplateLocation(viewLocationUrl);
-            if (location.exists(getApplicationContext())) {
-                LOGGER.debug("Found view [{}]", viewUrl);
-                thymeleafView.setTemplateName(viewUrl);
-            } else {
-                LOGGER.debug("View [{}] does not exist. Falling back to default view at [{}]", viewLocationUrl, thymeleafView.getTemplateName());
+            final boolean success = applyThemeToTemplateName(thymeleafView, viewUrl);
+            if (!success) {
+                applyDefaultThemeToTemplateName(thymeleafView);
             }
         }
-        return view;
     }
+
+    private void applyDefaultThemeToTemplateName(final View view) {
+        if (StringUtils.hasText(defaultThemeName) && view instanceof AbstractThymeleafView) {
+            LOGGER.debug("Attempting to locate views for default theme with name [{}]", defaultThemeName);
+            final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
+            final String viewUrl = defaultThemeName + '/' + thymeleafView.getTemplateName();
+            applyThemeToTemplateName(thymeleafView, viewUrl);
+        }
+    }
+
+    private boolean applyThemeToTemplateName(final AbstractThymeleafView thymeleafView, final String viewUrl) {
+        final String viewLocationUrl = prefix.concat(viewUrl).concat(suffix);
+        LOGGER.debug("Attempting to locate view at [{}]", viewLocationUrl);
+        final TemplateLocation location = new TemplateLocation(viewLocationUrl);
+        if (location.exists(getApplicationContext())) {
+            LOGGER.debug("Found view [{}]", viewUrl);
+            thymeleafView.setTemplateName(viewUrl);
+            return true;
+        }
+        LOGGER.debug("View [{}] does not exist. Falling back to default view at [{}]", viewLocationUrl, thymeleafView.getTemplateName());
+        return false;
+    }
+
 }

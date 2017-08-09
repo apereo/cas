@@ -65,10 +65,7 @@ can be chosen arbitrarily, make sure all service numeric identifiers are unique.
 if duplicate data is found.
 </p></div>
 
-## Auto Initialization
 
-Upon startup and configuration permitting,
-the registry is able to auto initialize itself from default
-JSON service definitions available to CAS.
+## Replication
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
+If CAS is to deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.

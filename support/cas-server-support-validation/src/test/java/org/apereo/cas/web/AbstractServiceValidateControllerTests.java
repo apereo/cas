@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
@@ -21,6 +22,8 @@ import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
@@ -38,12 +41,13 @@ import static org.junit.Assert.*;
  */
 @Import({CasProtocolViewsConfiguration.class, CasValidationConfiguration.class, ThymeleafAutoConfiguration.class})
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceValidateControllerTests.class);
+    
     private static final Service SERVICE = CoreAuthenticationTestUtils.getService();
     private static final String SUCCESS = "Success";
+    private static final String GITHUB_URL = "https://www.github.com";
     private static final String SERVICE_PARAM = "service";
     private static final String TICKET_PARAM = "ticket";
-    private static final String GITHUB_URL = "https://www.github.com";
     private static final String PGT_URL_PARAM = "pgtUrl";
     private static final String PGT_IOU_PARAM = "pgtIou";
 
@@ -75,13 +79,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(SERVICE_PARAM, SERVICE.getId());
         request.addParameter(TICKET_PARAM, sId2.getId());
-        request.addParameter("renew", "true");
+        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
 
         return request;
     }
 
     @Test
-    public void verifyAfterPropertesSetTestEverything() throws Exception {
+    public void verifyAfterPropertiesSetTestEverything() throws Exception {
         this.serviceValidateController.setValidationSpecification(new Cas20ProtocolValidationSpecification());
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler(null, null));
     }
@@ -156,7 +160,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(SERVICE_PARAM, SERVICE.getId());
         request.addParameter(TICKET_PARAM, sId.getId());
-        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
+        request.addParameter(PGT_URL_PARAM, SERVICE.getId());
 
         assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse())
                 .getView().toString().contains(SUCCESS));
@@ -197,7 +201,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(SERVICE_PARAM, SERVICE.getId());
         request.addParameter(TICKET_PARAM, sId.getId());
-        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
+        request.addParameter(PGT_URL_PARAM, SERVICE.getId());
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(modelAndView.getView().toString().contains(SUCCESS));
@@ -214,7 +218,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(SERVICE_PARAM, SERVICE.getId());
         request.addParameter(TICKET_PARAM, sId.getId());
-        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
+        request.addParameter(PGT_URL_PARAM, SERVICE.getId());
 
         this.serviceValidateController.setProxyHandler(new ProxyHandler() {
             @Override

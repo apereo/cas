@@ -4,7 +4,7 @@ import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.context.TestConfiguration;
 
 import java.util.HashMap;
 
@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("CasMultifactorTestAuthenticationEventExecutionPlanConfiguration")
+@TestConfiguration("CasMultifactorTestAuthenticationEventExecutionPlanConfiguration")
 public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {

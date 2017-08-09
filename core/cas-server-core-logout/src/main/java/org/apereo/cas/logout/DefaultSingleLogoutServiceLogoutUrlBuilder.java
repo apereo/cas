@@ -1,8 +1,8 @@
 package org.apereo.cas.logout;
 
-import org.apache.commons.validator.routines.UrlValidator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +18,12 @@ import java.net.URL;
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceLogoutUrlBuilder.class);
 
+    private UrlValidator urlValidator; 
+
+    public DefaultSingleLogoutServiceLogoutUrlBuilder(final UrlValidator urlValidator) {
+        this.urlValidator = urlValidator;
+    }
+
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) {
         try {
@@ -26,8 +32,12 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
                 LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
                 return serviceLogoutUrl;
             }
-            if (UrlValidator.getInstance().isValid(singleLogoutService.getOriginalUrl())) {
-                return new URL(singleLogoutService.getOriginalUrl());
+            final String originalUrl = singleLogoutService.getOriginalUrl();
+            if (this.urlValidator.isValid(originalUrl)) {
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]", originalUrl, singleLogoutService);
+                return new URL(originalUrl);
+            } else {
+                LOGGER.debug("Logout request will not be sent, the URL [{}] for service [{}] is not valid", originalUrl, singleLogoutService);
             }
             return null;
         } catch (final Exception e) {

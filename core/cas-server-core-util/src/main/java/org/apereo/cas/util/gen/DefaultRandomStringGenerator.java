@@ -1,6 +1,5 @@
 package org.apereo.cas.util.gen;
 
-import java.security.SecureRandom;
 import java.util.stream.IntStream;
 
 /**
@@ -11,58 +10,17 @@ import java.util.stream.IntStream;
 
  * @since 3.0.0
  */
-public class DefaultRandomStringGenerator implements RandomStringGenerator {
-
-    /** The default maximum length. */
-    public static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
+public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator {
 
     /** The array of printable characters to be used in our random string. */
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
 
-    /** An instance of secure random to ensure randomness is secure. */
-    private final SecureRandom randomizer = new SecureRandom();
-
-    /** The maximum length the random string can be. */
-    private final int maximumRandomLength;
-
-    /**
-     * Instantiates a new default random string generator
-     * with length set to {@link #DEFAULT_MAX_RANDOM_LENGTH}.
-     */
     public DefaultRandomStringGenerator() {
-        this.maximumRandomLength = DEFAULT_MAX_RANDOM_LENGTH;
+        super();
     }
 
-    /**
-     * Instantiates a new default random string generator.
-     *
-     * @param maxRandomLength the max random length
-     */
-    public DefaultRandomStringGenerator(final int maxRandomLength) {
-        this.maximumRandomLength = maxRandomLength;
-    }
-
-    @Override
-    public int getMinLength() {
-        return this.maximumRandomLength;
-    }
-
-    @Override
-    public int getMaxLength() {
-        return this.maximumRandomLength;
-    }
-
-    @Override
-    public String getNewString() {
-        final byte[] random = getNewStringAsBytes();
-        return convertBytesToString(random);
-    }
-
-    @Override
-    public byte[] getNewStringAsBytes() {
-        final byte[] random = new byte[this.maximumRandomLength];
-        this.randomizer.nextBytes(random);
-        return random;
+    public DefaultRandomStringGenerator(final int defaultLength) {
+        super(defaultLength);
     }
 
     /**
@@ -71,7 +29,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
      * @param random the random
      * @return the string
      */
-    private static String convertBytesToString(final byte[] random) {
+    protected String convertBytesToString(final byte[] random) {
         final char[] output = new char[random.length];
         IntStream.range(0, random.length).forEach(i -> {
             final int index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);

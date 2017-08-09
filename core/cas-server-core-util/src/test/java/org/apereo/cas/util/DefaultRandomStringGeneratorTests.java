@@ -1,10 +1,10 @@
 package org.apereo.cas.util;
 
-import static org.junit.Assert.*;
-
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -14,19 +14,14 @@ import org.junit.Test;
  */
 public class DefaultRandomStringGeneratorTests {
 
-    private static final int LENGTH = 35;
+    private static final int LENGTH = 36;
 
     private final RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
         LENGTH);
 
     @Test
-    public void verifyMaxLength() {
-        assertEquals(LENGTH, this.randomStringGenerator.getMaxLength());
-    }
-
-    @Test
-    public void verifyMinLength() {
-        assertEquals(LENGTH, this.randomStringGenerator.getMinLength());
+    public void verifyDefaultLength() {
+        assertEquals(LENGTH, this.randomStringGenerator.getDefaultLength());
     }
 
     @Test

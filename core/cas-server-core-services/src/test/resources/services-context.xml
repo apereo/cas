@@ -22,7 +22,7 @@
             </property>
             <property name="publicKey">
                 <bean class="org.apereo.cas.services.RegisteredServicePublicKeyImpl"
-                      c:location="classpath:RSA1024Public.key"
+                      c:location="classpath:keys/RSA1024Public.key"
                       c:algorithm="RSA"/>
             </property>
             <property name="attributeReleasePolicy">
@@ -169,23 +169,6 @@
             </property>
             <property name="attributeReleasePolicy">
                 <bean class="org.apereo.cas.services.ReturnAllAttributeReleasePolicy"/>
-            </property>
-        </bean>
-
-        <bean class="org.apereo.cas.services.RegexRegisteredService">
-            <property name="id" value="35"/>
-            <property name="name" value="Test Encryption of Attributes"/>
-            <property name="serviceId" value="testencryption$"/>
-            <property name="evaluationOrder" value="1"/>
-            <property name="publicKey">
-                <bean class="org.apereo.cas.services.RegisteredServicePublicKeyImpl"
-                      c:location="classpath:keys/RSA1024Public.key"
-                      c:algorithm="RSA"/>
-            </property>
-            <property name="attributeReleasePolicy">
-                <bean class="org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
-                      p:authorizedToReleaseCredentialPassword="true"
-                      p:authorizedToReleaseProxyGrantingTicket="true"/>
             </property>
         </bean>
 

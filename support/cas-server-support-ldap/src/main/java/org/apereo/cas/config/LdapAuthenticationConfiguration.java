@@ -16,6 +16,7 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationPropert
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -83,7 +84,7 @@ public class LdapAuthenticationConfiguration {
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
-                    final Authenticator authenticator = Beans.newLdaptiveAuthenticator(l);
+                    final Authenticator authenticator = LdapUtils.newLdaptiveAuthenticator(l);
                     LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
                             multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 

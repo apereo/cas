@@ -12,7 +12,7 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-util")
     
-    testCompileOnly libraries.metrics
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

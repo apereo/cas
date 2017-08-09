@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.AbstractConfigProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,17 +46,18 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Clean up expired records via a background cleaner process.
      */
-    private Cleaner cleaner = new Cleaner();
+    @NestedConfigurationProperty
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
     public U2FMultifactorProperties() {
         setId("mfa-u2f");
     }
 
-    public Cleaner getCleaner() {
+    public ScheduledJobProperties getCleaner() {
         return cleaner;
     }
 
-    public void setCleaner(final Cleaner cleaner) {
+    public void setCleaner(final ScheduledJobProperties cleaner) {
         this.cleaner = cleaner;
     }
 
@@ -100,7 +101,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
         this.expireDevicesTimeUnit = expireDevicesTimeUnit;
     }
 
-    public static class Json extends AbstractConfigProperties {
+    public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = -6883660787308509919L;
     }
 
@@ -116,43 +117,5 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
         private static final long serialVersionUID = -4334840263678287815L;
     }
 
-    public static class Cleaner implements Serializable {
-        /**
-         * Whether cleaner should be enabled as a background process to remove expired records.
-         */
-        private boolean enabled = true;
-        /**
-         * Cleaner startup delay.
-         */
-        private String startDelay = "PT10S";
-        /**
-         * Cleaner repeat interval. Indicates how often should the cleaner run again.
-         */
-        private String repeatInterval = "PT1M";
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public long getStartDelay() {
-            return Beans.newDuration(startDelay).toMillis();
-        }
-
-        public void setStartDelay(final String startDelay) {
-            this.startDelay = startDelay;
-        }
-
-        public long getRepeatInterval() {
-            return Beans.newDuration(repeatInterval).toMillis();
-        }
-
-        public void setRepeatInterval(final String repeatInterval) {
-            this.repeatInterval = repeatInterval;
-        }
-    }
 }
 

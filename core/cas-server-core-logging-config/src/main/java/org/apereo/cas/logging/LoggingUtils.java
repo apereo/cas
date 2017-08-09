@@ -4,6 +4,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.SimpleMessage;
+import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
 /**
@@ -29,7 +30,7 @@ public final class LoggingUtils {
                 .setLevel(logEvent.getLevel())
                 .setLoggerName(logEvent.getLoggerName())
                 .setLoggerFqcn(logEvent.getLoggerFqcn())
-                .setContextMap(logEvent.getContextMap())
+                .setContextData(new SortedArrayStringMap(logEvent.getContextData()))
                 .setContextStack(logEvent.getContextStack())
                 .setEndOfBatch(logEvent.isEndOfBatch())
                 .setIncludeLocation(logEvent.isIncludeLocation())

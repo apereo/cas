@@ -9,6 +9,8 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 public class WarningCookieProperties extends CookieProperties {
 
+    private static final long serialVersionUID = -266090748600049578L;
+
     public WarningCookieProperties() {
         super.setName("CASPRIVACY");
     }

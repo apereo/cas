@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy;
@@ -123,7 +122,7 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             try {
                 accessStrategy.setUnauthorizedRedirectUrl(new URI(supportAccess.getUnauthorizedRedirectUrl()));
             } catch (final Exception e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
 

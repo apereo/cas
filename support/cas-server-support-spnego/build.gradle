@@ -9,9 +9,8 @@ dependencies {
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-util")
-    implementation libraries.ldaptive
     implementation libraries.jcifs
-    implementation libraries.persondirectory
+    
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(":core:cas-server-core")

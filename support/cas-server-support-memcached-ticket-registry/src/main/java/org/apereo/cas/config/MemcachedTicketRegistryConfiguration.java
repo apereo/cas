@@ -1,12 +1,13 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
@@ -50,7 +51,7 @@ public class MemcachedTicketRegistryConfiguration {
             bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getTicket().getRegistry().getMemcached().getHashAlgorithm()));
             return bean;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -63,7 +64,9 @@ public class MemcachedTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) {
         final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
-        registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(casProperties.getTicket().getRegistry().getMemcached().getCrypto()));
+        final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
+        final CipherExecutor cipherExecutor = Beans.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
+        registry.setCipherExecutor(cipherExecutor);
         return registry;
     }
 

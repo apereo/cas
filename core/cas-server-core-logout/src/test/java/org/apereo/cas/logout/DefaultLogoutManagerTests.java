@@ -11,6 +11,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
+import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
+import org.apereo.cas.web.UrlValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,14 +59,16 @@ public class DefaultLogoutManagerTests {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
 
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(true).getObject();
+
         singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client, 
                 new SamlCompliantLogoutMessageCreator(), servicesManager,
-                new DefaultSingleLogoutServiceLogoutUrlBuilder(), true,
+                new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), true,
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
         final Map<String, Service> services = new HashMap<>();

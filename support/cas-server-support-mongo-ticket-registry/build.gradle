@@ -2,7 +2,9 @@ description = "Apereo CAS MongoDB Ticket Registry"
 dependencies {
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-util")
+    compile project(":support:cas-server-support-mongo-core")
     implementation libraries.mongo
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

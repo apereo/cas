@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
@@ -9,11 +8,11 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.apereo.cas.util.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -103,10 +102,10 @@ public final class RegisteredServiceTestUtils {
             final RegexRegisteredService s = new RegexRegisteredService();
             s.setServiceId(id);
             s.setEvaluationOrder(1);
-            s.setName("Test registered service");
+            s.setName("Test registered service " + id);
             s.setDescription("Registered service description");
             s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-            s.setId(new SecureRandom().nextInt(Math.abs(s.hashCode())));
+            s.setId(RandomUtils.getInstanceStrong().nextInt(Math.abs(s.hashCode())));
             s.setTheme("exampleTheme");
             s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
             final DefaultRegisteredServiceAccessStrategy accessStrategy =
@@ -119,7 +118,7 @@ public final class RegisteredServiceTestUtils {
             s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
             s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
-            s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:pub.key", "RSA"));
+            s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
             final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAuthorizedToReleaseCredentialPassword(true);
@@ -135,7 +134,7 @@ public final class RegisteredServiceTestUtils {
 
             return s;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

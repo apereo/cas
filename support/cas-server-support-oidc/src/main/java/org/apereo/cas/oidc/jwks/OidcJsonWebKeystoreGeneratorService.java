@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.jwks;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.jose4j.jwk.JsonWebKey;
@@ -46,7 +45,7 @@ public class OidcJsonWebKeystoreGeneratorService {
                 LOGGER.debug("Located JSON web keystore at [{}]", file);
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

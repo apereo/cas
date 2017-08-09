@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -53,7 +52,7 @@ public class EncodedTicket implements Ticket {
             this.id = encodedTicketId;
             this.encodedTicket = encodedTicket.read();
         } catch (final IOException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -69,7 +68,7 @@ public class EncodedTicket implements Ticket {
             this.id = encodedTicketId;
             this.encodedTicket = EncodingUtils.decodeBase64(encodedTicket);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

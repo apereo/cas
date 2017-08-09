@@ -15,10 +15,12 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -57,7 +59,9 @@ import org.springframework.test.context.TestPropertySource;
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         MongoDbTicketRegistryTicketCatalogConfiguration.class,
-        MongoDbTicketRegistryConfiguration.class})
+        MongoDbTicketRegistryConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class})
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/mongoregistry.properties"})
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)

@@ -29,7 +29,7 @@ import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.saml.SamlCore;
+import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
@@ -45,6 +45,8 @@ import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serializable;
+
 /**
  * This is {@link CasConfigurationProperties}.
  *
@@ -52,8 +54,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 @ConfigurationProperties(value = "cas")
-public class CasConfigurationProperties {
+public class CasConfigurationProperties implements Serializable {
 
+    private static final long serialVersionUID = -8620267783496071683L;
     @NestedConfigurationProperty
     private ConsentProperties consent = new ConsentProperties();
 
@@ -145,7 +148,7 @@ public class CasConfigurationProperties {
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
     @NestedConfigurationProperty
-    private SamlServiceProviderProperties samlSP = new SamlServiceProviderProperties();
+    private SamlServiceProviderProperties samlSp = new SamlServiceProviderProperties();
 
     @NestedConfigurationProperty
     private MaxmindProperties maxmind = new MaxmindProperties();
@@ -163,7 +166,7 @@ public class CasConfigurationProperties {
     private SamlMetadataUIProperties samlMetadataUi = new SamlMetadataUIProperties();
 
     @NestedConfigurationProperty
-    private SamlCore samlCore = new SamlCore();
+    private SamlCoreProperties samlCore = new SamlCoreProperties();
 
     @NestedConfigurationProperty
     private ShibbolethAttributeResolverProperties shibAttributeResolver = new ShibbolethAttributeResolverProperties();
@@ -404,11 +407,11 @@ public class CasConfigurationProperties {
         this.samlMetadataUi = samlMetadataUi;
     }
 
-    public SamlCore getSamlCore() {
+    public SamlCoreProperties getSamlCore() {
         return samlCore;
     }
 
-    public void setSamlCore(final SamlCore samlCore) {
+    public void setSamlCore(final SamlCoreProperties samlCore) {
         this.samlCore = samlCore;
     }
 
@@ -476,12 +479,12 @@ public class CasConfigurationProperties {
         this.googleRecaptcha = googleRecaptcha;
     }
 
-    public SamlServiceProviderProperties getSamlSP() {
-        return samlSP;
+    public SamlServiceProviderProperties getSamlSp() {
+        return samlSp;
     }
 
-    public void setSamlSP(final SamlServiceProviderProperties samlSP) {
-        this.samlSP = samlSP;
+    public void setSamlSp(final SamlServiceProviderProperties samlSp) {
+        this.samlSp = samlSp;
     }
 
     public TwillioProperties getTwillio() {

@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +73,7 @@ public class PathWatcher implements Runnable, Closeable {
             LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
             watchablePath.register(this.watcher, KINDS);
         } catch (final IOException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

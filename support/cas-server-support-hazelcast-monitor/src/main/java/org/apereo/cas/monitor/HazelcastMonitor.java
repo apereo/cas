@@ -4,7 +4,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
     @Override
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
-        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         LOGGER.debug("Locating hazelcast instance [{}]...", hz.getCluster().getInstanceName());
         final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(hz.getCluster().getInstanceName());
 

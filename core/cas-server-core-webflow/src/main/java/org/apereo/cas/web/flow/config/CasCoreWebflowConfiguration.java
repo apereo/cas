@@ -297,6 +297,7 @@ public class CasCoreWebflowConfiguration {
     public Action redirectToServiceAction() {
         return new RedirectToServiceAction(responseBuilderLocator);
     }
+
     @Bean
     @ConditionalOnMissingBean(name = "injectResponseHeadersAction")
     @RefreshScope

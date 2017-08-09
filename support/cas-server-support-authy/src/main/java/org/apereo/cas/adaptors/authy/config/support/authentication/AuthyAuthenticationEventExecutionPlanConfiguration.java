@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.authy.config.support.authentication;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandler;
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
@@ -65,7 +64,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
             final boolean forceVerification = authy.isForceVerification();
             return new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyPrincipalFactory(), authyClientInstance(), forceVerification);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

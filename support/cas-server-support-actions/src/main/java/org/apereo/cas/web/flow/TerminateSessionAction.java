@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequest;
@@ -87,7 +86,7 @@ public class TerminateSessionAction extends AbstractAction {
             LOGGER.debug("Terminated all CAS sessions successfully.");
             return this.eventFactorySupport.success(this);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

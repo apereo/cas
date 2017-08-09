@@ -80,114 +80,72 @@ public class MockX509CRL extends X509CRL {
         return false;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getEncoded()
-     */
     @Override
     public byte[] getEncoded() throws CRLException {
         return null;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getIssuerDN()
-     */
     @Override
     public Principal getIssuerDN() {
         return this.issuer;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getNextUpdate()
-     */
     @Override
     public Date getNextUpdate() {
         return this.nextUpdate;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getRevokedCertificate(java.math.BigInteger)
-     */
     @Override
     public X509CRLEntry getRevokedCertificate(final BigInteger serialNumber) {
         return null;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getRevokedCertificates()
-     */
     @Override
     public Set<? extends X509CRLEntry> getRevokedCertificates() {
         return null;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getSigAlgName()
-     */
     @Override
     public String getSigAlgName() {
         return "SHA1";
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getSigAlgOID()
-     */
     @Override
     public String getSigAlgOID() {
         return "1.3.14.3.2.26";
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getSigAlgParams()
-     */
     @Override
     public byte[] getSigAlgParams() {
         return null;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getSignature()
-     */
     @Override
     public byte[] getSignature() {
         return null;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getTBSCertList()
-     */
     @Override
     public byte[] getTBSCertList() throws CRLException {
         return null;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getThisUpdate()
-     */
     @Override
     public Date getThisUpdate() {
         return this.thisUpdate;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#getVersion()
-     */
     @Override
     public int getVersion() {
         return 0;
     }
 
-    /**
-     * @see java.security.cert.X509CRL#verify(java.security.PublicKey)
-     */
     @Override
     public void verify(final PublicKey key) throws CRLException, NoSuchAlgorithmException,
             InvalidKeyException, NoSuchProviderException, SignatureException {
         // Do nothing to indicate valid signature
     }
 
-    /**
-     * @see java.security.cert.X509CRL#verify(java.security.PublicKey, java.lang.String)
-     */
     @Override
     public void verify(final PublicKey key, final String sigProvider) throws CRLException,
     NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,

@@ -103,9 +103,9 @@ public class SurrogateAuthenticationConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         try {
             final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
-            if (su.getJson().getConfig().getLocation() != null) {
-                LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getConfig().getLocation());
-                return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
+            if (su.getJson().getLocation() != null) {
+                LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
+                return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation());
             }
 
             final Map<String, Set> accounts = new LinkedHashMap<>();

@@ -1,12 +1,11 @@
 package org.apereo.cas.mgmt.config;
 
-import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.mgmt.DefaultCasManagementEventListener;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
@@ -31,7 +30,6 @@ import org.apereo.cas.mgmt.web.CasManagementSecurityInterceptor;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -70,10 +68,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -165,7 +161,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             p.load(casProperties.getMgmt().getUserPropertiesFile().getInputStream());
             return p;
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -284,12 +280,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     private String getDefaultServiceUrl() {
         return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/manage.html");
     }
-
-    @Bean
-    public List serviceFactoryList() {
-        return new ArrayList();
-    }
-
+    
     @RefreshScope
     @Bean
     public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
@@ -300,17 +291,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 .collect(Collectors.toSet());
     }
 
+    @Bean
+    public DefaultCasManagementEventListener defaultCasManagementEventListener() {
+        return new DefaultCasManagementEventListener();
+    }
     
-    @Bean
-    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
-        return new HashMap<>();
-    }
-
-    @Bean
-    public List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators() {
-        return new ArrayList<>();
-    }
-
     /**
      * The Permit all authorization generator.
      */

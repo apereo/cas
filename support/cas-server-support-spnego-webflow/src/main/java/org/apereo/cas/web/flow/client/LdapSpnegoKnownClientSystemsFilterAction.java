@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.client;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -44,7 +43,9 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
     public LdapSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute,
-                                                    final long dnsTimeout, final ConnectionFactory connectionFactory, final SearchRequest searchRequest,
+                                                    final long dnsTimeout, 
+                                                    final ConnectionFactory connectionFactory, 
+                                                    final SearchRequest searchRequest,
                                                     final String spnegoAttributeName) {
         super(ipsToCheckPattern, alternativeRemoteHostAttribute, dnsTimeout);
         this.connectionFactory = connectionFactory;
@@ -127,7 +128,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
             throw new IllegalArgumentException("Failed to establish a connection ldap. " + searchResult.getMessage());
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (connection != null) {
                 connection.close();

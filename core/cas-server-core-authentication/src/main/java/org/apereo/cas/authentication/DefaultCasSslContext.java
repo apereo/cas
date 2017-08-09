@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.base.Throwables;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +69,7 @@ public class DefaultCasSslContext {
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

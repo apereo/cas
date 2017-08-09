@@ -1,6 +1,6 @@
 package org.apereo.cas.authorization;
 
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -65,8 +65,8 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
             LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
             final Response<SearchResult> response = this.groupSearchExecutor.search(
                     this.connectionFactory,
-                    Beans.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
-                            Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(userEntry.getDn())));
+                    LdapUtils.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
+                            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(userEntry.getDn())));
             LOGGER.debug("LDAP role search response: [{}]", response);
             final SearchResult groupResult = response.getResult();
 

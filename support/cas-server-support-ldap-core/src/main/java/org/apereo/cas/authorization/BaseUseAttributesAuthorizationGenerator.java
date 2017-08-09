@@ -1,7 +1,7 @@
 package org.apereo.cas.authorization;
 
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -79,8 +79,8 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             LOGGER.debug("Attempting to get details for user [{}].", username);
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
-                    Beans.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
-                            Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username)));
+                    LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+                            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username)));
 
             LOGGER.debug("LDAP user search response: [{}]", response);
             userResult = response.getResult();

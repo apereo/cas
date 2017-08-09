@@ -5,7 +5,6 @@ dependencies {
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-authentication")
     
-
     implementation libraries.textmagic
     
     testImplementation project(":core:cas-server-core")
@@ -13,6 +12,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(":support:cas-server-support-cookie")
 }
