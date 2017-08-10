@@ -2,21 +2,11 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeFilterMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeReleasePolicyMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesRepositoryMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
-import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,8 +18,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -49,17 +37,12 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     private ManageRegisteredServicesMultiActionController controller;
     private DefaultRegisteredServiceFactory registeredServiceFactory;
     private DefaultServicesManager servicesManager;
-    private final DefaultAttributeReleasePolicyMapper policyMapper =
-            new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
-                    new DefaultPrincipalAttributesRepositoryMapper(),
-                    new ArrayList<>());
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry());
 
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
-                new DefaultRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(), new ArrayList<>(0));
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new ArrayList<>(0));
 
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
                 .registeredServiceFactory, new WebApplicationServiceFactory(), "https://cas.example.org");
@@ -143,8 +126,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     @Test
     public void verifyCustomComponents() throws Exception {
         // override the RegisteredServiceMapper
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
-                new CustomRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(), new ArrayList<>(0));
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new ArrayList<>(0));
 
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
                 .registeredServiceFactory, new WebApplicationServiceFactory(), "https://cas.example.org");
@@ -170,28 +152,5 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertTrue(content.contains(UNIQUE_DESCRIPTION));
         assertTrue(content.contains("customComponent1"));
         assertTrue(content.contains("key2"));
-    }
-
-    private static class CustomRegisteredServiceMapper implements RegisteredServiceMapper {
-        private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
-
-        @Override
-        public void mapRegisteredService(final RegisteredService svc, final ServiceData bean) {
-            base.mapRegisteredService(svc, bean);
-        }
-
-        @Override
-        public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceViewBean bean) {
-            base.mapRegisteredService(svc, bean);
-            final Map<String, Object> properties = new HashMap<>();
-            properties.put("key1", "string");
-            properties.put("key2", 100);
-            bean.setCustomComponent("customComponent1", properties);
-        }
-
-        @Override
-        public RegisteredService toRegisteredService(final ServiceData data) {
-            return base.toRegisteredService(data);
-        }
     }
 }
