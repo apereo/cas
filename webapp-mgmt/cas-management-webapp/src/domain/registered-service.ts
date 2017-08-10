@@ -61,8 +61,12 @@ export abstract class AbstractRegisteredService extends RegisteredService {
 }
 
 export class RegexRegisteredService extends AbstractRegisteredService {
+  static cName = "org.apereo.cas.services.RegexRegisteredService";
   constructor(service?: RegisteredService) {
     super(service);
-    this["@class"] = "org.apereo.cas.services.RegexRegisteredService";
+    this["@class"] = RegexRegisteredService.cName;
+  }
+  static instanceOf(obj: any): boolean {
+    return obj && obj["@class"] === RegexRegisteredService.cName;
   }
 }

@@ -57,6 +57,9 @@ import { TimeComponent } from './access-strategy/time/time.component';
 import { GrouperComponent } from './access-strategy/grouper/grouper.component';
 import { OidcclientComponent } from './oidcclient/oidcclient.component';
 import { MappedattributesComponent } from './mappedattributes/mappedattributes.component';
+import { TabOauthComponent } from './tab-oauth/tab-oauth.component';
+import { TabSamlComponent } from './tab-saml/tab-saml.component';
+import { TabWsfedComponent } from './tab-wsfed/tab-wsfed.component';
 
 @NgModule({
   imports: [
@@ -78,6 +81,9 @@ import { MappedattributesComponent } from './mappedattributes/mappedattributes.c
     TabAttrreleaseComponent,
     TabPropertiesComponent,
     TabAdvancedComponent,
+    TabSamlComponent,
+    TabOauthComponent,
+    TabWsfedComponent,
     FormComponent,
     AccessStrategyComponent,
     AttributeReleaseComponent,
@@ -114,6 +120,9 @@ import { MappedattributesComponent } from './mappedattributes/mappedattributes.c
     GrouperComponent,
     OidcclientComponent,
     MappedattributesComponent,
+    TabOauthComponent,
+    TabSamlComponent,
+    TabWsfedComponent,
   ],
   providers: [
     FormResolve,

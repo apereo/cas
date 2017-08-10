@@ -10,9 +10,19 @@
           <ng-container i18n>Basics</ng-container>
       </ng-template>
     </md-tab>
+    <!--
     <md-tab>
       <ng-template md-tab-label>
           <ng-container i18n>Service Type</ng-container>
+      </ng-template>
+    </md-tab>
+    -->
+    <md-tab *ngIf="isSaml() || isOauth() || isOidc() || isWsFed()">
+      <ng-template md-tab-label>
+        <ng-container *ngIf="isSaml()" i18n>SAML</ng-container>
+        <ng-container i18n *ngIf="isOauth()">OAuth</ng-container>
+        <ng-container *ngIf="isOidc()" i18n>OIDC</ng-container>
+        <ng-container *ngIf="isWsFed()" i18n>WS Federation</ng-container>
       </ng-template>
     </md-tab>
     <md-tab>
