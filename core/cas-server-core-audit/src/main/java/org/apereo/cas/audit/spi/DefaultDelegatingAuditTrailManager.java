@@ -1,8 +1,8 @@
 package org.apereo.cas.audit.spi;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apereo.cas.support.events.audit.CasAuditActionContextRecordedEvent;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -40,17 +40,14 @@ public class DefaultDelegatingAuditTrailManager implements DelegatingAuditTrailM
 
     public DefaultDelegatingAuditTrailManager(final AuditTrailManager manager) {
         this.manager = manager;
-        this.storage = CacheBuilder.newBuilder()
+        this.storage = Caffeine.newBuilder()
                 .initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE)
                 .recordStats()
                 .expireAfterWrite(this.expirationDuration, this.expirationTimeUnit)
-                .build(new CacheLoader<String, AuditActionContext>() {
-                    @Override
-                    public AuditActionContext load(final String s) throws Exception {
-                        LOGGER.error("Load operation of the audit cache is not supported.");
-                        return null;
-                    }
+                .build(s -> {
+                    LOGGER.error("Load operation of the audit cache is not supported.");
+                    return null;
                 });
     }
 

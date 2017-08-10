@@ -309,9 +309,7 @@ public final class Beans {
     public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
                                                                  final boolean forceIfBlankKeys,
                                                                  final String registryName) {
-        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
-                && StringUtils.isNotBlank(registry.getEncryption().getKey())
-                || forceIfBlankKeys) {
+        if (registry.isEnabled() || forceIfBlankKeys) {
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),
                     registry.getSigning().getKey(),

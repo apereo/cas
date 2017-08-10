@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.token;
 
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwa.AlgorithmConstraints;
