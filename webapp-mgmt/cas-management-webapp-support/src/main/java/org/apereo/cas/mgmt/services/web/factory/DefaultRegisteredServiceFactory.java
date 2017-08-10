@@ -1,7 +1,6 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.FormData;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.apereo.cas.mgmt.services.web.beans.FormData;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -21,23 +20,9 @@ import java.util.List;
  */
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
 
-    private final MultifactorAuthenticationMapper multifactorAuthenticationMapper = new DefaultMultifactorAuthenticationMapper();
-    private final AccessStrategyMapper accessStrategyMapper;
-    private final AttributeReleasePolicyMapper attributeReleasePolicyMapper;
-    private final ProxyPolicyMapper proxyPolicyMapper;
-    private final RegisteredServiceMapper registeredServiceMapper;
-    private final UsernameAttributeProviderMapper usernameAttributeProviderMapper;
     private final List<? extends FormDataPopulator> formDataPopulators;
 
-    public DefaultRegisteredServiceFactory(final AccessStrategyMapper accessStrategyMapper, final AttributeReleasePolicyMapper attributeReleasePolicyMapper,
-                                           final ProxyPolicyMapper proxyPolicyMapper, final RegisteredServiceMapper registeredServiceMapper,
-                                           final DefaultUsernameAttributeProviderMapper defaultUsernameAttributeProviderMapper,
-                                           final List<? extends FormDataPopulator> formDataPopulators) {
-        this.accessStrategyMapper = accessStrategyMapper;
-        this.attributeReleasePolicyMapper = attributeReleasePolicyMapper;
-        this.proxyPolicyMapper = proxyPolicyMapper;
-        this.registeredServiceMapper = registeredServiceMapper;
-        this.usernameAttributeProviderMapper = defaultUsernameAttributeProviderMapper;
+    public DefaultRegisteredServiceFactory(final List<? extends FormDataPopulator> formDataPopulators) {
         this.formDataPopulators = formDataPopulators;
     }
 
@@ -49,67 +34,18 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
     }
 
     @Override
-    public ServiceData createServiceData(final RegisteredService svc) {
-        final ServiceData bean = new ServiceData();
-
-        this.registeredServiceMapper.mapRegisteredService(svc, bean);
-        this.accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
-        this.usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
-        this.proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
-        this.attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
-        this.multifactorAuthenticationMapper.mapMultifactorPolicy(svc.getMultifactorPolicy(), bean);
-        
-        return bean;
-    }
-
-    @Override
     public RegisteredServiceViewBean createServiceViewBean(final RegisteredService svc) {
         final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
-
-        this.registeredServiceMapper.mapRegisteredService(svc, bean);
-        this.accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
-        this.usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
-        this.proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
-        this.attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
+        bean.setEvalOrder(svc.getEvaluationOrder());
+        bean.setAssignedId(String.valueOf(svc.getId()));
+        bean.setSasCASEnabled(svc.getAccessStrategy().isServiceAccessAllowed());
+        bean.setServiceId(svc.getServiceId());
+        bean.setName(svc.getName());
+        bean.setDescription(svc.getDescription());
+        //bean.setLogoUrl(svc.getLogo().toString());
+        //bean.setProxyPolicy(svc.getProxyPolicy());
+        //bean.setAttrRelease(svc.getAttributeReleasePolicy());
 
         return bean;
-    }
-
-    @Override
-    public RegisteredService createRegisteredService(final ServiceData data) {
-        final RegisteredService svc = this.registeredServiceMapper.toRegisteredService(data);
-
-        if (svc instanceof AbstractRegisteredService) {
-            final AbstractRegisteredService absSvc = (AbstractRegisteredService) svc;
-
-            final RegisteredServiceAccessStrategy accessStrategy = this.accessStrategyMapper.toAccessStrategy(data);
-            if (accessStrategy != null) {
-                absSvc.setAccessStrategy(accessStrategy);
-            }
-
-            final RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
-                    this.usernameAttributeProviderMapper.toUsernameAttributeProvider(data);
-            if (usernameAttributeProvider != null) {
-                absSvc.setUsernameAttributeProvider(usernameAttributeProvider);
-            }
-
-            final RegisteredServiceProxyPolicy proxyPolicy = this.proxyPolicyMapper.toProxyPolicy(data);
-            if (proxyPolicy != null) {
-                absSvc.setProxyPolicy(proxyPolicy);
-            }
-
-            final RegisteredServiceAttributeReleasePolicy attrPolicy = this.attributeReleasePolicyMapper
-                    .toAttributeReleasePolicy(data);
-            if (attrPolicy != null) {
-                absSvc.setAttributeReleasePolicy(attrPolicy);
-            }
-            
-            final RegisteredServiceMultifactorPolicy mfaPolicy = this.multifactorAuthenticationMapper.toMultifactorPolicy(data);
-            if (mfaPolicy != null) {
-                absSvc.setMultifactorPolicy(mfaPolicy);
-            }
-        }
-
-        return svc;
     }
 }

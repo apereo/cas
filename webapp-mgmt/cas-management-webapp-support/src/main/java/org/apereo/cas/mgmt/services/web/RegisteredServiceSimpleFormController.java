@@ -1,6 +1,6 @@
 package org.apereo.cas.mgmt.services.web;
 
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
+import org.apereo.cas.mgmt.services.web.beans.FormData;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -75,7 +75,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     }
 
     @GetMapping(value = "formData")
-    public ResponseEntity<RegisteredServiceEditBean.FormData> getFormData() throws Exception {
+    public ResponseEntity<FormData> getFormData() throws Exception {
         return new ResponseEntity<>(this.registeredServiceFactory.createFormData(),HttpStatus.OK);
     }
 }

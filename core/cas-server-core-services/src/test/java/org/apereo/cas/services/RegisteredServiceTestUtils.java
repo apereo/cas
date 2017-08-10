@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesR
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.apereo.cas.services.RegisteredService.LogoutType;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -8,23 +8,10 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.DefaultCasManagementEventListener;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
-import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
-import org.apereo.cas.mgmt.services.web.factory.AttributeFilterMapper;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
-import org.apereo.cas.mgmt.services.web.factory.AttributeReleasePolicyMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeFilterMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeReleasePolicyMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesRepositoryMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
-import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
 import org.apereo.cas.mgmt.services.web.factory.FormDataPopulator;
-import org.apereo.cas.mgmt.services.web.factory.PrincipalAttributesRepositoryMapper;
-import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
-import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.mgmt.web.CasManagementRootController;
 import org.apereo.cas.mgmt.web.CasManagementSecurityInterceptor;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
@@ -222,53 +209,16 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new SimpleControllerHandlerAdapter();
     }
 
-    @Bean
-    public AccessStrategyMapper defaultAccessStrategyMapper() {
-        return new DefaultAccessStrategyMapper();
-    }
 
     @Bean
     public RegisteredServiceFactory registeredServiceFactory() {
         this.formDataPopulators.add(attributeFormDataPopulator());
-        return new DefaultRegisteredServiceFactory(defaultAccessStrategyMapper(), defaultAttributeReleasePolicyMapper(), defaultProxyPolicyMapper(),
-                defaultRegisteredServiceMapper(), usernameAttributeProviderMapper(), formDataPopulators);
-    }
-
-    @Bean
-    public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
-        return new DefaultAttributeReleasePolicyMapper(defaultAttributeFilterMapper(),
-                defaultPrincipalAttributesRepositoryMapper(),
-                userDefinedScopeBasedAttributeReleasePolicies());
+        return new DefaultRegisteredServiceFactory(formDataPopulators);
     }
 
     @Bean
     public FormDataPopulator attributeFormDataPopulator() {
         return new AttributeFormDataPopulator(attributeRepository());
-    }
-
-    @Bean
-    public DefaultUsernameAttributeProviderMapper usernameAttributeProviderMapper() {
-        return new DefaultUsernameAttributeProviderMapper();
-    }
-
-    @Bean
-    public RegisteredServiceMapper defaultRegisteredServiceMapper() {
-        return new DefaultRegisteredServiceMapper();
-    }
-
-    @Bean
-    public ProxyPolicyMapper defaultProxyPolicyMapper() {
-        return new DefaultProxyPolicyMapper();
-    }
-
-    @Bean
-    public AttributeFilterMapper defaultAttributeFilterMapper() {
-        return new DefaultAttributeFilterMapper();
-    }
-
-    @Bean
-    public PrincipalAttributesRepositoryMapper defaultPrincipalAttributesRepositoryMapper() {
-        return new DefaultPrincipalAttributesRepositoryMapper();
     }
 
     @Bean
