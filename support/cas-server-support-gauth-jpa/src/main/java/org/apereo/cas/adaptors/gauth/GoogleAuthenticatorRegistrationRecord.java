@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,8 @@ import java.util.List;
 @Table(name = "GoogleAuthenticatorRegistrationRecord")
 public class GoogleAuthenticatorRegistrationRecord {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id = Integer.MAX_VALUE;
 
     @Column(updatable = true, insertable = true, nullable = false)
