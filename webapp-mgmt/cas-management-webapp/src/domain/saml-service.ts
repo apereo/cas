@@ -11,6 +11,7 @@ export class SamlRegisteredService extends RegexRegisteredService {
   metadataSignatureLocation: String;
   serviceProviderNameIdQualifier: String;
   nameIdQualifier: String;
+  metadataExpirationDuration: String;
   signAssertions: boolean;
   signResponses: boolean;
   encryptAssertions: boolean;

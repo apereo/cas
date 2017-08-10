@@ -56,6 +56,17 @@
     </div>
 
     <div>
+      <md-input-container class="textInput">
+        <input mdInput
+               placeholder="Metadata Expiration Duration"
+               [(ngModel)]="service.metadataExpirationDuration">
+      </md-input-container>
+      <md-icon style="font-size: medium"
+               mdTooltip="If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.">help
+      </md-icon>
+    </div>
+
+    <div>
       <md-checkbox [(ngModel)]="service.signAssertions">
         <ng-container i18n="services.form.label.saml.signassertions">
           {{ messages.services_form_label_saml_signassertions }}
