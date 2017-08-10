@@ -5,7 +5,7 @@ import {Location} from "@angular/common";
 import {FormService} from "./form.service";
 import {Data} from "./data";
 import {AlertComponent} from "../alert/alert.component";
-import {AbstractRegisteredService} from "../../domain/registered-service";
+import {AbstractRegisteredService, RegexRegisteredService} from "../../domain/registered-service";
 import {CachingPrincipalAttributesRepository} from "../../domain/attribute-repo";
 import {
   AnonymousRegisteredServiceUsernameProvider,
@@ -14,7 +14,9 @@ import {
 import {
   RegexMatchingRegisteredServiceProxyPolicy
 } from "../../domain/proxy-policy,ts";
-import {OAuthRegisteredService} from "../../domain/oauth-service";
+import {OAuthRegisteredService, OidcRegisteredService} from "../../domain/oauth-service";
+import {SamlRegisteredService} from "../../domain/saml-service";
+import {WSFederationRegisterdService} from "../../domain/wsed-service";
 
 enum Tabs {
   BASICS,
@@ -66,7 +68,6 @@ export class FormComponent implements OnInit {
         this.goto(Tabs.BASICS);
       });
     });
-
   }
 
   goto(tab:Tabs) {
@@ -81,14 +82,42 @@ export class FormComponent implements OnInit {
     this.service.formData().then(resp => {
       this.data.formData = resp;
     });
-  };
+  }
+
+  isOidc(): boolean {
+    return OidcRegisteredService.instanceOf(this.data.service)
+  }
+
+  isSaml(): boolean {
+    return SamlRegisteredService.instanceOf(this.data.service)
+  }
+
+  isWsFed(): boolean {
+    return WSFederationRegisterdService.instanceOf(this.data.service)
+  }
+
+  isOauth() {
+    return OAuthRegisteredService.instanceOf(this.data.service)
+  }
+
+  isCas() {
+    return RegexRegisteredService.instanceOf(this.data.service);
+  }
 
   tabRoute(tab: Tabs): String {
-    switch(+tab) {
+    if(tab > 0 && this.isCas()) {
+      tab++
+    }
+    switch(tab) {
       case Tabs.BASICS :
         return 'basics';
       case Tabs.TYPE :
-        return 'servicetype';
+        if(this.isSaml())
+          return 'saml';
+        if(this.isOauth() || this.isOidc())
+          return 'oauth';
+        if(this.isWsFed())
+          return 'wsfed';
       case Tabs.LOGOUT :
         return 'logout';
       case Tabs.ACCESS_STRATEGY :

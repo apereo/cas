@@ -15,6 +15,9 @@ import {TabUsernameattrComponent} from "./tab-usernameattr/tab-usernameattr.comp
 import {TabAttrreleaseComponent} from "./tab-attrrelease/tab-attrrelease.component";
 import {TabPropertiesComponent} from "./tab-properties/tab-properties.component";
 import {TabAdvancedComponent} from "./tab-advanced/tab-advanced.component";
+import {TabSamlComponent} from "./tab-saml/tab-saml.component";
+import {TabOauthComponent} from "./tab-oauth/tab-oauth.component";
+import {TabWsfedComponent} from "./tab-wsfed/tab-wsfed.component";
 
 @NgModule({
   imports: [
@@ -34,6 +37,21 @@ import {TabAdvancedComponent} from "./tab-advanced/tab-advanced.component";
           {
             path: 'servicetype',
             component: TabServicetypeComponent,
+            outlet: 'form'
+          },
+          {
+            path: 'saml',
+            component: TabSamlComponent,
+            outlet: 'form'
+          },
+          {
+            path: 'oauth',
+            component: TabOauthComponent,
+            outlet: 'form'
+          },
+          {
+            path: 'wsfed',
+            component: TabWsfedComponent,
             outlet: 'form'
           },
           {
