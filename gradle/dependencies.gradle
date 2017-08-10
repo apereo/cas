@@ -1653,6 +1653,7 @@ ext.libraries = [
         quartz                  : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "c3p0", module: "c3p0")
+            exclude(group: "com.zaxxer", module: "HikariCP-java6")
             force = true
         },
         shiro                   : [
