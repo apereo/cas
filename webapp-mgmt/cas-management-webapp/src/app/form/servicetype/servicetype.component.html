@@ -1,9 +1,10 @@
+<!--
 <md-card class="tabCard">
   <md-card-title>
     <h5>Service Type</h5>
   </md-card-title>
   <div class="cardContent">
-    <div>
+    <div> -->
       <md-select i18n-placeholder="services.form.label.type" style="width:400px;padding-top: 25px;padding-bottom: 25px;"
                  [placeholder]="messages.services_form_label_type"
                  [(ngModel)]="type"
@@ -12,9 +13,11 @@
           {{ display[i] }}
         </md-option>
       </md-select>
+<!--
     </div>
   </div>
 </md-card>
 <app-oauthclient *ngIf="type == TYPE.OAUTH || type == TYPE.OIDC"></app-oauthclient>
 <app-samlclient *ngIf="type == TYPE.SAML"></app-samlclient>
 <app-wsfedclient *ngIf="type == TYPE.WS_Fed"></app-wsfedclient>
+-->
