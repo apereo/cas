@@ -3,6 +3,7 @@ package org.apereo.cas.support.events.dao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -29,7 +30,8 @@ import java.util.Map;
 public class CasEvent {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id = Integer.MAX_VALUE;
 
     @Column(updatable = true, insertable = true, nullable = false)
