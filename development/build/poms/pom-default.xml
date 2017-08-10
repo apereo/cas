@@ -2664,6 +2664,10 @@
           <artifactId>c3p0</artifactId>
           <groupId>c3p0</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>HikariCP-java6</artifactId>
+          <groupId>com.zaxxer</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
