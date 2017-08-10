@@ -1,6 +1,7 @@
 package org.apereo.cas.otp.repository.token;
 
-import com.google.common.cache.LoadingCache;
+
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     public void cleanInternal() {
         LOGGER.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
-        LOGGER.debug("Total of [{}] token(s) remain in the cache and may be removed in future iterations", this.storage.size());
+        LOGGER.debug("Estimated total of [{}] token(s) remain in the cache and may be removed in future iterations", this.storage.estimatedSize());
     }
 
     @Override

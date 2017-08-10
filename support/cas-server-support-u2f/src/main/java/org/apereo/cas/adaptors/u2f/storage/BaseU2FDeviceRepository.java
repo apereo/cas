@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 
 /**
  * This is {@link BaseU2FDeviceRepository}.
@@ -17,7 +17,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     @Override
     public String getDeviceRegistrationRequest(final String requestId, final String username) {
-        final String request = requestStorage.getUnchecked(requestId);
+        final String request = requestStorage.get(requestId);
         requestStorage.invalidate(requestId);
         requestStorage.cleanUp();
         return request;
@@ -25,7 +25,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     @Override
     public String getDeviceAuthenticationRequest(final String requestId, final String username) {
-        final String request = requestStorage.getUnchecked(requestId);
+        final String request = requestStorage.get(requestId);
         requestStorage.invalidate(requestId);
         requestStorage.cleanUp();
         return request;

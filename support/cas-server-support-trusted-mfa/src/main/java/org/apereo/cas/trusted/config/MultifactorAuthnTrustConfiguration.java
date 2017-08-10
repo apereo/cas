@@ -1,17 +1,19 @@
 package org.apereo.cas.trusted.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustController;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
@@ -73,21 +75,22 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = CacheBuilder.newBuilder()
+        final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
+        final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = Caffeine.newBuilder()
                 .initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE)
-                .recordStats()
-                .expireAfterWrite(casProperties.getAuthn().getMfa().getTrusted().getExpiration(),
-                        casProperties.getAuthn().getMfa().getTrusted().getTimeUnit())
-                .build(new CacheLoader<String, MultifactorAuthenticationTrustRecord>() {
-                    @Override
-                    public MultifactorAuthenticationTrustRecord load(final String s) throws Exception {
-                        LOGGER.error("Load operation of the cache is not supported.");
-                        return null;
-                    }
+                .expireAfterWrite(trusted.getExpiration(), trusted.getTimeUnit())
+                .build(s -> {
+                    LOGGER.error("Load operation of the cache is not supported.");
+                    return null;
                 });
 
-        final InMemoryMultifactorAuthenticationTrustStorage m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
+        final BaseMultifactorAuthenticationTrustStorage m;
+        if (trusted.getJson().getLocation() != null) {
+            m = new JsonMultifactorAuthenticationTrustStorage(trusted.getJson().getLocation());
+        } else {
+            m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
+        }
         m.setCipherExecutor(mfaTrustCipherExecutor());
         return m;
     }

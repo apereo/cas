@@ -6,6 +6,7 @@ dependencies {
     compile project(":support:cas-server-support-oauth-core")
     compile project(":support:cas-server-support-oidc-services")
     implementation libraries.jose4j
+    implementation libraries.caffein
     compileOnly project(":support:cas-server-support-cookie")
     compileOnly project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-util")
