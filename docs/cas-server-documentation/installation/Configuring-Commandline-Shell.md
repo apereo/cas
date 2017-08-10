@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Configuring Shell
+title: CAS - Configuring Commandline Shell
 ---
 
 # CAS Command-line Shell
