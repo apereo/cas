@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

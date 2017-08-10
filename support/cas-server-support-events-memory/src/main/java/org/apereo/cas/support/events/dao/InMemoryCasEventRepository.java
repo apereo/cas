@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 
 import java.util.Collection;
 import java.util.UUID;
