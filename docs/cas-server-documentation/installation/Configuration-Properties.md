@@ -2530,6 +2530,12 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
+### JSON Storage
+
+```properties
+# cas.authn.mfa.trusted.json.location=file:/etc/cas/config/trusted-dev.json
+```
+
 ### JDBC Storage
 
 ```properties
