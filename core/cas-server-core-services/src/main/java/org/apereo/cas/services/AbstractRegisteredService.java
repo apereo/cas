@@ -23,6 +23,8 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,7 +68,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private String privacyUrl;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
