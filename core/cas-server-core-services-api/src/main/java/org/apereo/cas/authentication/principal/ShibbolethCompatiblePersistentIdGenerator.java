@@ -72,7 +72,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @Override
     public String generate(final String principal, final String service) {
         final String data = String.join(CONST_SEPARATOR, service, principal);
-        final String result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data), System.getProperty("line.separator"));
+        final String result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data, CONST_SEPARATOR), System.getProperty("line.separator"));
         LOGGER.debug("Generated persistent id for [{}] is [{}]", data, result);
         return result;
     }

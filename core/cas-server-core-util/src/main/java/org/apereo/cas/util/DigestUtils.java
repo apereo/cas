@@ -66,7 +66,19 @@ public final class DigestUtils {
      * @return the string
      */
     public static String shaBase64(final String salt, final String data) {
-        final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, data);
+        return shaBase64(salt, data, null);
+    }
+
+    /**
+     * Sha base 64 string.
+     *
+     * @param salt the salt
+     * @param data the data
+     * @param separator a string separator, if any
+     * @return the string
+     */
+    public static String shaBase64(String salt, String data, String separator) {
+        final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
         return EncodingUtils.encodeBase64(result);
     }
     
@@ -131,5 +143,4 @@ public final class DigestUtils {
         digest.reset();
         return digest;
     }
-    
 }
