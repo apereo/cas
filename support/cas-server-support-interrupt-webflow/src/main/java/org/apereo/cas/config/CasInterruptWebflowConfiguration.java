@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.interrupt.webflow.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
+import org.apereo.cas.interrupt.webflow.PrepareInterruptViewAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link CasInterruptWebflowConfiguration}.
@@ -37,4 +40,13 @@ public class CasInterruptWebflowConfiguration {
         return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
     
+    @Bean
+    public Action inquireInterruptAction() {
+        return new InquireInterruptAction();
+    }
+
+    @Bean
+    public Action prepareInterruptViewAction() {
+        return new PrepareInterruptViewAction();
+    }
 }

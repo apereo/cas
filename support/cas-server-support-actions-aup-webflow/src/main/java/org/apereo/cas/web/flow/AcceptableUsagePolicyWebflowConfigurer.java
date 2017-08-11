@@ -50,7 +50,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     private void createSubmitActionState(final Flow flow) {
         final ActionState aupAcceptedAction = createActionState(flow, AUP_ACCEPTED_ACTION, createAcceptableUsagePolicyAction("submit"));
         aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+                CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
         aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
                 CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
     }

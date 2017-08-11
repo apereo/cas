@@ -22,6 +22,8 @@ public class InterruptResponse implements Serializable {
     private boolean block;
     private boolean ssoEnabled;
     private boolean interrupt;
+    private boolean autoRedirect;
+    private long autoRedirectAfterSeconds = -1;
 
     public InterruptResponse() {
         this.interrupt = false;
@@ -48,6 +50,22 @@ public class InterruptResponse implements Serializable {
         this.block = block;
         this.ssoEnabled = ssoEnabled;
         this.interrupt = true;
+    }
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
+    }
+
+    public long getAutoRedirectAfterSeconds() {
+        return autoRedirectAfterSeconds;
+    }
+
+    public void setAutoRedirectAfterSeconds(final long autoRedirectAfterSeconds) {
+        this.autoRedirectAfterSeconds = autoRedirectAfterSeconds;
     }
 
     public boolean isInterrupt() {
