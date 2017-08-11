@@ -70,7 +70,7 @@ public class GoogleAuthenticatorConfiguration {
         @Bean
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
             return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), loginFlowDefinitionRegistry);
+                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry());
         }
     }
     

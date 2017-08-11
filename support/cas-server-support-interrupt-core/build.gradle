@@ -1,0 +1,4 @@
+description = "Apereo CAS Notification/Interrupt Core Implementations"
+dependencies {
+    compile project(":support:cas-server-support-interrupt-api")
+}

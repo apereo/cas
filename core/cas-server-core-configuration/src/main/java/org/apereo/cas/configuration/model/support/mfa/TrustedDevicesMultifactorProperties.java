@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -47,6 +48,12 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      * Store devices records via JDBC resources.
      */
     private Jpa jpa = new Jpa();
+
+    /**
+     * Record trusted devices via a JSON resource.
+     */
+    private Json json = new Json();
+    
     /**
      * Settings that control the background cleaner process.
      */
@@ -59,6 +66,14 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+    
+    public Json getJson() {
+        return json;
+    }
+
+    public void setJson(final Json json) {
+        this.json = json;
+    }
 
     public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
         return crypto;
@@ -158,5 +173,9 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
         public MongoDb() {
             setCollection("MongoDbCasTrustedAuthnMfaRepository");
         }
+    }
+
+    public static class Json extends SpringResourceProperties {
+        private static final long serialVersionUID = 3599367681439517829L;
     }
 }

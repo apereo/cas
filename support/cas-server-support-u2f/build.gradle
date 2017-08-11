@@ -6,6 +6,7 @@ dependencies {
 
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver
+    implementation libraries.caffein
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }
