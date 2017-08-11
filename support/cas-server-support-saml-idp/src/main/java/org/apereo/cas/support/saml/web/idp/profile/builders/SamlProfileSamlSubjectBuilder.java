@@ -26,9 +26,8 @@ import java.time.ZonedDateTime;
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
     private static final long serialVersionUID = 4782621942035583007L;
 
-    private SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
-
-    private int skewAllowance;
+    private final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
+    private final int skewAllowance;
 
     public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean, final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
                                          final int skewAllowance) {
