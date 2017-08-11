@@ -3,6 +3,7 @@ package org.apereo.cas.interrupt;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.springframework.core.io.Resource;
 
 /**
  * This is {@link JsonResourceInterruptInquirer}.
@@ -11,6 +12,12 @@ import org.apereo.cas.services.RegisteredService;
  * @since 5.2.0
  */
 public class JsonResourceInterruptInquirer implements InterruptInquirer {
+    private final Resource resource;
+
+    public JsonResourceInterruptInquirer(final Resource resource) {
+        this.resource = resource;
+    }
+
     @Override
     public InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService, final Service service) {
         return null;
