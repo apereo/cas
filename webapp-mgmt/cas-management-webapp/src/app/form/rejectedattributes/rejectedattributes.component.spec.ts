@@ -25,7 +25,6 @@ describe('RejectedattributesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RejectedattributesComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

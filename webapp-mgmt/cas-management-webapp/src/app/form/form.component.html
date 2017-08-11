@@ -4,7 +4,7 @@
   <app-saveformtop (save)="saveForm()"></app-saveformtop>
   <app-alert #alert></app-alert>
 
-  <md-tab-group (selectedIndexChange)="goto($event)">
+  <md-tab-group #tabGroup (selectedIndexChange)="goto($event)">
     <md-tab>
       <ng-template md-tab-label>
           <ng-container i18n>Basics</ng-container>

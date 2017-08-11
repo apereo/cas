@@ -6,7 +6,6 @@ import { RouterModule, Routes } from '@angular/router';
 import {FormComponent} from "./form.component";
 import {FormResolve} from "./form.resolover";
 import {TabBasicsComponent} from "./tab-basics/tab-basics.component";
-import {TabServicetypeComponent} from "./tab-servicetype/tab-servicetype.component";
 import {TabLogoutComponent} from "./tab-logout/tab-logout.component";
 import {TabAccessstrategyComponent} from "./tab-accessstrategy/tab-accessstrategy.component";
 import {TabMulitauthComponent} from "./tab-mulitauth/tab-mulitauth.component";
@@ -32,11 +31,6 @@ import {TabWsfedComponent} from "./tab-wsfed/tab-wsfed.component";
           {
             path: 'basics',
             component: TabBasicsComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'servicetype',
-            component: TabServicetypeComponent,
             outlet: 'form'
           },
           {

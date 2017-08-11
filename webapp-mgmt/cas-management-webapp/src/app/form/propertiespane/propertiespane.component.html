@@ -21,8 +21,8 @@
         <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
           <md-input-container>
             <input mdInput [disabled]="row.key == ''"
-                   [ngModel]="service.properties[row.key] ?  service.properties[row.key].values : ''"
-                   (ngModelChange)="service.properties[row.key].values = $event.split(',')">
+                   [ngModel]="data.service.properties[row.key] ?  service.properties[row.key].values : ''"
+                   (ngModelChange)="data.service.properties[row.key].values = $event.split(',')">
           </md-input-container>
         </md-cell>
       </ng-container>

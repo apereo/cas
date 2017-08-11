@@ -45,6 +45,8 @@ export class OidcRegisteredService extends OAuthRegisteredService {
 
   constructor(service?: RegisteredService) {
     super(service);
+    this.jsonFormat = true;
+    this.signIdToken = true;
     this["@class"] = OidcRegisteredService.cName;
   }
 

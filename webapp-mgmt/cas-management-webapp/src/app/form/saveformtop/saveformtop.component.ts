@@ -16,10 +16,16 @@ export class SaveformtopComponent implements OnInit {
 
   constructor(public messages: Messages,
               private location: Location,
-              private tabService: Data) {
+              public data: Data) {
   }
 
   ngOnInit() {
+  }
+
+  saveFn() {
+    this.save.emit();
+    this.data.save.emit();
+    this.data.submitted = true;
   }
 
   goBack() {
@@ -27,7 +33,7 @@ export class SaveformtopComponent implements OnInit {
   }
 
   isNew() {
-    return this.tabService.service.id == -1;
+    return this.data.service.id == -1;
   }
 
   isView() {

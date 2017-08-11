@@ -21,7 +21,6 @@ enum Type {
 })
 export class UidattrsComponent implements OnInit {
 
-  service: AbstractRegisteredService;
   formData: FormData;
   selectOptions;
   type: Type;
@@ -29,18 +28,17 @@ export class UidattrsComponent implements OnInit {
   canonicalizations = ["NONE","UPPER","LOWER"];
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
     this.formData = data.formData;
     this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
-    if (DefaultRegisteredServiceUsernameProvider.instanceOf(this.service.usernameAttributeProvider)) {
+    if (DefaultRegisteredServiceUsernameProvider.instanceOf(this.data.service.usernameAttributeProvider)) {
       this.type = Type.DEFAULT;
-    } else if (PrincipalAttributeRegisteredServiceUsernameProvider.instanceOf(this.service.usernameAttributeProvider)) {
+    } else if (PrincipalAttributeRegisteredServiceUsernameProvider.instanceOf(this.data.service.usernameAttributeProvider)) {
       this.type = Type.PRINCIPAL_ATTRIBUTE;
-    } else if (AnonymousRegisteredServiceUsernameProvider.instanceOf(this.service.usernameAttributeProvider)) {
+    } else if (AnonymousRegisteredServiceUsernameProvider.instanceOf(this.data.service.usernameAttributeProvider)) {
       this.type = Type.ANONYMOUS;
     }
   }
@@ -48,13 +46,13 @@ export class UidattrsComponent implements OnInit {
   changeType() {
       switch(+this.type) {
         case Type.DEFAULT :
-          this.service.usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
+          this.data.service.usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
           break;
         case Type.PRINCIPAL_ATTRIBUTE :
-          this.service.usernameAttributeProvider = new PrincipalAttributeRegisteredServiceUsernameProvider();
+          this.data.service.usernameAttributeProvider = new PrincipalAttributeRegisteredServiceUsernameProvider();
           break;
         case Type.ANONYMOUS :
-          this.service.usernameAttributeProvider = new AnonymousRegisteredServiceUsernameProvider();
+          this.data.service.usernameAttributeProvider = new AnonymousRegisteredServiceUsernameProvider();
           break;
       }
   }

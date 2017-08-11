@@ -3,6 +3,9 @@
     <h5>Username Options</h5>
   </md-card-title>
   <div class="cardContent">
-    <app-uidattrs></app-uidattrs>
+    <form #userAttrForm="ngForm">
+      <app-uidattrs></app-uidattrs>
+      <button type="submit" style="display: none;" #submit></button>
+    </form>
   </div>
 </md-card>

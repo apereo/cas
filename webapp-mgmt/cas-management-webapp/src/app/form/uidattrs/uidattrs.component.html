@@ -31,7 +31,7 @@
     <input mdInput required
            i18n-placeholder="services.form.label.uap.saltSetting"
            [placeholder]="messages.services_form_label_uap_saltSetting"
-           [(ngModel)]="service.usernameAttributeProvider.persistentIdGenerator.salt">
+           [(ngModel)]="data.service.usernameAttributeProvider.persistentIdGenerator.salt">
   </md-input-container>
   <md-icon style="font-size: medium;"
            i18n-myTooltip="services.form.tooltip.uap.saltSetting"
@@ -46,7 +46,7 @@
       <input mdInput required
              i18n-placeholder="services.form.label.uap.usernameAttribute"
              [placeholder]="messages.services_form_label_uap_usernameAttribute"
-             [(ngModel)]="service.usernameAttributeProvider.usernameAttribute">
+             [(ngModel)]="data.service.usernameAttributeProvider.usernameAttribute">
     </md-input-container>
     <md-icon style="font-size: medium;"
              i18n-mdTooltip="services.form.tooltip.uap.usernameAttribute"
@@ -55,7 +55,7 @@
   </div>
 
   <div>
-    <md-checkbox [(ngModel)]="service.usernameAttributeProvider.canonicalizationMode">
+    <md-checkbox [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
       <ng-container i18n="services.form.label.uap.canonicalizationMode">
         {{ messages.services_form_label_uap_canonicalizationMode }}
       </ng-container>
@@ -66,9 +66,9 @@
     </md-icon>
   </div>
 
-  <div *ngIf="service.usernameAttributeProvider.canonicalizationMode">
+  <div *ngIf="data.service.usernameAttributeProvider.canonicalizationMode">
     <md-select style="width:400px;padding-top:25px;"
-               [(ngModel)]="service.usernameAttributeProvider.canonicalizationMode">
+               [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
       <md-option *ngFor="let opt of canonicalizations" [value]="opt">
         {{ opt }}
       </md-option>

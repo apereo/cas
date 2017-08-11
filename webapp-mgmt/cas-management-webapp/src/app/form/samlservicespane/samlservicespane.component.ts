@@ -17,7 +17,6 @@ import {Util} from "../../util/util";
 })
 export class SamlservicespaneComponent implements OnInit {
 
-  service: SamlRegisteredService;
   selectOptions;
   displayedColumns = ['source', 'mapped', "delete"];
   attributeDatabase = new AttributeDatabase();
@@ -26,16 +25,17 @@ export class SamlservicespaneComponent implements OnInit {
   type: String;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service as SamlRegisteredService;
+              public data: Data) {
     this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
-    if (Util.isEmpty(this.service.attributeNameFormats)) {
-      this.service.attributeNameFormats = new Map();
+    let service: SamlRegisteredService = this.data.service as SamlRegisteredService;
+
+    if (Util.isEmpty(service.attributeNameFormats)) {
+      service.attributeNameFormats = new Map();
     }
-    for (let p of Array.from(Object.keys(this.service.attributeNameFormats))) {
+    for (let p of Array.from(Object.keys(service.attributeNameFormats))) {
       this.attributeDatabase.addRow(new Row(p));
     }
     this.dataSource = new AttributeDataSource(this.attributeDatabase);
@@ -46,13 +46,14 @@ export class SamlservicespaneComponent implements OnInit {
   }
 
   doChange(row: Row, val: string) {
-    this.service.properties[val] = this.service.properties[row.key as string];
-    delete this.service.properties[row.key as string];
+    let service: SamlRegisteredService = this.data.service as SamlRegisteredService;
+    service.properties[val] = service.properties[row.key as string];
+    delete service.properties[row.key as string];
     row.key = val;
   }
 
   delete(row: Row) {
-    delete this.service.properties[row.key as string];
+    delete this.data.service.properties[row.key as string];
     this.attributeDatabase.removeRow(row);
   }
 }

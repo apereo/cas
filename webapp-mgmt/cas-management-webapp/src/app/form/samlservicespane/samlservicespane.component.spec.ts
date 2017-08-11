@@ -24,7 +24,6 @@ describe('SamlservicespaneComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SamlservicespaneComponent);
     component = fixture.componentInstance;
-    component.service = new SamlRegisteredService();
     fixture.detectChanges();
   });
 

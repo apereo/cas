@@ -26,7 +26,6 @@ describe('OauthclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(OauthclientComponent);
     component = fixture.componentInstance;
-    component.service = new OAuthRegisteredService();
     fixture.detectChanges();
   });
 

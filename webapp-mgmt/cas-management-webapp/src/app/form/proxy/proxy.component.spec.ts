@@ -25,7 +25,6 @@ describe('ProxyComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ProxyComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

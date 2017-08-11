@@ -4,7 +4,7 @@
   </md-card-title>
   <div class="cardContent">
     <div>
-      <md-checkbox [(ngModel)]="service.accessStrategy.ssoEnabled">
+      <md-checkbox [(ngModel)]="data.service.accessStrategy.ssoEnabled">
         <ng-container i18n="services.form.label.sas.ssoEnabled">
           {{ messages.services_form_label_sas_ssoEnabled }}
         </ng-container>
@@ -13,7 +13,7 @@
                i18n-mdTooltip="services.form.tooltip.sas.ssoEnabled"
                [mdTooltip]="messages.services_form_tooltip_sas_ssoEnabled">help
       </md-icon>
-      <md-checkbox [(ngModel)]="service.accessStrategy.requireAllAttributes">
+      <md-checkbox [(ngModel)]="data.service.accessStrategy.requireAllAttributes">
         <ng-container i18n="services.form.label.sas.requireAll">
           {{ messages.services_form_label_sas_requireAll }}
         </ng-container>
@@ -29,7 +29,7 @@
         <input mdInput
                i18n-placeholder="services.form.label.sas.unauthorizedredirecturl"
                [placeholder]="messages.services_form_label_sas_unauthorizedredirecturl"
-               [(ngModel)]="service.accessStrategy.unauthorizedRedirectUrl">
+               [(ngModel)]="data.service.accessStrategy.unauthorizedRedirectUrl">
       </md-input-container>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.sas.unauthorizedredirecturl"
@@ -38,7 +38,7 @@
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.accessStrategy.caseInsensitive">
+      <md-checkbox [(ngModel)]="data.service.accessStrategy.caseInsensitive">
         <ng-container i18n="services.form.label.sas.caseinsensitive">
           {{ messages.services_form_label_sas_caseinsensitive }}
         </ng-container>
@@ -55,7 +55,7 @@
     <h5>Required Attributes</h5>
   </md-card-title>
   <div class="cardContent">
-    <app-mappedattributes [attributes]="service.accessStrategy.requiredAttributes"></app-mappedattributes>
+    <app-mappedattributes [attributes]="data.service.accessStrategy.requiredAttributes"></app-mappedattributes>
   </div>
 </md-card>
 

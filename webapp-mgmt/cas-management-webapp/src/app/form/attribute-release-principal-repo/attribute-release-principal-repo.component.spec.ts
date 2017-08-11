@@ -24,7 +24,6 @@ describe('AttributeReleasePrincipalRepoComponent', () => {
     fixture = TestBed.createComponent(AttributeReleasePrincipalRepoComponent);
     component = fixture.componentInstance;
     component.formData = new FormData;
-    component.service= new RegexRegisteredService();
     fixture.detectChanges();
   });
 
