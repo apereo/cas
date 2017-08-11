@@ -77,7 +77,7 @@ public final class DigestUtils {
      * @param separator a string separator, if any
      * @return the string
      */
-    public static String shaBase64(String salt, String data, String separator) {
+    public static String shaBase64(final String salt, final String data, final String separator) {
         final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
         return EncodingUtils.encodeBase64(result);
     }
