@@ -19,7 +19,6 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -32,9 +31,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ImportResource(locations = {
-        "classpath:/deployerConfigContext.groovy",
-        "classpath:/deployerConfigContext.xml"})
 @EnableDiscoveryClient
 @SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
