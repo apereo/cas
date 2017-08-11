@@ -213,7 +213,7 @@ public class SamlIdPProperties {
     }
 
     public static class Response {
-        private int skewAllowance;
+        private int skewAllowance = 5;
         private boolean signError;
         private boolean useAttributeFriendlyName = true;
         private List<String> attributeNameFormats = new ArrayList<>();
