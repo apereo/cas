@@ -36,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -75,6 +76,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     public static final String VIEW_ID_STOP_WEBFLOW = "casPac4jStopWebflow";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
+
+    private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
 
     private final Clients clients;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -197,10 +200,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             try {
                 final IndirectClient indirectClient = (IndirectClient) client;
 
-                final String name = client.getName().replaceAll("Client\\d*", StringUtils.EMPTY);
+                final String name = client.getName();
+                final String type = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName()).replaceAll(StringUtils.EMPTY).toLowerCase();
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type));
             } catch (final HttpAction e) {
                 if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                     LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
