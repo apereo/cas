@@ -3,9 +3,5 @@ dependencies {
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-authentication")
-    
-
-    
-    
-
+    implementation libraries.caffein
 }

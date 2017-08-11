@@ -80,6 +80,16 @@ public abstract class BaseConverters {
     }
 
     /**
+     * The type Caffein cache converter.
+     */
+    public static class CaffeinCacheConverter extends NullConverter<com.github.benmanes.caffeine.cache.Cache, DBObject> {}
+
+    /**
+     * The type Caffein cache loader converter.
+     */
+    public static class CaffeinCacheLoaderConverter extends NullConverter<com.github.benmanes.caffeine.cache.CacheLoader, DBObject> {}
+    
+    /**
      * The type Cache builder converter.
      * @since 4.1
      */
@@ -119,5 +129,7 @@ public abstract class BaseConverters {
     public static class CertPathConverter
             extends NullConverter<CertPath, DBObject> {
     }
+    
+    
     
 }

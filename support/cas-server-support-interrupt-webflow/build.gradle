@@ -1,0 +1,5 @@
+description = "Apereo CAS Notification/Interrupt Webflow"
+dependencies {
+    compile project(":support:cas-server-support-interrupt-core")
+    compile project(":core:cas-server-core-webflow")
+}
