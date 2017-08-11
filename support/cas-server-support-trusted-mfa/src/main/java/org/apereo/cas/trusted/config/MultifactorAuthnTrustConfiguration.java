@@ -87,8 +87,10 @@ public class MultifactorAuthnTrustConfiguration {
 
         final BaseMultifactorAuthenticationTrustStorage m;
         if (trusted.getJson().getLocation() != null) {
+            LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
             m = new JsonMultifactorAuthenticationTrustStorage(trusted.getJson().getLocation());
         } else {
+            LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
             m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
         }
         m.setCipherExecutor(mfaTrustCipherExecutor());
