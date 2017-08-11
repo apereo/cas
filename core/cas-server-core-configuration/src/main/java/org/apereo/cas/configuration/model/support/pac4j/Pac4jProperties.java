@@ -194,6 +194,7 @@ public class Pac4jProperties {
         private String secret;
         private String scope;
         private String fields;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -225,6 +226,14 @@ public class Pac4jProperties {
 
         public void setFields(final String fields) {
             this.fields = fields;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
@@ -233,6 +242,7 @@ public class Pac4jProperties {
         private String secret;
         private String scope;
         private String fields;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -265,11 +275,20 @@ public class Pac4jProperties {
         public void setFields(final String fields) {
             this.fields = fields;
         }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
+        }
     }
 
     public static class Bitbucket {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -285,12 +304,21 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
     public static class Wordpress {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -306,12 +334,21 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
     public static class Paypal {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -327,6 +364,14 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
@@ -341,6 +386,7 @@ public class Pac4jProperties {
         private String profileVerb = "POST";
         private Map<String, String> profileAttrs;
         private Map<String, String> customParams;
+        private String clientName;
 
         public String getAuthUrl() {
             return authUrl;
@@ -413,12 +459,21 @@ public class Pac4jProperties {
         public void setSecret(final String secret) {
             this.secret = secret;
         }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
+        }
     }
 
 
     public static class Twitter {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -435,6 +490,14 @@ public class Pac4jProperties {
         public void setSecret(final String secret) {
             this.secret = secret;
         }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
+        }
     }
 
     public static class Saml {
@@ -445,6 +508,7 @@ public class Pac4jProperties {
         private int maximumAuthenticationLifetime = 600;
         private String serviceProviderEntityId;
         private String serviceProviderMetadataPath;
+        private String clientName;
 
         public String getKeystorePassword() {
             return this.keystorePassword;
@@ -501,11 +565,20 @@ public class Pac4jProperties {
         public void setServiceProviderMetadataPath(final String serviceProviderMetadataPath) {
             this.serviceProviderMetadataPath = serviceProviderMetadataPath;
         }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
+        }
     }
 
     public static class Cas {
         private String loginUrl;
         private String protocol;
+        private String clientName;
 
         public String getLoginUrl() {
             return this.loginUrl;
@@ -522,6 +595,14 @@ public class Pac4jProperties {
         public void setProtocol(final String protocol) {
             this.protocol = protocol;
         }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
+        }
     }
 
     public static class Oidc {
@@ -534,6 +615,7 @@ public class Pac4jProperties {
         private String preferredJwsAlgorithm;
         private int maxClockSkew;
         private Map<String, String> customParams = new HashMap<>();
+        private String clientName;
 
         public Map<String, String> getCustomParams() {
             return customParams;
@@ -606,11 +688,20 @@ public class Pac4jProperties {
         public void setMaxClockSkew(final int maxClockSkew) {
             this.maxClockSkew = maxClockSkew;
         }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
+        }
     }
 
     public static class Github {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -626,12 +717,21 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
     public static class Yahoo {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -647,12 +747,21 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
     public static class Foursquare {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -668,12 +777,21 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
     public static class Dropbox {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -689,12 +807,21 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
     public static class WindowsLive {
         private String id;
         private String secret;
+        private String clientName;
 
         public String getId() {
             return this.id;
@@ -710,6 +837,14 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 
@@ -717,6 +852,7 @@ public class Pac4jProperties {
         private String id;
         private String secret;
         private String scope;
+        private String clientName;
 
         public String getScope() {
             return scope;
@@ -740,6 +876,14 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+
+        public String getClientName() {
+            return this.clientName;
+        }
+
+        public void setClientName(final String clientName) {
+            this.clientName = clientName;
         }
     }
 }

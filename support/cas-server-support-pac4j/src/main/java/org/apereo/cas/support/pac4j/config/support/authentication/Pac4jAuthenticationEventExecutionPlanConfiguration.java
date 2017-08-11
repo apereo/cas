@@ -81,6 +81,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Github github = casProperties.getAuthn().getPac4j().getGithub();
         if (StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             final GitHubClient client = new GitHubClient(github.getId(), github.getSecret());
+            if (StringUtils.isNotBlank(github.getClientName())) {
+                client.setName(github.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -90,6 +93,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Dropbox db = casProperties.getAuthn().getPac4j().getDropbox();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             final DropBoxClient client = new DropBoxClient(db.getId(), db.getSecret());
+            if (StringUtils.isNotBlank(db.getClientName())) {
+                client.setName(db.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -99,6 +105,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.WindowsLive live = casProperties.getAuthn().getPac4j().getWindowsLive();
         if (StringUtils.isNotBlank(live.getId()) && StringUtils.isNotBlank(live.getSecret())) {
             final WindowsLiveClient client = new WindowsLiveClient(live.getId(), live.getSecret());
+            if (StringUtils.isNotBlank(live.getClientName())) {
+                client.setName(live.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -108,6 +117,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Yahoo yahoo = casProperties.getAuthn().getPac4j().getYahoo();
         if (StringUtils.isNotBlank(yahoo.getId()) && StringUtils.isNotBlank(yahoo.getSecret())) {
             final YahooClient client = new YahooClient(yahoo.getId(), yahoo.getSecret());
+            if (StringUtils.isNotBlank(yahoo.getClientName())) {
+                client.setName(yahoo.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -117,6 +129,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Foursquare foursquare = casProperties.getAuthn().getPac4j().getFoursquare();
         if (StringUtils.isNotBlank(foursquare.getId()) && StringUtils.isNotBlank(foursquare.getSecret())) {
             final FoursquareClient client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
+            if (StringUtils.isNotBlank(foursquare.getClientName())) {
+                client.setName(foursquare.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -126,6 +141,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Google google = casProperties.getAuthn().getPac4j().getGoogle();
         final Google2Client client = new Google2Client(google.getId(), google.getSecret());
         if (StringUtils.isNotBlank(google.getId()) && StringUtils.isNotBlank(google.getSecret())) {
+            if (StringUtils.isNotBlank(google.getClientName())) {
+                client.setName(google.getClientName());
+            }
             if (StringUtils.isNotBlank(google.getScope())) {
                 client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
             }
@@ -138,6 +156,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Facebook fb = casProperties.getAuthn().getPac4j().getFacebook();
         if (StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
             final FacebookClient client = new FacebookClient(fb.getId(), fb.getSecret());
+            if (StringUtils.isNotBlank(fb.getClientName())) {
+                client.setName(fb.getClientName());
+            }
             if (StringUtils.isNotBlank(fb.getScope())) {
                 client.setScope(fb.getScope());
             }
@@ -154,7 +175,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.LinkedIn ln = casProperties.getAuthn().getPac4j().getLinkedIn();
         if (StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             final LinkedIn2Client client = new LinkedIn2Client(ln.getId(), ln.getSecret());
-
+            if (StringUtils.isNotBlank(ln.getClientName())) {
+                client.setName(ln.getClientName());
+            }
             if (StringUtils.isNotBlank(ln.getScope())) {
                 client.setScope(ln.getScope());
             }
@@ -171,6 +194,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Twitter twitter = casProperties.getAuthn().getPac4j().getTwitter();
         if (StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
             final TwitterClient client = new TwitterClient(twitter.getId(), twitter.getSecret());
+            if (StringUtils.isNotBlank(twitter.getClientName())) {
+                client.setName(twitter.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -180,6 +206,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Wordpress wp = casProperties.getAuthn().getPac4j().getWordpress();
         if (StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
             final WordPressClient client = new WordPressClient(wp.getId(), wp.getSecret());
+            if (StringUtils.isNotBlank(wp.getClientName())) {
+                client.setName(wp.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -189,6 +218,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Bitbucket bb = casProperties.getAuthn().getPac4j().getBitbucket();
         if (StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
             final BitbucketClient client = new BitbucketClient(bb.getId(), bb.getSecret());
+            if (StringUtils.isNotBlank(bb.getClientName())) {
+                client.setName(bb.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -198,6 +230,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Paypal paypal = casProperties.getAuthn().getPac4j().getPaypal();
         if (StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
             final PayPalClient client = new PayPalClient(paypal.getId(), paypal.getSecret());
+            if (StringUtils.isNotBlank(paypal.getClientName())) {
+                client.setName(paypal.getClientName());
+            }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -212,7 +247,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                     final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), cas.getProtocol());
                     final CasClient client = new CasClient(cfg);
                     final int count = index.intValue();
-                    if (count > 0) {
+                    if (StringUtils.isNotBlank(cas.getClientName())) {
+                        client.setName(cas.getClientName());
+                    } else if (count > 0) {
                         client.setName(client.getClass().getSimpleName() + count);
                     }
                     index.incrementAndGet();
@@ -236,7 +273,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                     final SAML2Client client = new SAML2Client(cfg);
                     
                     final int count = index.intValue();
-                    if (count > 0) {
+                    if (StringUtils.isNotBlank(saml.getClientName())) {
+                        client.setName(saml.getClientName());
+                    } else if (count > 0) {
                         client.setName(client.getClass().getSimpleName() + count);
                     }
                     index.incrementAndGet();
@@ -262,7 +301,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                     client.setAuthUrl(oauth.getAuthUrl());
                     client.setCustomParams(oauth.getCustomParams());
                     final int count = index.intValue();
-                    if (count > 0) {
+                    if (StringUtils.isNotBlank(oauth.getClientName())) {
+                        client.setName(oauth.getClientName());
+                    } else if (count > 0) {
                         client.setName(client.getClass().getSimpleName() + count);
                     }
                     index.incrementAndGet();
@@ -308,7 +349,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                             break;
                     }
                     final int count = index.intValue();
-                    if (count > 0) {
+                    if (StringUtils.isNotBlank(oidc.getClientName())) {
+                        client.setName(oidc.getClientName());
+                    } else if (count > 0) {
                         client.setName(client.getClass().getSimpleName() + count);
                     }
                     index.incrementAndGet();
