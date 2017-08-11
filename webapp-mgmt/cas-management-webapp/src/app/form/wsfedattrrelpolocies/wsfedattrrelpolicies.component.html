@@ -30,7 +30,7 @@
       </md-header-cell>
       <md-cell *cdkCellDef="let row">
         <md-select class="form-control"
-                   [(ngModel)]="attrPolicy.allowedAttributes[row.key]">
+                   [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes[row.key]">
           <md-option *ngFor="let item of selectOptions.wsfedClaimList" [value]="item.name">{{ item.name }}</md-option>
         </md-select>
       </md-cell>

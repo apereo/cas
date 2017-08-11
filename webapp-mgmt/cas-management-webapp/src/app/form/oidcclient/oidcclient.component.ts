@@ -10,13 +10,13 @@ import {Data} from "../data";
 })
 export class OidcclientComponent implements OnInit {
 
-  service: OidcRegisteredService;
   selectOptions;
+  service: OidcRegisteredService;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service as OidcRegisteredService;
+              public data: Data) {
     this.selectOptions = data.selectOptions;
+    this.service = data.service as OidcRegisteredService;
   }
 
   ngOnInit() {

@@ -10,13 +10,13 @@ import {Data} from "../data";
 })
 export class SamlclientComponent implements OnInit {
 
-  service: SamlRegisteredService
   selectOptions;
+  service: SamlRegisteredService;
 
   constructor(public messages: Messages,
-              private data: Data) {
+              public data: Data) {
+    this.selectOptions = data.selectOptions;
     this.service = data.service as SamlRegisteredService;
-    this.selectOptions = data.selectOptions
   }
 
   ngOnInit() {

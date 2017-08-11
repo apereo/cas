@@ -4,7 +4,7 @@
     <input mdInput
            i18n-placeholder="services.form.label.pubKey.location"
            [placeholder]="messages.services_form_label_pubKey_location"
-           [(ngModel)]="service.publicKey.location">
+           [(ngModel)]="data.service.publicKey.location">
   </md-input-container>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.pubKey.location"
@@ -16,7 +16,7 @@
   <md-select style="width: 400px;padding-top:25px;"
              i18n-placeholder="services.form.label.pubKey.algorithm"
              [placeholder]="messages.services_form_label_pubKey_algorithm"
-             [(ngModel)]="service.publicKey.algorithm">
+             [(ngModel)]="data.service.publicKey.algorithm">
     <md-option value="RSA">RSA</md-option>
   </md-select>
   <md-icon style="font-size: medium"

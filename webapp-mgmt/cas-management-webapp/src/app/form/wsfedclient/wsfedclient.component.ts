@@ -10,13 +10,13 @@ import {Data} from "../data";
 })
 export class WsfedclientComponent implements OnInit {
 
-  service: WSFederationRegisterdService;
   selectOptions;
+  service: WSFederationRegisterdService;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service as WSFederationRegisterdService;
+              public data: Data) {
     this.selectOptions = data.selectOptions;
+    this.service = data.service as WSFederationRegisterdService;
   }
 
   ngOnInit() {

@@ -1,15 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {Data} from "../data";
+import {Component} from '@angular/core';
+import {TabBase} from "../tab-base";
 
 @Component({
   selector: 'app-tab-mulitauth',
   templateUrl: './tab-mulitauth.component.html'
 })
-export class TabMulitauthComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class TabMulitauthComponent extends TabBase {}

@@ -9,11 +9,8 @@ import {Data} from "../data";
 })
 export class ThemeidComponent implements OnInit {
 
-  service: AbstractRegisteredService;
-
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {

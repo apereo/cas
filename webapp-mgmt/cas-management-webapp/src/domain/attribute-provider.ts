@@ -5,13 +5,19 @@ export abstract class RegisteredServiceUsernameAttributeProvider {
 
 export abstract class BaseRegisteredServiceUsernameAtttributeProvider extends RegisteredServiceUsernameAttributeProvider {
 
+  constructor(provider?: RegisteredServiceUsernameAttributeProvider) {
+    super();
+    this.canonicalizationMode = (provider && provider.canonicalizationMode) || "NONE";
+    this.encryptUserName = provider && provider.encryptUserName;
+  }
+
 }
 
 export class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAtttributeProvider {
   static cName = "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider";
 
-  constructor() {
-    super();
+  constructor(provider?: RegisteredServiceUsernameAttributeProvider) {
+    super(provider);
     this["@class"] = DefaultRegisteredServiceUsernameProvider.cName;
   }
 
@@ -25,8 +31,8 @@ export class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
 
   static cName = "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider";
 
-  constructor(){
-    super();
+  constructor(provider?: RegisteredServiceUsernameAttributeProvider){
+    super(provider);
     this["@class"] = PrincipalAttributeRegisteredServiceUsernameProvider.cName;
   }
 

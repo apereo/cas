@@ -25,7 +25,6 @@ describe('EvalorderComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EvalorderComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

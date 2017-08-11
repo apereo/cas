@@ -14,18 +14,16 @@ import {WSFederationRegisterdService} from "../../../domain/wsed-service";
 
 export class AttributeReleaseComponent implements OnInit {
 
-  service: AbstractRegisteredService;
   isOidc: boolean;
   isWsFed: boolean;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {
-    this.isOidc = OidcRegisteredService.instanceOf(this.service);
-    this.isWsFed = WSFederationRegisterdService.instanceOf(this.service);
+    this.isOidc = OidcRegisteredService.instanceOf(this.data.service);
+    this.isWsFed = WSFederationRegisterdService.instanceOf(this.data.service);
   }
 
 }

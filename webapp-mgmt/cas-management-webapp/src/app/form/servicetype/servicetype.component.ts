@@ -20,7 +20,6 @@ enum Type {
 })
 export class ServicetypeComponent implements OnInit {
 
-  service: AbstractRegisteredService;
   selectOptions;
   type: Type;
   TYPE = Type;
@@ -29,18 +28,17 @@ export class ServicetypeComponent implements OnInit {
 
   constructor(public messages: Messages,
               private data: Data) {
-    this.service = data.service;
     this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
-    if (OAuthRegisteredService.instanceOf(this.service)) {
+    if (OAuthRegisteredService.instanceOf(this.data.service)) {
       this.type = Type.OAUTH;
-    } else if (WSFederationRegisterdService.instanceOf(this.service)) {
+    } else if (WSFederationRegisterdService.instanceOf(this.data.service)) {
       this.type = Type.WS_Fed;
-    } else if (OidcRegisteredService.instanceOf(this.service)) {
+    } else if (OidcRegisteredService.instanceOf(this.data.service)) {
       this.type = Type.OIDC;
-    } else if (SamlRegisteredService.instanceOf(this.service)) {
+    } else if (SamlRegisteredService.instanceOf(this.data.service)) {
       this.type = Type.SAML;
     } else {
       this.type = Type.CAS;
@@ -50,22 +48,21 @@ export class ServicetypeComponent implements OnInit {
   changeType() {
     switch(+this.type) {
       case Type.CAS :
-        this.service = new RegexRegisteredService(this.service);
+        this.data.service = new RegexRegisteredService(this.data.service);
         break;
       case Type.OAUTH :
-        this.service = new OAuthRegisteredService(this.service);
+        this.data.service = new OAuthRegisteredService(this.data.service);
         break;
       case Type.OIDC :
-        this.service = new OidcRegisteredService(this.service);
+        this.data.service = new OidcRegisteredService(this.data.service);
         break;
       case Type.SAML :
-        this.service = new SamlRegisteredService(this.service);
+        this.data.service = new SamlRegisteredService(this.data.service);
         break;
       case Type.WS_Fed:
-        this.service = new WSFederationRegisterdService(this.service);
+        this.data.service = new WSFederationRegisterdService(this.data.service);
         break;
     }
-    this.data.service = this.service;
   }
 
 }

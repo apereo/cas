@@ -17,23 +17,21 @@ import {DefaultRegisteredServiceProperty} from "../../../domain/property";
   styleUrls: ['./propertiespane.component.css']
 })
 export class PropertiespaneComponent implements OnInit {
-  service: AbstractRegisteredService;
   displayedColumns = ['source', 'mapped', "delete"];
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
 
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {
 
-    if (Util.isEmpty(this.service.properties)) {
-      this.service.properties = new Map();
+    if (Util.isEmpty(this.data.service.properties)) {
+      this.data.service.properties = new Map();
     }
-    for (let p of Array.from(Object.keys(this.service.properties))) {
+    for (let p of Array.from(Object.keys(this.data.service.properties))) {
       this.attributeDatabase.addRow(new Row(p));
     }
     this.dataSource = new AttributeDataSource(this.attributeDatabase);
@@ -44,17 +42,17 @@ export class PropertiespaneComponent implements OnInit {
   }
 
   doChange(row: Row, val: string) {
-    if(Object.keys(this.service.properties).indexOf(row.key as string) > -1) {
-      this.service.properties[val] = this.service.properties[row.key as string];
-      delete this.service.properties[row.key as string];
+    if(Object.keys(this.data.service.properties).indexOf(row.key as string) > -1) {
+      this.data.service.properties[val] = this.data.service.properties[row.key as string];
+      delete this.data.service.properties[row.key as string];
     } else {
-      this.service.properties[val] = new DefaultRegisteredServiceProperty();
+      this.data.service.properties[val] = new DefaultRegisteredServiceProperty();
     }
     row.key = val;
   }
 
   delete(row: Row) {
-    delete this.service.properties[row.key as string];
+    delete this.data.service.properties[row.key as string];
     this.attributeDatabase.removeRow(row);
   }
 }
