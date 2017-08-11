@@ -107,8 +107,7 @@ public class InterruptResponse implements Serializable {
     public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
-
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -117,6 +116,8 @@ public class InterruptResponse implements Serializable {
                 .append("block", block)
                 .append("ssoEnabled", ssoEnabled)
                 .append("interrupt", interrupt)
+                .append("autoRedirect", autoRedirect)
+                .append("autoRedirectAfterSeconds", autoRedirectAfterSeconds)
                 .toString();
     }
 
@@ -139,6 +140,8 @@ public class InterruptResponse implements Serializable {
                 .append(this.block, rhs.block)
                 .append(this.ssoEnabled, rhs.ssoEnabled)
                 .append(this.interrupt, rhs.interrupt)
+                .append(this.autoRedirect, rhs.autoRedirect)
+                .append(this.autoRedirectAfterSeconds, rhs.autoRedirectAfterSeconds)
                 .isEquals();
     }
 
@@ -150,6 +153,8 @@ public class InterruptResponse implements Serializable {
                 .append(block)
                 .append(ssoEnabled)
                 .append(interrupt)
+                .append(autoRedirect)
+                .append(autoRedirectAfterSeconds)
                 .toHashCode();
     }
 }
