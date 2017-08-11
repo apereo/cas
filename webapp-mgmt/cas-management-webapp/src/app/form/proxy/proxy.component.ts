@@ -18,19 +18,17 @@ enum Type {
 })
 export class ProxyComponent implements OnInit {
 
-  service: AbstractRegisteredService;
   type: Type;
   TYPE = Type;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {
-    if (RefuseRegisteredServiceProxyPolicy.instanceOf(this.service.proxyPolicy)) {
+    if (RefuseRegisteredServiceProxyPolicy.instanceOf(this.data.service.proxyPolicy)) {
       this.type = Type.REFUSE;
-    } else if (RegexMatchingRegisteredServiceProxyPolicy.instanceOf(this.service.proxyPolicy)) {
+    } else if (RegexMatchingRegisteredServiceProxyPolicy.instanceOf(this.data.service.proxyPolicy)) {
       this.type = Type.REGEX;
     }
   }
@@ -38,10 +36,10 @@ export class ProxyComponent implements OnInit {
   changeType() {
     switch(+this.type) {
       case Type.REFUSE :
-        this.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
+        this.data.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
         break;
       case Type.REGEX :
-        this.service.proxyPolicy = new RegexMatchingRegisteredServiceProxyPolicy();
+        this.data.service.proxyPolicy = new RegexMatchingRegisteredServiceProxyPolicy();
         break;
     }
   }

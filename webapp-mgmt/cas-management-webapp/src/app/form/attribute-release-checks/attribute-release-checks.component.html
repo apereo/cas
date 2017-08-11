@@ -1,5 +1,5 @@
 <div>
-  <md-checkbox [(ngModel)]="service.attributeReleasePolicy.excludeDefaultAttributes">
+  <md-checkbox [(ngModel)]="data.service.attributeReleasePolicy.excludeDefaultAttributes">
     <ng-container i18n="services.form.label.attrRelease.excludeDefault">
       {{ messages.services_form_label_attrRelease_excludeDefault }}
     </ng-container>
@@ -11,7 +11,7 @@
 </div>
 
 <div>
-  <md-checkbox [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseCredentialPassword">
+  <md-checkbox [(ngModel)]="data.service.attributeReleasePolicy.authorizedToReleaseCredentialPassword">
     <ng-container i18n="services.form.label.attrRelease.releaseCredPassword">
       {{ messages.services_form_label_attrRelease_releaseCredPassword }}
     </ng-container>
@@ -23,7 +23,7 @@
 </div>
 
 <div>
-  <md-checkbox [(ngModel)]="service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket">
+  <md-checkbox [(ngModel)]="data.service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket">
     <ng-container i18n="services.form.label.attrRelease.releaseProxyTicket">
       {{ messages.services_form_label_attrRelease_releaseProxyTicket }}
     </ng-container>

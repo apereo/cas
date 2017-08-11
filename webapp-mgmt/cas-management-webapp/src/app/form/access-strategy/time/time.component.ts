@@ -13,7 +13,7 @@ export class TimeComponent implements OnInit {
   accessStrategy: TimeBasedRegisteredServiceAccessStrategy;
 
   constructor(public messages: Messages,
-              private data: Data) {
+              public data: Data) {
     this.accessStrategy = data.service.accessStrategy as TimeBasedRegisteredServiceAccessStrategy;
   }
 

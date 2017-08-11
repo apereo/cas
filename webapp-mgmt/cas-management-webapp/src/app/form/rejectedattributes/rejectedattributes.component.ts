@@ -17,23 +17,21 @@ import {Util} from "../../util/util";
 })
 export class RejectedattributesComponent implements OnInit {
 
-  service: AbstractRegisteredService;
   displayedColumns = ['source', 'mapped', "delete"];
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
 
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {
 
-    if (Util.isEmpty(this.service.accessStrategy.rejectedAttributes)) {
-      this.service.accessStrategy.rejectedAttributes = new Map();
+    if (Util.isEmpty(this.data.service.accessStrategy.rejectedAttributes)) {
+      this.data.service.accessStrategy.rejectedAttributes = new Map();
     }
-    for (let p of Array.from(Object.keys(this.service.accessStrategy.rejectedAttributes))) {
+    for (let p of Array.from(Object.keys(this.data.service.accessStrategy.rejectedAttributes))) {
       this.attributeDatabase.addRow(new Row(p));
     }
     this.dataSource = new AttributeDataSource(this.attributeDatabase);
@@ -44,13 +42,13 @@ export class RejectedattributesComponent implements OnInit {
   }
 
   doChange(row: Row, val: string) {
-    this.service.accessStrategy.rejectedAttributes[val] = this.service.accessStrategy.rejectedAttributes[row.key as string];
-    delete this.service.accessStrategy.rejectedAttributes[row.key as string];
+    this.data.service.accessStrategy.rejectedAttributes[val] = this.data.service.accessStrategy.rejectedAttributes[row.key as string];
+    delete this.data.service.accessStrategy.rejectedAttributes[row.key as string];
     row.key = val;
   }
 
   delete(row: Row) {
-   delete this.service.accessStrategy.rejectedAttributes[row.key as string];
+   delete this.data.service.accessStrategy.rejectedAttributes[row.key as string];
    this.attributeDatabase.removeRow(row);
   }
 }

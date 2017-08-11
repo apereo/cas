@@ -4,7 +4,10 @@
   </md-card-title>
   <md-card-content>
     <div class="cardContent">
-      <app-multiauthpane></app-multiauthpane>
+      <form #multiAuthForm="ngForm">
+        <app-multiauthpane></app-multiauthpane>
+        <button type="submit" style="display:none;" #submit></button>
+      </form>
     </div>
   </md-card-content>
 </md-card>

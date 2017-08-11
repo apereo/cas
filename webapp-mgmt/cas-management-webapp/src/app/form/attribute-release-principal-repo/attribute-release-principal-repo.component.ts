@@ -19,7 +19,6 @@ enum Type {
   styleUrls: ['./attribute-release-principal-repo.component.css']
 })
 export class AttributeReleasePrincipalRepoComponent implements OnInit {
-  service: AbstractRegisteredService;
   formData: FormData;
   type: Type;
   TYPE = Type;
@@ -27,15 +26,14 @@ export class AttributeReleasePrincipalRepoComponent implements OnInit {
   mergeStrategies = ["NONE","ADD","MULTIVALUED","REPLACE"];
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
     this.formData = data.formData;
   }
 
   ngOnInit() {
-    if (DefaultPrincipalAttributesRepository.instanceOf(this.service.attributeReleasePolicy.principalAttributesRepository)) {
+    if (DefaultPrincipalAttributesRepository.instanceOf(this.data.service.attributeReleasePolicy.principalAttributesRepository)) {
       this.type = Type.DEFAULT;
-    } else if (CachingPrincipalAttributesRepository.instanceOf(this.service.attributeReleasePolicy.principalAttributesRepository)) {
+    } else if (CachingPrincipalAttributesRepository.instanceOf(this.data.service.attributeReleasePolicy.principalAttributesRepository)) {
       this.type = Type.CACHING;
     }
   }
@@ -43,10 +41,10 @@ export class AttributeReleasePrincipalRepoComponent implements OnInit {
   changeType() {
     switch(+this.type) {
       case Type.DEFAULT :
-        this.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+        this.data.service.attributeReleasePolicy.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
         break;
       case Type.CACHING :
-        this.service.attributeReleasePolicy.principalAttributesRepository = new CachingPrincipalAttributesRepository();
+        this.data.service.attributeReleasePolicy.principalAttributesRepository = new CachingPrincipalAttributesRepository();
         break;
     }
   }

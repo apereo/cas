@@ -31,7 +31,6 @@ describe('AccessStrategyComponent', () => {
     fixture = TestBed.createComponent(AccessStrategyComponent);
     component = fixture.componentInstance;
     component.formData = new FormData();
-    component.service = new RegexRegisteredService();
     component.selectOptions = new Data().selectOptions;
     fixture.detectChanges();
   });

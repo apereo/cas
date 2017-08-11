@@ -10,11 +10,9 @@ import {Data} from "../data";
   styleUrls: ['./attribute-release-checks.component.css']
 })
 export class AttributeReleaseChecksComponent implements OnInit {
-  service: AbstractRegisteredService;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {

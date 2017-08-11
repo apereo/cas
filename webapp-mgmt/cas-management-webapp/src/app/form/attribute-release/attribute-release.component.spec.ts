@@ -36,7 +36,6 @@ describe('AttributeReleaseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleaseComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

@@ -25,7 +25,6 @@ describe('PropertiespaneComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PropertiespaneComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

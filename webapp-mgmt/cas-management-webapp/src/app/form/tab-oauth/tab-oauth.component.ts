@@ -1,15 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
+import {TabBase} from "../tab-base";
 
 @Component({
   selector: 'app-tab-oauth',
   templateUrl: './tab-oauth.component.html',
   styleUrls: ['./tab-oauth.component.css']
 })
-export class TabOauthComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class TabOauthComponent extends TabBase {}

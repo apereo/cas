@@ -69,7 +69,7 @@
     <input mdInput
            i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
            [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
-           [(ngModel)]="service.attributeReleasePolicy.scriptFile">
+           [(ngModel)]="data.service.attributeReleasePolicy.scriptFile">
   </md-input-container>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
@@ -82,7 +82,7 @@
     <input mdInput
            i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
            [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
-           [(ngModel)]="service.attributeReleasePolicy.groovyScript">
+           [(ngModel)]="data.service.attributeReleasePolicy.groovyScript">
   </md-input-container>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
@@ -100,7 +100,7 @@
   <md-select multiple style="width:400px;padding-top:25px;"
              i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
              [placeholder]="messages.services_form_label_attrRelease_policies_returnAllowed"
-             [(ngModel)]="service.attributeReleasePolicy.allowedAttributes">
+             [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes">
     <md-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
       {{ opt }}
     </md-option>
@@ -112,5 +112,5 @@
 </div>
 
 <div *ngIf="type == TYPE.RETURN_MAPPED && !isEmpty( formData.availableAttributes )">
-  <app-mappedattributes [attributes]="service.attributeReleasePolicy.allowedAttributes"></app-mappedattributes>
+  <app-mappedattributes [attributes]="data.service.attributeReleasePolicy.allowedAttributes"></app-mappedattributes>
 </div>
