@@ -84,7 +84,8 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE));
         }
         final ViewState viewRegister = createViewState(flow, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
-        final Transition viewRegisterTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
+        final Transition viewRegisterTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT, 
+                CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
         viewRegister.getTransitionSet().add(viewRegisterTransition);
 
         final ActionState registerAction = createActionState(flow,
