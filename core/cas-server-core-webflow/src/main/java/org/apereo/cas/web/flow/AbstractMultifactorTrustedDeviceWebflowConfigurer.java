@@ -84,8 +84,8 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE));
         }
         final ViewState viewRegister = createViewState(flow, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
-        viewRegister.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT,
-                CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE));
+        final Transition viewRegisterTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
+        viewRegister.getTransitionSet().add(viewRegisterTransition);
 
         final ActionState registerAction = createActionState(flow,
                 CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, createEvaluateAction(MFA_SET_TRUST_ACTION_BEAN_ID));
@@ -96,8 +96,8 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         }
         final Action act = submit.getActionList().iterator().next();
         final ActionState finishMfaTrustedAuth = createActionState(flow, STATE_ID_FINISH_MFA_TRUSTED_AUTH, act);
-        finishMfaTrustedAuth.getTransitionSet().add(
-                createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS));
+        final Transition finishedTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
+        finishMfaTrustedAuth.getTransitionSet().add(finishedTransition);
         createStateDefaultTransition(finishMfaTrustedAuth, CasWebflowConstants.STATE_ID_SUCCESS);
     }
 

@@ -87,6 +87,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     @Override
     public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
         this.storage.put(record.getKey(), record);
+        writeTrustedRecordsToResource();
         return record;
     }
     
