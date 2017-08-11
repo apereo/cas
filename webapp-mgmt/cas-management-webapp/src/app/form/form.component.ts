@@ -17,6 +17,8 @@ import {
 import {OAuthRegisteredService, OidcRegisteredService} from "../../domain/oauth-service";
 import {SamlRegisteredService} from "../../domain/saml-service";
 import {WSFederationRegisterdService} from "../../domain/wsed-service";
+import {MdTabGroup} from "@angular/material";
+import {GrouperRegisteredServiceAccessStrategy} from "../../domain/access-strategy";
 
 enum Tabs {
   BASICS,
@@ -44,6 +46,9 @@ export class FormComponent implements OnInit {
 
   @ViewChild('alert')
   alert: AlertComponent;
+
+  @ViewChild('tabGroup')
+  tabGroup: MdTabGroup;
 
   constructor(public messages: Messages,
               private route: ActivatedRoute,
@@ -78,6 +83,8 @@ export class FormComponent implements OnInit {
 
   loadService(form: AbstractRegisteredService) {
     this.data.service = form;
+    this.data.submitted = false;
+    this.data.form = this;
 
     this.service.formData().then(resp => {
       this.data.formData = resp;
@@ -157,21 +164,17 @@ export class FormComponent implements OnInit {
   };
 
   saveForm() {
-    let formErrors;
+    let formErrors: number = -1;
     this.clearErrors();
     formErrors = this.validateForm();
-    if (formErrors.length > 0) {
+    if (formErrors > -1) {
       this.alert.show(this.messages.services_form_alert_formHasErrors, 'danger');
-      formErrors.forEach((fieldId) => {
-        document.getElementById(fieldId).classList.add('required-missing');
-      });
-      this.alert.show(this.messages.services_form_alert_formHasErrors,'danger');
-      return;
+      this.tabGroup.selectedIndex = (formErrors > 0 && this.isCas()) ? formErrors - 1 : formErrors;
+    } else {
+      this.service.saveService(this.data.service)
+        .then(resp => this.handleSave(resp))
+        .catch(e => this.handleNotSaved(e));
     }
-
-    this.service.saveService(this.data.service)
-      .then(resp => this.handleSave(resp))
-      .catch(e => this.handleNotSaved(e));
 
   };
 
@@ -215,35 +218,55 @@ export class FormComponent implements OnInit {
     }
   }
 
-  validateForm() {
-    let err = [],
-      data = this.data.service;
+  validateForm(): Tabs {
+    let data = this.data.service;
 
     // Service Basics
-    if (!data.serviceId) {
-      err.push('serviceId');
+    if (!data.serviceId ||
+        !this.validateRegex(data.serviceId) ||
+        !data.name ||
+        !data.description) {
+      return Tabs.BASICS;
     }
 
-    if (!this.validateRegex(data.serviceId)) {
-      err.push('serviceId');
-    }
-
-    if (!data.name) {
-      err.push('serviceName');
-    }
-
-    if (!data.description) {
-      err.push('serviceDesc');
-    }
-
-    // OAuth Client Options Only
-    if (OAuthRegisteredService.instanceOf(data)) {
+    if (this.isOauth()) {
       let oauth: OAuthRegisteredService = data as OAuthRegisteredService;
-      if (!oauth.clientId) {
-        err.push('oauthClientId');
+      if (!oauth.clientId ||
+          !oauth.clientSecret) {
+        return Tabs.TYPE;
       }
-      if (!oauth.clientSecret) {
-        err.push('oauthClientSecret');
+    }
+
+    if (this.isOidc()) {
+      let oidc: OidcRegisteredService = data as OidcRegisteredService;
+      if (!oidc.clientId ||
+          !oidc.clientSecret ||
+          !oidc.jwks ||
+          !oidc.idTokenEncryptionAlg ||
+          !oidc.idTokenEncryptionEncoding) {
+        return Tabs.TYPE;
+      }
+    }
+
+    if (this.isSaml()) {
+      let saml: SamlRegisteredService = data as SamlRegisteredService;
+      if (!saml.metadataLocation) {
+        return Tabs.TYPE;
+      }
+    }
+
+    if (this.isWsFed()) {
+      let wsfed: WSFederationRegisterdService = data as WSFederationRegisterdService;
+      if (!wsfed.realm ||
+          !wsfed.appliesTo) {
+        return Tabs.TYPE;
+      }
+    }
+
+    if (GrouperRegisteredServiceAccessStrategy.instanceOf(data.accessStrategy)) {
+      let grouper: GrouperRegisteredServiceAccessStrategy = data.accessStrategy as GrouperRegisteredServiceAccessStrategy;
+      if (!grouper.groupField) {
+        return Tabs.ACCESS_STRATEGY;
       }
     }
 
@@ -251,13 +274,13 @@ export class FormComponent implements OnInit {
     if (PrincipalAttributeRegisteredServiceUsernameProvider.instanceOf(data.usernameAttributeProvider)) {
       let attrProvider: PrincipalAttributeRegisteredServiceUsernameProvider = data.usernameAttributeProvider as PrincipalAttributeRegisteredServiceUsernameProvider;
       if (!attrProvider.usernameAttribute) {
-        err.push('uapUsernameAttribute');
+        return Tabs.USERNAME_ATTRIBUTE;
       }
     }
     if (AnonymousRegisteredServiceUsernameProvider.instanceOf(data.usernameAttributeProvider)) {
       let anonProvider: AnonymousRegisteredServiceUsernameProvider = data.usernameAttributeProvider as AnonymousRegisteredServiceUsernameProvider;
       if (anonProvider.persistentIdGenerator) {
-        err.push('uapSaltSetting');
+        return Tabs.USERNAME_ATTRIBUTE;
       }
     }
 
@@ -265,7 +288,7 @@ export class FormComponent implements OnInit {
     if (RegexMatchingRegisteredServiceProxyPolicy.instanceOf(data.proxyPolicy)) {
       let regPolicy: RegexMatchingRegisteredServiceProxyPolicy = data.proxyPolicy as RegexMatchingRegisteredServiceProxyPolicy;
       if (!regPolicy.pattern || !this.validateRegex(regPolicy.pattern)) {
-        err.push('proxyPolicyRegex');
+        return Tabs.PROXY;
       }
     }
 
@@ -275,18 +298,18 @@ export class FormComponent implements OnInit {
     if (CachingPrincipalAttributesRepository.instanceOf(data.attributeReleasePolicy.principalAttributesRepository)) {
       let cache: CachingPrincipalAttributesRepository = data.attributeReleasePolicy.principalAttributesRepository as CachingPrincipalAttributesRepository;
       if (!cache.timeUnit){
-        err.push('cachedTime');
+        return Tabs.ATTRIBUTE_RELEASE;
       }
       if (!cache.mergingStrategy){
-        err.push('mergingStrategy');
+        return Tabs.ATTRIBUTE_RELEASE;
       }
     }
     if (data.attributeReleasePolicy.attributeFilter != null) {
       if (!this.validateRegex(data.attributeReleasePolicy.attributeFilter.pattern)) {
-        err.push('attFilter');
+        return Tabs.ATTRIBUTE_RELEASE;
       }
     }
 
-    return err;
+    return -1;
   };
 }

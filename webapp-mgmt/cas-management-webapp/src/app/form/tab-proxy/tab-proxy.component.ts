@@ -1,15 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {Data} from "../data";
+import {Component} from '@angular/core';
+import {TabBase} from "../tab-base";
 
 @Component({
   selector: 'app-tab-proxy',
   templateUrl: './tab-proxy.component.html'
 })
-export class TabProxyComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class TabProxyComponent extends TabBase {}

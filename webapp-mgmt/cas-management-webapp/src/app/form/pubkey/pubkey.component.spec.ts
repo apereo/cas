@@ -25,7 +25,6 @@ describe('PubkeyComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PubkeyComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

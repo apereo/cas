@@ -103,7 +103,7 @@
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.metadataCriteriaRemoveEmptyEntitesDescriptors">
+      <md-checkbox [(ngModel)]="service.metadataCriteriaRemoveEmptyEntitiesDescriptors">
         <ng-container i18n="services.form.saml.removeEmptyEntities">
           {{ messages.services_form_label_saml_removeEmptyEntities }}
         </ng-container>
@@ -155,7 +155,7 @@
     </div>
 
     <div>
-      <md-select multiple style="width:400px;"
+      <md-select style="width:400px;"
                  i18n-placeholder="services.form.label.saml.metadata.role"
                  [placeholder]="messages.services_form_label_saml_metadata_role"
                  [(ngModel)]="service.metadataCriteriaRoles">

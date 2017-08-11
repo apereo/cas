@@ -26,7 +26,6 @@ describe('UidattrsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UidattrsComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     component.formData = new FormData();
     fixture.detectChanges();
   });

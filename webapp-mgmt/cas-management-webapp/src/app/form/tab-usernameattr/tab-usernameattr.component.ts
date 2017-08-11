@@ -1,15 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {Data} from "../data";
+import {Component} from '@angular/core';
+import {TabBase} from "../tab-base";
 
 @Component({
   selector: 'app-tab-usernameattr',
   templateUrl: './tab-usernameattr.component.html'
 })
-export class TabUsernameattrComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class TabUsernameattrComponent extends TabBase {}

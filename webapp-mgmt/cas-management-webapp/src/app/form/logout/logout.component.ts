@@ -8,11 +8,9 @@ import {Data} from "../data";
   templateUrl: './logout.component.html'
 })
 export class LogoutComponent implements OnInit {
-  service: AbstractRegisteredService;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {

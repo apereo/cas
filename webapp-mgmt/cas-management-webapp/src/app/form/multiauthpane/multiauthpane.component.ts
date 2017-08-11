@@ -9,19 +9,17 @@ import {Data} from "../data";
 })
 export class MultiauthpaneComponent implements OnInit {
 
-  service: AbstractRegisteredService;
   failureModes = ["NONE","OPEN","CLOSED","PHANTOM"];
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {
   }
 
   saveProviders(providers: String) {
-    this.service.multifactorPolicy.multifactorAuthenticationProviders = providers.split(',');
+    this.data.service.multifactorPolicy.multifactorAuthenticationProviders = providers.split(',');
   }
 
 }

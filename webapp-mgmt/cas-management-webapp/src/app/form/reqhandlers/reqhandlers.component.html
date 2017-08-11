@@ -3,8 +3,8 @@
     <input mdInput
            i18n-placeholder="services.form.label.requiredHandlers"
            [placeholder]="messages.services_form_label_requiredHandlers"
-           [ngModel]="service.requiredHandlers"
-           (ngModelChange)="service.requiredHandlers = $event.split(',')">
+           [ngModel]="data.service.requiredHandlers"
+           (ngModelChange)="data.service.requiredHandlers = $event.split(',')">
   </md-input-container>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.requiredHandlers"

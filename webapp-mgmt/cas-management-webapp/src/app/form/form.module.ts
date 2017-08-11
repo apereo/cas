@@ -10,7 +10,6 @@ import {FormRoutingModule} from "./form-routing.module";
 import {FormComponent} from "./form.component";
 import {FormResolve} from "./form.resolover";
 import {TabBasicsComponent} from "./tab-basics/tab-basics.component";
-import {TabServicetypeComponent} from "./tab-servicetype/tab-servicetype.component";
 import {TabLogoutComponent} from "./tab-logout/tab-logout.component";
 import {TabAccessstrategyComponent} from "./tab-accessstrategy/tab-accessstrategy.component";
 import {TabMulitauthComponent} from "./tab-mulitauth/tab-mulitauth.component";
@@ -60,6 +59,7 @@ import { MappedattributesComponent } from './mappedattributes/mappedattributes.c
 import { TabOauthComponent } from './tab-oauth/tab-oauth.component';
 import { TabSamlComponent } from './tab-saml/tab-saml.component';
 import { TabWsfedComponent } from './tab-wsfed/tab-wsfed.component';
+import {TabBase} from "./tab-base";
 
 @NgModule({
   imports: [
@@ -72,7 +72,6 @@ import { TabWsfedComponent } from './tab-wsfed/tab-wsfed.component';
   declarations: [
     FormComponent,
     TabBasicsComponent,
-    TabServicetypeComponent,
     TabLogoutComponent,
     TabAccessstrategyComponent,
     TabMulitauthComponent,
@@ -84,6 +83,7 @@ import { TabWsfedComponent } from './tab-wsfed/tab-wsfed.component';
     TabSamlComponent,
     TabOauthComponent,
     TabWsfedComponent,
+    TabBase,
     FormComponent,
     AccessStrategyComponent,
     AttributeReleaseComponent,

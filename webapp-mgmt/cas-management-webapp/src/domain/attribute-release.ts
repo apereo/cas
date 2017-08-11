@@ -9,7 +9,7 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
   principalIdAttribute: String;
 
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
-    this.attributeFilter = (policy && policy.attributeFilter) || new RegisteredServiceRegexAttributeFilter();
+    this.attributeFilter = policy && policy.attributeFilter;
     this.principalAttributesRepository = (policy && policy.principalAttributesRepository) || new DefaultPrincipalAttributesRepository();
     this.authorizedToReleaseCredentialPassword = policy && policy.authorizedToReleaseCredentialPassword;
     this.authorizedToReleaseProxyGrantingTicket = policy && policy.authorizedToReleaseProxyGrantingTicket;
@@ -115,13 +115,17 @@ export class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 export abstract class RegisteredServiceAttributeFilter {
   order: number;
   pattern: String
+
+  constructor(filter?: RegisteredServiceAttributeFilter) {
+    this.pattern = (filter && filter.pattern) || "";
+  }
 }
 
 export class RegisteredServiceRegexAttributeFilter extends RegisteredServiceAttributeFilter {
   static cName = "org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter";
 
-  constructor() {
-    super();
+  constructor(filter?) {
+    super(filter);
     this["@class"] = RegisteredServiceRegexAttributeFilter.cName;
   }
 

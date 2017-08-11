@@ -27,7 +27,6 @@ describe('SamlclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SamlclientComponent);
     component = fixture.componentInstance;
-    component.service = new SamlRegisteredService();
     fixture.detectChanges();
   });
 

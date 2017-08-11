@@ -9,13 +9,11 @@ import {Data} from "../data";
 })
 export class LogouttypeevalComponent implements OnInit {
 
-  service: AbstractRegisteredService;
   selectOptions;
   logoutType = ["NONE","BACK_CHANNEL","FRONT_CHANNEL"];
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
     this.selectOptions = data.selectOptions;
   }
 

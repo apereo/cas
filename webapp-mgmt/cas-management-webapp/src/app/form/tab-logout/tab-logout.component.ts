@@ -1,15 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {Data} from "../data";
+import {Component} from '@angular/core';
+import {TabBase} from "../tab-base";
 
 @Component({
   selector: 'app-tab-logout',
   templateUrl: './tab-logout.component.html'
 })
-export class TabLogoutComponent implements OnInit {
+export class TabLogoutComponent extends TabBase {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}

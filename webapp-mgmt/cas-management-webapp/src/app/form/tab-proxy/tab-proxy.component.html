@@ -3,6 +3,9 @@
     <h5>Proxy Options</h5>
   </md-card-title>
   <div class="cardContent">
-    <app-proxy></app-proxy>
+    <form #proxyForm="ngForm">
+      <app-proxy></app-proxy>
+      <button type="submit" style="display: none;" #submit></button>
+    </form>
   </div>
 </md-card>

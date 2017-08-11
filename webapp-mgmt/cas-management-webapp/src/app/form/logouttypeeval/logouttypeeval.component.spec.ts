@@ -26,7 +26,6 @@ describe('LogouttypeevalComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LogouttypeevalComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     component.selectOptions = new Data().selectOptions;
     fixture.detectChanges();
   });

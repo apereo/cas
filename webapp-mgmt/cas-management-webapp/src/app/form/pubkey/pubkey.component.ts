@@ -10,16 +10,13 @@ import {Data} from "../data";
 })
 export class PubkeyComponent implements OnInit {
 
-  service: AbstractRegisteredService;
-
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
   }
 
   ngOnInit() {
-    if (!this.service.publicKey) {
-      this.service.publicKey = new RegisteredServicePublicKeyImpl();
+    if (!this.data.service.publicKey) {
+      this.data.service.publicKey = new RegisteredServicePublicKeyImpl();
     }
   }
 

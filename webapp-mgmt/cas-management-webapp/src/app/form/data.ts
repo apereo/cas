@@ -2,15 +2,19 @@
  * Created by tschmidt on 2/22/17.
  */
 
-import {Injectable} from "@angular/core";
+import {EventEmitter, Injectable} from "@angular/core";
 import {AbstractRegisteredService} from "../../domain/registered-service";
 import {FormData} from "../../domain/service-view-bean";
+import {FormComponent} from "./form.component";
 
 @Injectable()
 export class Data {
-  isAdmin: boolean;
   service: AbstractRegisteredService;
   formData: FormData;
+  submitted: boolean;
+  save: EventEmitter<void> = new EventEmitter<void>();
+  typeChange: EventEmitter<void> = new EventEmitter<void>();
+  form: FormComponent;
 
   roles = [
     {id: 1, text: "guest"},

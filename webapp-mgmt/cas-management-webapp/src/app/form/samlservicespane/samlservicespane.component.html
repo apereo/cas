@@ -15,7 +15,7 @@
     <md-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</md-header-cell>
     <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
       <md-select style="width:200px"
-                 [(ngModel)]="service.attributeNameFormats[row.key]">
+                 [(ngModel)]="data.service.attributeNameFormats[row.key]">
         <md-option *ngFor="let item of selectOptions.nameIdList" [value]="item.name">
           {{item.name}}
         </md-option>

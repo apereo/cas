@@ -27,7 +27,6 @@ enum Type {
   styleUrls: ['./attribute-release-policies.component.css']
 })
 export class AttributeReleasePoliciesComponent implements OnInit {
-  service: AbstractRegisteredService;
   formData: FormData;
   selectOptions;
   type: Type;
@@ -37,31 +36,30 @@ export class AttributeReleasePoliciesComponent implements OnInit {
   isSaml: boolean;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service;
+              public data: Data) {
     this.formData = data.formData;
     this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
-    if (ReturnAllAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
+    if (ReturnAllAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.RETURN_ALL;
-    } else if (DenyAllAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
+    } else if (DenyAllAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.DENY_ALL;
-    } else if (ReturnMappedAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
-      let mapped: ReturnMappedAttributeReleasePolicy = this.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
+    } else if (ReturnMappedAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
+      let mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
       this.formData.availableAttributes.forEach((item: any) => {
         mapped.allowedAttributes[item] = mapped.allowedAttributes[item] || [item];
       });
       this.type = Type.RETURN_MAPPED;
-    } else if (ReturnAllowedAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
+    } else if (ReturnAllowedAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.RETURN_ALLOWED;
-    } else if (ScriptedRegisteredServiceAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
+    } else if (ScriptedRegisteredServiceAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.SCRIPT;
-    } else if (GroovyScriptAttributeReleasePolicy.instanceOf(this.service.attributeReleasePolicy)) {
+    } else if (GroovyScriptAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.GROOVY;
     }
-    this.isSaml = SamlRegisteredService.instanceOf(this.service);
+    this.isSaml = SamlRegisteredService.instanceOf(this.data.service);
   }
 
   changeType() {
@@ -69,27 +67,27 @@ export class AttributeReleasePoliciesComponent implements OnInit {
     switch(+this.type) {
       case Type.RETURN_ALL:
         console.log("Changed to return all");
-        this.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.DENY_ALL :
-        this.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy(this.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.RETURN_MAPPED :
-        let mapped: ReturnMappedAttributeReleasePolicy = this.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
+        let mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
         mapped.allowedAttributes = new Map();
         this.formData.availableAttributes.forEach((item: any) => {
           mapped.allowedAttributes[item] = [item];
         });
-        this.service.attributeReleasePolicy = mapped;
+        this.data.service.attributeReleasePolicy = mapped;
         break;
       case Type.RETURN_ALLOWED :
-        this.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.SCRIPT :
-        this.service.attributeReleasePolicy = new ScriptedRegisteredServiceAttributeReleasePolicy(this.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new ScriptedRegisteredServiceAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.GROOVY :
-        this.service.attributeReleasePolicy = new GroovyScriptAttributeReleasePolicy(this.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new GroovyScriptAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
     }
   }

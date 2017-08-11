@@ -6,7 +6,10 @@ import {
   DefaultRegisteredServiceUsernameProvider,
   RegisteredServiceUsernameAttributeProvider
 } from "./attribute-provider";
-import {RegisteredServiceAttributeReleasePolicy, ReturnAllAttributeReleasePolicy} from "./attribute-release";
+import {
+  RegisteredServiceAttributeReleasePolicy, ReturnAllAttributeReleasePolicy,
+  ReturnAllowedAttributeReleasePolicy
+} from "./attribute-release";
 import {RegisteredServicePublicKey} from "./public-key";
 import {DefaultRegisteredServiceProperty} from "./property";
 
@@ -43,11 +46,11 @@ export abstract class RegisteredService {
     this.evaluationOrder = (service && service.evaluationOrder) || -1;
     this.usernameAttributeProvider = (service && service.usernameAttributeProvider) || new DefaultRegisteredServiceUsernameProvider();
     this.requiredHandlers = service && service.requiredHandlers;
-    this.attributeReleasePolicy = (service && service.attributeReleasePolicy) || new ReturnAllAttributeReleasePolicy();
+    this.attributeReleasePolicy = (service && service.attributeReleasePolicy) || new ReturnAllowedAttributeReleasePolicy();
     this.multifactorPolicy = (service && service.multifactorPolicy) || new DefaultRegisteredServiceMultifactorPolicy();
     this.logo = service && service.logo;
     this.logoutUrl = service && service.logoutUrl;
-    this.logoutType = service && service.logoutType;
+    this.logoutType = (service && service.logoutType) || "BACK_CHANNEL";
     this.accessStrategy = (service && service.accessStrategy) || new DefaultRegisteredServiceAccessStrategy();
     this.publicKey = service && service.publicKey;
     this.properties = service && service.properties;

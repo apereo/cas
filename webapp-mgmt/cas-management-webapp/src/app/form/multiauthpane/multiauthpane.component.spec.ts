@@ -24,7 +24,6 @@ describe('MultiauthpaneComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MultiauthpaneComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

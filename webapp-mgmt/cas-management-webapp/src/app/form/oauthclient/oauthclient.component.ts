@@ -15,9 +15,9 @@ export class OauthclientComponent implements OnInit {
   showOAuthSecret: boolean;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service as OAuthRegisteredService;
+              public data: Data) {
     this.selectOptions = data.selectOptions;
+    this.service = data.service as OAuthRegisteredService;
   }
 
   ngOnInit() {

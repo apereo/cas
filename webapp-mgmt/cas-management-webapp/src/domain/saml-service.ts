@@ -16,7 +16,7 @@ export class SamlRegisteredService extends RegexRegisteredService {
   signResponses: boolean;
   encryptAssertions: boolean;
   metadataCriteriaRoles: String;
-  metadataCriteriaRemoveEmptyEntitesDescriptors: boolean;
+  metadataCriteriaRemoveEmptyEntitiesDescriptors: boolean;
   metadataCriteriaRemoveRolelessEntityDescriptors: boolean;
   attributeNameFormats: Map<String, String>;
 
@@ -24,6 +24,11 @@ export class SamlRegisteredService extends RegexRegisteredService {
 
   constructor(service?: RegisteredService) {
     super(service);
+    this.metadataExpirationDuration = "PT60M";
+    this.metadataCriteriaRoles = "SPSSODescriptor";
+    this.signResponses = true;
+    this.metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
+    this.metadataCriteriaRemoveRolelessEntityDescriptors = true;
     this["@class"] = SamlRegisteredService.cName;
   }
 

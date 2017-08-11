@@ -27,7 +27,7 @@
     <md-select required style="width:400px;padding-top:25px;padding-bottom: 25px;"
                i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.timeUnit"
                [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit"
-               [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
+               [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
       <md-option *ngFor="let opt of timeUnits" [value]="opt">
         {{ opt }}
       </md-option>
@@ -43,7 +43,7 @@
       <input mdInput
              i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.expiration"
              [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_expiration"
-             [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.expiration">
+             [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.expiration">
     </md-input-container>
     <md-icon style="font-size: medium"
              i18n-mdTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration"
@@ -55,7 +55,7 @@
     <md-select required style="width: 400px;padding-top:25px;padding-bottom: 25px;"
                i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy"
                [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy"
-               [(ngModel)]="service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
+               [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
       <md-option *ngFor="let opt of mergeStrategies" [value]="opt">
         {{ opt }}
       </md-option>

@@ -25,7 +25,6 @@ describe('LogoComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LogoComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

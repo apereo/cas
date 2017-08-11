@@ -25,7 +25,6 @@ describe('LinkrefsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LinkrefsComponent);
     component = fixture.componentInstance;
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

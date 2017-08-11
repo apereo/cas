@@ -13,7 +13,7 @@ export class RemoteComponent implements OnInit {
   accessStrategy: RemoteEndpointServiceAccessStrategy;
 
   constructor(public messages: Messages,
-              private data: Data) {
+              public data: Data) {
     this.accessStrategy = data.service.accessStrategy as RemoteEndpointServiceAccessStrategy;
   }
 

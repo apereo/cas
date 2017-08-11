@@ -17,7 +17,6 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 })
 export class MappedattributesComponent implements OnInit {
   formData: FormData;
-  service: AbstractRegisteredService;
   displayedColumns = ['source','mapped'];
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
@@ -27,10 +26,9 @@ export class MappedattributesComponent implements OnInit {
 
 
   constructor(public messages: Messages,
-              private data: Data,
+              public data: Data,
               private changeDetector: ChangeDetectorRef) {
     this.formData = data.formData;
-    this.service = data.service;
   }
 
   ngOnInit() {

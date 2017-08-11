@@ -14,11 +14,9 @@ import {Util} from "../../util/util";
 
 export class AttributeReleaseFiltersComponent implements OnInit {
 
-  attributeFilter: RegisteredServiceRegexAttributeFilter;
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter
+              public data: Data) {
   }
 
   ngOnInit() {
@@ -26,19 +24,21 @@ export class AttributeReleaseFiltersComponent implements OnInit {
   }
 
   updateFilter(pattern: String) {
+    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter;
     if (pattern && pattern != '') {
-      this.attributeFilter = new RegisteredServiceRegexAttributeFilter();
-      this.attributeFilter.pattern = pattern;
-      this.data.service.attributeReleasePolicy.attributeFilter = this.attributeFilter;
+      attributeFilter = new RegisteredServiceRegexAttributeFilter();
+      attributeFilter.pattern = pattern;
+      this.data.service.attributeReleasePolicy.attributeFilter = attributeFilter;
     } else {
-      this.attributeFilter = null;
+      attributeFilter = null;
       this.data.service.attributeReleasePolicy.attributeFilter = null;
     }
   }
 
   getPattern(): String {
-    if (this.attributeFilter) {
-      return this.attributeFilter.pattern;
+    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter;
+    if (attributeFilter) {
+      return attributeFilter.pattern;
     }
     return '';
   }

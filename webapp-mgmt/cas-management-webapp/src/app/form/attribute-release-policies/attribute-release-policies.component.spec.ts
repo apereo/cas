@@ -27,7 +27,6 @@ describe('AttributeReleasePoliciesComponent', () => {
     component = fixture.componentInstance;
     component.selectOptions = new Data().selectOptions;
     component.formData = new FormData();
-    component.service = new RegexRegisteredService();
     fixture.detectChanges();
   });
 

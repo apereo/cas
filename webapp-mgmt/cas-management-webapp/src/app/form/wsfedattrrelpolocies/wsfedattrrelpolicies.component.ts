@@ -21,11 +21,9 @@ import {Util} from "../../util/util";
 })
 export class WsfedattrrelpoliciesComponent implements OnInit {
 
-  service: WSFederationRegisterdService;
   formData: FormData;
   selectOptions;
   wsFedOnly: boolean;
-  attrPolicy: WsFederationClaimsReleasePolicy;
 
   displayedColumns = ['source','mapped'];
   attributeDatabase = new AttributeDatabase();
@@ -33,23 +31,22 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
 
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.service = data.service as WSFederationRegisterdService;
-    this.attrPolicy = data.service.attributeReleasePolicy as WsFederationClaimsReleasePolicy;
+              public data: Data) {
     this.formData = data.formData;
     this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
-    if(Util.isEmpty(this.attrPolicy.allowedAttributes)) {
-      this.attrPolicy.allowedAttributes = new Map();
+    let attrPolicy: WsFederationClaimsReleasePolicy = this.data.service.attributeReleasePolicy as WsFederationClaimsReleasePolicy;
+    if(Util.isEmpty(attrPolicy.allowedAttributes)) {
+      attrPolicy.allowedAttributes = new Map();
     }
 
     this.formData.availableAttributes.forEach((k) => {
-      this.attrPolicy.allowedAttributes[k as string] = k;
+      attrPolicy.allowedAttributes[k as string] = k;
     });
 
-    for(let key of Array.from(Object.keys(this.attrPolicy.allowedAttributes))) {
+    for(let key of Array.from(Object.keys(attrPolicy.allowedAttributes))) {
       this.attributeDatabase.addRow(new Row(key as string));
     };
 

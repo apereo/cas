@@ -23,34 +23,38 @@ export class AccessStrategyComponent implements OnInit {
 
 
   formData: FormData;
-  service: AbstractRegisteredService;
   selectOptions;
   type: Type;
   TYPE = Type;
   types = [Type.DEFAULT,Type.TIME,Type.GROUPER,Type.REMOTE];
 
   constructor(public messages: Messages,
-              private data: Data) {
+              public data: Data) {
     this.formData = data.formData;
-    this.service = data.service;
     this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
 
-    if (Util.isEmpty(this.service.accessStrategy.rejectedAttributes)) {;
-      this.service.accessStrategy.rejectedAttributes = new Map();
+    let service = this.data.service;
+
+    if (Util.isEmpty(service.accessStrategy.rejectedAttributes)) {
+      service.accessStrategy.rejectedAttributes = new Map();
+    }
+
+    if (Util.isEmpty(service.accessStrategy.requiredAttributes)) {
+      service.accessStrategy.requiredAttributes = new Map();
     }
 
     this.formData.availableAttributes.forEach((item: any) => {
-      this.service.accessStrategy.requiredAttributes[item] = this.service.accessStrategy.requiredAttributes[item] || [item];//this.textareaArrParse(dir, data.accessStrategy.requiredAttributes[item]);
+      service.accessStrategy.requiredAttributes[item] = service.accessStrategy.requiredAttributes[item] || [item];//this.textareaArrParse(dir, data.accessStrategy.requiredAttributes[item]);
     });
 
-    if (RemoteEndpointServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
+    if (RemoteEndpointServiceAccessStrategy.instanceOf(service.accessStrategy)) {
       this.type = Type.REMOTE;
-    } else if (TimeBasedRegisteredServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
+    } else if (TimeBasedRegisteredServiceAccessStrategy.instanceOf(service.accessStrategy)) {
       this.type = Type.TIME;
-    } else if (GrouperRegisteredServiceAccessStrategy.instanceOf(this.service.accessStrategy)) {
+    } else if (GrouperRegisteredServiceAccessStrategy.instanceOf(service.accessStrategy)) {
       this.type = Type.GROUPER;
     } else {
       this.type = Type.DEFAULT;
@@ -60,16 +64,16 @@ export class AccessStrategyComponent implements OnInit {
   changeType() {
     switch(+this.type) {
       case Type.DEFAULT :
-        this.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy(this.service.accessStrategy);
+        this.data.service.accessStrategy = new DefaultRegisteredServiceAccessStrategy(this.data.service.accessStrategy);
         break;
       case Type.REMOTE :
-        this.service.accessStrategy = new RemoteEndpointServiceAccessStrategy(this.service.accessStrategy);
+        this.data.service.accessStrategy = new RemoteEndpointServiceAccessStrategy(this.data.service.accessStrategy);
         break;
       case Type.TIME :
-        this.service.accessStrategy = new TimeBasedRegisteredServiceAccessStrategy(this.service.accessStrategy);
+        this.data.service.accessStrategy = new TimeBasedRegisteredServiceAccessStrategy(this.data.service.accessStrategy);
         break;
       case Type.GROUPER :
-        this.service.accessStrategy = new GrouperRegisteredServiceAccessStrategy(this.service.accessStrategy);
+        this.data.service.accessStrategy = new GrouperRegisteredServiceAccessStrategy(this.data.service.accessStrategy);
         break;
       default:
     }
