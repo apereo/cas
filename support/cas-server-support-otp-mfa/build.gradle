@@ -3,6 +3,7 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-webflow")
 
+    implementation libraries.caffein
     implementation libraries.zxingbarcode
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
