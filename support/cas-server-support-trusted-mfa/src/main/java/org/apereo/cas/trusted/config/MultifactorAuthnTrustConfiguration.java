@@ -86,6 +86,7 @@ public class MultifactorAuthnTrustConfiguration {
                     }
                 });
 
+        LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
         final InMemoryMultifactorAuthenticationTrustStorage m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
         m.setCipherExecutor(mfaTrustCipherExecutor());
         return m;
