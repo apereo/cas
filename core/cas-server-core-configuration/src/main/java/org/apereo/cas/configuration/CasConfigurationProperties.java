@@ -28,6 +28,7 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
+import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
@@ -57,6 +58,10 @@ import java.io.Serializable;
 public class CasConfigurationProperties implements Serializable {
 
     private static final long serialVersionUID = -8620267783496071683L;
+
+    @NestedConfigurationProperty
+    private InterruptProperties interrupt = new InterruptProperties();
+    
     @NestedConfigurationProperty
     private ConsentProperties consent = new ConsentProperties();
 
@@ -519,4 +524,11 @@ public class CasConfigurationProperties implements Serializable {
         this.clickatell = clickatell;
     }
 
+    public InterruptProperties getInterrupt() {
+        return interrupt;
+    }
+
+    public void setInterrupt(final InterruptProperties interrupt) {
+        this.interrupt = interrupt;
+    }
 }
