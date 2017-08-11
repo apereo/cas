@@ -35,13 +35,13 @@ class StatisticsApp extends React.Component {
     let d = new Date()
     const startTime = d.setHours(d.getHours() - 2)
     axios.get(`/cas/status/stats/getAuthnAudit/summary?start=${startTime}&range=${this.state.range}&scale=${this.state.scale}`)
-    .then(res => {
-      res.data.forEach(function (value) {
-        value.time = moment(value.time).utc().format('h:mm')
+      .then(res => {
+        res.data.forEach(function (value) {
+          value.time = moment(value.time).utc().format('h:mm')
+        })
+        const graphData = res.data
+        this.setState({graphData, refreshing: false})
       })
-      const graphData = res.data
-      this.setState({graphData, refreshing: false})
-    })
   }
 
   componentDidMount () {
@@ -58,9 +58,11 @@ class StatisticsApp extends React.Component {
     let button = null
 
     if (this.state.graphData.length < 2) {
-      button = <button className='btn btn-primary btn-sm' disabled={this.state.refreshing} onClick={this.refreshData}><i className={refreshIcon} /> Refresh</button>
+      button = <button className='btn btn-primary btn-sm' disabled={this.state.refreshing} onClick={this.refreshData}><i
+        className={refreshIcon} /> Refresh</button>
     } else {
-      button = <button style={refreshButtonStyle} className='btn btn-default btn-xs' disabled={this.state.refreshing} onClick={this.refreshData}><i className={refreshIcon} /> Refresh</button>
+      button = <button style={refreshButtonStyle} className='btn btn-default btn-xs' disabled={this.state.refreshing}
+        onClick={this.refreshData}><i className={refreshIcon} /> Refresh</button>
     }
 
     return (
