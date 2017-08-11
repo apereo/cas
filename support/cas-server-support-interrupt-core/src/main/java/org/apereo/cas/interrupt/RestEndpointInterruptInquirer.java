@@ -56,7 +56,9 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
 
             final URIBuilder uriBuilder = new URIBuilder(restProperties.getUrl());
             uriBuilder.addParameter("username", authentication.getPrincipal().getId());
-            uriBuilder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            if (service != null) {
+                uriBuilder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            }
             final URI uri = uriBuilder.build();
             final HttpUriRequest request = restProperties.getMethod().equalsIgnoreCase(HttpMethod.GET.name()) ? new HttpGet(uri) : new HttpPost(uri);
             final HttpResponse response = client.execute(request);

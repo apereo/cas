@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
 import org.apereo.cas.interrupt.webflow.PrepareInterruptViewAction;
@@ -28,6 +29,10 @@ public class CasInterruptWebflowConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("interruptInquirer")
+    private InterruptInquirer interruptInquirer;
+    
+    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
@@ -42,7 +47,7 @@ public class CasInterruptWebflowConfiguration {
     
     @Bean
     public Action inquireInterruptAction() {
-        return new InquireInterruptAction();
+        return new InquireInterruptAction(interruptInquirer);
     }
 
     @Bean
