@@ -7,18 +7,18 @@
     <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
         /*<![CDATA[*/
 
-        var autoRedirect = /*[[${interrupt.autoRedirect}]]*/ ;
-        var emptyLinks = /*[[${#maps.isEmpty(interrupt.links)}]]*/ ; 
-        
-        if (autoRedirect && !emptyLinks) {
-            
-            var link = /*[[${interrupt.links.values().iterator().next()}]]*/ ;
-            var redirectTimeout = /*[[${interrupt.autoRedirectAfterSeconds}]]*/ ;
+        var autoRedirect = /*[[${interrupt.autoRedirect}]]*/;
+        var emptyLinks = /*[[${#maps.isEmpty(interrupt.links)}]]*/;
 
-            setTimeout(function() {
+        if (autoRedirect && !emptyLinks) {
+
+            var link = /*[[${interrupt.links.values().iterator().next()}]]*/;
+            var redirectTimeout = /*[[${interrupt.autoRedirectAfterSeconds}]]*/;
+
+            setTimeout(function () {
                 window.location = link;
             }, redirectTimeout <= 0 ? 0 : redirectTimeout * 1000);
-            
+
         }
         /*]]>*/
     </script>
@@ -28,7 +28,7 @@
 <div layout:fragment="content">
     <div class="box fl-panel" id="login">
         <h1 th:text="#{screen.interrupt.title}"/>
-        <p th:text="#{screen.interrupt.message}"/>
+        <p th:text="#{screen.interrupt.message(${principal.id})}"/>
 
         <div th:if="${interrupt.message}" class="alert alert-info">
             <p th:utext="${interrupt.message}"/>
@@ -47,12 +47,13 @@
             <div align="center">
 
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <input type="hidden" name="_eventId" value="confirm"/>
-                <input class="btn btn-primary btn-lg"
-                       name="confirm"
-                       accesskey="l"
-                       th:value="#{screen.interrupt.btn.proceed}"
-                       type="submit"/>
+                <input type="hidden" name="_eventId" value="proceed"/>
+                <input  th:else="${interrupt.block}"
+                        class="btn btn-primary btn-lg"
+                        name="proceed"
+                        accesskey="l"
+                        th:value="#{screen.interrupt.btn.proceed}"
+                        type="submit"/>
                 &nbsp;
                 <a class="btn btn-danger btn-lg" id="cancel" name="cancel"
                    th:href="@{/login}" th:text="#{screen.interrupt.btn.cancel}"/>
