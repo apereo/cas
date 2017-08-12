@@ -5,7 +5,9 @@ title: CAS - Authentication Interrupt
 
 # Authentication Interrupt
 
-CAS has the ability to pause and interrupt the authentication flow to reach out to external services and resources, querying for status and setings that would then dicatate how CAS should manage and control the SSO session. Interrupt services are able to present notification messages to the user, provide options for redirects to external services, etc. A common use case of this functionality deals with presenting a bulletin board during the authentication flow to present messages and announcements to select users and then optionally require that audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
+CAS has the ability to pause and interrupt the authentication flow to reach out to external services and resources, querying for status and setings that would then dicatate how CAS should manage and control the SSO session. Interrupt services are able to present notification messages to the user, provide options for redirects to external services, etc. A common use case deals with presenting a *bulletin board* during the authentication flow to present messages and announcements to select users and then optionally require the audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
+
+In the interrupt flow, CAS is not at the moment reaching back to an external resource acting as an interrupt service to store, track or remember a user's decision. In other words, we are only dealing with the `R` in `CRUD`. Today's functionality only deals with inquiring status and reading results solely in read-only mode. Interrupt services are themselves required and encouraged to redirect the audience to external resources where execution of an action resets the interrupt status thereby freeing CAS to proceed forward later on without having to interrupt the authentication flow again.  
 
 ## Configuration
 
@@ -28,7 +30,7 @@ Each interrupt strategy is ultimately tasked to produce a response that contains
 | Field                      | Description
 |----------------------------|---------------------------------------------------------------------------------
 | `message`                  | Announcement message to display on the screen.
-| `link`                     | A map of links to display on the screen where key is the link text and value is the destination.
+| `links`                     | A map of links to display on the screen where key is the link text and value is the destination.
 | `interrupt`                | `true/false` to indicate whether CAS should interrupt the authentication flow.
 | `block`                    | `true/false` to indicate whether CAS should block the authentication flow altogether.
 | `ssoEnabled`               | `true/false` to indicate whether CAS should permit the authentication but not establish SSO.
