@@ -8,7 +8,7 @@
 <body id="cas">
 <div layout:fragment="content">
     <div class="alert alert-danger">
-        <h2 th:utext="#{screen.service.error.header}"/>
+        <h1 th:utext="#{screen.service.error.header}"/>
         <p th:if="${rootCauseException != null and rootCauseException.code != null}"
            th:utext="#{${rootCauseException.code}}"/>
     </div>

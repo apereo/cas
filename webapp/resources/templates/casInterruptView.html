@@ -28,7 +28,7 @@
 <div layout:fragment="content">
     <div class="box fl-panel" id="login">
         <h1 th:text="#{screen.interrupt.title}"/>
-        <p th:text="#{screen.interrupt.message(${principal.id})}"/>
+        <p th:utext="#{screen.interrupt.message(${principal.id})}"/>
 
         <div th:if="${interrupt.message}" class="alert alert-info">
             <p th:utext="${interrupt.message}"/>
@@ -36,6 +36,7 @@
 
             <div th:if="${interrupt.links}">
                 <a class="btn btn-success"
+                   style="margin-right: 5px"
                    th:each="link : ${interrupt.links}"
                    th:text="${link.key}"
                    th:href="${link.value}"
@@ -43,23 +44,28 @@
             </div>
         </div>
 
-        <form method="post" id="fm1">
+        
+        <form method="post" id="fm1" th:if="${not interrupt.block}">
             <div align="center">
 
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="proceed"/>
-                <input  th:else="${interrupt.block}"
+                <input  
                         class="btn btn-primary btn-lg"
                         name="proceed"
                         accesskey="l"
                         th:value="#{screen.interrupt.btn.proceed}"
                         type="submit"/>
                 &nbsp;
-                <a class="btn btn-danger btn-lg" id="cancel" name="cancel"
+                <a class="btn btn-warning btn-lg" id="cancel" name="cancel"
                    th:href="@{/login}" th:text="#{screen.interrupt.btn.cancel}"/>
-
             </div>
         </form>
+        
+        <div th:if="${interrupt.block}" align="center">
+            <a class="btn btn-warning btn-lg" id="cancel" name="cancel"
+               th:href="@{/login}" th:text="#{screen.interrupt.btn.cancel}"/>
+        </div>
     </div>
 </div>
 </body>

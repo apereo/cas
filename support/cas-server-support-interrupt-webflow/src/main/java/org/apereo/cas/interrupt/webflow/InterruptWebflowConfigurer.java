@@ -17,9 +17,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String INTERRUPT_VIEW_ID = "interruptView";
-    private static final String STATE_ID_INQUIRE_INTERRUPT_CHECK = "inquireInterruptAction";
-    private static final String STATE_ID_FINALIZE_INTERRUPT = "finalizeInterruptFlowAction";
+    private static final String VIEW_ID_INTERRUPT_VIEW = "interruptView";
+    private static final String INTERRUPT_VIEW_ID = "casInterruptView";
+    private static final String STATE_ID_INQUIRE_INTERRUPT_ACTION = "inquireInterruptAction";
+    private static final String STATE_ID_FINALIZE_INTERRUPT_ACTION = "finalizeInterruptFlowAction";
+    private static final String STATE_ID_PREPARE_INTERRUPT_VIEW_ACTION = "prepareInterruptViewAction";
 
     public InterruptWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                       final FlowDefinitionRegistry flowDefinitionRegistry) {
@@ -39,7 +41,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createTransitionStateToInterrupt(final Flow flow) {
         final ActionState submit = getRealSubmissionState(flow);
-        createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, "inquireInterruptAction", true);
+        createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
     }
 
     private ActionState getRealSubmissionState(final Flow flow) {
@@ -47,24 +49,26 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createInterruptView(final Flow flow) {
-        final ViewState viewState = createViewState(flow, INTERRUPT_VIEW_ID, "casInterruptView");
-        viewState.getEntryActionList().add(createEvaluateAction("prepareInterruptViewAction"));
-
-        createStateDefaultTransition(viewState, STATE_ID_FINALIZE_INTERRUPT);
+        final ViewState viewState = createViewState(flow, VIEW_ID_INTERRUPT_VIEW, INTERRUPT_VIEW_ID);
+        viewState.getEntryActionList().add(createEvaluateAction(STATE_ID_PREPARE_INTERRUPT_VIEW_ACTION));
+        createStateDefaultTransition(viewState, STATE_ID_FINALIZE_INTERRUPT_ACTION);
 
         final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-        final ActionState finalizeInterrupt = createActionState(flow, STATE_ID_FINALIZE_INTERRUPT, createEvaluateAction(STATE_ID_FINALIZE_INTERRUPT));
+        final ActionState finalizeInterrupt = createActionState(flow, STATE_ID_FINALIZE_INTERRUPT_ACTION, 
+                createEvaluateAction(STATE_ID_FINALIZE_INTERRUPT_ACTION));
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_SUCCESS, target);
+        createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_NO, "finishedInterrupt");
+        createEndState(flow, "finishedInterrupt");
     }
 
     private void createInquireActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_CHECK, createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_CHECK));
+        final ActionState actionState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_ACTION, createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_ACTION));
 
         final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         final Transition noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_NO, target);
         actionState.getTransitionSet().add(noInterruptTransition);
 
-        final Transition yesInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_YES, INTERRUPT_VIEW_ID);
+        final Transition yesInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_YES, VIEW_ID_INTERRUPT_VIEW);
         actionState.getTransitionSet().add(yesInterruptTransition);
     }
 }
