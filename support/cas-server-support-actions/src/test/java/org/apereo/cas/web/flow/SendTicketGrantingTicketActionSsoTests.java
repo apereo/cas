@@ -2,8 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
@@ -77,7 +76,9 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
-        final Service svc = CoreAuthenticationTestUtils.getService("TestSsoFalse");
+        final WebApplicationService svc = mock(WebApplicationService.class);
+        when(svc.getId()).thenReturn("TestSsoFalse");
+        
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
