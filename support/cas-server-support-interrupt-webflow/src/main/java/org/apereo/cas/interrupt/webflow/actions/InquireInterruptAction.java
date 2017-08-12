@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptResponse;
+import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -33,8 +34,8 @@ public class InquireInterruptAction extends AbstractAction {
         if (response == null || !response.isInterrupt()) {
             return no();
         }
-        requestContext.getFlowScope().put("interrupt", response);
-        requestContext.getFlowScope().put("principal", authentication.getPrincipal());
+        InterruptUtils.putInterruptIn(requestContext, response);
+        WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
         return yes();
     }
 }
