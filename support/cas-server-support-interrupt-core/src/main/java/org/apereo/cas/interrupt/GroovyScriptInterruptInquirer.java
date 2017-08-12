@@ -34,7 +34,7 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
             final Principal principal = authentication.getPrincipal();
             final Map<String, Object> attributes = new LinkedHashMap<>(principal.getAttributes());
             attributes.putAll(authentication.getAttributes());
-            final Object[] args = {principal.getId(), attributes, service != null ? service.getId() : null};
+            final Object[] args = {principal.getId(), attributes, service != null ? service.getId() : null, LOGGER};
             return ScriptingUtils.executeGroovyScript(resource, args, InterruptResponse.class);
         }
         return new InterruptResponse(false);

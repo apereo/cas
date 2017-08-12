@@ -1,6 +1,8 @@
 package org.apereo.cas.interrupt;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -32,7 +34,11 @@ import java.net.URI;
  */
 public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestEndpointInterruptInquirer.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .findAndRegisterModules()
+            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    
     private final InterruptProperties.Rest restProperties;
 
     public RestEndpointInterruptInquirer(final InterruptProperties.Rest restProperties) {
