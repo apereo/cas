@@ -500,7 +500,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
         if (svc == null || !svc.getServiceId().equals(oAuthCallbackUrl)) {
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getInstanceStrong().nextLong()));
+            service.setId(Math.abs(RandomUtils.getInstanceGood().nextLong()));
             service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("OAuth Authentication Callback Request URL");

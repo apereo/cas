@@ -105,7 +105,7 @@ public final class RegisteredServiceTestUtils {
             s.setName("Test registered service " + id);
             s.setDescription("Registered service description");
             s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-            s.setId(RandomUtils.getInstanceStrong().nextInt(Math.abs(s.hashCode())));
+            s.setId(RandomUtils.getInstanceGood().nextInt(Math.abs(s.hashCode())));
             s.setTheme("exampleTheme");
             s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
             final DefaultRegisteredServiceAccessStrategy accessStrategy =
