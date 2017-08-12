@@ -56,7 +56,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
         } catch (final Exception e) {
             throw new IllegalStateException("Exception generating digest of source ID.", e);
         }
-        this.random = RandomUtils.getInstanceGood();
+        this.random = RandomUtils.getInstanceNative();
     }
 
     /**
