@@ -26,7 +26,7 @@ public final class DigestAuthenticationUtils {
      */
     public static String createNonce() {
         final String fmtDate = ZonedDateTime.now().toString();
-        final SecureRandom rand = RandomUtils.getInstanceStrong();
+        final SecureRandom rand = RandomUtils.getInstanceGood();
         final Integer randomInt = rand.nextInt();
         return DigestUtils.md5Hex(fmtDate + randomInt);
     }
