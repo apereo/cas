@@ -54,7 +54,7 @@ public class JsonConsentRepository implements ConsentRepository {
         if (consent != null) {
             this.consentDecisions.remove(decision);
         } else {
-            decision.setId(Math.abs(RandomUtils.getInstanceGood().nextInt()));
+            decision.setId(Math.abs(RandomUtils.getInstanceNative().nextInt()));
         }
         this.consentDecisions.add(decision);
         writeAccountToJsonResource();

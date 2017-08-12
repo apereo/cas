@@ -163,7 +163,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                 this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        final String sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceGood().nextLong()));
+        final String sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceNative().nextLong()));
         final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
                 notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());

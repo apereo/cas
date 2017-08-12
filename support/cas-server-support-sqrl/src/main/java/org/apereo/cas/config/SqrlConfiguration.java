@@ -75,7 +75,7 @@ public class SqrlConfiguration {
     @Bean
     public SqrlNutService sqrlNutService() {
         try {
-            return new SqrlNutService(RandomUtils.getInstanceGood(), sqrlConfig(),
+            return new SqrlNutService(RandomUtils.getInstanceNative(), sqrlConfig(),
                     MessageDigest.getInstance("SHA-256"), sqrlAesKey());
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
