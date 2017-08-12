@@ -16,7 +16,7 @@ import org.apereo.cas.web.flow.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.GenericSuccessViewAction;
-import org.apereo.cas.web.flow.InitialAuthenticationAction;
+import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.InitialAuthenticationRequestValidationAction;
 import org.apereo.cas.web.flow.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.InitializeLoginAction;

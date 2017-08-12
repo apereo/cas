@@ -3,7 +3,7 @@ package org.apereo.cas.trusted.util;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;

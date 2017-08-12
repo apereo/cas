@@ -1,5 +1,6 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

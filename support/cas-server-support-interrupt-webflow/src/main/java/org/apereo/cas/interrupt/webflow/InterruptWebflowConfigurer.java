@@ -1,6 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
-import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
