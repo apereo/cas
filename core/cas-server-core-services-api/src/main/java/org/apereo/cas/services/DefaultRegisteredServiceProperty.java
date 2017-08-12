@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +29,8 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     private static final long serialVersionUID = 1349556364689133211L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
     @Lob
