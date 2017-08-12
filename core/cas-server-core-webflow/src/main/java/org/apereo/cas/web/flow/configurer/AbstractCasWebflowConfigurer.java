@@ -1,7 +1,8 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

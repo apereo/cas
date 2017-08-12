@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -13,6 +13,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
