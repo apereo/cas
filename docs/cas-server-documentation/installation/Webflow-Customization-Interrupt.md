@@ -25,15 +25,15 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Each interrupt strategy is ultimately tasked to produce a response that contains the following settings:
 
-| Field                  | Description
-|------------------------|---------------------------------------------------------------------------------
-| `message`              | Announcement message to display on the screen.
-| `link`                 | A map of links to display on the screen where key is the link text and value is the destination.
-| `interrupt`            | `true/false` to indicate whether CAS should interrupt the authentication flow.
-| `block`                | `true/false` to indicate whether CAS should block the authentication flow altogether.
-| `ssoEnabled`           | `true/false` to indicate whether CAS should permit the authentication but not establish SSO.
-| `autoRedirect`         | `true/false` to indicate whether CAS should auto-redirect to the first provided link.
-| `autoRedirectAfterSeconds` | Indicate whether CAS should auto-redirect after the configured number of seconds. The default is `-1`, meaning delayed redirect functionality should be execute.
+| Field                      | Description
+|----------------------------|---------------------------------------------------------------------------------
+| `message`                  | Announcement message to display on the screen.
+| `link`                     | A map of links to display on the screen where key is the link text and value is the destination.
+| `interrupt`                | `true/false` to indicate whether CAS should interrupt the authentication flow.
+| `block`                    | `true/false` to indicate whether CAS should block the authentication flow altogether.
+| `ssoEnabled`               | `true/false` to indicate whether CAS should permit the authentication but not establish SSO.
+| `autoRedirect`             | `true/false` to indicate whether CAS should auto-redirect to the first provided link.
+| `autoRedirectAfterSeconds` | Indicate whether CAS should auto-redirect after the configured number of seconds. The default is `-1`, meaning delayed redirect functionality should not be executed.
 
 ## Interrupt Strategies
 
@@ -63,7 +63,6 @@ This option is most useful during development, testing and demos.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-json).
 
-
 ### Groovy
 
 This strategy reaches out to a Groovy resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the provided username and certain number of other parameters.
@@ -83,7 +82,6 @@ def run(final Object... args) {
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-groovy).
-
 
 ### REST
 
@@ -107,6 +105,5 @@ public class MyInterruptConfiguration {
 
 }
 ```
-
 
 [See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
