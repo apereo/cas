@@ -1,4 +1,4 @@
-package org.apereo.cas.interrupt.webflow;
+package org.apereo.cas.interrupt.webflow.actions;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;

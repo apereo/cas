@@ -177,7 +177,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUBMIT);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        transModel.setTo(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         transModel.setBind(Boolean.TRUE.toString());
         transModel.setValidate(Boolean.FALSE.toString());
 
@@ -187,7 +187,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         /////////////////
 
-        actModel = new ActionStateModel(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         actions = new LinkedList<>();
         actions.add(new EvaluateModel("duoAuthenticationWebflowAction"));
         actModel.setActions(actions);

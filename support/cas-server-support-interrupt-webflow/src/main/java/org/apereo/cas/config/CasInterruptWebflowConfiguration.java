@@ -2,9 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
-import org.apereo.cas.interrupt.webflow.InquireInterruptAction;
+import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowAction;
+import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
-import org.apereo.cas.interrupt.webflow.PrepareInterruptViewAction;
+import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,5 +54,10 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     public Action prepareInterruptViewAction() {
         return new PrepareInterruptViewAction();
+    }
+    
+    @Bean
+    public Action finalizeInterruptFlowAction() {
+        return new FinalizeInterruptFlowAction();
     }
 }
