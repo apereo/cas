@@ -28,7 +28,7 @@ Each interrupt strategy is ultimately tasked to produce a response that contains
 | Field                      | Description
 |----------------------------|---------------------------------------------------------------------------------
 | `message`                  | Announcement message to display on the screen.
-| `link`                     | A map of links to display on the screen where key is the link text and value is the destination.
+| `links`                     | A map of links to display on the screen where key is the link text and value is the destination.
 | `interrupt`                | `true/false` to indicate whether CAS should interrupt the authentication flow.
 | `block`                    | `true/false` to indicate whether CAS should block the authentication flow altogether.
 | `ssoEnabled`               | `true/false` to indicate whether CAS should permit the authentication but not establish SSO.
