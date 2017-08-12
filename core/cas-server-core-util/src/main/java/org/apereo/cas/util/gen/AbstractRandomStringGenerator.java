@@ -16,7 +16,7 @@ import java.security.SecureRandom;
  */
 public abstract class AbstractRandomStringGenerator implements RandomStringGenerator{
     /** An instance of secure random to ensure randomness is secure. */
-    protected final SecureRandom randomizer = RandomUtils.getInstanceStrong();
+    protected final SecureRandom randomizer = RandomUtils.getInstanceGood();
 
     /** Default string length before encoding. */
     protected final int defaultLength;
