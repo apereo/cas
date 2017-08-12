@@ -40,10 +40,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";
     private static final String SUCCESS = "success";
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -56,6 +53,10 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy;
     
     private MockRequestContext context;
 
@@ -127,8 +128,8 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, false);
+        final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, 
+                ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
@@ -148,8 +149,8 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         this.context.getFlowScope().put("service", svc);
 
-        final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, false);
+        final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService,
+                ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
