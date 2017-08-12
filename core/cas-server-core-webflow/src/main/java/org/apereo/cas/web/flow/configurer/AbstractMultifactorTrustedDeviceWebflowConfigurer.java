@@ -1,5 +1,6 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
