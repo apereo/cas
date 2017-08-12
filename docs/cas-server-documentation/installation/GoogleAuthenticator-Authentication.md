@@ -51,33 +51,38 @@ Registration records and tokens may be kept inside a database instance via the f
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-jpa).
 
+#### MySQL / Galera Limitations
 
-#### MySQL / Galera limitations
-You might notice errors if running CAS on a Galera cluster if you enabled the Google Authentication Authenticator and start the application for the first time ("This table type requires a primary key").
+Registration records and tokens keps inside a MySQL database backd by a [Galera cluster](http://galeracluster.com) might produce the following error when running CAS for the first time: `This table type requires a primary key`.
 
-This is due to the fact that Galera needs primary keys on all tables (Galera setting "innodb_force_primary_key = 1") [See Galera known limitations](https://mariadb.com/kb/en/mariadb/mariadb-galera-cluster-known-limitations/), 
-but the hibernate_sequence table does not define a PK (See [](HHH-))
-To workaround this issue, you can either: 
-1. create a custom hibernate_sequence table manually with a primary key id column in your Galera cluster
+This is due to the fact that Galera needs primary keys on all tables (Galera setting `innodb_force_primary_key = 1`). [See Galera known limitations](https://mariadb.com/kb/en/mariadb/mariadb-galera-cluster-known-limitations/), but the `hibernate_sequence` table does not define a primary key.
+
+To workaround this issue, you can either:
+
+1. Create a custom `hibernate_sequence` table manually with a primary key id column in your Galera cluster:
+
 ```sql
-  CREATE TABLE `hibernate_sequence` (
-    `id` bigint(20) NOT NULL AUTO_INCREMENT,
-    `next_val` bigint(20) DEFAULT NULL,
-    PRIMARY KEY (`id`)
-  ) ENGINE=InnoDB;
+CREATE TABLE `hibernate_sequence` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `next_val` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 ```
-2. Or define you own org.apereo.cas.otp.repository.token.OneTimeToken and org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount Classes in your Overlay project 
-   
-In both classes, annotate the id column with a @SequenceGenerator definition holding a PK:
+
+2. Define your own `OneTimeToken` and `OneTimeTokenAccount` classes in your overlay project and in both classes, annotate the id column with a `@SequenceGenerator` definition holding a primary key:
+
 ```java
-    
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE, generator="ticket_sequence")
-  @javax.persistence.TableGenerator (name="ticket_sequence", table="ticket_sequence", pkColumnName = "gen_name", valueColumnName = "next_val", pkColumnValue="gen_name", allocationSize=100)
+  @javax.persistence.TableGenerator (name="ticket_sequence", 
+                                     table="ticket_sequence", 
+                                     pkColumnName = "gen_name", 
+                                     valueColumnName = "next_val", 
+                                     pkColumnValue="gen_name", 
+                                     allocationSize=100)
   private long id = Integer.MAX_VALUE;
-    
 ```
-  
+
 ### MongoDb
 
 Registration records and tokens may be kept inside a mongo db instance, via the following module:
