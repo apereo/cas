@@ -75,7 +75,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         statements.add(this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
                 response, casAssertion, service, adaptor, binding));
 
-        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceStrong().nextLong()));
+        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceGood().nextLong()));
         final Assertion assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
                 ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
