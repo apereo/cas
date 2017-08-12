@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
