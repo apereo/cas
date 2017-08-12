@@ -57,6 +57,13 @@ User decisions must be remembered and processed later on subsequent requests.  A
 If you do nothing, by default records are kept inside the runtime memory and cached for a configurable amount of time.
 This is most useful if you have a very small deployment with a small user base or if you simply wish to demo the functionality.
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-storage).
+
+### JSON
+
+Records may be kept inside a static json resource whose path is defined via CAS settings.
+This is also most useful if you have a very small deployment with a small user base or if you simply wish to demo the functionality.
+
 ### JDBC
 
 User decisions may also be kept inside a regular RDBMS of your own choosing.
@@ -74,8 +81,7 @@ Support is provided via the following module:
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-storage).
 
-
-### Mongo
+### MongoDb
 
 User decisions may also be kept inside a MongoDb instance.
 

@@ -2530,6 +2530,12 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
+### JSON Storage
+
+```properties
+# cas.authn.mfa.trusted.json.location=file:/etc/cas/config/trusted-dev.json
+```
+
 ### JDBC Storage
 
 ```properties
@@ -4786,6 +4792,31 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
+```
+
+### Authentication Interrupt
+
+Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](Webflow-Customization-Interrupt.html).
+
+#### Authentication Interrupt JSON
+
+```properties
+# cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
+```
+
+#### Authentication Interrupt Groovy
+
+```properties
+# cas.interrupt.groovy.location=file:/etc/cas/config/interrupt.groovy
+```
+
+#### Authentication Interrupt REST
+
+```properties
+# cas.interrupt.rest.url=https://somewhere.interrupt.org
+# cas.interrupt.rest.method=GET|POST
+# cas.interrupt.rest.basicAuthUsername=
+# cas.interrupt.rest.basicAuthPassword=
 ```
 
 ### Acceptable Usage Policy
