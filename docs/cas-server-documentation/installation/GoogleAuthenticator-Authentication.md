@@ -55,7 +55,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 You might notice errors if running CAS on a Galera cluster if you enabled the Google Authentication Authenticator and start the application for the first time ("This table type requires a primary key").
 
 This is due to the fact that Galera needs primary keys on all tables (Galera setting "innodb_force_primary_key = 1") [See Galera known limitations](https://mariadb.com/kb/en/mariadb/mariadb-galera-cluster-known-limitations/), 
-but the hibernate_sequence table does not define a PK (See [](HHH-))
+but the hibernate_sequence table does not define a PK (See [https://hibernate.atlassian.net/browse/HHH-11923](HHH-11923))
 To workaround this issue, you can either: 
 1. create a custom hibernate_sequence table manually with a primary key id column in your Galera cluster
 ```sql
