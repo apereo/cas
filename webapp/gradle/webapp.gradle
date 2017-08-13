@@ -22,6 +22,8 @@ processResources.dependsOn gulpRun
 
 node {
     nodeModulesDir = project(":webapp").projectDir
+    version = '7.10.0'
+    download = true
 }
 
 gulp {
