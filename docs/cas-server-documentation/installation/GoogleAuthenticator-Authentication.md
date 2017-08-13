@@ -55,7 +55,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Registration records and tokens keps inside a MySQL database backd by a [Galera cluster](http://galeracluster.com) might produce the following error when running CAS for the first time: `This table type requires a primary key`.
 
-This is due to the fact that Galera needs primary keys on all tables (Galera setting `innodb_force_primary_key = 1`). [See Galera known limitations](https://mariadb.com/kb/en/mariadb/mariadb-galera-cluster-known-limitations/), but the `hibernate_sequence` table does not define a primary key.
+This is due to the fact that Galera needs primary keys on all tables (Galera setting `innodb_force_primary_key = 1`). [See Galera known limitations](https://mariadb.com/kb/en/mariadb/mariadb-galera-cluster-known-limitations/), but the `hibernate_sequence` table does not define a primary key (See [HHH-11923](https://hibernate.atlassian.net/browse/HHH-11923)).
 
 To workaround this issue, you can either:
 
