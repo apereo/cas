@@ -5,6 +5,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ServiceViewService} from "./service.service";
 import {Location} from "@angular/common";
 import {AlertComponent} from "../alert/alert.component";
+import {MdDialog} from "@angular/material";
+import {DeleteComponent} from "../delete/delete.component";
 
 @Component({
   selector: 'app-services',
@@ -19,12 +21,14 @@ export class ServicesComponent implements OnInit {
   detailRow: String;
   deleteItem: ServiceViewBean;
   domain: String;
+  selectedItem: ServiceViewBean;
 
   constructor(public messages: Messages,
               private route: ActivatedRoute,
               private router: Router,
               private service: ServiceViewService,
-              private location: Location) {
+              private location: Location,
+              public dialog: MdDialog) {
     this.dataTable = [];
   }
 
@@ -47,15 +51,25 @@ export class ServicesComponent implements OnInit {
   }
 
   toggleDetail(id: String) {
-    this.detailRow = id;
+    if (this.detailRow != id) {
+      this.detailRow = id;
+    } else {
+      this.detailRow = null;
+    }
   }
 
   openModalDelete(selectedItem: ServiceViewBean) {
+    let dialogRef = this.dialog.open(DeleteComponent,{
+      data: selectedItem,
+      width: '500px',
+      position: {top: '100px'}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.delete();
+      }
+    });
     this.deleteItem = selectedItem;
-  };
-
-  closeModalDelete() {
-    this.deleteItem  = null;
   };
 
   delete() {
@@ -64,7 +78,6 @@ export class ServicesComponent implements OnInit {
     this.service.delete(Number.parseInt(this.deleteItem.assignedId as string))
       .then(resp => this.handleDelete(resp))
       .catch((e: any) => this.alert.show(this.messages.management_services_status_notdeleted, 'danger'));
-    this.closeModalDelete();
   };
 
   handleDelete(name: String) {
@@ -110,10 +123,6 @@ export class ServicesComponent implements OnInit {
       this.dataTable[index+1] = a;
       this.service.updateOrder(a,b).then(resp => this.refresh());
     }
-  }
-
-  needsPadding(item) {
-    return this.dataTable.indexOf(item) != 0 || this.dataTable.indexOf(item ) == this.dataTable.length - 1 ? '2px' : '0px';
   }
 
 }

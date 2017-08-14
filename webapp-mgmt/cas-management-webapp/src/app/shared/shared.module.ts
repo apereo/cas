@@ -41,7 +41,8 @@ import {CdkTableModule} from "@angular/cdk";
     MdListModule,
     MdCoreModule,
     MdMenuModule,
-    MdChipsModule
+    MdChipsModule,
+    MdDialogModule
   ],
   declarations: [
     AlertComponent,
@@ -71,7 +72,8 @@ import {CdkTableModule} from "@angular/cdk";
     MdListModule,
     MdCoreModule,
     MdMenuModule,
-    MdChipsModule
+    MdChipsModule,
+    MdDialogModule
   ]
 })
 export class SharedModule {
