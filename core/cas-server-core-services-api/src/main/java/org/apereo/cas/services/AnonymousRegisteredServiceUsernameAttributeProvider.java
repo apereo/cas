@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * Generates a persistent id as username for anonymous service access.
  * By default, the generation is handled by
@@ -18,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class AnonymousRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
+public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 7050462900237284803L;
 
@@ -48,13 +50,33 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
     public PersistentIdGenerator getPersistentIdGenerator() {
         return this.persistentIdGenerator;
     }
-
+    
     @Override
-    public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
+    protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No persistent id generator is defined");
         }
-        final String id = this.persistentIdGenerator.generate(principal, service);
+        final String id = this.persistentIdGenerator.generate(principal, new Service() {
+            @Override
+            public void setPrincipal(final Principal principal) {
+
+            }
+
+            @Override
+            public boolean matches(final Service service) {
+                return false;
+            }
+
+            @Override
+            public String getId() {
+                return null;
+            }
+
+            @Override
+            public Map<String, Object> getAttributes() {
+                return null;
+            }
+        });
         LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }

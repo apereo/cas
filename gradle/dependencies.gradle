@@ -876,7 +876,7 @@ ext.libraries = [
                 dependencies.create("org.apache.ignite:ignite-core:$igniteVersion") {
                     force = true
                 },
-                dependencies.create("org.apache.ignite:ignite-log4j:$igniteVersion") {
+                dependencies.create("org.apache.ignite:ignite-log4j2:$igniteVersion") {
                     exclude(group: "log4j", module: "log4j")
                     force = true
                 },
