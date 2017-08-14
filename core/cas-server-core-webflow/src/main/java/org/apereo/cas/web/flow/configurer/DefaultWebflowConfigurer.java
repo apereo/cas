@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -53,11 +54,11 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
+            createStartState(flow);
             createDefaultGlobalExceptionHandlers(flow);
             createDefaultEndStates(flow);
             createDefaultDecisionStates(flow);
             createDefaultActionStates(flow);
-
             createRememberMeAuthnWebflowConfig(flow);
         }
     }
@@ -98,7 +99,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     protected void createHandleAuthenticationFailureAction(final Flow flow) {
         final ActionState handler = createActionState(flow,
-                "handleAuthenticationFailure",
+                CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
                 createEvaluateAction("authenticationExceptionHandler"));
         createTransitionForState(handler, AccountDisabledException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
         createTransitionForState(handler, AccountLockedException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
@@ -342,7 +343,8 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     protected void createRenewCheckDecisionState(final Flow flow) {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
-                "requestParameters.renew != '' and requestParameters.renew != null",
+                "requestParameters." + CasProtocolConstants.PARAMETER_RENEW 
+                        + " != '' and requestParameters." + CasProtocolConstants.PARAMETER_RENEW + " != null",
                 CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK,
                 CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }
