@@ -50,6 +50,6 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createConsentRequiredCheckAction(final Flow flow) {
         createEvaluateActionForExistingActionState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, "checkConsentRequiredAction");
-        cloneAndCreateActionState(flow, ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+        createClonedActionState(flow, ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }
 }
