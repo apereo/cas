@@ -142,7 +142,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToLive());
 
         if (element.isExpired(config) || ticket.isExpired()) {
-            ehcache.evictExpiredElements();
+            ehcache.remove(element);
             LOGGER.debug("Ticket [{}] has expired and is now evicted from the cache", ticket.getId());
             return null;
         }

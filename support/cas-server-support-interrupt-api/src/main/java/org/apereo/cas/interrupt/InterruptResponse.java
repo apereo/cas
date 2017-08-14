@@ -19,8 +19,62 @@ public class InterruptResponse implements Serializable {
     
     private String message;
     private Map<String, String> links = new LinkedHashMap<>();
-    private boolean enabled;
+    private boolean block;
     private boolean ssoEnabled;
+    private boolean interrupt;
+    private boolean autoRedirect;
+    private long autoRedirectAfterSeconds = -1;
+
+    public InterruptResponse() {
+        this.interrupt = false;
+    }
+
+    public InterruptResponse(final String message, final boolean block,
+                             final boolean ssoEnabled) {
+        this.message = message;
+        this.block = block;
+        this.ssoEnabled = ssoEnabled;
+        this.interrupt = true;
+    }
+    
+    public InterruptResponse(final boolean interrupt) {
+        this.interrupt = interrupt;
+    }
+
+    public InterruptResponse(final String message, 
+                             final Map<String, String> links,
+                             final boolean block,
+                             final boolean ssoEnabled) {
+        this.message = message;
+        this.links = links;
+        this.block = block;
+        this.ssoEnabled = ssoEnabled;
+        this.interrupt = true;
+    }
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
+    }
+
+    public long getAutoRedirectAfterSeconds() {
+        return autoRedirectAfterSeconds;
+    }
+
+    public void setAutoRedirectAfterSeconds(final long autoRedirectAfterSeconds) {
+        this.autoRedirectAfterSeconds = autoRedirectAfterSeconds;
+    }
+
+    public boolean isInterrupt() {
+        return interrupt;
+    }
+
+    public void setInterrupt(final boolean interrupt) {
+        this.interrupt = interrupt;
+    }
 
     public String getMessage() {
         return message;
@@ -38,12 +92,12 @@ public class InterruptResponse implements Serializable {
         this.links = links;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isBlock() {
+        return block;
     }
 
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
+    public void setBlock(final boolean block) {
+        this.block = block;
     }
 
     public boolean isSsoEnabled() {
@@ -53,15 +107,17 @@ public class InterruptResponse implements Serializable {
     public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
-
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("message", message)
                 .append("links", links)
-                .append("enabled", enabled)
+                .append("block", block)
                 .append("ssoEnabled", ssoEnabled)
+                .append("interrupt", interrupt)
+                .append("autoRedirect", autoRedirect)
+                .append("autoRedirectAfterSeconds", autoRedirectAfterSeconds)
                 .toString();
     }
 
@@ -81,8 +137,11 @@ public class InterruptResponse implements Serializable {
         return new EqualsBuilder()
                 .append(this.message, rhs.message)
                 .append(this.links, rhs.links)
-                .append(this.enabled, rhs.enabled)
+                .append(this.block, rhs.block)
                 .append(this.ssoEnabled, rhs.ssoEnabled)
+                .append(this.interrupt, rhs.interrupt)
+                .append(this.autoRedirect, rhs.autoRedirect)
+                .append(this.autoRedirectAfterSeconds, rhs.autoRedirectAfterSeconds)
                 .isEquals();
     }
 
@@ -91,8 +150,11 @@ public class InterruptResponse implements Serializable {
         return new HashCodeBuilder()
                 .append(message)
                 .append(links)
-                .append(enabled)
+                .append(block)
                 .append(ssoEnabled)
+                .append(interrupt)
+                .append(autoRedirect)
+                .append(autoRedirectAfterSeconds)
                 .toHashCode();
     }
 }

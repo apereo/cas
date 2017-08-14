@@ -13,10 +13,12 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
-import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
-import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
-import org.apereo.cas.web.flow.InjectResponseHeadersAction;
-import org.apereo.cas.web.flow.RedirectToServiceAction;
+import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
+import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
+import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
+import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -303,5 +305,12 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public Action injectResponseHeadersAction() {
         return new InjectResponseHeadersAction(responseBuilderLocator);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
+    @RefreshScope
+    public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
+        return new DefaultSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso().isRenewedAuthn());  
     }
 }

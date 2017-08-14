@@ -24,7 +24,7 @@ public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServ
     }
 
     @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service) {
+    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         LOGGER.debug("Returning the default principal id [{}] for username.", principal.getId());
         return principal.getId();
     }

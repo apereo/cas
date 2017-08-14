@@ -17,6 +17,7 @@ public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExec
      * @param secretKeyAlg        the secret key alg
      * @param signingKeySize      the signing key size
      * @param encryptionKeySize   the encryption key size
+     * @param cipherName          the cipher name
      */
     public WebflowConversationStateCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                                   final String secretKeyAlg, final int signingKeySize,

@@ -1,7 +1,8 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -703,8 +704,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param actionStateId        the action state id
      * @param actionStateIdToClone the action state id to clone
      */
-    protected void cloneAndCreateActionState(final Flow flow, final String actionStateId,
-                                             final String actionStateIdToClone) {
+    protected void createClonedActionState(final Flow flow, final String actionStateId,
+                                           final String actionStateIdToClone) {
         final ActionState generateServiceTicket = (ActionState) flow.getState(actionStateIdToClone);
         final ActionState consentTicketAction = createActionState(flow, actionStateId);
         cloneActionState(generateServiceTicket, consentTicketAction);

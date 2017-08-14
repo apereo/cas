@@ -156,6 +156,7 @@ layout: null
         *   [Localization](/$version/installation/User-Interface-Customization-Localization.html)
         *   [Dynamic Themes](/$version/installation/User-Interface-Customization-Themes.html)
     *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
+    *   [Interrupt](/$version/installation/Webflow-Customization-Interrupt.html)
         
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/installation/Webflow-Customization.html) 

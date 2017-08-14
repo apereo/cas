@@ -127,6 +127,12 @@ public class IgniteProperties implements Serializable {
     private int threadPriority = 10;
 
     /**
+     * Start in client mode.
+     * If true the local node is started as a client.
+     */
+    private boolean clientMode;
+
+    /**
      * Sets force server mode flag.
      * If true {@code TcpDiscoverySpi} is started in server mode regardless of {@code IgniteConfiguration.isClientMode()}.
      */
@@ -200,6 +206,14 @@ public class IgniteProperties implements Serializable {
 
     public void setForceServerMode(final boolean forceServerMode) {
         this.forceServerMode = forceServerMode;
+    }
+
+    public boolean isClientMode() {
+        return clientMode;
+    }
+
+    public void setClientMode(final boolean clientMode) {
+        this.clientMode = clientMode;
     }
 
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {

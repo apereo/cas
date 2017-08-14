@@ -11,11 +11,12 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.GenericSuccessViewAction;
-import org.apereo.cas.web.flow.InitialAuthenticationAction;
+import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.InitialAuthenticationRequestValidationAction;
 import org.apereo.cas.web.flow.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.InitializeLoginAction;
@@ -106,6 +107,10 @@ public class CasSupportActionsConfiguration {
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
+    @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy;
+
     @Bean
     @RefreshScope
     public HandlerExceptionResolver errorHandlerResolver() {
@@ -132,8 +137,8 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "sendTicketGrantingTicketAction")
     @Bean
     public Action sendTicketGrantingTicketAction() {
-        return new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager, ticketGrantingTicketCookieGenerator,
-                casProperties.getSso().isRenewedAuthn());
+        return new SendTicketGrantingTicketAction(centralAuthenticationService,
+                ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
     }
 
     @RefreshScope

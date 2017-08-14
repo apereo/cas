@@ -29,7 +29,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Storage Mechanism
 
-Usage policy user decisions are stored and rememberd via the following ways. 
+Usage policy user decisions are stored and remembered via the following ways. 
 
 ### Default
 

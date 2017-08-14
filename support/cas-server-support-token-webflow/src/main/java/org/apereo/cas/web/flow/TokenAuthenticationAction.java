@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenCredential;
 import org.apereo.cas.web.TokenRequestExtractor;
+import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;

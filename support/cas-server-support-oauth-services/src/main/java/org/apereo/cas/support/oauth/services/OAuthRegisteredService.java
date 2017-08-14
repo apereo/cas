@@ -151,7 +151,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
             return false;
         }
         final OAuthRegisteredService rhs = (OAuthRegisteredService) obj;
-        return new EqualsBuilder()
+        final EqualsBuilder builder = new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(this.clientSecret, rhs.clientSecret)
                 .append(this.clientId, rhs.clientId)
@@ -159,8 +159,9 @@ public class OAuthRegisteredService extends RegexRegisteredService {
                 .append(this.generateRefreshToken, rhs.generateRefreshToken)
                 .append(this.jsonFormat, rhs.jsonFormat)
                 .append(this.supportedResponseTypes, rhs.supportedResponseTypes)
-                .append(this.supportedGrantTypes, rhs.supportedGrantTypes)
-                .isEquals();
+                .append(this.supportedGrantTypes, rhs.supportedGrantTypes);
+        
+        return builder.isEquals();
     }
 
     @Override

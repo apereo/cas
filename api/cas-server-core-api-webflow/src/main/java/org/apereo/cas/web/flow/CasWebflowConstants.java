@@ -42,14 +42,10 @@ public interface CasWebflowConstants {
     String STATE_ID_REGISTER_TRUSTED_DEVICE = "registerTrustedDevice";
 
     /**
-     * The transition state 'realSubmit'.
+     * The state 'realSubmit'.
      */
-    String TRANSITION_ID_REAL_SUBMIT = "realSubmit";
-
-    /**
-     * The state id 'successWithWarnings'.
-     */
-    String STATE_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
+    String STATE_ID_REAL_SUBMIT = "realSubmit";
+    
 
     /**
      * The transition state 'successWithWarnings'.
@@ -108,7 +104,7 @@ public interface CasWebflowConstants {
     /**
      * The transition state 'initialAuthenticationRequestValidationCheck'.
      */
-    String TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
+    String STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
 
     /**
      * The transition state 'sendTicketGrantingTicket'.
@@ -257,7 +253,6 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
 
-
     /**
      * View id 'casPasswordUpdateSuccessView'.
      */
@@ -271,7 +266,7 @@ public interface CasWebflowConstants {
     /**
      * View id 'casResetPasswordErrorView'.
      */
-    String VIEW_ID_PASSORD_RESET_ERROR = "casResetPasswordErrorView";
+    String VIEW_ID_PASSWORD_RESET_ERROR = "casResetPasswordErrorView";
 
     /**
      * View id 'casBadWorkstationView'.
@@ -322,5 +317,14 @@ public interface CasWebflowConstants {
      * State id 'casPasswordUpdateSuccess'.
      */
     String STATE_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccess";
-    
+
+    /**
+     * State id 'handleAuthenticationFailure'.
+     */
+    String STATE_ID_HANDLE_AUTHN_FAILURE = "handleAuthenticationFailure";
+
+    /**
+     * State id 'initialFlowSetupAction'.
+     */
+    String STATE_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
 }

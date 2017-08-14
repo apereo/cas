@@ -1,5 +1,6 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -68,15 +69,15 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         if (enableDeviceRegistration) {
             createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, STATE_ID_FINISH_MFA_TRUSTED_AUTH);
         } else {
-            createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+            createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         }
         createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_NO, targetStateId);
 
         createDecisionState(flow, CasWebflowConstants.DECISION_STATE_REQUIRE_REGISTRATION,
                 isDeviceRegistrationRequired(),
-                CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+                CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
-        final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         final Transition success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         if (enableDeviceRegistration) {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.VIEW_ID_REGISTER_DEVICE));

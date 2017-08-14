@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

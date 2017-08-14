@@ -4434,6 +4434,7 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.socketTimeout=5000
 # cas.ticket.registry.ignite.threadPriority=10
 # cas.ticket.registry.ignite.forceServerMode=false
+# cas.ticket.registry.ignite.clientMode=false
 
 # cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
 # cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
@@ -4792,6 +4793,31 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
+```
+
+### Authentication Interrupt
+
+Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](Webflow-Customization-Interrupt.html).
+
+#### Authentication Interrupt JSON
+
+```properties
+# cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
+```
+
+#### Authentication Interrupt Groovy
+
+```properties
+# cas.interrupt.groovy.location=file:/etc/cas/config/interrupt.groovy
+```
+
+#### Authentication Interrupt REST
+
+```properties
+# cas.interrupt.rest.url=https://somewhere.interrupt.org
+# cas.interrupt.rest.method=GET|POST
+# cas.interrupt.rest.basicAuthUsername=
+# cas.interrupt.rest.basicAuthPassword=
 ```
 
 ### Acceptable Usage Policy

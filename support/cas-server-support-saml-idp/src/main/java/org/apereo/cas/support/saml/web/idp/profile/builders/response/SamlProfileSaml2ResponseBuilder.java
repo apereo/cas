@@ -57,7 +57,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                      final HttpServletRequest request,
                                      final HttpServletResponse response,
                                      final String binding) throws SamlException {
-        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceStrong().nextLong()));
+        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceNative().nextLong()));
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());

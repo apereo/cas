@@ -1,5 +1,6 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.mapping.Mapper;
@@ -66,8 +67,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         final String[] flowIds = mfaProviderFlowRegistry.getFlowDefinitionIds();
         Arrays.stream(flowIds).forEach(id -> {
             final Flow flow = Flow.class.cast(mfaProviderFlowRegistry.getFlowDefinition(id));
-            if (containsFlowState(flow, CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT)) {
-                final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+            if (containsFlowState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT)) {
+                final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
                 ensureEndStateTransitionExists(submit, flow, 
                         CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
                 ensureEndStateTransitionExists(submit, flow, 
@@ -89,7 +90,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
         final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
 
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         final String targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         final String targetWarningsId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).getTargetStateId();
 
@@ -107,7 +108,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         registerMultifactorFlowDefinitionIntoLoginFlowRegistry(mfaProviderFlowRegistry);
         augmentMfaProviderFlowRegistry(mfaProviderFlowRegistry);
 
-        final TransitionableState state = flow.getTransitionableState(CasWebflowConstants.TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+        final TransitionableState state = flow.getTransitionableState(CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
         createTransitionForState(state, subflowId, subflowId);
     }
 }
