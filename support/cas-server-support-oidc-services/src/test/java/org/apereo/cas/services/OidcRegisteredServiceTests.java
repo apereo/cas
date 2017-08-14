@@ -55,16 +55,14 @@ public class OidcRegisteredServiceTests {
     @Test
     public void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
         final OidcRegisteredService serviceWritten = new OidcRegisteredService();
-        serviceWritten.setName("checkSaveMethod");
+        serviceWritten.setName("verifySerializeAOidcRegisteredServiceToJson");
         serviceWritten.setServiceId("testId");
         serviceWritten.setJwks("file:/etc/cas/thekeystorehere.jwks");
         serviceWritten.setSignIdToken(true);
         serviceWritten.setBypassApprovalPrompt(true);
-
+        serviceWritten.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
-
         assertEquals(serviceWritten, serviceRead);
     }
 }

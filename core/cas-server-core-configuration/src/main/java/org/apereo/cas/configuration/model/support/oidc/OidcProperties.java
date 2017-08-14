@@ -54,7 +54,7 @@ public class OidcProperties implements Serializable {
     /**
      * List of supported subject types.
      */
-    private List<String> subjectTypes = Arrays.asList("public");
+    private List<String> subjectTypes = Arrays.asList("public", "pairwise");
 
     /**
      * Mapping of user-defined scopes. Key is the new scope name

@@ -54,7 +54,6 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
-            createStartState(flow);
             createDefaultGlobalExceptionHandlers(flow);
             createDefaultEndStates(flow);
             createDefaultDecisionStates(flow);
@@ -342,9 +341,9 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createRenewCheckDecisionState(final Flow flow) {
+        final String renewParam = "requestParameters." + CasProtocolConstants.PARAMETER_RENEW;
         createDecisionState(flow, CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
-                "requestParameters." + CasProtocolConstants.PARAMETER_RENEW 
-                        + " != '' and requestParameters." + CasProtocolConstants.PARAMETER_RENEW + " != null",
+                renewParam + " != '' and " + renewParam + " != null",
                 CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK,
                 CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }
