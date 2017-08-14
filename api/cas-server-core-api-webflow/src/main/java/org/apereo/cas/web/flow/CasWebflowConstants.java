@@ -104,7 +104,7 @@ public interface CasWebflowConstants {
     /**
      * The transition state 'initialAuthenticationRequestValidationCheck'.
      */
-    String TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
+    String STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
 
     /**
      * The transition state 'sendTicketGrantingTicket'.
@@ -317,5 +317,14 @@ public interface CasWebflowConstants {
      * State id 'casPasswordUpdateSuccess'.
      */
     String STATE_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccess";
-    
+
+    /**
+     * State id 'handleAuthenticationFailure'.
+     */
+    String STATE_ID_HANDLE_AUTHN_FAILURE = "handleAuthenticationFailure";
+
+    /**
+     * State id 'initialFlowSetupAction'.
+     */
+    String STATE_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
 }

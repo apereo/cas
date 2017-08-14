@@ -108,7 +108,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         registerMultifactorFlowDefinitionIntoLoginFlowRegistry(mfaProviderFlowRegistry);
         augmentMfaProviderFlowRegistry(mfaProviderFlowRegistry);
 
-        final TransitionableState state = flow.getTransitionableState(CasWebflowConstants.TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+        final TransitionableState state = flow.getTransitionableState(CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
         createTransitionForState(state, subflowId, subflowId);
     }
 }
