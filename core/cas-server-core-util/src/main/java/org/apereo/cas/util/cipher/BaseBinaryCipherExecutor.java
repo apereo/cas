@@ -49,6 +49,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @param signingSecretKey    the signing key
      * @param signingKeySize      the signing key size
      * @param encryptionKeySize   the encryption key size
+     * @param cipherName          the cipher name
      */
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                     final int signingKeySize, final int encryptionKeySize,
