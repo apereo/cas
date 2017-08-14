@@ -11,6 +11,7 @@ import {ServicesModule} from "./services/services.module";
 import {HeaderComponent} from "./header/header.component";
 import {SharedModule} from "./shared/shared.module";
 import {FormModule} from "./form/form.module";
+import { DeleteComponent } from './delete/delete.component';
 
 
 @NgModule({
@@ -26,7 +27,11 @@ import {FormModule} from "./form/form.module";
   ],
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
+    DeleteComponent
+  ],
+  entryComponents: [
+    DeleteComponent
   ],
   providers: [
     Messages
