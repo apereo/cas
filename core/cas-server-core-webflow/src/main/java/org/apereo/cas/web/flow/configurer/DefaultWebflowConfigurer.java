@@ -1,5 +1,6 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -13,6 +14,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
@@ -56,7 +58,6 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createDefaultEndStates(flow);
             createDefaultDecisionStates(flow);
             createDefaultActionStates(flow);
-
             createRememberMeAuthnWebflowConfig(flow);
         }
     }
@@ -97,7 +98,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     protected void createHandleAuthenticationFailureAction(final Flow flow) {
         final ActionState handler = createActionState(flow,
-                "handleAuthenticationFailure",
+                CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
                 createEvaluateAction("authenticationExceptionHandler"));
         createTransitionForState(handler, AccountDisabledException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
         createTransitionForState(handler, AccountLockedException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
@@ -340,8 +341,9 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createRenewCheckDecisionState(final Flow flow) {
+        final String renewParam = "requestParameters." + CasProtocolConstants.PARAMETER_RENEW;
         createDecisionState(flow, CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
-                "requestParameters.renew != '' and requestParameters.renew != null",
+                renewParam + " != '' and " + renewParam + " != null",
                 CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK,
                 CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }

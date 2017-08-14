@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -38,8 +39,12 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     private void createTransitionStateToAcceptableUsagePolicy(final Flow flow) {
-        final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        final ActionState submit = getRealSubmissionState(flow);
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_AUP_CHECK, true);
+    }
+
+    private ActionState getRealSubmissionState(final Flow flow) {
+        return (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
     }
 
     private EvaluateAction createAcceptableUsagePolicyAction(final String actionId) {
@@ -49,10 +54,10 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
     private void createSubmitActionState(final Flow flow) {
         final ActionState aupAcceptedAction = createActionState(flow, AUP_ACCEPTED_ACTION, createAcceptableUsagePolicyAction("submit"));
-        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
-                CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
+
+        final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
+        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
     }
 
     private void createAcceptableUsagePolicyView(final Flow flow) {
@@ -62,9 +67,9 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
     private void createVerifyActionState(final Flow flow) {
         final ActionState actionState = createActionState(flow, STATE_ID_AUP_CHECK, createAcceptableUsagePolicyAction("verify"));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(AcceptableUsagePolicyFormAction.EVENT_ID_MUST_ACCEPT, 
-                ACCEPTABLE_USAGE_POLICY_VIEW));
+
+        final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
+        actionState.getTransitionSet().add(createTransition(AcceptableUsagePolicyFormAction.EVENT_ID_MUST_ACCEPT, ACCEPTABLE_USAGE_POLICY_VIEW));
     }
 }

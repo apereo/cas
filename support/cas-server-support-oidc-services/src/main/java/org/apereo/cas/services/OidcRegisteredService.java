@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -41,6 +42,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Column(length = 255, updatable = true, insertable = true)
     private String idTokenEncryptionEncoding;
 
+    @Column(length = 255, updatable = true, insertable = true)
+    private String sectorIdentifierUri;
+
+    @Column(length = 255, updatable = true, insertable = true)
+    private String subjectType;
+    
     @Column(updatable = true, insertable = true)
     private boolean dynamicallyRegistered;
 
@@ -111,6 +118,31 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     }
 
     /**
+     * Gets subject type.
+     *
+     * @return the subject type
+     */
+    public String getSubjectType() {
+        if (StringUtils.isBlank(this.subjectType)) {
+            return OidcSubjectTypes.PUBLIC.getType();
+        }
+        return subjectType;
+    }
+
+    /**
+     * Sets subject type.
+     *
+     * @param subjectType the subject type
+     */
+    public void setSubjectType(final String subjectType) {
+        if (StringUtils.isBlank(this.subjectType)) {
+            this.subjectType = OidcSubjectTypes.PUBLIC.getType();
+        } else {
+            this.subjectType = subjectType;
+        }
+    }
+
+    /**
      * Indicates the service was dynamically registered.
      * Records the registration time automatically.
      *
@@ -153,6 +185,14 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         this.dynamicRegistrationDateTime = dynamicRegistrationDateTime;
     }
 
+    public String getSectorIdentifierUri() {
+        return sectorIdentifierUri;
+    }
+
+    public void setSectorIdentifierUri(final String sectorIdentifierUri) {
+        this.sectorIdentifierUri = sectorIdentifierUri;
+    }
+
     /**
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.
@@ -191,6 +231,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append(this.idTokenEncryptionAlg, rhs.idTokenEncryptionAlg)
                 .append(this.idTokenEncryptionEncoding, rhs.idTokenEncryptionEncoding)
                 .append(this.getScopes(), rhs.getScopes())
+                .append(this.sectorIdentifierUri, rhs.sectorIdentifierUri)
+                .append(this.getSubjectType(), rhs.getSubjectType())
                 .isEquals();
     }
 
@@ -206,6 +248,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append(idTokenEncryptionEncoding)
                 .append(dynamicallyRegistered)
                 .append(getScopes())
+                .append(sectorIdentifierUri)
+                .append(subjectType)
                 .toHashCode();
     }
 
@@ -221,6 +265,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append("encryptIdToken", encryptIdToken)
                 .append("dynamicallyRegistered", dynamicallyRegistered)
                 .append("scopes", getScopes())
+                .append("sectorIdentifierUri", sectorIdentifierUri)
+                .append("subjectType", subjectType)
                 .toString();
     }
 
@@ -237,10 +283,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
             setEncryptIdToken(oidcService.isEncryptIdToken());
             setDynamicallyRegistered(oidcService.isDynamicallyRegistered());
             setScopes(oidcService.getScopes());
+            setSectorIdentifierUri(oidcService.getSectorIdentifierUri());
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
-
 }
