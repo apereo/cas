@@ -27,6 +27,9 @@ public class OidcClientRegistrationRequest implements Serializable {
     @JsonProperty("client_name")
     private String clientName;
 
+    @JsonProperty("subject_type")
+    private String subjectType;
+
     @JsonProperty("token_endpoint_auth_method")
     private String tokenEndpointAuthMethod;
 
@@ -41,6 +44,9 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("jwks_uri")
     private String jwksUri;
+    
+    @JsonProperty("sector_identifier_uri")
+    private String sectorIdentifierUri;
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;
@@ -80,6 +86,14 @@ public class OidcClientRegistrationRequest implements Serializable {
         return requestObjectSigningAlg;
     }
 
+    public String getSectorIdentifierUri() {
+        return sectorIdentifierUri;
+    }
+
+    public String getSubjectType() {
+        return subjectType;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
@@ -90,7 +104,9 @@ public class OidcClientRegistrationRequest implements Serializable {
                 .append("grantTypes", grantTypes)
                 .append("responseTypes", responseTypes)
                 .append("jwksUri", jwksUri)
+                .append("sectorIdentifierUri", sectorIdentifierUri)
                 .append("requestObjectSigningAlg", requestObjectSigningAlg)
+                .append("subjectType", subjectType)
                 .toString();
     }
 

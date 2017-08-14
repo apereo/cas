@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
-import org.apereo.cas.web.flow.AbstractCasMultifactorWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
