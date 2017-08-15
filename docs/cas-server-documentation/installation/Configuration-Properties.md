@@ -4424,7 +4424,8 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.keyStoreFilePath=
 # cas.ticket.registry.ignite.keyStorePassword=
 # cas.ticket.registry.ignite.trustStoreType=
-# cas.ticket.registry.ignite.igniteAddresses=localhost:47500
+# cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500
+# cas.ticket.registry.ignite.igniteAddress[1]=
 # cas.ticket.registry.ignite.trustStoreFilePath=
 # cas.ticket.registry.ignite.ackTimeout=2000
 # cas.ticket.registry.ignite.joinTimeout=1000
