@@ -61,65 +61,50 @@ Content-Type: text/xml
 ## Sample Response
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-  <SOAP-ENV:Header />
   <SOAP-ENV:Body>
-    <Response xmlns="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion"
-    xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IssueInstant="2008-12-10T14:12:14.817Z"
-    MajorVersion="1" MinorVersion="1" Recipient="https://eiger.iad.vt.edu/dat/home.do"
-    ResponseID="_5c94b5431c540365e5a70b2874b75996">
-      <Status>
-        <StatusCode Value="samlp:Success">
-        </StatusCode>
-      </Status>
-      <Assertion xmlns="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="_e5c23ff7a3889e12fa01802a47331653"
-      IssueInstant="2008-12-10T14:12:14.817Z" Issuer="localhost" MajorVersion="1"
-      MinorVersion="1">
-        <Conditions NotBefore="2008-12-10T14:12:14.817Z" NotOnOrAfter="2008-12-10T14:12:44.817Z">
-          <AudienceRestrictionCondition>
-            <Audience>
-              https://some-service.example.com/app/
-            </Audience>
-          </AudienceRestrictionCondition>
-        </Conditions>
-        <AttributeStatement>
-          <Subject>
-            <NameIdentifier>johnq</NameIdentifier>
-            <SubjectConfirmation>
-              <ConfirmationMethod>
-                urn:oasis:names:tc:SAML:1.0:cm:artifact
-              </ConfirmationMethod>
-            </SubjectConfirmation>
-          </Subject>
-          <Attribute AttributeName="uid" AttributeNamespace="http://www.ja-sig.org/products/cas/">
-            <AttributeValue>12345</AttributeValue>
-          </Attribute>
-          <Attribute AttributeName="groupMembership" AttributeNamespace="http://www.ja-sig.org/products/cas/">
-            <AttributeValue>
-              uugid=middleware.staff,ou=Groups,dc=vt,dc=edu
-            </AttributeValue>
-          </Attribute>
-          <Attribute AttributeName="eduPersonAffiliation" AttributeNamespace="http://www.ja-sig.org/products/cas/">
-            <AttributeValue>staff</AttributeValue>
-          </Attribute>
-          <Attribute AttributeName="accountState" AttributeNamespace="http://www.ja-sig.org/products/cas/">
-            <AttributeValue>ACTIVE</AttributeValue>
-          </Attribute>
-        </AttributeStatement>
-        <AuthenticationStatement AuthenticationInstant="2008-12-10T14:12:14.741Z"
-        AuthenticationMethod="urn:oasis:names:tc:SAML:1.0:am:password">
-          <Subject>
-            <NameIdentifier>johnq</NameIdentifier>
-            <SubjectConfirmation>
-              <ConfirmationMethod>
-                urn:oasis:names:tc:SAML:1.0:cm:artifact
-              </ConfirmationMethod>
-            </SubjectConfirmation>
-          </Subject>
-        </AuthenticationStatement>
-      </Assertion>
-    </Response>
+    <saml1p:Response xmlns:saml1p="urn:oasis:names:tc:SAML:1.0:protocol" InResponseTo="...." IssueInstant="2017-08-15T06:30:04.622Z" MajorVersion="1" MinorVersion="1" ResponseID="_bf6957bad275fc74a1c079a445581441">
+      <saml1p:Status>
+        <saml1p:StatusCode Value="saml1p:Success" />
+      </saml1p:Status>
+      <saml1:Assertion xmlns:saml1="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="_d9673d8af414cc9612929480b58cb2a1" IssueInstant="2017-08-15T06:30:04.622Z" Issuer="testIssuer" MajorVersion="1" MinorVersion="1">
+        <saml1:Conditions NotBefore="2017-08-15T06:30:04.622Z" NotOnOrAfter="2017-08-15T06:30:05.622Z">
+          <saml1:AudienceRestrictionCondition>
+            <saml1:Audience>https://google.com</saml1:Audience>
+          </saml1:AudienceRestrictionCondition>
+        </saml1:Conditions>
+        <saml1:AuthenticationStatement AuthenticationInstant="2017-08-15T06:46:43.585Z" AuthenticationMethod="urn:ietf:rfc:2246">
+          <saml1:Subject>
+            <saml1:NameIdentifier>testPrincipal</saml1:NameIdentifier>
+            <saml1:SubjectConfirmation>
+              <saml1:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:artifact</saml1:ConfirmationMethod>
+            </saml1:SubjectConfirmation>
+          </saml1:Subject>
+        </saml1:AuthenticationStatement>
+        <saml1:AttributeStatement>
+          <saml1:Subject>
+            <saml1:NameIdentifier>testPrincipal</saml1:NameIdentifier>
+            <saml1:SubjectConfirmation>
+              <saml1:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:artifact</saml1:ConfirmationMethod>
+            </saml1:SubjectConfirmation>
+          </saml1:Subject>
+          <saml1:Attribute AttributeName="testAttribute" AttributeNamespace="whatever">
+            <saml1:AttributeValue>testValue</saml1:AttributeValue>
+          </saml1:Attribute>
+          <saml1:Attribute AttributeName="samlAuthenticationStatementAuthMethod" AttributeNamespace="whatever">
+            <saml1:AttributeValue>urn:ietf:rfc:2246</saml1:AttributeValue>
+          </saml1:Attribute>
+          <saml1:Attribute AttributeName="testSamlAttribute" AttributeNamespace="whatever">
+            <saml1:AttributeValue>value</saml1:AttributeValue>
+          </saml1:Attribute>
+          <saml1:Attribute AttributeName="testAttributeCollection" AttributeNamespace="whatever">
+            <saml1:AttributeValue>tac1</saml1:AttributeValue>
+            <saml1:AttributeValue>tac2</saml1:AttributeValue>
+          </saml1:Attribute>
+        </saml1:AttributeStatement>
+      </saml1:Assertion>
+    </saml1p:Response>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```
