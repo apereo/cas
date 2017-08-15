@@ -9,6 +9,7 @@ echo -e "Job number: ${TRAVIS_JOB_NUMBER}"
 echo -e "Repo slug: ${TRAVIS_REPO_SLUG}"
 echo -e "OS name: ${TRAVIS_OS_NAME}"
 echo -e "Commit Message: ${TRAVIS_COMMIT_MESSAGE}"
+echo -e "Publish Snapshots: ${PUBLISH_SNAPSHOTS}"
 
 if [ "$TRAVIS_SECURE_ENV_VARS" == "false" ]
 then
