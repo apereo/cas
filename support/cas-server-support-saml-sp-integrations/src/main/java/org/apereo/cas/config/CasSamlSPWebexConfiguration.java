@@ -17,6 +17,6 @@ public class CasSamlSPWebexConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getWebex();
+        return casProperties.getSamlSp().getWebex();
     }
 }

@@ -62,7 +62,10 @@ public abstract class AbstractTicketRegistryTests {
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
-            registry.setCipherExecutor(new DefaultTicketCipherExecutor(null, null, "AES", 512, 16));
+            final DefaultTicketCipherExecutor cipher = new DefaultTicketCipherExecutor(
+                    null, null, "AES", 
+                    512, 16, "test");
+            registry.setCipherExecutor(cipher);
         } else {
             registry.setCipherExecutor((CipherExecutor) NoOpCipherExecutor.getInstance());
         }

@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
@@ -19,7 +19,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -171,33 +171,23 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final MultifactorAuthenticationProperties.U2F u2f = casProperties.getAuthn().getMfa().getU2f();
+        final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
 
         final LoadingCache<String, String> requestStorage =
-                CacheBuilder.newBuilder()
+                Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
-                        .build(new CacheLoader<String, String>() {
-                            @Override
-                            public String load(final String key) throws Exception {
-                                return StringUtils.EMPTY;
-                            }
-                        });
+                        .build(key -> StringUtils.EMPTY);
 
-        if (u2f.getJson().getConfig().getLocation() != null) {
+        if (u2f.getJson().getLocation() != null) {
             return new U2FJsonResourceDeviceRepository(requestStorage,
-                    u2f.getJson().getConfig().getLocation(),
+                    u2f.getJson().getLocation(),
                     u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
         }
 
         final LoadingCache<String, Map<String, String>> userStorage =
-                CacheBuilder.newBuilder()
+                Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
-                        .build(new CacheLoader<String, Map<String, String>>() {
-                            @Override
-                            public Map<String, String> load(final String key) throws Exception {
-                                return new HashMap<>();
-                            }
-                        });
+                        .build(key -> new HashMap<>());
         return new U2FInMemoryDeviceRepository(userStorage, requestStorage);
     }
 
@@ -211,8 +201,8 @@ public class U2FConfiguration {
             this.repository = repository;
         }
 
-        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.startDelay:PT20S}",
-                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.repeatInterval:PT15M}")
+        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.startDelay:PT20S}",
+                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.repeatInterval:PT15M}")
         public void run() {
             LOGGER.debug("Starting to clean expired U2F devices from repository");
             this.repository.clean();

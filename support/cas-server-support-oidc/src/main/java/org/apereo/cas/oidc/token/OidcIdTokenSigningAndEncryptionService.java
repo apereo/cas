@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.token;
 
-import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwa.AlgorithmConstraints;
@@ -67,7 +66,7 @@ public class OidcIdTokenSigningAndEncryptionService {
             return innerJwt;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

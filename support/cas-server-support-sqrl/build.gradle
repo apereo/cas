@@ -1,4 +1,10 @@
 description = "Apereo CAS SQRL Authentication Support"
+
+repositories {
+    maven { url "https://jitpack.io" }
+    jcenter()
+}
+
 dependencies {
     compile libraries.sqrlserver
     compile libraries.zxingbarcode

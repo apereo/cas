@@ -1,0 +1,6 @@
+description = "Apereo CAS Notification/Interrupt Core Implementations"
+dependencies {
+    compile project(":support:cas-server-support-interrupt-api")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

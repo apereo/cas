@@ -1,7 +1,8 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Configuration properties class for tgc.
@@ -12,32 +13,30 @@ import org.apereo.cas.configuration.support.Beans;
 
 public class TicketGrantingCookieProperties extends CookieProperties {
 
+    private static final long serialVersionUID = 7392972818105536350L;
+    /**
+     * If remember-me is enabled, specifies the maximum age of the cookie.
+     */
     private String rememberMeMaxAge = "P14D";
 
-    private String encryptionKey = StringUtils.EMPTY;
-    private String signingKey = StringUtils.EMPTY;
-    private boolean cipherEnabled = true;
-    
+    /**
+     * Crypto settings that determine how the cookie should be signed and encrypted.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
     public TicketGrantingCookieProperties() {
         super.setName("TGC");
     }
+
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
     
-    public String getEncryptionKey() {
-        return encryptionKey;
-    }
-
-    public void setEncryptionKey(final String encryptionKey) {
-        this.encryptionKey = encryptionKey;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(final String signingKey) {
-        this.signingKey = signingKey;
-    }
-
     public long getRememberMeMaxAge() {
         return Beans.newDuration(rememberMeMaxAge).getSeconds();
     }
@@ -46,11 +45,4 @@ public class TicketGrantingCookieProperties extends CookieProperties {
         this.rememberMeMaxAge = rememberMeMaxAge;
     }
 
-    public boolean isCipherEnabled() {
-        return cipherEnabled;
-    }
-
-    public void setCipherEnabled(final boolean cipherEnabled) {
-        this.cipherEnabled = cipherEnabled;
-    }
 }

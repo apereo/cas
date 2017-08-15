@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.sqrl.SqrlAuthenticationProperties;
 import org.apereo.cas.sqrl.storage.SqrlInMemoryAuthenticationService;
 import org.apereo.cas.sqrl.storage.SqrlInMemoryUserService;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.SqrlAuthenticationController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SqrlCleanUpAction;
@@ -25,10 +26,9 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import javax.crypto.KeyGenerator;
 import java.security.Key;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
+import javax.crypto.KeyGenerator;
 
 /**
  * This is {@link SqrlConfiguration}.
@@ -75,7 +75,7 @@ public class SqrlConfiguration {
     @Bean
     public SqrlNutService sqrlNutService() {
         try {
-            return new SqrlNutService(new SecureRandom(), sqrlConfig(),
+            return new SqrlNutService(RandomUtils.getInstanceNative(), sqrlConfig(),
                     MessageDigest.getInstance("SHA-256"), sqrlAesKey());
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);

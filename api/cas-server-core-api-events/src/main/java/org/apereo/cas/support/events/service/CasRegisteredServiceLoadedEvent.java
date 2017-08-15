@@ -2,7 +2,6 @@ package org.apereo.cas.support.events.service;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.AbstractCasEvent;
 
 /**
  * This is {@link CasRegisteredServiceLoadedEvent} that is signaled
@@ -11,7 +10,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasRegisteredServiceLoadedEvent extends AbstractCasEvent {
+public class CasRegisteredServiceLoadedEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = 290988299766263298L;
     private final RegisteredService registeredService;

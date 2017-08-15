@@ -5,6 +5,6 @@ dependencies {
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-web")
     implementation libraries.awsclouddirectory
-    implementation libraries.httpclient
+    
     
 }

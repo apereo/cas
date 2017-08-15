@@ -3,6 +3,8 @@ package org.apereo.cas.configuration.model.core.events;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 
+import java.io.Serializable;
+
 /**
  * Configuration properties class for events.
  *
@@ -10,13 +12,31 @@ import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientPrope
  * @since 5.0.0
  */
 
-public class EventsProperties {
+public class EventsProperties implements Serializable {
 
+    private static final long serialVersionUID = 1734523424737956370L;
+    /**
+     * Whether geolocation should be tracked as part of collected authentication events.
+     * This of course require's consent from the user's browser to collect stats on location.
+     */
     private boolean trackGeolocation;
+
+    /**
+     * Whether CAS should track the underlying configuration store for changes.
+     * This depends on whether the store provides that sort of functionality.
+     * When running in standalone mode, this typically translates to CAS monitoring
+     * configuration files and reloading context conditionally if there are any changes.
+     */
     private boolean trackConfigurationModifications = true;
-    
+
+    /**
+     * Track authentication events inside a database.
+     */
     private Jpa jpa = new Jpa();
 
+    /**
+     * Track authentication events inside a mongodb instance.
+     */
     private Mongodb mongodb = new Mongodb();
 
     public Mongodb getMongodb() {

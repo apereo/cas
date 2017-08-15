@@ -33,14 +33,14 @@ The current implementation provides support for:
 
 | Field                                         | Description
 |-----------------------------------------------|-------------------------------------------------------
-| `/cas/oidc/.well-known`                       | The discovery endpoint is a static page that you/clients use to query for CAS OIDC configuration information and metadata. No session is required. CAS returns basic information about endpoints, supported scopes, etc used for OIDC authentication.
-| `/cas/oidc/.well-known/openid-configuration`  | Same as above.
-| `/cas/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
-| `/cas/oidc/authorize`                         | Authorization requests are handled here.
-| `/cas/oidc/profile`                           | User profile requests are handled here.
-| `/cas/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
-| `/cas/oidc/accessToken`, `/cas/oidc/token`    | Produces authorized access tokens.
-| `/cas/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
+| `/oidc/.well-known`                       | The discovery endpoint is a static page that you/clients use to query for CAS OIDC configuration information and metadata. No session is required. CAS returns basic information about endpoints, supported scopes, etc used for OIDC authentication.
+| `/oidc/.well-known/openid-configuration`  | Same as above.
+| `/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
+| `/oidc/authorize`                         | Authorization requests are handled here.
+| `/oidc/profile`                           | User profile requests are handled here.
+| `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
+| `/oidc/accessToken`, `/oidc/token`    | Produces authorized access tokens.
+| `/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
 ## Register Clients
 
@@ -69,7 +69,7 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 ```
 
 | Field                         | Description
-|-------------------------------|------------------------------------------------------------------
+|-------------------------------|---------------------------------------------------------------------------------------
 | `serviceId`                   | The authorized redirect URI for this OIDC client.
 | `implicit`                    | Whether the response produced for this service should be [implicit](https://openid.net/specs/openid-connect-implicit-1_0.html).
 | `signIdToken`                 | Whether ID tokens should be signed. Default is `true`.
@@ -77,6 +77,8 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 | `encryptIdToken`              | Whether ID tokens should be encrypted. Default is `false`.
 | `idTokenEncryptionAlg`        | The algorithm header value used to encrypt the id token.
 | `idTokenEncryptionEncoding`   | The algorithm method header value used to encrypt the id token.
+| `subjectType`                 | Type to use when generating principal identifiers. Default is `public`.
+| `sectoreIdentifierUri`        | Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
@@ -144,6 +146,27 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,
 which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS.
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
+
+## Pairwise Identifiers
+
+When `pairwise` subject type is used, CAS will calculate a unique `sub` value for each sector identifier. This identifier should not be reversible by any party other than CAS and is somewhat akin to CAS generating persistent anonymous user identifiers. Each value provided to every relying party is different so as not to enable clients to correlate the user's activities without permission.
+
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^<https://the-redirect-uri>",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator" : {
+      "@class" : "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
+      "salt" : "aGVsbG93b3JsZA=="
+    }
+  }
+}
+```
 
 ## Keystores
 

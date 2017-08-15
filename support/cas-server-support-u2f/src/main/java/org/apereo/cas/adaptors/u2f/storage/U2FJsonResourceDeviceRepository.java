@@ -3,8 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                 }
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -108,7 +107,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                         + "no matching record was found. Is device registered?");
             }
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

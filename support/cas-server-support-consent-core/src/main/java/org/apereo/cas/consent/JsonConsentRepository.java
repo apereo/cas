@@ -2,17 +2,16 @@ package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.security.SecureRandom;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -55,7 +54,7 @@ public class JsonConsentRepository implements ConsentRepository {
         if (consent != null) {
             this.consentDecisions.remove(decision);
         } else {
-            decision.setId(Math.abs(new SecureRandom().nextInt()));
+            decision.setId(Math.abs(RandomUtils.getInstanceNative().nextInt()));
         }
         this.consentDecisions.add(decision);
         writeAccountToJsonResource();
@@ -70,7 +69,7 @@ public class JsonConsentRepository implements ConsentRepository {
                 };
                 this.consentDecisions = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             } catch (final Exception e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
     }
@@ -80,7 +79,7 @@ public class JsonConsentRepository implements ConsentRepository {
             MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.consentDecisions);
             readDecisionsFromJsonResource();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return true;
     }

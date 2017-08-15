@@ -1,16 +1,15 @@
 package org.apereo.cas.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,13 +43,13 @@ public class U2FJpaConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaU2fVendorAdapter() {
-        return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
+        return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
     @Bean
     public DataSource dataSourceU2f() {
-        return Beans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
+        return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
     public String[] jpaU2fPackagesToScan() {
@@ -61,7 +60,7 @@ public class U2FJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newHibernateEntityManagerFactoryBean(
+                JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaU2fVendorAdapter(),
                                 "jpaU2fRegistryContext",
@@ -82,16 +81,11 @@ public class U2FJpaConfiguration {
 
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final MultifactorAuthenticationProperties.U2F u2f = casProperties.getAuthn().getMfa().getU2f();
+        final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
-                CacheBuilder.newBuilder()
+                Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
-                        .build(new CacheLoader<String, String>() {
-                            @Override
-                            public String load(final String key) throws Exception {
-                                return StringUtils.EMPTY;
-                            }
-                        });
+                        .build(key -> StringUtils.EMPTY);
         return new U2FJpaDeviceRepository(requestStorage, u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
     }
 

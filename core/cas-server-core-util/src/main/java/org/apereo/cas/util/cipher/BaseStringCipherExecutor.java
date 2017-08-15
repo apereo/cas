@@ -1,6 +1,5 @@
 package org.apereo.cas.util.cipher;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
@@ -64,9 +63,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
                                     final String contentEncryptionAlgorithmIdentifier) {
-
         super();
-
         if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
             LOGGER.warn("Content encryption algorithm identifier is not defined");
             return;
@@ -184,7 +181,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.debug("Decrypting value...");
             return jwe.getPayload();
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

@@ -17,6 +17,6 @@ public class CasSamlSPGartnerConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getGartner();
+        return casProperties.getSamlSp().getGartner();
     }
 }

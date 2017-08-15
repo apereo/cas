@@ -1,14 +1,30 @@
 package org.apereo.cas.configuration.model.core.rest;
 
+import java.io.Serializable;
+
 /**
  * This is {@link RestProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RestProperties {
+public class RestProperties implements Serializable {
+    private static final long serialVersionUID = -1833107478273171342L;
+    /**
+     * Authorization attribute name required by the REST endpoint in order to allow for the requested operation.
+     * Attribute must be resolveable by the authenticated principal, or must have been already.
+     */
     private String attributeName;
+    /**
+     * Matching authorization attribute value, pulled from the attribute
+     * required by the REST endpoint in order to allow for the requested operation.
+     */
     private String attributeValue;
+
+    /**
+     * The bean id of the throttler component whose job is to control rest authentication requests
+     * an throttle requests per define policy.
+     */
     private String throttler = "neverThrottle";
     
     public String getAttributeName() {

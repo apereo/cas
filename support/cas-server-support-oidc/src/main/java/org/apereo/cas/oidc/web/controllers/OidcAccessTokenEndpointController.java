@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +56,13 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
     @Override
     public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        super.handleRequest(request, response);
+    }
+
+    @GetMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
+            '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
+    @Override
+    public void handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         super.handleRequest(request, response);
     }
 }

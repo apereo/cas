@@ -2,7 +2,8 @@ description = "Apereo CAS Core Audit"
 dependencies {
     compile project(":api:cas-server-core-api")
     implementation libraries.pac4j
-    implementation libraries.persondirectory
+    implementation libraries.caffein
+    
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
     compile project(":api:cas-server-core-api-events")
@@ -13,5 +14,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 }

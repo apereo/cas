@@ -98,8 +98,4 @@ public abstract class BaseOAuth20Controller {
         this.scopeToAttributesFilter = scopeToAttributesFilter;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
-
-
-
-
 }

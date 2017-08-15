@@ -1,14 +1,30 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import java.io.Serializable;
+
 /**
  * This is {@link SmsProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SmsProperties {
+public class SmsProperties implements Serializable {
+
+    private static final long serialVersionUID = -3713886839517507306L;
+    /**
+     * The body of the SMS message.
+     */
     private String text;
+    /**
+     * The from address for the message.
+     */
     private String from;
+
+    /**
+     * Principal attribute name that indicates the destination phone number
+     * for this SMS message. The attribute must already be resolved and available
+     * to the CAS principal.
+     */
     private String attributeName = "phone";
 
     public String getAttributeName() {

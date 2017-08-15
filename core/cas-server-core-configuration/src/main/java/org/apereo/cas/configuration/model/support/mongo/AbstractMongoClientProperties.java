@@ -12,8 +12,22 @@ import java.io.Serializable;
  */
 public abstract class AbstractMongoClientProperties implements Serializable {
     private static final long serialVersionUID = 2844298699021872943L;
+
+    /**
+     * The connection uri to the mongodb instance.
+     * This typically takes on the form of {@code mongodb://user:psw@ds135522.somewhere.com:35522/db}
+     */
     private String clientUri = StringUtils.EMPTY;
+
+    /**
+     * The collection name to use and create statically.
+     */
     private String collection = StringUtils.EMPTY;
+
+    /**
+     * When pre-existing collections should be dropped on startup,
+     * rebooting the current data before doing anything else.
+     */
     private boolean dropCollection;
 
     public String getClientUri() {

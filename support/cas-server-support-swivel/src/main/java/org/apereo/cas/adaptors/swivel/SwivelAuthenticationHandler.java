@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -36,11 +36,11 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     private static final String SWIVEL_ERR_CODE_AUTHN_FAIL = "swivel.server.error";
     private static final Map<String, String> ERROR_MAP = createErrorCodeMap();
 
-    private final MultifactorAuthenticationProperties.Swivel swivelProperties;
+    private final SwivelMultifactorProperties swivelProperties;
 
     public SwivelAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
-                                       final MultifactorAuthenticationProperties.Swivel swivelProperties) {
+                                       final SwivelMultifactorProperties swivelProperties) {
         super(name, servicesManager, principalFactory, null);
         this.swivelProperties = swivelProperties;
     }
@@ -74,7 +74,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             throw new FailedLoginException("Swivel credentials are not specified can cannot be blank");
         }
 
-        /**
+        /*
          * Create a new session with the Swivel server. We do not support
          * the user having a password on his/her Swivel account, just the
          * one-time code.
@@ -90,7 +90,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             LOGGER.error(e.getMessage(), e);
         }
 
-        /**
+        /*
          * Send the request. It will return either PASS (user authenticated)
          * or FAIL (user not authenticated).
          */
@@ -104,7 +104,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
             return createHandlerResult(swivelCredential, this.principalFactory.createPrincipal(uid), null);
         }
 
-        /**
+        /*
          * A "normal" authentication failure (wrong one-time code)
          * doesn't produce an agent error, so we fake one here to
          * give us something to throw.

@@ -22,11 +22,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-import javax.cache.expiry.CreatedExpiryPolicy;
-import javax.cache.expiry.Duration;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import javax.cache.expiry.CreatedExpiryPolicy;
+import javax.cache.expiry.Duration;
 
 /**
  * This is {@link IgniteTicketRegistryConfiguration}.
@@ -69,11 +69,12 @@ public class IgniteTicketRegistryConfiguration {
         spi.setForceServerMode(ignite.isForceServerMode());
 
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
-        finder.setAddresses(StringUtils.commaDelimitedListToSet(ignite.getIgniteAddresses()));
+        finder.setAddresses(ignite.getIgniteAddress());
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
         final Collection<CacheConfiguration> cacheConfigurations = buildIgniteTicketCaches(ignite, ticketCatalog);
         config.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[]{}));
+        config.setClientMode(ignite.isClientMode());
 
         return config;
     }
@@ -103,7 +104,7 @@ public class IgniteTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final IgniteProperties igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
         final IgniteTicketRegistry r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration(ticketCatalog), igniteProperties);
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(igniteProperties.getCrypto()));
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
         return r;
     }
 }

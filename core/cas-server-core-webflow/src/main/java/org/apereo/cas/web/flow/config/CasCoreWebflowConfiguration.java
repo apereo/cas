@@ -13,10 +13,12 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
-import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
-import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
-import org.apereo.cas.web.flow.InjectResponseHeadersAction;
-import org.apereo.cas.web.flow.RedirectToServiceAction;
+import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
+import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
+import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
+import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -270,11 +272,11 @@ public class CasCoreWebflowConfiguration {
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
         final WebflowProperties webflow = casProperties.getWebflow();
         return new WebflowConversationStateCipherExecutor(
-                webflow.getEncryption().getKey(),
-                webflow.getSigning().getKey(),
-                webflow.getAlg(),
-                webflow.getSigning().getKeySize(),
-                webflow.getEncryption().getKeySize());
+                webflow.getCrypto().getEncryption().getKey(),
+                webflow.getCrypto().getSigning().getKey(),
+                webflow.getCrypto().getAlg(),
+                webflow.getCrypto().getSigning().getKeySize(),
+                webflow.getCrypto().getEncryption().getKeySize());
     }
 
     @Bean
@@ -297,10 +299,18 @@ public class CasCoreWebflowConfiguration {
     public Action redirectToServiceAction() {
         return new RedirectToServiceAction(responseBuilderLocator);
     }
+
     @Bean
     @ConditionalOnMissingBean(name = "injectResponseHeadersAction")
     @RefreshScope
     public Action injectResponseHeadersAction() {
         return new InjectResponseHeadersAction(responseBuilderLocator);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
+    @RefreshScope
+    public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
+        return new DefaultSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso().isRenewedAuthn());  
     }
 }

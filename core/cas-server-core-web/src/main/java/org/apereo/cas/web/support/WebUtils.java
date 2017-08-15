@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,15 +67,19 @@ public final class WebUtils {
      */
     public static final String USER_AGENT_HEADER = "user-agent";
 
+    /**
+     * Ticket-granting ticket id parameter used in various flow scopes.
+     */
+    public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
-
+    
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
     private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
     private static final String PARAMETER_CREDENTIAL = "credential";
     private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
-    private static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
     private static final String PARAMETER_REGISTERED_SERVICE = "registeredService";
     private static final String PARAMETER_SERVICE = "service";
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
@@ -757,7 +760,7 @@ public final class WebUtils {
         } catch (final Exception e) {
             LOGGER.warn("Could not locate beans of type [{}]", MultifactorAuthenticationProvider.class);
         }
-        return Collections.emptyMap();
+        return new HashMap<>(0);
     }
 
     /**

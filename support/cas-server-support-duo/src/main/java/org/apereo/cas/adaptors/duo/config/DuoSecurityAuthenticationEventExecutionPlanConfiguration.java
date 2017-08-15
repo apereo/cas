@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
@@ -121,7 +121,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
         final DuoAuthenticationHandler h;
-        final List<MultifactorAuthenticationProperties.Duo> duos = casProperties.getAuthn().getMfa().getDuo();
+        final List<DuoSecurityMultifactorProperties> duos = casProperties.getAuthn().getMfa().getDuo();
         if (!duos.isEmpty()) {
             final String name = duos.get(0).getName();
             if (duos.size() > 1) {

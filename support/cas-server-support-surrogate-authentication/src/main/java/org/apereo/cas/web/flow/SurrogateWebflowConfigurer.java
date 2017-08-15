@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -37,9 +38,9 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
             final ActionState selectSurrogate = createActionState(flow, "selectSurrogate", selectSurrogateAction);
             createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                    CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+                    CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
-            final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+            final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
             createTransitionForState(actionState, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW, true);
         }
     }

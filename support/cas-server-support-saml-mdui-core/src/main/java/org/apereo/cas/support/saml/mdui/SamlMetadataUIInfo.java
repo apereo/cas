@@ -143,7 +143,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the description
      */
     public String getDescription(final String locale) {
-        final String description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
+        final String description = getLocalizedValues(locale, List.class.cast(this.getDescriptions()));
         return (description != null) ? description : super.getDescription();
     }
 
@@ -159,7 +159,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the displayName
      */
     public String getDisplayName(final String locale) {
-        final String displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
+        final String displayName = getLocalizedValues(locale, List.class.cast(this.getDisplayNames()));
         return (displayName != null) ? displayName : super.getDisplayName();
     }
 
@@ -175,7 +175,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the informationURL
      */
     public String getInformationURL(final String locale) {
-        final String informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
+        final String informationUrl = getLocalizedValues(locale, List.class.cast(this.getInformationURLs()));
         return (informationUrl != null) ? informationUrl : super.getInformationURL();
     }
 
@@ -191,7 +191,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the privacyStatementURL
      */
     public String getPrivacyStatementURL(final String locale) {
-        final String privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
+        final String privacyStatementURL = getLocalizedValues(locale, List.class.cast(this.getPrivacyStatementURLs()));
         return (privacyStatementURL != null) ? privacyStatementURL : super.getPrivacyStatementURL();
     }
 

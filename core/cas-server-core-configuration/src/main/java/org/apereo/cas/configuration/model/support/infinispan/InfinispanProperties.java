@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.infinispan;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * Encapsulates hazelcast properties exposed by CAS via properties file property source in a type-safe manner.
@@ -11,19 +13,29 @@ import org.springframework.core.io.Resource;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-public class InfinispanProperties extends CryptographyProperties {
-    
+public class InfinispanProperties implements Serializable {
+
+    private static final long serialVersionUID = 1974626726565626634L;
+    /**
+     * Path to the infinispan XML configuration file.
+     */
     private Resource configLocation = new ClassPathResource("infinispan.xml");
+    /**
+     * Cache name to create and hold tickets in.
+     */
     private String cacheName;
 
+    /**
+     * Crypto settings for the registry.
+     */
     @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
-    public CryptographyProperties getCrypto() {
+    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
 
-    public void setCrypto(final CryptographyProperties crypto) {
+    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
     

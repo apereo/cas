@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.DefaultWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.DefaultWebflowConfigurer;
 import org.apereo.cas.web.flow.LogoutConversionService;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
@@ -160,7 +159,7 @@ public class CasWebflowContextConfiguration {
                 }
             };
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

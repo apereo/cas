@@ -1,6 +1,9 @@
 package org.apereo.cas.configuration.model.support.gua;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import java.io.Serializable;
 
 /**
  * This is {@link GraphicalUserAuthenticationProperties}
@@ -10,9 +13,16 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class GraphicalUserAuthenticationProperties {
+public class GraphicalUserAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7527953699378415460L;
+    /**
+     * Locate GUA settings and images from LDAP.
+     */
     private Ldap ldap = new Ldap();
-    private Resource resource = new Resource();
+    /**
+     * Locate GUA settings and images from a static image.
+     */
+    private SpringResourceProperties resource = new SpringResourceProperties();
 
     public Ldap getLdap() {
         return ldap;
@@ -22,30 +32,28 @@ public class GraphicalUserAuthenticationProperties {
         this.ldap = ldap;
     }
 
-    public Resource getResource() {
+    public SpringResourceProperties getResource() {
         return resource;
     }
 
-    public void setResource(final Resource resource) {
+    public void setResource(final SpringResourceProperties resource) {
         this.resource = resource;
-    }
-
-    public static class Resource {
-        private String location;
-
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(final String location) {
-            this.location = location;
-        }
     }
     
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = 4666838063728336692L;
+        /**
+         * Base DN to use for the user search.
+         */
         private String baseDn;
+        /**
+         * Search filter to locate the account in LDAP.
+         * Syntax is {@code cn={user}} or {@code cn={0}}
+         */
         private String userFilter;
+        /**
+         * Entry attribute that holds the user image.
+         */
         private String imageAttribute;
 
         public String getBaseDn() {

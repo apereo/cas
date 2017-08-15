@@ -146,7 +146,8 @@ The following fields are available for SAML services:
 |--------------------------------------|------------------------------------------------------------------
 | `metadataLocation`                   | Location of service metadata defined from system files, classpath, directories or URL resources.
 | `metadataSignatureLocation`          | Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
-| `metadataMaxValidity`                | If defined, will enforce the `RequiredValidUntilFilter` validation filter on metadata.
+| `metadataExpirationDuration`         | If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.
+| `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signResponses`                      | Whether responses should be signed. Default is `true`.
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
@@ -183,6 +184,10 @@ entities by a defined criteria at resolution time when it reads the
 metadata itself. This is essentially the same thing as forcing the pattern
 to match entity ids, except that it's done while CAS is reading the
 metadata and thus load times are improved.
+
+### Metadata Resolution
+
+Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed, will resort to actually resolving the metadata by loading or contacting the configured resource. Each service provider definition that is registered with CAS may optionally also specifically an expiration period of metadata resolution to override the default global value.
 
 ### Attribute Name Formats
 
@@ -286,6 +291,13 @@ from a Metadata query server, the metadata location must be configured to point 
 
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
 please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
+
+## Client Libraries
+
+For Java-based applications, the following frameworks may be used to integrate your application with CAS acting as a SAML2 identity provider:
+
+- [Spring Security SAML](http://projects.spring.io/spring-security-saml/)
+- [Pac4j](http://www.pac4j.org/docs/clients/saml.html)
 
 ## Troubleshooting
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.ws.idp.web;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * This is {@link WSFederationValidateRequestController}.
@@ -72,7 +71,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 break;
             default:
                 throw new UnauthorizedAuthenticationException("The authentication request is not recognized",
-                        Collections.emptyMap());
+                        new HashMap<>(0));
         }
     }
 
@@ -110,7 +109,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
             final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
             authenticationRedirectStrategy.redirect(request, response, initialUrl);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

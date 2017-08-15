@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.web.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,9 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
-                                                      final SamlRegisteredServiceCachingMetadataResolver resolver) {
+                                                      final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                      final UrlValidator urlValidator) {
+        super(urlValidator);
         this.servicesManager = servicesManager;
         this.samlRegisteredServiceCachingMetadataResolver = resolver;
     }

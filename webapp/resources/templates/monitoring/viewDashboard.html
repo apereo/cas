@@ -10,7 +10,7 @@
 
     <div class="viewDashboard">
 
-        <div class="app-launcher">
+        <div class="app-launcher clearfix">
             <h1 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h1>
 
             <div class="alert alert-warning" th:if="${!dashboardEndpointsEnabled}">
@@ -19,7 +19,6 @@
                     Revisit the CAS configuration/documentation and explicitly enable access for desired endpoints and knobs.
                 </p>
             </div>
-
             <ul>
                 <li th:if="${healthcheckEndpointEnabled}">
                     <a th:href="@{/status}" class="casTooltip">Status
@@ -130,7 +129,7 @@
                 </li>
             </ul>
         </div>
-        
+
         <div class="server-functions" th:if="${restartEndpointEnabled or shutdownEndpointEnabled}">
             <h2 th:inline="text"><i class="fa fa-server"></i>[[#{cas.dashboard.section.server.functions.title}]]</h2>
             <ul>
@@ -182,7 +181,6 @@
             });
         </script>
     </div>
-
 </div>
 </body>
 </html>
