@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is {@link IgniteProperties}.
@@ -38,7 +40,7 @@ public class IgniteProperties implements Serializable {
      * <li>Both port1 and port2 should be greater than 0.</li>
      * </ul>
      */
-    private String igniteAddresses = "localhost:47500";
+    private List<String> igniteAddress = Arrays.asList("localhost:47500");
 
     /**
      * Settings related to tickets cache.
@@ -127,6 +129,12 @@ public class IgniteProperties implements Serializable {
     private int threadPriority = 10;
 
     /**
+     * Start in client mode.
+     * If true the local node is started as a client.
+     */
+    private boolean clientMode;
+
+    /**
      * Sets force server mode flag.
      * If true {@code TcpDiscoverySpi} is started in server mode regardless of {@code IgniteConfiguration.isClientMode()}.
      */
@@ -202,6 +210,14 @@ public class IgniteProperties implements Serializable {
         this.forceServerMode = forceServerMode;
     }
 
+    public boolean isClientMode() {
+        return clientMode;
+    }
+
+    public void setClientMode(final boolean clientMode) {
+        this.clientMode = clientMode;
+    }
+
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
@@ -274,12 +290,12 @@ public class IgniteProperties implements Serializable {
         this.trustStorePassword = trustStorePassword;
     }
 
-    public String getIgniteAddresses() {
-        return igniteAddresses;
+    public List<String> getIgniteAddress() {
+        return igniteAddress;
     }
 
-    public void setIgniteAddresses(final String igniteAddresses) {
-        this.igniteAddresses = igniteAddresses;
+    public void setIgniteAddress(final List<String> igniteAddress) {
+        this.igniteAddress = igniteAddress;
     }
 
     public TicketsCache getTicketsCache() {
