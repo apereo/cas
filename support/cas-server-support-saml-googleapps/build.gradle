@@ -8,6 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication")
 
     testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
