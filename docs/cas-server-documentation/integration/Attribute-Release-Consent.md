@@ -19,6 +19,40 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
+## Attribute Selection
+
+By default, all attributes that are marked for release do qualify for consent. To control this process, you may define a consent policy that indicates a criteria by which attribute selection for consent is carried out.
+
+The policy assigned to each service includes the following features:
+
+| Field                      | Description
+|----------------------------|---------------------------------------------------------------------------------------
+| `excludedAttributes`       | Exclude the indicated attributes from consent.
+| `includeOnlyAttributes`    | Force-include the indicated attributes in consent, provided attributes are resolved.
+| `enabled`                  | Control whether consent is active/inactive for this service. Default is `true`.
+
+A sample definition follows:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "consentPolicy":
+    {
+      "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+      "excludedAttributes":["java.util.LinkedHashSet", ["test"]],
+      "includeOnlyAttributes":["java.util.LinkedHashSet", ["test"]],
+      "enabled": true
+    }
+  }
+}
+```
+
 ## Storage
 
 User consent decisions may be stored and remembered using one of the following options.
@@ -115,23 +149,3 @@ public class MyConfiguration {
 
 [See this guide](../installation/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
-## Disable Consent Per Service
-
-Consent by default will be enabled for all services. If you wish to conditionally bypass and ignore consent on a per-service basis,
-you may decorate the service definition as such:
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.+",
-  "name" : "sample service",
-  "id" : 100,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "attributeConsentEnabled" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "false" ] ]
-    }
-  }
-}
-```
