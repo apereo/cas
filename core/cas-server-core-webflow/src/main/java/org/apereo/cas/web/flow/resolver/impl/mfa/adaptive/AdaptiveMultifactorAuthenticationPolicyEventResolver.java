@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.resolver.impl;
+package org.apereo.cas.web.flow.resolver.impl.mfa.adaptive;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -31,9 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link AdaptiveMultifactorAuthenticationPolicyEventResolver},
- * which handles the initial authentication attempt and calls upon a number of
- * embedded resolvers to produce the next event in the authentication flow.
+ * This is {@link AdaptiveMultifactorAuthenticationPolicyEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -42,18 +40,21 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
     private static final Logger LOGGER = LoggerFactory.getLogger(AdaptiveMultifactorAuthenticationPolicyEventResolver.class);
     
     private final GeoLocationService geoLocationService;
-    private final Map multifactorMap;
+    private final Map<String, String> multifactorMap;
 
     public AdaptiveMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                 final CentralAuthenticationService centralAuthenticationService,
-                                                                final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                                final ServicesManager servicesManager, 
+                                                                final TicketRegistrySupport ticketRegistrySupport,
                                                                 final CookieGenerator warnCookieGenerator,
                                                                 final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                 final MultifactorAuthenticationProviderSelector selector,
-                                                                final CasConfigurationProperties casProperties, final GeoLocationService geoLocationService) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+                                                                final CasConfigurationProperties casProperties, 
+                                                                final GeoLocationService geoLocationService) {
+        super(authenticationSystemSupport, centralAuthenticationService, 
+                servicesManager, ticketRegistrySupport, warnCookieGenerator,
                 authenticationSelectionStrategies, selector);
-        multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
+        this.multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
         this.geoLocationService = geoLocationService;
     }
 
@@ -67,7 +68,6 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             return null;
         }
         
-
         if (multifactorMap == null || multifactorMap.isEmpty()) {
             LOGGER.debug("Adaptive authentication is not configured to require multifactor authentication");
             return null;
@@ -86,7 +86,6 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             return providerFound;
         }
         
-        
         return null;
     }
 
@@ -99,7 +98,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         final String agent = WebUtils.getHttpServletRequestUserAgent();
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        final Set<Map.Entry> entries = multifactorMap.entrySet();
+        final Set<Map.Entry<String, String>> entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
             final String mfaMethod = entry.getKey().toString();
             final String pattern = entry.getValue().toString();
@@ -165,7 +164,8 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         return null;
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+    @Audit(action = "AUTHENTICATION_EVENT", 
+            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
