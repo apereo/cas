@@ -1214,6 +1214,16 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+Adaptive authentication can also react to specific times in order to trigger multifactor authentication.
+
+```properties
+# cas.authn.adaptive.requireTimedMultifactor[0].providerId=mfa-duo
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=20
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrBeforeHour=7
+# cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday
+```
+
+
 ## Surrogate Authentication
 
 Authenticate on behalf of another user.
