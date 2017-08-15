@@ -143,9 +143,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
+                final ClientCredential clientCredential = new ClientCredential(credentials);
                 final AuthenticationResult authenticationResult =
-                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, new ClientCredential(credentials));
-
+                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
@@ -188,7 +188,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         // save parameters in web session
         final WebApplicationService service = WebUtils.getService(context);
-        LOGGER.debug("save service: [{}]", service);
+        LOGGER.debug("Save service: [{}]", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         saveRequestParameter(request, session, this.themeParamName);
         saveRequestParameter(request, session, this.localParamName);
