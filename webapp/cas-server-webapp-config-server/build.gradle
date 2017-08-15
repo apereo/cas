@@ -28,6 +28,6 @@ bootRepackage {
 dependencies {
     providedRuntime libraries.springboottomcat
     runtimeOnly libraries.springsecuritywebconfig
-    compile libraries.springcloudconfigserver
-    compile project(":core:cas-server-core-util")
+    implementation libraries.springcloudconfigserver
+    implementation project(":core:cas-server-core-util")
 }
