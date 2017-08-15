@@ -60,12 +60,13 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
                 this.authentication.process(spnegoCredential.getInitToken());
                 
                 principal = this.authentication.getPrincipal();
-                LOGGER.debug("Authenticated SPNEGO principal [{}]", principal.getName());
+                LOGGER.debug("Authenticated SPNEGO principal [{}]", principal != null ? principal.getName() : null);
 
                 LOGGER.debug("Retrieving the next token for authentication");
                 nextToken = this.authentication.getNextToken();
             }
         } catch (final jcifs.spnego.AuthenticationException e) {
+            LOGGER.debug("Processing SPNEGO authentication failed with exception", e);
             throw new FailedLoginException(e.getMessage());
         }
 
