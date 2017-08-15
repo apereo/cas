@@ -42,8 +42,7 @@ A sample definition follows:
   "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
-    "consentPolicy":
-    {
+    "consentPolicy": {
       "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
       "excludedAttributes":["java.util.LinkedHashSet", ["test"]],
       "includeOnlyAttributes":["java.util.LinkedHashSet", ["test"]],
