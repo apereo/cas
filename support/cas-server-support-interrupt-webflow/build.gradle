@@ -1,7 +1,8 @@
 description = "Apereo CAS Notification/Interrupt Webflow"
 dependencies {
-    compile project(":support:cas-server-support-interrupt-core")
-    compile project(":core:cas-server-core-webflow")
+    implementation project(":support:cas-server-support-interrupt-core")
+    implementation project(":support:cas-server-support-interrupt-api")
+    implementation project(":core:cas-server-core-webflow")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

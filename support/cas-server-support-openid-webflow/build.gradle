@@ -1,6 +1,6 @@
 
 description = "Apereo CAS OpenID Webflow Support"
 dependencies {
-    compile project(":core:cas-server-core-webflow")
-    compile project(":support:cas-server-support-openid")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":support:cas-server-support-openid")
 }

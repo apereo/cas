@@ -1,11 +1,11 @@
 description = "Apereo CAS Surrogate Authentication JDBC Support"
 dependencies {
-    compile project(":support:cas-server-support-surrogate-authentication")
+    implementation project(":support:cas-server-support-surrogate-authentication")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     provided project(":core:cas-server-core-authentication")
     provided project(":core:cas-server-core-webflow")
     provided project(":core:cas-server-core-util")
     provided project(":core:cas-server-core-services")
-    compile project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-jpa-util")
     
 }

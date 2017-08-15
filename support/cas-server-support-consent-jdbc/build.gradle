@@ -1,10 +1,11 @@
 description = "Apereo CAS Consent JDBC Support"
 dependencies {
-    compile project(":core:cas-server-core-web")
-    compile project(":support:cas-server-support-consent-api")
-    compile project(":support:cas-server-support-consent-core")
-    compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":support:cas-server-support-consent-api")
+    implementation project(":support:cas-server-support-consent-core")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-util")
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(":core:cas-server-core-services")

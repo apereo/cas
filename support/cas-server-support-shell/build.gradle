@@ -7,16 +7,16 @@ mainClassName = MAIN_CLASS
 description = "Apereo CAS Shell Support via Spring"
 
 dependencies {
-    compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-services-api")
-    compile project(":api:cas-server-core-api-services")
-    compile project(":support:cas-server-support-oauth-services")
-    compile project(":support:cas-server-support-oidc-services")
-    compile project(":support:cas-server-support-saml-idp-core")
-    compile project(":support:cas-server-support-ws-idp-api")
-    compile project(":core:cas-server-core-configuration-metadata-repository")
-    compile libraries.springbootconfigmetadata
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":api:cas-server-core-api-services")
+    implementation project(":support:cas-server-support-oauth-services")
+    implementation project(":support:cas-server-support-oidc-services")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":support:cas-server-support-ws-idp-api")
+    implementation project(":core:cas-server-core-configuration-metadata-repository")
+    implementation libraries.springbootconfigmetadata
 }
 
 springBoot {

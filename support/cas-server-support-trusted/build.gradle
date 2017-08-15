@@ -1,9 +1,9 @@
 description = "Apereo CAS Trusted User Support"
 dependencies {
 
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-authentication")
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")

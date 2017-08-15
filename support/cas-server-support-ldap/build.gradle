@@ -1,9 +1,9 @@
 description = "Apereo CAS LDAP Support"
 dependencies {
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":support:cas-server-support-ldap-core")
-    compile project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":support:cas-server-support-ldap-core")
+    implementation project(":core:cas-server-core-configuration")
     
     implementation libraries.pac4j
     testImplementation project(":core:cas-server-core-services")

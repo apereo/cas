@@ -1,11 +1,11 @@
 description = "Apereo CAS Person Directory & Attribute Resolution Support"
 dependencies {
-    compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-web")
-    compile project(":support:cas-server-support-ldap-core")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":support:cas-server-support-ldap-core")
     implementation libraries.groovy
     implementation libraries.caffein
 }

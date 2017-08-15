@@ -3,7 +3,7 @@ dependencies {
     implementation libraries.mongo
     implementation libraries.caffein
 
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication")
 }
