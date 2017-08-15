@@ -43,9 +43,9 @@ install:
 - ./travis/install.sh
 script:
 - chmod -R 777 ./travis/script.sh
-- travis_wait ./travis/script.sh
+- ./travis/script.sh
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
 - chmod -R 777 ./travis/deploy-to-sonatype.sh
-- travis_wait ./travis/deploy-to-sonatype.sh
+- ./travis/deploy-to-sonatype.sh
