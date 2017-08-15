@@ -17,5 +17,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-cookie")
 }
