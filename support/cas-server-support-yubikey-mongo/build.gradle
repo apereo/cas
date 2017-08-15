@@ -3,9 +3,11 @@ description = "Apereo CAS YubiKey MongoDb Support"
 dependencies {
     implementation libraries.mongo
     implementation libraries.yubicoapi
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-util")
-    compile project(":support:cas-server-support-yubikey")
-    compile project(":support:cas-server-support-mongo-core")
+
+    implementation project(":support:cas-server-support-yubikey-core")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":support:cas-server-support-yubikey")
+    implementation project(":support:cas-server-support-mongo-core")
 }
