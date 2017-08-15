@@ -1,8 +1,8 @@
 
 description = "Apereo CAS Events Consumer MongoDb"
 dependencies {
-    compile project(":core:cas-server-core-events")
-    compile project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-events")
+    implementation project(":core:cas-server-core-util")
     implementation libraries.mongo
     
 

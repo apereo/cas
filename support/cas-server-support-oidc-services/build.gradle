@@ -1,6 +1,8 @@
 description = "Apereo CAS Server OpenID Connect Support Services"
 dependencies {
-    compile project(":support:cas-server-support-oauth-services")
+    implementation project(":support:cas-server-support-oauth-services")
+    implementation project(":core:cas-server-core-services-api")
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":support:cas-server-support-json-service-registry")
 }
