@@ -9,11 +9,15 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import javax.persistence.PostLoad;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -25,18 +29,32 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
+public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy, Serializable {
     private static final long serialVersionUID = 5325460875620586503L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredServiceAttributeReleasePolicy.class);
 
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
     private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+    private RegisteredServiceConsentPolicy consentPolicy = new DefaultRegisteredServiceConsentPolicy();
 
     private boolean authorizedToReleaseCredentialPassword;
     private boolean authorizedToReleaseProxyGrantingTicket;
     private boolean excludeDefaultAttributes;
     private String principalIdAttribute;
+
+    /**
+     * Post load, after having loaded the bean via JPA, etc.
+     */
+    @PostLoad
+    public void postLoad() {
+        if (principalAttributesRepository == null) {
+            this.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+        }
+        if (consentPolicy == null) {
+            this.consentPolicy = new DefaultRegisteredServiceConsentPolicy();
+        }
+    }
 
     @Override
     public void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
@@ -63,6 +81,14 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         this.principalIdAttribute = principalIdAttribute;
     }
 
+    public RegisteredServiceConsentPolicy getConsentPolicy() {
+        return consentPolicy;
+    }
+
+    public void setConsentPolicy(final RegisteredServiceConsentPolicy consentPolicy) {
+        this.consentPolicy = consentPolicy;
+    }
+
     @Override
     public boolean isAuthorizedToReleaseCredentialPassword() {
         return this.authorizedToReleaseCredentialPassword;
@@ -87,6 +113,35 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     public void setExcludeDefaultAttributes(final boolean excludeDefaultAttributes) {
         this.excludeDefaultAttributes = excludeDefaultAttributes;
+    }
+
+    @Override
+    public Map<String, Object> getConsentableAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
+        if (this.consentPolicy != null && !this.consentPolicy.isEnabled()) {
+            LOGGER.debug("Consent is disabled for service [{}]", service);
+            return new LinkedHashMap<>(0);
+        }
+
+        final Map<String, Object> attributes = getAttributes(p, selectedService, service);
+        LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
+        if (this.consentPolicy != null) {
+            LOGGER.debug("Activating consent policy [{}] for service [{}]", this.consentPolicy, service);
+            
+            consentPolicy.getExcludedAttributes().forEach(attributes::remove);
+            LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
+
+            if (consentPolicy.getIncludeOnlyAttributes() != null && !consentPolicy.getIncludeOnlyAttributes().isEmpty()) {
+                attributes.keySet().retainAll(consentPolicy.getIncludeOnlyAttributes());
+                LOGGER.debug("Consentable attributes after force-including attributes are [{}]", attributes);
+            } else {
+                LOGGER.debug("No attributes are defined per the consent policy to forcefully be included in the consentable attributes", attributes);
+            }
+        } else {
+            LOGGER.debug("No consent policy is defined for service [{}]. Using the collection of attributes released for consent", service);
+        }
+        LOGGER.debug("Finalized set of consentable attributes are [{}]", attributes);
+
+        return attributes;
     }
 
     @Override
@@ -216,6 +271,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append(getPrincipalAttributesRepository())
                 .append(isExcludeDefaultAttributes())
                 .append(getPrincipalIdAttribute())
+                .append(consentPolicy)
                 .toHashCode();
     }
 
@@ -242,6 +298,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append(getPrincipalAttributesRepository(), that.getPrincipalAttributesRepository())
                 .append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
                 .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute())
+                .append(consentPolicy, that.consentPolicy)
                 .isEquals();
     }
 
@@ -255,6 +312,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append("authorizedToReleaseProxyGrantingTicket", isAuthorizedToReleaseProxyGrantingTicket())
                 .append("excludeDefaultAttributes", isExcludeDefaultAttributes())
                 .append("principalIdAttribute", getPrincipalIdAttribute())
+                .append("consentPolicy", consentPolicy)
                 .toString();
     }
 }
