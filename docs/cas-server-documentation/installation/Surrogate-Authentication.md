@@ -15,7 +15,7 @@ Surrogate authentication is enabled by including the following dependencies in t
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-surrogate-authentication</artifactId>
+    <artifactId>cas-server-support-surrogate-webflow</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
