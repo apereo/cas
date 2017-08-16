@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -147,16 +148,20 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
-                .filter(s -> s.contains(":"))
+                .filter(getSanitizingAttributeNamePredicate())
                 .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
             LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
-            attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
+            attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
                 LOGGER.debug("Sanitized attribute name to be [{}]", p.getKey());
                 attributes.put(p.getKey(), p.getValue());
             });
         }
+    }
+
+    private static Predicate<String> getSanitizingAttributeNamePredicate() {
+        return s -> s.contains(":") || s.contains("@");
     }
 }
