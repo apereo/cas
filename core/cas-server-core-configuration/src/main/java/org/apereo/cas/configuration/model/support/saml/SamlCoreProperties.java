@@ -16,6 +16,11 @@ public class SamlCoreProperties implements Serializable {
     private int skewAllowance = 5;
 
     /**
+     * Issue length that controls the validity period of the assertion.
+     */
+    private int issueLength = 30;
+
+    /**
      * Attribute namespace to use when generating SAML1 responses.
      */
     private String attributeNamespace = "http://www.ja-sig.org/products/cas/";
@@ -65,6 +70,14 @@ public class SamlCoreProperties implements Serializable {
 
     public void setSkewAllowance(final int skewAllowance) {
         this.skewAllowance = skewAllowance;
+    }
+
+    public int getIssueLength() {
+        return issueLength;
+    }
+
+    public void setIssueLength(final int issueLength) {
+        this.issueLength = issueLength;
     }
 
     public boolean isTicketidSaml2() {
