@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,6 +15,8 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class SimpleSurrogateAuthenticationService implements SurrogateAuthenticationService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSurrogateAuthenticationService.class);
+    
     private final Map<String, Set> eligibleAccounts;
 
     /**
@@ -28,8 +32,10 @@ public class SimpleSurrogateAuthenticationService implements SurrogateAuthentica
     public boolean canAuthenticateAs(final String surrogate, final Principal principal) {
         if (this.eligibleAccounts.containsKey(principal.getId())) {
             final Set surrogates = this.eligibleAccounts.get(principal.getId());
+            LOGGER.debug("Surrogate accounts authorized for [{}] are [{}]", principal.getId(), surrogates);
             return surrogates.contains(surrogate);
         }
+        LOGGER.warn("[{}] is not eligible to authenticate as [{}]", principal.getId(), surrogate);
         return false;
     }
 
