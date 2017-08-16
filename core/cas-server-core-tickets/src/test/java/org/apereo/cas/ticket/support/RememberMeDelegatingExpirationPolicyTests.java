@@ -28,18 +28,22 @@ import static org.junit.Assert.*;
 public class RememberMeDelegatingExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    /** Factory to create the principal type. **/
+    /**
+     * Factory to create the principal type.
+     **/
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     private RememberMeDelegatingExpirationPolicy p;
 
     @Before
     public void setUp() throws Exception {
-        this.p = new RememberMeDelegatingExpirationPolicy();
-        this.p.setRememberMeExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000));
-        this.p.setSessionExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
+        final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
+        this.p = new RememberMeDelegatingExpirationPolicy(rememberMe);
+        this.p.addPolicy(HardTimeoutExpirationPolicy.class.getSimpleName(), rememberMe);
+        this.p.addPolicy(ExpirationPolicy.class.getSimpleName(),
+                new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
     }
 
     @Test
@@ -66,9 +70,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, p);
-
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
-
         assertEquals(p, policyRead);
     }
 }
