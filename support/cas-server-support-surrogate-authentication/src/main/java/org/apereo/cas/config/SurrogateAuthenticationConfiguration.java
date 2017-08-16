@@ -1,9 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
-import org.apereo.cas.authentication.SurrogateAuthenticationAspect;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
-import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.audit.SurrogatePrincipalIdProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -13,12 +14,6 @@ import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServ
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
-import org.apereo.cas.web.flow.SurrogateSelectionAction;
-import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,53 +41,12 @@ import java.util.Set;
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAspectJAutoProxy
 public class SurrogateAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    @Autowired
-    private FlowBuilderServices flowBuilderServices;
-
-    @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
-    @Bean
-    public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, selectSurrogateAction());
-    }
-
-    @ConditionalOnMissingBean(name = "selectSurrogateAction")
-    @Bean
-    public Action selectSurrogateAction() {
-        return new SurrogateSelectionAction(casProperties.getAuthn().getSurrogate().getSeparator());
-    }
-
-    @Bean
-    public Action authenticationViaFormAction() {
-        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy,
-                casProperties.getAuthn().getSurrogate().getSeparator(),
-                surrogateAuthenticationService());
-    }
-
+    
     @RefreshScope
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
     @Bean
@@ -116,12 +66,7 @@ public class SurrogateAuthenticationConfiguration {
             throw new BeanCreationException(e.getMessage(), e);
         }
     }
-
-    @Bean
-    public SurrogateAuthenticationAspect surrogateAuthenticationAspect() {
-        return new SurrogateAuthenticationAspect(new DefaultPrincipalFactory(), surrogateAuthenticationService());
-    }
-
+    
     @Autowired
     @RefreshScope
     @Bean
@@ -136,7 +81,18 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @Bean
+    public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
+        return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService());
+    }
+
+    @Bean
     public AuditPrincipalIdProvider principalIdProvider() {
         return new SurrogatePrincipalIdProvider();
+    }
+
+    @ConditionalOnMissingBean(name = "surrogateAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationPostProcessor(surrogateAuthenticationPostProcessor());
     }
 }
