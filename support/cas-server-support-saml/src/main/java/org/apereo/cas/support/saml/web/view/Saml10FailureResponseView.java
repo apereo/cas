@@ -26,9 +26,10 @@ public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
             final Saml10ObjectBuilder samlObjectBuilder,
             final ArgumentExtractor samlArgumentExtractor, 
             final String encoding, 
-            final int skewAllowance) {
+            final int skewAllowance,
+            final int issueLength) {
         super(false, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, 
-                samlObjectBuilder, samlArgumentExtractor, encoding, skewAllowance);
+                samlObjectBuilder, samlArgumentExtractor, encoding, skewAllowance, issueLength);
     }
 
     @Override
