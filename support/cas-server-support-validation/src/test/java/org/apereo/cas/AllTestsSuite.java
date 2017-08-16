@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.ProxyControllerTests;
+import org.apereo.cas.web.view.Cas10ProxyServiceValidateControllerTests;
 import org.apereo.cas.web.view.Cas10ResponseViewTests;
 import org.apereo.cas.web.view.Cas20ResponseViewTests;
 import org.apereo.cas.web.view.Cas30ResponseViewTests;
@@ -16,7 +17,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({Cas10ResponseViewTests.class, Cas20ResponseViewTests.class, Cas30ResponseViewTests.class,
-                        ProxyControllerTests.class})
+        ProxyControllerTests.class, Cas10ProxyServiceValidateControllerTests.class})
 public class AllTestsSuite {
 }
 
