@@ -39,6 +39,7 @@
     "preact": "^8.2.1",
     "preact-compat": "^3.17.0",
     "preact-render-to-string": "^3.6.3",
+    "prop-types": "^15.5.7",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "victory": "^0.21.4",
