@@ -72,6 +72,24 @@ JDBC support for surrogate authentication is enabled by including the following 
 Aside from the usual database settings, this mode requires the specification of two SQL queries; one that determines eligibility and one that is able to retrieve
 the list of accounts that can be impersonated for a given admin user. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-surrogate-accounts).
 
+#### REST
+
+REST support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-surrogate-authentication-rest</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+| Method       | Description                                                   | Parameter(s)             | Response
+|--------------|---------------------------------------------------------------|--------------------------------------
+| `GET`        | Whether principal can authenricate as a surrogate account.    | `surrogate`, `principal` | `202`
+| `GET`        | List of accounts principal is eligible to impersonate.        | `principal` | JSON list of usernames.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-surrogate-accounts).
 
 ### Surrogate Account Selection
 
