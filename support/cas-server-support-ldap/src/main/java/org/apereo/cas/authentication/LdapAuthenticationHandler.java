@@ -89,7 +89,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param order            the order
      * @param authenticator    Ldaptive authenticator component.
      */
-    public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                     final PrincipalFactory principalFactory,
                                      final Integer order,
                                      final Authenticator authenticator) {
         super(name, servicesManager, principalFactory, order);
@@ -210,7 +211,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                         key, ldapEntry.getDn());
             }
         });
-        final String dnAttribute = getName().concat(".").concat(username);
+        final String dnAttribute = getName().concat(".").concat(id);
         LOGGER.debug("Recording principal DN attribute as [{}]", dnAttribute);
 
         attributeMap.put(dnAttribute, ldapEntry.getDn());
