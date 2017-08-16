@@ -124,7 +124,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public Conditions newConditions(final ZonedDateTime issuedAt, final String audienceUri, final long issueLength) {
         final Conditions conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(DateTimeUtils.dateTimeOf(issuedAt));
-        conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(issuedAt.plus(issueLength, ChronoUnit.MILLIS)));
+        conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(issuedAt.plus(issueLength, ChronoUnit.SECONDS)));
         final AudienceRestrictionCondition audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
         final Audience audience = newSamlObject(Audience.class);
         audience.setUri(audienceUri);

@@ -38,6 +38,11 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      * Skew time.
      **/
     protected final int skewAllowance;
+
+    /**
+     * Assertion validity period length.
+     **/
+    protected final int issueLength;
     
     private final ArgumentExtractor samlArgumentExtractor;
 
@@ -69,6 +74,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      *                                       be used in situations where the NTP server is unresponsive to
      *                                       sync time on the client, or the client is simply unable
      *                                       to adjust their server time configuration.
+     * @param issueLength                    Sets the length of time in seconds between the {@code NotBefore}
+     *                                       and {@code NotOnOrAfter} attributes in the SAML assertion. Default 30s.
      */
     public AbstractSaml10ResponseView(final boolean successResponse,
                                       final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -77,11 +84,13 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                                       final Saml10ObjectBuilder samlObjectBuilder,
                                       final ArgumentExtractor samlArgumentExtractor,
                                       final String encoding,
-                                      final int skewAllowance) {
+                                      final int skewAllowance,
+                                      final int issueLength) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
         this.samlObjectBuilder = samlObjectBuilder;
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.encoding = encoding;
+        this.issueLength = issueLength;
 
         LOGGER.debug("Using [{}] seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;

@@ -10,6 +10,8 @@ package org.apereo.cas.configuration.model.support.saml;
 public class SamlCore {
     private int skewAllowance = 5;
 
+    private int issueLength = 30;
+
     private String attributeNamespace = "http://www.ja-sig.org/products/cas/";
 
     private String issuer = "localhost";
@@ -48,6 +50,14 @@ public class SamlCore {
 
     public void setSkewAllowance(final int skewAllowance) {
         this.skewAllowance = skewAllowance;
+    }
+
+    public int getIssueLength() {
+        return issueLength;
+    }
+
+    public void setIssueLength(final int issueLength) {
+        this.issueLength = issueLength;
     }
 
     public boolean isTicketidSaml2() {
