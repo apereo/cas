@@ -26,8 +26,7 @@ class StatisticsApp extends React.Component {
     this.refreshData = this.refreshData.bind(this);
   }
 
-  refreshData(e) {
-    this.setState({ refreshing: true });
+  componentDidMount() {
     this.getData();
   }
 
@@ -37,14 +36,16 @@ class StatisticsApp extends React.Component {
     axios.get(`/cas/status/stats/getAuthnAudit/summary?start=${startTime}&range=${this.state.range}&scale=${this.state.scale}`)
       .then((res) => {
         res.data.forEach((value) => {
-          value.time = moment(value.time).utc().format('h:mm');
+          value.time = moment(value.time).utc().format('h:mm'); // eslint-disable-line no-param-reassign
         });
         const graphData = res.data;
         this.setState({ graphData, refreshing: false });
       });
   }
 
-  componentDidMount() {
+  refreshData(event) {
+    event.preventDefault();
+    this.setState({ refreshing: true });
     this.getData();
   }
 
@@ -58,9 +59,12 @@ class StatisticsApp extends React.Component {
     let button = null;
 
     if (this.state.graphData.length < 2) {
-      button = (<button className="btn btn-primary btn-sm" disabled={this.state.refreshing} onClick={this.refreshData}><i
-        className={refreshIcon}
-      /> Refresh</button>);
+      button = (
+        <button
+          className="btn btn-primary btn-sm"
+          disabled={this.state.refreshing}
+          onClick={this.refreshData}
+        ><i className={refreshIcon} /> Refresh</button>);
     } else {
       button = (<button
         style={refreshButtonStyle}
