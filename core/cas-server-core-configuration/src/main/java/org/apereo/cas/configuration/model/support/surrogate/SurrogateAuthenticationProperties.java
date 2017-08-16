@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.surrogate;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import java.io.Serializable;
@@ -38,9 +39,22 @@ public class SurrogateAuthenticationProperties implements Serializable {
     private Jdbc jdbc = new Jdbc();
 
     /**
+     * Locate surrogate accounts via a REST resource.
+     */
+    private Rest rest = new Rest();
+    
+    /**
      * Settings related to tickets issued for surrogate session, their expiration policy, etc.
      */
     private Tgt tgt = new Tgt();
+
+    public Rest getRest() {
+        return rest;
+    }
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
+    }
 
     public Tgt getTgt() {
         return tgt;
@@ -113,6 +127,10 @@ public class SurrogateAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = 3599367681439517829L;
     }
 
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = 8152273816132989085L;
+    }
+    
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -3848837302921751926L;
         /**

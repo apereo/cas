@@ -1223,7 +1223,6 @@ Adaptive authentication can also react to specific times in order to trigger mul
 # cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday
 ```
 
-
 ## Surrogate Authentication
 
 Authenticate on behalf of another user.
@@ -1318,6 +1317,15 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 
 # cas.authn.surrogate.jdbc.surrogateSearchQuery=SELECT COUNT(*) FROM surrogate WHERE username=?
 # cas.authn.surrogate.jdbc.surrogateAccountQuery=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
+```
+
+### REST Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.rest.url=https://somewhere.interrupt.org
+# cas.authn.surrogate.rest.method=GET|POST
+# cas.authn.surrogate.rest.basicAuthUsername=
+# cas.authn.surrogate.rest.basicAuthPassword=
 ```
 
 ## Risk-based Authentication
