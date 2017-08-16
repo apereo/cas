@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
-import org.apereo.cas.authentication.audit.SurrogatePrincipalIdProvider;
+import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -14,6 +14,9 @@ import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServ
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +49,15 @@ public class SurrogateAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+    
+    @Bean
+    public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") 
+                                                           final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        return new SurrogateSessionExpirationPolicy(
+                new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds()), 
+        ticketGrantingTicketExpirationPolicy);    
+    }
     
     @RefreshScope
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
@@ -87,7 +99,7 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     public AuditPrincipalIdProvider principalIdProvider() {
-        return new SurrogatePrincipalIdProvider();
+        return new SurrogateAuditPrincipalIdProvider();
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventExecutionPlanConfigurer")

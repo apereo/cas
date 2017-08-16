@@ -37,6 +37,19 @@ public class SurrogateAuthenticationProperties implements Serializable {
      */
     private Jdbc jdbc = new Jdbc();
 
+    /**
+     * Settings related to tickets issued for surrogate session, their expiration policy, etc.
+     */
+    private Tgt tgt = new Tgt();
+
+    public Tgt getTgt() {
+        return tgt;
+    }
+
+    public void setTgt(final Tgt tgt) {
+        this.tgt = tgt;
+    }
+
     public Jdbc getJdbc() {
         return jdbc;
     }
@@ -169,6 +182,23 @@ public class SurrogateAuthenticationProperties implements Serializable {
         }
     }
 
+    public static class Tgt implements Serializable {
+        private static final long serialVersionUID = 2077366413438267330L;
+
+        /**
+         * Timeout in seconds to kill the surrogate session and consider tickets expired.
+         */
+        private long timeToKillInSeconds;
+
+        public long getTimeToKillInSeconds() {
+            return timeToKillInSeconds;
+        }
+
+        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
+            this.timeToKillInSeconds = timeToKillInSeconds;
+        }
+    }
+    
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 8970195444880123796L;
 

@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.persistence.NoResultException;
 import javax.sql.DataSource;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,7 +70,9 @@ public class SurrogateJdbcAuthenticationService implements SurrogateAuthenticati
     /**
      * The type Surrogate account.
      */
-    public static class SurrogateAccount {
+    public static class SurrogateAccount implements Serializable {
+        private static final long serialVersionUID = 7734857552147825153L;
+        
         private String surrogateAccount;
 
         public String getSurrogateAccount() {

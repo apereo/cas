@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**

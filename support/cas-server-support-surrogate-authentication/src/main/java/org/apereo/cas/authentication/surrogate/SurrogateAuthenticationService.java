@@ -12,7 +12,17 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface SurrogateAuthenticationService {
+    /**
+     * Surrogate username attribute in the authentication payload.
+     */
+    String AUTHENTICATION_ATTR_SURROGATE_USER = "surrogateUser";
+    /**
+     * Original credential attribute in the authentication payload.
+     */
+    String AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL = "surrogateCredential";
+    
     /**
      * Checks whether a surrogate can authenticate as a particular user.
      *
@@ -20,7 +30,9 @@ public interface SurrogateAuthenticationService {
      * @param principal the principal
      * @return true if the given surrogate can authenticate as the user
      */
-    boolean canAuthenticateAs(String surrogate, Principal principal);
+    default boolean canAuthenticateAs(final String surrogate, final Principal principal) {
+        return false;
+    }
 
     /**
      * Gets a collection of account names a surrogate can authenticate as.
