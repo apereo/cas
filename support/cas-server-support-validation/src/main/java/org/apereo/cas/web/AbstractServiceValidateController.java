@@ -62,7 +62,7 @@ import java.util.Optional;
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceValidateController.class);
 
-    private final ValidationSpecification validationSpecification;
+    private ValidationSpecification validationSpecification;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -440,5 +440,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     public void setProxyHandler(final ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
+    }
+
+    public void setValidationSpecification(final ValidationSpecification validationSpecification) {
+        this.validationSpecification = validationSpecification;
     }
 }

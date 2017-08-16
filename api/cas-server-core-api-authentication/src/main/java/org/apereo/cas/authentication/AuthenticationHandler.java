@@ -75,5 +75,7 @@ public interface AuthenticationHandler extends Ordered {
      *
      * @return Unique name within a Spring context.
      */
-    String getName();
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }
