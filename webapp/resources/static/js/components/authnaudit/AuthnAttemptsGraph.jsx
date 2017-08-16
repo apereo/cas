@@ -1,53 +1,53 @@
-import React from 'react'
-import { VictoryChart, VictoryVoronoiContainer, VictoryLine } from 'victory'
-const { array } = React.PropTypes
+import React from 'react';
+import { VictoryChart, VictoryVoronoiContainer, VictoryLine } from 'victory';
 
-const AuthnAttemptsGraph = React.createClass({
-  propTypes: {
-    graphData: array
-  },
+import PropTypes from 'prop-types';
 
-  render: function () {
-    if (this.props.graphData.length < 2) {
-      return (
-        <div>
-          <h4>No data found</h4>
-        </div>
-      )
-    }
-
+const AuthnAttemptsGraph = (props) => {
+  if (props.graphData.length < 2) {
     return (
       <div>
-        <VictoryChart
-          width={950} height={300}
-          padding={50}
-          containerComponent={<VictoryVoronoiContainer />}
-          domainPadding={{y: 10}}
-        >
-          <VictoryLine
-            data={this.props.graphData}
-            x='time'
-            y='failures'
-            style={{
-              data: {stroke: 'tomato', opacity: 1.0},
-              labels: {fontSize: 12},
-              parent: {border: '1px solid #ccc'}
-            }}
-          />
-          <VictoryLine
-            data={this.props.graphData}
-            x='time'
-            y='successes'
-            style={{
-              data: {stroke: 'darkgreen', opacity: 1.0},
-              labels: {fontSize: 12},
-              parent: {border: '1px solid #ccc'}
-            }}
-          />
-        </VictoryChart>
+        <h4>No data found</h4>
       </div>
-    )
+    );
   }
-})
 
-export default AuthnAttemptsGraph
+  return (
+    <div>
+      <VictoryChart
+        width={950}
+        height={300}
+        padding={50}
+        containerComponent={<VictoryVoronoiContainer />}
+        domainPadding={{ y: 10 }}
+      >
+        <VictoryLine
+          data={props.graphData}
+          x="time"
+          y="failures"
+          style={{
+            data: { stroke: 'tomato', opacity: 1.0 },
+            labels: { fontSize: 12 },
+            parent: { border: '1px solid #ccc' },
+          }}
+        />
+        <VictoryLine
+          data={props.graphData}
+          x="time"
+          y="successes"
+          style={{
+            data: { stroke: 'darkgreen', opacity: 1.0 },
+            labels: { fontSize: 12 },
+            parent: { border: '1px solid #ccc' },
+          }}
+        />
+      </VictoryChart>
+    </div>
+  );
+};
+
+AuthnAttemptsGraph.propTypes = {
+  graphData: PropTypes.arrayOf.isRequired,
+};
+
+export default AuthnAttemptsGraph;
