@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
  * @since 5.1.0
  */
 public class SurrogateAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-   
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationMetaDataPopulator.class);
     

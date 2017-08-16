@@ -110,7 +110,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * Define the list of accounts that are allowed to impersonate.
          * This is done in a key-value structure where the key is the admin user
          * and the value is a comma-separated list of identifiers that can be
-         * impersonated by the adminuser.
+         * impersonated by the admin-user.
          */
         private Map<String, String> surrogates = new LinkedHashMap<>();
 
@@ -154,7 +154,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
         /**
          * A pattern that is matched against the attribute value of the admin user,
          * that allows for further authorization of the admin user and accounts qualified for impersonation.
-         * The regular expession pattern is expected to contain at least a single group whose value on a
+         * The regular expression pattern is expected to contain at least a single group whose value on a
          * successful match indicates the qualified impersonated user by admin.
          */
         private String memberAttributeValueRegex;

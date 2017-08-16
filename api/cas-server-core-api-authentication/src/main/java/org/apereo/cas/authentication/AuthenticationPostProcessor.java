@@ -2,9 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.springframework.core.Ordered;
 
-import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
-
 /**
  * This is {@link AuthenticationPostProcessor}. Authentication post processors
  * run as the very last step in CAS authentication where authentication event is internally

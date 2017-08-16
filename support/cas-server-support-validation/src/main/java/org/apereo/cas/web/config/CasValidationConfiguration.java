@@ -154,7 +154,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "v3ServiceValidateController")
     public V3ServiceValidateController v3ServiceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                                   @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+                                                                   @Qualifier("defaultAuthenticationSystemSupport") 
+                                                                   final AuthenticationSystemSupport authenticationSystemSupport) {
         return new V3ServiceValidateController(
                 cas20WithoutProxyProtocolValidationSpecification, authenticationSystemSupport,
                 servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
@@ -168,7 +169,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "v3ProxyValidateController")
     public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                               @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+                                                               @Qualifier("defaultAuthenticationSystemSupport") 
+                                                               final AuthenticationSystemSupport authenticationSystemSupport) {
 
         return new V3ProxyValidateController(
                 cas20ProtocolValidationSpecification, authenticationSystemSupport,
@@ -183,7 +185,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "proxyValidateController")
     public ProxyValidateController proxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                           @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+                                                           @Qualifier("defaultAuthenticationSystemSupport") 
+                                                           final AuthenticationSystemSupport authenticationSystemSupport) {
         return new ProxyValidateController(
                 cas20ProtocolValidationSpecification, authenticationSystemSupport,
                 servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
@@ -197,7 +200,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "legacyValidateController")
     public LegacyValidateController legacyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                             @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+                                                             @Qualifier("defaultAuthenticationSystemSupport") 
+                                                             final AuthenticationSystemSupport authenticationSystemSupport) {
         return new LegacyValidateController(
                 cas10ProtocolValidationSpecification, authenticationSystemSupport,
                 servicesManager, centralAuthenticationService, proxy10Handler, argumentExtractor,

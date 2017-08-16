@@ -49,16 +49,18 @@ public class SurrogateAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") 
                                                            final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
-        return new SurrogateSessionExpirationPolicy(
-                new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds()), 
-        ticketGrantingTicketExpirationPolicy);    
+        final HardTimeoutExpirationPolicy surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
+        final SurrogateSessionExpirationPolicy policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
+        policy.addPolicy(HardTimeoutExpirationPolicy.class.getSimpleName(), surrogatePolicy);
+        policy.addPolicy(ExpirationPolicy.class.getSimpleName(), ticketGrantingTicketExpirationPolicy);
+        return policy;
     }
-    
+
     @RefreshScope
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
     @Bean
@@ -78,7 +80,7 @@ public class SurrogateAuthenticationConfiguration {
             throw new BeanCreationException(e.getMessage(), e);
         }
     }
-    
+
     @Autowired
     @RefreshScope
     @Bean
