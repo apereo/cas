@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
@@ -65,14 +64,11 @@ public class SurrogateAuthenticationWebflowConfiguration {
         return new SurrogateSelectionAction(casProperties.getAuthn().getSurrogate().getSeparator());
     }
 
-    @Autowired
     @Bean
-    public Action authenticationViaFormAction(@Qualifier("surrogateAuthenticationService") 
-                                              final SurrogateAuthenticationService surrogateAuthenticationService) {
+    public Action authenticationViaFormAction() {
         return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy,
-                casProperties.getAuthn().getSurrogate().getSeparator(),
-                surrogateAuthenticationService);
+                casProperties.getAuthn().getSurrogate().getSeparator());
     }
 }

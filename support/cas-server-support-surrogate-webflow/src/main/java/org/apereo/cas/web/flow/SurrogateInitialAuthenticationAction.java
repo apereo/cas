@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -22,16 +21,13 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class SurrogateInitialAuthenticationAction extends InitialAuthenticationAction {
     private final String separator;
-    private final SurrogateAuthenticationService surrogateService;
 
     public SurrogateInitialAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
                                                 final CasWebflowEventResolver webflowEventResolver,
                                                 final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-                                                final String separator,
-                                                final SurrogateAuthenticationService surrogateService) {
+                                                final String separator) {
         super(delegatingWebflowEventResolver, webflowEventResolver, adaptiveAuthenticationPolicy);
         this.separator = separator;
-        this.surrogateService = surrogateService;
     }
 
     @Override

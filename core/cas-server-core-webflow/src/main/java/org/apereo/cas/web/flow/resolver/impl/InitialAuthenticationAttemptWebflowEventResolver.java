@@ -74,32 +74,19 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 }
             }
 
-            if (service != null) {
-                LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
-                final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-
-                LOGGER.debug("Locating authentication event in the request context...");
-                final Authentication authn = WebUtils.getAuthentication(context);
-                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]",
-                        registeredService, authn.getPrincipal());
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
-
-                LOGGER.debug("Attempting to resolve candidate authentication events for [{}]", service);
-                final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
-                if (!resolvedEvents.isEmpty()) {
-                    LOGGER.debug("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...",
-                            service, resolvedEvents);
-                    putResolvedEventsAsAttribute(context, resolvedEvents);
-                    final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
-                    LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
-                    if (finalResolvedEvent != null) {
-                        return CollectionUtils.wrapSet(finalResolvedEvent);
-                    }
+            final RegisteredService registeredService = determineRegisteredServiceForEvent(context, service);
+            LOGGER.debug("Attempting to resolve candidate authentication events for service [{}]", service);
+            final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
+            if (!resolvedEvents.isEmpty()) {
+                LOGGER.debug("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
+                putResolvedEventsAsAttribute(context, resolvedEvents);
+                final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
+                LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
+                if (finalResolvedEvent != null) {
+                    return CollectionUtils.wrapSet(finalResolvedEvent);
                 }
-            } else {
-                LOGGER.debug("No target service is specified in the request to determine authentication policy. "
-                        + "CAS will proceed to the build the authentication event/transaction as usual.");
             }
+
 
             final AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
             if (builder == null) {
@@ -118,6 +105,20 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         }
     }
 
+    private RegisteredService determineRegisteredServiceForEvent(final RequestContext context, final Service service) {
+        RegisteredService registeredService = null;
+        if (service != null) {
+            LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
+            registeredService = this.servicesManager.findServiceBy(service);
+
+            LOGGER.debug("Locating authentication event in the request context...");
+            final Authentication authn = WebUtils.getAuthentication(context);
+            LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
+        }
+        return registeredService;
+    }
+
     /**
      * Resolve candidate authentication events set.
      *
@@ -127,7 +128,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @return the set
      */
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service, final RegisteredService registeredService) {
-        return this.orderedResolvers.stream()
+        return this.orderedResolvers
+                .stream()
                 .map(resolver -> resolver.resolveSingle(context))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());

@@ -1,7 +1,6 @@
 description = "Apereo CAS Surrogate Authentication Support"
 dependencies {
     provided project(":core:cas-server-core-authentication")
-    provided project(":core:cas-server-core-webflow")
     provided project(":core:cas-server-core-util")
     provided project(":core:cas-server-core-services")
     provided project(":core:cas-server-core-web")
