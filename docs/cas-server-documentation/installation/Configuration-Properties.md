@@ -2490,7 +2490,8 @@ Control core SAML functionality within CAS.
 
 ```properties
 # cas.samlCore.ticketidSaml2=false
-# cas.samlCore.skewAllowance=0
+# cas.samlCore.skewAllowance=5
+# cas.samlCore.issueLength=30
 # cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
 # cas.samlCore.issuer=localhost
 # cas.samlCore.securityManager=com.sun.org.apache.xerces.internal.util.SecurityManager
