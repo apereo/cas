@@ -1,4 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SurrogateAuthenticationConfiguration,\
-org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration,\
-org.apereo.cas.config.SurrogateWebflowEventResolutionConfiguration,\
-org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration
+org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration
