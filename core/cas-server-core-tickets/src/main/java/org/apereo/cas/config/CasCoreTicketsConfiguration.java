@@ -235,13 +235,18 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ExpirationPolicy grantingTicketExpirationPolicy() {
         final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
         if (tgt.getRememberMe().isEnabled()) {
-            final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy();
-            p.setRememberMeExpirationPolicy(new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds()));
-            p.setSessionExpirationPolicy(buildTicketGrantingTicketExpirationPolicy());
-            return p;
+            return rememberMeExpirationPolicy();
         }
+        return ticketGrantingTicketExpirationPolicy();
+    }
 
-        return buildTicketGrantingTicketExpirationPolicy();
+    @Bean
+    public ExpirationPolicy rememberMeExpirationPolicy() {
+        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy();
+        p.setRememberMeExpirationPolicy(new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds()));
+        p.setSessionExpirationPolicy(ticketGrantingTicketExpirationPolicy());
+        return p;
     }
 
     @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
@@ -287,7 +292,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return NoOpCipherExecutor.getInstance();
     }
 
-    private ExpirationPolicy buildTicketGrantingTicketExpirationPolicy() {
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketExpirationPolicy")
+    @Bean
+    public ExpirationPolicy ticketGrantingTicketExpirationPolicy() {
         final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
         if (tgt.getMaxTimeToLiveInSeconds() <= 0 && tgt.getTimeToKillInSeconds() <= 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
