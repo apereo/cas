@@ -56,10 +56,11 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
                                      final ArgumentExtractor samlArgumentExtractor,
                                      final String encoding,
                                      final int skewAllowance,
+                                     final int issueLength,
                                      final String issuer,
                                      final String defaultAttributeNamespace) {
         super(true, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                samlObjectBuilder, samlArgumentExtractor, encoding, skewAllowance);
+                samlObjectBuilder, samlArgumentExtractor, encoding, skewAllowance, issueLength);
         this.issuer = issuer;
         this.rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
         this.defaultAttributeNamespace = defaultAttributeNamespace;
@@ -86,7 +87,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
                 this.samlObjectBuilder.generateSecureRandomId());
         LOGGER.debug("Built assertion for issuer [{}] dated at [{}]", this.issuer, issuedAt);
         
-        final Conditions conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.skewAllowance);
+        final Conditions conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.issueLength);
         assertion.setConditions(conditions);
         LOGGER.debug("Built assertion conditions for issuer [{}] and service [{}] ", this.issuer, service.getId());
         

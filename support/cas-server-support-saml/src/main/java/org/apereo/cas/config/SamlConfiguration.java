@@ -91,7 +91,8 @@ public class SamlConfiguration {
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
                 StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
-                casProperties.getSamlCore().getIssuer(), casProperties.getSamlCore().getAttributeNamespace());
+                casProperties.getSamlCore().getIssueLength(), casProperties.getSamlCore().getIssuer(),
+                casProperties.getSamlCore().getAttributeNamespace());
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
@@ -101,7 +102,8 @@ public class SamlConfiguration {
         return new Saml10FailureResponseView(protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
-                StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance());
+                StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
+                casProperties.getSamlCore().getIssueLength());
     }
 
 
