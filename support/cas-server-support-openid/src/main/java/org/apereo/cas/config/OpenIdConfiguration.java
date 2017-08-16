@@ -167,20 +167,15 @@ public class OpenIdConfiguration {
     @Autowired
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
-        final OpenIdValidateController c = new OpenIdValidateController(serverManager());
-        c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
-        c.setSuccessView(casOpenIdServiceSuccessView);
-        c.setFailureView(casOpenIdServiceFailureView);
-        c.setProxyHandler(proxy20Handler);
-        c.setAuthenticationSystemSupport(authenticationSystemSupport);
-        c.setServicesManager(servicesManager);
-        c.setCentralAuthenticationService(centralAuthenticationService);
-        c.setArgumentExtractor(argumentExtractor);
-        c.setMultifactorTriggerSelectionStrategy(multifactorTriggerSelectionStrategy);
-        c.setAuthenticationContextValidator(authenticationContextValidator);
-        c.setJsonView(cas3ServiceJsonView);
-        c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-
+        final OpenIdValidateController c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
+                authenticationSystemSupport, servicesManager,
+                centralAuthenticationService, proxy20Handler,
+                argumentExtractor, multifactorTriggerSelectionStrategy,
+                authenticationContextValidator, cas3ServiceJsonView,
+                casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                serverManager());
+        
         final DelegatingController controller = new DelegatingController();
         controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), c));
 
