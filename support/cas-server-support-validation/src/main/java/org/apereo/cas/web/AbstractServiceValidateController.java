@@ -438,6 +438,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
     }
 
+    public View getSuccessView() {
+        return successView;
+    }
+
+    public View getFailureView() {
+        return failureView;
+    }
+
     public void setProxyHandler(final ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
     }

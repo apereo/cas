@@ -122,20 +122,13 @@ public class SamlConfiguration {
     @Autowired
     @Bean
     public SamlValidateController samlValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
-        final SamlValidateController c = new SamlValidateController();
-        c.setValidationSpecification(cas20WithoutProxyProtocolValidationSpecification);
-        c.setSuccessView(casSamlServiceSuccessView());
-        c.setFailureView(casSamlServiceFailureView());
-        c.setProxyHandler(proxy20Handler);
-        c.setAuthenticationSystemSupport(authenticationSystemSupport);
-        c.setServicesManager(servicesManager);
-        c.setCentralAuthenticationService(centralAuthenticationService);
-        c.setArgumentExtractor(argumentExtractor);
-        c.setMultifactorTriggerSelectionStrategy(multifactorTriggerSelectionStrategy);
-        c.setAuthenticationContextValidator(authenticationContextValidator);
-        c.setJsonView(cas3ServiceJsonView);
-        c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        return c;
+        return new SamlValidateController(cas20WithoutProxyProtocolValidationSpecification,
+                authenticationSystemSupport, servicesManager,
+                centralAuthenticationService, proxy20Handler,
+                argumentExtractor, multifactorTriggerSelectionStrategy,
+                authenticationContextValidator, cas3ServiceJsonView,
+                casSamlServiceSuccessView(), casSamlServiceFailureView(),
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
     }
 
 }
