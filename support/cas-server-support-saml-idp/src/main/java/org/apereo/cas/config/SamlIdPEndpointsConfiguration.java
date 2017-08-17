@@ -16,7 +16,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileCallbackHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOProfileCallbackHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -176,8 +176,8 @@ public class SamlIdPEndpointsConfiguration {
     
     @Bean
     @RefreshScope
-    public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
-        return new SSOPostProfileCallbackHandlerController(
+    public SSOProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
+        return new SSOProfileCallbackHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,

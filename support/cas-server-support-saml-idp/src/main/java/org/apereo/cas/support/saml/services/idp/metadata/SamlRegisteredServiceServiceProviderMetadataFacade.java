@@ -225,14 +225,33 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
     }
 
-    private AssertionConsumerService getAssertionConsumerServiceForPaosBinding() {
+    /**
+     * Gets assertion consumer service for paos binding.
+     *
+     * @return the assertion consumer service for paos binding
+     */
+    public AssertionConsumerService getAssertionConsumerServiceForPaosBinding() {
         return getAssertionConsumerService(SAMLConstants.SAML2_PAOS_BINDING_URI);
     }
 
-    private AssertionConsumerService getAssertionConsumerServiceForPostBinding() {
+    /**
+     * Gets assertion consumer service for post binding.
+     *
+     * @return the assertion consumer service for post binding
+     */
+    public AssertionConsumerService getAssertionConsumerServiceForPostBinding() {
         return getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
     }
-        
+
+    /**
+     * Gets assertion consumer service for artifact binding.
+     *
+     * @return the assertion consumer service for artifact binding
+     */
+    public AssertionConsumerService getAssertionConsumerServiceForArtifactBinding() {
+        return getAssertionConsumerService(SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
+    }
+
     public MetadataResolver getMetadataResolver() {
         return this.metadataResolver;
     }
@@ -244,5 +263,14 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      */
     public boolean containsAssertionConsumerServices() {
         return !getAssertionConsumerServices().isEmpty();
+    }
+
+    /**
+     * Assertion consumer services size.
+     *
+     * @return the size
+     */
+    public int assertionConsumerServicesSize() {
+        return getAssertionConsumerServices().size();
     }
 }

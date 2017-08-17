@@ -45,9 +45,9 @@ public interface SamlIdPConstants {
     String ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO = "/idp/profile/SAML2/SOAP/ECP";
 
     /**
-     * The SAML2 SSO post callback profile endpoint.
+     * The SAML2 callback profile endpoint.
      */
-    String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = "/idp/profile/SAML2/POST/SSO/Callback";
+    String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = "/idp/profile/SAML2/Callback";
 
     /**
      * The shire constant.
