@@ -40,9 +40,9 @@ public class RememberMeDelegatingExpirationPolicyTests {
     @Before
     public void setUp() throws Exception {
         final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
-        this.p = new RememberMeDelegatingExpirationPolicy(rememberMe);
-        this.p.addPolicy(HardTimeoutExpirationPolicy.class.getSimpleName(), rememberMe);
-        this.p.addPolicy(ExpirationPolicy.class.getSimpleName(),
+        p = new RememberMeDelegatingExpirationPolicy(rememberMe);
+        p.addPolicy(p.getClass().getSimpleName(), rememberMe);
+        p.addPolicy(ExpirationPolicy.class.getSimpleName(),
                 new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
     }
 

@@ -43,6 +43,6 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
             LOGGER.debug("Ticket is not associated with a remember-me authentication.");
             return ExpirationPolicy.class.getSimpleName();
         }
-        return HardTimeoutExpirationPolicy.class.getSimpleName();
+        return getClass().getSimpleName();
     }
 }
