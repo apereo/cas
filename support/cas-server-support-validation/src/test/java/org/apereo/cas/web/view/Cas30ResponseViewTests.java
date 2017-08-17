@@ -3,6 +3,8 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
@@ -10,8 +12,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
-import org.junit.Before;
+import org.apereo.cas.web.ServiceValidateController;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,13 +68,20 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("cas3ServiceFailureView")
     private View cas3ServiceFailureView;
 
-    @Before
-    public void setUp() {
-        this.serviceValidateController.setFailureView(cas3ServiceFailureView);
-        this.serviceValidateController.setSuccessView(cas3SuccessView);
-        this.serviceValidateController.setJsonView(cas3ServiceJsonView);
+    @Override
+    public AbstractServiceValidateController getServiceValidateControllerInstance() throws Exception {
+        return new ServiceValidateController(
+                getValidationSpecification(),
+                getAuthenticationSystemSupport(), getServicesManager(),
+                getCentralAuthenticationService(),
+                getProxyHandler(),
+                getArgumentExtractor(),
+                new DefaultMultifactorTriggerSelectionStrategy("", ""),
+                new DefaultAuthenticationContextValidator("", "OPEN", "test"),
+                cas3ServiceJsonView, cas3SuccessView, cas3ServiceFailureView, "authenticationContext"
+        );
     }
-
+    
     private Map<?, ?> renderView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         LOGGER.warn("Retrieved model and view [{}]", modelAndView.getModel());

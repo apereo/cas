@@ -151,12 +151,12 @@ layout: null
         
 * [User Interface](#user_interface)
     *   [Overview](/$version/installation/User-Interface-Customization.html)
-        *   [CSS & JavaScript](/$version/installation/User-Interface-Customization-CSSJS.html)
-        *   [Views](/$version/installation/User-Interface-Customization-Views.html)
-        *   [Localization](/$version/installation/User-Interface-Customization-Localization.html)
-        *   [Dynamic Themes](/$version/installation/User-Interface-Customization-Themes.html)
+    *   [CSS & JavaScript](/$version/installation/User-Interface-Customization-CSSJS.html)
+    *   [Views](/$version/installation/User-Interface-Customization-Views.html)
+    *   [Localization](/$version/installation/User-Interface-Customization-Localization.html)
+    *   [Dynamic Themes](/$version/installation/User-Interface-Customization-Themes.html)
     *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
-    *   [Interrupt](/$version/installation/Webflow-Customization-Interrupt.html)
+    *   [Interrupt Notifications](/$version/installation/Webflow-Customization-Interrupt.html)
         
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/installation/Webflow-Customization.html) 

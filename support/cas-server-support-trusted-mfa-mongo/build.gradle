@@ -1,5 +1,7 @@
 description = "Apereo CAS Trusted MFA Browser/Device Mongo Support"
 dependencies {
-    compile project(":support:cas-server-support-trusted-mfa")
+    implementation project(":support:cas-server-support-trusted-mfa")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation libraries.mongo
 }

@@ -25,6 +25,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationEventExecutionPlan.class);
 
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
+    private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Override
@@ -83,5 +84,19 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
                                                                     final PrincipalResolver principalResolver) {
         handlers.forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
+    }
+
+    @Override
+    public void registerAuthenticationPostProcessor(final AuthenticationPostProcessor processor) {
+        LOGGER.debug("Registering authentication post processor [{}] into the execution plan", processor);
+        authenticationPostProcessors.add(processor);
+    }
+
+    @Override
+    public Collection<AuthenticationPostProcessor> getAuthenticationPostProcessors(final AuthenticationTransaction transaction) {
+        final List<AuthenticationPostProcessor> list = new ArrayList(this.authenticationPostProcessors);
+        OrderComparator.sort(list);
+        LOGGER.debug("Sorted and registered authentication post processors for this transaction are [{}]", list);
+        return list;
     }
 }

@@ -1214,6 +1214,15 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+Adaptive authentication can also react to specific times in order to trigger multifactor authentication.
+
+```properties
+# cas.authn.adaptive.requireTimedMultifactor[0].providerId=mfa-duo
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=20
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrBeforeHour=7
+# cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday
+```
+
 ## Surrogate Authentication
 
 Authenticate on behalf of another user.
@@ -1308,6 +1317,15 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 
 # cas.authn.surrogate.jdbc.surrogateSearchQuery=SELECT COUNT(*) FROM surrogate WHERE username=?
 # cas.authn.surrogate.jdbc.surrogateAccountQuery=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
+```
+
+### REST Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.rest.url=https://somewhere.interrupt.org
+# cas.authn.surrogate.rest.method=GET|POST
+# cas.authn.surrogate.rest.basicAuthUsername=
+# cas.authn.surrogate.rest.basicAuthPassword=
 ```
 
 ## Risk-based Authentication
@@ -2941,7 +2959,8 @@ Control core SAML functionality within CAS.
 
 ```properties
 # cas.samlCore.ticketidSaml2=false
-# cas.samlCore.skewAllowance=0
+# cas.samlCore.skewAllowance=5
+# cas.samlCore.issueLength=30
 # cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
 # cas.samlCore.issuer=localhost
 # cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
