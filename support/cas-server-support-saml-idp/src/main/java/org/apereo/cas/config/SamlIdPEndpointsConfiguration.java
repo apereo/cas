@@ -8,18 +8,17 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.Saml1ArtifactResolutionController;
-import org.apereo.cas.support.saml.web.idp.profile.ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOProfileCallbackHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOProfileCallbackHandlerController;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
@@ -211,13 +210,17 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public Saml1ArtifactResolutionController saml1ArtifactResolutionController() {
-        return new Saml1ArtifactResolutionController();
-    }
-
-    @Bean
-    @RefreshScope
     public ArtifactResolutionProfileHandlerController saml2ArtifactResolutionController() {
-        return new ArtifactResolutionProfileHandlerController();
+        return new ArtifactResolutionProfileHandlerController(
+                samlObjectSigner,
+                openSamlConfigBean.getParserPool(),
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver,
+                openSamlConfigBean,
+                samlProfileSamlResponseBuilder,
+                casProperties,
+                samlObjectSignatureValidator());
     }
 }
