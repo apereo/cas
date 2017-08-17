@@ -3,8 +3,8 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -41,8 +41,8 @@ public class RememberMeDelegatingExpirationPolicyTests {
     public void setUp() throws Exception {
         final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
         p = new RememberMeDelegatingExpirationPolicy(rememberMe);
-        p.addPolicy(p.getClass().getSimpleName(), rememberMe);
-        p.addPolicy(ExpirationPolicy.class.getSimpleName(),
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT,
                 new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
     }
 
