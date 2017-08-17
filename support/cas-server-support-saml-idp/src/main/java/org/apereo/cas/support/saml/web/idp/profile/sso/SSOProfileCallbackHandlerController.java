@@ -12,6 +12,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -26,6 +28,7 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,14 +37,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link SSOPostProfileCallbackHandlerController}, which handles
+ * This is {@link SSOProfileCallbackHandlerController}, which handles
  * the profile callback request to build the final saml response.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SSOPostProfileCallbackHandlerController.class);
+public class SSOProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SSOProfileCallbackHandlerController.class);
 
     private final AbstractUrlBasedTicketValidator ticketValidator;
 
@@ -60,17 +63,17 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      * @param samlObjectSignatureValidator                 the saml object signature validator
      * @param ticketValidator                              the ticket validator
      */
-    public SSOPostProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
-                                                   final ParserPool parserPool,
-                                                   final AuthenticationSystemSupport authenticationSystemSupport,
-                                                   final ServicesManager servicesManager,
-                                                   final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                   final OpenSamlConfigBean configBean,
-                                                   final SamlProfileObjectBuilder<Response> responseBuilder,
-                                                   final CasConfigurationProperties casProperties,
-                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator,
-                                                   final AbstractUrlBasedTicketValidator ticketValidator) {
+    public SSOProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+                                               final ParserPool parserPool,
+                                               final AuthenticationSystemSupport authenticationSystemSupport,
+                                               final ServicesManager servicesManager,
+                                               final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                               final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                               final OpenSamlConfigBean configBean,
+                                               final SamlProfileObjectBuilder<Response> responseBuilder,
+                                               final CasConfigurationProperties casProperties,
+                                               final SamlObjectSignatureValidator samlObjectSignatureValidator,
+                                               final AbstractUrlBasedTicketValidator ticketValidator) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,
@@ -111,7 +114,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
 
         final Pair<AuthnRequest, MessageContext> authenticationContext = buildAuthenticationContextPair(request, authnRequest);
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
-        buildSamlResponse(response, request, authenticationContext, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
+        final String binding = determineProfileBinding(authenticationContext, assertion);
+        buildSamlResponse(response, request, authenticationContext, assertion, binding);
     }
 
     /**
@@ -146,5 +150,26 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final Assertion assertion = this.ticketValidator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         return assertion;
+    }
+
+    /**
+     * Determine profile binding.
+     *
+     * @param authenticationContext the authentication context
+     * @param assertion             the assertion
+     * @return the string
+     */
+    protected String determineProfileBinding(final Pair<AuthnRequest, MessageContext> authenticationContext,
+                                             final Assertion assertion) {
+        
+        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair = 
+                getRegisteredServiceAndFacade(authenticationContext.getKey());
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade = pair.getValue();
+        
+        final AssertionConsumerService svc = facade.getAssertionConsumerServiceForArtifactBinding();
+        if (svc != null && facade.assertionConsumerServicesSize() == 1) {
+            return svc.getBinding();
+        }
+        return SAMLConstants.SAML2_POST_BINDING_URI;
     }
 }

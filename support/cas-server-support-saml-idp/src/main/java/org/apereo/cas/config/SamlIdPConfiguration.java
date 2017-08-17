@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
@@ -23,7 +24,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncryp
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
+import org.apereo.cas.ticket.DefaultSamlArtifactTicketFactory;
+import org.apereo.cas.ticket.SamlArtifactTicketExpirationPolicy;
+import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.UrlValidator;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -50,6 +56,14 @@ import org.springframework.ui.velocity.VelocityEngineFactory;
 public class SamlIdPConfiguration {
 
     @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -71,6 +85,10 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     private VelocityEngineFactory velocityEngineFactory;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
     
     @Autowired
     @Qualifier("urlValidator")
@@ -80,7 +98,7 @@ public class SamlIdPConfiguration {
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver, urlValidator);
     }
-    
+
     @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
     @Bean
     @RefreshScope
@@ -90,7 +108,26 @@ public class SamlIdPConfiguration {
                 samlObjectSigner(),
                 velocityEngineFactory,
                 samlProfileSamlAssertionBuilder(),
-                samlObjectEncrypter());
+                samlObjectEncrypter(),
+                ticketRegistry,
+                samlArtifactTicketFactory(), 
+                ticketGrantingTicketCookieGenerator);
+    }
+
+    @ConditionalOnMissingBean(name = "samlArtifactTicketFactory")
+    @Bean
+    @RefreshScope
+    public SamlArtifactTicketFactory samlArtifactTicketFactory() {
+        return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy(), 
+                openSamlConfigBean,
+                webApplicationServiceFactory);
+    }
+
+    @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
+    @Bean
+    @RefreshScope
+    public SamlArtifactTicketExpirationPolicy samlArtifactTicketExpirationPolicy() {
+        return new SamlArtifactTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlSubjectBuilder")
@@ -100,7 +137,7 @@ public class SamlIdPConfiguration {
         return new SamlProfileSamlSubjectBuilder(openSamlConfigBean, samlProfileSamlNameIdBuilder(),
                 casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
     }
-    
+
     @ConditionalOnMissingBean(name = "samlProfileSamlSoap11FaultResponseBuilder")
     @Bean
     @RefreshScope
