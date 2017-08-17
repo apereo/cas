@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
 import org.opensaml.saml.common.SAMLObject;
 
 /**

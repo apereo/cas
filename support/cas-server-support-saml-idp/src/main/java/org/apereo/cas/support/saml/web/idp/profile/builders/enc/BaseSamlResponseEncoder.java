@@ -81,7 +81,6 @@ public abstract class BaseSamlResponseEncoder {
      *
      * @param encoder      the encoder
      * @param samlResponse the saml response
-     * @return the response
      * @throws Exception the saml exception
      */
     protected void finalizeEncode(final BaseSAML2MessageEncoder encoder,
