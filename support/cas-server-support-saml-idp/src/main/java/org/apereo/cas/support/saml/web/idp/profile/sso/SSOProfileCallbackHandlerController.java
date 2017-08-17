@@ -161,14 +161,18 @@ public class SSOProfileCallbackHandlerController extends AbstractSamlProfileHand
      */
     protected String determineProfileBinding(final Pair<AuthnRequest, MessageContext> authenticationContext,
                                              final Assertion assertion) {
-        
+
+        final AuthnRequest authnRequest = authenticationContext.getKey();
         final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair = 
-                getRegisteredServiceAndFacade(authenticationContext.getKey());
+                getRegisteredServiceAndFacade(authnRequest);
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = pair.getValue();
         
-        final AssertionConsumerService svc = facade.getAssertionConsumerServiceForArtifactBinding();
-        if (svc != null && facade.assertionConsumerServicesSize() == 1) {
-            return svc.getBinding();
+        final String binding = authnRequest.getProtocolBinding();
+        if (StringUtils.isNotBlank(binding) && StringUtils.equalsIgnoreCase(binding, SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
+            final AssertionConsumerService svc = facade.getAssertionConsumerServiceForArtifactBinding();
+            if (svc != null) {
+                return svc.getBinding();
+            }
         }
         return SAMLConstants.SAML2_POST_BINDING_URI;
     }

@@ -4,8 +4,8 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.ui.velocity.VelocityEngineFactory;
@@ -53,22 +53,18 @@ public abstract class BaseSamlResponseEncoder {
      *
      * @param samlResponse the saml response
      * @param relayState   the relay state
-     * @param binding      the binding
      * @return the response
      * @throws SamlException the saml exception
      */
-    public final Response encode(final Response samlResponse, final String relayState, final String binding) throws SamlException {
-
+    public final Response encode(final Response samlResponse, final String relayState) throws SamlException {
         try {
             if (httpResponse != null) {
                 final BaseSAML2MessageEncoder encoder = getMessageEncoderInstance();
                 encoder.setHttpServletResponse(httpResponse);
-                final MessageContext outboundMessageContext = new MessageContext<>();
-                outboundMessageContext.setMessage(samlResponse);
-                SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
-                SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor, binding);
-                encoder.setMessageContext(outboundMessageContext);
-                finalizeEncode(encoder, samlResponse);
+
+                final MessageContext ctx = getEncoderMessageContext(samlResponse, relayState);
+                encoder.setMessageContext(ctx);
+                finalizeEncode(encoder, samlResponse, relayState);
             }
             return samlResponse;
         } catch (final Exception e) {
@@ -77,14 +73,33 @@ public abstract class BaseSamlResponseEncoder {
     }
 
     /**
+     * Build encoder message context.
+     *
+     * @param samlResponse the saml response
+     * @param relayState   the relay state
+     * @return the message context
+     */
+    protected MessageContext getEncoderMessageContext(final Response samlResponse, final String relayState) {
+        final MessageContext ctx = new MessageContext<>();
+        ctx.setMessage(samlResponse);
+        SAMLBindingSupport.setRelayState(ctx, relayState);
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(ctx, adaptor, getBinding());
+        final SAMLSelfEntityContext self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
+        self.setEntityId(samlResponse.getIssuer().getValue());
+        return ctx;
+    }
+
+    /**
      * Finalize encode response.
      *
      * @param encoder      the encoder
      * @param samlResponse the saml response
+     * @param relayState   the relay state
      * @throws Exception the saml exception
      */
     protected void finalizeEncode(final BaseSAML2MessageEncoder encoder,
-                                  final SAMLObject samlResponse) throws Exception {
+                                  final Response samlResponse, 
+                                  final String relayState) throws Exception {
         encoder.initialize();
         encoder.encode();
     }

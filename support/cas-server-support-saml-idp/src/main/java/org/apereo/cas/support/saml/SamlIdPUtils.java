@@ -63,7 +63,8 @@ public final class SamlIdPUtils {
         if (peerEntityContext == null) {
             throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
         }
-
+        peerEntityContext.setEntityId(adaptor.getEntityId());
+        
         final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         if (endpointContext == null) {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());

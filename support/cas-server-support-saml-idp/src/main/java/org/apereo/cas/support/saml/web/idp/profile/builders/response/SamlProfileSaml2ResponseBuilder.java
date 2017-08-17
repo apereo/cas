@@ -114,11 +114,11 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                         adaptor, httpRequest, httpResponse, authnRequest, 
                         ticketRegistry, samlArtifactTicketFactory, 
                         ticketGrantingTicketCookieGenerator);
-                return encoder.encode(samlResponse, relayState, binding);
+                return encoder.encode(samlResponse, relayState);
             default:
                 break;
         }
         final SamlResponsePostEncoder encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
-        return encoder.encode(samlResponse, relayState, binding);
+        return encoder.encode(samlResponse, relayState);
     }
 }
