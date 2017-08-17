@@ -75,7 +75,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        encodeFinalResponse(request, response, service, adaptor, envelope, binding);
+        encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);
         return envelope;
     }
 }

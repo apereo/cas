@@ -531,28 +531,41 @@ public abstract class AbstractSamlProfileHandlerController {
                                      final Pair<AuthnRequest, MessageContext> authenticationContext,
                                      final Assertion casAssertion,
                                      final String binding) {
-        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authenticationContext.getKey());
-        LOGGER.debug("Located issuer [{}] from authentication context", issuer);
+        
+        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair = 
+                getRegisteredServiceAndFacade(authenticationContext.getKey());
 
+        final String entityId = pair.getValue().getEntityId();
+        LOGGER.debug("Preparing SAML response for [{}]", entityId);
+        final AuthnRequest authnRequest = authenticationContext.getKey();
+        this.responseBuilder.build(authnRequest, request, response, casAssertion, pair.getKey(), pair.getValue(), binding);
+        LOGGER.info("Built the SAML response for [{}]", entityId);
+    }
+
+    /**
+     * Gets registered service and facade.
+     *
+     * @param request the request
+     * @return the registered service and facade
+     */
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(final AuthnRequest request) {
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(request);
+        LOGGER.debug("Located issuer [{}] from authentication context", issuer);
+        
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
 
         LOGGER.debug("Located SAML metadata for [{}]", registeredService);
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
+                getSamlMetadataFacadeFor(registeredService, request);
 
         if (!adaptor.isPresent()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                     "Cannot find metadata linked to " + issuer);
         }
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
-        final String entityId = facade.getEntityId();
-        LOGGER.debug("Preparing SAML response for [{}]", entityId);
-        final AuthnRequest authnRequest = authenticationContext.getKey();
-        this.responseBuilder.build(authnRequest, request, response,
-                casAssertion, registeredService, facade, binding);
-        LOGGER.info("Built the SAML response for [{}]", entityId);
+        return Pair.of(registeredService, facade);
     }
-
+    
     /**
      * Handle unauthorized service exception.
      *
