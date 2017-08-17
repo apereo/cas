@@ -25,6 +25,20 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
     private static final long serialVersionUID = -2735975347698196127L;
 
     /**
+     * Policy types.
+     */
+    public enum PolicyTypes {
+        /**
+         * Remember me policy type.
+         */
+        REMEMBER_ME,
+        /**
+         * Default policy type.
+         */
+        DEFAULT
+    }
+
+    /**
      * Instantiates a new Remember me delegating expiration policy.
      *
      * @param policy the policy
@@ -41,8 +55,8 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
 
         if (b == null || b.equals(Boolean.FALSE)) {
             LOGGER.debug("Ticket is not associated with a remember-me authentication.");
-            return ExpirationPolicy.class.getSimpleName();
+            return PolicyTypes.DEFAULT.name();
         }
-        return getClass().getSimpleName();
+        return PolicyTypes.REMEMBER_ME.name();
     }
 }

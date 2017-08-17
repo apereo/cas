@@ -246,8 +246,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
         final HardTimeoutExpirationPolicy rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
         final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy(rememberMePolicy);
-        p.addPolicy(p.getClass().getSimpleName(), rememberMePolicy);
-        p.addPolicy(ExpirationPolicy.class.getSimpleName(), ticketGrantingTicketExpirationPolicy());
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMePolicy);
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy());
         return p;
     }
 

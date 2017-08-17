@@ -56,8 +56,8 @@ public class SurrogateAuthenticationConfiguration {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
         final HardTimeoutExpirationPolicy surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
         final SurrogateSessionExpirationPolicy policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
-        policy.addPolicy(policy.getClass().getSimpleName(), surrogatePolicy);
-        policy.addPolicy(ExpirationPolicy.class.getSimpleName(), ticketGrantingTicketExpirationPolicy);
+        policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.SURROGATE, surrogatePolicy);
+        policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy);
         return policy;
     }
 

@@ -23,6 +23,20 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateSessionExpirationPolicy.class);
 
     /**
+     * Policy types.
+     */
+    public enum PolicyTypes {
+        /**
+         * Surrogate policy type.
+         */
+        SURROGATE,
+        /**
+         * Default policy type.
+         */
+        DEFAULT
+    }
+    
+    /**
      * Instantiates a new surrogate session expiration policy.
      *
      * @param policy the policy
@@ -37,10 +51,10 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
         if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL)
                 && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
             LOGGER.debug("Ticket is associated with a surrogate authentication.");
-            return getClass().getSimpleName();
+            return PolicyTypes.SURROGATE.name();
         }
 
         LOGGER.debug("Ticket is not associated with a surrogate authentication.");
-        return ExpirationPolicy.class.getSimpleName();
+        return PolicyTypes.DEFAULT.name();
     }
 }
