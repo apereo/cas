@@ -86,12 +86,8 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
                                                               @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
-        final SurrogatePrincipalResolver bean = new SurrogatePrincipalResolver();
-        bean.setAttributeRepository(attributeRepository);
-        bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
-        bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
-        bean.setPrincipalFactory(principalFactory);
-        return bean;
+        return new SurrogatePrincipalResolver(attributeRepository, principalFactory,
+                casProperties.getPersonDirectory().isReturnNull(), casProperties.getPersonDirectory().getPrincipalAttribute());
     }
 
     @Bean

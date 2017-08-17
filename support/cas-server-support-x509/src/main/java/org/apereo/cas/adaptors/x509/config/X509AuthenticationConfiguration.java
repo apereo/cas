@@ -203,11 +203,11 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver(x509.getPrincipalDescriptor());
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
-        r.setPrincipalFactory(x509PrincipalFactory());
+        final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver(attributeRepository, 
+                x509PrincipalFactory(),
+                x509.getPrincipal().isReturnNull(),
+                x509.getPrincipal().getPrincipalAttribute(),
+                x509.getPrincipalDescriptor());
         return r;
     }
 
@@ -215,11 +215,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SubjectDNPrincipalResolver r = new X509SubjectDNPrincipalResolver();
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
-        r.setPrincipalFactory(x509PrincipalFactory());
+        final X509SubjectDNPrincipalResolver r = new X509SubjectDNPrincipalResolver(attributeRepository,
+                x509PrincipalFactory(),
+                x509.getPrincipal().isReturnNull(),
+                x509.getPrincipal().getPrincipalAttribute());
         return r;
     }
 
@@ -227,11 +226,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SubjectAlternativeNameUPNPrincipalResolver r = new X509SubjectAlternativeNameUPNPrincipalResolver();
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
-        r.setPrincipalFactory(x509PrincipalFactory());
+        final X509SubjectAlternativeNameUPNPrincipalResolver r = new X509SubjectAlternativeNameUPNPrincipalResolver(attributeRepository,
+                x509PrincipalFactory(),
+                x509.getPrincipal().isReturnNull(),
+                x509.getPrincipal().getPrincipalAttribute());
         return r;
     }
 
@@ -243,17 +241,24 @@ public class X509AuthenticationConfiguration {
         final int radix = x509.getPrincipalSNRadix();
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
-                r = new X509SerialNumberPrincipalResolver(radix, x509.isPrincipalHexSNZeroPadding());
+                r = new X509SerialNumberPrincipalResolver(attributeRepository,
+                        x509PrincipalFactory(),
+                        x509.getPrincipal().isReturnNull(),
+                        x509.getPrincipal().getPrincipalAttribute(),
+                        radix, x509.isPrincipalHexSNZeroPadding());
             } else {
-                r = new X509SerialNumberPrincipalResolver(radix, false);
+                r = new X509SerialNumberPrincipalResolver(attributeRepository,
+                        x509PrincipalFactory(),
+                        x509.getPrincipal().isReturnNull(),
+                        x509.getPrincipal().getPrincipalAttribute(),
+                        radix, false);
             }
         } else {
-            r = new X509SerialNumberPrincipalResolver();
+            r = new X509SerialNumberPrincipalResolver(attributeRepository,
+                    x509PrincipalFactory(),
+                    x509.getPrincipal().isReturnNull(),
+                    x509.getPrincipal().getPrincipalAttribute());
         }
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
-        r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
 
@@ -267,7 +272,11 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        return new X509SerialNumberAndIssuerDNPrincipalResolver(x509.getSerialNumberPrefix(), x509.getValueDelimiter());
+        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository,
+                x509PrincipalFactory(),
+                x509.getPrincipal().isReturnNull(),
+                x509.getPrincipal().getPrincipalAttribute(),
+                x509.getSerialNumberPrefix(), x509.getValueDelimiter());
     }
 
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
