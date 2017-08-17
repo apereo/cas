@@ -2,8 +2,11 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a
@@ -14,6 +17,15 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
  * @since 3.1
  */
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
+
+    public SpnegoPrincipalResolver() {
+    }
+
+    public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
+                                   final String principalAttributeName) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalNameTransformer, principalAttributeName);
+    }
 
     @Override
     protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
