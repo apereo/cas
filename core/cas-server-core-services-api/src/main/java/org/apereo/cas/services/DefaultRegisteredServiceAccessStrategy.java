@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -52,6 +53,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     private boolean requireAllAttributes = true;
 
+    /**
+     * Collection of subordinate access strategies.
+     */
+    private Set<RegisteredServiceAccessStrategy> subordinates = new LinkedHashSet<>();
+    
     /**
      * Collection of required attributes
      * for this service to proceed.
@@ -205,6 +211,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return this.rejectedAttributes;
     }
 
+    @Override
+    public Set<RegisteredServiceAccessStrategy> getSubordinates() {
+        return this.subordinates;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -244,7 +255,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
-
         return true;
     }
 
@@ -334,6 +344,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
                 .append(this.caseInsensitive, rhs.caseInsensitive)
                 .append(this.rejectedAttributes, rhs.rejectedAttributes)
+                .append(this.subordinates, rhs.subordinates)
                 .isEquals();
     }
 
@@ -347,6 +358,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.unauthorizedRedirectUrl)
                 .append(this.caseInsensitive)
                 .append(this.rejectedAttributes)
+                .append(this.subordinates)
                 .toHashCode();
     }
 
@@ -360,6 +372,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("unauthorizedRedirectUrl", this.unauthorizedRedirectUrl)
                 .append("caseInsensitive", this.caseInsensitive)
                 .append("rejectedAttributes", this.rejectedAttributes)
+                .append("subordinates", this.subordinates)
                 .toString();
     }
 
