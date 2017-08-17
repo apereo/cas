@@ -91,14 +91,17 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                 saml2ResponseBuilder.build(authnRequest, request, null, 
                         casAssertion, service, adaptor, binding);
     }
-
+    
     @Override
     protected Envelope encode(final SamlRegisteredService service,
                               final Envelope envelope,
                               final HttpServletResponse httpResponse,
+                              final HttpServletRequest httpRequest,
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                               final String relayState,
-                              final String binding) throws SamlException {
+                              final String binding,
+                              final AuthnRequest authnRequest,
+                              final org.jasig.cas.client.validation.Assertion assertion) throws SamlException {
         try {
             final MessageContext result = new MessageContext();
             final SOAP11Context ctx = result.getSubcontext(SOAP11Context.class, true);
