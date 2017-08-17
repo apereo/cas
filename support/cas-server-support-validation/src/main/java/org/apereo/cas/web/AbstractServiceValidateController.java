@@ -28,6 +28,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.validation.ValidationSpecification;
@@ -43,8 +44,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -62,7 +65,7 @@ import java.util.Optional;
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceValidateController.class);
 
-    private ValidationSpecification validationSpecification;
+    private Set<ValidationSpecification> validationSpecifications = new LinkedHashSet<>();
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -110,7 +113,25 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                              final View successView,
                                              final View failureView,
                                              final String authnContextAttribute) {
-        this.validationSpecification = validationSpecification;
+        this(CollectionUtils.wrapSet(validationSpecification), authenticationSystemSupport, servicesManager,
+                centralAuthenticationService, proxyHandler, argumentExtractor,
+                multifactorTriggerSelectionStrategy, authenticationContextValidator,
+                jsonView, successView, failureView, authnContextAttribute);
+    }
+    
+    public AbstractServiceValidateController(final Set<ValidationSpecification> validationSpecifications,
+                                             final AuthenticationSystemSupport authenticationSystemSupport,
+                                             final ServicesManager servicesManager,
+                                             final CentralAuthenticationService centralAuthenticationService,
+                                             final ProxyHandler proxyHandler,
+                                             final ArgumentExtractor argumentExtractor,
+                                             final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                             final AuthenticationContextValidator authenticationContextValidator,
+                                             final View jsonView,
+                                             final View successView,
+                                             final View failureView,
+                                             final String authnContextAttribute) {
+        this.validationSpecifications = validationSpecifications;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.servicesManager = servicesManager;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -156,12 +177,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion,
                                                                                                        final HttpServletRequest request) {
-        // find the RegisteredService for this Assertion
+        // Find the RegisteredService for this Assertion
         LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
-        // resolve MFA auth context for this request
+        // Resolve MFA auth context for this request
         final Map<String, MultifactorAuthenticationProvider> providers =
                 this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         final Authentication authentication = assertion.getPrimaryAuthentication();
@@ -297,14 +318,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return true/false
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
-        this.validationSpecification.reset();
-        final ServletRequestDataBinder binder = new ServletRequestDataBinder(this.validationSpecification, "validationSpecification");
-        initBinder(request, binder);
-        binder.bind(request);
+        for (final ValidationSpecification s : this.validationSpecifications) {
+            s.reset();
+            final ServletRequestDataBinder binder = new ServletRequestDataBinder(s, "validationSpecification");
+            initBinder(request, binder);
+            binder.bind(request);
 
-        if (!this.validationSpecification.isSatisfiedBy(assertion, request)) {
-            LOGGER.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
-            return false;
+            if (!s.isSatisfiedBy(assertion, request)) {
+                LOGGER.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+                return false;
+            }
         }
         return true;
     }
@@ -450,7 +473,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         this.proxyHandler = proxyHandler;
     }
 
-    public void setValidationSpecification(final ValidationSpecification validationSpecification) {
-        this.validationSpecification = validationSpecification;
+    /**
+     * Add validation specification.
+     *
+     * @param validationSpecification the validation specification
+     */
+    public void addValidationSpecification(final ValidationSpecification validationSpecification) {
+        this.validationSpecifications.add(validationSpecification);
     }
 }

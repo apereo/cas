@@ -212,7 +212,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
-        this.serviceValidateController.setValidationSpecification(new MockValidationSpecification(false));
+        this.serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
         assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
                 new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
