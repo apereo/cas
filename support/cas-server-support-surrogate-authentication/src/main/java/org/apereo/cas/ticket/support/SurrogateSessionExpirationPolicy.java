@@ -37,7 +37,7 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
         if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL)
                 && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
             LOGGER.debug("Ticket is associated with a surrogate authentication.");
-            return HardTimeoutExpirationPolicy.class.getSimpleName();
+            return getClass().getSimpleName();
         }
 
         LOGGER.debug("Ticket is not associated with a surrogate authentication.");
