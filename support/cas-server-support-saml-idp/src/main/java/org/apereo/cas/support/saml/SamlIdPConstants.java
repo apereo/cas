@@ -40,6 +40,11 @@ public interface SamlIdPConstants {
     String ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO = "/idp/profile/SAML2/Unsolicited/SSO";
 
     /**
+     * The SAML2 artifact resolution endpoint.
+     */
+    String ENDPOINT_SAML2_SOAP_ARTIFACT_RESOLUTION = "/idp/profile/SAML2/SOAP/ArtifactResolution";
+
+    /**
      * The SAML2 IDP ECP endpoint.
      */
     String ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO = "/idp/profile/SAML2/SOAP/ECP";

@@ -10,6 +10,8 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.Saml1ArtifactResolutionController;
+import org.apereo.cas.support.saml.web.idp.profile.ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignatureValidator;
@@ -44,11 +46,11 @@ public class SamlIdPEndpointsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
@@ -56,11 +58,11 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
     private SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder;
-    
+
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
-    
+
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
@@ -72,7 +74,7 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlObjectSigner")
     private BaseSamlObjectSigner samlObjectSigner;
-    
+
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
     private MetadataResolver casSamlIdPMetadataResolver;
@@ -84,7 +86,7 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
     private SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder;
-    
+
     @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
     @Bean
     public SamlObjectSignatureValidator samlIdPObjectSignatureValidator() {
@@ -109,7 +111,7 @@ public class SamlIdPEndpointsConfiguration {
                 algs.getOverrideWhiteListedSignatureSigningAlgorithms()
         );
     }
-    
+
     @Bean
     @RefreshScope
     public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
@@ -125,7 +127,7 @@ public class SamlIdPEndpointsConfiguration {
                 casProperties,
                 samlObjectSignatureValidator());
     }
-    
+
     @Bean
     @RefreshScope
     public SLORedirectProfileHandlerController sloRedirectProfileHandlerController() {
@@ -141,7 +143,7 @@ public class SamlIdPEndpointsConfiguration {
                 casProperties,
                 samlObjectSignatureValidator());
     }
-    
+
     @Bean
     @RefreshScope
     public SLOPostProfileHandlerController sloPostProfileHandlerController() {
@@ -157,7 +159,7 @@ public class SamlIdPEndpointsConfiguration {
                 casProperties,
                 samlObjectSignatureValidator());
     }
-    
+
     @Bean
     @RefreshScope
     public IdPInitiatedProfileHandlerController idPInitiatedSamlProfileHandlerController() {
@@ -173,7 +175,7 @@ public class SamlIdPEndpointsConfiguration {
                 casProperties,
                 samlIdPObjectSignatureValidator());
     }
-    
+
     @Bean
     @RefreshScope
     public SSOProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
@@ -190,7 +192,7 @@ public class SamlIdPEndpointsConfiguration {
                 samlObjectSignatureValidator(),
                 this.casClientTicketValidator);
     }
-    
+
     @Bean
     @RefreshScope
     public ECPProfileHandlerController ecpProfileHandlerController() {
@@ -206,5 +208,16 @@ public class SamlIdPEndpointsConfiguration {
                 casProperties,
                 samlObjectSignatureValidator());
     }
-    
+
+    @Bean
+    @RefreshScope
+    public Saml1ArtifactResolutionController saml1ArtifactResolutionController() {
+        return new Saml1ArtifactResolutionController();
+    }
+
+    @Bean
+    @RefreshScope
+    public ArtifactResolutionProfileHandlerController saml2ArtifactResolutionController() {
+        return new ArtifactResolutionProfileHandlerController();
+    }
 }

@@ -45,10 +45,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                     + service.getMetadataLocation(), e);
         } finally {
             if (resolver != null) {
-                LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}] for [{}] minute(s)",
+                LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
                         resolver.getId(),
-                        service.getMetadataLocation(),
-                        this.metadataCacheExpirationMinutes);
+                        service.getMetadataLocation());
             }
         }
     }
