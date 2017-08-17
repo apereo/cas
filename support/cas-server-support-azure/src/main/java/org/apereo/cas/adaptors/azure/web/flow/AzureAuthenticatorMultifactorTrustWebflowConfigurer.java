@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.azure.web.flow;
 
-import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 

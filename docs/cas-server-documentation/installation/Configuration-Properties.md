@@ -1214,6 +1214,15 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+Adaptive authentication can also react to specific times in order to trigger multifactor authentication.
+
+```properties
+# cas.authn.adaptive.requireTimedMultifactor[0].providerId=mfa-duo
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=20
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrBeforeHour=7
+# cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday
+```
+
 ## Surrogate Authentication
 
 Authenticate on behalf of another user.
@@ -1308,6 +1317,15 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 
 # cas.authn.surrogate.jdbc.surrogateSearchQuery=SELECT COUNT(*) FROM surrogate WHERE username=?
 # cas.authn.surrogate.jdbc.surrogateAccountQuery=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
+```
+
+### REST Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.rest.url=https://somewhere.interrupt.org
+# cas.authn.surrogate.rest.method=GET|POST
+# cas.authn.surrogate.rest.basicAuthUsername=
+# cas.authn.surrogate.rest.basicAuthPassword=
 ```
 
 ## Risk-based Authentication
@@ -2530,6 +2548,12 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
+### JSON Storage
+
+```properties
+# cas.authn.mfa.trusted.json.location=file:/etc/cas/config/trusted-dev.json
+```
+
 ### JDBC Storage
 
 ```properties
@@ -2935,7 +2959,8 @@ Control core SAML functionality within CAS.
 
 ```properties
 # cas.samlCore.ticketidSaml2=false
-# cas.samlCore.skewAllowance=0
+# cas.samlCore.skewAllowance=5
+# cas.samlCore.issueLength=30
 # cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
 # cas.samlCore.issuer=localhost
 # cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
@@ -4418,7 +4443,8 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.keyStoreFilePath=
 # cas.ticket.registry.ignite.keyStorePassword=
 # cas.ticket.registry.ignite.trustStoreType=
-# cas.ticket.registry.ignite.igniteAddresses=localhost:47500
+# cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500
+# cas.ticket.registry.ignite.igniteAddress[1]=
 # cas.ticket.registry.ignite.trustStoreFilePath=
 # cas.ticket.registry.ignite.ackTimeout=2000
 # cas.ticket.registry.ignite.joinTimeout=1000
@@ -4428,6 +4454,7 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.socketTimeout=5000
 # cas.ticket.registry.ignite.threadPriority=10
 # cas.ticket.registry.ignite.forceServerMode=false
+# cas.ticket.registry.ignite.clientMode=false
 
 # cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
 # cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
@@ -4786,6 +4813,31 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
+```
+
+### Authentication Interrupt
+
+Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](Webflow-Customization-Interrupt.html).
+
+#### Authentication Interrupt JSON
+
+```properties
+# cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
+```
+
+#### Authentication Interrupt Groovy
+
+```properties
+# cas.interrupt.groovy.location=file:/etc/cas/config/interrupt.groovy
+```
+
+#### Authentication Interrupt REST
+
+```properties
+# cas.interrupt.rest.url=https://somewhere.interrupt.org
+# cas.interrupt.rest.method=GET|POST
+# cas.interrupt.rest.basicAuthUsername=
+# cas.interrupt.rest.basicAuthPassword=
 ```
 
 ### Acceptable Usage Policy

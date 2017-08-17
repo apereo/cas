@@ -12,7 +12,7 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
+import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;

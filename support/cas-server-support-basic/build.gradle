@@ -1,8 +1,8 @@
 description = "Apereo CAS Basic Authentication Support"
 dependencies {
-    compile project(":core:cas-server-core-authentication")
-    compile project(":api:cas-server-core-api")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":api:cas-server-core-api")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web")
     implementation libraries.pac4j
 }

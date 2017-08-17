@@ -1,10 +1,12 @@
 description = "Apereo CAS SAML Identity Provider Support"
 dependencies {
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-logout")
-    compile project(":support:cas-server-support-saml")
-    compile project(":support:cas-server-support-saml-mdui-core")
-    compile project(":support:cas-server-support-saml-idp-core")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-logout")
+    implementation project(":support:cas-server-support-saml")
+    implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-mdui-core")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":core:cas-server-core-webflow")
     implementation libraries.casclient
     implementation libraries.shibidp
     implementation libraries.pac4j

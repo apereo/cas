@@ -14,6 +14,8 @@ import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,7 +32,8 @@ import java.util.Optional;
  */
 public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasWebflowEventResolver
         implements MultifactorAuthenticationProviderResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseMultifactorAuthenticationProviderEventResolver.class);
+    
     public BaseMultifactorAuthenticationProviderEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
                                                               final ServicesManager servicesManager,
@@ -99,8 +102,12 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      */
     protected RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) {
         final Service resolvedService = resolveServiceFromAuthenticationRequest(requestContext);
-        final RegisteredService service = this.servicesManager.findServiceBy(resolvedService);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(resolvedService, service);
-        return service;
+        if (resolvedService != null) {
+            final RegisteredService service = this.servicesManager.findServiceBy(resolvedService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(resolvedService, service);
+            return service;
+        }
+        LOGGER.debug("Authentication request is not accompanied by a service given none is specified");
+        return null;
     }
 }

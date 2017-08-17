@@ -2,7 +2,7 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
-import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -92,7 +92,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                     CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO);
 
             final Flow pswdFlow = buildFlow("classpath:/webflow/pswdreset/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
-            createViewState(pswdFlow, "passwordResetErrorView", CasWebflowConstants.VIEW_ID_PASSORD_RESET_ERROR);
+            createViewState(pswdFlow, "passwordResetErrorView", CasWebflowConstants.VIEW_ID_PASSWORD_RESET_ERROR);
             createEndState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS,
                     CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
             configurePasswordResetFlow(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);

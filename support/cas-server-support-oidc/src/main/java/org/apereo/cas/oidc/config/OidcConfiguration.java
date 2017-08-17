@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -64,7 +64,6 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
@@ -194,11 +193,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory defaultAccessTokenFactory;
-
-    @Autowired
-    @Qualifier("defaultRefreshTokenFactory")
-    private RefreshTokenFactory defaultRefreshTokenFactory;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -417,7 +412,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> cache =
-                CacheBuilder.newBuilder().maximumSize(1)
+                Caffeine.newBuilder().maximumSize(1)
                         .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
                         .build(oidcServiceJsonWebKeystoreCacheLoader());
         return cache;
@@ -427,7 +422,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final LoadingCache<String, Optional<RsaJsonWebKey>> cache =
-                CacheBuilder.newBuilder().maximumSize(1)
+                Caffeine.newBuilder().maximumSize(1)
                         .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
                         .build(oidcDefaultJsonWebKeystoreCacheLoader());
         return cache;

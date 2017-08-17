@@ -2,8 +2,11 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
+import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
-import org.junit.Before;
+import org.apereo.cas.web.ServiceValidateController;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,11 +45,18 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("cas2ServiceFailureView")
     private View cas2ServiceFailureView;
 
-    @Before
-    public void setUp() {
-        this.serviceValidateController.setFailureView(cas2ServiceFailureView);
-        this.serviceValidateController.setSuccessView(cas2SuccessView);
-        this.serviceValidateController.setJsonView(cas3ServiceJsonView);
+    @Override
+    public AbstractServiceValidateController getServiceValidateControllerInstance() throws Exception {
+        return new ServiceValidateController(
+                getValidationSpecification(),
+                getAuthenticationSystemSupport(), getServicesManager(),
+                getCentralAuthenticationService(),
+                getProxyHandler(),
+                getArgumentExtractor(),
+                new DefaultMultifactorTriggerSelectionStrategy("", ""),
+                new DefaultAuthenticationContextValidator("", "OPEN", "test"),
+                cas3ServiceJsonView, cas2SuccessView, cas2ServiceFailureView, "authenticationContext"
+        );
     }
 
     @Test
@@ -54,10 +64,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
-
-
+        
         final MockHttpServletResponse resp = new MockHttpServletResponse();
-
         final View delegatedView = new View() {
             @Override
             public String getContentType() {

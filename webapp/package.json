@@ -11,66 +11,48 @@
     "url": "https://github.com/apereo/cas"
   },
   "keywords": [
+    "Apereo",
     "CAS",
     "Central Authentication Service"
   ],
-  "engines": {
-    "node": ">=5.11.0 <6.0"
-  },
   "bugs": {
     "url": "https://github.com/apereo/cas/issues"
   },
   "scripts": {
+    "build": "webpack",
     "gulp": "gulp",
     "lint": "eslint resources/static/**/*.jsx --quiet --color",
-    "build": "webpack",
-    "prod": "NODE_ENV=production webpack -p",
-    "dev": "webpack-dev-server",
-    "watch": "npm run build -- --watch",
-    "test": "NODE_ENV=test jest",
-    "update-test": "npm run test -- -u",
-    "cover": "npm run test -- --coverage"
+    "prod": "webpack -p",
+    "watch": "npm run build -- --watch"
   },
   "dependencies": {
-    "axios": "^0.16.1",
-    "bootstrap-sass": "~> 3.3.6",
-    "gulp": "3.9.1",
-    "gulp-autoprefixer": "3.1.0",
-    "gulp-sass": "2.2.0",
-    "lodash": "4.16.2",
+    "axios": "^0.16.2",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "eslint-loader": "^1.9.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-sass": "^3.1.0",
     "moment": "^2.18.1",
-    "preact": "^6.4.0",
-    "preact-compat": "^3.9.3",
-    "preact-render-to-string": "^3.3.0",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
-    "victory": "^0.20.0",
-    "yargs": "4.7.0"
+    "preact": "^8.2.1",
+    "preact-compat": "^3.17.0",
+    "preact-render-to-string": "^3.6.3",
+    "prop-types": "^15.5.7",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "victory": "^0.21.4",
+    "webpack": "^3.5.3"
   },
   "devDependencies": {
-    "babel-core": "6.16.0",
-    "babel-eslint": "7.2.3",
-    "babel-loader": "6.2.7",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
-    "babel-polyfill": "^6.16.0",
-    "babel-preset-es2015": "6.18.0",
-    "babel-preset-es2017": "6.16.0",
-    "babel-preset-react": "6.16.0",
-    "babel-register": "6.16.0",
-    "css-loader": "0.25.0",
-    "eslint": "3.6.1",
-    "eslint-config-standard": "6.1.0",
-    "eslint-config-standard-jsx": "3.1.0",
-    "eslint-config-standard-react": "4.1.0",
-    "eslint-loader": "1.3.0",
-    "eslint-plugin-prettier": "2.1.1",
-    "eslint-plugin-promise": "2.0.1",
-    "eslint-plugin-react": "6.3.0",
-    "eslint-plugin-standard": "2.0.0",
-    "jest": "15.1.1",
-    "prettier": "^1.4.4",
-    "style-loader": "0.13.1",
-    "webpack": "2.1.0-beta.25",
-    "webpack-dev-server": "1.16.2"
+    "eslint": "^4.4.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^7.2.0",
+    "eslint-plugin-standard": "^3.0.1"
   }
 }

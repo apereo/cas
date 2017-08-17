@@ -876,7 +876,7 @@ ext.libraries = [
                 dependencies.create("org.apache.ignite:ignite-core:$igniteVersion") {
                     force = true
                 },
-                dependencies.create("org.apache.ignite:ignite-log4j:$igniteVersion") {
+                dependencies.create("org.apache.ignite:ignite-log4j2:$igniteVersion") {
                     exclude(group: "log4j", module: "log4j")
                     force = true
                 },
@@ -1653,6 +1653,7 @@ ext.libraries = [
         quartz                  : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "c3p0", module: "c3p0")
+            exclude(group: "com.zaxxer", module: "HikariCP-java6")
             force = true
         },
         shiro                   : [

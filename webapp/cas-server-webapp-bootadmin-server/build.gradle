@@ -28,5 +28,5 @@ bootRepackage {
 dependencies {
     providedRuntime libraries.springboottomcat
     implementation libraries.springbootadminserver
-    compile project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util")
 }

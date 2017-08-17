@@ -1,9 +1,15 @@
 description = "Apereo CAS SAML Server Google Apps SAML Support"
 dependencies {
     implementation project(":support:cas-server-support-saml-googleapps-core")
+    implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication")
+
+    testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":core:cas-server-core-util")
-    
-    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(":support:cas-server-support-person-directory")
