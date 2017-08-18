@@ -1,10 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 /**
  * This class is targeted at usage for mapping to an existing user record. It
@@ -27,17 +31,16 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
     /**
      * Prefix for Certificate Serial Number.
      */
-    private String serialNumberPrefix = "SERIALNUMBER=";
+    private final String serialNumberPrefix;
 
     /**
      * Prefix for Value Delimiter.
      */
-    private String valueDelimiter = ", ";
+    private final String valueDelimiter;
 
     public X509SerialNumberAndIssuerDNPrincipalResolver(final String serialNumberPrefix, final String valueDelimiter) {
-        super();
-        this.serialNumberPrefix = serialNumberPrefix;
-        this.valueDelimiter = valueDelimiter;
+        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), 
+                false, null, serialNumberPrefix, valueDelimiter);
     }
 
     /**
@@ -57,12 +60,8 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
                                                         final String serialNumberPrefix,
                                                         final String valueDelimiter) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
-        if (serialNumberPrefix != null) {
-            this.serialNumberPrefix = serialNumberPrefix;
-        }
-        if (valueDelimiter != null) {
-            this.valueDelimiter = valueDelimiter;
-        }
+        this.serialNumberPrefix = StringUtils.defaultString(serialNumberPrefix, "SERIALNUMBER=");
+        this.valueDelimiter = StringUtils.defaultIfBlank(valueDelimiter, ", ");
     }
 
     @Override
