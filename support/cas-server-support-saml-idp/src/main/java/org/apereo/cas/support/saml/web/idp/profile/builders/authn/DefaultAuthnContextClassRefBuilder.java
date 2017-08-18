@@ -1,13 +1,13 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders;
+package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +29,8 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
     }
 
     @Override
-    public String build(final Assertion assertion,
-                        final AuthnRequest authnRequest,
+    public String build(final Object assertion,
+                        final RequestAbstractType authnRequest,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                         final SamlRegisteredService service) {
         if (StringUtils.isNotBlank(service.getRequiredAuthenticationContextClass())) {
@@ -44,7 +44,8 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
                 casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
                 AuthnContext.PPT_AUTHN_CTX);
 
-        final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
+        final RequestedAuthnContext requestedAuthnContext = (authnRequest instanceof AuthnRequest)
+                ? AuthnRequest.class.cast(authnRequest).getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
             return defClass;
@@ -72,7 +73,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
      * @param authnContextClassRefs the authn context class refs
      * @return the authentication context by assertion
      */
-    protected String getAuthenticationContextByAssertion(final Assertion assertion,
+    protected String getAuthenticationContextByAssertion(final Object assertion,
                                                          final RequestedAuthnContext requestedAuthnContext,
                                                          final List<AuthnContextClassRef> authnContextClassRefs) {
         LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());

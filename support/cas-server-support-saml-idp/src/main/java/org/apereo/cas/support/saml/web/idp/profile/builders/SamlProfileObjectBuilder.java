@@ -3,9 +3,8 @@ package org.apereo.cas.support.saml.web.idp.profile.builders;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,10 +33,10 @@ public interface SamlProfileObjectBuilder<T extends XMLObject> {
      * @return the response
      * @throws SamlException the exception
      */
-    T build(AuthnRequest authnRequest,
+    T build(RequestAbstractType authnRequest,
             HttpServletRequest request,
             HttpServletResponse response,
-            Assertion assertion,
+            Object assertion,
             SamlRegisteredService service,
             SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
             String binding) throws SamlException;
