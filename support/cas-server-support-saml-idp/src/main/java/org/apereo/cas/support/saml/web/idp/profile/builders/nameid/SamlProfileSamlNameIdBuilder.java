@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders;
+package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -12,12 +12,15 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +46,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     }
 
     @Override
-    public NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                        final Assertion assertion, final SamlRegisteredService service,
+    public NameID build(final RequestAbstractType authnRequest, final HttpServletRequest request, 
+                        final HttpServletResponse response,
+                        final Object assertion, final SamlRegisteredService service,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                         final String binding)
             throws SamlException {
@@ -63,8 +67,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @return the name id
      * @throws SamlException the saml exception
      */
-    private NameID buildNameId(final AuthnRequest authnRequest,
-                               final Assertion assertion,
+    private NameID buildNameId(final RequestAbstractType authnRequest,
+                               final Object assertion,
                                final SamlRegisteredService service,
                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final List<String> supportedNameFormats = getSupportedNameIdFormats(service, adaptor);
@@ -86,8 +90,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @return the name id
      */
     protected NameID finalizeNameId(final NameID nameid,
-                                    final AuthnRequest authnRequest,
-                                    final Assertion assertion,
+                                    final RequestAbstractType authnRequest,
+                                    final Object assertion,
                                     final List<String> supportedNameFormats,
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
@@ -115,7 +119,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param supportedNameFormats the supported name formats
      * @param requiredNameFormat   the required name format
      */
-    protected void validateRequiredNameIdFormatIfAny(final AuthnRequest authnRequest,
+    protected void validateRequiredNameIdFormatIfAny(final RequestAbstractType authnRequest,
                                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                      final List<String> supportedNameFormats,
                                                      final String requiredNameFormat) {
@@ -135,10 +139,10 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param authnRequest the authn request
      * @return the required name id format if any
      */
-    protected String getRequiredNameIdFormatIfAny(final AuthnRequest authnRequest) {
+    protected String getRequiredNameIdFormatIfAny(final RequestAbstractType authnRequest) {
         String requiredNameFormat = null;
-        if (authnRequest.getNameIDPolicy() != null) {
-            requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
+        if (getNameIDPolicy(authnRequest) != null) {
+            requiredNameFormat = getNameIDPolicy(authnRequest).getFormat();
             LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
             if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
                 LOGGER.warn("Encrypted NameID formats are not supported");
@@ -148,6 +152,12 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return requiredNameFormat;
     }
 
+    private NameIDPolicy getNameIDPolicy(final RequestAbstractType authnRequest) {
+        if (authnRequest instanceof AuthnRequest) {
+            return AuthnRequest.class.cast(authnRequest).getNameIDPolicy();
+        }
+        return null;
+    }
     /**
      * Gets supported name id formats.
      *
@@ -182,8 +192,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param adaptor              the adaptor
      * @return the name id
      */
-    protected NameID determineNameId(final AuthnRequest authnRequest,
-                                     final Assertion assertion,
+    protected NameID determineNameId(final RequestAbstractType authnRequest,
+                                     final Object assertion,
                                      final List<String> supportedNameFormats,
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
@@ -207,8 +217,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param adaptor      the adaptor
      * @return the name id
      */
-    protected NameID encodeNameIdBasedOnNameFormat(final AuthnRequest authnRequest,
-                                                   final Assertion assertion,
+    protected NameID encodeNameIdBasedOnNameFormat(final RequestAbstractType authnRequest,
+                                                   final Object assertion,
                                                    final String nameFormat,
                                                    final SamlRegisteredService service,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
@@ -228,13 +238,15 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     /**
      * Prepare name id attribute id p attribute.
      *
-     * @param assertion  the assertion
+     * @param casAssertion  the assertion
      * @param nameFormat the name format
      * @param adaptor    the adaptor
      * @return the idp attribute
      */
-    protected IdPAttribute prepareNameIdAttribute(final Assertion assertion, final String nameFormat,
+    protected IdPAttribute prepareNameIdAttribute(final Object casAssertion, final String nameFormat,
                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+
+        final Assertion assertion = Assertion.class.cast(casAssertion);
         final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
 
         final String nameIdValue;
@@ -262,15 +274,15 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param adaptor      the adaptor
      * @return the saml 2 string name id encoder
      */
-    protected SAML2StringNameIDEncoder prepareNameIdEncoder(final AuthnRequest authnRequest,
+    protected SAML2StringNameIDEncoder prepareNameIdEncoder(final RequestAbstractType authnRequest,
                                                             final String nameFormat,
                                                             final IdPAttribute attribute,
                                                             final SamlRegisteredService service,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
         encoder.setNameFormat(nameFormat);
-        if (authnRequest.getNameIDPolicy() != null) {
-            final String qualifier = authnRequest.getNameIDPolicy().getSPNameQualifier();
+        if (getNameIDPolicy(authnRequest) != null) {
+            final String qualifier = getNameIDPolicy(authnRequest).getSPNameQualifier();
             LOGGER.debug("NameID qualifier is set to [{}]", qualifier);
             encoder.setNameQualifier(qualifier);
         }

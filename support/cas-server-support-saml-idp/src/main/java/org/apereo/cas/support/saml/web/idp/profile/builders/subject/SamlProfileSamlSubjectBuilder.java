@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders;
+package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -6,10 +6,11 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.slf4j.Logger;
@@ -42,9 +43,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     }
 
     @Override
-    public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request,
+    public Subject build(final RequestAbstractType authnRequest, final HttpServletRequest request,
                          final HttpServletResponse response,
-                         final Assertion assertion, final SamlRegisteredService service,
+                         final Object assertion, final SamlRegisteredService service,
                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                          final String binding) throws SamlException {
         return buildSubject(request, response, authnRequest, assertion, service, adaptor, binding);
@@ -52,13 +53,14 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private Subject buildSubject(final HttpServletRequest request,
                                  final HttpServletResponse response,
-                                 final AuthnRequest authnRequest,
-                                 final Assertion assertion,
+                                 final RequestAbstractType authnRequest,
+                                 final Object casAssertion,
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                  final String binding) throws SamlException {
-        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response,
-                assertion, service, adaptor, binding);
+
+        final Assertion assertion = Assertion.class.cast(casAssertion);
+        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor, binding);
         final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
 
         final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);

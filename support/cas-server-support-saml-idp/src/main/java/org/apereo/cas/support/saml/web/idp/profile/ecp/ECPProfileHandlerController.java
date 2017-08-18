@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile;
+package org.apereo.cas.support.saml.web.idp.profile.ecp;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -21,21 +20,17 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.jasig.cas.client.authentication.AttributePrincipal;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.WebContext;
@@ -48,7 +43,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -154,7 +149,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
             final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
             final Service service = webApplicationServiceFactory.createService(issuer);
-            final Assertion casAssertion = buildEcpCasAssertion(authentication, service, serviceRequest.getKey());
+            final Assertion casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
 
             LOGGER.debug("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
@@ -180,7 +175,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      */
     protected void buildEcpFaultResponse(final HttpServletResponse response,
                                          final HttpServletRequest request,
-                                         final Pair<AuthnRequest, String> authenticationContext) {
+                                         final Pair<RequestAbstractType, String> authenticationContext) {
         request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, authenticationContext.getValue());
         samlEcpFaultResponseBuilder.build(authenticationContext.getKey(), request, response,
                 null, null, null, SAMLConstants.SAML2_PAOS_BINDING_URI);
@@ -205,54 +200,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         return authenticationResult.getAuthentication();
     }
 
-    /**
-     * Build ecp cas assertion assertion.
-     *
-     * @param authentication    the authentication
-     * @param service           the service
-     * @param registeredService the registered service
-     * @return the assertion
-     */
-    protected Assertion buildEcpCasAssertion(final Authentication authentication,
-                                             final Service service,
-                                             final RegisteredService registeredService) {
-        final Map attributes = registeredService.getAttributeReleasePolicy()
-                .getAttributes(authentication.getPrincipal(), service, registeredService);
-        final AttributePrincipal principal = new AttributePrincipalImpl(
-                authentication.getPrincipal().getId(), attributes);
-        return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
-                null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
-                authentication.getAttributes());
-    }
-
-    /**
-     * Decode soap 11 context.
-     *
-     * @param request the request
-     * @return the soap 11 context
-     */
-    protected MessageContext decodeSoapRequest(final HttpServletRequest request) {
-        try {
-            final HTTPSOAP11Decoder decoder = new HTTPSOAP11Decoder();
-            decoder.setParserPool(parserPool);
-            decoder.setHttpServletRequest(request);
-
-            final BindingDescriptor binding = new BindingDescriptor();
-            binding.setId(getClass().getName());
-            binding.setShortName(getClass().getName());
-            binding.setSignatureCapable(true);
-            binding.setSynchronous(true);
-
-            decoder.setBindingDescriptor(binding);
-            decoder.initialize();
-            decoder.decode();
-            return decoder.getMessageContext();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
+    
     private Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
         try {

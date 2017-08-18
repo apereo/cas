@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders.response;
+package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -11,7 +11,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSi
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
@@ -46,10 +46,10 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
 
 
     @Override
-    public Envelope build(final AuthnRequest authnRequest,
+    public Envelope build(final RequestAbstractType authnRequest,
                           final HttpServletRequest request,
                           final HttpServletResponse response,
-                          final org.jasig.cas.client.validation.Assertion casAssertion,
+                          final Object casAssertion,
                           final SamlRegisteredService service,
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                           final String binding) throws SamlException {

@@ -16,6 +16,8 @@ import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
+import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
@@ -180,6 +182,24 @@ public final class SamlIdPUtils {
      */
     public static String getIssuerFromSamlRequest(final RequestAbstractType request) {
         return request.getIssuer().getValue();
+    }
+
+    /**
+     * Gets role descriptor resolver.
+     *
+     * @param adaptor              the adaptor
+     * @param requireValidMetadata the require valid metadata
+     * @return the role descriptor resolver
+     * @throws Exception the exception
+     */
+    public static RoleDescriptorResolver getRoleDescriptorResolver(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                   final boolean requireValidMetadata) throws Exception {
+        final PredicateRoleDescriptorResolver roleDescriptorResolver = new PredicateRoleDescriptorResolver(adaptor.getMetadataResolver());
+        roleDescriptorResolver.setSatisfyAnyPredicates(true);
+        roleDescriptorResolver.setUseDefaultPredicateRegistry(true);
+        roleDescriptorResolver.setRequireValidMetadata(requireValidMetadata);
+        roleDescriptorResolver.initialize();
+        return roleDescriptorResolver;
     }
 }
 
