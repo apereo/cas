@@ -8,17 +8,20 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.web.idp.profile.ArtifactResolutionProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.artifact.Saml1ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOProfileCallbackHandlerController;
+import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.http.HttpClient;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
@@ -49,6 +52,10 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
@@ -85,6 +92,19 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
     private SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder;
+
+
+    @Autowired
+    @Qualifier("samlProfileSamlArtifactResponseBuilder")
+    private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder;
+
+    @Autowired
+    @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
+    private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder;
+            
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
     @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
     @Bean
@@ -208,10 +228,12 @@ public class SamlIdPEndpointsConfiguration {
                 samlObjectSignatureValidator());
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public ArtifactResolutionProfileHandlerController saml2ArtifactResolutionController() {
-        return new ArtifactResolutionProfileHandlerController(
+    public Saml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController(
+            @Qualifier("samlArtifactTicketFactory") final SamlArtifactTicketFactory samlArtifactTicketFactory) {
+        return new Saml1ArtifactResolutionProfileHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -219,8 +241,11 @@ public class SamlIdPEndpointsConfiguration {
                 webApplicationServiceFactory,
                 defaultSamlRegisteredServiceCachingMetadataResolver,
                 openSamlConfigBean,
-                samlProfileSamlResponseBuilder,
+                samlProfileSamlArtifactResponseBuilder,
                 casProperties,
-                samlObjectSignatureValidator());
+                samlObjectSignatureValidator(),
+                ticketRegistry, 
+                samlArtifactTicketFactory, 
+                samlProfileSamlArtifactFaultResponseBuilder);
     }
 }

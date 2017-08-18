@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders;
+package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -8,9 +8,10 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
-import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,20 +41,22 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     }
 
     @Override
-    public AttributeStatement build(final AuthnRequest authnRequest,
+    public AttributeStatement build(final RequestAbstractType authnRequest,
                                     final HttpServletRequest request,
                                     final HttpServletResponse response,
-                                    final Assertion assertion,
+                                    final Object assertion,
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                     final String binding) throws SamlException {
         return buildAttributeStatement(assertion, authnRequest, service, adaptor);
     }
 
-    private AttributeStatement buildAttributeStatement(final Assertion assertion,
-                                                       final AuthnRequest authnRequest,
+    private AttributeStatement buildAttributeStatement(final Object casAssertion,
+                                                       final RequestAbstractType authnRequest,
                                                        final SamlRegisteredService service,
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+        
+        final Assertion assertion = Assertion.class.cast(casAssertion);
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);

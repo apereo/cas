@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders;
+package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -6,13 +6,14 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.util.RandomUtils;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
 import org.slf4j.Logger;
@@ -64,8 +65,8 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     }
 
     @Override
-    public Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                           final org.jasig.cas.client.validation.Assertion casAssertion, final SamlRegisteredService service,
+    public Assertion build(final RequestAbstractType authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+                           final Object casAssertion, final SamlRegisteredService service,
                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                            final String binding) throws SamlException {
 

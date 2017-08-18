@@ -33,7 +33,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     @Column(length = 500, updatable = true, insertable = true)
     private String relyingParty;
 
-    @Column(length = 2000, updatable = true, insertable = true)
+    @Column(length = 5000, updatable = true, insertable = true)
     private String samlObject;
 
     /**
@@ -99,7 +99,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     public String getRelyingPartyId() {
         return this.relyingParty;
     }
-    
+
     @Override
     public String getObject() {
         return this.samlObject;

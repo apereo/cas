@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders;
+package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -7,12 +7,13 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.jasig.cas.client.validation.Assertion;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,10 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     @Override
-    public AuthnStatement build(final AuthnRequest authnRequest,
+    public AuthnStatement build(final RequestAbstractType authnRequest,
                                 final HttpServletRequest request,
                                 final HttpServletResponse response,
-                                final Assertion assertion,
+                                final Object assertion,
                                 final SamlRegisteredService service,
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                 final String binding) throws SamlException {
@@ -64,10 +65,11 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @return constructed authentication statement
      * @throws SamlException the saml exception
      */
-    private AuthnStatement buildAuthnStatement(final Assertion assertion, final AuthnRequest authnRequest,
+    private AuthnStatement buildAuthnStatement(final Object casAssertion, final RequestAbstractType authnRequest,
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                final SamlRegisteredService service, final String binding) throws SamlException {
 
+        final Assertion assertion = Assertion.class.cast(casAssertion);
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
         final String id = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceNative().nextLong()));
         final AuthnStatement statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
@@ -90,7 +92,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @return the subject locality
      * @throws SamlException the saml exception
      */
-    protected SubjectLocality buildSubjectLocality(final Assertion assertion, final AuthnRequest authnRequest,
+    protected SubjectLocality buildSubjectLocality(final Object assertion, final RequestAbstractType authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                    final String binding)
             throws SamlException {

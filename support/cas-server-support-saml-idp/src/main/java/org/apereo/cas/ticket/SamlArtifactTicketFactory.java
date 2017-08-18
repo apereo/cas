@@ -14,6 +14,7 @@ public interface SamlArtifactTicketFactory extends TicketFactory {
     /**
      * Create an access token.
      *
+     * @param artifactId           the artifact id
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param issuer               the issuer
@@ -21,8 +22,19 @@ public interface SamlArtifactTicketFactory extends TicketFactory {
      * @param samlObject           the saml object
      * @return the access token
      */
-    SamlArtifactTicket create(Authentication authentication,
+    SamlArtifactTicket create(String artifactId,
+                              Authentication authentication,
                               TicketGrantingTicket ticketGrantingTicket,
                               String issuer, String relyingParty,
                               SAMLObject samlObject);
+
+    /**
+     * Create ticket id.
+     *
+     * @param artifactId the artifact id
+     * @return the string
+     */
+    default String createTicketIdFor(final String artifactId) {
+        return SamlArtifactTicket.PREFIX + "-" + artifactId;
+    }
 }

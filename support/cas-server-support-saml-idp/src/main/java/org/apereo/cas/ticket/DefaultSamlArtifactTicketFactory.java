@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.opensaml.saml.common.SAMLObject;
 
 import java.io.StringWriter;
@@ -18,12 +17,7 @@ import java.io.StringWriter;
  * @since 5.2.0
  */
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
-
-    /**
-     * Default instance for the ticket id generator.
-     */
-    protected final UniqueTicketIdGenerator uniqueTicketIdGenerator;
-
+    
     /**
      * ExpirationPolicy for refresh tokens.
      */
@@ -41,18 +35,18 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
     
     public DefaultSamlArtifactTicketFactory(final ExpirationPolicy expirationPolicy, final OpenSamlConfigBean configBean,
                                             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
         this.expirationPolicy = expirationPolicy;
         this.configBean = configBean;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
     @Override
-    public SamlArtifactTicket create(final Authentication authentication,
+    public SamlArtifactTicket create(final String artifactId, 
+                                     final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
                                      final String relyingParty, final SAMLObject samlObject) {
         try (StringWriter w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            final String codeId = this.uniqueTicketIdGenerator.getNewTicketId(SamlArtifactTicket.PREFIX);
+            final String codeId = createTicketIdFor(artifactId);
             
             final Service service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlArtifactTicket at = new SamlArtifactTicketImpl(codeId, service, authentication,
