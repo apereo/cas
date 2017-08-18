@@ -1,0 +1,8 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://sp.idptestbed/shibboleth",
+  "name" : "SAML",
+  "id" : 100,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "/Users/Misagh/Workspace/GitWorkspace/dockerized-idp-testbed/idp/shibboleth-idp/metadata/sp-metadata.xml"
+}
