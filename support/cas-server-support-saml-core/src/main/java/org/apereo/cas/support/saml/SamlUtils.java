@@ -7,6 +7,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.Unmarshaller;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.OutputKeys;
@@ -29,8 +31,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +78,29 @@ public final class SamlUtils {
      */
     public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
         return transformSamlObject(configBean, samlObject, false);
+    }
+
+    /**
+     * Transform saml object t.
+     *
+     * @param <T>         the type parameter
+     * @param configBean  the config bean
+     * @param xml         the xml
+     * @return the t
+     */
+    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml) {
+        try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
+            final Document document = configBean.getParserPool().parse(in);
+            final Element root = document.getDocumentElement();
+
+            final Unmarshaller marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
+            if (marshaller != null) {
+                return (T) marshaller.unmarshall(root);
+            }
+        } catch (final Exception e) {
+            throw new SamlException(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**

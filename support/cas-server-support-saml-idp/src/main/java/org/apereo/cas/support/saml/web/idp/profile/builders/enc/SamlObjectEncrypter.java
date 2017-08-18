@@ -4,12 +4,13 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.EncodingUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
+import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.encryption.Encrypter;
@@ -161,7 +162,7 @@ public class SamlObjectEncrypter {
      * @param credential the credential
      * @return the key encryption parameters
      */
-    protected KeyEncryptionParameters getKeyEncryptionParameters(final Assertion samlObject, final SamlRegisteredService service,
+    protected KeyEncryptionParameters getKeyEncryptionParameters(final Object samlObject, final SamlRegisteredService service,
                                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                  final Credential credential) {
         final KeyEncryptionParameters keyEncParams = new KeyEncryptionParameters();
@@ -220,11 +221,8 @@ public class SamlObjectEncrypter {
         final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
         kekCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
-        final PredicateRoleDescriptorResolver roleDescriptorResolver = new PredicateRoleDescriptorResolver(adaptor.getMetadataResolver());
-        roleDescriptorResolver.setSatisfyAnyPredicates(true);
-        roleDescriptorResolver.setUseDefaultPredicateRegistry(true);
-        roleDescriptorResolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
-        roleDescriptorResolver.initialize();
+        final RoleDescriptorResolver roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor, 
+                idp.getMetadata().isRequireValidMetadata());
 
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.initialize();
@@ -239,19 +237,5 @@ public class SamlObjectEncrypter {
         return kekCredentialResolver.resolveSingle(criteriaSet);
     }
 
-    public void setOverrideDataEncryptionAlgorithms(final List overrideDataEncryptionAlgorithms) {
-        this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
-    }
 
-    public void setOverrideKeyEncryptionAlgorithms(final List overrideKeyEncryptionAlgorithms) {
-        this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
-    }
-
-    public void setOverrideBlackListedEncryptionAlgorithms(final List overrideBlackListedEncryptionAlgorithms) {
-        this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
-    }
-
-    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
-        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
-    }
 }

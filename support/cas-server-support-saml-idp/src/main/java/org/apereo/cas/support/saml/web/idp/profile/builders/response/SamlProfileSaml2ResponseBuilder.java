@@ -16,10 +16,11 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
@@ -44,7 +45,8 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     private final TicketRegistry ticketRegistry;
     private final SamlArtifactTicketFactory samlArtifactTicketFactory;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
+    private final SAMLArtifactMap samlArtifactMap;
+    
     public SamlProfileSaml2ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                            final BaseSamlObjectSigner samlObjectSigner,
                                            final VelocityEngineFactory velocityEngineFactory,
@@ -52,18 +54,20 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                            final SamlObjectEncrypter samlObjectEncrypter,
                                            final TicketRegistry ticketRegistry,
                                            final SamlArtifactTicketFactory samlArtifactTicketFactory,
-                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                           final SAMLArtifactMap samlArtifactMap) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
                 samlProfileSamlAssertionBuilder, samlObjectEncrypter);
         this.ticketRegistry = ticketRegistry;
         this.samlArtifactTicketFactory = samlArtifactTicketFactory;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.samlArtifactMap = samlArtifactMap;
     }
 
     @Override
     protected Response buildResponse(final Assertion assertion,
-                                     final org.jasig.cas.client.validation.Assertion casAssertion,
-                                     final AuthnRequest authnRequest,
+                                     final Object casAssertion,
+                                     final RequestAbstractType authnRequest,
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request,
@@ -106,14 +110,14 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                               final String relayState,
                               final String binding,
-                              final AuthnRequest authnRequest,
-                              final org.jasig.cas.client.validation.Assertion assertion) throws SamlException {
+                              final RequestAbstractType authnRequest,
+                              final Object assertion) throws SamlException {
         switch (binding) {
             case SAMLConstants.SAML2_ARTIFACT_BINDING_URI:
                 final SamlResponseArtifactEncoder encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
                         adaptor, httpRequest, httpResponse, authnRequest, 
                         ticketRegistry, samlArtifactTicketFactory, 
-                        ticketGrantingTicketCookieGenerator);
+                        ticketGrantingTicketCookieGenerator, samlArtifactMap);
                 return encoder.encode(samlResponse, relayState);
             default:
                 break;
