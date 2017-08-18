@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * The {@link AllTestsSuite} is responsible for
+ * The {@link AllCoreTestsSuite} is responsible for
  * running all cas test cases.
  *
  * @author Misagh Moayyed
@@ -15,5 +15,5 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({CentralAuthenticationServiceImplTests.class, 
         CentralAuthenticationServiceImplWithMockitoTests.class,
         MultifactorAuthenticationTests.class})
-public class AllTestsSuite {
+public class AllCoreTestsSuite {
 }
