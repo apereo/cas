@@ -2,6 +2,7 @@ description = "Apereo CAS Web Application Configuration"
 dependencies {
     implementation libraries.groovy
     implementation libraries.pac4j
+    implementation libraries.metrics
     implementation libraries.cassecurityfilter
 
     implementation project(":core:cas-server-core-webflow")
