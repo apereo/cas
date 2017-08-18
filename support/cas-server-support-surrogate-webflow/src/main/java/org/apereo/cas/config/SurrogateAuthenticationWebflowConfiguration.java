@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -17,6 +18,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.PostConstruct;
+import java.util.Set;
 
 /**
  * This is {@link SurrogateAuthenticationWebflowConfiguration}.
@@ -52,6 +56,10 @@ public class SurrogateAuthenticationWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
+    @Autowired
+    @Qualifier("handledAuthenticationExceptions")
+    private Set<Class<? extends Exception>> handledAuthenticationExceptions;
+            
     @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
@@ -70,5 +78,10 @@ public class SurrogateAuthenticationWebflowConfiguration {
                 serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy,
                 casProperties.getAuthn().getSurrogate().getSeparator());
+    }
+    
+    @PostConstruct
+    public void init() {
+        this.handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
     }
 }
