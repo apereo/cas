@@ -4,11 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.util.Map;
 
 /**
  * This is {@link SurrogateAuthenticationPostProcessor}.
@@ -48,8 +50,9 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             }
             LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", principal, targetUserId);
             throw new FailedLoginException();
-        } catch (final Throwable e) {
-            throw new AuthenticationException(e.getMessage());
+        } catch (final Exception e) {
+            final Map<String, Class<? extends Throwable>> map = CollectionUtils.wrap(getClass().getSimpleName(), SurrogateAuthenticationException.class);
+            throw new AuthenticationException(map);
         }
     }
 
