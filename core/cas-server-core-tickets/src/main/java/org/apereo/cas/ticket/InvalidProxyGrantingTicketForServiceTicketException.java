@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class InvalidProxyGrantingTicketForServiceTicket extends AbstractTicketValidationException {
+public class InvalidProxyGrantingTicketForServiceTicketException extends AbstractTicketValidationException {
     private static final long serialVersionUID = 2120177571513373134L;
 
     private static final String CODE = "INVALID_PROXY_GRANTING_TICKET";
@@ -18,7 +18,7 @@ public class InvalidProxyGrantingTicketForServiceTicket extends AbstractTicketVa
      *
      * @param service the service
      */
-    public InvalidProxyGrantingTicketForServiceTicket(final Service service) {
+    public InvalidProxyGrantingTicketForServiceTicketException(final Service service) {
         this(CODE, service);
     }
 
@@ -28,7 +28,7 @@ public class InvalidProxyGrantingTicketForServiceTicket extends AbstractTicketVa
      * @param code    the code
      * @param service the service
      */
-    public InvalidProxyGrantingTicketForServiceTicket(final String code, final Service service) {
+    public InvalidProxyGrantingTicketForServiceTicketException(final String code, final Service service) {
         super(code, service);
     }
 }

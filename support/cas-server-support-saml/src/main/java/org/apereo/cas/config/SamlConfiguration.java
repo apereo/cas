@@ -16,7 +16,7 @@ import org.apereo.cas.support.saml.web.SamlValidateController;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.validation.ValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-    private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
+    private CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
 
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
