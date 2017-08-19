@@ -5,9 +5,7 @@ import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAccessStrategy}
