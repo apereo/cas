@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.validation.ValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.openid4java.message.ParameterList;
@@ -37,7 +37,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     private final ServerManager serverManager;
 
-    public OpenIdValidateController(final ValidationSpecification validationSpecification, 
+    public OpenIdValidateController(final CasProtocolValidationSpecification validationSpecification, 
                                     final AuthenticationSystemSupport authenticationSystemSupport, 
                                     final ServicesManager servicesManager, final CentralAuthenticationService centralAuthenticationService, 
                                     final ProxyHandler proxyHandler, final ArgumentExtractor argumentExtractor, 

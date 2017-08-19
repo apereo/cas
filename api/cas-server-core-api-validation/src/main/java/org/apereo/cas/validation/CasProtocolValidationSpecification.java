@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.0.0
  */
 @FunctionalInterface
-public interface ValidationSpecification {
+public interface CasProtocolValidationSpecification {
 
     /**
-     * Is satisfied.
+     * Is satisfied?
      *
      * @param assertion The assertion we want to confirm is satisfied by this spec.
      * @param request   the request
