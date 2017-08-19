@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServ
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
@@ -48,6 +49,10 @@ public class SurrogateAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
@@ -69,13 +74,13 @@ public class SurrogateAuthenticationConfiguration {
             final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
             if (su.getJson().getLocation() != null) {
                 LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
-                return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation());
+                return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
             }
 
             final Map<String, Set> accounts = new LinkedHashMap<>();
             su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
             LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
-            return new SimpleSurrogateAuthenticationService(accounts);
+            return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
         }
