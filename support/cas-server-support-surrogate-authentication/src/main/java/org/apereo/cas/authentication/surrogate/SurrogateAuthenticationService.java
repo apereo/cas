@@ -23,7 +23,11 @@ public interface SurrogateAuthenticationService {
      * Original credential attribute in the authentication payload.
      */
     String AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL = "surrogatePrincipal";
-
+    /**
+     * Indicates that surrogate authn is enabled and activated.
+     */
+    String AUTHENTICATION_ATTR_SURROGATE_ENABLED = "surrogateEnabled";
+    
     /**
      * Checks whether a principal can authenticate as a surrogate user.
      *

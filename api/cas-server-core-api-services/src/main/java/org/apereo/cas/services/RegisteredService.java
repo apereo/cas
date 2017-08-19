@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -211,5 +212,5 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * @return map of custom metadata.
      * @since 4.2
      */
-    Map<String, RegisteredServiceProperty> getProperties();
+    default Map<String, RegisteredServiceProperty> getProperties() { return new LinkedHashMap<>(); }
 }

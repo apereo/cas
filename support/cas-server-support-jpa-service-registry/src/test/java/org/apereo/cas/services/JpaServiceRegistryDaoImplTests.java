@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,7 +88,6 @@ public class JpaServiceRegistryDaoImplTests {
         this.dao.save(r);
 
         final List<RegisteredService> services = this.dao.load();
-
         final RegisteredService r2 = services.get(0);
 
         r.setId(r2.getId());
@@ -98,7 +98,7 @@ public class JpaServiceRegistryDaoImplTests {
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
     }
-
+        
     @Test
     public void verifyRegisteredServiceProperties() {
         final RegexRegisteredService r = new RegexRegisteredService();
