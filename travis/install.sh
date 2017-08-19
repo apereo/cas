@@ -5,5 +5,5 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
   sudo ./gradlew clean checkstyleMain bootRepackage --parallel -x test -x javadoc --stacktrace --build-cache
 else
   echo -e "Travis CI build indicates that tests should should run.\n"
-  sudo ./gradlew clean checkstyleMain bootRepackage --parallel -x test --stacktrace --build-cache
+  sudo ./gradlew bootRepackage --parallel -x test --stacktrace --build-cache -x check
 fi
