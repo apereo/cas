@@ -19,7 +19,7 @@ import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.ValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -103,7 +103,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-    private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
+    private CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
 
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")

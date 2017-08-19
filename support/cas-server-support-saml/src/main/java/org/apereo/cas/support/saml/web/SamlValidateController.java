@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.validation.ValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SamlValidateController extends AbstractServiceValidateController {
 
-    public SamlValidateController(final ValidationSpecification validationSpecification, 
+    public SamlValidateController(final CasProtocolValidationSpecification validationSpecification, 
                                   final AuthenticationSystemSupport authenticationSystemSupport, 
                                   final ServicesManager servicesManager, 
                                   final CentralAuthenticationService centralAuthenticationService, 
