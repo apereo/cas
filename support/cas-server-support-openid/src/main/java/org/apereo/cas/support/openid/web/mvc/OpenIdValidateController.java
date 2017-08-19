@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.ValidationAuthorizer;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.openid4java.message.ParameterList;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An Openid controller that delegates to its own views on service validates.
@@ -44,10 +46,14 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
                                     final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy, 
                                     final AuthenticationContextValidator authenticationContextValidator, 
                                     final View jsonView, final View successView, 
-                                    final View failureView, final String authnContextAttribute, final ServerManager serverManager) {
+                                    final View failureView, final String authnContextAttribute, 
+                                    final ServerManager serverManager,
+                                    final Set<ValidationAuthorizer> validationAuthorizers) {
         super(validationSpecification, authenticationSystemSupport, servicesManager, 
-                centralAuthenticationService, proxyHandler, argumentExtractor, multifactorTriggerSelectionStrategy, 
-                authenticationContextValidator, jsonView, successView, failureView, authnContextAttribute);
+                centralAuthenticationService, proxyHandler, 
+                argumentExtractor, multifactorTriggerSelectionStrategy, 
+                authenticationContextValidator, jsonView, successView, 
+                failureView, authnContextAttribute, validationAuthorizers);
         this.serverManager = serverManager;
     }
 
