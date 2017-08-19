@@ -170,12 +170,14 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * Describes the canonical information url
      * where this service is advertised and may provide
      * help/guidance.
+     *
      * @return the info url.
      */
     String getInformationUrl();
 
     /**
      * Links to the privacy policy of this service, if any.
+     *
      * @return the link to privacy policy
      */
     String getPrivacyUrl();
@@ -212,5 +214,7 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * @return map of custom metadata.
      * @since 4.2
      */
-    default Map<String, RegisteredServiceProperty> getProperties() { return new LinkedHashMap<>(); }
+    default Map<String, RegisteredServiceProperty> getProperties() {
+        return new LinkedHashMap<>();
+    }
 }
