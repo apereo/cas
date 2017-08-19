@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -55,7 +56,9 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
                 getArgumentExtractor(),
                 new DefaultMultifactorTriggerSelectionStrategy("", ""),
                 new DefaultAuthenticationContextValidator("", "OPEN", "test"),
-                cas3ServiceJsonView, cas2SuccessView, cas2ServiceFailureView, "authenticationContext"
+                cas3ServiceJsonView, cas2SuccessView, 
+                cas2ServiceFailureView, "authenticationContext",
+                new LinkedHashSet<>()
         );
     }
 

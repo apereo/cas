@@ -36,6 +36,7 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -78,7 +79,9 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
                 getArgumentExtractor(),
                 new DefaultMultifactorTriggerSelectionStrategy("", ""),
                 new DefaultAuthenticationContextValidator("", "OPEN", "test"),
-                cas3ServiceJsonView, cas3SuccessView, cas3ServiceFailureView, "authenticationContext"
+                cas3ServiceJsonView, cas3SuccessView, 
+                cas3ServiceFailureView, "authenticationContext",
+                new LinkedHashSet<>()
         );
     }
     
