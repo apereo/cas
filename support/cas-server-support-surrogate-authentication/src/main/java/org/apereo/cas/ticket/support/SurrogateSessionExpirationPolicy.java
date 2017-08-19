@@ -48,7 +48,7 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
     @Override
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
         final Map<String, Object> attributes = ticketState.getAuthentication().getAttributes();
-        if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL)
+        if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL)
                 && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
             LOGGER.debug("Ticket is associated with a surrogate authentication.");
             return PolicyTypes.SURROGATE.name();
