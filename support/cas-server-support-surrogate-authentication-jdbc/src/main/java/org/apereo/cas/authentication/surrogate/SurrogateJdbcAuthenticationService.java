@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SurrogateJdbcAuthenticationService implements SurrogateAuthenticationService {
+public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateJdbcAuthenticationService.class);
 
     private final JdbcTemplate jdbcTemplate;
@@ -28,14 +29,16 @@ public class SurrogateJdbcAuthenticationService implements SurrogateAuthenticati
     private final String surrogateAccountQuery;
 
     public SurrogateJdbcAuthenticationService(final String surrogateSearchQuery, final DataSource dataSource,
-                                              final String surrogateAccountQuery) {
+                                              final String surrogateAccountQuery,
+                                              final ServicesManager servicesManager) {
+        super(servicesManager);
         this.surrogateSearchQuery = surrogateSearchQuery;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.surrogateAccountQuery = surrogateAccountQuery;
     }
 
     @Override
-    public boolean canAuthenticateAs(final String username, final Principal surrogate) {
+    public boolean canAuthenticateAsInternal(final String username, final Principal surrogate) {
         try {
             if (username.equalsIgnoreCase(surrogate.getId())) {
                 return true;
@@ -72,7 +75,7 @@ public class SurrogateJdbcAuthenticationService implements SurrogateAuthenticati
      */
     public static class SurrogateAccount implements Serializable {
         private static final long serialVersionUID = 7734857552147825153L;
-        
+
         private String surrogateAccount;
 
         public String getSurrogateAccount() {

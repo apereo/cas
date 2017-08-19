@@ -43,7 +43,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             final Principal principal = builder.build().getPrincipal();
             LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
 
-            if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, principal)) {
+            if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, principal, transaction.getService())) {
                 LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", principal, targetUserId);
                 builder.setPrincipal(this.principalFactory.createPrincipal(targetUserId));
                 return;

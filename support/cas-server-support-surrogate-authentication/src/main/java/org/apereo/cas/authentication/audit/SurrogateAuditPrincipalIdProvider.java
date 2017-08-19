@@ -21,7 +21,7 @@ public class SurrogateAuditPrincipalIdProvider implements AuditPrincipalIdProvid
             final String surrogateUser = authentication.getAttributes()
                     .get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER).toString();
             final String principalId = authentication.getAttributes()
-                    .get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL).toString();
+                    .get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).toString();
             return String.format("(Primary User: [%s], Surrogate User: [%s])", principalId, surrogateUser);
         }
         return authentication.getPrincipal().getId();
