@@ -150,6 +150,13 @@ public class CasValidationConfiguration {
                 servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "proxyController")
+    public ProxyController proxyController() {
+        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory,
+                cas2ProxySuccessView, cas2ProxyFailureView);
+    }
+    
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "v3ServiceValidateController")
@@ -171,7 +178,6 @@ public class CasValidationConfiguration {
     public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                                @Qualifier("defaultAuthenticationSystemSupport") 
                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
-
         return new V3ProxyValidateController(
                 cas20ProtocolValidationSpecification, authenticationSystemSupport,
                 servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
@@ -211,20 +217,12 @@ public class CasValidationConfiguration {
         );
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "proxyController")
-    public ProxyController proxyController() {
-        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory,
-                cas2ProxySuccessView, cas2ProxyFailureView);
-    }
-
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "serviceValidateController")
     public ServiceValidateController serviceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                                @Qualifier("defaultAuthenticationSystemSupport") 
                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
-
         if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
             return new ServiceValidateController(
                     cas20WithoutProxyProtocolValidationSpecification, authenticationSystemSupport,
@@ -242,7 +240,5 @@ public class CasValidationConfiguration {
                 cas3ServiceJsonView(), cas2ServiceSuccessView(), cas2ServiceFailureView,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()
         );
-
-
     }
 }

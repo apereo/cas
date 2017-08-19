@@ -21,6 +21,7 @@ public class SurrogateAuthenticationMetaDataPopulator extends BaseAuthentication
         LOGGER.debug("Recording surrogate username [{}] as an authentication attribute", current.getSurrogateUsername());
         builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, current.getSurrogateUsername());
         builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, current.getId());
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.TRUE.toString());
     }
 
     @Override
