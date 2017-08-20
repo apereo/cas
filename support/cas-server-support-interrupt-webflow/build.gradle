@@ -3,6 +3,9 @@ dependencies {
     implementation project(":support:cas-server-support-interrupt-core")
     implementation project(":support:cas-server-support-interrupt-api")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":api:cas-server-core-api-webflow")
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

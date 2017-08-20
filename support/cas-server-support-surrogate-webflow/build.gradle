@@ -6,6 +6,7 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-audit")
+    implementation project(":api:cas-server-core-api-webflow")
     implementation project(":support:cas-server-support-surrogate-authentication")
 
     testImplementation project(":core:cas-server-core-services")
