@@ -4,6 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +27,14 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
 
     private final PrincipalFactory principalFactory;
     private final SurrogateAuthenticationService surrogateAuthenticationService;
+    private final ServicesManager servicesManager;
 
     public SurrogateAuthenticationPostProcessor(final PrincipalFactory principalFactory,
-                                                final SurrogateAuthenticationService surrogateAuthenticationService) {
+                                                final SurrogateAuthenticationService surrogateAuthenticationService, 
+                                                final ServicesManager servicesManager) {
         this.principalFactory = principalFactory;
         this.surrogateAuthenticationService = surrogateAuthenticationService;
+        this.servicesManager = servicesManager;
     }
 
     @Override
@@ -40,9 +46,15 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 LOGGER.error("No surrogate username was specified as part of the credential");
                 throw new CredentialNotFoundException("Missing surrogate username in credential");
             }
-            final Principal principal = builder.build().getPrincipal();
+            final Authentication authentication = builder.build();
+            final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
 
+            if (transaction.getService() != null) {
+                final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(transaction.getService(), svc, authentication);
+            }
+            
             if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, principal, transaction.getService())) {
                 LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", principal, targetUserId);
                 builder.setPrincipal(this.principalFactory.createPrincipal(targetUserId));
