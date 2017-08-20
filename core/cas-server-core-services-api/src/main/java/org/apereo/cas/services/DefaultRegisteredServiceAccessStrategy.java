@@ -38,6 +38,10 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceAccessStrategy.class);
 
     /**
+     * The sorting/execution order of this strategy.
+     */
+    private int order = 0;
+    /**
      * Is the service allowed at all?
      */
     private boolean enabled = true;
@@ -196,6 +200,15 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     @Override
     public URI getUnauthorizedRedirectUrl() {
         return this.unauthorizedRedirectUrl;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
+
+    public void setOrder(final int order) {
+        this.order = order;
     }
 
     /**
