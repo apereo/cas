@@ -40,7 +40,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /**
      * The sorting/execution order of this strategy.
      */
-    private int order = 0;
+    private int order;
     /**
      * Is the service allowed at all?
      */
