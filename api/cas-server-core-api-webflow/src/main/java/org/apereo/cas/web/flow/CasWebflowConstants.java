@@ -77,6 +77,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'gateway'.
+     */
+    String TRANSITION_ID_GATEWAY = "gateway";
+    
+    /**
      * The view state 'error'.
      */
     String VIEW_ID_ERROR = "error";

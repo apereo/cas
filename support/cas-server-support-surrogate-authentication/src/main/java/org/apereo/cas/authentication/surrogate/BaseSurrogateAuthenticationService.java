@@ -22,7 +22,7 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
 
     @Override
     public final boolean canAuthenticateAs(final String surrogate, final Principal principal, final Service service) {
-        return canAuthenticateAsInternal(surrogate, principal);
+        return canAuthenticateAsInternal(surrogate, principal, service);
     }
 
     /**
@@ -30,7 +30,8 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
      *
      * @param surrogate the surrogate
      * @param principal the principal
+     * @param service   the service
      * @return the boolean
      */
-    protected abstract boolean canAuthenticateAsInternal(String surrogate, Principal principal);
+    protected abstract boolean canAuthenticateAsInternal(String surrogate, Principal principal, Service service);
 }
