@@ -10,6 +10,13 @@ import java.io.Serializable;
  */
 public class Pac4jSamlProperties implements Serializable {
     private static final long serialVersionUID = -862819796533384951L;
+
+    /**
+     * The destination binding to use
+     * when creating authentication requests.
+     */
+    private String destinationBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
+    
     /**
      * The password to use when generating the SP/CAS keystore.
      */
@@ -83,6 +90,14 @@ public class Pac4jSamlProperties implements Serializable {
      * Whether metadata should be marked to request sign assertions.
      */
     private boolean wantsAssertionsSigned;
+
+    public String getDestinationBinding() {
+        return destinationBinding;
+    }
+
+    public void setDestinationBinding(final String destinationBinding) {
+        this.destinationBinding = destinationBinding;
+    }
 
     public boolean isPassive() {
         return passive;

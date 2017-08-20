@@ -12,7 +12,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
 
     /**
@@ -49,7 +49,6 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return the authentication provider id
      */
     Set<String> getMultifactorAuthenticationProviders();
-
 
     /**
      * Gets failure mode.
