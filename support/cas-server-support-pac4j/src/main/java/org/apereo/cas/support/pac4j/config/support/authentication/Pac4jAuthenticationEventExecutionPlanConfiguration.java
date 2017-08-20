@@ -264,7 +264,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                     cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                     cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
-                    cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+                    cfg.setDestinationBindingType(saml.getDestinationBinding());
                     cfg.setForceAuth(saml.isForceAuth());
                     cfg.setPassive(saml.isPassive());
                     cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
