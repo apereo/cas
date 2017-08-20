@@ -9,6 +9,8 @@ dependencies {
     implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":core:cas-server-core-logout")
+    implementation project(":api:cas-server-core-api-webflow")
+    
     implementation libraries.pac4j
 
     testImplementation project(":support:cas-server-support-person-directory")

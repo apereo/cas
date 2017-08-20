@@ -11,11 +11,12 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.support.WebUtils;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -36,7 +37,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                                                         final Map<String, Object> attrs, final RegisteredService service) {
         if (service instanceof SamlRegisteredService) {
             final SamlRegisteredService saml = (SamlRegisteredService) service;
-            final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+            final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
             if (request == null) {
                 LOGGER.warn("Could not locate the request context to process attributes");
