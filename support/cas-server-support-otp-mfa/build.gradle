@@ -2,6 +2,9 @@ description = "Apereo CAS Multifactor Authentication OTP Support"
 dependencies {
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":api:cas-server-core-api")
 
     implementation libraries.caffein
     implementation libraries.zxingbarcode

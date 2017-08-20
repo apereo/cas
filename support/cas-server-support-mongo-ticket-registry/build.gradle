@@ -3,6 +3,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-util")
     implementation project(":support:cas-server-support-mongo-core")
+    implementation project(":api:cas-server-core-api-logout")
     implementation libraries.mongo
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")

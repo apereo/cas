@@ -1,11 +1,11 @@
 description = "Apereo CAS Core Web"
 dependencies {
-    compile project(":api:cas-server-core-api-web")
-    compile project(":api:cas-server-core-api-ticket")
-    compile project(":api:cas-server-core-api-services")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":api:cas-server-core-api-logout")
-    compile project(":api:cas-server-core-api-logout")
+    implementation project(":api:cas-server-core-api-web")
+    implementation project(":api:cas-server-core-api-ticket")
+    implementation project(":api:cas-server-core-api-services")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":api:cas-server-core-api-logout")
+    implementation project(":api:cas-server-core-api-logout")
     compileOnly project(":api:cas-server-core-api-webflow")
     implementation libraries.pac4j
     implementation libraries.thymeleaf
