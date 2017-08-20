@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.action;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
