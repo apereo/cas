@@ -97,7 +97,7 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
-        return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService());
+        return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService(), servicesManager);
     }
 
     @Bean

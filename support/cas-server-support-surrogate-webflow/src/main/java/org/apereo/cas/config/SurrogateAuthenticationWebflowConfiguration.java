@@ -3,9 +3,11 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
-import org.apereo.cas.web.flow.SurrogateSelectionAction;
+import org.apereo.cas.web.flow.action.SurrogateAuthorizationAction;
+import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationAction;
+import org.apereo.cas.web.flow.action.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -34,6 +36,10 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SurrogateAuthenticationWebflowConfiguration {
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -78,6 +84,11 @@ public class SurrogateAuthenticationWebflowConfiguration {
                 serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy,
                 casProperties.getAuthn().getSurrogate().getSeparator());
+    }
+    
+    @Bean
+    public Action surrogateAuthorizationCheck() {
+        return new SurrogateAuthorizationAction(servicesManager);
     }
     
     @PostConstruct

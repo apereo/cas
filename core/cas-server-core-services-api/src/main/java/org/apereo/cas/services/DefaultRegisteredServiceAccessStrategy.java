@@ -33,21 +33,23 @@ import java.util.stream.Collectors;
  * @since 4.1
  */
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
-
+    
     private static final long serialVersionUID = 1245279151345635245L;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceAccessStrategy.class);
 
     /**
      * Is the service allowed at all?
-     **/
+     */
     private boolean enabled = true;
 
     /**
      * Is the service allowed to use SSO?
-     **/
+     */
     private boolean ssoEnabled = true;
 
+    /**
+     * The Unauthorized redirect url.
+     */
     private URI unauthorizedRedirectUrl;
 
     /**
@@ -55,7 +57,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Default requires that all attributes be present and match the principal's.
      */
     private boolean requireAllAttributes = true;
-    
+
     /**
      * Collection of required attributes
      * for this service to proceed.
@@ -118,6 +120,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.requiredAttributes = requiredAttributes;
     }
 
+    /**
+     * Sets enabled.
+     *
+     * @param enabled the enabled
+     */
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
@@ -131,10 +138,20 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.ssoEnabled = ssoEnabled;
     }
 
+    /**
+     * Is enabled boolean.
+     *
+     * @return the boolean
+     */
     public boolean isEnabled() {
         return this.enabled;
     }
 
+    /**
+     * Is sso enabled boolean.
+     *
+     * @return the boolean
+     */
     public boolean isSsoEnabled() {
         return this.ssoEnabled;
     }
@@ -149,14 +166,29 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.requireAllAttributes = requireAllAttributes;
     }
 
+    /**
+     * Is require all attributes boolean.
+     *
+     * @return the boolean
+     */
     public boolean isRequireAllAttributes() {
         return this.requireAllAttributes;
     }
 
+    /**
+     * Gets required attributes.
+     *
+     * @return the required attributes
+     */
     public Map<String, Set<String>> getRequiredAttributes() {
         return new HashMap<>(this.requiredAttributes);
     }
 
+    /**
+     * Sets unauthorized redirect url.
+     *
+     * @param unauthorizedRedirectUrl the unauthorized redirect url
+     */
     public void setUnauthorizedRedirectUrl(final URI unauthorizedRedirectUrl) {
         this.unauthorizedRedirectUrl = unauthorizedRedirectUrl;
     }
@@ -169,7 +201,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /**
      * Is attribute value matching case insensitive?
      *
-     * @return true/false
+     * @return true /false
      */
     public boolean isCaseInsensitive() {
         return this.caseInsensitive;
@@ -207,10 +239,15 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.rejectedAttributes = rejectedAttributes;
     }
 
+    /**
+     * Gets rejected attributes.
+     *
+     * @return the rejected attributes
+     */
     public Map<String, Set<String>> getRejectedAttributes() {
         return this.rejectedAttributes;
     }
-    
+
     @JsonIgnore
     @Override
     public boolean isServiceAccessAllowedForSso() {
@@ -251,16 +288,24 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
-        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes)) {
+        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, this.requiredAttributes)) {
             LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
 
-        
+
         return true;
     }
 
-    private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
+    /**
+     * Do required attributes allow principal access boolean.
+     *
+     * @param principalAttributes the principal attributes
+     * @param requiredAttributes  the required attributes
+     * @return the boolean
+     */
+    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
+                                                             final Map<String, Set<String>> requiredAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
         if (requiredAttributes.isEmpty()) {
             return true;
@@ -269,6 +314,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return common(principalAttributes, requiredAttributes);
     }
 
+    /**
+     * Do rejected attributes refuse principal access boolean.
+     *
+     * @param principalAttributes the principal attributes
+     * @return the boolean
+     */
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", rejectedAttributes, principalAttributes);
         if (rejectedAttributes.isEmpty()) {
@@ -283,11 +334,10 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      *
      * @param principal           the principal
      * @param principalAttributes the principal attributes
-     * @return true/false
+     * @return true /false
      */
     protected boolean enoughAttributesAvailableToProcess(final String principal, final Map<String, Object> principalAttributes) {
-        if (principalAttributes.isEmpty() && !this.requiredAttributes.isEmpty()) {
-            LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
+        if (!enoughRequiredAttributesAvailableToProcess(principalAttributes, this.requiredAttributes)) {
             return false;
         }
 
@@ -298,7 +348,25 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
-        if (principalAttributes.size() < this.requiredAttributes.size()) {
+        return true;
+    }
+
+    /**
+     * Enough required attributes available to process? Check collection sizes and determine
+     * if we have enough data to move on.
+     *
+     * @param principalAttributes the principal attributes
+     * @param requiredAttributes  the required attributes
+     * @return true /false
+     */
+    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes,
+                                                                 final Map<String, Set<String>> requiredAttributes) {
+        if (principalAttributes.isEmpty() && !requiredAttributes.isEmpty()) {
+            LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
+            return false;
+        }
+
+        if (principalAttributes.size() < requiredAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
                             + "which indicates the principal is not carrying enough data to grant authorization",
                     principalAttributes);
@@ -357,6 +425,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .toString();
     }
 
+    /**
+     * Common boolean.
+     *
+     * @param principalAttributes the principal attributes
+     * @param attributes          the attributes
+     * @return the boolean
+     */
     private boolean common(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
         final Set<String> difference = attributes.keySet().stream()
                 .filter(a -> principalAttributes.keySet().contains(a))

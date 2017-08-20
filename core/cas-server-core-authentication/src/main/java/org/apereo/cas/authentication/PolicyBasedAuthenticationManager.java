@@ -219,8 +219,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
-        final Authentication authentication = builder.build();
+        AuthenticationCredentialsLocalBinder.bindCurrent(builder);
         
+        final Authentication authentication = builder.build();
         addAuthenticationMethodAttribute(builder, authentication);
         populateAuthenticationMetadataAttributes(builder, transaction);
         invokeAuthenticationPostProcessors(builder, transaction);

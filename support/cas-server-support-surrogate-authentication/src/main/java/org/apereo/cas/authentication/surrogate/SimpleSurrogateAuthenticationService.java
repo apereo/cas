@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal) {
+    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         if (this.eligibleAccounts.containsKey(principal.getId())) {
             final Set surrogates = this.eligibleAccounts.get(principal.getId());
             LOGGER.debug("Surrogate accounts authorized for [{}] are [{}]", principal.getId(), surrogates);

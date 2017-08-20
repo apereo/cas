@@ -14,6 +14,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationService;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -66,7 +67,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal) {
+    public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         try {
             final HttpClientBuilder builder = HttpClientBuilder.create();
             prepareCredentialsIfNeeded(builder);

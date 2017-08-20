@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String username, final Principal surrogate) {
+    public boolean canAuthenticateAsInternal(final String username, final Principal surrogate, final Service service) {
         try {
             if (username.equalsIgnoreCase(surrogate.getId())) {
                 return true;
