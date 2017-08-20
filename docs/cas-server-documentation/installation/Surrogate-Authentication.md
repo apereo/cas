@@ -122,3 +122,31 @@ For example, if you are `casuser` and you need to locate the surrogate account t
 ## Session Expiration
 
 An impersonation session can be assigned a specific expiration policy that would control how long a surrogate session may last. This means that the SSO session established as part of impersonation will rightly vanish, once the expiration policy dictates as such. It is recommended that you keep the expiration length short (i.e. 30 minutes) to avoid possible security issues.
+
+## Surrogate Authorization
+
+Each surrogate account storage is able to determine the list of impersonatees to enforce authorization rules. Additionally, you may on a per-service level define whether an application is authorized to leverage surrogate authentication and whether the primary user is tagged with enough attributes and entitlements to allow impersonation to execute.
+
+A sample service definition follows:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
+    "surrogateEnabled" : true,
+    "surrogateSsoEnabled" : false,
+    "enabled": true,
+    "ssoEnabled": true,
+    "surrogateRequiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]
+    }
+  }
+}
+```
+
+The surrogate access strategy is only activated if the establish authentication and SSO session is one of impersonation. In the above example, surrogate access to the application matching `testId` is allowed only if the authenticated primary user carries an attribute `givenName` which contains a value of `Administrator`. While the surrogate authentication session will also not take part in SSO, a *normal* authentication session however will.
