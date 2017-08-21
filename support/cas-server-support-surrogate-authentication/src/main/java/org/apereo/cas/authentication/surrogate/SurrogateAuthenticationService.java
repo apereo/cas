@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 
 import java.util.Collection;
 
@@ -21,16 +22,21 @@ public interface SurrogateAuthenticationService {
     /**
      * Original credential attribute in the authentication payload.
      */
-    String AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL = "surrogateCredential";
+    String AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL = "surrogatePrincipal";
+    /**
+     * Indicates that surrogate authn is enabled and activated.
+     */
+    String AUTHENTICATION_ATTR_SURROGATE_ENABLED = "surrogateEnabled";
     
     /**
-     * Checks whether a surrogate can authenticate as a particular user.
+     * Checks whether a principal can authenticate as a surrogate user.
      *
      * @param surrogate The username of the surrogate
      * @param principal the principal
+     * @param service   the service
      * @return true if the given surrogate can authenticate as the user
      */
-    default boolean canAuthenticateAs(final String surrogate, final Principal principal) {
+    default boolean canAuthenticateAs(final String surrogate, final Principal principal, final Service service) {
         return false;
     }
 

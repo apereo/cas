@@ -14,8 +14,8 @@ import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Before;
@@ -212,7 +212,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
-        this.serviceValidateController.setValidationSpecification(new MockValidationSpecification(false));
+        this.serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
         assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
                 new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
@@ -316,7 +316,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     public abstract AbstractServiceValidateController getServiceValidateControllerInstance() throws Exception;
 
-    protected ValidationSpecification getValidationSpecification() {
+    protected CasProtocolValidationSpecification getValidationSpecification() {
         return new Cas20WithoutProxyingValidationSpecification();
     }
 

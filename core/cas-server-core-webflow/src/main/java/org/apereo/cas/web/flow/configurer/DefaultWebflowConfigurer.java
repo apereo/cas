@@ -84,11 +84,28 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createDefaultActionStates(final Flow flow) {
+        createGenerateServiceTicketAction(flow);
         createTerminateSessionAction(flow);
         createGatewayServicesMgmtAction(flow);
         createServiceAuthorizationCheckAction(flow);
         createRedirectToServiceActionState(flow);
         createHandleAuthenticationFailureAction(flow);
+    }
+
+    /**
+     * Create generate service ticket action.
+     *
+     * @param flow the flow
+     */
+    protected void createGenerateServiceTicketAction(final Flow flow) {
+        final ActionState handler = createActionState(flow,
+                CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
+                createEvaluateAction("generateServiceTicketAction"));
+        createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_REDIRECT);
+        createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN);
+        createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
+        createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_GATEWAY, CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK);
     }
 
     /**

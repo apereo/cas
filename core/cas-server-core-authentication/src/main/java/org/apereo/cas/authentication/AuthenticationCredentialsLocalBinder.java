@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.*;
 
 /**
  * ThreadLocal based holder for current set of credentials and/or authentication object for any current
@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.joining;
 public class AuthenticationCredentialsLocalBinder {
 
     private static final ThreadLocal<Authentication> CURRENT_AUTHENTICATION = new ThreadLocal<>();
-
+    private static final ThreadLocal<AuthenticationBuilder> CURRENT_AUTHENTICATION_BUILDER = new ThreadLocal<>();
     private static final ThreadLocal<String[]> CURRENT_CREDENTIAL_IDS = new ThreadLocal<>();
 
     protected AuthenticationCredentialsLocalBinder() {
@@ -54,6 +54,15 @@ public class AuthenticationCredentialsLocalBinder {
     public static void bindCurrent(final Authentication authentication) {
         CURRENT_AUTHENTICATION.set(authentication);
     }
+
+    /**
+     * Bind AuthenticationBuilder to ThreadLocal.
+     *
+     * @param builder the authentication builder
+     */
+    public static void bindCurrent(final AuthenticationBuilder builder) {
+        CURRENT_AUTHENTICATION_BUILDER.set(builder);
+    }
     
     /**
      * Get credential ids from ThreadLocal.
@@ -73,7 +82,14 @@ public class AuthenticationCredentialsLocalBinder {
         return getCurrentCredentialIds() != null ? Arrays.stream(getCurrentCredentialIds()).collect(joining(", ")) : null;
     }
 
-
+    /**
+     * Get AuthenticationBuilder from ThreadLocal.
+     *
+     * @return authentication builder
+     */
+    public static AuthenticationBuilder getCurrentAuthenticationBuilder() {
+        return CURRENT_AUTHENTICATION_BUILDER.get();
+    }
 
     /**
      * Get Authentication from ThreadLocal.
@@ -90,5 +106,6 @@ public class AuthenticationCredentialsLocalBinder {
     public static void clear() {
         CURRENT_CREDENTIAL_IDS.remove();
         CURRENT_AUTHENTICATION.remove();
+        CURRENT_AUTHENTICATION_BUILDER.remove();
     }
 }

@@ -47,14 +47,14 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         final Set<MultifactorAuthenticationTrustRecord> results = storage
                 .values()
                 .stream()
-                .filter(entry -> entry.getDate().isEqual(onOrBefore) || entry.getDate().isBefore(onOrBefore))
+                .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
                 .sorted()
                 .distinct()
                 .collect(Collectors.toSet());
 
         LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
-            results.forEach(entry -> storage.remove(entry.getKey()));
+            results.forEach(entry -> storage.remove(entry.getRecordKey()));
             LOGGER.info("Invalidated and removed [{}] expired records", results.size());
             writeTrustedRecordsToResource();
         }
@@ -66,7 +66,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return storage
                 .values()
                 .stream()
-                .filter(entry -> entry.getDate().isEqual(onOrAfterDate) || entry.getDate().isAfter(onOrAfterDate))
+                .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
                 .sorted()
                 .distinct()
                 .collect(Collectors.toSet());
@@ -86,7 +86,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
-        this.storage.put(record.getKey(), record);
+        this.storage.put(record.getRecordKey(), record);
         writeTrustedRecordsToResource();
         return record;
     }

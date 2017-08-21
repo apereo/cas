@@ -2,9 +2,11 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,15 @@ import java.util.Map;
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
-    private WsFederationConfiguration configuration;
+    private final WsFederationConfiguration configuration;
+
+    public WsFederationCredentialsToPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                                      final boolean returnNullIfNoAttributes,
+                                                      final String principalAttributeName,
+                                                      final WsFederationConfiguration configuration) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+        this.configuration = configuration;
+    }
 
     /**
      * Extracts the principalId.
@@ -68,15 +78,6 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         final Map<String, List<Object>> mergedAttributes = new HashMap<>(wsFedCredentials.getAttributes());
         mergedAttributes.putAll(super.retrievePersonAttributes(principalId, credential));
         return mergedAttributes;
-    }
-
-    /**
-     * Sets the configuration.
-     *
-     * @param configuration a configuration
-     */
-    public void setConfiguration(final WsFederationConfiguration configuration) {
-        this.configuration = configuration;
     }
 
     @Override

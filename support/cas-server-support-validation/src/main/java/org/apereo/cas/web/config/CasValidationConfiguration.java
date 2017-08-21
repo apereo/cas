@@ -10,7 +10,8 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.validation.ValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.ValidationAuthorizer;
 import org.apereo.cas.web.LegacyValidateController;
 import org.apereo.cas.web.ProxyController;
 import org.apereo.cas.web.ProxyValidateController;
@@ -29,6 +30,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * This is {@link CasValidationConfiguration}.
@@ -57,15 +61,15 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-    private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
+    private CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
 
     @Autowired
     @Qualifier("cas20ProtocolValidationSpecification")
-    private ValidationSpecification cas20ProtocolValidationSpecification;
+    private CasProtocolValidationSpecification cas20ProtocolValidationSpecification;
 
     @Autowired
     @Qualifier("cas10ProtocolValidationSpecification")
-    private ValidationSpecification cas10ProtocolValidationSpecification;
+    private CasProtocolValidationSpecification cas10ProtocolValidationSpecification;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -150,6 +154,13 @@ public class CasValidationConfiguration {
                 servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "proxyController")
+    public ProxyController proxyController() {
+        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory,
+                cas2ProxySuccessView, cas2ProxyFailureView);
+    }
+    
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "v3ServiceValidateController")
@@ -161,7 +172,7 @@ public class CasValidationConfiguration {
                 servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
                 cas3ServiceJsonView(), cas3ServiceSuccessView(), cas3ServiceFailureView,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
         );
     }
 
@@ -171,13 +182,12 @@ public class CasValidationConfiguration {
     public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                                @Qualifier("defaultAuthenticationSystemSupport") 
                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
-
         return new V3ProxyValidateController(
                 cas20ProtocolValidationSpecification, authenticationSystemSupport,
                 servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
                 cas3ServiceJsonView(), cas3ServiceSuccessView(), cas3ServiceFailureView,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
         );
     }
 
@@ -192,7 +202,7 @@ public class CasValidationConfiguration {
                 servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
                 cas3ServiceJsonView(), cas3ServiceSuccessView(), cas3ServiceFailureView,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
         );
     }
 
@@ -207,15 +217,8 @@ public class CasValidationConfiguration {
                 servicesManager, centralAuthenticationService, proxy10Handler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
                 cas3ServiceJsonView(), cas1ServiceSuccessView(), cas1ServiceFailureView(),
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
         );
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "proxyController")
-    public ProxyController proxyController() {
-        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory,
-                cas2ProxySuccessView, cas2ProxyFailureView);
     }
 
     @Autowired
@@ -224,14 +227,13 @@ public class CasValidationConfiguration {
     public ServiceValidateController serviceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                                @Qualifier("defaultAuthenticationSystemSupport") 
                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
-
         if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
             return new ServiceValidateController(
                     cas20WithoutProxyProtocolValidationSpecification, authenticationSystemSupport,
                     servicesManager, centralAuthenticationService, proxy10Handler, argumentExtractor,
                     multifactorTriggerSelectionStrategy, authenticationContextValidator,
                     cas3ServiceJsonView(), cas3ServiceSuccessView(), cas3ServiceFailureView,
-                    casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()
+                    casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
             );
         }
 
@@ -240,9 +242,13 @@ public class CasValidationConfiguration {
                 servicesManager, centralAuthenticationService, proxy10Handler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
                 cas3ServiceJsonView(), cas2ServiceSuccessView(), cas2ServiceFailureView,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
         );
+    }
 
-
+    @Bean
+    @ConditionalOnMissingBean(name = "serviceValidationAuthorizers")
+    public Set<ValidationAuthorizer> serviceValidationAuthorizers() {
+        return new LinkedHashSet<>();
     }
 }

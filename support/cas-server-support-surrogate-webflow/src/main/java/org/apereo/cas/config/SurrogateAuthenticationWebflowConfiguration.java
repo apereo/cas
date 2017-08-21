@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
-import org.apereo.cas.web.flow.SurrogateSelectionAction;
+import org.apereo.cas.web.flow.action.SurrogateAuthorizationAction;
+import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationAction;
+import org.apereo.cas.web.flow.action.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -18,6 +21,9 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
+import java.util.Set;
+
 /**
  * This is {@link SurrogateAuthenticationWebflowConfiguration}.
  *
@@ -30,6 +36,10 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SurrogateAuthenticationWebflowConfiguration {
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -52,6 +62,10 @@ public class SurrogateAuthenticationWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
+    @Autowired
+    @Qualifier("handledAuthenticationExceptions")
+    private Set<Class<? extends Exception>> handledAuthenticationExceptions;
+            
     @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
@@ -70,5 +84,15 @@ public class SurrogateAuthenticationWebflowConfiguration {
                 serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy,
                 casProperties.getAuthn().getSurrogate().getSeparator());
+    }
+    
+    @Bean
+    public Action surrogateAuthorizationCheck() {
+        return new SurrogateAuthorizationAction(servicesManager);
+    }
+    
+    @PostConstruct
+    public void init() {
+        this.handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
     }
 }

@@ -206,7 +206,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
         /**
          * Timeout in seconds to kill the surrogate session and consider tickets expired.
          */
-        private long timeToKillInSeconds;
+        private long timeToKillInSeconds = 1_800;
 
         public long getTimeToKillInSeconds() {
             return timeToKillInSeconds;
