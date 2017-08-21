@@ -62,7 +62,6 @@ import java.util.Collection;
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class,
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class})
 public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
