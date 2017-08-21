@@ -98,7 +98,9 @@ Although the scripts support different login methodologies, they do share some c
   * Name and location of file containing test user credentials
   * Should be in the format of `User,Password`, with no spaces between “User", the “comma" and “Password”
 
-**Scripts**
+**Scripts**  
+The scripts can be downloaded from **[here](https://github.com/apereo/cas/raw/master/etc/loadtests/)**
+  
 * **_CAS_CAS.jmx_**
   * Vanilla installation of CAS using standard CAS login process
   * No SP (Service Provider) is needed
