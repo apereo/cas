@@ -99,8 +99,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             samlbean.setRemoveEmptyEntities(saml.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             samlbean.setRemoveRoleless(saml.isMetadataCriteriaRemoveRolelessEntityDescriptors());
             samlbean.setRqrdNmeIdFmt(saml.getRequiredNameIdFormat());
-            samlbean.setSvcPrvdrNmeIdQlfr(saml.getServiceProviderNameIdQualifier());
-            samlbean.setNmeIdQlfr(saml.getNameIdQualifier());
+            samlbean.setSvcPrvdrNmeIdQlfr(saml.getServiceProviderNameQualifier());
+            samlbean.setNmeIdQlfr(saml.getNameQualifier());
 
             if (StringUtils.isNotBlank(saml.getMetadataCriteriaDirection())) {
                 samlbean.setDir(saml.getMetadataCriteriaDirection().toUpperCase());
@@ -210,8 +210,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((SamlRegisteredService) regSvc).setMetadataCriteriaRemoveEmptyEntitiesDescriptors(samlBean.isRemoveEmptyEntities());
                 ((SamlRegisteredService) regSvc).setMetadataCriteriaRemoveRolelessEntityDescriptors(samlBean.isRemoveRoleless());
                 ((SamlRegisteredService) regSvc).setRequiredNameIdFormat(samlBean.getRqrdNmeIdFmt());
-                ((SamlRegisteredService) regSvc).setServiceProviderNameIdQualifier(samlBean.getSvcPrvdrNmeIdQlfr());
-                ((SamlRegisteredService) regSvc).setNameIdQualifier(samlBean.getNmeIdQlfr());
+                ((SamlRegisteredService) regSvc).setServiceProviderNameQualifier(samlBean.getSvcPrvdrNmeIdQlfr());
+                ((SamlRegisteredService) regSvc).setNameQualifier(samlBean.getNmeIdQlfr());
 
                 if (StringUtils.isNotBlank(samlBean.getDir())) {
                     ((SamlRegisteredService) regSvc).setMetadataCriteriaDirection(samlBean.getDir().toUpperCase());
