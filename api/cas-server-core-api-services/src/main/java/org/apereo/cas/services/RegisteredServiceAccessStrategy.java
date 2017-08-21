@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAccessStrategy}
@@ -17,7 +16,7 @@ import java.util.Set;
  * @since 4.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-public interface RegisteredServiceAccessStrategy extends Serializable {
+public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
 
     /**
      * Verify is the service is enabled and recognized by CAS.
@@ -36,7 +35,21 @@ public interface RegisteredServiceAccessStrategy extends Serializable {
     /**
      * Verify authorization policy by checking the pre-configured rules
      * that may depend on what the principal might be carrying.
-     *
+     * 
+     * Verify presence of service required attributes.
+     * <ul>
+     *     <li>If no rejected attributes are specified, authz is granted.</li>
+     *     <li>If no required attributes are specified, authz is granted.</li>
+     *     <li>If ALL attributes must be present, and the principal contains all and there is
+     *     at least one attribute value that matches the rejected, authz is denied.</li>
+     *     <li>If ALL attributes must be present, and the principal contains all and there is
+     *     at least one attribute value that matches the required, authz is granted.</li>
+     *     <li>If ALL attributes don't have to be present, and there is at least
+     *     one principal attribute present whose value matches the rejected, authz is denied.</li>
+     *     <li>If ALL attributes don't have to be present, and there is at least
+     *     one principal attribute present whose value matches the required, authz is granted.</li>
+     *     <li>Otherwise, access is denied</li>
+     * </ul>
      * @param principal           The authenticated principal
      * @param principalAttributes the principal attributes. Rather than passing the principal directly, we are only allowing principal attributes
      *                            given they may be coming from a source external to the principal itself. (Cached principal attributes, etc)
@@ -54,18 +67,9 @@ public interface RegisteredServiceAccessStrategy extends Serializable {
      * @since 4.2
      */
     URI getUnauthorizedRedirectUrl();
-
-    /**
-     * Subordinate access strategies are secondary auxiliary strategies
-     * that are specifically used by extensions. Rather than having extensions
-     * and modules implement their own access strategy, thereby losing defaults,
-     * this is an approach to have each implementation tie an instance directly
-     * yet loosely into the API. It is up to the caller/extension to enforce
-     * subordinate access strategies.
-     *
-     * @return the subordinates
-     */
-    default Set<RegisteredServiceAccessStrategy> getSubordinates() {
-        return new LinkedHashSet<>(0);
+    
+    @Override
+    default int getOrder() {
+        return Integer.MAX_VALUE;
     }
 }

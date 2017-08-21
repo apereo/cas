@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -20,31 +19,41 @@ import java.util.stream.Collectors;
 /**
  * This is {@link DefaultRegisteredServiceAccessStrategy}
  * that allows the following rules:
- *
+ * <p>
  * <ul>
- *     <li>A service may be disallowed to use CAS for authentication</li>
- *     <li>A service may be disallowed to take part in CAS single sign-on such that
- *     presentation of credentials would always be required.</li>
- *     <li>A service may be prohibited from receiving a service ticket
- *     if the existing principal attributes don't contain the required attributes
- *     that otherwise grant access to the service.</li>
+ * <li>A service may be disallowed to use CAS for authentication</li>
+ * <li>A service may be disallowed to take part in CAS single sign-on such that
+ * presentation of credentials would always be required.</li>
+ * <li>A service may be prohibited from receiving a service ticket
+ * if the existing principal attributes don't contain the required attributes
+ * that otherwise grant access to the service.</li>
  * </ul>
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
-
+    
     private static final long serialVersionUID = 1245279151345635245L;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceAccessStrategy.class);
 
-    /** Is the service allowed at all? **/
+    /**
+     * The sorting/execution order of this strategy.
+     */
+    private int order;
+    /**
+     * Is the service allowed at all?
+     */
     private boolean enabled = true;
 
-    /** Is the service allowed to use SSO? **/
+    /**
+     * Is the service allowed to use SSO?
+     */
     private boolean ssoEnabled = true;
 
+    /**
+     * The Unauthorized redirect url.
+     */
     private URI unauthorizedRedirectUrl;
 
     /**
@@ -53,11 +62,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     private boolean requireAllAttributes = true;
 
-    /**
-     * Collection of subordinate access strategies.
-     */
-    private Set<RegisteredServiceAccessStrategy> subordinates = new LinkedHashSet<>();
-    
     /**
      * Collection of required attributes
      * for this service to proceed.
@@ -70,7 +74,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * policy to refuse access.
      */
     private Map<String, Set<String>> rejectedAttributes = new HashMap<>();
-    
+
     /**
      * Indicates whether matching on required attribute values
      * should be done in a case-insensitive manner.
@@ -89,7 +93,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /**
      * Instantiates a new Default registered service authorization strategy.
      *
-     * @param enabled the enabled
+     * @param enabled    the enabled
      * @param ssoEnabled the sso enabled
      */
     public DefaultRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
@@ -103,7 +107,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param requiredAttributes the required attributes
      * @param rejectedAttributes the rejected attributes
      */
-    public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes, 
+    public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes,
                                                   final Map<String, Set<String>> rejectedAttributes) {
         this();
         this.requiredAttributes = requiredAttributes;
@@ -120,22 +124,38 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.requiredAttributes = requiredAttributes;
     }
 
+    /**
+     * Sets enabled.
+     *
+     * @param enabled the enabled
+     */
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
     /**
      * Set to enable/authorize this service.
+     *
      * @param ssoEnabled true to enable service
      */
     public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
 
+    /**
+     * Is enabled boolean.
+     *
+     * @return the boolean
+     */
     public boolean isEnabled() {
         return this.enabled;
     }
 
+    /**
+     * Is sso enabled boolean.
+     *
+     * @return the boolean
+     */
     public boolean isSsoEnabled() {
         return this.ssoEnabled;
     }
@@ -143,20 +163,36 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /**
      * Defines the attribute aggregation when checking for required attributes.
      * Default requires that all attributes be present and match the principal's.
+     *
      * @param requireAllAttributes the require all attributes
      */
     public void setRequireAllAttributes(final boolean requireAllAttributes) {
         this.requireAllAttributes = requireAllAttributes;
     }
 
+    /**
+     * Is require all attributes boolean.
+     *
+     * @return the boolean
+     */
     public boolean isRequireAllAttributes() {
         return this.requireAllAttributes;
     }
 
+    /**
+     * Gets required attributes.
+     *
+     * @return the required attributes
+     */
     public Map<String, Set<String>> getRequiredAttributes() {
         return new HashMap<>(this.requiredAttributes);
     }
 
+    /**
+     * Sets unauthorized redirect url.
+     *
+     * @param unauthorizedRedirectUrl the unauthorized redirect url
+     */
     public void setUnauthorizedRedirectUrl(final URI unauthorizedRedirectUrl) {
         this.unauthorizedRedirectUrl = unauthorizedRedirectUrl;
     }
@@ -166,10 +202,19 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return this.unauthorizedRedirectUrl;
     }
 
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
+
+    public void setOrder(final int order) {
+        this.order = order;
+    }
+
     /**
      * Is attribute value matching case insensitive?
      *
-     * @return true/false
+     * @return true /false
      */
     public boolean isCaseInsensitive() {
         return this.caseInsensitive;
@@ -199,7 +244,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     /**
      * Sets rejected attributes. If the policy finds any of the attributes defined
-     * here, it will simply reject and refuse access. 
+     * here, it will simply reject and refuse access.
      *
      * @param rejectedAttributes the rejected attributes
      */
@@ -207,40 +252,45 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.rejectedAttributes = rejectedAttributes;
     }
 
+    /**
+     * Gets rejected attributes.
+     *
+     * @return the rejected attributes
+     */
     public Map<String, Set<String>> getRejectedAttributes() {
         return this.rejectedAttributes;
     }
 
+    @JsonIgnore
     @Override
-    public Set<RegisteredServiceAccessStrategy> getSubordinates() {
-        return this.subordinates;
+    public boolean isServiceAccessAllowedForSso() {
+        if (!this.ssoEnabled) {
+            LOGGER.trace("Service is not authorized to participate in SSO.");
+            return false;
+        }
+
+        return true;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Verify presence of service required attributes.
-     * <ul>
-     *     <li>If no rejected attributes are specified, authz is granted.</li>
-     *     <li>If no required attributes are specified, authz is granted.</li>
-     *     <li>If ALL attributes must be present, and the principal contains all and there is
-     *     at least one attribute value that matches the rejected, authz is denied.</li>
-     *     <li>If ALL attributes must be present, and the principal contains all and there is
-     *     at least one attribute value that matches the required, authz is granted.</li>
-     *     <li>If ALL attributes don't have to be present, and there is at least
-     *     one principal attribute present whose value matches the rejected, authz is denied.</li>
-     *     <li>If ALL attributes don't have to be present, and there is at least
-     *     one principal attribute present whose value matches the required, authz is granted.</li>
-     *     <li>Otherwise, access is denied</li>
-     * </ul>
-     */
+    @JsonIgnore
+    @Override
+    public boolean isServiceAccessAllowed() {
+        if (!this.enabled) {
+            LOGGER.trace("Service is not enabled in service registry.");
+            return false;
+        }
+
+
+        return true;
+    }
+
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (this.rejectedAttributes.isEmpty() && this.requiredAttributes.isEmpty()) {
             LOGGER.debug("Skipping access strategy policy, since no attributes rules are defined");
             return true;
         }
-        
+
         if (!enoughAttributesAvailableToProcess(principal, principalAttributes)) {
             LOGGER.debug("Access is denied. There are not enough attributes available to satisfy requirements");
             return false;
@@ -250,15 +300,25 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             LOGGER.debug("Access is denied. The principal carries attributes that would reject service access");
             return false;
         }
-                
-        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes)) {
+
+        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, this.requiredAttributes)) {
             LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
+
+
         return true;
     }
 
-    private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
+    /**
+     * Do required attributes allow principal access boolean.
+     *
+     * @param principalAttributes the principal attributes
+     * @param requiredAttributes  the required attributes
+     * @return the boolean
+     */
+    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
+                                                             final Map<String, Set<String>> requiredAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
         if (requiredAttributes.isEmpty()) {
             return true;
@@ -266,7 +326,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         return common(principalAttributes, requiredAttributes);
     }
-    
+
+    /**
+     * Do rejected attributes refuse principal access boolean.
+     *
+     * @param principalAttributes the principal attributes
+     * @return the boolean
+     */
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", rejectedAttributes, principalAttributes);
         if (rejectedAttributes.isEmpty()) {
@@ -281,11 +347,10 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      *
      * @param principal           the principal
      * @param principalAttributes the principal attributes
-     * @return true/false
+     * @return true /false
      */
     protected boolean enoughAttributesAvailableToProcess(final String principal, final Map<String, Object> principalAttributes) {
-        if (principalAttributes.isEmpty() && !this.requiredAttributes.isEmpty()) {
-            LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
+        if (!enoughRequiredAttributesAvailableToProcess(principalAttributes, this.requiredAttributes)) {
             return false;
         }
 
@@ -296,33 +361,33 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
-        if (principalAttributes.size() < this.requiredAttributes.size()) {
+        return true;
+    }
+
+    /**
+     * Enough required attributes available to process? Check collection sizes and determine
+     * if we have enough data to move on.
+     *
+     * @param principalAttributes the principal attributes
+     * @param requiredAttributes  the required attributes
+     * @return true /false
+     */
+    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes,
+                                                                 final Map<String, Set<String>> requiredAttributes) {
+        if (principalAttributes.isEmpty() && !requiredAttributes.isEmpty()) {
+            LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
+            return false;
+        }
+
+        if (principalAttributes.size() < requiredAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
-                        + "which indicates the principal is not carrying enough data to grant authorization",
+                            + "which indicates the principal is not carrying enough data to grant authorization",
                     principalAttributes);
             return false;
         }
         return true;
     }
 
-    @JsonIgnore
-    @Override
-    public boolean isServiceAccessAllowedForSso() {
-        if (!this.ssoEnabled) {
-            LOGGER.trace("Service is not authorized to participate in SSO.");
-        }
-        return this.ssoEnabled;
-    }
-
-    @JsonIgnore
-    @Override
-    public boolean isServiceAccessAllowed() {
-        if (!this.enabled) {
-            LOGGER.trace("Service is not enabled in service registry.");
-        }
-
-        return this.enabled;
-    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -344,7 +409,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
                 .append(this.caseInsensitive, rhs.caseInsensitive)
                 .append(this.rejectedAttributes, rhs.rejectedAttributes)
-                .append(this.subordinates, rhs.subordinates)
                 .isEquals();
     }
 
@@ -358,7 +422,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.unauthorizedRedirectUrl)
                 .append(this.caseInsensitive)
                 .append(this.rejectedAttributes)
-                .append(this.subordinates)
                 .toHashCode();
     }
 
@@ -372,10 +435,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("unauthorizedRedirectUrl", this.unauthorizedRedirectUrl)
                 .append("caseInsensitive", this.caseInsensitive)
                 .append("rejectedAttributes", this.rejectedAttributes)
-                .append("subordinates", this.subordinates)
                 .toString();
     }
 
+    /**
+     * Common boolean.
+     *
+     * @param principalAttributes the principal attributes
+     * @param attributes          the attributes
+     * @return the boolean
+     */
     private boolean common(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
         final Set<String> difference = attributes.keySet().stream()
                 .filter(a -> principalAttributes.keySet().contains(a))

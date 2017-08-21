@@ -4,14 +4,17 @@ dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-events")
+    implementation project(":api:cas-server-core-api-webflow")
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-geolocation-googlemaps")
-
+    implementation project(":api:cas-server-core-api")
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(path: ":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":support:cas-server-support-events-memory")
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

@@ -5,10 +5,13 @@ dependencies {
     compile project(":core:cas-server-core-configuration")
     compile project(":api:cas-server-core-api-events")
     compile project(":core:cas-server-core-authentication-attributes")
-    api libraries.metrics
     implementation libraries.groovy
     implementation libraries.springsecurity
     implementation libraries.caffein
+    implementation libraries.metrics
+
+    
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-authentication")
+    
 }
