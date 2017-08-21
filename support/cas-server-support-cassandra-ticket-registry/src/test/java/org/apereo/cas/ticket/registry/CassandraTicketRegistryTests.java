@@ -11,7 +11,6 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CassandraTicketRegistryConfiguration;
 import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
 import org.junit.Assert;
@@ -38,7 +37,6 @@ import java.util.Collection;
         CasCoreTicketCatalogConfiguration.class,
         CassandraTicketRegistryTicketCatalogConfiguration.class,
         CasCoreUtilConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
