@@ -3,11 +3,8 @@ dependencies {
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-util")
     implementation project(":support:cas-server-support-couchbase-core")
-    implementation project(":support:cas-server-support-oauth-core")
-    implementation project(":support:cas-server-support-oauth-api")
     
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
-    
 }
