@@ -125,7 +125,7 @@ public class RegisteredServiceSamlTypeEditBean {
         return rqrdNmeIdFmt;
     }
 
-    public void setRqrdNmeIdFmt(String rdNmeIdFmt) {
+    public void setRqrdNmeIdFmt(final String rdNmeIdFmt) {
         this.rqrdNmeIdFmt = rdNmeIdFmt;
     }
 
@@ -133,7 +133,7 @@ public class RegisteredServiceSamlTypeEditBean {
         return svcPrvdrNmeQlfr;
     }
 
-    public void setSvcPrvdrNmeQlfr(String svcPrvdrNmeQlfr) {
+    public void setSvcPrvdrNmeQlfr(final String svcPrvdrNmeQlfr) {
         this.svcPrvdrNmeQlfr = svcPrvdrNmeQlfr;
     }
 
@@ -141,7 +141,7 @@ public class RegisteredServiceSamlTypeEditBean {
         return nmeQlfr;
     }
 
-    public void setNmeQlfr(String nmeQlfr) {
+    public void setNmeQlfr(final String nmeQlfr) {
         this.nmeQlfr = nmeQlfr;
     }
 }
