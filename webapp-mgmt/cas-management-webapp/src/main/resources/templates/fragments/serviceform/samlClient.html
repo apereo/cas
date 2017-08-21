@@ -193,8 +193,50 @@
                 </div>
             </div>
             
+            <!--Required NameIdFormat: text-->
+            <div class="form-group">
+                <label class="col-sm-4" for="rqrdNmeIdFmt">
+                    <span th:remove="tag" th:text="#{services.form.label.saml.requiredNameIdFormat}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.saml.requiredNameIdFormat}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" autocomplete="off" class="form-control" id="samlRqrdNmeIdFmt"
+                           ng-model="serviceFormCtrl.serviceData.saml.rqrdNmeIdFmt"/>
+                </div>
+            </div>
             
+            <!--Service Provider NameIdQualifier: text-->
+            <div class="form-group">
+                <label class="col-sm-4" for="samlsvcPrvdrNmeIdQlfr">
+                    <span th:remove="tag" th:text="#{services.form.label.saml.serviceProviderNameIdQualifier}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.saml.serviceProviderNameIdQualifier}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" autocomplete="off" class="form-control" id="samlSvcPrvdrNmeIdQlfr"
+                           ng-model="serviceFormCtrl.serviceData.saml.svcPrvdrNmeIdQlfr"/>
+                </div>
+            </div>
             
+            <!--NameIdQualifier: text-->
+            <div class="form-group">
+                <label class="col-sm-4" for="samlNmeIdQlfr">
+                    <span th:remove="tag" th:text="#{services.form.label.saml.nameIdQualifier}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.saml.nameIdQualifier}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" autocomplete="off" class="form-control" id="samlNmeIdQlfr"
+                           ng-model="serviceFormCtrl.serviceData.saml.nmeIdQlfr"/>
+                </div>
+            </div>
         </div>
     </div>
 </div>

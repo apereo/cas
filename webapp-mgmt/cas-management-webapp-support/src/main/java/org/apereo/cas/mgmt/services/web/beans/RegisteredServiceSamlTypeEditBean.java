@@ -21,6 +21,9 @@ public class RegisteredServiceSamlTypeEditBean {
     private String mdPattern;
     private String dir;
     private Set<String> roles;
+    private String rqrdNmeIdFmt;
+    private String svcPrvdrNmeIdQlfr;
+    private String nmeIdQlfr;
 
     public boolean isSignResp() {
         return signResp;
@@ -116,5 +119,29 @@ public class RegisteredServiceSamlTypeEditBean {
 
     public void setRoles(final Set<String> roles) {
         this.roles = roles;
+    }
+    
+    public String getRqrdNmeIdFmt() {
+        return rqrdNmeIdFmt;
+    }
+
+    public void setRqrdNmeIdFmt(String rdNmeIdFmt) {
+        this.rqrdNmeIdFmt = rdNmeIdFmt;
+    }
+
+    public String getSvcPrvdrNmeIdQlfr() {
+        return svcPrvdrNmeIdQlfr;
+    }
+
+    public void setSvcPrvdrNmeIdQlfr(String svcPrvdrNmeIdQlfr) {
+        this.svcPrvdrNmeIdQlfr = svcPrvdrNmeIdQlfr;
+    }
+
+    public String getNmeIdQlfr() {
+        return nmeIdQlfr;
+    }
+
+    public void setNmeIdQlfr(String nmeIdQlfr) {
+        this.nmeIdQlfr = nmeIdQlfr;
     }
 }
