@@ -6,6 +6,8 @@ dependencies {
     implementation project(":support:cas-server-support-validation")
     implementation libraries.openid4java
     implementation project(":core:cas-server-core-authentication")
+
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
