@@ -92,7 +92,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             nameid.setNameQualifier(service.getNameIdQualifier());
         }
         if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
-            nameid.setNameQualifier(service.getServiceProviderNameIdQualifier());
+            nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
         }
 
         return nameid;
