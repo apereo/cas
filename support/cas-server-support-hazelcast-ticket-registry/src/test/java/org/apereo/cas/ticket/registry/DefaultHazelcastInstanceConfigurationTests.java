@@ -106,7 +106,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(Arrays.asList("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5701, config.getNetworkConfig().getPort());
-        assertEquals(2, config.getMapConfigs().size());
+        assertEquals(4, config.getMapConfigs().size());
     }
 
     @After
