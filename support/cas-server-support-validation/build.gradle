@@ -4,6 +4,8 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-tickets")
+
+    testImplementation project(":core:cas-server-core-webflow")
     testCompileOnly libraries.javax
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
