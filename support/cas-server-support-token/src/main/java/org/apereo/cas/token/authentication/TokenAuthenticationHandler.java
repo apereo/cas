@@ -121,7 +121,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param service the service
      * @return the registered service jwt secret
      */
-    private String getRegisteredServiceJwtEncryptionSecret(final RegisteredService service) {
+    private static String getRegisteredServiceJwtEncryptionSecret(final RegisteredService service) {
         return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
     }
 
@@ -131,7 +131,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param service the service
      * @return the registered service jwt secret
      */
-    private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
+    private static String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
         return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
     }
 
@@ -142,7 +142,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param propName the prop name
      * @return the registered service jwt secret
      */
-    protected String getRegisteredServiceJwtSecret(final RegisteredService service, final String propName) {
+    protected static String getRegisteredServiceJwtSecret(final RegisteredService service, final String propName) {
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
