@@ -88,11 +88,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         
-        if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
-            nameid.setNameQualifier(service.getNameIdQualifier());
+        if (StringUtils.isNotBlank(service.getNameQualifier())) {
+            nameid.setNameQualifier(service.getNameQualifier());
         }
-        if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
-            nameid.setNameQualifier(service.getServiceProviderNameIdQualifier());
+        if (StringUtils.isNotBlank(service.getServiceProviderNameQualifier())) {
+            nameid.setSPNameQualifier(service.getServiceProviderNameQualifier());
         }
 
         return nameid;
