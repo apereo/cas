@@ -55,10 +55,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String metadataSignatureLocation;
 
     @Column(length = 255, updatable = true, insertable = true)
-    private String serviceProviderNameQualifier;
+    private String serviceProviderNameIdQualifier;
 
     @Column(length = 255, updatable = true, insertable = true)
-    private String nameQualifier;
+    private String nameIdQualifier;
 
     @Column(updatable = true, insertable = true)
     private boolean signAssertions;
@@ -203,20 +203,20 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.attributeNameFormats = attributeNameFormats;
     }
 
-    public String getServiceProviderNameQualifier() {
-        return serviceProviderNameQualifier;
+    public String getServiceProviderNameIdQualifier() {
+        return serviceProviderNameIdQualifier;
     }
 
-    public void setServiceProviderNameQualifier(final String serviceProviderNameQualifier) {
-        this.serviceProviderNameQualifier = serviceProviderNameQualifier;
+    public void setServiceProviderNameIdQualifier(final String serviceProviderNameIdQualifier) {
+        this.serviceProviderNameIdQualifier = serviceProviderNameIdQualifier;
     }
 
-    public String getNameQualifier() {
-        return nameQualifier;
+    public String getNameIdQualifier() {
+        return nameIdQualifier;
     }
 
-    public void setNameQualifier(final String nameQualifier) {
-        this.nameQualifier = nameQualifier;
+    public void setNameIdQualifier(final String nameIdQualifier) {
+        this.nameIdQualifier = nameIdQualifier;
     }
 
     @Override
@@ -246,8 +246,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataCriteriaRoles(samlRegisteredService.getMetadataCriteriaRoles());
             setAttributeNameFormats(samlRegisteredService.getAttributeNameFormats());
 
-            setNameQualifier(samlRegisteredService.getNameQualifier());
-            setServiceProviderNameQualifier(samlRegisteredService.serviceProviderNameQualifier);
+            setNameIdQualifier(samlRegisteredService.getNameIdQualifier());
+            setServiceProviderNameIdQualifier(samlRegisteredService.serviceProviderNameIdQualifier);
 
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -282,8 +282,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors, rhs.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles, rhs.metadataCriteriaRoles)
                 .append(this.attributeNameFormats, rhs.attributeNameFormats)
-                .append(this.serviceProviderNameQualifier, rhs.serviceProviderNameQualifier)
-                .append(this.nameQualifier, rhs.nameQualifier)
+                .append(this.serviceProviderNameIdQualifier, rhs.serviceProviderNameIdQualifier)
+                .append(this.nameIdQualifier, rhs.nameIdQualifier)
                 .isEquals();
     }
 
@@ -305,8 +305,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles)
                 .append(this.attributeNameFormats)
-                .append(this.serviceProviderNameQualifier)
-                .append(this.nameQualifier)
+                .append(this.serviceProviderNameIdQualifier)
+                .append(this.nameIdQualifier)
                 .toHashCode();
     }
 
@@ -328,8 +328,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("metadataCriteriaRemoveRolelessEntityDescriptors", this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append("metadataCriteriaRoles", this.metadataCriteriaRoles)
                 .append("attributeNameFormats", this.attributeNameFormats)
-                .append("serviceProviderNameQualifier", this.serviceProviderNameQualifier)
-                .append("nameQualifier", this.nameQualifier)
+                .append("serviceProviderNameIdQualifier", this.serviceProviderNameIdQualifier)
+                .append("nameIdQualifier", this.nameIdQualifier)
                 .toString();
     }
 }
