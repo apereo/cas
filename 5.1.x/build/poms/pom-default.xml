@@ -13,10 +13,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -27,14 +23,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -49,10 +37,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -63,14 +47,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -85,10 +61,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -99,14 +71,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -125,10 +89,6 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -139,14 +99,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -161,10 +113,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -175,14 +123,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -197,10 +137,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -211,14 +147,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -233,10 +161,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -247,14 +171,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -269,10 +185,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -283,14 +195,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -305,10 +209,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -319,14 +219,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -340,10 +232,6 @@
       <version>0.9.11</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
@@ -359,14 +247,6 @@
         <exclusion>
           <artifactId>javassist</artifactId>
           <groupId>org.javassist</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -385,10 +265,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -399,14 +275,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -420,10 +288,6 @@
       <version>0.8</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>jgroups-all</artifactId>
           <groupId>jgroups</groupId>
@@ -505,14 +369,6 @@
           <groupId>ehcache</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>webster</artifactId>
           <groupId>jini</groupId>
         </exclusion>
@@ -565,10 +421,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -579,14 +431,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -601,10 +445,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -615,14 +455,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -641,10 +473,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -655,14 +483,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -677,8 +497,8 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-lang3</artifactId>
@@ -686,30 +506,6 @@
         </exclusion>
         <exclusion>
           <artifactId>logback-core</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-core</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-beans</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
@@ -725,8 +521,20 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>commons-lang</artifactId>
           <groupId>commons-lang</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-beans</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
         </exclusion>
         <exclusion>
           <artifactId>log4j</artifactId>
@@ -745,10 +553,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -763,14 +567,6 @@
         <exclusion>
           <artifactId>commons-digester</artifactId>
           <groupId>commons-digester</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-collections</artifactId>
@@ -801,10 +597,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -815,14 +607,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -836,10 +620,6 @@
       <version>1.1</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
@@ -855,14 +635,6 @@
         <exclusion>
           <artifactId>junit</artifactId>
           <groupId>junit</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -885,10 +657,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -899,14 +667,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -921,10 +681,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -935,14 +691,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -957,10 +705,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -971,14 +715,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -993,10 +729,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1007,14 +739,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1029,10 +753,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1043,14 +763,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1065,10 +777,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1079,14 +787,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1105,10 +805,6 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1123,14 +819,6 @@
         <exclusion>
           <artifactId>hjson</artifactId>
           <groupId>org.hjson</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1153,24 +841,12 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>aspectjrt</artifactId>
@@ -1225,10 +901,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1239,14 +911,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1261,10 +925,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1275,14 +935,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1297,8 +949,12 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-web</artifactId>
@@ -1309,16 +965,16 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>spring-expression</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-core</artifactId>
@@ -1329,28 +985,12 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib-full</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-webmvc</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-context</artifactId>
@@ -1365,10 +1005,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1379,14 +1015,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1401,10 +1029,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1415,14 +1039,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1437,10 +1053,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1451,14 +1063,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1477,10 +1081,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
@@ -1495,14 +1095,6 @@
         <exclusion>
           <artifactId>spring-expression</artifactId>
           <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>mongo-java-driver</artifactId>
@@ -1561,10 +1153,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
@@ -1575,14 +1163,6 @@
         <exclusion>
           <artifactId>spring-expression</artifactId>
           <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>mongo-java-driver</artifactId>
@@ -1641,10 +1221,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1655,14 +1231,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1681,10 +1249,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1695,14 +1259,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1717,10 +1273,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1731,14 +1283,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1753,10 +1297,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1767,14 +1307,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1789,10 +1321,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1803,14 +1331,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1825,10 +1345,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1839,14 +1355,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1861,10 +1369,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1875,14 +1379,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -1897,8 +1393,8 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-web</artifactId>
@@ -1909,16 +1405,16 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>spring-expression</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-core</artifactId>
@@ -1929,24 +1425,12 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib-full</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-webmvc</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-context</artifactId>
@@ -1960,10 +1444,6 @@
       <version>1.0.3</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>slf4j-log4j12</artifactId>
           <groupId>org.slf4j</groupId>
@@ -1979,14 +1459,6 @@
         <exclusion>
           <artifactId>cryptacular</artifactId>
           <groupId>org.cryptacular</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-core</artifactId>
@@ -2041,10 +1513,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2055,14 +1523,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2077,10 +1537,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2091,14 +1547,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2117,10 +1565,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2131,14 +1575,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2161,10 +1597,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2175,14 +1607,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2197,10 +1621,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2211,14 +1631,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2237,10 +1649,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2251,14 +1659,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2273,10 +1673,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2287,14 +1683,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>snakeyaml</artifactId>
@@ -2317,8 +1705,8 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>hibernate-validator</artifactId>
@@ -2327,6 +1715,14 @@
         <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xml-apis</artifactId>
+          <groupId>xml-apis</groupId>
         </exclusion>
         <exclusion>
           <artifactId>hibernate-entitymanager</artifactId>
@@ -2337,12 +1733,12 @@
           <groupId>org.javassist</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
+          <artifactId>classmate</artifactId>
+          <groupId>com.fasterxml</groupId>
         </exclusion>
         <exclusion>
           <artifactId>dom4j</artifactId>
@@ -2352,26 +1748,6 @@
           <artifactId>jboss-logging-annotations</artifactId>
           <groupId>org.jboss.logging</groupId>
         </exclusion>
-        <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xml-apis</artifactId>
-          <groupId>xml-apis</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib-full</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>classmate</artifactId>
-          <groupId>com.fasterxml</groupId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -2380,10 +1756,6 @@
       <version>5.2.10.Final</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
@@ -2407,14 +1779,6 @@
         <exclusion>
           <artifactId>javassist</artifactId>
           <groupId>org.javassist</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2437,10 +1801,6 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2451,14 +1811,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2481,10 +1833,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2499,14 +1847,6 @@
         <exclusion>
           <artifactId>xml-apis</artifactId>
           <groupId>xml-apis</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2525,10 +1865,6 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2545,14 +1881,6 @@
           <groupId>xml-apis</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -2565,10 +1893,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2579,14 +1903,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2601,10 +1917,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2615,14 +1927,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2636,10 +1940,6 @@
       <version>1.2.0.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>jboss-logging</artifactId>
           <groupId>org.jboss.logging</groupId>
@@ -2695,14 +1995,6 @@
         <exclusion>
           <artifactId>spring-boot-autoconfigure</artifactId>
           <groupId>org.springframework.boot</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-boot-starter-actuator</artifactId>
@@ -2761,10 +2053,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
@@ -2773,48 +2061,12 @@
           <groupId>org.hibernate</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-boot-starter</artifactId>
-          <groupId>org.springframework.boot</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>hibernate-core</artifactId>
-          <groupId>org.hibernate</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logj-over-slf4j</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-security-crypto</artifactId>
-          <groupId>org.springframework.security</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-context</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>hibernate-entitymanager</artifactId>
           <groupId>org.hibernate</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-boot-starter-actuator</artifactId>
@@ -2841,7 +2093,27 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-boot-starter</artifactId>
+          <groupId>org.springframework.boot</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hibernate-core</artifactId>
+          <groupId>org.hibernate</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>jcl-over-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logj-over-slf4j</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
@@ -2849,11 +2121,19 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>spring-security-crypto</artifactId>
+          <groupId>org.springframework.security</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>jackson-databind</artifactId>
           <groupId>com.fasterxml.jackson.core</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-webmvc</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
@@ -2869,10 +2149,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
@@ -2881,44 +2157,8 @@
           <groupId>org.hibernate</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jul-to-slf4j</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-logging</artifactId>
-          <groupId>org.jboss.logging</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib</artifactId>
-          <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>classmate</artifactId>
-          <groupId>com.fasterxml</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-context</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>tomcat-embed-core</artifactId>
-          <groupId>org.apache.tomcat.embed</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>log4j-over-slf4j</artifactId>
@@ -2941,12 +2181,28 @@
           <groupId>org.apache.tomcat.embed</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jboss-logging</artifactId>
+          <groupId>org.jboss.logging</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>jackson-annotations</artifactId>
           <groupId>com.fasterxml.jackson.core</groupId>
         </exclusion>
         <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -2961,8 +2217,20 @@
           <groupId>org.springframework.boot</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>classmate</artifactId>
+          <groupId>com.fasterxml</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>spring-webmvc</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tomcat-embed-core</artifactId>
+          <groupId>org.apache.tomcat.embed</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -2981,10 +2249,6 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -2995,14 +2259,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>log4j-over-slf4j</artifactId>
@@ -3028,10 +2284,6 @@
       <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>hibernate-validator</artifactId>
           <groupId>org.hibernate</groupId>
@@ -3079,14 +2331,6 @@
         <exclusion>
           <artifactId>hibernate-entitymanager</artifactId>
           <groupId>org.hibernate</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>log4j-over-slf4j</artifactId>
@@ -3149,10 +2393,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
@@ -3167,14 +2407,6 @@
         <exclusion>
           <artifactId>hibernate-entitymanager</artifactId>
           <groupId>org.hibernate</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-boot-starter-actuator</artifactId>
@@ -3225,10 +2457,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>hibernate-validator</artifactId>
           <groupId>org.hibernate</groupId>
         </exclusion>
@@ -3243,14 +2471,6 @@
         <exclusion>
           <artifactId>hibernate-entitymanager</artifactId>
           <groupId>org.hibernate</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-core</artifactId>
@@ -3297,10 +2517,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>hibernate-validator</artifactId>
           <groupId>org.hibernate</groupId>
         </exclusion>
@@ -3315,14 +2531,6 @@
         <exclusion>
           <artifactId>hibernate-entitymanager</artifactId>
           <groupId>org.hibernate</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-core</artifactId>
@@ -3369,10 +2577,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>hibernate-validator</artifactId>
           <groupId>org.hibernate</groupId>
         </exclusion>
@@ -3387,14 +2591,6 @@
         <exclusion>
           <artifactId>hibernate-entitymanager</artifactId>
           <groupId>org.hibernate</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-core</artifactId>
@@ -3457,8 +2653,12 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-web</artifactId>
@@ -3466,30 +2666,6 @@
         </exclusion>
         <exclusion>
           <artifactId>logback-core</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-core</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jackson-annotations</artifactId>
-          <groupId>com.fasterxml.jackson.core</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
@@ -3505,12 +2681,20 @@
           <groupId>com.fasterxml.jackson.core</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>spring-webmvc</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-context</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jackson-annotations</artifactId>
+          <groupId>com.fasterxml.jackson.core</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -3520,10 +2704,6 @@
       <version>1.8.10</version>
       <scope>runtime</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
@@ -3535,14 +2715,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -3557,10 +2729,6 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -3571,14 +2739,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -3593,10 +2753,6 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -3607,14 +2763,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -3629,10 +2777,6 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>ognl</artifactId>
-          <groupId>ognl</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -3643,14 +2787,6 @@
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>servlet-api</artifactId>
-          <groupId>javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-          <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
