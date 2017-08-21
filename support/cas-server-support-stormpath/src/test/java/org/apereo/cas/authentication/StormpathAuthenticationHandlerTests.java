@@ -21,6 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -51,6 +52,7 @@ import static org.junit.Assert.*;
                 RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/stormpath.properties"})
 @EnableScheduling
+@IfProfileValue(name = "stormpath")
 public class StormpathAuthenticationHandlerTests {
     @Autowired
     @Qualifier("stormpathAuthenticationHandler")
