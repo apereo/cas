@@ -20,6 +20,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-cookie")
-
+    testImplementation project(":core:cas-server-core-webflow")
+    
     compileOnly libraries.bouncycastle
 }
