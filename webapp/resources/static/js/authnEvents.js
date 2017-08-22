@@ -42,7 +42,7 @@ $('#myTabs a').click(function (e) {
         }
     };
 
-  // initialization *******
+    // initialization *******
     (function init () {
         getData();
     })();
