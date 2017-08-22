@@ -19,11 +19,8 @@
     "url": "https://github.com/apereo/cas/issues"
   },
   "scripts": {
-    "build": "webpack",
     "gulp": "gulp",
-    "lint": "eslint resources/static/**/*.js --quiet --color",
-    "prod": "webpack -p",
-    "watch": "npm run build -- --watch"
+    "lint": "eslint resources/static/**/*.js --quiet --color"
   },
   "dependencies": {
     "eslint-loader": "^1.9.0",
@@ -32,8 +29,6 @@
     "gulp-sass": "^3.1.0"
   },
   "devDependencies": {
-    "eslint": "^4.4.1",
-    "eslint-config-airbnb": "^15.1.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint": "^4.4.1"
   }
 }
