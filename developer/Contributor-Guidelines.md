@@ -5,7 +5,6 @@ title: CAS - Contributor Guidelines
 
 # Contributor Guidelines
 
-
 ## First
 
 We want to start off by saying thank you for using CAS. This project is a labor of love, and we appreciate the work done by all 
@@ -21,9 +20,14 @@ we are all here to help you as much as we can so you can ultimately become an in
 to make mistakes and it does take some time, effort and energy to get better at it. So do not be discouraged, keep at it
 and if you find anything that is unclear along the way, do not hesitate to ask questions. 
 
-## Code of conduct
+## Code of Conduct
 
 CAS is a sponsored Apereo project participating in the [Apereo Welcoming Policy](https://www.apereo.org/content/apereo-welcoming-policy).
+
+## The Long Story
+
+[Start from here](https://apereo.github.io/2017/07/05/cas-contribution-guide/).
+
 
 ## Getting Started
 
