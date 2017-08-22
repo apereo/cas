@@ -52,6 +52,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -179,8 +180,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
 
+    @ConditionalOnMissingBean(name = "localeResolver")
     @Bean
-    public CookieLocaleResolver localeResolver() {
+    public LocaleResolver localeResolver() {
         return new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
