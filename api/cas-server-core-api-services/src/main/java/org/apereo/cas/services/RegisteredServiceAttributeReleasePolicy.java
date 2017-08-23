@@ -19,6 +19,15 @@ import java.util.Map;
 public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
 
     /**
+     * Is authorized to release authentication attributes boolean.
+     *
+     * @return the boolean
+     */
+    default boolean isAuthorizedToReleaseAuthenticationAttributes() {
+        return true;
+    }
+
+    /**
      * Is authorized to release credential password?
      *
      * @return true /false

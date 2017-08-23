@@ -41,6 +41,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     private boolean authorizedToReleaseCredentialPassword;
     private boolean authorizedToReleaseProxyGrantingTicket;
     private boolean excludeDefaultAttributes;
+    private boolean authorizedToReleaseAuthenticationAttributes = true;
     private String principalIdAttribute;
 
     /**
@@ -106,13 +107,22 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     public void setAuthorizedToReleaseProxyGrantingTicket(final boolean authorizedToReleaseProxyGrantingTicket) {
         this.authorizedToReleaseProxyGrantingTicket = authorizedToReleaseProxyGrantingTicket;
     }
-
+    
     public boolean isExcludeDefaultAttributes() {
         return excludeDefaultAttributes;
     }
 
     public void setExcludeDefaultAttributes(final boolean excludeDefaultAttributes) {
         this.excludeDefaultAttributes = excludeDefaultAttributes;
+    }
+
+    @Override
+    public boolean isAuthorizedToReleaseAuthenticationAttributes() {
+        return authorizedToReleaseAuthenticationAttributes;
+    }
+
+    public void setAuthorizedToReleaseAuthenticationAttributes(final boolean authorizedToReleaseAuthenticationAttributes) {
+        this.authorizedToReleaseAuthenticationAttributes = authorizedToReleaseAuthenticationAttributes;
     }
 
     @Override
@@ -271,7 +281,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append(getPrincipalAttributesRepository())
                 .append(isExcludeDefaultAttributes())
                 .append(getPrincipalIdAttribute())
-                .append(consentPolicy)
+                .append(getConsentPolicy())
+                .append(isAuthorizedToReleaseAuthenticationAttributes())
                 .toHashCode();
     }
 
@@ -298,7 +309,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append(getPrincipalAttributesRepository(), that.getPrincipalAttributesRepository())
                 .append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
                 .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute())
-                .append(consentPolicy, that.consentPolicy)
+                .append(getConsentPolicy(), that.getConsentPolicy())
+                .append(isAuthorizedToReleaseAuthenticationAttributes(), that.isAuthorizedToReleaseAuthenticationAttributes())
                 .isEquals();
     }
 
@@ -309,10 +321,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append("attributeFilter", getAttributeFilter())
                 .append("principalAttributesRepository", getPrincipalAttributesRepository())
                 .append("authorizedToReleaseCredentialPassword", isAuthorizedToReleaseCredentialPassword())
+                .append("authorizedToReleaseAuthenticationAttributes", isAuthorizedToReleaseAuthenticationAttributes())
                 .append("authorizedToReleaseProxyGrantingTicket", isAuthorizedToReleaseProxyGrantingTicket())
                 .append("excludeDefaultAttributes", isExcludeDefaultAttributes())
                 .append("principalIdAttribute", getPrincipalIdAttribute())
-                .append("consentPolicy", consentPolicy)
+                .append("consentPolicy", getConsentPolicy())
                 .toString();
     }
 }

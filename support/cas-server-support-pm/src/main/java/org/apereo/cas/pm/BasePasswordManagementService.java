@@ -21,7 +21,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BasePasswordManagementService implements PasswordManagementService {
+public class BasePasswordManagementService implements PasswordManagementService {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasePasswordManagementService.class);
 
     /**
@@ -109,7 +109,7 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
             actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
             resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
-    public final boolean change(final Credential c, final PasswordChangeBean bean) {
+    public boolean change(final Credential c, final PasswordChangeBean bean) {
         return changeInternal(c, bean);
     }
 
@@ -120,5 +120,7 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
      * @param bean the bean
      * @return the boolean
      */
-    public abstract boolean changeInternal(Credential c, PasswordChangeBean bean);
+    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) {
+        return false;
+    }
 }
