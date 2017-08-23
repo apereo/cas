@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.inspektr.audit.annotation.Audit;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -19,7 +18,6 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -44,7 +42,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     @Override
     public String findEmail(final String username) {
         try {
-            final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
+            final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(username));
@@ -58,7 +56,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 final LdapEntry entry = response.getResult().getEntry();
                 LOGGER.debug("Found LDAP entry [{}] to use for the account email", entry);
 
-                final String attributeName = passwordManagementProperties.getReset().getEmailAttribute();
+                final String attributeName = properties.getReset().getEmailAttribute();
                 final LdapAttribute attr = entry.getAttribute(attributeName);
                 if (attr != null) {
                     final String email = attr.getStringValue();
@@ -80,17 +78,11 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         }
         return null;
     }
-
-    @Audit(action = "CHANGE_PASSWORD",
-            actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
-            resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+    
     @Override
-    public boolean change(final Credential credential, final PasswordChangeBean bean) {
-        Assert.notNull(credential, "Credential cannot be null");
-        Assert.notNull(bean, "PasswordChangeBean cannot be null");
-
+    public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
         try {
-            final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
+            final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
 
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
@@ -106,7 +98,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 final String dn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating account password for [{}]", dn);
                 if (LdapUtils.executePasswordModifyOperation(dn, factory, c.getPassword(), bean.getPassword(),
-                        passwordManagementProperties.getLdap().getType())) {
+                        properties.getLdap().getType())) {
                     LOGGER.debug("Successfully updated the account password for [{}]", dn);
                     return true;
                 }
@@ -124,7 +116,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     public Map<String, String> getSecurityQuestions(final String username) {
         final Map<String, String> set = new LinkedHashMap<>();
         try {
-            final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
+            final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(username));
@@ -137,7 +129,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             if (LdapUtils.containsResultEntry(response)) {
                 final LdapEntry entry = response.getResult().getEntry();
                 LOGGER.debug("Located LDAP entry [{}] in the response", entry);
-                final Map<String, String> qs = passwordManagementProperties.getLdap().getSecurityQuestionsAttributes();
+                final Map<String, String> qs = properties.getLdap().getSecurityQuestionsAttributes();
                 LOGGER.debug("Security question attributes are defined to be [{}]", qs);
 
                 qs.forEach((k, v) -> {
