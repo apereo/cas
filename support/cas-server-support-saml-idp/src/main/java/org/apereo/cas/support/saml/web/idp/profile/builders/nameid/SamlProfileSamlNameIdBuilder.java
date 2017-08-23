@@ -16,6 +16,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.util.CollectionUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
+import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -223,6 +224,14 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                    final SamlRegisteredService service,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         try {
+            
+            if (authnRequest instanceof AttributeQuery) {
+                final AttributeQuery query = AttributeQuery.class.cast(authnRequest);
+                final NameID nameID = query.getSubject().getNameID();
+                nameID.detach();
+                return nameID;
+            }
+            
             final IdPAttribute attribute = prepareNameIdAttribute(assertion, nameFormat, adaptor);
             final SAML2StringNameIDEncoder encoder = prepareNameIdEncoder(authnRequest, nameFormat, attribute, service, adaptor);
             LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
