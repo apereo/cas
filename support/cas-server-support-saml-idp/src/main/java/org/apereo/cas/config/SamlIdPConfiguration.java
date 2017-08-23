@@ -29,9 +29,13 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.query.SamlP
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.subject.SamlProfileSamlSubjectBuilder;
-import org.apereo.cas.ticket.DefaultSamlArtifactTicketFactory;
-import org.apereo.cas.ticket.SamlArtifactTicketExpirationPolicy;
-import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactory;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicy;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactory;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -41,6 +45,7 @@ import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +141,7 @@ public class SamlIdPConfiguration {
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
     @Bean
     @RefreshScope
-    public SamlArtifactTicketExpirationPolicy samlArtifactTicketExpirationPolicy() {
+    public ExpirationPolicy samlArtifactTicketExpirationPolicy() {
         return new SamlArtifactTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
 
@@ -157,7 +162,7 @@ public class SamlIdPConfiguration {
     @ConditionalOnMissingBean(name = "samlProfileSamlSubjectBuilder")
     @Bean
     @RefreshScope
-    public SamlProfileSamlSubjectBuilder samlProfileSamlSubjectBuilder() {
+    public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder() {
         return new SamlProfileSamlSubjectBuilder(openSamlConfigBean, samlProfileSamlNameIdBuilder(),
                 casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
     }
@@ -310,4 +315,22 @@ public class SamlIdPConfiguration {
                 samlProfileSamlResponseBuilder(),
                 samlObjectEncrypter());
     }
+
+    @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactory")
+    @Bean
+    @RefreshScope
+    public SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory() {
+        return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy(),
+                openSamlConfigBean,
+                webApplicationServiceFactory);
+    }
+
+    @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
+    @Bean
+    @RefreshScope
+    public ExpirationPolicy samlAttributeQueryTicketExpirationPolicy() {
+        return new SamlAttributeQueryTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+    }
+    
+    
 }
