@@ -1,7 +1,7 @@
 description = "Apereo CAS JDBC Support"
 dependencies {
 
-    compile project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication")
     
     
     implementation libraries.shiro

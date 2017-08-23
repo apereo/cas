@@ -66,8 +66,8 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
             LOGGER.debug("No group field is defined to process for Grouper multifactor trigger");
             return null;
         }
-        if (authentication == null) {
-            LOGGER.debug("No authentication is available to determine event for principal");
+        if (authentication == null || service == null) {
+            LOGGER.debug("No authentication or service is available to determine event for principal");
             return null;
         }
 

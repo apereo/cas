@@ -20,25 +20,30 @@ import java.time.temporal.ChronoUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -8383186650682727360L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthAccessTokenExpirationPolicy.class);
 
-    /** Maximum time this token is valid.  */
+    /**
+     * Maximum time this token is valid.
+     */
     private long maxTimeToLiveInSeconds;
 
-    /** Time to kill in seconds. */
+    /**
+     * Time to kill in seconds.
+     */
     private long timeToKillInSeconds;
 
-    public OAuthAccessTokenExpirationPolicy() {}
+    public OAuthAccessTokenExpirationPolicy() {
+    }
 
     /**
      * Instantiates a new OAuth access token expiration policy.
      *
      * @param maxTimeToLive the max time to live
-     * @param timeToKill the time to kill
+     * @param timeToKill    the time to kill
      */
     @JsonCreator
     public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,

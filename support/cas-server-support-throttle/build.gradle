@@ -1,7 +1,8 @@
 description = "Apereo CAS Web Application Authentication Throttling"
 dependencies {
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-audit")

@@ -3,8 +3,8 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -28,18 +28,22 @@ import static org.junit.Assert.*;
 public class RememberMeDelegatingExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    /** Factory to create the principal type. **/
+    /**
+     * Factory to create the principal type.
+     **/
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     private RememberMeDelegatingExpirationPolicy p;
 
     @Before
     public void setUp() throws Exception {
-        this.p = new RememberMeDelegatingExpirationPolicy();
-        this.p.setRememberMeExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000));
-        this.p.setSessionExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
+        final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
+        p = new RememberMeDelegatingExpirationPolicy(rememberMe);
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);
+        p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT,
+                new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
     }
 
     @Test
@@ -66,9 +70,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, p);
-
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
-
         assertEquals(p, policyRead);
     }
 }
