@@ -230,8 +230,8 @@ var ssoSessions = (function () {
                     'className': 'col-xs-4 col-md-2',
                     'render': function (data, type) {
                         return type === 'display' && data.length > 20 ?
-                          '<span title="' + data + '">' + data.substr(0, 18) + '...</span>' :
-                          data;
+                            '<span title="' + data + '">' + data.substr(0, 18) + '...</span>' :
+                            data;
                     }
                 },
                 {
@@ -240,8 +240,8 @@ var ssoSessions = (function () {
                     'className': 'hidden-xs hidden-sm col-md-4',
                     'render': function (data, type) {
                         return type === 'display' && data.length > 20 ?
-                          '<span title="' + data + '">' + data.substr(0, 40) + '...</span>' :
-                          data;
+                            '<span title="' + data + '">' + data.substr(0, 40) + '...</span>' :
+                            data;
                     }
                 },
                 {
