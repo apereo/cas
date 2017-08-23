@@ -6,7 +6,7 @@
         $('#formRefreshCAS button').on('click', function (e) {
             e.preventDefault();
 
-      // Show the refreshModal
+            // Show the refreshModal
             var myModal = $('#refreshModal').modal({
                 keyboard: false,
                 backdrop: 'static'
@@ -14,39 +14,39 @@
 
             var primaryButton = myModal.find('.modal-footer button.btn-primary');
 
-      // Disable the primary button
+            // Disable the primary button
             primaryButton.prop('disabled', true).text('Refreshing...');
 
             $.post(e.target.parentNode.action, function (data) {
                 if (data.length !== 0) {
                     $('#refreshModal-label').text('Refreshed Properties');
                     myModal.find('.modal-content .modal-body').html(
-            '<pre>' + data + '</pre>' +
+                        '<pre>' + data + '</pre>' +
             '<p>Click &quot;OK&quot; to reload page.</p>'
-          );
+                    );
                 } else {
                     myModal.find('.modal-header .modal-title').text('Properties Refreshed');
                     myModal.find('.modal-content .modal-body').html(
-            '<p>Click &quot;OK&quot; to reload page.</p>'
-          );
+                        '<p>Click &quot;OK&quot; to reload page.</p>'
+                    );
                 }
             })
-        .done(function () {
-            primaryButton.prop('disabled', false).text('Reload page').on('click', function (e) {
-                e.preventDefault();
-                window.location.reload();
-            });
-        })
-        .fail(function (jqXHR) {
-            $('#refreshModal-label').text('Problem With Refreshing Properties');
-            myModal.find('.modal-content .modal-body').html(
-            '<div class="alert alert-warning"><strong>Status: ' + jqXHR.status + '</strong><p/>Unable to refresh the properties. Please try again.</div>'
-          );
-            primaryButton.prop('disabled', false).text('OK').on('click', function (e) {
-                e.preventDefault();
-                myModal.modal('hide');
-            });
-        });
+                .done(function () {
+                    primaryButton.prop('disabled', false).text('Reload page').on('click', function (e) {
+                        e.preventDefault();
+                        window.location.reload();
+                    });
+                })
+                .fail(function (jqXHR) {
+                    $('#refreshModal-label').text('Problem With Refreshing Properties');
+                    myModal.find('.modal-content .modal-body').html(
+                        '<div class="alert alert-warning"><strong>Status: ' + jqXHR.status + '</strong><p/>Unable to refresh the properties. Please try again.</div>'
+                    );
+                    primaryButton.prop('disabled', false).text('OK').on('click', function (e) {
+                        e.preventDefault();
+                        myModal.modal('hide');
+                    });
+                });
         });
     };
 
@@ -90,8 +90,8 @@
                 }
             },
             'columns': [
-        {'data': 'key', 'className': 'col-xs-6 key'},
-        {'data': 'value', 'className': 'col-xs-6 value'}
+                {'data': 'key', 'className': 'col-xs-6 key'},
+                {'data': 'value', 'className': 'col-xs-6 value'}
             ],
             'pageLength': 50
         });
@@ -122,32 +122,32 @@
 
             var data = {old: origData, new: newChanges};
             $.ajax({url: urls.updateConfiguration, data: JSON.stringify(data), type: 'POST', contentType: 'application/json'})
-        .fail(function () {
-            var result = 'Failed to save settings.';
-            $('#alertWrapper').addClass('alert-warning');
-            $('#alertWrapper').removeClass('alert-success');
+                .fail(function () {
+                    var result = 'Failed to save settings.';
+                    $('#alertWrapper').addClass('alert-warning');
+                    $('#alertWrapper').removeClass('alert-success');
 
-            $('#alertWrapper').text(result);
-            $('#alertWrapper').show();
-        })
-        .success(function () {
-            var result = 'Saved settings successfully.';
-            $('#alertWrapper').removeClass('alert-warning');
-            $('#alertWrapper').addClass('alert-success');
+                    $('#alertWrapper').text(result);
+                    $('#alertWrapper').show();
+                })
+                .success(function () {
+                    var result = 'Saved settings successfully.';
+                    $('#alertWrapper').removeClass('alert-warning');
+                    $('#alertWrapper').addClass('alert-success');
 
-            $('#resultText').text(result);
-            $('#alertWrapper').show();
-        });
+                    $('#resultText').text(result);
+                    $('#alertWrapper').show();
+                });
         });
     };
 
-  // initialization *******
+    // initialization *******
     (function init () {
         createDataTable();
         setupButtonClickOnRefreshedProperties();
     })();
 
-  // Public Methods
+    // Public Methods
     return {
     /**
      * Not used
