@@ -37,41 +37,62 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Repository of principal attributes to be retrieved.
      */
-    protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
+    protected final IPersonAttributeDao attributeRepository;
     /**
      * Factory to create the principal type.
      **/
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    protected final PrincipalFactory principalFactory;
 
     /**
      * return null if no attributes are found.
      */
-    protected boolean returnNullIfNoAttributes;
+    protected final boolean returnNullIfNoAttributes;
 
     /**
      * Transform principal name.
      */
-    protected PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
+    protected final PrincipalNameTransformer principalNameTransformer;
 
     /**
      * Optional principal attribute name.
      */
-    protected String principalAttributeName;
+    protected final String principalAttributeName;
 
-    public void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
+    public PersonDirectoryPrincipalResolver() {
+        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(),
+                false, formUserId -> formUserId, null
+        );
+    }
+    
+    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName) {
+        this(attributeRepository, new DefaultPrincipalFactory(), false, formUserId -> formUserId, principalAttributeName);
+    }
+    
+    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository) {
+        this(attributeRepository, new DefaultPrincipalFactory(), false, formUserId -> formUserId, null);
+    }
+
+    public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(),
+                returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName
+        );
+    }
+
+    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                            final PrincipalFactory principalFactory,
+                                            final boolean returnNullIfNoAttributes,
+                                            final String principalAttributeName) {
+        this(attributeRepository, principalFactory, returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
+    }
+
+    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                            final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
+                                            final String principalAttributeName) {
         this.attributeRepository = attributeRepository;
-    }
-
-    public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
-        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
-    }
-
-    public void setPrincipalAttributeName(final String attribute) {
-        this.principalAttributeName = attribute;
-    }
-
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
+        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
+        this.principalNameTransformer = principalNameTransformer;
+        this.principalAttributeName = principalAttributeName;
     }
 
     @Override
@@ -165,10 +186,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return attributes;
     }
 
-    public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
-        this.principalNameTransformer = principalNameTransformer;
-    }
-
     /**
      * Extracts the id of the user from the provided credential. This method should be overridden by subclasses to
      * achieve more sophisticated strategies for producing a principal ID from a credential.
@@ -186,6 +203,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return new ToStringBuilder(this)
                 .append("returnNullIfNoAttributes", returnNullIfNoAttributes)
                 .append("principalAttributeName", principalAttributeName)
+                .append("principalNameTransformer", principalNameTransformer)
+                .append("principalFactory", principalFactory)
                 .toString();
     }
 

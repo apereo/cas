@@ -16,7 +16,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({Cas10ResponseViewTests.class, Cas20ResponseViewTests.class, Cas30ResponseViewTests.class,
-                        ProxyControllerTests.class})
+        ProxyControllerTests.class})
 public class AllTestsSuite {
 }
 

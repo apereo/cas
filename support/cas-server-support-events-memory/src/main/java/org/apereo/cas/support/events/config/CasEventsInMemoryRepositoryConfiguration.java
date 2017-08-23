@@ -1,8 +1,7 @@
 package org.apereo.cas.support.events.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -32,17 +31,14 @@ public class CasEventsInMemoryRepositoryConfiguration {
     
     @Bean
     public CasEventRepository casEventRepository() {
-        final LoadingCache<String, CasEvent> storage = CacheBuilder.newBuilder()
+        final LoadingCache<String, CasEvent> storage = Caffeine.newBuilder()
                 .initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE)
                 .recordStats()
                 .expireAfterWrite(EXPIRATION_TIME, TimeUnit.HOURS)
-                .build(new CacheLoader<String, CasEvent>() {
-                    @Override
-                    public CasEvent load(final String s) throws Exception {
-                        LOGGER.error("Load operation of the cache is not supported.");
-                        return null;
-                    }
+                .build(s -> {
+                    LOGGER.error("Load operation of the cache is not supported.");
+                    return null;
                 });
         LOGGER.debug("Created an in-memory event repository to store CAS events for [{}] hours", EXPIRATION_TIME);
         return new InMemoryCasEventRepository(storage);

@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
@@ -174,14 +174,9 @@ public class U2FConfiguration {
         final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
 
         final LoadingCache<String, String> requestStorage =
-                CacheBuilder.newBuilder()
+                Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
-                        .build(new CacheLoader<String, String>() {
-                            @Override
-                            public String load(final String key) throws Exception {
-                                return StringUtils.EMPTY;
-                            }
-                        });
+                        .build(key -> StringUtils.EMPTY);
 
         if (u2f.getJson().getLocation() != null) {
             return new U2FJsonResourceDeviceRepository(requestStorage,
@@ -190,14 +185,9 @@ public class U2FConfiguration {
         }
 
         final LoadingCache<String, Map<String, String>> userStorage =
-                CacheBuilder.newBuilder()
+                Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
-                        .build(new CacheLoader<String, Map<String, String>>() {
-                            @Override
-                            public Map<String, String> load(final String key) throws Exception {
-                                return new HashMap<>();
-                            }
-                        });
+                        .build(key -> new HashMap<>());
         return new U2FInMemoryDeviceRepository(userStorage, requestStorage);
     }
 

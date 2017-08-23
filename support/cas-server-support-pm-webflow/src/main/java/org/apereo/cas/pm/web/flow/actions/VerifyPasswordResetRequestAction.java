@@ -68,8 +68,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
 
         requestContext.getFlowScope().put("token", token);
         requestContext.getFlowScope().put("username", username);
-        requestContext.getFlowScope().put("questionsEnabled", 
-                pm.getReset().isSecurityQuestionsEnabled());
+        requestContext.getFlowScope().put("questionsEnabled", pm.getReset().isSecurityQuestionsEnabled());
 
         if (pm.getReset().isSecurityQuestionsEnabled()) {
             return success();

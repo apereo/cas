@@ -1,6 +1,8 @@
 description = "Apereo CAS REST JWT Tickets Implementation"
 dependencies {
-    compile project(":support:cas-server-support-token-core")   
-    compile project(":support:cas-server-support-rest")
-
+    implementation project(":support:cas-server-support-token-core")   
+    implementation project(":support:cas-server-support-rest")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":api:cas-server-core-api")
+    implementation project(":core:cas-server-core-authentication")
 }

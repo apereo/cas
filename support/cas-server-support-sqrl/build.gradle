@@ -6,8 +6,8 @@ repositories {
 }
 
 dependencies {
-    compile libraries.sqrlserver
-    compile libraries.zxingbarcode
+    implementation libraries.sqrlserver
+    implementation libraries.zxingbarcode
     provided project(":core:cas-server-core-webflow")
     provided project(":core:cas-server-core-authentication")
     provided project(":core:cas-server-core-util")

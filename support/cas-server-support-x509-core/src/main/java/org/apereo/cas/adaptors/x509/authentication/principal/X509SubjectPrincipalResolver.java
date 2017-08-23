@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.cryptacular.x509.dn.Attribute;
 import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
@@ -28,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(X509SubjectPrincipalResolver.class);
-    
+
     /**
      * Pattern used to extract attribute names from descriptor.
      */
@@ -61,26 +63,33 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
      * @param descriptor Descriptor string where attribute names are prefixed with "$"
-     *          to identify replacement by real attribute values from the subject DN.
-     *          Valid attributes include common X.509 DN attributes such as the following:
-     *          <ul>
-     *          <li>C</li>
-     *          <li>CN</li>
-     *          <li>DC</li>
-     *          <li>EMAILADDRESS</li>
-     *          <li>L</li>
-     *          <li>O</li>
-     *          <li>OU</li>
-     *          <li>SERIALNUMBER</li>
-     *          <li>ST</li>
-     *          <li>UID</li>
-     *          <li>UNIQUEIDENTIFIER</li>
-     *          </ul>
-     *          For a complete list of supported attributes, see
-     *          {@link org.cryptacular.x509.dn.StandardAttributeType}.
+     *                   to identify replacement by real attribute values from the subject DN.
+     *                   Valid attributes include common X.509 DN attributes such as the following:
+     *                   <ul>
+     *                   <li>C</li>
+     *                   <li>CN</li>
+     *                   <li>DC</li>
+     *                   <li>EMAILADDRESS</li>
+     *                   <li>L</li>
+     *                   <li>O</li>
+     *                   <li>OU</li>
+     *                   <li>SERIALNUMBER</li>
+     *                   <li>ST</li>
+     *                   <li>UID</li>
+     *                   <li>UNIQUEIDENTIFIER</li>
+     *                   </ul>
+     *                   For a complete list of supported attributes, see
+     *                   {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
+    public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                        final boolean returnNullIfNoAttributes,
+                                        final String principalAttributeName, final String descriptor) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+        this.descriptor = descriptor;
+    }
 
     public X509SubjectPrincipalResolver(final String descriptor) {
+        super();
         this.descriptor = descriptor;
     }
 
@@ -178,6 +187,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
             return this.values[this.currentIndex++];
         }
     }
-    
-    
+
+
 }

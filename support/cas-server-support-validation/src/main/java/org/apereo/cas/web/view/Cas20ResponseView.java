@@ -1,6 +1,7 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
@@ -22,13 +23,20 @@ import java.util.Map;
  */
 public class Cas20ResponseView extends AbstractDelegatingCasView {
     private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ResponseView.class);
+
+    /**
+     * The Service selection strategy.
+     */
+    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     
     public Cas20ResponseView(final boolean successResponse, 
                              final ProtocolAttributeEncoder protocolAttributeEncoder, 
                              final ServicesManager servicesManager, 
                              final String authenticationContextAttribute, 
-                             final View view) {
+                             final View view,
+                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
+        this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategy;
     }
 
     @Override

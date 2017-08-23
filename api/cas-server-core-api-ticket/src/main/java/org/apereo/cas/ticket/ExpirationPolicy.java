@@ -28,17 +28,21 @@ public interface ExpirationPolicy extends Serializable {
      * Describes the time duration where this policy should consider the item alive.
      * Once this time passes, the item is considered expired and dead.
      *
-     * @return time to live in seconds. A zero value indicates the time duration
-     * is not supported or is inactive.
+     * @return time to live in seconds. A zero value indicates the time duration is not supported or is inactive.
      */
     Long getTimeToLive();
 
     /**
      * Describes the idle time duration for the item.
      *
-     * @return idle time in seconds. A zero value indicates the time duration
-     * is not supported or is inactive. Unit of measure is defined
-     * by the implementation.
+     * @return idle time in seconds. A zero value indicates the time duration is not supported or is inactive. Unit of measure is defined by the implementation.
      */
     Long getTimeToIdle();
+
+    /**
+     * Gets name of this expiration policy.
+     *
+     * @return the name
+     */
+    String getName();
 }

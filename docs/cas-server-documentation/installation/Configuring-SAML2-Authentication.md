@@ -15,12 +15,16 @@ If you intend to allow CAS to delegate authentication to an external SAML2 ident
 
 The following CAS endpoints respond to supported SAML2 profiles:
 
-- `/cas/idp/profile/SAML2/Redirect/SSO`
-- `/cas/idp/profile/SAML2/POST/SSO`
-- `/cas/idp/profile/SAML2/POST/SLO`
-- `/cas/idp/profile/SAML2/Redirect/SLO`
-- `/cas/idp/profile/SAML2/Unsolicited/SSO`
-- `/cas/idp/profile/SAML2/SOAP/ECP`
+- `/idp/profile/SAML2/Redirect/SSO`
+- `/idp/profile/SAML2/POST/SSO`
+- `/idp/profile/SAML2/POST/SLO`
+- `/idp/profile/SAML2/Redirect/SLO`
+- `/idp/profile/SAML2/Unsolicited/SSO`
+- `/idp/profile/SAML2/SOAP/ECP`
+- `/idp/profile/SAML2/SOAP/AttributeQuery`
+- `/idp/profile/SAML1/SOAP/ArtifactResolution`
+
+## Unsolicited SSO
 
 SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 
@@ -30,6 +34,17 @@ SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 | `shire`                           | Optional. Response location (ACS URL) of the service provider.
 | `target`                          | Optional. Relay state.
 | `time`                            | Optional. Skew the authentication request.
+
+## Attribute Queries
+
+In order to allow CAS to support and respond to attribute queries, you need to make sure the generated metadata has
+the `AttributeAuthorityDescriptor` element enabled, with protocol support enabled for `urn:oasis:names:tc:SAML:2.0:protocol`
+and relevant binding that corresponds to the CAS endpoint(s). You also must ensure the `AttributeAuthorityDescriptor` tag lists all
+`KeyDescriptor` elements and certificates that are used for signing as well as authentication, specially if the SOAP client of the service provider needs to cross-compare the certificate behind the CAS endpoint with what is defined for the `AttributeAuthorityDescriptor`. CAS by default will always use its own signing certificate for signing of the responses generated as a result of an attribute query.
+
+Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
 
 ## IdP Metadata
 
@@ -45,7 +60,7 @@ Here is a generated metadata file as an example:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<EntityDescriptor  xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
                 xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace"
                 xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="ENTITY_ID">
     <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">

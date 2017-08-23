@@ -63,11 +63,12 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "personDirectoryPrincipalResolver")
     public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
-        final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
-        bean.setAttributeRepository(attributeRepository);
-        bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
-        bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
-        bean.setPrincipalFactory(principalFactory);
+        final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver(
+                attributeRepository, 
+                principalFactory,
+                casProperties.getPersonDirectory().isReturnNull(),
+                casProperties.getPersonDirectory().getPrincipalAttribute()
+        );
         
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         if (!attributeRepositories.isEmpty()) {

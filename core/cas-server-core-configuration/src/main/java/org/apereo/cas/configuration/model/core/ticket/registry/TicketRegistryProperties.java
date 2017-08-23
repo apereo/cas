@@ -220,6 +220,10 @@ public class TicketRegistryProperties implements Serializable {
         @NestedConfigurationProperty
         private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+        public InMemory() {
+            crypto.setEnabled(false);
+        }
+
         public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
             return crypto;
         }

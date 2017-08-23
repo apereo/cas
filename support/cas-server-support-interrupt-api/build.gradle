@@ -1,0 +1,9 @@
+description = "Apereo CAS Notification/Interrupt API"
+dependencies {
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-services")
+    implementation libraries.caffein
+}

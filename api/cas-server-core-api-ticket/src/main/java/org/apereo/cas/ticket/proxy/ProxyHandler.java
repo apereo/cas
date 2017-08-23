@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@FunctionalInterface
 public interface ProxyHandler {
 
     /**
@@ -30,5 +31,7 @@ public interface ProxyHandler {
      * @param credential the credential object containing the proxy request details.
      * @return true, if successful
      */
-    boolean canHandle(Credential credential);
+    default boolean canHandle(Credential credential) {
+        return true;
+    }
 }

@@ -24,7 +24,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
-import org.apereo.cas.validation.ValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -79,14 +79,14 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test
     public void verifyDisallowNullCredentialsWhenCreatingTicketGrantingTicket() throws Exception {
-        final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), new Credential[] {null});
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), new Credential[]{null});
         this.thrown.expect(RuntimeException.class);
         getCentralAuthenticationService().createTicketGrantingTicket(ctx);
     }
 
     @Test
     public void verifyDisallowNullCredentialsArrayWhenCreatingTicketGrantingTicket() throws Exception {
-        final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), new Credential[] {null, null});
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), new Credential[]{null, null});
         this.thrown.expect(RuntimeException.class);
         getCentralAuthenticationService().createTicketGrantingTicket(ctx);
     }
@@ -103,9 +103,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test
     public void verifyGrantingOfServiceTicketUsingDefaultTicketIdGen() throws Exception {
-        final Service mockService = mock(Service.class);
-        when(mockService.getId()).thenReturn("testDefault");
-
+        final Service mockService = CoreAuthenticationTestUtils.getService("testDefault");
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
         final TicketGrantingTicket ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), mockService, ctx);
@@ -287,7 +285,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final UsernamePasswordCredential cred = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        
+
         final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
 
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
@@ -429,7 +427,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         // simulate renew with new good same credentials
         final ServiceTicket st2Id = cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         final Assertion assertion = cas.validateServiceTicket(st2Id.getId(), svc);
-        final ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
+        final CasProtocolValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
         assertTrue(validationSpecification.isSatisfiedBy(assertion, new MockHttpServletRequest()));
     }
 

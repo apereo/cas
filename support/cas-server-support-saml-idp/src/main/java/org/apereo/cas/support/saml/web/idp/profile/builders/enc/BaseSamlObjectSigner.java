@@ -17,6 +17,7 @@ import org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler;
 import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
 import org.opensaml.security.credential.Credential;
@@ -69,6 +70,8 @@ public class BaseSamlObjectSigner {
     protected List overrideWhiteListedAlgorithms;
 
 
+    private MetadataResolver idpMetadataResolver;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -78,18 +81,19 @@ public class BaseSamlObjectSigner {
         this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
         this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
         this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+        this.idpMetadataResolver = idpMetadataResolver;
     }
 
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
-     * @param <T>        the type parameter
-     * @param samlObject the saml object
-     * @param service    the service
-     * @param adaptor    the adaptor
-     * @param response   the response
-     * @param request    the request
-     * @param binding    the binding
+     * @param <T>            the type parameter
+     * @param samlObject     the saml object
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param response       the response
+     * @param request        the request
+     * @param binding        the binding
      * @return the t
      * @throws SamlException the saml exception
      */
@@ -171,7 +175,8 @@ public class BaseSamlObjectSigner {
         if (secParametersContext == null) {
             throw new IllegalArgumentException("No signature signing parameters could be determined");
         }
-        final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(adaptor.getSsoDescriptor());
+        final RoleDescriptor roleDesc = adaptor.getSsoDescriptor();
+        final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(roleDesc);
         secParametersContext.setSignatureSigningParameters(signingParameters);
     }
 
@@ -285,7 +290,8 @@ public class BaseSamlObjectSigner {
     protected X509Certificate getSigningCertificate() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
         LOGGER.debug("Locating signature signing certificate file from [{}]", samlIdp.getMetadata().getSigningCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(samlIdp.getMetadata().getSigningCertFile().getFile()));
+        final FileSystemResource resource = new FileSystemResource(samlIdp.getMetadata().getSigningCertFile().getFile());
+        return SamlUtils.readCertificate(resource);
     }
 
     /**

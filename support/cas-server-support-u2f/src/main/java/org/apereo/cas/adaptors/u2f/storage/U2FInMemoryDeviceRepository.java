@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 
 import java.util.List;
@@ -30,23 +30,23 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public List<DeviceRegistration> getRegisteredDevices(final String username) {
-        final List<DeviceRegistration> registrations = userStorage.getUnchecked(username).values()
+        final List<DeviceRegistration> registrations = userStorage.get(username).values()
                 .stream().map(DeviceRegistration::fromJson).collect(Collectors.toList());
         return registrations;
     }
     
     @Override
     public void registerDevice(final String username, final DeviceRegistration registration) {
-        userStorage.getUnchecked(username).put(registration.getKeyHandle(), registration.toJson());
+        userStorage.get(username).put(registration.getKeyHandle(), registration.toJson());
     }
 
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        userStorage.getUnchecked(username).put(registration.getKeyHandle(), registration.toJson());
+        userStorage.get(username).put(registration.getKeyHandle(), registration.toJson());
     }
 
     @Override
     public boolean isDeviceRegisteredFor(final String username) {
-        return !userStorage.getUnchecked(username).values().isEmpty();
+        return !userStorage.get(username).values().isEmpty();
     }
 }

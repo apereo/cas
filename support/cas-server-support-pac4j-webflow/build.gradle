@@ -1,6 +1,10 @@
 
 description = "Apereo CAS Pac4j Webflow Support"
 dependencies {
-    compile project(":core:cas-server-core-webflow")
-    compile project(":support:cas-server-support-pac4j")
+    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-pac4j")
+    implementation project(":support:cas-server-support-pac4j-core-clients")
+    implementation project(":core:cas-server-core-web")
 }

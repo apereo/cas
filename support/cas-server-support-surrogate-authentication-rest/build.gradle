@@ -1,0 +1,7 @@
+description = "Apereo CAS Surrogate Authentication REST Support"
+dependencies {
+    implementation project(":support:cas-server-support-surrogate-authentication")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services")
+}

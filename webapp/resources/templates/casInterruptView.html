@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{cas.login.pagetitle}"></title>
+
+    <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
+        /*<![CDATA[*/
+
+        var autoRedirect = /*[[${interrupt.autoRedirect}]]*/;
+        var emptyLinks = /*[[${#maps.isEmpty(interrupt.links)}]]*/;
+
+        if (autoRedirect && !emptyLinks) {
+
+            var link = /*[[${interrupt.links.values().iterator().next()}]]*/;
+            var redirectTimeout = /*[[${interrupt.autoRedirectAfterSeconds}]]*/;
+
+            setTimeout(function () {
+                window.location = link;
+            }, redirectTimeout <= 0 ? 0 : redirectTimeout * 1000);
+
+        }
+        /*]]>*/
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="box fl-panel" id="login">
+        <h1 th:text="#{screen.interrupt.title}"/>
+        <p th:utext="#{screen.interrupt.message(${principal.id})}"/>
+
+        <div th:if="${interrupt.message}" class="alert alert-info">
+            <p th:utext="${interrupt.message}"/>
+            <br/>
+
+            <div th:if="${interrupt.links}">
+                <a class="btn btn-success"
+                   style="margin-right: 5px"
+                   th:each="link : ${interrupt.links}"
+                   th:text="${link.key}"
+                   th:href="${link.value}"
+                   type="button"/>
+            </div>
+        </div>
+
+        
+        <form method="post" id="fm1" th:if="${not interrupt.block}">
+            <div align="center">
+
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="proceed"/>
+                <input  
+                        class="btn btn-primary btn-lg"
+                        name="proceed"
+                        accesskey="l"
+                        th:value="#{screen.interrupt.btn.proceed}"
+                        type="submit"/>
+                &nbsp;
+                <a class="btn btn-warning btn-lg" id="cancel" name="cancel"
+                   th:href="@{/login}" th:text="#{screen.interrupt.btn.cancel}"/>
+            </div>
+        </form>
+        
+        <div th:if="${interrupt.block}" align="center">
+            <a class="btn btn-warning btn-lg" id="cancel" name="cancel"
+               th:href="@{/login}" th:text="#{screen.interrupt.btn.cancel}"/>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

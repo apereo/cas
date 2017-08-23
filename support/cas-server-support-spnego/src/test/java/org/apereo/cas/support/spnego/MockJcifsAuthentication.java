@@ -1,9 +1,9 @@
 package org.apereo.cas.support.spnego;
 
+import java.security.Principal;
+
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
-
-import java.security.Principal;
 
 /**
  *
@@ -13,29 +13,25 @@ import java.security.Principal;
  */
 public class MockJcifsAuthentication extends Authentication {
 
-    private final Principal principal;
-    private final boolean valid;
-    private final byte[] outToken = new byte[] {4, 5, 6};
+    private Principal principal;
+    private byte[] outToken = new byte[] {4, 5, 6};
 
-    public MockJcifsAuthentication(final boolean valid) {
+    public MockJcifsAuthentication() {
         this.principal = new MockPrincipal("test");
-        this.valid = valid;
     }
 
     @Override
     public byte[] getNextToken() {
-        return this.valid ? this.outToken : null;
+        return this.outToken;
     }
 
     @Override
     public Principal getPrincipal() {
-        return this.valid ? this.principal : null;
+        return this.principal;
     }
 
     @Override
     public void process(final byte[] arg0) throws AuthenticationException {
-        if (!this.valid) {
-            throw new AuthenticationException("not valid");
-        }
+        // empty
     }
 }

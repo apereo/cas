@@ -1,11 +1,10 @@
 package org.apereo.cas.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -84,14 +83,9 @@ public class U2FJpaConfiguration {
     public U2FDeviceRepository u2fDeviceRepository() {
         final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
-                CacheBuilder.newBuilder()
+                Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
-                        .build(new CacheLoader<String, String>() {
-                            @Override
-                            public String load(final String key) throws Exception {
-                                return StringUtils.EMPTY;
-                            }
-                        });
+                        .build(key -> StringUtils.EMPTY);
         return new U2FJpaDeviceRepository(requestStorage, u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
     }
 

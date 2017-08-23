@@ -28,9 +28,12 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
+import org.apereo.cas.validation.ValidationAuthorizer;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +46,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -61,39 +66,91 @@ import java.util.Optional;
  */
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceValidateController.class);
-    
-    private ValidationSpecification validationSpecification;
-    
-    private AuthenticationSystemSupport authenticationSystemSupport;
-            
-    private ServicesManager servicesManager;
-    
-    private CentralAuthenticationService centralAuthenticationService;
 
-    /** The proxy handler we want to use with the controller. */
+    private Set<CasProtocolValidationSpecification> validationSpecifications = new LinkedHashSet<>();
+
+    private final Set<ValidationAuthorizer> validationAuthorizers;
+
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
+    private final ServicesManager servicesManager;
+
+    private final CentralAuthenticationService centralAuthenticationService;
+
+    /**
+     * The proxy handler we want to use with the controller.
+     */
     private ProxyHandler proxyHandler;
 
-    /** The view to redirect to on a successful validation. */
-    private View successView;
-
-    /** The view to redirect to on a validation failure. */
-    private View failureView;
-
-    /** Extracts parameters from Request object. */
-    private ArgumentExtractor argumentExtractor;
-    
-    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-        
-    private AuthenticationContextValidator authenticationContextValidator;
-    
-    private View jsonView;
-
-    private String authnContextAttribute;
-    
     /**
-     * Instantiates a new Service validate controller.
+     * The view to redirect to on a successful validation.
      */
-    public AbstractServiceValidateController() {}
+    private final View successView;
+
+    /**
+     * The view to redirect to on a validation failure.
+     */
+    private final View failureView;
+
+    /**
+     * Extracts parameters from Request object.
+     */
+    private final ArgumentExtractor argumentExtractor;
+
+    private final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
+
+    private final AuthenticationContextValidator authenticationContextValidator;
+
+    private final View jsonView;
+
+    private final String authnContextAttribute;
+
+    public AbstractServiceValidateController(final CasProtocolValidationSpecification validationSpecification,
+                                             final AuthenticationSystemSupport authenticationSystemSupport,
+                                             final ServicesManager servicesManager,
+                                             final CentralAuthenticationService centralAuthenticationService,
+                                             final ProxyHandler proxyHandler,
+                                             final ArgumentExtractor argumentExtractor,
+                                             final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                             final AuthenticationContextValidator authenticationContextValidator,
+                                             final View jsonView,
+                                             final View successView,
+                                             final View failureView,
+                                             final String authnContextAttribute,
+                                             final Set<ValidationAuthorizer> validationAuthorizers) {
+        this(CollectionUtils.wrapSet(validationSpecification), authenticationSystemSupport, servicesManager,
+                centralAuthenticationService, proxyHandler, argumentExtractor,
+                multifactorTriggerSelectionStrategy, authenticationContextValidator,
+                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
+    }
+
+    public AbstractServiceValidateController(final Set<CasProtocolValidationSpecification> validationSpecifications,
+                                             final AuthenticationSystemSupport authenticationSystemSupport,
+                                             final ServicesManager servicesManager,
+                                             final CentralAuthenticationService centralAuthenticationService,
+                                             final ProxyHandler proxyHandler,
+                                             final ArgumentExtractor argumentExtractor,
+                                             final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                             final AuthenticationContextValidator authenticationContextValidator,
+                                             final View jsonView,
+                                             final View successView,
+                                             final View failureView,
+                                             final String authnContextAttribute,
+                                             final Set<ValidationAuthorizer> validationAuthorizers) {
+        this.validationSpecifications = validationSpecifications;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.servicesManager = servicesManager;
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.proxyHandler = proxyHandler;
+        this.argumentExtractor = argumentExtractor;
+        this.multifactorTriggerSelectionStrategy = multifactorTriggerSelectionStrategy;
+        this.authenticationContextValidator = authenticationContextValidator;
+        this.jsonView = jsonView;
+        this.authnContextAttribute = authnContextAttribute;
+        this.successView = successView;
+        this.failureView = failureView;
+        this.validationAuthorizers = validationAuthorizers;
+    }
 
     /**
      * Overrideable method to determine which credentials to use to grant a
@@ -127,33 +184,33 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion,
                                                                                                        final HttpServletRequest request) {
-        // find the RegisteredService for this Assertion
+        // Find the RegisteredService for this Assertion
         LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
-        // resolve MFA auth context for this request
+        // Resolve MFA auth context for this request
         final Map<String, MultifactorAuthenticationProvider> providers =
                 this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         final Authentication authentication = assertion.getPrimaryAuthentication();
         final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
                 service, authentication.getPrincipal());
 
-        // no MFA auth context found
+        // No MFA auth context found
         if (!requestedContext.isPresent()) {
             LOGGER.debug("No particular authentication context is required for this request");
             return Pair.of(Boolean.TRUE, Optional.empty());
         }
 
-        // validate the requested strategy
+        // Validate the requested strategy
         return this.authenticationContextValidator.validate(authentication, requestedContext.get(), service);
     }
 
     /**
-     * Inits the binder with the required fields. {@code renew} is required.
+     * Initialize the binder with the required fields. {@code renew} is required.
      *
      * @param request the request
-     * @param binder the binder
+     * @param binder  the binder
      */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
         binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
@@ -163,11 +220,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Handle proxy granting ticket delivery.
      *
      * @param serviceTicketId the service ticket id
-     * @param credential the service credential
+     * @param credential      the service credential
      * @return the ticket granting ticket
      */
     private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
-        throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, AbstractTicketException {
         final ServiceTicket serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
         final AuthenticationResult authenticationResult =
                 this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
@@ -179,11 +236,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
-        if (service == null || serviceTicketId == null) {
+        if (service == null || !StringUtils.hasText(serviceTicketId)) {
             LOGGER.debug("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request, service);
         }
@@ -194,8 +251,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             final String code = e.getCode();
             return generateErrorView(code, new Object[]{serviceTicketId, e.getOriginalService().getId(), service.getId()}, request, service);
         } catch (final AbstractTicketException e) {
-            return generateErrorView(e.getCode(), 
-                new Object[] {serviceTicketId}, request, service);
+            return generateErrorView(e.getCode(), new Object[]{serviceTicketId}, request, service);
         } catch (final UnauthorizedProxyingException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, new Object[]{service.getId()}, request, service);
         } catch (final UnauthorizedServiceException e) {
@@ -230,10 +286,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
-        if (!validateAssertion(request, serviceTicketId, assertion)) {
+        if (!validateAssertion(request, serviceTicketId, assertion, service)) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request, service);
         }
-
+        
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
         if (!ctxResult.getKey()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
@@ -246,7 +302,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
             }
         } else {
-            LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", 
+            LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials",
                     this.proxyHandler.getClass().getSimpleName());
         }
 
@@ -258,25 +314,32 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private String handleProxyIouDelivery(final Credential serviceCredential, final TicketGrantingTicket proxyGrantingTicketId) {
         return this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
     }
-    
+
     /**
      * Validate assertion.
      *
-     * @param request the request
+     * @param request         the request
      * @param serviceTicketId the service ticket id
-     * @param assertion the assertion
-     * @return true/false
+     * @param assertion       the assertion
+     * @param service         the service
+     * @return true /false
      */
-    private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
-        this.validationSpecification.reset();
-        final ServletRequestDataBinder binder = new ServletRequestDataBinder(this.validationSpecification, "validationSpecification");
-        initBinder(request, binder);
-        binder.bind(request);
-        
-        if (!this.validationSpecification.isSatisfiedBy(assertion, request)) {
-            LOGGER.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
-            return false;
+    private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, 
+                                      final Assertion assertion, final Service service) {
+        for (final CasProtocolValidationSpecification s : this.validationSpecifications) {
+            s.reset();
+            final ServletRequestDataBinder binder = new ServletRequestDataBinder(s, "validationSpecification");
+            initBinder(request, binder);
+            binder.bind(request);
+
+            if (!s.isSatisfiedBy(assertion, request)) {
+                LOGGER.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+                return false;
+            }
         }
+
+        enforceTicketValidationAuthorizationFor(request, service, assertion);
+        
         return true;
     }
 
@@ -285,7 +348,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * use this as hook to plug in behavior.
      *
      * @param serviceTicketId the service ticket id
-     * @param assertion the assertion
+     * @param assertion       the assertion
      */
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
         // template method with nothing to do.
@@ -294,8 +357,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * Generate error view.
      *
-     * @param code the code
-     * @param args the args
+     * @param code    the code
+     * @param args    the args
      * @param request the request
      * @return the model and view
      */
@@ -323,11 +386,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 LOGGER.warn(e.getMessage(), e);
             }
         }
-        
+
         if (type == ValidationResponseType.JSON) {
             return new ModelAndView(this.jsonView);
         }
-        
+
         return new ModelAndView(isSuccess ? this.successView : this.failureView);
     }
 
@@ -341,7 +404,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param proxyGrantingTicket the proxy granting ticket
      * @return the model and view, pointed to the view name set by
      */
-    private ModelAndView generateSuccessView(final Assertion assertion, 
+    private ModelAndView generateSuccessView(final Assertion assertion,
                                              final String proxyIou,
                                              final WebApplicationService service,
                                              final HttpServletRequest request,
@@ -352,7 +415,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
-        
+
         if (StringUtils.hasText(proxyIou)) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
         }
@@ -367,6 +430,25 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             modelAndView.addAllObjects(augmentedModelObjects);
         }
         return modelAndView;
+    }
+
+    /**
+     * Enforce ticket validation authorization for.
+     *
+     * @param request   the request
+     * @param service   the service
+     * @param assertion the assertion
+     */
+    protected void enforceTicketValidationAuthorizationFor(final HttpServletRequest request,
+                                                           final Service service,
+                                                           final Assertion assertion) {
+        for (final ValidationAuthorizer a : this.validationAuthorizers) {
+            try {
+                a.authorize(request, service, assertion);
+            } catch (final Exception e) {
+                throw new UnauthorizedServiceTicketValidationException(service);
+            }
+        }
     }
 
     /**
@@ -388,79 +470,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     /**
-     * @param centralAuthenticationService The centralAuthenticationService to
-     * set.
-     */
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-    
-    public void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
-        this.argumentExtractor = argumentExtractor;
-    }
-
-    public void setMultifactorTriggerSelectionStrategy(final MultifactorTriggerSelectionStrategy strategy) {
-        this.multifactorTriggerSelectionStrategy = strategy;
-    }
-
-    /**
-     * @param validationSpecificationClass The authenticationSpecificationClass
-     * to set.
-     */
-    public void setValidationSpecification(final ValidationSpecification validationSpecificationClass) {
-        this.validationSpecification = validationSpecificationClass;
-    }
-
-    /**
-     * @param failureView The failureView to set.
-     */
-    public void setFailureView(final View failureView) {
-        this.failureView = failureView;
-    }
-
-    /**
-     * Return the failureView.
-     * @return the failureView
-     */
-    public View getFailureView() {
-        return this.failureView;
-    }
-
-    /**
-     * @param successView The successView to set.
-     */
-    public void setSuccessView(final View successView) {
-        this.successView = successView;
-    }
-
-    /**
-     * Return the successView.
-     * @return the successView
-     */
-    public View getSuccessView() {
-        return this.successView;
-    }
-    
-    /**
-     * @param proxyHandler The proxyHandler to set.
-     */
-    public void setProxyHandler(final ProxyHandler proxyHandler) {
-        this.proxyHandler = proxyHandler;
-    }
-
-    /**
-     * Sets the services manager.
-     *
-     * @param servicesManager the new services manager
-     */
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    /**
      * Ensure that the service is found and enabled in the service registry.
+     *
      * @param registeredService the located entry in the registry
-     * @param service authenticating service
+     * @param service           authenticating service
      * @throws UnauthorizedServiceException if service is determined to be unauthorized
      */
     private static void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
@@ -478,19 +491,24 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
     }
 
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-    
-    public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {
-        this.authenticationContextValidator = authenticationContextValidator;
+    public View getSuccessView() {
+        return successView;
     }
 
-    public void setJsonView(final View jsonView) {
-        this.jsonView = jsonView;
+    public View getFailureView() {
+        return failureView;
     }
 
-    public void setAuthnContextAttribute(final String authnContextAttribute) {
-        this.authnContextAttribute = authnContextAttribute;
+    public void setProxyHandler(final ProxyHandler proxyHandler) {
+        this.proxyHandler = proxyHandler;
+    }
+
+    /**
+     * Add validation specification.
+     *
+     * @param validationSpecification the validation specification
+     */
+    public void addValidationSpecification(final CasProtocolValidationSpecification validationSpecification) {
+        this.validationSpecifications.add(validationSpecification);
     }
 }

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,34 +68,35 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private String privacyUrl;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String description;
-    
+
     @Lob
     @Column(name = "proxy_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
-    
+
     @Lob
     @Column(name = "username_attr", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
-    
+
     @Column(name = "logout_type", nullable = true)
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
     @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
-    
+
     @Lob
     @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
-    
+
     @Lob
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
@@ -115,7 +118,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredServiceImpl_Props")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
-
+    
     @Override
     public long getId() {
         return this.id;
@@ -193,7 +196,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
             this.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
         }
         if (this.properties == null) {
-            this.properties = new HashMap<>();
+            this.properties = new LinkedHashMap<>();
         }
         if (this.attributeReleasePolicy == null) {
             this.attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
@@ -323,6 +326,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.privacyUrl = privacyUrl;
     }
 
+   
     /**
      * Sets the user attribute provider instance
      * when providing usernames to this registered service.
@@ -380,6 +384,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         setMultifactorPolicy(source.getMultifactorPolicy());
         setInformationUrl(source.getInformationUrl());
         setPrivacyUrl(source.getPrivacyUrl());
+
     }
 
     /**
@@ -401,27 +406,27 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Override
     public String toString() {
-        final ToStringBuilder toStringBuilder = new ToStringBuilder(null, ToStringStyle.SHORT_PREFIX_STYLE);
-        toStringBuilder.append("id", this.id);
-        toStringBuilder.append("name", this.name);
-        toStringBuilder.append("description", this.description);
-        toStringBuilder.append("serviceId", this.serviceId);
-        toStringBuilder.append("usernameAttributeProvider", this.usernameAttributeProvider);
-        toStringBuilder.append("theme", this.theme);
-        toStringBuilder.append("evaluationOrder", this.evaluationOrder);
-        toStringBuilder.append("logoutType", this.logoutType);
-        toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
-        toStringBuilder.append("accessStrategy", this.accessStrategy);
-        toStringBuilder.append("publicKey", this.publicKey);
-        toStringBuilder.append("proxyPolicy", this.proxyPolicy);
-        toStringBuilder.append("logo", this.logo);
-        toStringBuilder.append("logoutUrl", this.logoutUrl);
-        toStringBuilder.append("requiredHandlers", this.requiredHandlers);
-        toStringBuilder.append("properties", this.properties);
-        toStringBuilder.append("multifactorPolicy", this.multifactorPolicy);
-        toStringBuilder.append("informationUrl", this.informationUrl);
-        toStringBuilder.append("privacyUrl", this.privacyUrl);
-        return toStringBuilder.toString();
+        final ToStringBuilder builder = new ToStringBuilder(null, ToStringStyle.SHORT_PREFIX_STYLE);
+        builder.append("id", this.id);
+        builder.append("name", this.name);
+        builder.append("description", this.description);
+        builder.append("serviceId", this.serviceId);
+        builder.append("usernameAttributeProvider", this.usernameAttributeProvider);
+        builder.append("theme", this.theme);
+        builder.append("evaluationOrder", this.evaluationOrder);
+        builder.append("logoutType", this.logoutType);
+        builder.append("attributeReleasePolicy", this.attributeReleasePolicy);
+        builder.append("accessStrategy", this.accessStrategy);
+        builder.append("publicKey", this.publicKey);
+        builder.append("proxyPolicy", this.proxyPolicy);
+        builder.append("logo", this.logo);
+        builder.append("logoutUrl", this.logoutUrl);
+        builder.append("requiredHandlers", this.requiredHandlers);
+        builder.append("properties", this.properties);
+        builder.append("multifactorPolicy", this.multifactorPolicy);
+        builder.append("informationUrl", this.informationUrl);
+        builder.append("privacyUrl", this.privacyUrl);
+        return builder.toString();
     }
 
     /**

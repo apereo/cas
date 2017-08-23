@@ -1,8 +1,7 @@
 package org.apereo.cas.otp.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -106,17 +105,14 @@ public class OneTimeTokenAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
-        final LoadingCache<String, Collection<OneTimeToken>> storage = CacheBuilder.newBuilder()
+        final LoadingCache<String, Collection<OneTimeToken>> storage = Caffeine.newBuilder()
                 .initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE)
                 .recordStats()
                 .expireAfterWrite(EXPIRE_TOKENS_IN_SECONDS, TimeUnit.SECONDS)
-                .build(new CacheLoader<String, Collection<OneTimeToken>>() {
-                    @Override
-                    public Collection<OneTimeToken> load(final String s) throws Exception {
-                        LOGGER.error("Load operation of the cache is not supported.");
-                        return null;
-                    }
+                .build(s -> {
+                    LOGGER.error("Load operation of the cache is not supported.");
+                    return null;
                 });
         return new CachingOneTimeTokenRepository(storage);
     }

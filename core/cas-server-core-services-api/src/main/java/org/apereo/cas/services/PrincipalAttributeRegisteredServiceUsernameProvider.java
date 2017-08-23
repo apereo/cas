@@ -55,7 +55,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     }
 
     @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service) {
+    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         String principalId = principal.getId();
 
         final Map<String, Object> originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
