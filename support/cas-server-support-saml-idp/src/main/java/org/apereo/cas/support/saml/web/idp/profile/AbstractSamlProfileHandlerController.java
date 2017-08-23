@@ -59,6 +59,9 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -297,9 +300,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                           final Map<String, Object> attributesToCombine) {
         final Map attributes = registeredService.getAttributeReleasePolicy()
                 .getAttributes(authentication.getPrincipal(), service, registeredService);
-        final AttributePrincipal principal = new AttributePrincipalImpl(
-                authentication.getPrincipal().getId(), attributes);
-        
+        final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
         final Map authnAttrs = new LinkedHashMap(authentication.getAttributes());
         authnAttrs.putAll(attributesToCombine);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
@@ -307,6 +308,21 @@ public abstract class AbstractSamlProfileHandlerController {
                 authnAttrs);
     }
 
+    /**
+     * Build cas assertion.
+     *
+     * @param principal         the principal
+     * @param registeredService the registered service
+     * @param attributes        the attributes
+     * @return the assertion
+     */
+    protected Assertion buildCasAssertion(final String principal,
+                                          final RegisteredService registeredService,
+                                          final Map<String, Object> attributes) {
+        final AttributePrincipal p = new AttributePrincipalImpl(principal, attributes);
+        return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now()),
+                null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
+    }
 
     /**
      * Decode authentication request saml object.

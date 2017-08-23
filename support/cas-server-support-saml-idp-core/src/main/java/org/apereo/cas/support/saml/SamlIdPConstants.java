@@ -42,6 +42,11 @@ public interface SamlIdPConstants {
     /**
      * The SAML2 artifact resolution endpoint.
      */
+    String ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY = "/idp/profile/SAML2/SOAP/AttributeQuery";
+
+    /**
+     * The SAML2 attribute query endpoint.
+     */
     String ENDPOINT_SAML2_SOAP_ARTIFACT_RESOLUTION = "/idp/profile/SAML2/SOAP/ArtifactResolution";
 
     /**

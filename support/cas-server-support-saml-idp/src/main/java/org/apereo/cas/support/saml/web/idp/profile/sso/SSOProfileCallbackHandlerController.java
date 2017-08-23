@@ -96,7 +96,6 @@ public class SSOProfileCallbackHandlerController extends AbstractSamlProfileHand
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
     protected void handleCallbackProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
-
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         final AuthnRequest authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
         if (authnRequest == null) {

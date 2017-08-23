@@ -38,7 +38,10 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlSoap11ResponseBuilder.class);
     private static final long serialVersionUID = -1875903354216171261L;
 
-    private final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder;
+    /**
+     * SAML2 response builder for the soap body.
+     */
+    protected final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder;
 
     public SamlProfileSamlSoap11ResponseBuilder(
             final OpenSamlConfigBean openSamlConfigBean,
@@ -82,7 +85,18 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         return envelope;
     }
 
-    private org.opensaml.saml.saml2.core.Response buildSaml2Response(final Object casAssertion,
+    /**
+     * Build saml2 response.
+     *
+     * @param casAssertion the cas assertion
+     * @param authnRequest the authn request
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @param request      the request
+     * @param binding      the binding
+     * @return the org . opensaml . saml . saml 2 . core . response
+     */
+    protected org.opensaml.saml.saml2.core.Response buildSaml2Response(final Object casAssertion,
                                                                      final RequestAbstractType authnRequest, final SamlRegisteredService service,
                                                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                      final HttpServletRequest request,
