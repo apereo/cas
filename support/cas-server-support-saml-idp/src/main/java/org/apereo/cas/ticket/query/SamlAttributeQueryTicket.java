@@ -18,16 +18,16 @@ public interface SamlAttributeQueryTicket extends ServiceTicket {
     String PREFIX = "SATQ";
 
     /**
-     * Gets issuer.
+     * Gets relying party.
      *
-     * @return the issuer
+     * @return the relying party id
      */
-    String getIssuer();
+    String getRelyingParty();
     
     /**
-     * Gets saml attributes.
+     * Gets saml object.
      *
      * @return the object
      */
-    Map<String, Object> getAttributes();
+    String getObject();
 }

@@ -9,8 +9,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
+import org.opensaml.saml.common.SAMLObject;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -33,19 +32,26 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    /**
+     * The opensaml config bean.
+     */
+    protected final OpenSamlConfigBean configBean;
+    
     public DefaultSamlAttributeQueryTicketFactory(final ExpirationPolicy expirationPolicy, final OpenSamlConfigBean configBean,
                                                   final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         this.expirationPolicy = expirationPolicy;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
+        this.configBean = configBean;
     }
 
     @Override
-    public SamlAttributeQueryTicket create(final String id, final Map<String, Object> attributes,
-                                           final String issuer, final TicketGrantingTicket ticketGrantingTicket) {
-        try {
+    public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,
+                                           final String relyingParty, final TicketGrantingTicket ticketGrantingTicket) {
+        try (StringWriter w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
             final String codeId = createTicketIdFor(id);
-            final Service service = this.webApplicationServiceFactory.createService(issuer);
-            final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy, issuer, attributes);
+            final Service service = this.webApplicationServiceFactory.createService(relyingParty);
+            final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy, 
+                    relyingParty, w.toString(), ticketGrantingTicket);
             if (ticketGrantingTicket != null) {
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());
             }

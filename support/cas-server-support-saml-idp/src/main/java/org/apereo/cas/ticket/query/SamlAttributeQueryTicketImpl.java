@@ -7,23 +7,15 @@ import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.Table;
-import java.util.Map;
 
 /**
  * This is {@link SamlAttributeQueryTicketImpl}.
@@ -40,7 +32,10 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     private static final long serialVersionUID = 6276140828446447398L;
 
     @Column(length = 255, updatable = true, insertable = true)
-    private String issuer;
+    private String relyingParty;
+
+    @Column(length = 5000, updatable = true, insertable = true)
+    private String samlObject;
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
@@ -48,19 +43,13 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     @JsonProperty("grantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
-    
+
     /**
      * The service this ticket is valid for.
      */
     @Lob
     @Column(name = "SERVICE", nullable = false)
     private Service service;
-
-    @ElementCollection
-    @CollectionTable(name = "SamlAttributeQueryTicket_Attributes")
-    @MapKey(name = "key")
-    @Column(name = "value")
-    private Map<String, Object> attributes;
 
     /**
      * Instantiates a new OAuth code impl.
@@ -70,44 +59,43 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     }
 
     /**
-     * Constructs a new OAuth code with unique id for a service and authentication.
+     * Constructs saml attribute query ticket.
      *
-     * @param id               the unique identifier for the ticket.
-     * @param service          the service this ticket is for.
-     * @param expirationPolicy the expiration policy.
-     * @param issuer           the issuer
-     * @param attributes       the attributes
+     * @param id                   the unique identifier for the ticket.
+     * @param service              the service this ticket is for.
+     * @param expirationPolicy     the expiration policy.
+     * @param relyingParty         the relying party
+     * @param samlObject           the saml object
+     * @param ticketGrantingTicket the ticket granting ticket
      * @throws IllegalArgumentException if the service or authentication are null.
      */
     public SamlAttributeQueryTicketImpl(final String id, final Service service,
                                         final ExpirationPolicy expirationPolicy,
-                                        final String issuer, final Map<String, Object> attributes) {
+                                        final String relyingParty, final String samlObject,
+                                        final TicketGrantingTicket ticketGrantingTicket) {
         super(id, expirationPolicy);
         this.service = service;
-        this.issuer = issuer;
-        this.attributes = attributes;
+        this.relyingParty = relyingParty;
+        this.samlObject = samlObject;
+        this.ticketGrantingTicket = ticketGrantingTicket;
     }
 
     @Override
-    public String getIssuer() {
-        return this.issuer;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return this.attributes;
-    }
-
-    public void setIssuer(final String issuer) {
-        this.issuer = issuer;
+    public String getObject() {
+        return this.samlObject;
     }
     
-    public void setService(final Service service) {
-        this.service = service;
+    @Override
+    public String getRelyingParty() {
+        return this.relyingParty;
     }
 
-    public void setAttributes(final Map<String, Object> attributes) {
-        this.attributes = attributes;
+    public void setRelyingParty(final String relyingParty) {
+        this.relyingParty = relyingParty;
+    }
+
+    public void setService(final Service service) {
+        this.service = service;
     }
 
     @Override

@@ -126,7 +126,8 @@ public class SamlIdPConfiguration {
                 ticketRegistry,
                 samlArtifactTicketFactory(), 
                 ticketGrantingTicketCookieGenerator, 
-                samlArtifactMap());
+                samlArtifactMap(), 
+                samlAttributeQueryTicketFactory());
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketFactory")

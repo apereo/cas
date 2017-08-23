@@ -31,6 +31,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -87,7 +88,7 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
+
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
     private MetadataResolver casSamlIdPMetadataResolver;
@@ -115,11 +116,11 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
     private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder;
-    
+
     @Autowired
     @Qualifier("samlAttributeQueryTicketFactory")
     private SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
-    
+
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -262,11 +263,12 @@ public class SamlIdPEndpointsConfiguration {
                 samlProfileSamlArtifactResponseBuilder,
                 casProperties,
                 samlObjectSignatureValidator(),
-                ticketRegistry, 
-                samlArtifactTicketFactory, 
+                ticketRegistry,
+                samlArtifactTicketFactory,
                 samlProfileSamlArtifactFaultResponseBuilder);
     }
 
+    @ConditionalOnProperty(prefix = "cas.authn.samlIdp", name = "attributeQueryProfileEnabled", havingValue = "true")
     @Bean
     @RefreshScope
     public Saml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
@@ -282,8 +284,8 @@ public class SamlIdPEndpointsConfiguration {
                 casProperties,
                 samlObjectSignatureValidator(),
                 ticketRegistry,
-                samlProfileSamlAttributeQueryFaultResponseBuilder, 
-                ticketGrantingTicketCookieGenerator, 
+                samlProfileSamlAttributeQueryFaultResponseBuilder,
+                ticketGrantingTicketCookieGenerator,
                 samlAttributeQueryTicketFactory);
     }
 }
