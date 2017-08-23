@@ -149,3 +149,29 @@ export class WsFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
   }
 }
 
+export class InCommonRSAttributeReleasePolicy extends RegisteredServiceAttributeReleasePolicy {
+  static cName = "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy";
+
+  constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
+    super(policy);
+    this["@class"] = InCommonRSAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === InCommonRSAttributeReleasePolicy.cName;
+  }
+}
+
+export class PatternMatchingEntityIdAttributeReleasePolicy extends RegisteredServiceAttributeReleasePolicy {
+  static cName = "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy";
+
+  constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
+    super(policy);
+    this["@class"] = PatternMatchingEntityIdAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === PatternMatchingEntityIdAttributeReleasePolicy.cName;
+  }
+}
+

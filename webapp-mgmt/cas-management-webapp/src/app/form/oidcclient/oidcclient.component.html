@@ -21,8 +21,7 @@
                  i18n-placeholder="services.form.label.oidc.scopes"
                  [placeholder]="messages.services_form_label_oidc_scopes"
                  [(ngModel)]="service.scopes">
-        <md-option *ngFor="let opt of selectOptions.oidcScopes"
-                   [value]="opt.value">{{ opt.name }}</md-option>
+        <md-option *ngFor="let opt of oidcScopes" [value]="opt.value">{{ opt.name }}</md-option>
       </md-select>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.oidc.scopes"
