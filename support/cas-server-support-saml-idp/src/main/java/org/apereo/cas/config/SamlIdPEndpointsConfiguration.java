@@ -20,7 +20,8 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerCont
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlProfileCallbackHandlerController;
-import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -115,6 +116,9 @@ public class SamlIdPEndpointsConfiguration {
     @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
     private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder;
     
+    @Autowired
+    @Qualifier("samlAttributeQueryTicketFactory")
+    private SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
     
     @Autowired
     @Qualifier("ticketRegistry")
@@ -279,6 +283,7 @@ public class SamlIdPEndpointsConfiguration {
                 samlObjectSignatureValidator(),
                 ticketRegistry,
                 samlProfileSamlAttributeQueryFaultResponseBuilder, 
-                ticketGrantingTicketCookieGenerator);
+                ticketGrantingTicketCookieGenerator, 
+                samlAttributeQueryTicketFactory);
     }
 }
