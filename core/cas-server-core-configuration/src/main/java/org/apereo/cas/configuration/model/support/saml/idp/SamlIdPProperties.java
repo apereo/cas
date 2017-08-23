@@ -26,11 +26,11 @@ public class SamlIdPProperties implements Serializable {
 
     /**
      * Indicates whether attribute query profile is enabled.
-     * Enabling this setting would allow CAS to record SAML 
+     * Enabling this setting would allow CAS to record SAML
      * responses and have them be made available later for attribute lookups.
      */
     private boolean attributeQueryProfileEnabled;
-    
+
     /**
      * The SAML entity id for the deployment.
      */

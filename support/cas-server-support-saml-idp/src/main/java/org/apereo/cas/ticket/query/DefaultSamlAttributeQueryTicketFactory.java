@@ -12,7 +12,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.opensaml.saml.common.SAMLObject;
 
 import java.io.StringWriter;
-import java.util.Map;
+
 
 /**
  * Factory to create OAuth access tokens.
