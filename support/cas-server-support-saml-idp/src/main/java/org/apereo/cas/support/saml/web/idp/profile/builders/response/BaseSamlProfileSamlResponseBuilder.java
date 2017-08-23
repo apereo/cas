@@ -73,12 +73,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                    final SamlRegisteredService service,
                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                    final String binding) throws SamlException {
-        final Assertion assertion = buildSamlAssertion(authnRequest, request, response,
-                casAssertion, service, adaptor, binding);
-        final T finalResponse = buildResponse(assertion, casAssertion, authnRequest,
-                service, adaptor, request, response, binding);
-        return encodeFinalResponse(request, response, service, adaptor,
-                finalResponse, binding, authnRequest, casAssertion);
+        final Assertion assertion = buildSamlAssertion(authnRequest, request, response, casAssertion, service, adaptor, binding);
+        final T finalResponse = buildResponse(assertion, casAssertion, authnRequest, service, adaptor, request, response, binding);
+        return encodeFinalResponse(request, response, service, adaptor, finalResponse, binding, authnRequest, casAssertion);
     }
 
     /**
@@ -129,8 +126,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
         return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response,
                 casAssertion, service, adaptor, binding);
     }
-
-
+    
     /**
      * Build response response.
      *
