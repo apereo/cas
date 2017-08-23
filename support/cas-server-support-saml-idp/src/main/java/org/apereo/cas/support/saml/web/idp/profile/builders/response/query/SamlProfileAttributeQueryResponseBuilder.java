@@ -9,17 +9,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
-import org.apereo.cas.ticket.SamlArtifactTicket;
-import org.joda.time.DateTime;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
-import org.opensaml.saml.saml2.core.StatusCode;
-import org.opensaml.saml.saml2.core.impl.ArtifactResponseBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
@@ -47,21 +42,22 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
     }
 
     @Override
-    protected Envelope buildResponse(final Assertion assertion, final Object casAssertion, final RequestAbstractType authnRequest,
-                                     final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                     final HttpServletRequest request, final HttpServletResponse response, final String binding) throws SamlException {
+    public Envelope build(final RequestAbstractType authnRequest, final HttpServletRequest request, 
+                          final HttpServletResponse response, final Object casAssertion, final SamlRegisteredService service, 
+                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final String binding) throws SamlException {
         final AttributeQuery query = (AttributeQuery) authnRequest;
-
         final Header header = newSoapObject(Header.class);
 
         final Body body = newSoapObject(Body.class);
-        final Response saml2Response = buildSaml2Response(casAssertion, query, service, adaptor, request, SAMLConstants.SAML2_SOAP11_BINDING_URI);
+        final Response saml2Response = buildSaml2Response(casAssertion, query, service, 
+                adaptor, request, SAMLConstants.SAML2_POST_BINDING_URI);
         body.getUnknownXMLObjects().add(saml2Response);
 
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.configBean, envelope);
-        return envelope;
+        
+        return encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);
     }
 }

@@ -6,11 +6,11 @@ dependencies {
     api libraries.xmlapis
     
     implementation libraries.shibidp
-    
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":support:cas-server-support-validation")
+
+    provided project(":core:cas-server-core-web")
+    provided project(":core:cas-server-core-services")
+    provided project(":core:cas-server-core-authentication")
+    provided project(":support:cas-server-support-validation")
 
     testImplementation project(":support:cas-server-support-person-directory")
 }

@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.web.idp.profile.query;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,11 +16,9 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -33,7 +30,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
 import java.util.Optional;
 
 /**
@@ -95,7 +91,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
             final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, query, facade);
             
-            final Assertion casAssertion = buildCasAssertion(issuer, service, );
+            final Assertion casAssertion = buildCasAssertion(issuer, service, CollectionUtils.wrap("misagh", "moayyed"));
             this.responseBuilder.build(query, request, response, casAssertion, service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
