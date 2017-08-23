@@ -3,6 +3,7 @@ package org.apereo.cas.support.pac4j.web.flow;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.saml.client.SAML2Client;
 import org.slf4j.Logger;
@@ -36,7 +37,14 @@ public class SAML2ClientLogoutAction extends AbstractAction {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
             final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
             final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
-            final SAML2Client client = clients.findClient(SAML2Client.class);
+            SAML2Client client;
+            try {
+                client = clients.findClient(SAML2Client.class);
+            } catch(final TechnicalException e) {
+                // this exception indicates that the SAML2Client is not in the list
+                LOGGER.debug("No SAML2 client found");
+                client = null;
+            }
             if (client != null) {
                 LOGGER.debug("Located SAML2 client [{}]", client);
                 final RedirectAction action = client.getLogoutAction(context, null, null);
