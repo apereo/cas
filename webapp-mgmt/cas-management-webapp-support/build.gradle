@@ -4,7 +4,8 @@ dependencies {
     implementation libraries.pac4j
     implementation libraries.casclient
     implementation libraries.groovy
-    
+    implementation libraries.springcloudconfigclient
+
     compile libraries.springcloudconfigclient
     compile libraries.thymeleaf
     compile project(":core:cas-server-core-configuration")

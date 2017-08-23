@@ -34,14 +34,14 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
         final Set<MultifactorAuthenticationTrustRecord> results = storage.asMap()
                 .values()
                 .stream()
-                .filter(entry -> entry.getDate().isEqual(onOrBefore) || entry.getDate().isBefore(onOrBefore))
+                .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
                 .sorted()
                 .distinct()
                 .collect(Collectors.toSet());
 
         LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
-            results.forEach(entry -> storage.invalidate(entry.getKey()));
+            results.forEach(entry -> storage.invalidate(entry.getRecordKey()));
             LOGGER.info("Invalidated and removed [{}] expired records", results.size());
         }
     }
@@ -52,7 +52,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
         return storage.asMap()
                 .values()
                 .stream()
-                .filter(entry -> entry.getDate().isEqual(onOrAfterDate) || entry.getDate().isAfter(onOrAfterDate))
+                .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
                 .sorted()
                 .distinct()
                 .collect(Collectors.toSet());
@@ -68,11 +68,10 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .distinct()
                 .collect(Collectors.toSet());
     }
-
-
+    
     @Override
     public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
-        this.storage.put(record.getKey(), record);
+        this.storage.put(record.getRecordKey(), record);
         return record;
     }
 }

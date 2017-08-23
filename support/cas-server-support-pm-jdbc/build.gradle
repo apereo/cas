@@ -1,11 +1,11 @@
 description = "Apereo CAS Password Management JDBC Support"
 dependencies {
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-configuration")
-    compile project(":support:cas-server-support-pm")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-pm")
     implementation libraries.pac4j
     
     testImplementation project(":support:cas-server-support-person-directory")

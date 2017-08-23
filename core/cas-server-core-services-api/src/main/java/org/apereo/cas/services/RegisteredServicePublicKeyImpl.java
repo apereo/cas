@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.data.annotation.Transient;
 import org.springframework.util.ResourceUtils;
 
 import java.security.PublicKey;
@@ -27,6 +29,8 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
     private String algorithm = "RSA";
 
+    @JsonIgnore
+    @Transient
     private Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass = PublicKeyFactoryBean.class;
 
     /**
@@ -62,15 +66,6 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     @Override
     public String getAlgorithm() {
         return this.algorithm;
-    }
-
-    /**
-     * Sets public key factory bean class.
-     *
-     * @param publicKeyFactoryBeanClass the public key factory bean class
-     */
-    public void setPublicKeyFactoryBeanClass(final Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass) {
-        this.publicKeyFactoryBeanClass = publicKeyFactoryBeanClass;
     }
 
     @Override

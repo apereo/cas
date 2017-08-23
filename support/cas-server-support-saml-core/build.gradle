@@ -7,10 +7,10 @@ dependencies {
     
     implementation libraries.shibidp
     
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":support:cas-server-support-validation")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":support:cas-server-support-validation")
 
     testImplementation project(":support:cas-server-support-person-directory")
 }

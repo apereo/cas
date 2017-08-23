@@ -57,8 +57,8 @@ public class AuthenticationException extends RuntimeException {
      * @param handlerErrors Map of handler names to errors.
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
-    public AuthenticationException(
-            final Map<String, Class<? extends Throwable>> handlerErrors, final Map<String, HandlerResult> handlerSuccesses) {
+    public AuthenticationException(final Map<String, Class<? extends Throwable>> handlerErrors, 
+                                   final Map<String, HandlerResult> handlerSuccesses) {
         this(
             String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()),
             handlerErrors,

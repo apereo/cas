@@ -14,7 +14,7 @@ public interface PrePostAuthenticationHandler extends AuthenticationHandler {
      * @param credential the Credential supplied
      * @return true if authentication should continue, false otherwise.
      */
-    default boolean preAuthenticate(Credential credential) {
+    default boolean preAuthenticate(final Credential credential) {
         return true;
     }
 
@@ -25,7 +25,7 @@ public interface PrePostAuthenticationHandler extends AuthenticationHandler {
      * @param result     the result of the authentication attempt.
      * @return An authentication handler result that MAY be different or modified from that provided.
      */
-    default HandlerResult postAuthenticate(Credential credential, HandlerResult result) {
+    default HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
         return result;
     }
 }

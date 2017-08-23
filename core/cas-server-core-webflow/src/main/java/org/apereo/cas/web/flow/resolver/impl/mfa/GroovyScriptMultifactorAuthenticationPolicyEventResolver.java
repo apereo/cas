@@ -71,7 +71,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
             return null;
         }
         if (registeredService == null || service == null) {
-            LOGGER.debug("No registeredService is available to determine event for principal [{}]", authentication.getPrincipal());
+            LOGGER.debug("No registered service is available to determine event for principal [{}]", authentication.getPrincipal());
             return null;
         }
 

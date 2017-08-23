@@ -29,7 +29,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
                                   final long currentTime) {
         
         if (StringUtils.isNotBlank(service.getMetadataExpirationDuration())) {
-            final Duration duration = Beans.newDuration(service.getMetadataLocation());
+            final Duration duration = Beans.newDuration(service.getMetadataExpirationDuration());
             return duration.toNanos();
         }
         return defaultExpiration;

@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
@@ -107,6 +108,21 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
         r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
+    public void execSaveMethodWithConsentPolicy() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("execSaveMethodWithConsentPolicy");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
+        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
+                CollectionUtils.wrapSet("test")));
+        r.setAttributeReleasePolicy(policy);
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
     }

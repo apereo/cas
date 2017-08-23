@@ -1,7 +1,8 @@
 description = "Apereo CAS Ehcache Integration"
 dependencies {
     implementation libraries.ehcache
-    compile project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-tickets")
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":support:cas-server-support-person-directory")

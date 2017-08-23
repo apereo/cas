@@ -1,7 +1,12 @@
 description = "Apereo CAS AUP LDAP Support"
 dependencies {
-    compile project(":core:cas-server-core-webflow")
-    compile project(":support:cas-server-support-actions")
-    compile project(":support:cas-server-support-actions-aup-webflow")
-    compile project(":support:cas-server-support-ldap-core")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":api:cas-server-core-api-ticket")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":api:cas-server-core-api-authentication")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-aup-webflow")
+    implementation project(":support:cas-server-support-ldap-core")
 }

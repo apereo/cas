@@ -24,7 +24,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
-import org.apereo.cas.validation.ValidationSpecification;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -427,7 +427,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         // simulate renew with new good same credentials
         final ServiceTicket st2Id = cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         final Assertion assertion = cas.validateServiceTicket(st2Id.getId(), svc);
-        final ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
+        final CasProtocolValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
         assertTrue(validationSpecification.isSatisfiedBy(assertion, new MockHttpServletRequest()));
     }
 

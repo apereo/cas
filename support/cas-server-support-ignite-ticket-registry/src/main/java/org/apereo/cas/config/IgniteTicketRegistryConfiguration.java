@@ -69,7 +69,7 @@ public class IgniteTicketRegistryConfiguration {
         spi.setForceServerMode(ignite.isForceServerMode());
 
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
-        finder.setAddresses(StringUtils.commaDelimitedListToSet(ignite.getIgniteAddresses()));
+        finder.setAddresses(ignite.getIgniteAddress());
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
         final Collection<CacheConfiguration> cacheConfigurations = buildIgniteTicketCaches(ignite, ticketCatalog);

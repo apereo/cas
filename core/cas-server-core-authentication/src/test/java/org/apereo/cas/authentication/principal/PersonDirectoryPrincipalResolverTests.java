@@ -40,9 +40,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyNullAttributes() {
-        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setReturnNullIfNoAttributes(true);
-        resolver.setPrincipalAttributeName(CoreAuthenticationTestUtils.CONST_USERNAME);
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(true, CoreAuthenticationTestUtils.CONST_USERNAME);
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c, null);
         assertNull(p);
@@ -50,8 +48,8 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyNoAttributesWithPrincipal() {
-        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setPrincipalAttributeName(CoreAuthenticationTestUtils.CONST_USERNAME);
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), 
+                CoreAuthenticationTestUtils.CONST_USERNAME);
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c, null);
         assertNotNull(p);
@@ -59,9 +57,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyAttributesWithPrincipal() {
-        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
-        resolver.setPrincipalAttributeName("cn");
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn");
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c, null);
         assertNotNull(p);
@@ -71,8 +67,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyChainingResolverOverwrite() {
-        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
 
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
@@ -90,8 +85,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyChainingResolver() {
-        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
 
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
@@ -105,8 +99,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyChainingResolverDistinct() {
-        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
 
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));

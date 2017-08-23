@@ -5,8 +5,8 @@ dependencies {
 
     implementation libraries.springsecurity
     implementation libraries.springsecuritywebconfig
-    compile project(":support:cas-server-support-ldap-core")
-    compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-services")
+    implementation project(":support:cas-server-support-ldap-core")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-services")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

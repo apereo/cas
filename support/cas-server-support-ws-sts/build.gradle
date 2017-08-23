@@ -4,13 +4,14 @@ dependencies {
     implementation libraries.bouncycastle
     implementation libraries.apachecxf
     implementation libraries.ehcache
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":support:cas-server-support-validation")
-    compile project(":support:cas-server-support-ws-idp-api")
-    compile project(":support:cas-server-support-saml-core")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":support:cas-server-support-validation")
+    implementation project(":support:cas-server-support-ws-idp-api")
+    implementation project(":support:cas-server-support-saml-core")
     testImplementation project(path: ":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-cookie")

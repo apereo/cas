@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is {@link IgniteProperties}.
@@ -38,7 +40,7 @@ public class IgniteProperties implements Serializable {
      * <li>Both port1 and port2 should be greater than 0.</li>
      * </ul>
      */
-    private String igniteAddresses = "localhost:47500";
+    private List<String> igniteAddress = Arrays.asList("localhost:47500");
 
     /**
      * Settings related to tickets cache.
@@ -288,12 +290,12 @@ public class IgniteProperties implements Serializable {
         this.trustStorePassword = trustStorePassword;
     }
 
-    public String getIgniteAddresses() {
-        return igniteAddresses;
+    public List<String> getIgniteAddress() {
+        return igniteAddress;
     }
 
-    public void setIgniteAddresses(final String igniteAddresses) {
-        this.igniteAddresses = igniteAddresses;
+    public void setIgniteAddress(final List<String> igniteAddress) {
+        this.igniteAddress = igniteAddress;
     }
 
     public TicketsCache getTicketsCache() {

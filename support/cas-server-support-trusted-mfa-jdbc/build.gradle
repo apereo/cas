@@ -1,8 +1,9 @@
 description = "Apereo CAS Trusted MFA Browser/Device JDBC Support"
 dependencies {
-    compile project(":support:cas-server-support-trusted-mfa")
-    compile project(":support:cas-server-support-jpa-util")
-    
+    implementation project(":support:cas-server-support-trusted-mfa")
+    implementation project(":support:cas-server-support-jpa-util")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

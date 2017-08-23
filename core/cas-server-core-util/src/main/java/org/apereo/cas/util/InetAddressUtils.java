@@ -29,7 +29,7 @@ public final class InetAddressUtils {
             final URL url = new URL(urlAddr);
             return InetAddress.getByName(url.getHost()).getHostAddress();
         } catch (final Exception e) {
-            LOGGER.warn("Host name could not be determined automatically.", e);
+            LOGGER.debug("Host name could not be determined automatically.", e);
         }
         return null;
     }

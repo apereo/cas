@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,14 +12,6 @@ import org.slf4j.LoggerFactory;
  * @since 5.1.0
  */
 public class SurrogateAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-    /**
-     * Surrogate username attribute in the authentication payload.
-     */
-    public static final String AUTHENTICATION_ATTR_SURROGATE_USER = "surrogateUser";
-    /**
-     * Original credential attribute in the authentication payload.
-     */
-    public static final String AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL = "surrogateCredential";
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationMetaDataPopulator.class);
     
@@ -26,8 +19,9 @@ public class SurrogateAuthenticationMetaDataPopulator extends BaseAuthentication
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         final SurrogateUsernamePasswordCredential current = SurrogateUsernamePasswordCredential.class.cast(transaction.getCredential());
         LOGGER.debug("Recording surrogate username [{}] as an authentication attribute", current.getSurrogateUsername());
-        builder.addAttribute(AUTHENTICATION_ATTR_SURROGATE_USER, current.getSurrogateUsername());
-        builder.addAttribute(AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL, current.getId());
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, current.getSurrogateUsername());
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, current.getId());
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.TRUE.toString());
     }
 
     @Override

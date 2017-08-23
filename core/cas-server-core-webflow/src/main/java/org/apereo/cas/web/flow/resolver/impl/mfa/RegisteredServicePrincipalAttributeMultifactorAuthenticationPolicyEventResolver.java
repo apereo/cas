@@ -35,13 +35,13 @@ import java.util.regex.Pattern;
  */
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver.class);
-    
+
     public RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver(
-            final AuthenticationSystemSupport authenticationSystemSupport, 
+            final AuthenticationSystemSupport authenticationSystemSupport,
             final CentralAuthenticationService centralAuthenticationService,
-            final ServicesManager servicesManager, 
+            final ServicesManager servicesManager,
             final TicketRegistrySupport ticketRegistrySupport,
-            final CookieGenerator warnCookieGenerator, 
+            final CookieGenerator warnCookieGenerator,
             final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
             final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
@@ -53,7 +53,12 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        final RegisteredServiceMultifactorPolicy policy = service != null ? service.getMultifactorPolicy() : null;
+        if (authentication == null || service == null) {
+            LOGGER.debug("No authentication or service is available to determine event for principal");
+            return null;
+        }
+
+        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy == null || service.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
             LOGGER.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;

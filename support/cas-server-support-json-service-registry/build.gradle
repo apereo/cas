@@ -1,7 +1,7 @@
 description = "Apereo CAS JSON Service Registry"
 dependencies {
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-util")
 
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

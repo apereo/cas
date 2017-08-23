@@ -1214,6 +1214,15 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+Adaptive authentication can also react to specific times in order to trigger multifactor authentication.
+
+```properties
+# cas.authn.adaptive.requireTimedMultifactor[0].providerId=mfa-duo
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=20
+# cas.authn.adaptive.requireTimedMultifactor[0].onOrBeforeHour=7
+# cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday
+```
+
 ## Surrogate Authentication
 
 Authenticate on behalf of another user.
@@ -1308,6 +1317,15 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 
 # cas.authn.surrogate.jdbc.surrogateSearchQuery=SELECT COUNT(*) FROM surrogate WHERE username=?
 # cas.authn.surrogate.jdbc.surrogateAccountQuery=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
+```
+
+### REST Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.rest.url=https://somewhere.interrupt.org
+# cas.authn.surrogate.rest.method=GET|POST
+# cas.authn.surrogate.rest.basicAuthUsername=
+# cas.authn.surrogate.rest.basicAuthPassword=
 ```
 
 ## Risk-based Authentication
@@ -2941,7 +2959,8 @@ Control core SAML functionality within CAS.
 
 ```properties
 # cas.samlCore.ticketidSaml2=false
-# cas.samlCore.skewAllowance=0
+# cas.samlCore.skewAllowance=5
+# cas.samlCore.issueLength=30
 # cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
 # cas.samlCore.issuer=localhost
 # cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
@@ -3458,6 +3477,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].serviceProviderMetadataPath=
 
 # cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=
+# cas.authn.pac4j.saml[0].destinationBinding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
 
 # Path/URL to delegated IdP metadata
 # cas.authn.pac4j.saml[0].identityProviderMetadataPath=
@@ -4424,7 +4444,8 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.keyStoreFilePath=
 # cas.ticket.registry.ignite.keyStorePassword=
 # cas.ticket.registry.ignite.trustStoreType=
-# cas.ticket.registry.ignite.igniteAddresses=localhost:47500
+# cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500
+# cas.ticket.registry.ignite.igniteAddress[1]=
 # cas.ticket.registry.ignite.trustStoreFilePath=
 # cas.ticket.registry.ignite.ackTimeout=2000
 # cas.ticket.registry.ignite.joinTimeout=1000

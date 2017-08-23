@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.base.Predicates;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.Serializable;
@@ -161,7 +162,17 @@ public interface AuthenticationBuilder extends Serializable {
      *
      * @param name  the name
      * @param value the value
-     * @return true/false
+     * @return true /false
      */
     boolean hasAttribute(String name, Predicate<Object> value);
+
+    /**
+     * Has attribute boolean.
+     *
+     * @param name the name
+     * @return the boolean
+     */
+    default boolean hasAttribute(final String name) {
+        return hasAttribute(name, Predicates.alwaysTrue());
+    }
 }

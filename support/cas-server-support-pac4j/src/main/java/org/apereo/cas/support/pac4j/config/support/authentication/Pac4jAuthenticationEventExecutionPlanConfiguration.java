@@ -15,7 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.SAML2ClientLogoutAction;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
@@ -264,7 +263,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                     cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                     cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
-                    cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+                    cfg.setDestinationBindingType(saml.getDestinationBinding());
                     cfg.setForceAuth(saml.isForceAuth());
                     cfg.setPassive(saml.isPassive());
                     cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
