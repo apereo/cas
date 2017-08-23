@@ -32,17 +32,7 @@ export class Data {
       {name: "OpenID Connect Client", value: "oidc"},
       {name: "WS Federation", value: "wsfed"}
     ],
-    oidcScopes: [
-      {name: "Profile", value: "profile"},
-      {name: "Email", value: "email"},
-      {name: "Address", value: "address"},
-      {name: "Phone", value: "phone"},
-      {name: "Offline Access", value: "offline_access"},
-      {name: "User Defined", value: "user_defined"},
-      {name: "OAuth2 Client", value: "oauth"},
-      {name: "SAML2 Service Provider", value: "saml"},
-      {name: "OpenID Connect Client", value: "oidc"}
-    ],
+
     samlRoleList: [
       {name: "SPSSODescriptor", value: "SPSSODescriptor"},
       {name: "IDPSSODescriptor", value: "IDPSSODescriptor"}
