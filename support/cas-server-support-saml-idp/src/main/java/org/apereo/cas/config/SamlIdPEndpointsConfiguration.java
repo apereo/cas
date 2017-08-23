@@ -18,8 +18,8 @@ import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPProfileHandlerControll
 import org.apereo.cas.support.saml.web.idp.profile.query.Saml2AttributeQueryProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOProfileCallbackHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlProfileCallbackHandlerController;
 import org.apereo.cas.ticket.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
@@ -147,8 +147,8 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
-        return new SSOPostProfileHandlerController(
+    public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
+        return new SSOSamlPostProfileHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -211,8 +211,8 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SSOProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
-        return new SSOProfileCallbackHandlerController(
+    public SSOSamlProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
+        return new SSOSamlProfileCallbackHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
