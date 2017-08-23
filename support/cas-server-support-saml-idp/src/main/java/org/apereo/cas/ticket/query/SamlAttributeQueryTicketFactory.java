@@ -1,9 +1,7 @@
 package org.apereo.cas.ticket.query;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.opensaml.saml.common.SAMLObject;
 
 import java.util.Map;
@@ -20,13 +18,13 @@ public interface SamlAttributeQueryTicketFactory extends TicketFactory {
      * Create the ticket.
      *
      * @param id                   the id
-     * @param attributes           the attributes
-     * @param issuer               the issuer
+     * @param samlObject           the saml object
+     * @param relyingParty         the relying party
      * @param ticketGrantingTicket the ticket granting ticket
      * @return the access token
      */
-    SamlAttributeQueryTicket create(String id, Map<String, Object> attributes, 
-                                    String issuer, TicketGrantingTicket ticketGrantingTicket);
+    SamlAttributeQueryTicket create(String id, SAMLObject samlObject, 
+                                    String relyingParty, TicketGrantingTicket ticketGrantingTicket);
 
     /**
      * Create ticket id.
