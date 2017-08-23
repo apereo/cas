@@ -38,7 +38,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service) {
+    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.groovyScript);
         final Matcher matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(this.groovyScript);
 

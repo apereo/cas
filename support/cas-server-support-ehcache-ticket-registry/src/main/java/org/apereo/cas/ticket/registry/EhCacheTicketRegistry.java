@@ -78,7 +78,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     /**
-     * {@inheritDoc}
      * Either the element is removed from the cache
      * or it's not found in the cache and is already removed.
      * Thus the result of this op would always be true.
@@ -142,7 +141,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToLive());
 
         if (element.isExpired(config) || ticket.isExpired()) {
-            ehcache.evictExpiredElements();
+            ehcache.remove(element);
             LOGGER.debug("Ticket [{}] has expired and is now evicted from the cache", ticket.getId());
             return null;
         }

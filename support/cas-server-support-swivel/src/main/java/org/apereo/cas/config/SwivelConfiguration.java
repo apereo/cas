@@ -136,7 +136,7 @@ public class SwivelConfiguration {
         @Bean
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
             return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), loginFlowDefinitionRegistry);
+                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), swivelAuthenticatorFlowRegistry());
         }
     }
 }

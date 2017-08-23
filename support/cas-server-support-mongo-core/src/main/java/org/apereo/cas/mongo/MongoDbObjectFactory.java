@@ -60,6 +60,8 @@ public class MongoDbObjectFactory {
             new BaseConverters.ReferenceQueueConverter(),
             new BaseConverters.ThreadLocalConverter(),
             new BaseConverters.CertPathConverter(),
+            new BaseConverters.CaffeinCacheConverter(),
+            new BaseConverters.CaffeinCacheLoaderConverter(),
             new BaseConverters.CacheConverter()
     ));
 

@@ -1,5 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Marker interface for Services. Services are generally either remote
  * applications utilizing CAS or applications that principals wish to gain
@@ -10,13 +16,14 @@ package org.apereo.cas.authentication.principal;
  * @since 3.0.0
  */
 public interface Service extends Principal {
-
+    Logger LOGGER = LoggerFactory.getLogger(Service.class);
+    
     /**
      * Sets the principal.
      *
      * @param principal the new principal
      */
-    void setPrincipal(Principal principal);
+    default void setPrincipal(Principal principal) {}
 
     /**
      * Whether the services matches another.
@@ -24,5 +31,16 @@ public interface Service extends Principal {
      * @param service the service
      * @return true, if successful
      */
-    boolean matches(Service service);
+    default boolean matches(Service service) {
+        try {
+            final String thisUrl = URLDecoder.decode(getId(), StandardCharsets.UTF_8.name());
+            final String serviceUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
+
+            LOGGER.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
+            return thisUrl.equalsIgnoreCase(serviceUrl);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
 }

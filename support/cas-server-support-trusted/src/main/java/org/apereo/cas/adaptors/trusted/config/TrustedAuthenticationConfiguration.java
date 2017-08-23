@@ -77,12 +77,8 @@ public class TrustedAuthenticationConfiguration {
     public PrincipalResolver trustedPrincipalResolver() {
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
 
-        final PrincipalBearingPrincipalResolver bearingPrincipalResolver = new PrincipalBearingPrincipalResolver();
-        bearingPrincipalResolver.setAttributeRepository(this.attributeRepository);
-        bearingPrincipalResolver.setPrincipalAttributeName(casProperties.getAuthn().getTrusted().getPrincipalAttribute());
-        bearingPrincipalResolver.setReturnNullIfNoAttributes(casProperties.getAuthn().getTrusted().isReturnNull());
-        bearingPrincipalResolver.setPrincipalFactory(trustedPrincipalFactory());
-
+        final PrincipalBearingPrincipalResolver bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository, trustedPrincipalFactory(),
+                casProperties.getAuthn().getTrusted().isReturnNull(), casProperties.getAuthn().getTrusted().getPrincipalAttribute());
         resolver.setChain(Arrays.asList(bearingPrincipalResolver, new EchoingPrincipalResolver()));
         return resolver;
     }

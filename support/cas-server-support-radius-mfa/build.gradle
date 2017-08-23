@@ -6,8 +6,13 @@ repositories {
 }
 
 dependencies {
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-web")
-    compile project(":support:cas-server-support-radius-core")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":api:cas-server-core-api")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":support:cas-server-support-radius-core")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

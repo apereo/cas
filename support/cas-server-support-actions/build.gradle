@@ -1,14 +1,16 @@
 description = "Apereo CAS Web Application Spring Webflow Actions"
 dependencies {
-    compile project(":support:cas-server-support-cookie")
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-tickets")
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-configuration")
-    compile project(":support:cas-server-support-geolocation")
-    compile project(":core:cas-server-core-logout")
+    implementation project(":support:cas-server-support-cookie")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-geolocation")
+    implementation project(":core:cas-server-core-logout")
+    implementation project(":api:cas-server-core-api-webflow")
+    
     implementation libraries.pac4j
 
     testImplementation project(":support:cas-server-support-person-directory")
@@ -16,6 +18,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

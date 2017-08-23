@@ -5,6 +5,7 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -26,38 +27,47 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.WebUtils;
+import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * A parent controller to handle SAML requests.
@@ -126,7 +136,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * The cas properties.
      */
     protected CasConfigurationProperties casProperties;
-    
+
     /**
      * Instantiates a new Abstract saml profile handler controller.
      *
@@ -181,7 +191,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the saml metadata adaptor for service
      */
     protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
-                                                                                                    final AuthnRequest authnRequest) {
+                                                                                                    final RequestAbstractType authnRequest) {
         return SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
     }
 
@@ -241,7 +251,7 @@ public abstract class AbstractSamlProfileHandlerController {
             LOGGER.debug("Initializing callback service [{}]", callbackService);
 
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getInstanceStrong().nextLong()));
+            service.setId(Math.abs(RandomUtils.getInstanceNative().nextLong()));
             service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("SAML Authentication Request");
@@ -271,6 +281,45 @@ public abstract class AbstractSamlProfileHandlerController {
         final AuthnRequest authnRequest = (AuthnRequest)
                 XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
         return authnRequest;
+    }
+
+    /**
+     * Build  cas assertion.
+     *
+     * @param authentication      the authentication
+     * @param service             the service
+     * @param registeredService   the registered service
+     * @param attributesToCombine the attributes to combine
+     * @return the assertion
+     */
+    protected Assertion buildCasAssertion(final Authentication authentication,
+                                          final Service service,
+                                          final RegisteredService registeredService,
+                                          final Map<String, Object> attributesToCombine) {
+        final Map attributes = registeredService.getAttributeReleasePolicy()
+                .getAttributes(authentication.getPrincipal(), service, registeredService);
+        final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
+        final Map authnAttrs = new LinkedHashMap(authentication.getAttributes());
+        authnAttrs.putAll(attributesToCombine);
+        return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
+                null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
+                authnAttrs);
+    }
+
+    /**
+     * Build cas assertion.
+     *
+     * @param principal         the principal
+     * @param registeredService the registered service
+     * @param attributes        the attributes
+     * @return the assertion
+     */
+    protected Assertion buildCasAssertion(final String principal,
+                                          final RegisteredService registeredService,
+                                          final Map<String, Object> attributes) {
+        final AttributePrincipal p = new AttributePrincipalImpl(principal, attributes);
+        return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now()),
+                null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
     }
 
     /**
@@ -501,9 +550,25 @@ public abstract class AbstractSamlProfileHandlerController {
      * @throws Exception the exception
      */
     protected void verifyAuthenticationContextSignature(final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
-                                                        final HttpServletRequest request, final AuthnRequest authnRequest,
+                                                        final HttpServletRequest request, final RequestAbstractType authnRequest,
                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws Exception {
         final MessageContext ctx = authenticationContext.getValue();
+        verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor);
+    }
+
+    /**
+     * Verify authentication context signature.
+     *
+     * @param ctx          the authentication context
+     * @param request      the request
+     * @param authnRequest the authn request
+     * @param adaptor      the adaptor
+     * @throws Exception the exception
+     */
+    protected void verifyAuthenticationContextSignature(final MessageContext ctx,
+                                                        final HttpServletRequest request,
+                                                        final RequestAbstractType authnRequest,
+                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws Exception {
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
             LOGGER.debug("The authentication context is not signed");
             if (adaptor.isAuthnRequestsSigned()) {
@@ -531,26 +596,68 @@ public abstract class AbstractSamlProfileHandlerController {
                                      final Pair<AuthnRequest, MessageContext> authenticationContext,
                                      final Assertion casAssertion,
                                      final String binding) {
-        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authenticationContext.getKey());
+
+        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair =
+                getRegisteredServiceAndFacade(authenticationContext.getKey());
+
+        final String entityId = pair.getValue().getEntityId();
+        LOGGER.debug("Preparing SAML response for [{}]", entityId);
+        final AuthnRequest authnRequest = authenticationContext.getKey();
+        this.responseBuilder.build(authnRequest, request, response, casAssertion, pair.getKey(), pair.getValue(), binding);
+        LOGGER.info("Built the SAML response for [{}]", entityId);
+    }
+
+    /**
+     * Gets registered service and facade.
+     *
+     * @param request the request
+     * @return the registered service and facade
+     */
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(final AuthnRequest request) {
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(request);
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
 
         LOGGER.debug("Located SAML metadata for [{}]", registeredService);
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
+                getSamlMetadataFacadeFor(registeredService, request);
 
         if (!adaptor.isPresent()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                     "Cannot find metadata linked to " + issuer);
         }
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
-        final String entityId = facade.getEntityId();
-        LOGGER.debug("Preparing SAML response for [{}]", entityId);
-        final AuthnRequest authnRequest = authenticationContext.getKey();
-        this.responseBuilder.build(authnRequest, request, response,
-                casAssertion, registeredService, facade, binding);
-        LOGGER.info("Built the SAML response for [{}]", entityId);
+        return Pair.of(registeredService, facade);
+    }
+
+
+    /**
+     * Decode soap 11 context.
+     *
+     * @param request the request
+     * @return the soap 11 context
+     */
+    protected MessageContext decodeSoapRequest(final HttpServletRequest request) {
+        try {
+            final HTTPSOAP11Decoder decoder = new HTTPSOAP11Decoder();
+            decoder.setParserPool(parserPool);
+            decoder.setHttpServletRequest(request);
+
+            final BindingDescriptor binding = new BindingDescriptor();
+            binding.setId(getClass().getName());
+            binding.setShortName(getClass().getName());
+            binding.setSignatureCapable(true);
+            binding.setSynchronous(true);
+
+            decoder.setBindingDescriptor(binding);
+            decoder.initialize();
+            decoder.decode();
+            return decoder.getMessageContext();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
