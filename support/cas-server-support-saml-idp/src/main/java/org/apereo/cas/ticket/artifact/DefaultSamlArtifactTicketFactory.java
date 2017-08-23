@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.artifact;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -6,6 +6,10 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.opensaml.saml.common.SAMLObject;
 
 import java.io.StringWriter;
@@ -41,7 +45,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
     }
 
     @Override
-    public SamlArtifactTicket create(final String artifactId, 
+    public SamlArtifactTicket create(final String artifactId,
                                      final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
                                      final String relyingParty, final SAMLObject samlObject) {

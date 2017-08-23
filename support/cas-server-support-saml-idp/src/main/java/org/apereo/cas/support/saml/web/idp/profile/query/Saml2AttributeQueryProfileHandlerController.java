@@ -16,8 +16,9 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -42,6 +45,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
     private static final Logger LOGGER = LoggerFactory.getLogger(Saml2AttributeQueryProfileHandlerController.class);
     private final TicketRegistry ticketRegistry;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
     
             
@@ -56,13 +60,15 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                                                        final CasConfigurationProperties casProperties,
                                                        final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                        final TicketRegistry ticketRegistry,
-                                                       final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder, 
-                                                       final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+                                                       final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder,
+                                                       final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator, 
+                                                       final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
                 webApplicationServiceFactory, metadataResolver, configBean,
                 responseBuilder, casProperties, samlObjectSignatureValidator);
         this.ticketRegistry = ticketRegistry;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.samlAttributeQueryTicketFactory = samlAttributeQueryTicketFactory;
         this.casProperties = casProperties;
         this.samlFaultResponseBuilder = samlFaultResponseBuilder;
     }
@@ -91,7 +97,14 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
             final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, query, facade);
             
-            final Assertion casAssertion = buildCasAssertion(issuer, service, CollectionUtils.wrap("misagh", "moayyed"));
+            final Map<String, Object> attrs = new LinkedHashMap<>();
+            if (!query.getAttributes().isEmpty()) {
+                final String id = this.samlAttributeQueryTicketFactory.createTicketIdFor(query.getSubject().getNameID().getValue());
+                final SamlAttributeQueryTicket ticket = this.ticketRegistry.getTicket(id, SamlAttributeQueryTicket.class);
+                attrs.putAll(ticket.getAttributes());
+            }
+            
+            final Assertion casAssertion = buildCasAssertion(issuer, service, attrs);
             this.responseBuilder.build(query, request, response, casAssertion, service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

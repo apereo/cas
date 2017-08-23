@@ -1,6 +1,8 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.artifact;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.opensaml.saml.common.SAMLObject;
 
 /**
@@ -12,7 +14,7 @@ import org.opensaml.saml.common.SAMLObject;
 public interface SamlArtifactTicketFactory extends TicketFactory {
 
     /**
-     * Create an access token.
+     * Create the ticket.
      *
      * @param artifactId           the artifact id
      * @param authentication       the authentication
