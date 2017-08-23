@@ -15,12 +15,13 @@ If you intend to allow CAS to delegate authentication to an external SAML2 ident
 
 The following CAS endpoints respond to supported SAML2 profiles:
 
-- `/cas/idp/profile/SAML2/Redirect/SSO`
-- `/cas/idp/profile/SAML2/POST/SSO`
-- `/cas/idp/profile/SAML2/POST/SLO`
-- `/cas/idp/profile/SAML2/Redirect/SLO`
-- `/cas/idp/profile/SAML2/Unsolicited/SSO`
-- `/cas/idp/profile/SAML2/SOAP/ECP`
+- `/idp/profile/SAML2/Redirect/SSO`
+- `/idp/profile/SAML2/POST/SSO`
+- `/idp/profile/SAML2/POST/SLO`
+- `/idp/profile/SAML2/Redirect/SLO`
+- `/idp/profile/SAML2/Unsolicited/SSO`
+- `/idp/profile/SAML2/SOAP/ECP`
+- `/idp/profile/SAML1/SOAP/ArtifactResolution`
 
 SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 

@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link PolicyBasedAuthenticationManager}, which provides common operations
@@ -139,6 +140,28 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @param builder     the builder
      * @param transaction the transaction
      */
+    protected void invokeAuthenticationPostProcessors(final AuthenticationBuilder builder,
+                                                      final AuthenticationTransaction transaction) {
+        LOGGER.debug("Invoking authentication post processors for authentication transaction");
+        final Collection<AuthenticationPostProcessor> pops = authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction);
+
+        final Collection<AuthenticationPostProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
+                .stream()
+                .filter(processor::supports)
+                .findFirst()
+                .isPresent())
+                .collect(Collectors.toList());
+        for (final AuthenticationPostProcessor p : supported) {
+            p.process(builder, transaction);
+        }
+    }
+
+    /**
+     * Populate authentication metadata attributes.
+     *
+     * @param builder     the builder
+     * @param transaction the transaction
+     */
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
                                                             final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
@@ -196,18 +219,22 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
+        AuthenticationCredentialsLocalBinder.bindCurrent(builder);
+        
         final Authentication authentication = builder.build();
-        final Principal principal = authentication.getPrincipal();
-        if (principal instanceof NullPrincipal) {
-            throw new UnresolvedPrincipalException(authentication);
-        }
         addAuthenticationMethodAttribute(builder, authentication);
-        LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
-                principal.getId(), principal.getAttributes(), transaction.getCredentials());
         populateAuthenticationMetadataAttributes(builder, transaction);
+        invokeAuthenticationPostProcessors(builder, transaction);
 
         final Authentication auth = builder.build();
+        final Principal principal = auth.getPrincipal();
+        if (principal instanceof NullPrincipal) {
+            throw new UnresolvedPrincipalException(auth);
+        }
+        LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
+                principal.getId(), principal.getAttributes(), transaction.getCredentials());
         AuthenticationCredentialsLocalBinder.bindCurrent(auth);
+        
         return auth;
     }
 

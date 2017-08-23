@@ -1,3 +1,28 @@
 {
-  "extends": ["standard", "standard-react"]
+  "env": {
+    "browser": true
+  },
+  "extends": "eslint:recommended",
+  "globals": {
+    "$": false,
+    "urls": true
+  },
+  "rules": {
+    "indent": [
+      "error",
+      4
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
 }

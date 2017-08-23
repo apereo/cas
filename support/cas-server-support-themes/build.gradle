@@ -3,8 +3,8 @@ dependencies {
     compileOnly libraries.thymeleaf
     implementation libraries.groovy
     implementation libraries.thymeleafdialect
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

@@ -1,9 +1,12 @@
 
 description = "Apereo CAS Google Authenticator JPA"
 dependencies {
-    compile project(":support:cas-server-support-gauth")
-    compile project(":core:cas-server-core-util")
-    compile project(":support:cas-server-support-jpa-util")
+    implementation project(":support:cas-server-support-gauth")
+    implementation project(":support:cas-server-support-gauth-core")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-otp-mfa")
+    implementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-person-directory")

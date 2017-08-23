@@ -9,7 +9,7 @@ branchVersion="development"
 # for the first job in the build matrix, so as
 # to avoid multiple deployments.
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$casBranch" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$PUBLISH_SNAPSHOTS" == "false" ] && [ "$TRAVIS_BRANCH" == "$casBranch" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1)
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
