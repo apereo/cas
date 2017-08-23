@@ -46,8 +46,11 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      */
     protected final VelocityEngineFactory velocityEngineFactory;
 
+    /**
+     * CAS settings.
+     */
     @Autowired
-    private CasConfigurationProperties casProperties;
+    protected CasConfigurationProperties casProperties;
 
     private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
