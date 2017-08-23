@@ -55,7 +55,8 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
     }
 
     @Override
-    protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context, final RegisteredService service,
+    protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context, 
+                                                                final RegisteredService service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
         try {

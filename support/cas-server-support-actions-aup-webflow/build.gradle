@@ -1,6 +1,11 @@
 
 description = "Apereo CAS AUP Webflow Support"
 dependencies {
-    compile project(":core:cas-server-core-webflow")
-    compile project(":support:cas-server-support-actions")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":api:cas-server-core-api-authentication")
+    implementation project(":support:cas-server-support-actions")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":api:cas-server-core-api-ticket")
 }

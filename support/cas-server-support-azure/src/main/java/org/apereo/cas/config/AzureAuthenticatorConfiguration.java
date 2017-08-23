@@ -71,7 +71,7 @@ public class AzureAuthenticatorConfiguration {
         @Bean
         public CasWebflowConfigurer azureMultifactorTrustWebflowConfigurer() {
             return new AzureAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), loginFlowDefinitionRegistry);
+                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), azureAuthenticatorFlowRegistry());
         }
     }
     

@@ -9,12 +9,8 @@ import com.couchbase.client.java.view.ViewRow;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,15 +62,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
     private static final String END_TOKEN = "\u02ad";
 
+    private final TicketCatalog ticketCatalog;
     private final CouchbaseClientFactory couchbase;
 
-    public CouchbaseTicketRegistry(final CouchbaseClientFactory couchbase, final boolean isQueryEnabled) {
+    public CouchbaseTicketRegistry(final CouchbaseClientFactory couchbase,
+                                   final TicketCatalog ticketCatalog) {
         this.couchbase = couchbase;
+        this.ticketCatalog = ticketCatalog;
 
-        LOGGER.info("Setting up Couchbase Ticket Registry instance");
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(isQueryEnabled));
-        LOGGER.debug("Setting up indexes on document [{}] and views [{}]", UTIL_DOCUMENT, ALL_VIEWS);
-        LOGGER.info("Initialized Couchbase getBucket [{}]", this.couchbase.getBucket().name());
+        LOGGER.info("Setting up Couchbase Ticket Registry instance with bucket [{}]", this.couchbase.getBucket().name());
     }
 
     @Override
@@ -171,33 +167,13 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Iterator<ViewRow> grantingTicketsIt = getViewResultIteratorForPrefixedTickets(TicketGrantingTicket.PREFIX + '-').iterator();
-        final Iterator<ViewRow> serviceTicketsIt = getViewResultIteratorForPrefixedTickets(ServiceTicket.PREFIX + '-').iterator();
-        final Iterator<ViewRow> proxyTicketsIt = getViewResultIteratorForPrefixedTickets(ProxyTicket.PREFIX + '-').iterator();
-        final Iterator<ViewRow> proxyGrantingTicketsIt = getViewResultIteratorForPrefixedTickets(ProxyGrantingTicket.PREFIX + '-').iterator();
-        final Iterator<ViewRow> accessTokenIt = getViewResultIteratorForPrefixedTickets(AccessToken.PREFIX + '-').iterator();
-        final Iterator<ViewRow> oauthcodeIt = getViewResultIteratorForPrefixedTickets(OAuthCode.PREFIX + '-').iterator();
-        final Iterator<ViewRow> refreshTokenIt = getViewResultIteratorForPrefixedTickets(RefreshToken.PREFIX + '-').iterator();
-
-        final int count = getViewRowCountFromViewResultIterator(grantingTicketsIt)
-                + getViewRowCountFromViewResultIterator(serviceTicketsIt)
-                + getViewRowCountFromViewResultIterator(proxyTicketsIt)
-                + getViewRowCountFromViewResultIterator(proxyGrantingTicketsIt)
-                + getViewRowCountFromViewResultIterator(accessTokenIt)
-                + getViewRowCountFromViewResultIterator(oauthcodeIt)
-                + getViewRowCountFromViewResultIterator(refreshTokenIt);
-
         final Consumer<? super ViewRow> remove = t -> this.couchbase.getBucket().remove(t.document());
-
-        grantingTicketsIt.forEachRemaining(remove);
-        serviceTicketsIt.forEachRemaining(remove);
-        proxyTicketsIt.forEachRemaining(remove);
-        proxyGrantingTicketsIt.forEachRemaining(remove);
-        accessTokenIt.forEachRemaining(remove);
-        oauthcodeIt.forEachRemaining(remove);
-        refreshTokenIt.forEachRemaining(remove);
-
-        return count;
+        return this.ticketCatalog.findAll().stream().mapToLong(t -> {
+            final Iterator<ViewRow> it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+            final int count = getViewRowCountFromViewResultIterator(it);
+            it.forEachRemaining(remove);
+            return count;
+        }).sum();
     }
 
     private int runQuery(final String prefix) {

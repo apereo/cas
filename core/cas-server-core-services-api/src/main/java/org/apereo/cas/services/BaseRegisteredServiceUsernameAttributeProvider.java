@@ -37,7 +37,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
 
     @Override
     public final String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-        final String username = resolveUsernameInternal(principal, service);
+        final String username = resolveUsernameInternal(principal, service, registeredService);
         if (canonicalizationMode == null) {
             canonicalizationMode = CaseCanonicalizationMode.NONE.name();
         }
@@ -83,11 +83,12 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     /**
      * Resolve username internal string.
      *
-     * @param principal the principal
-     * @param service   the service
+     * @param principal         the principal
+     * @param service           the service
+     * @param registeredService the registered service
      * @return the string
      */
-    protected abstract String resolveUsernameInternal(Principal principal, Service service);
+    protected abstract String resolveUsernameInternal(Principal principal, Service service, RegisteredService registeredService);
 
     public String getCanonicalizationMode() {
         return canonicalizationMode;

@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;

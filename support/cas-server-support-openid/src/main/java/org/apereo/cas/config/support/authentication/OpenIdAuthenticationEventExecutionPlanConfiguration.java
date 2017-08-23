@@ -51,11 +51,9 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
-        final OpenIdPrincipalResolver r = new OpenIdPrincipalResolver();
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull());
-        r.setPrincipalFactory(openidPrincipalFactory());
+        final OpenIdPrincipalResolver r = new OpenIdPrincipalResolver(attributeRepository, openidPrincipalFactory(),
+                casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull(),
+                casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
         return r;
     }
 

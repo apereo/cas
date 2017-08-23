@@ -3,7 +3,7 @@ dependencies {
     
 
     implementation libraries.thymeleaf
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-configuration")
 }

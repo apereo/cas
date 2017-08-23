@@ -2,7 +2,7 @@ description = "Apereo CAS Hazelcast Monitoring Support"
 dependencies {
     implementation libraries.hazelcast
     
-    compile project(":core:cas-server-core-monitor")
-    compile project(":support:cas-server-support-hazelcast-ticket-registry")
-    compile project(":support:cas-server-support-hazelcast-core")
+    implementation project(":core:cas-server-core-monitor")
+    implementation project(":support:cas-server-support-hazelcast-ticket-registry")
+    implementation project(":support:cas-server-support-hazelcast-core")
 }
