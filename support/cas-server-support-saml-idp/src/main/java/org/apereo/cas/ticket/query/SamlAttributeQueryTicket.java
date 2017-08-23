@@ -2,8 +2,6 @@ package org.apereo.cas.ticket.query;
 
 import org.apereo.cas.ticket.ServiceTicket;
 
-import java.util.Map;
-
 /**
  * This is {@link SamlAttributeQueryTicket}.
  *
