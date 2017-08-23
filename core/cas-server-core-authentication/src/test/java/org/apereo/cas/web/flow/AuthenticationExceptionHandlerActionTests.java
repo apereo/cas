@@ -65,22 +65,7 @@ public class AuthenticationExceptionHandlerActionTests {
         assertEquals(id, "UNKNOWN");
         verifyZeroInteractions(ctx);
     }
-
-    @Test
-    public void correctHandlersOrder() {
-        final AuthenticationExceptionHandlerAction handler = 
-                new AuthenticationExceptionHandlerAction(CollectionUtils.wrapSet(AccountLockedException.class,
-                        AccountNotFoundException.class));
-        final MessageContext ctx = mock(MessageContext.class);
-
-        final Map<String, Class<? extends Throwable>> map = new LinkedHashMap<>();
-        map.put("accountLocked", AccountLockedException.class);
-        map.put("accountNotFound", AccountNotFoundException.class);
-        final String id = handler.handle(new AuthenticationException(map), ctx);
-        assertEquals(id, AccountLockedException.class.getSimpleName());
-    }
-
-
+    
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
         final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction(
