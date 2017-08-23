@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSi
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.query.Saml2AttributeQueryProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
@@ -22,6 +23,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.SSOProfileCallbackHandler
 import org.apereo.cas.ticket.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
@@ -82,6 +84,10 @@ public class SamlIdPEndpointsConfiguration {
     private BaseSamlObjectSigner samlObjectSigner;
 
     @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    
+    @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
     private MetadataResolver casSamlIdPMetadataResolver;
 
@@ -93,7 +99,6 @@ public class SamlIdPEndpointsConfiguration {
     @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
     private SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder;
 
-
     @Autowired
     @Qualifier("samlProfileSamlArtifactResponseBuilder")
     private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder;
@@ -101,7 +106,16 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
     private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder;
-            
+
+    @Autowired
+    @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
+    private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryResponseBuilder;
+
+    @Autowired
+    @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
+    private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder;
+    
+    
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -247,5 +261,24 @@ public class SamlIdPEndpointsConfiguration {
                 ticketRegistry, 
                 samlArtifactTicketFactory, 
                 samlProfileSamlArtifactFaultResponseBuilder);
+    }
+
+    @Bean
+    @RefreshScope
+    public Saml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
+        return new Saml2AttributeQueryProfileHandlerController(
+                samlObjectSigner,
+                openSamlConfigBean.getParserPool(),
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver,
+                openSamlConfigBean,
+                samlProfileSamlAttributeQueryResponseBuilder,
+                casProperties,
+                samlObjectSignatureValidator(),
+                ticketRegistry,
+                samlProfileSamlAttributeQueryFaultResponseBuilder, 
+                ticketGrantingTicketCookieGenerator);
     }
 }
