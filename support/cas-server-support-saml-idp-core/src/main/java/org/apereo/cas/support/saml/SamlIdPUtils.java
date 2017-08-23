@@ -194,7 +194,20 @@ public final class SamlIdPUtils {
      */
     public static RoleDescriptorResolver getRoleDescriptorResolver(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                    final boolean requireValidMetadata) throws Exception {
-        final PredicateRoleDescriptorResolver roleDescriptorResolver = new PredicateRoleDescriptorResolver(adaptor.getMetadataResolver());
+        return getRoleDescriptorResolver(adaptor.getMetadataResolver(), requireValidMetadata);
+    }
+
+    /**
+     * Gets role descriptor resolver.
+     *
+     * @param metadata             the metadata
+     * @param requireValidMetadata the require valid metadata
+     * @return the role descriptor resolver
+     * @throws Exception the exception
+     */
+    public static RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver metadata,
+                                                                   final boolean requireValidMetadata) throws Exception {
+        final PredicateRoleDescriptorResolver roleDescriptorResolver = new PredicateRoleDescriptorResolver(metadata);
         roleDescriptorResolver.setSatisfyAnyPredicates(true);
         roleDescriptorResolver.setUseDefaultPredicateRegistry(true);
         roleDescriptorResolver.setRequireValidMetadata(requireValidMetadata);
