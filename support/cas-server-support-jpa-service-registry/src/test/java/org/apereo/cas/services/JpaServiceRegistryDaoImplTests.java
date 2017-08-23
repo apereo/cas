@@ -87,7 +87,6 @@ public class JpaServiceRegistryDaoImplTests {
         this.dao.save(r);
 
         final List<RegisteredService> services = this.dao.load();
-
         final RegisteredService r2 = services.get(0);
 
         r.setId(r2.getId());
@@ -98,7 +97,7 @@ public class JpaServiceRegistryDaoImplTests {
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
     }
-
+        
     @Test
     public void verifyRegisteredServiceProperties() {
         final RegexRegisteredService r = new RegexRegisteredService();

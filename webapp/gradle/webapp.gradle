@@ -75,35 +75,36 @@ war {
 }
 
 dependencies {
-    compile project(":core:cas-server-core")
-    compile project(":core:cas-server-core-monitor")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-logout")
-    compile project(":core:cas-server-core-audit")
-    compile project(":core:cas-server-core-logging")
-    compile project(":core:cas-server-core-tickets")
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-validation")
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-events")
-    compile project(":core:cas-server-core-events-configuration")
-    compile project(":core:cas-server-core-configuration")
-    compile project(":core:cas-server-core-configuration-metadata-repository")
+    implementation project(":core:cas-server-core")
+    implementation project(":core:cas-server-core-monitor")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-logout")
+    implementation project(":core:cas-server-core-audit")
+    implementation project(":core:cas-server-core-logging")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-validation")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-events")
+    implementation project(":core:cas-server-core-events-configuration")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-metadata-repository")
 
-    compile project(":support:cas-server-support-throttle")
-    compile project(":support:cas-server-support-person-directory")
-    compile project(":support:cas-server-support-configuration")
-    compile project(":support:cas-server-support-geolocation")
-    compile project(":support:cas-server-support-actions")
-    compile project(":support:cas-server-support-cookie")
-    compile project(":support:cas-server-support-reports")
-    compile project(":support:cas-server-support-themes")
-    compile project(":support:cas-server-support-validation")
-    compile project(":support:cas-server-support-pm-webflow")
+    implementation project(":support:cas-server-support-throttle")
+    implementation project(":support:cas-server-support-person-directory")
+    implementation project(":support:cas-server-support-configuration")
+    implementation project(":support:cas-server-support-geolocation")
+    implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-cookie")
+    implementation project(":support:cas-server-support-reports")
+    implementation project(":support:cas-server-support-themes")
+    implementation project(":support:cas-server-support-validation")
+    implementation project(":support:cas-server-support-pm-webflow")
+    
 
-    compile project(":webapp:cas-server-webapp-config")
-    compile project(":webapp:cas-server-webapp-init")
+    implementation project(":webapp:cas-server-webapp-config")
+    implementation project(":webapp:cas-server-webapp-init")
 
     implementation libraries.pac4j
     implementation libraries.thymeleaf
@@ -112,5 +113,5 @@ dependencies {
     implementation libraries.metrics
     implementation libraries.bouncycastle
     runtime libraries.webjars
-    compile libraries.springcloudconfigclient
+    implementation libraries.springcloudconfigclient
 }

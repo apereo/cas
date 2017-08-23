@@ -46,9 +46,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * identified by for a particular service.
      */
     public ShibbolethCompatiblePersistentIdGenerator() {
-        this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
     }
-
+    
     public ShibbolethCompatiblePersistentIdGenerator(final String salt) {
         this.salt = salt;
     }
@@ -71,8 +70,11 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     @Override
     public String generate(final String principal, final String service) {
+        if (StringUtils.isBlank(salt)) {
+            this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
+        }
         final String data = String.join(CONST_SEPARATOR, service, principal);
-        final String result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data), System.getProperty("line.separator"));
+        final String result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data, CONST_SEPARATOR), System.getProperty("line.separator"));
         LOGGER.debug("Generated persistent id for [{}] is [{}]", data, result);
         return result;
     }

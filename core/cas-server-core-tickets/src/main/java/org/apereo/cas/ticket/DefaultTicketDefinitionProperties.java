@@ -15,6 +15,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     private boolean cascadeTicket;
     private String cacheName;
     private long cacheTimeout;
+    private String storagePassword;
 
     @Override
     public long getStorageTimeout() {
@@ -47,6 +48,16 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     }
     
     @Override
+    public String getStoragePassword() {
+        return storagePassword;
+    }
+
+    @Override
+    public void setStoragePassword(final String storagePassword) {
+        this.storagePassword = storagePassword;
+    }
+
+    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -62,6 +73,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
                 .append(this.cascadeTicket, rhs.cascadeTicket)
                 .append(this.cacheName, rhs.cacheName)
                 .append(this.cacheTimeout, rhs.cacheTimeout)
+                .append(this.storagePassword, rhs.storagePassword)
                 .isEquals();
     }
 
@@ -71,6 +83,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
                 .append(cascadeTicket)
                 .append(cacheName)
                 .append(cacheTimeout)
+                .append(storagePassword)
                 .toHashCode();
     }
     

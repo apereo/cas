@@ -4,9 +4,9 @@ import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.DynamicFlowModelBuilder;
+import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -177,7 +177,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUBMIT);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        transModel.setTo(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         transModel.setBind(Boolean.TRUE.toString());
         transModel.setValidate(Boolean.FALSE.toString());
 
@@ -187,7 +187,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         /////////////////
 
-        actModel = new ActionStateModel(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         actions = new LinkedList<>();
         actions.add(new EvaluateModel("duoAuthenticationWebflowAction"));
         actModel.setActions(actions);

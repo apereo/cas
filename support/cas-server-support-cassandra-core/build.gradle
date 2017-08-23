@@ -1,7 +1,7 @@
 description = "Apereo CAS Apache Cassandra Core Support"
 dependencies {
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-configuration")
     implementation libraries.cassandra
     
 }

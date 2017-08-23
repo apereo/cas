@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.surrogate;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import java.io.Serializable;
@@ -36,6 +37,32 @@ public class SurrogateAuthenticationProperties implements Serializable {
      * Locate surrogate accounts via a JDBC resource.
      */
     private Jdbc jdbc = new Jdbc();
+
+    /**
+     * Locate surrogate accounts via a REST resource.
+     */
+    private Rest rest = new Rest();
+    
+    /**
+     * Settings related to tickets issued for surrogate session, their expiration policy, etc.
+     */
+    private Tgt tgt = new Tgt();
+
+    public Rest getRest() {
+        return rest;
+    }
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
+    }
+
+    public Tgt getTgt() {
+        return tgt;
+    }
+
+    public void setTgt(final Tgt tgt) {
+        this.tgt = tgt;
+    }
 
     public Jdbc getJdbc() {
         return jdbc;
@@ -83,7 +110,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * Define the list of accounts that are allowed to impersonate.
          * This is done in a key-value structure where the key is the admin user
          * and the value is a comma-separated list of identifiers that can be
-         * impersonated by the adminuser.
+         * impersonated by the admin-user.
          */
         private Map<String, String> surrogates = new LinkedHashMap<>();
 
@@ -100,6 +127,10 @@ public class SurrogateAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = 3599367681439517829L;
     }
 
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = 8152273816132989085L;
+    }
+    
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -3848837302921751926L;
         /**
@@ -123,7 +154,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
         /**
          * A pattern that is matched against the attribute value of the admin user,
          * that allows for further authorization of the admin user and accounts qualified for impersonation.
-         * The regular expession pattern is expected to contain at least a single group whose value on a
+         * The regular expression pattern is expected to contain at least a single group whose value on a
          * successful match indicates the qualified impersonated user by admin.
          */
         private String memberAttributeValueRegex;
@@ -169,6 +200,23 @@ public class SurrogateAuthenticationProperties implements Serializable {
         }
     }
 
+    public static class Tgt implements Serializable {
+        private static final long serialVersionUID = 2077366413438267330L;
+
+        /**
+         * Timeout in seconds to kill the surrogate session and consider tickets expired.
+         */
+        private long timeToKillInSeconds = 1_800;
+
+        public long getTimeToKillInSeconds() {
+            return timeToKillInSeconds;
+        }
+
+        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
+            this.timeToKillInSeconds = timeToKillInSeconds;
+        }
+    }
+    
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 8970195444880123796L;
 

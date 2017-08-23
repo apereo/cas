@@ -18,7 +18,8 @@ import org.junit.runners.Suite;
         LogoutActionTests.class,
         InitialFlowSetupActionSsoTests.class, 
         InitialFlowSetupActionCookieTests.class,
-        SendTicketGrantingTicketActionTests.class, 
+        SendTicketGrantingTicketActionTests.class,
+        SendTicketGrantingTicketActionSsoTests.class,
         ServiceAuthorizationCheckTests.class,
         TicketGrantingTicketCheckActionTests.class, 
         CasDefaultFlowUrlHandlerTests.class

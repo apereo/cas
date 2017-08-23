@@ -309,9 +309,7 @@ public final class Beans {
     public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
                                                                  final boolean forceIfBlankKeys,
                                                                  final String registryName) {
-        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
-                && StringUtils.isNotBlank(registry.getEncryption().getKey())
-                || forceIfBlankKeys) {
+        if (registry.isEnabled() || forceIfBlankKeys) {
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),
                     registry.getSigning().getKey(),
@@ -320,7 +318,7 @@ public final class Beans {
                     registry.getEncryption().getKeySize(),
                     registryName);
         }
-        LOGGER.debug("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a clustered production environment. "
+        LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
         return NoOpCipherExecutor.getInstance();

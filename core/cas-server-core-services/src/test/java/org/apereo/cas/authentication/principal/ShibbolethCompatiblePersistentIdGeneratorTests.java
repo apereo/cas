@@ -32,6 +32,19 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
+    public void realTestofGeneratorThatVerifiesValueReturned() {
+        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
+
+        final Principal p = mock(Principal.class);
+        when(p.getId()).thenReturn("grudkin");
+        final Service s = mock(Service.class);
+        when(s.getId()).thenReturn("https://shibboleth.irbmanager.com/");
+
+        final String value = generator.generate(p, s);
+        assertEquals("jvZO/wYedArYIEIORGdHoMO4qkw=", value);
+    }
+
+    @Test
     public void verifySerializeAShibbolethCompatiblePersistentIdGeneratorToJson() throws IOException {
         final ShibbolethCompatiblePersistentIdGenerator generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 

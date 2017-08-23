@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +21,8 @@ import javax.persistence.Table;
 public class YubiKeyAccount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id = Integer.MAX_VALUE;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)

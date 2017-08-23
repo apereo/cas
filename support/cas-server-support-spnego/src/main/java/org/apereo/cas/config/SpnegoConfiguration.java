@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
 import jcifs.spnego.Authentication;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
@@ -34,11 +34,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("spnegoConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoConfiguration {
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
@@ -51,7 +51,7 @@ public class SpnegoConfiguration {
     public Authentication spnegoAuthentication() {
         return new Authentication();
     }
-    
+
     @Bean
     @RefreshScope
     public JcifsConfig jcifsConfig() {
@@ -106,13 +106,10 @@ public class SpnegoConfiguration {
     @RefreshScope
     public PrincipalResolver spnegoPrincipalResolver() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final SpnegoPrincipalResolver r = new SpnegoPrincipalResolver();
-        r.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()));
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(spnegoProperties.getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(spnegoProperties.getPrincipal().isReturnNull());
-        r.setPrincipalFactory(spnegoPrincipalFactory());
-        return r;
+        return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
+                spnegoProperties.getPrincipal().isReturnNull(),
+                Beans.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
+                spnegoProperties.getPrincipal().getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

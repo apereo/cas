@@ -19,6 +19,15 @@ import java.util.Map;
 public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
 
     /**
+     * Is authorized to release authentication attributes boolean.
+     *
+     * @return the boolean
+     */
+    default boolean isAuthorizedToReleaseAuthenticationAttributes() {
+        return true;
+    }
+
+    /**
      * Is authorized to release credential password?
      *
      * @return true /false
@@ -53,4 +62,17 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
      * @return the attributes
      */
     Map<String, Object> getAttributes(Principal p, Service selectedService, RegisteredService service);
+
+    /**
+     * Gets the attributes that qualify for consent.
+     *
+     * @param p               the principal that contains the resolved attributes
+     * @param selectedService the selected service
+     * @param service         the service
+     * @return the attributes
+     */
+    default Map<String, Object> getConsentableAttributes(final Principal p, final Service selectedService, 
+                                                         final RegisteredService service) {
+        return getAttributes(p, selectedService, service);    
+    }
 }
