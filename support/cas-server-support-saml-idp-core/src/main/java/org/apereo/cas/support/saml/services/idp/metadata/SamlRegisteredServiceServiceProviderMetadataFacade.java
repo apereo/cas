@@ -56,8 +56,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         this.entityDescriptor = entityDescriptor;
         this.metadataResolver = metadataResolver;
     }
-
-
+    
     /**
      * Adapt saml metadata and parse. Acts as a facade.
      *
@@ -107,11 +106,10 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
                 LOGGER.debug("Cannot find entity [{}] in metadata provider.", entityID);
                 return Optional.empty();
             }
-            LOGGER.debug("Located EntityDescriptor in metadata for [{}]", entityID);
+            LOGGER.debug("Located entity descriptor in metadata for [{}]", entityID);
             final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
             if (ssoDescriptor != null) {
-                LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
-                        entityID, ssoDescriptor.getValidUntil());
+                LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID, ssoDescriptor.getValidUntil());
                 return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver));
             }
             LOGGER.warn("Could not locate SPSSODescriptor in the metadata for [{}]", entityID);

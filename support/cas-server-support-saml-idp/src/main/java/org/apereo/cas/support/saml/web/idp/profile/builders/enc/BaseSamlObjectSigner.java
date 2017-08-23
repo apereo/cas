@@ -171,7 +171,8 @@ public class BaseSamlObjectSigner {
         if (secParametersContext == null) {
             throw new IllegalArgumentException("No signature signing parameters could be determined");
         }
-        final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(adaptor.getSsoDescriptor());
+        final RoleDescriptor roleDesc = adaptor.getSsoDescriptor();
+        final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(roleDesc);
         secParametersContext.setSignatureSigningParameters(signingParameters);
     }
 

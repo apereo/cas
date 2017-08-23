@@ -28,13 +28,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@link SSOPostProfileHandlerController} is responsible for
+ * The {@link SSOSamlPostProfileHandlerController} is responsible for
  * handling profile requests for SAML2 Web SSO.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerController {
+public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHandlerController {
 
     /**
      * Instantiates a new idp-sso saml profile handler controller.
@@ -50,16 +50,16 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param casProperties                                the cas properties
      * @param samlObjectSignatureValidator                 the saml object signature validator
      */
-    public SSOPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
-                                           final ParserPool parserPool,
-                                           final AuthenticationSystemSupport authenticationSystemSupport,
-                                           final ServicesManager servicesManager,
-                                           final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                           final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                           final OpenSamlConfigBean configBean,
-                                           final SamlProfileObjectBuilder<Response> responseBuilder,
-                                           final CasConfigurationProperties casProperties,
-                                           final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+    public SSOSamlPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+                                               final ParserPool parserPool,
+                                               final AuthenticationSystemSupport authenticationSystemSupport,
+                                               final ServicesManager servicesManager,
+                                               final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                               final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                               final OpenSamlConfigBean configBean,
+                                               final SamlProfileObjectBuilder<Response> responseBuilder,
+                                               final CasConfigurationProperties casProperties,
+                                               final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,

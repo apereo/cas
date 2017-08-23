@@ -56,8 +56,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                            final SamlArtifactTicketFactory samlArtifactTicketFactory,
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                            final SAMLArtifactMap samlArtifactMap) {
-        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
-                samlProfileSamlAssertionBuilder, samlObjectEncrypter);
+        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
         this.ticketRegistry = ticketRegistry;
         this.samlArtifactTicketFactory = samlArtifactTicketFactory;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
