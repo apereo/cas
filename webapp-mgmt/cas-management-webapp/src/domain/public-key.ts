@@ -7,6 +7,7 @@ export abstract class RegisteredServicePublicKey {
 export class RegisteredServicePublicKeyImpl extends RegisteredServicePublicKey {
   constructor() {
     super();
+    this.algorithm = "RSA";
     this["@class"] = "org.apereo.cas.services.RegisteredServicePublicKeyImpl";
   }
 }
