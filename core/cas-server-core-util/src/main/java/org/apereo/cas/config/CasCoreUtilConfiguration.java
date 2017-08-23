@@ -5,6 +5,7 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
+import org.apereo.cas.util.spring.CustomBeanValidationPostProcessor;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -69,6 +70,11 @@ public class CasCoreUtilConfiguration {
         return new Converters.ZonedDateTimeToStringConverter();
     }
 
+    @Bean
+    public CustomBeanValidationPostProcessor beanValidationPostProcessor() {
+        return new CustomBeanValidationPostProcessor();
+    }
+    
     @PostConstruct
     public void init() {
         final ConfigurableApplicationContext ctx = applicationContextProvider().getConfigurableApplicationContext();
