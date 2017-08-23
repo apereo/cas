@@ -3001,6 +3001,8 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.metadata.basicAuthnPassword=
 # cas.authn.samlIdp.metadata.supportedContentTypes=
 
+# cas.authn.samlIdp.attributeQueryProfileEnabled=true
+
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
 
