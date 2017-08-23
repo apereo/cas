@@ -18,6 +18,8 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSaml
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.query.SamlProfileAttributeQueryFaultResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.query.SamlProfileAttributeQueryResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.subject.SamlProfileSamlSubjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
@@ -188,6 +190,7 @@ public class SamlIdPConfiguration {
                 samlObjectEncrypter());
     }
 
+    
     @ConditionalOnMissingBean(name = "samlProfileSamlArtifactFaultResponseBuilder")
     @Bean
     @RefreshScope
@@ -284,4 +287,29 @@ public class SamlIdPConfiguration {
                 algs.getOverrideWhiteListedSignatureSigningAlgorithms());
     }
 
+    @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryFaultResponseBuilder() {
+        return new SamlProfileAttributeQueryFaultResponseBuilder(
+                openSamlConfigBean,
+                samlObjectSigner(),
+                velocityEngineFactory,
+                samlProfileSamlAssertionBuilder(),
+                samlProfileSamlResponseBuilder(),
+                samlObjectEncrypter());
+    }
+
+    @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryResponseBuilder")
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryResponseBuilder() {
+        return new SamlProfileAttributeQueryResponseBuilder(
+                openSamlConfigBean,
+                samlObjectSigner(),
+                velocityEngineFactory,
+                samlProfileSamlAssertionBuilder(),
+                samlProfileSamlResponseBuilder(),
+                samlObjectEncrypter());
+    }
 }
