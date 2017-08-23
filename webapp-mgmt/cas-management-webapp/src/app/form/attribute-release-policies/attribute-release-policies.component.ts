@@ -3,7 +3,9 @@ import {FormData } from "../../../domain/service-view-bean";
 import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {
-  DenyAllAttributeReleasePolicy, GroovyScriptAttributeReleasePolicy, ReturnAllAttributeReleasePolicy,
+  DenyAllAttributeReleasePolicy, GroovyScriptAttributeReleasePolicy, InCommonRSAttributeReleasePolicy,
+  PatternMatchingEntityIdAttributeReleasePolicy,
+  ReturnAllAttributeReleasePolicy,
   ReturnAllowedAttributeReleasePolicy,
   ReturnMappedAttributeReleasePolicy, ScriptedRegisteredServiceAttributeReleasePolicy
 } from "../../../domain/attribute-release";
@@ -58,12 +60,28 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       this.type = Type.SCRIPT;
     } else if (GroovyScriptAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.GROOVY;
+    } else if (InCommonRSAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
+      this.type = Type.INCOMMON;
+    } else if (PatternMatchingEntityIdAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
+      this.type = Type.MATCHING;
     }
+
     this.isSaml = SamlRegisteredService.instanceOf(this.data.service);
+
+    if (this.isSaml) {
+      this.types.push(Type.INCOMMON);
+      this.display.push("InCommon");
+      this.types.push(Type.MATCHING);
+      this.display.push("Matching");
+    } else {
+      this.types.splice(this.types.indexOf(Type.INCOMMON), 1);
+      this.display.splice(this.display.indexOf("InCommon"), 1);
+      this.types.splice(this.types.indexOf(Type.MATCHING), 1);
+      this.display.splice(this.display.indexOf("Matching"), 1);
+    }
   }
 
   changeType() {
-    console.log("Changed Type : "+this.type)
     switch(+this.type) {
       case Type.RETURN_ALL:
         console.log("Changed to return all");
@@ -88,6 +106,12 @@ export class AttributeReleasePoliciesComponent implements OnInit {
         break;
       case Type.GROOVY :
         this.data.service.attributeReleasePolicy = new GroovyScriptAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        break;
+      case Type.INCOMMON :
+        this.data.service.attributeReleasePolicy = new InCommonRSAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        break;
+      case Type.MATCHING :
+        this.data.service.attributeReleasePolicy = new PatternMatchingEntityIdAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
     }
   }

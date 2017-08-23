@@ -10,12 +10,17 @@ import {Data} from "../data";
 })
 export class OidcclientComponent implements OnInit {
 
-  selectOptions;
   service: OidcRegisteredService;
+  oidcScopes = [
+    {name: "Profile", value: "profile"},
+    {name: "Email", value: "email"},
+    {name: "Address", value: "address"},
+    {name: "Phone", value: "phone"},
+    {name: "User Defined", value: "user_defined"}
+  ];
 
   constructor(public messages: Messages,
               public data: Data) {
-    this.selectOptions = data.selectOptions;
     this.service = data.service as OidcRegisteredService;
   }
 
