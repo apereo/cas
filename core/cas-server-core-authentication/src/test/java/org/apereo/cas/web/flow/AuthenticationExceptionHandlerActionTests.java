@@ -17,6 +17,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -72,7 +73,7 @@ public class AuthenticationExceptionHandlerActionTests {
                         AccountNotFoundException.class));
         final MessageContext ctx = mock(MessageContext.class);
 
-        final Map<String, Class<? extends Throwable>> map = new HashMap<>();
+        final Map<String, Class<? extends Throwable>> map = new LinkedHashMap<>();
         map.put("accountLocked", AccountLockedException.class);
         map.put("accountNotFound", AccountNotFoundException.class);
         final String id = handler.handle(new AuthenticationException(map), ctx);
