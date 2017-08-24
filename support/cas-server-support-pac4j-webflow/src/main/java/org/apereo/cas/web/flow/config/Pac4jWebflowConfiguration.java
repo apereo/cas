@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -31,6 +32,12 @@ public class Pac4jWebflowConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
     
     @Autowired
     @Qualifier("saml2ClientLogoutAction")
@@ -43,8 +50,10 @@ public class Pac4jWebflowConfiguration {
     @ConditionalOnMissingBean(name = "pac4jWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer pac4jWebflowConfigurer() {
-        return new Pac4jWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                logoutFlowDefinitionRegistry, saml2ClientLogoutAction);
+        final CasWebflowConfigurer w = new Pac4jWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @Bean
