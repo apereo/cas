@@ -16,6 +16,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * {@link ThemeBasedViewResolver} is a View Resolver that takes the active theme into account to selectively choose
+ * which set of UI views will be used to generate the standard views.
+ *
+ * @author Daniel Frett
+ * @since 5.2.0
+ */
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     private static final Logger LOG = LoggerFactory.getLogger(ThemeBasedViewResolver.class);
 
