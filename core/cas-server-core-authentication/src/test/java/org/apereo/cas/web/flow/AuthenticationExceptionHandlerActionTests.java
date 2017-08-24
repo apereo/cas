@@ -17,6 +17,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,22 +65,7 @@ public class AuthenticationExceptionHandlerActionTests {
         assertEquals(id, "UNKNOWN");
         verifyZeroInteractions(ctx);
     }
-
-    @Test
-    public void correctHandlersOrder() {
-        final AuthenticationExceptionHandlerAction handler = 
-                new AuthenticationExceptionHandlerAction(CollectionUtils.wrapSet(AccountLockedException.class,
-                        AccountNotFoundException.class));
-        final MessageContext ctx = mock(MessageContext.class);
-
-        final Map<String, Class<? extends Throwable>> map = new HashMap<>();
-        map.put("accountLocked", AccountLockedException.class);
-        map.put("accountNotFound", AccountNotFoundException.class);
-        final String id = handler.handle(new AuthenticationException(map), ctx);
-        assertEquals(id, AccountLockedException.class.getSimpleName());
-    }
-
-
+    
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
         final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction(

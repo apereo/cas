@@ -2,7 +2,9 @@ package org.apereo.cas.pm;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
@@ -19,24 +21,23 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BasePasswordManagementService implements PasswordManagementService {
+public class BasePasswordManagementService implements PasswordManagementService {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasePasswordManagementService.class);
 
     /**
      * Password management settings.
      */
-    protected final PasswordManagementProperties passwordManagementProperties;
+    protected final PasswordManagementProperties properties;
 
     private final CipherExecutor<Serializable, String> cipherExecutor;
     private final String issuer;
-
-
+    
     public BasePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer, 
-                                         final PasswordManagementProperties passwordManagementProperties) {
+                                         final String issuer,
+                                         final PasswordManagementProperties properties) {
         this.cipherExecutor = cipherExecutor;
         this.issuer = issuer;
-        this.passwordManagementProperties = passwordManagementProperties;
+        this.properties = properties;
     }
 
     @Override
@@ -88,7 +89,7 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
-            claims.setExpirationTimeMinutesInTheFuture(passwordManagementProperties.getReset().getExpirationMinutes());
+            claims.setExpirationTimeMinutesInTheFuture(properties.getReset().getExpirationMinutes());
             claims.setIssuedAtToNow();
 
             final ClientInfo holder = ClientInfoHolder.getClientInfo();
@@ -102,5 +103,24 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    @Audit(action = "CHANGE_PASSWORD",
+            actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
+            resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+    @Override
+    public boolean change(final Credential c, final PasswordChangeBean bean) {
+        return changeInternal(c, bean);
+    }
+
+    /**
+     * Change password internally, by the impl.
+     *
+     * @param c    the credential
+     * @param bean the bean
+     * @return the boolean
+     */
+    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) {
+        return false;
     }
 }

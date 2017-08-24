@@ -37,14 +37,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link SSOProfileCallbackHandlerController}, which handles
+ * This is {@link SSOSamlProfileCallbackHandlerController}, which handles
  * the profile callback request to build the final saml response.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SSOProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SSOProfileCallbackHandlerController.class);
+public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SSOSamlProfileCallbackHandlerController.class);
 
     private final AbstractUrlBasedTicketValidator ticketValidator;
 
@@ -63,17 +63,17 @@ public class SSOProfileCallbackHandlerController extends AbstractSamlProfileHand
      * @param samlObjectSignatureValidator                 the saml object signature validator
      * @param ticketValidator                              the ticket validator
      */
-    public SSOProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
-                                               final ParserPool parserPool,
-                                               final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final ServicesManager servicesManager,
-                                               final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                               final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                               final OpenSamlConfigBean configBean,
-                                               final SamlProfileObjectBuilder<Response> responseBuilder,
-                                               final CasConfigurationProperties casProperties,
-                                               final SamlObjectSignatureValidator samlObjectSignatureValidator,
-                                               final AbstractUrlBasedTicketValidator ticketValidator) {
+    public SSOSamlProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+                                                   final ParserPool parserPool,
+                                                   final AuthenticationSystemSupport authenticationSystemSupport,
+                                                   final ServicesManager servicesManager,
+                                                   final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                                   final OpenSamlConfigBean configBean,
+                                                   final SamlProfileObjectBuilder<Response> responseBuilder,
+                                                   final CasConfigurationProperties casProperties,
+                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator,
+                                                   final AbstractUrlBasedTicketValidator ticketValidator) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,
@@ -96,7 +96,6 @@ public class SSOProfileCallbackHandlerController extends AbstractSamlProfileHand
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
     protected void handleCallbackProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
-
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         final AuthnRequest authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
         if (authnRequest == null) {
