@@ -209,7 +209,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     private String getLocalizedValues(final String locale, final List<?> items) {
         if (locale != null) {
-            LOGGER.debug("Looking for locale [{}]", locale);
+            LOGGER.trace("Looking for locale [{}]", locale);
             for (int i = 0; i < items.size(); i++) {
                 if (items.get(i) instanceof LocalizedName) {
                     final Pattern p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
@@ -219,10 +219,10 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
                     }
                 }
             }
-            LOGGER.debug("Locale [{}] not found.", locale);
+            LOGGER.trace("Locale [{}] not found.", locale);
         }
 
-        LOGGER.debug("Looking for locale [en]");
+        LOGGER.trace("Looking for locale [en]");
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i) instanceof LocalizedName) {
                 final Pattern p = Pattern.compile("en", Pattern.CASE_INSENSITIVE);
@@ -232,10 +232,10 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
                 }
             }
         }
-        LOGGER.debug("Locale [en] not found.");
+        LOGGER.trace("Locale [en] not found.");
 
         if (!items.isEmpty()) {
-            LOGGER.debug("Loading first available locale [{}]", ((LocalizedName) items.get(0)).getValue());
+            LOGGER.trace("Loading first available locale [{}]", ((LocalizedName) items.get(0)).getValue());
             return ((XSString) items.get(0)).getValue();
         }
         return null;
@@ -247,6 +247,8 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
                 .appendSuper(super.toString())
                 .append("displayName", getDisplayName())
                 .append("description", getDescription())
+                .append("informationUrl", getInformationURL())
+                .append("privacyStatementUrl", getPrivacyStatementURL())
                 .toString();
     }
 }

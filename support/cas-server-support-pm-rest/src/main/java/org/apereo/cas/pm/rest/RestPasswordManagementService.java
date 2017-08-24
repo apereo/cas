@@ -38,8 +38,8 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean change(final Credential c, final PasswordChangeBean bean) {
-        final PasswordManagementProperties.Rest rest = passwordManagementProperties.getRest();
+    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) {
+        final PasswordManagementProperties.Rest rest = properties.getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
         }
@@ -62,7 +62,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final String username) {
-        final PasswordManagementProperties.Rest rest = passwordManagementProperties.getRest();
+        final PasswordManagementProperties.Rest rest = properties.getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlEmail())) {
             return null;
         }
@@ -81,7 +81,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final PasswordManagementProperties.Rest rest = passwordManagementProperties.getRest();
+        final PasswordManagementProperties.Rest rest = properties.getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlSecurityQuestions())) {
             return null;
         }

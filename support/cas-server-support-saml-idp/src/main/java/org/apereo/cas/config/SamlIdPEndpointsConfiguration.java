@@ -15,19 +15,23 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSi
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.query.Saml2AttributeQueryProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOProfileCallbackHandlerController;
-import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlProfileCallbackHandlerController;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -82,6 +86,10 @@ public class SamlIdPEndpointsConfiguration {
     private BaseSamlObjectSigner samlObjectSigner;
 
     @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
     private MetadataResolver casSamlIdPMetadataResolver;
 
@@ -93,7 +101,6 @@ public class SamlIdPEndpointsConfiguration {
     @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
     private SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder;
 
-
     @Autowired
     @Qualifier("samlProfileSamlArtifactResponseBuilder")
     private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder;
@@ -101,7 +108,19 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
     private SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder;
-            
+
+    @Autowired
+    @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
+    private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryResponseBuilder;
+
+    @Autowired
+    @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
+    private SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder;
+
+    @Autowired
+    @Qualifier("samlAttributeQueryTicketFactory")
+    private SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
+
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -133,8 +152,8 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
-        return new SSOPostProfileHandlerController(
+    public SSOSamlPostProfileHandlerController ssoPostProfileHandlerController() {
+        return new SSOSamlPostProfileHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -197,8 +216,8 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SSOProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
-        return new SSOProfileCallbackHandlerController(
+    public SSOSamlProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
+        return new SSOSamlProfileCallbackHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -244,8 +263,29 @@ public class SamlIdPEndpointsConfiguration {
                 samlProfileSamlArtifactResponseBuilder,
                 casProperties,
                 samlObjectSignatureValidator(),
-                ticketRegistry, 
-                samlArtifactTicketFactory, 
+                ticketRegistry,
+                samlArtifactTicketFactory,
                 samlProfileSamlArtifactFaultResponseBuilder);
+    }
+
+    @ConditionalOnProperty(prefix = "cas.authn.samlIdp", name = "attributeQueryProfileEnabled", havingValue = "true")
+    @Bean
+    @RefreshScope
+    public Saml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
+        return new Saml2AttributeQueryProfileHandlerController(
+                samlObjectSigner,
+                openSamlConfigBean.getParserPool(),
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver,
+                openSamlConfigBean,
+                samlProfileSamlAttributeQueryResponseBuilder,
+                casProperties,
+                samlObjectSignatureValidator(),
+                ticketRegistry,
+                samlProfileSamlAttributeQueryFaultResponseBuilder,
+                ticketGrantingTicketCookieGenerator,
+                samlAttributeQueryTicketFactory);
     }
 }
