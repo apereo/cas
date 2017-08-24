@@ -41,7 +41,7 @@ presentations and training on a number of software products, including CAS, that
 Conferences are an excellent venue for strengthening ties to the larger CAS community and related open source software
 ecosystem.
 
-## Paid Support
+## Paid/Commercial Support
 
 A number of [consulting firms offer paid support](https://www.apereo.org/content/commercial-affiliates) for CAS. We list a few here with whom we have had positive experiences
 and feel comfortable recommending.
