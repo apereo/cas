@@ -58,6 +58,9 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         return view;
     }
 
+    /**
+     * {@link ThemeViewResolverFactory} that will create a ThemeViewResolver for the specified theme.
+     */
     public static class Factory implements ThemeViewResolverFactory, ApplicationContextAware {
         @Nonnull
         private final ViewResolver delegate;

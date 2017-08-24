@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 5.2.0
  */
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
-    private static final Logger LOG = LoggerFactory.getLogger(ThemeBasedViewResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThemeBasedViewResolver.class);
 
     private final ThemeResolver themeResolver;
     private final ThemeViewResolverFactory viewResolverFactory;
@@ -40,6 +40,7 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     }
 
     @Nullable
+    @Override
     public View resolveViewName(final String viewName, final Locale locale) throws Exception {
         // resolve the theme for this request
         final Optional<String> theme = Optional.of(RequestContextHolder.currentRequestAttributes())
@@ -54,7 +55,7 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
                 return delegate.get().resolveViewName(viewName, locale);
             }
         } catch (final Exception e) {
-            LOG.debug("error resolving view '{}' for theme '{}'", viewName, theme.orElse(null), e);
+            LOGGER.debug("error resolving view '{}' for theme '{}'", viewName, theme.orElse(null), e);
         }
 
         // default to not resolving any view
