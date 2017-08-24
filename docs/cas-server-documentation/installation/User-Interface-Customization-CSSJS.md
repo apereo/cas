@@ -30,7 +30,7 @@ You can also create your own `custom.js` file, for example, and call it from wit
 
 If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.javascript.file` setting.
 
-The following Javascript libraries are utilized by CAS automatically:
+Most importantly, the following Javascript libraries are utilized by CAS automatically:
 
 * JQuery
 * JQuery UI
