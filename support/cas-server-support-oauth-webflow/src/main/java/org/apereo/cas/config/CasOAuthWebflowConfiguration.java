@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -43,14 +44,21 @@ public class CasOAuthWebflowConfiguration {
     private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
+    @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
         final OAuth20WebflowConfigurer c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, 
-                oauth20RegisteredServiceUIAction());
+                oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
+        c.initialize();
         return c;
     }
 

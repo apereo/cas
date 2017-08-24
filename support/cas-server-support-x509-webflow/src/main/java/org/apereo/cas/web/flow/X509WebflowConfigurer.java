@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -36,8 +38,11 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String EVENT_ID_START_X509 = "startX509Authenticate";
 
-    public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                 final ApplicationContext applicationContext,
+                                 final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override

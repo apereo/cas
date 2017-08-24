@@ -82,6 +82,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -210,6 +211,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory defaultOAuthCodeFactory;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -386,11 +390,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "oidcWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer oidcWebflowConfigurer() {
         final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction());
+                loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction(), applicationContext, casProperties);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
+        cfg.initialize();
         return cfg;
     }
 

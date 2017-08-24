@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -37,8 +39,9 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
     public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                             final boolean enableDeviceRegistration) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                                             final boolean enableDeviceRegistration, final ApplicationContext applicationContext,
+                                                             final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.enableDeviceRegistration = enableDeviceRegistration;
     }
 

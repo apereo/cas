@@ -54,8 +54,10 @@ public class GoogleAuthenticatorConfiguration {
     @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
-        return new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                googleAuthenticatorFlowRegistry());
+        final CasWebflowConfigurer w = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                googleAuthenticatorFlowRegistry(), applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
     
     /**
@@ -69,8 +71,12 @@ public class GoogleAuthenticatorConfiguration {
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
         @Bean
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
-            return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry());
+            final CasWebflowConfigurer w = new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry(), 
+                    applicationContext, casProperties);
+            
+            w.initialize();
+            return w;
         }
     }
     
