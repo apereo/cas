@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -22,8 +24,10 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     private static final String STATE_ID_AUP_CHECK = "acceptableUsagePolicyCheck";
 
     public AcceptableUsagePolicyWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                  final ApplicationContext applicationContext,
+                                                  final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
