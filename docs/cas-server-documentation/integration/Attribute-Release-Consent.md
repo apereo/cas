@@ -103,10 +103,10 @@ The consent decision object in transit will and must match the following structu
 
 ```json
 {
-   "id":1000,
+   "id": 1000,
    "principal": "casuser",
    "service": "https://google.com",
-   "date":[ 2017, 7, 10, 14, 10, 17 ],
+   "date": [ 2017, 7, 10, 14, 10, 17 ],
    "options": "ATTRIBUTE_NAME",
    "reminder": 14,
    "reminderTimeUnit": "DAYS",
