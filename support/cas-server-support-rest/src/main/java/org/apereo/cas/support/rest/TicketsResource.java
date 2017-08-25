@@ -171,13 +171,14 @@ public class TicketsResource {
     public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.getTicket(tgtId);
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
             final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
 
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
             final AuthenticationResult authenticationResult =
-                    builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
+                    builder.collect(tgt.getAuthentication()).build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(tgtId,
                     service, authenticationResult);
