@@ -62,7 +62,7 @@ layout: null
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [Proxying](/$version/installation/Configuring-Proxy-Authentication.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
-    *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
+    *   [Surrogate](/$version/installation/Surrogate-Authentication.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
     
 * [Attributes](#casattributes)
