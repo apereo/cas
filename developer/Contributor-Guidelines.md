@@ -105,3 +105,20 @@ A pull request should contain the following:
 * Description that provides a succinct executive summary of changes.
 
 Source code changes SHOULD contain Javadoc changes and relevant documentation as needed as part of the same pull request.
+
+### Merging Upstream Changes
+
+It's recommended that you retrieve and merge changes into your own fork and topic branch from the original upstream CAS repository on a daily basis.
+The steps that you would take to do this are as follows, assuming `apereo` is the upstream CAS repository and `fork` in your own fork
+both defined in terms of git remote aliases:
+
+```
+git checkout master
+git pull apereo master
+
+git checkout [topic-branch]
+git merge master
+git push fork [topic-branch]
+```
+
+When you actually execute the `merge` command, chances are that you may be asked to resolve conflicts. 
