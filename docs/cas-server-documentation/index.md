@@ -14,9 +14,10 @@ title: CAS - Home
 [OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2F-Authentication.html), 
-[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Microsoft Azure](installation/MicrosoftAzure-Authentication.html), etc)
+[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Microsoft Azure](installation/MicrosoftAzure-Authentication.html), 
+[Authy](installation/AuthyAuthenticator-Authentication.html) etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
-* Built-in support for [password management](installation/Password-Management.html).
+* Built-in support for [password management](installation/Password-Management.html), [notifications](installation/Webflow-Customization-Interrupt.html), [terms of use](installation/Webflow-Customization-AUP.html) and [impersonation](installation/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).
 * [Monitor and track](installation/Monitoring-Statistics.html) application behavior, statistics and logs in real time.
 * Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies.
@@ -34,10 +35,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Architecture](planning/Architecture.html)
 * [Getting Started](planning/Getting-Started.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
-* [Overlay Installation](installation/Maven-Overlay-Installation.html)
-* [Authentication](installation/Configuring-Authentication-Components.html)
-* [Application Registration](installation/Service-Management.html)
-* [Attribute Release](integration/Attribute-Release.html)
+* [Installation](installation/Maven-Overlay-Installation.html)
 
 ## Demos
 
