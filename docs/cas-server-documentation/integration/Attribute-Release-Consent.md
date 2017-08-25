@@ -144,6 +144,9 @@ The consent decision object in transit will and must match the following structu
 | `attributeValues`         | SHA-512 of attribute values for this application, signed and encrypted.
 
 
+### LDAP
+
+
 ### Custom
 
 You may also inject your own implementation for attribute consent management into CAS that would itself handle storing consent decisions, etc. In order to do this, you will need to design a configuration class that roughly matches the following: 
