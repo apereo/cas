@@ -115,10 +115,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Sets the name of the principal's dn attribute.
      *
-     * @param principalDnattributeName principal's DN attribute name.
+     * @param principalDnAttributeName principal's DN attribute name.
      */
-    public void setPrincipalDnAttributeName(final String principalDnattributeName) {
-        this.principalDnAttributeName = principalDnattributeName;
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
     }
 
     /**
