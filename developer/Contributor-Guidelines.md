@@ -104,6 +104,4 @@ A pull request should contain the following:
 * Title that summarizes the issue.
 * Description that provides a succinct executive summary of changes.
 
-Source code changes SHOULD contain test coverage and Javadoc changes as needed.
-While documentation is frequently outside the scope of a pull request, there should be some consideration for how
-new features and functional changes will be documented. 
+Source code changes SHOULD contain Javadoc changes and relevant documentation as needed as part of the same pull request.
