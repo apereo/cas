@@ -171,7 +171,7 @@ CAS {
   };
 ```
 
-### LDAP by Ldaptive
+### Ldaptive
 
 Ldaptive provides several [login modules for authentication and authorization](http://www.ldaptive.org/docs/guide/jaas.html) against an LDAP. Each module accepts properties that correspond to the setters on objects in the ldaptive code base. If you are looking to set a specific configuration option that is available as a setter, the chances are that it will be accepted on the module. Any unknown options will be passed to the provider as a generic property.
 
