@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link RecursiveSearchEntryHandlersProperties}.
@@ -17,7 +18,7 @@ public class RecursiveSearchEntryHandlersProperties implements Serializable {
     /**
      * The Merge attributes.
      */
-    private String[] mergeAttributes;
+    private List<String> mergeAttributes;
 
     public String getSearchAttribute() {
         return searchAttribute;
@@ -27,11 +28,11 @@ public class RecursiveSearchEntryHandlersProperties implements Serializable {
         this.searchAttribute = searchAttribute;
     }
 
-    public String[] getMergeAttributes() {
+    public List<String> getMergeAttributes() {
         return mergeAttributes;
     }
 
-    public void setMergeAttributes(final String[] mergeAttributes) {
+    public void setMergeAttributes(final List<String> mergeAttributes) {
         this.mergeAttributes = mergeAttributes;
     }
 }
