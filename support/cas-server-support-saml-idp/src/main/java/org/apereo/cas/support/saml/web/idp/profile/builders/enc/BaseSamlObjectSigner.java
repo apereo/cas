@@ -17,7 +17,6 @@ import org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler;
 import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
 import org.opensaml.security.credential.Credential;
@@ -68,9 +67,6 @@ public class BaseSamlObjectSigner {
      * The Override white listed signature signing algorithms.
      */
     protected List overrideWhiteListedAlgorithms;
-
-
-    private MetadataResolver idpMetadataResolver;
     
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -81,7 +77,6 @@ public class BaseSamlObjectSigner {
         this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
         this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
         this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
-        this.idpMetadataResolver = idpMetadataResolver;
     }
 
     /**

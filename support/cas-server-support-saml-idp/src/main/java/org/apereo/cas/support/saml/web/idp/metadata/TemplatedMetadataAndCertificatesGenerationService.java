@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +128,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         generator.setHostName(getIdPHostName());
         generator.setCertificateFile(idp.getMetadata().getEncryptionCertFile().getFile());
         generator.setPrivateKeyFile(idp.getMetadata().getEncryptionKeyFile().getFile());
-        generator.setURISubjectAltNames(Arrays.asList(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(CollectionUtils.wrap(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 
@@ -142,7 +143,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         generator.setHostName(getIdPHostName());
         generator.setCertificateFile(idp.getMetadata().getSigningCertFile().getFile());
         generator.setPrivateKeyFile(idp.getMetadata().getSigningKeyFile().getFile());
-        generator.setURISubjectAltNames(Arrays.asList(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(CollectionUtils.wrap(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 

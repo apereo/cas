@@ -25,7 +25,7 @@ public class InCommonRSAttributeReleasePolicy extends BaseSamlRegisteredServiceA
     private static final long serialVersionUID = 1532960981124784595L;
     private static final Logger LOGGER = LoggerFactory.getLogger(InCommonRSAttributeReleasePolicy.class);
 
-    private List<String> allowedAttributes = Arrays.asList("eduPersonPrincipalName",
+    private List<String> allowedAttributes = CollectionUtils.wrapList("eduPersonPrincipalName",
             "eduPersonTargetedID", "email", "displayName", "givenName", "surname",
             "eduPersonScopedAffiliation");
 
