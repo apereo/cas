@@ -1,14 +1,18 @@
 package org.apereo.cas.support.rest;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -26,6 +30,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.security.auth.login.LoginException;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -238,12 +244,23 @@ public class TicketsResourceTests {
     }
 
     private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenThrow(e);
+        when(this.casMock.getTicket(anyString())).thenThrow(e);
     }
 
     private void configureCasMockToCreateValidST() throws Throwable {
         final ServiceTicket st = mock(ServiceTicket.class);
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        final Authentication auth = mock(Authentication.class);
+        final Principal principal = mock(Principal.class);
+        when(auth.getPrincipal()).thenReturn(principal);
+        when(auth.getCredentials()).thenReturn(Collections.singletonList(mock(CredentialMetaData.class)));
+        when(auth.getSuccesses()).thenReturn(Collections.singletonMap("success", mock(HandlerResult.class)));
+        when(auth.getAttributes()).thenReturn(Collections.emptyMap());
+        when(principal.getAttributes()).thenReturn(Collections.emptyMap());
+        when(principal.getId()).thenReturn("");
+        when(tgt.getAuthentication()).thenReturn(auth);
         when(st.getId()).thenReturn("ST-1");
+        when(this.casMock.getTicket(anyString())).thenReturn(tgt);
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
     }
 }
