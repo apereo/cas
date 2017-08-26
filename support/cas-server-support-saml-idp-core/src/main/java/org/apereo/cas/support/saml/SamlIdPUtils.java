@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -133,7 +134,7 @@ public final class SamlIdPUtils {
                 final CriteriaSet criteriaSet = new CriteriaSet();
                 criteriaSet.add(new EntityIdCriterion(issuer));
                 criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-                criteriaSet.add(new BindingCriterion(Arrays.asList(SAMLConstants.SAML2_POST_BINDING_URI)));
+                criteriaSet.add(new BindingCriterion(CollectionUtils.wrap(SAMLConstants.SAML2_POST_BINDING_URI)));
 
                 final Iterable<EntityDescriptor> it = samlResolver.resolve(criteriaSet);
                 it.forEach(entityDescriptor -> {
