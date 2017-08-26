@@ -937,7 +937,7 @@ public final class LdapUtils {
                 case CASE_CHANGE:
                     final CaseChangeEntryHandler eh = new CaseChangeEntryHandler();
                     eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeNameCaseChange()));
-                    eh.setAttributeNames(h.getCasChange().getAttributeNames());
+                    eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(new String[] {}));
                     eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeValueCaseChange()));
                     eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getDnCaseChange()));
                     handlers.add(eh);
@@ -950,7 +950,7 @@ public final class LdapUtils {
                     break;
                 case MERGE:
                     final MergeAttributeEntryHandler ehm = new MergeAttributeEntryHandler();
-                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames());
+                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(new String[] {}));
                     ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
                     handlers.add(ehm);
                     break;
@@ -970,7 +970,8 @@ public final class LdapUtils {
                     handlers.add(new RangeEntryHandler());
                     break;
                 case RECURSIVE_ENTRY:
-                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(), h.getRecursive().getMergeAttributes()));
+                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(), 
+                            h.getRecursive().getMergeAttributes().toArray(new String[] {})));
                     break;
                 default:
                     break;

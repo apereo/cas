@@ -32,23 +32,24 @@ import java.util.List;
  * @since 4.2.0
  */
 public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
+    
+    /**
+     * The utils document.
+     */
+    public static final String UTIL_DOCUMENT = "utils";
+
     /**
      * All services view.
      */
     public static final View ALL_SERVICES_VIEW = DefaultView.create(
             "all_services",
             "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
-
+    
     /**
      * All views.
      */
-    public static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_SERVICES_VIEW});
-
-    /**
-     * The utils document.
-     */
-    public static final String UTIL_DOCUMENT = "utils";
-
+    public static final List<View> ALL_VIEWS = CollectionUtils.wrap(new View[]{ALL_SERVICES_VIEW});
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
     
     private final CouchbaseClientFactory couchbase;
