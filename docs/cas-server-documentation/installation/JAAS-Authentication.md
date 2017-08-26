@@ -122,7 +122,7 @@ For a list of all other options and more comprehensive documentation, please see
 
 This module operates in one of three modes. A mode is selected by specifying a particular set of options: 
 
-- Search First
+#### Search First
 
 In search-first mode, the LDAP directory is searched to determine the user's distinguished name and then authentication is attempted. An (anonymous) search is performed using the supplied username in conjunction with a specified search filter. If successful then authentication is attempted using the user's distinguished name and the supplied password. To enable this mode, set the `userFilter` option and omit the `authIdentity` option. Use `search-first` mode when the user's distinguished name is not known in advance.
 
@@ -138,7 +138,7 @@ CAS {
 };
 ```
 
-- Authentication First
+#### Authentication First
 
 In `authentication-first` mode, authentication is attempted using the supplied username and password and then the LDAP directory is searched. If authentication is successful then a search is performed using the supplied username in conjunction with a specified search filter. To enable this mode, set the `authIdentity` and the `userFilter` options. Use `authentication-first` mode when accessing an LDAP directory that has been configured to disallow anonymous searches.
 
@@ -155,7 +155,7 @@ CAS {
 };
 ```
 
-- Authentication Only
+#### Authentication Only
 
 In `authentication-only` mode, authentication is attempted using the supplied username and password. The LDAP directory is not searched because the user's distinguished name is already known. To enable this mode, set the authIdentity option to a valid distinguished name and omit the userFilter option. Use authentication-only mode when the user's distinguished name is known in advance.
 
@@ -171,7 +171,7 @@ CAS {
   };
 ```
 
-### LDAP by Ldaptive
+### Ldaptive
 
 Ldaptive provides several [login modules for authentication and authorization](http://www.ldaptive.org/docs/guide/jaas.html) against an LDAP. Each module accepts properties that correspond to the setters on objects in the ldaptive code base. If you are looking to set a specific configuration option that is available as a setter, the chances are that it will be accepted on the module. Any unknown options will be passed to the provider as a generic property.
 
