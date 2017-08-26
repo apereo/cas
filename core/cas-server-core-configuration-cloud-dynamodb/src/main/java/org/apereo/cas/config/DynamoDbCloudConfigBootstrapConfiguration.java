@@ -82,8 +82,8 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     }
 
     private static Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
-        final String name = entry.get(ColumnNames.NAME).getS();
-        final String value = entry.get(ColumnNames.VALUE).getS();
+        final String name = entry.get(ColumnNames.NAME.name).getS();
+        final String value = entry.get(ColumnNames.VALUE.name).getS();
         return Pair.of(name, value);
     }
 
