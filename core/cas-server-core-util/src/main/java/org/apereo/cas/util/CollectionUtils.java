@@ -2,13 +2,13 @@ package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,9 +45,10 @@ public final class CollectionUtils {
             c.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued attribute [{}]", obj);
         } else if (obj instanceof Map) {
-            throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
+            final Set<Map.Entry> set = ((Map) obj).entrySet();
+            c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            Collections.addAll(c, obj);
+            c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             LOGGER.trace("Converting array attribute [{}]", obj);
         } else {
             c.add(obj);

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;

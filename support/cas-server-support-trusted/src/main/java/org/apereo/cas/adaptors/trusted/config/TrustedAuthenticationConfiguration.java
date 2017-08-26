@@ -30,8 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import java.util.Arrays;
-
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
  *
