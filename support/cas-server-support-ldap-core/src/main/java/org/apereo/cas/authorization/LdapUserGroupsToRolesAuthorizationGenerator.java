@@ -66,7 +66,7 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
             final Response<SearchResult> response = this.groupSearchExecutor.search(
                     this.connectionFactory,
                     LdapUtils.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
-                            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(userEntry.getDn())));
+                            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn())));
             LOGGER.debug("LDAP role search response: [{}]", response);
             final SearchResult groupResult = response.getResult();
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.couchbase.client.java.view.View;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
@@ -13,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +28,8 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseServiceRegistryConfiguration {
 
+
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 

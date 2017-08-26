@@ -54,7 +54,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
         final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
         final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getUserFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                Arrays.asList(id));
+                CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(
                 LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
                 gua.getLdap().getBaseDn(), filter,

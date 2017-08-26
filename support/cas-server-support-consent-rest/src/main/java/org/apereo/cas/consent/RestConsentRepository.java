@@ -44,9 +44,9 @@ public class RestConsentRepository implements ConsentRepository {
                                                final Authentication authentication) {
         try {
             final HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            headers.put("service", Arrays.asList(service.getId()));
-            headers.put("principal", Arrays.asList(authentication.getPrincipal().getId()));
+            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+            headers.put("service", CollectionUtils.wrap(service.getId()));
+            headers.put("principal", CollectionUtils.wrap(authentication.getPrincipal().getId()));
 
             final HttpEntity<String> entity = new HttpEntity<>(headers);
             final ResponseEntity<ConsentDecision> result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
@@ -63,7 +63,7 @@ public class RestConsentRepository implements ConsentRepository {
     public boolean storeConsentDecision(final ConsentDecision decision) {
         try {
             final HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<ConsentDecision> entity = new HttpEntity<>(decision, headers);
             final ResponseEntity<ConsentDecision> result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();

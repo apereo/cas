@@ -3,6 +3,7 @@ package org.apereo.cas.couchbase.core;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class CouchbaseClientFactory {
 
+
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseClientFactory.class);
     private static final int DEFAULT_TIMEOUT = 5;
 

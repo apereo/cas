@@ -277,4 +277,19 @@ public final class CollectionUtils {
         }
         return list;
     }
+
+    /**
+     * Wrap set set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> List<T> wrapList(final T... source) {
+        final List<T> list = new ArrayList<>();
+        if (source != null) {
+            list.addAll(Arrays.stream(source).collect(Collectors.toSet()));
+        }
+        return list;
+    }
 }

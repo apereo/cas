@@ -44,8 +44,8 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     public String getSecret(final String username) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.put("username", Arrays.asList(username));
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(username));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<String> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, String.class);
@@ -59,10 +59,10 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.put("username", Arrays.asList(userName));
-        headers.put("validationCode", Arrays.asList(String.valueOf(validationCode)));
-        headers.put("secretKey", Arrays.asList(secretKey));
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(userName));
+        headers.put("validationCode", CollectionUtils.wrap(String.valueOf(validationCode)));
+        headers.put("secretKey", CollectionUtils.wrap(secretKey));
         headers.put("scratchCodes", scratchCodes.stream().map(String::valueOf).collect(Collectors.toList()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);

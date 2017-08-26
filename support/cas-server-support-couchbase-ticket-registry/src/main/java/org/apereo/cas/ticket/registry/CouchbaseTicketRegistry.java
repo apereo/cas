@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     /**
      * Views available.
      */
-    public static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_TICKETS_VIEW});
+    public static final List<View> ALL_VIEWS = CollectionUtils.wrap(new View[]{ALL_TICKETS_VIEW});
 
     /**
      * "statistics" document.
