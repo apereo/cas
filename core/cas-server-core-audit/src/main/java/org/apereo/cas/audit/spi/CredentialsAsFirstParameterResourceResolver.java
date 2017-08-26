@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
 
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -43,6 +44,6 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
             final AuthenticationTransaction transaction = AuthenticationTransaction.class.cast(object);
             return new String[] {SUPPLIED_CREDENTIALS + transaction.getCredentials()};
         }
-        return new String[] {SUPPLIED_CREDENTIALS + CollectionUtils.wrap((Object[]) object)};
+        return new String[] {SUPPLIED_CREDENTIALS + CollectionUtils.wrap(object)};
     }
 }

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "
                     + "The principal resolver will use a combination of attributes collected from attribute repository sources "
                     + "and whatever may be collected during the authentication phase where results are eventually merged.");
-            resolver.setChain(CollectionUtils.wrap(bean, new EchoingPrincipalResolver()));
+            resolver.setChain(CollectionUtils.wrapList(bean, new EchoingPrincipalResolver()));
         } else {
             LOGGER.debug("Attribute repository sources are not available for principal resolution so principal resolver will echo "
                     + "back the principal resolved during authentication directly.");

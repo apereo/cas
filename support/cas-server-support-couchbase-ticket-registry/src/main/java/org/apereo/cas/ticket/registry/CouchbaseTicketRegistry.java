@@ -51,7 +51,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     /**
      * Views available.
      */
-    public static final List<View> ALL_VIEWS = CollectionUtils.wrap(new View[]{ALL_TICKETS_VIEW});
+    public static final Collection<View> ALL_VIEWS = CollectionUtils.wrap(ALL_TICKETS_VIEW);
 
     /**
      * "statistics" document.
