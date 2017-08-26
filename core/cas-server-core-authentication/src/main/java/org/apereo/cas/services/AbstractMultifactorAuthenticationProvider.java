@@ -60,7 +60,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     @Override
     public final boolean supports(final Event e, final Authentication authentication, final RegisteredService registeredService) {
         if (e == null || !e.getId().matches(getId())) {
-            LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", e.getId(), getId());
+            LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", e, getId());
             return false;
         }
         if (bypassEvaluator != null && !bypassEvaluator.isAuthenticationRequestHonored(authentication, registeredService, this)) {

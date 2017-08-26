@@ -43,6 +43,6 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
             final AuthenticationTransaction transaction = AuthenticationTransaction.class.cast(object);
             return new String[] {SUPPLIED_CREDENTIALS + transaction.getCredentials()};
         }
-        return new String[] {SUPPLIED_CREDENTIALS + Arrays.asList((Object[]) object)};
+        return new String[] {SUPPLIED_CREDENTIALS + CollectionUtils.wrap((Object[]) object)};
     }
 }
