@@ -151,7 +151,7 @@ public final class OAuth20Utils {
      * @return the requested scopes
      */
     public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
-        final Map<String, Object> map = getRequestParameters(Arrays.asList(OAuth20Constants.SCOPE), context);
+        final Map<String, Object> map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
         if (map == null || map.isEmpty()) {
             return new ArrayList<>(0);
         }
