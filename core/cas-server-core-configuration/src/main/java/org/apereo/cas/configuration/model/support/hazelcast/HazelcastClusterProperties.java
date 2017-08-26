@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -64,7 +66,7 @@ public class HazelcastClusterProperties implements Serializable {
      * If members is empty, calling this method will have the same effect as calling clear().
      * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which indicates multiple members are going to be added.
      */
-    private List<String> members = Arrays.asList("localhost");
+    private List<String> members = CollectionUtils.wrap("localhost");
     /**
      * Sets the maximum size of the map.
      */

@@ -4,6 +4,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Simple structure to collect and pass around pieces of JPA config data reusable across
@@ -19,19 +20,19 @@ public class JpaConfigDataHolder implements Serializable {
 
     private final String persistenceUnitName;
 
-    private final String[] packagesToScan;
+    private final List<String> packagesToScan;
 
     private final DataSource dataSource;
 
     public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter,
                                final String persistenceUnitName,
-                               final String[] packagesToScan) {
+                               final List<String> packagesToScan) {
         this(jpaVendorAdapter, persistenceUnitName, packagesToScan, null);
     }
 
     public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter,
                                final String persistenceUnitName,
-                               final String[] packagesToScan,
+                               final List<String> packagesToScan,
                                final DataSource dataSource) {
         this.jpaVendorAdapter = jpaVendorAdapter;
         this.persistenceUnitName = persistenceUnitName;
@@ -47,7 +48,7 @@ public class JpaConfigDataHolder implements Serializable {
         return persistenceUnitName;
     }
 
-    public String[] getPackagesToScan() {
+    public List<String> getPackagesToScan() {
         return packagesToScan;
     }
 
