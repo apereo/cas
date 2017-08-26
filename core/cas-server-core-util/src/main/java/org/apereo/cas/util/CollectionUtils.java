@@ -288,7 +288,10 @@ public final class CollectionUtils {
     public static <T> List<T> wrapList(final T... source) {
         final List<T> list = new ArrayList<>();
         if (source != null) {
-            list.addAll(Arrays.stream(source).collect(Collectors.toSet()));
+            Arrays.stream(source).forEach(s -> {
+                final Collection col = toCollection(s);
+                list.addAll(col);
+            });
         }
         return list;
     }

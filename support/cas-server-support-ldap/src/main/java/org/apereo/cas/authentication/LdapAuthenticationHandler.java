@@ -302,7 +302,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
 
         if (authenticator.getReturnAttributes() != null) {
-            final List<String> authenticatorAttributes = CollectionUtils.wrap(authenticator.getReturnAttributes());
+            final List<String> authenticatorAttributes = CollectionUtils.wrapList(authenticator.getReturnAttributes());
             if (!authenticatorAttributes.isEmpty()) {
                 LOGGER.debug("Filtering authentication entry attributes [{}] based on authenticator attributes [{}]",
                         authenticatedEntryAttributes, authenticatorAttributes);
