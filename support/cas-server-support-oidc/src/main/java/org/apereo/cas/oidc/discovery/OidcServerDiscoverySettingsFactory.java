@@ -33,7 +33,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discoveryProperties.setClaimsSupported(oidc.getClaims());
         discoveryProperties.setScopesSupported(oidc.getScopes());
         discoveryProperties.setResponseTypesSupported(
-                CollectionUtils.wrap(OAuth20ResponseTypes.CODE.getType(),
+                CollectionUtils.wrapList(OAuth20ResponseTypes.CODE.getType(),
                         OAuth20ResponseTypes.TOKEN.getType(),
                         OAuth20ResponseTypes.IDTOKEN_TOKEN.getType()));
 
@@ -45,11 +45,11 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discoveryProperties.setIntrospectionSupportedAuthenticationMethods(authnMethods);
 
         discoveryProperties.setGrantTypesSupported(
-                CollectionUtils.wrap(OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
+                CollectionUtils.wrapList(OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
                         OAuth20GrantTypes.PASSWORD.getType(),
                         OAuth20GrantTypes.REFRESH_TOKEN.getType()));
 
-        discoveryProperties.setIdTokenSigningAlgValuesSupported(CollectionUtils.wrap("none", "RS256"));
+        discoveryProperties.setIdTokenSigningAlgValuesSupported(CollectionUtils.wrapList("none", "RS256"));
         return discoveryProperties;
     }
 
