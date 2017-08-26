@@ -46,21 +46,21 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         if (registeredService == null || !OidcRegisteredService.class.isAssignableFrom(registeredService.getClass())) {
-            LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party");
+            LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
             return principal.getId();
         }
 
         final OidcRegisteredService oidcSvc = OidcRegisteredService.class.cast(registeredService);
         if (StringUtils.isBlank(oidcSvc.getSubjectType())
                 || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
-            LOGGER.warn("Service definition [{}] does not request a pairwise subject type");
+            LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);
             return principal.getId();
         }
 
 
         final String sectorIdentifier = getSectorIdentifier(oidcSvc);
         if (StringUtils.isBlank(sectorIdentifier)) {
-            LOGGER.debug("Service definition [{}] does not provide a sector identifier");
+            LOGGER.debug("Service definition [{}] does not provide a sector identifier", oidcSvc);
             return principal.getId();
         }
 

@@ -474,7 +474,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         return oidc.getUserDefinedScopes().entrySet()
                 .stream()
-                .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), Arrays.asList(k.getValue().split(","))))
+                .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrap(k.getValue().split(","))))
                 .collect(Collectors.toSet());
     }
 
