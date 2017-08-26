@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -123,7 +124,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
 
         final URI[] urls = getDistributionPoints(cert);
-        LOGGER.debug("Distribution points for [{}]: [{}].", CertUtils.toString(cert), Arrays.asList(urls));
+        LOGGER.debug("Distribution points for [{}]: [{}].", CertUtils.toString(cert), CollectionUtils.wrap(urls));
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
         boolean stopFetching = false;
 
