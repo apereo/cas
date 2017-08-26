@@ -66,6 +66,7 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -474,7 +475,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         return oidc.getUserDefinedScopes().entrySet()
                 .stream()
-                .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrap(k.getValue().split(","))))
+                .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
                 .collect(Collectors.toSet());
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
