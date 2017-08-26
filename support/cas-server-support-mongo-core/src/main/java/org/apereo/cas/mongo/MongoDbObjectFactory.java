@@ -50,7 +50,7 @@ public class MongoDbObjectFactory {
     private static final int TIMEOUT = 5000;
     private static final int DEFAULT_PORT = 27017;
 
-    private CustomConversions customConversions = new CustomConversions(CollectionUtils.wrap(
+    private CustomConversions customConversions = new CustomConversions(CollectionUtils.wrapList(
             new BaseConverters.LoggerConverter(),
             new BaseConverters.ClassConverter(),
             new BaseConverters.CommonsLogConverter(),

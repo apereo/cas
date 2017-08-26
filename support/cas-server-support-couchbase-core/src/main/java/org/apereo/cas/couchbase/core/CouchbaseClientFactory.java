@@ -7,6 +7,7 @@ import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class CouchbaseClientFactory {
 
 
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseClientFactory.class);
     private static final int DEFAULT_TIMEOUT = 5;
 
@@ -130,7 +130,7 @@ public class CouchbaseClientFactory {
                 LOGGER.info("Connected to Couchbase getBucket [{}]", this.bucketName);
                 if (this.views != null && this.designDocument != null) {
                     LOGGER.debug("Ensure that indexes exist in getBucket [{}]", this.bucket.name());
-                    final DesignDocument newDocument = DesignDocument.create(this.designDocument, CollectionUtils.wrapList( views));
+                    final DesignDocument newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
                     if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(this.designDocument))) {
                         LOGGER.warn("Missing indexes in getBucket [{}] for document [{}]", this.bucket.name(), this.designDocument);
                         this.bucket.bucketManager().upsertDesignDocument(newDocument);

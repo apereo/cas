@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.InetAddressUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * This this {@link JpaTicketRegistryConfiguration}.
@@ -43,11 +45,11 @@ public class JpaTicketRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public String[] ticketPackagesToScan() {
-        return new String[]{
+    public List<String> ticketPackagesToScan() {
+        return CollectionUtils.wrapList(
             "org.apereo.cas.ticket",
             "org.apereo.cas.adaptors.jdbc"
-        };
+        );
     }
     
     @Lazy

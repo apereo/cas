@@ -1,5 +1,6 @@
 package org.apereo.cas.authorization;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;

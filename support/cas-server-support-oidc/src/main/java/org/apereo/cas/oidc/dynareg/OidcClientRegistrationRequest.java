@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -112,7 +113,7 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonIgnore
     public Collection<String> getScopes() {
-        return Arrays.asList(getScope().split(" "));
+        return CollectionUtils.wrapList(getScope().split(" "));
     }
 }
 

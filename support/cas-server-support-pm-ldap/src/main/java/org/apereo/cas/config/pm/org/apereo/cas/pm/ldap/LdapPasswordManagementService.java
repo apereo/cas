@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
@@ -45,7 +46,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                    Arrays.asList(username));
+                    CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
@@ -87,7 +88,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                    Arrays.asList(c.getId()));
+                    CollectionUtils.wrap(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
@@ -119,7 +120,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                    Arrays.asList(username));
+                    CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);

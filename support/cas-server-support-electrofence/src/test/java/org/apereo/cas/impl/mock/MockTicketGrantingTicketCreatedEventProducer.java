@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
  */
 public class MockTicketGrantingTicketCreatedEventProducer {
 
-    private static final List<String> ALL_USER_AGENTS = CollectionUtils.wrap(
+    private static final List<String> ALL_USER_AGENTS = CollectionUtils.wrapList(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
             "Mozilla/5.0 (Windows NT 10.1; rv:10.0) Gecko/20100101 Firefox/10.0",
