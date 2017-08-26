@@ -3,7 +3,6 @@ package org.apereo.cas.ws.idp;
 import org.apache.commons.lang3.EnumUtils;
 import org.apereo.cas.util.CollectionUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**

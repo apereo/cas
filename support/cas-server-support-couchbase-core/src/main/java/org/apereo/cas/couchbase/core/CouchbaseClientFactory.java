@@ -3,17 +3,14 @@ package org.apereo.cas.couchbase.core;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
-import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 

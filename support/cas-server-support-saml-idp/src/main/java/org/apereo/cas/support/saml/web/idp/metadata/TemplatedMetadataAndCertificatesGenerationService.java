@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 /**
  * A metadata generator based on a predefined template.

@@ -20,7 +20,6 @@ import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.ProviderManagerBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This is {@link CasLdapUserDetailsManagerConfigurer}.

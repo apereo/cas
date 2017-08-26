@@ -7,8 +7,6 @@ import org.apereo.cas.util.io.SmsSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
 /**
  * This is {@link TextMagicSmsSender}.
  *

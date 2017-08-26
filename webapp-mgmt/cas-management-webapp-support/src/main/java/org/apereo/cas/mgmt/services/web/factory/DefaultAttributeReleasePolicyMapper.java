@@ -28,7 +28,6 @@ import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

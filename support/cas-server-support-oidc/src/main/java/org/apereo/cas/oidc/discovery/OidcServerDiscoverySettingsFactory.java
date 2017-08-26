@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

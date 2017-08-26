@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Arrays;
-
 /**
  * This is {@link LdapAcceptableUsagePolicyRepository}.
  * Examines the principal attribute collection to determine if

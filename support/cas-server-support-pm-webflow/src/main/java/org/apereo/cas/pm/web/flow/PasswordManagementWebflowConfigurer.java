@@ -18,8 +18,6 @@ import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.Arrays;
-
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.
  *

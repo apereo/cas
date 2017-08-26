@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 /**

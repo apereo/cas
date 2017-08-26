@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 /**
