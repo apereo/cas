@@ -7,8 +7,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
-import java.util.Arrays;
-
 /**
  * This is {@link Scim1PrincipalAttributeMapper}.
  *

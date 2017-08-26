@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.saml.sps;
 import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -403,7 +402,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Office365() {
             setNameIdAttribute("scopedImmutableID");
-            setAttributes(CollectionUtils.wrap("IDPEmail,ImmutableID"));
+            setAttributes(CollectionUtils.wrapList("IDPEmail", "ImmutableID"));
             setSignResponses(false);
             setSignAssertions(true);
         }
@@ -422,7 +421,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Webex() {
             setNameIdAttribute(EMAIL);
-            setAttributes(CollectionUtils.wrap("firstName,lastName"));
+            setAttributes(CollectionUtils.wrapList("firstName", "lastName"));
             setSignResponses(false);
             setSignAssertions(true);
         }
@@ -450,7 +449,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Zoom() {
             setNameIdAttribute("mail");
-            setAttributes(CollectionUtils.wrap("mail,sn,givenName"));
+            setAttributes(CollectionUtils.wrapList("mail", "sn", "givenName"));
         }
     }
 
@@ -459,7 +458,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public ArcGIS() {
             setNameIdAttribute("arcNameId");
-            setAttributes(CollectionUtils.wrap("mail,givenName,arcNameId"));
+            setAttributes(CollectionUtils.wrapList("mail", "givenName", "arcNameId"));
         }
     }
 

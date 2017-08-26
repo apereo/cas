@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

@@ -1,11 +1,9 @@
 package org.apereo.cas.configuration.model.core.web;
 
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 /**

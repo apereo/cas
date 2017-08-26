@@ -91,7 +91,8 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
-    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") final IGoogleAuthenticator googleAuthenticatorInstance) {
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") 
+                                                                               final IGoogleAuthenticator googleAuthenticatorInstance) {
         return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance);
     }
 
