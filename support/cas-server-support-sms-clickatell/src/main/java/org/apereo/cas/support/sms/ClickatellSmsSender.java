@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

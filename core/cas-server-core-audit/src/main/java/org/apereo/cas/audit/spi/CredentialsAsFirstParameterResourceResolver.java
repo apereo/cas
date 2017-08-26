@@ -8,8 +8,6 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 
 import org.apereo.cas.util.AopUtils;
 
-import java.util.Arrays;
-
 /**
  * Converts the Credential object into a String resource identifier.
  *

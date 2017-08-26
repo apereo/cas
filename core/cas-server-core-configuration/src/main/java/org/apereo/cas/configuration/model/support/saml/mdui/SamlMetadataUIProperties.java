@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 /**
