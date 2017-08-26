@@ -80,7 +80,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     public ResourceCRLRevocationChecker(final Resource[] crl,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this(false, null, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
-                new ResourceCRLFetcher(), Arrays.asList(crl));
+                new ResourceCRLFetcher(), CollectionUtils.wrapList(crl));
 
     }
     
@@ -104,7 +104,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     }
 
     public ResourceCRLRevocationChecker(final Resource... crls) {
-        this(new ResourceCRLFetcher(), Arrays.asList(crls), DEFAULT_REFRESH_INTERVAL);
+        this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
     }
     
     /**

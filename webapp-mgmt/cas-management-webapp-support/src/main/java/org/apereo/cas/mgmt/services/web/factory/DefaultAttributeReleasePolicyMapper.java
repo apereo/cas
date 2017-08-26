@@ -25,6 +25,7 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -186,7 +187,7 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
     }
 
     private RegisteredServiceAttributeReleasePolicy chainScopes(final String scopes) {
-        final List<String> scopeList = Arrays.asList(scopes.split(","));
+        final List<String> scopeList = CollectionUtils.wrapList(scopes.split(","));
         final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
         
         scopeList.forEach(s -> {

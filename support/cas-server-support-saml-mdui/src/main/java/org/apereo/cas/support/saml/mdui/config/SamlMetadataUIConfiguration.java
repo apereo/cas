@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.jooq.lambda.Unchecked;
@@ -106,7 +107,7 @@ public class SamlMetadataUIConfiguration {
     @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
     @Bean
     public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter() {
-        return new ChainingMetadataResolverAdapter(Arrays.asList(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
+        return new ChainingMetadataResolverAdapter(CollectionUtils.wrapList(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
     }
 
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
