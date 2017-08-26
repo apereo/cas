@@ -2,6 +2,7 @@ package org.apereo.cas.util.gen;
 
 import org.apereo.cas.util.RandomUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 /**
@@ -55,7 +56,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
      * @return a converted String
      */
     protected String convertBytesToString(final byte[] random) {
-        return new String(random);
+        return new String(random, StandardCharsets.UTF_8);
     }
 
     @Override

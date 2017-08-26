@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -47,7 +48,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     private PrivateKey readPemPrivateKey() throws Exception {
         LOGGER.debug("Attempting to read as PEM [{}]", this.location);
-        try (Reader in = new InputStreamReader(this.location.getInputStream());
+        try (Reader in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
              BufferedReader br = new BufferedReader(in)) {
             final PEMParser pp = new PEMParser(br);
             final PEMKeyPair pemKeyPair = (PEMKeyPair) pp.readObject();

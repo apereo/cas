@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -64,7 +65,7 @@ public class JsonConsentRepository implements ConsentRepository {
     private void readDecisionsFromJsonResource() {
         this.consentDecisions = new LinkedHashSet<>();
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            try (Reader reader = new InputStreamReader(jsonResource.getInputStream())) {
+            try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                 final TypeReference<Set<ConsentDecision>> personList = new TypeReference<Set<ConsentDecision>>() {
                 };
                 this.consentDecisions = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);

@@ -62,7 +62,7 @@ public class GrouperFacade {
                 return new ArrayList<>();
             }
             LOGGER.debug("Found [{}] groups for [{}]", results.length, subjectId);
-            return Arrays.asList(results);
+            return CollectionUtils.wrap(results);
         } catch (final Exception e) {
             LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
                     + ", the url endpoint for Grouper WS is correctly configured and the subject [{}]"

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -67,11 +68,12 @@ public class CasCoreWebConfiguration {
     @Bean
     public HierarchicalMessageSource messageSource(@Qualifier("casCommonMessages") final Properties casCommonMessages) {
         final CasReloadableMessageBundle bean = new CasReloadableMessageBundle();
-        bean.setDefaultEncoding(casProperties.getMessageBundle().getEncoding());
-        bean.setCacheSeconds(casProperties.getMessageBundle().getCacheSeconds());
-        bean.setFallbackToSystemLocale(casProperties.getMessageBundle().isFallbackSystemLocale());
-        bean.setUseCodeAsDefaultMessage(casProperties.getMessageBundle().isUseCodeMessage());
-        bean.setBasenames(casProperties.getMessageBundle().getBaseNames());
+        final MessageBundleProperties mb = casProperties.getMessageBundle();
+        bean.setDefaultEncoding(mb.getEncoding());
+        bean.setCacheSeconds(mb.getCacheSeconds());
+        bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
+        bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
+        bean.setBasenames(mb.getBaseNames().toArray(new String[] {}));
         bean.setCommonMessages(casCommonMessages);
         return bean;
     }
