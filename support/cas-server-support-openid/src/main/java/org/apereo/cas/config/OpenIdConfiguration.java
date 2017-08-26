@@ -19,6 +19,7 @@ import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationAuthorizer;
 import org.apereo.cas.web.AbstractDelegateController;
@@ -183,7 +184,7 @@ public class OpenIdConfiguration {
                 serverManager(), validationAuthorizers);
         
         final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), c));
+        controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
 
         final OpenIdPostUrlHandlerMapping m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);

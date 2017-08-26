@@ -163,7 +163,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
         clientResponse.setSubjectType("public");
         clientResponse.setTokenEndpointAuthMethod(registrationRequest.getTokenEndpointAuthMethod());
         clientResponse.setClientName(registeredService.getName());
-        clientResponse.setGrantTypes(Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
+        clientResponse.setGrantTypes(CollectionUtils.wrapList(OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
                 OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase()));
         clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
         clientResponse.setResponseTypes(CollectionUtils.wrap(OAuth20ResponseTypes.CODE.name().toLowerCase()));
