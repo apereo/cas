@@ -165,7 +165,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
-        final List<BaseAccessTokenGrantRequestExtractor> list = Arrays.asList(
+        final List<BaseAccessTokenGrantRequestExtractor> list = CollectionUtils.wrap(
                 new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry,
                         request, response, centralAuthenticationService, casProperties.getAuthn().getOauth()),
                 new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry,

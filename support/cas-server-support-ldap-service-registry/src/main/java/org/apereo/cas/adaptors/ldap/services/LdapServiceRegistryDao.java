@@ -187,7 +187,7 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
         final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                Arrays.asList(id.toString()));
+                CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 
