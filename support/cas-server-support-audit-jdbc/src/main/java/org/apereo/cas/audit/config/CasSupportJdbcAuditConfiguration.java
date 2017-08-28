@@ -71,7 +71,7 @@ public class CasSupportJdbcAuditConfiguration {
                 new JpaConfigDataHolder(
                         JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaInspektrAuditContext",
-                        CollectionUtils.wrap("org.apereo.cas.audit.entity"),
+                        CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
                         inspektrAuditTrailDataSource()),
                 casProperties.getAudit().getJdbc());
     }
