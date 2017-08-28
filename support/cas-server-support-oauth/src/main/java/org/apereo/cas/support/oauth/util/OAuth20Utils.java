@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
@@ -281,5 +282,27 @@ public final class OAuth20Utils {
                 + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
                 + "While just warning for now, this behavior will be strongly enforced by CAS in future versions.", registeredService.getName());
         return true;
+    }
+
+    /**
+     * Parse request scopes set.
+     *
+     * @param context the context
+     * @return the set
+     */
+    public static Set<String> parseRequestScopes(final J2EContext context) {
+        return parseRequestScopes(context.getRequest());
+    }
+
+    /**
+     * Parse request scopes set.
+     *
+     * @param context the context
+     * @return the set
+     */
+    public static Set<String> parseRequestScopes(final HttpServletRequest context) {
+        final String parameterValues = context.getParameter(OAuth20Constants.SCOPE);
+        final Set<String> scopes = CollectionUtils.wrapSet(parameterValues.split(" "));
+        return scopes;
     }
 }
