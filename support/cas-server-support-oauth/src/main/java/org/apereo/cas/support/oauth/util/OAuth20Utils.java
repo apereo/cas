@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -302,7 +303,9 @@ public final class OAuth20Utils {
      */
     public static Set<String> parseRequestScopes(final HttpServletRequest context) {
         final String parameterValues = context.getParameter(OAuth20Constants.SCOPE);
-        final Set<String> scopes = CollectionUtils.wrapSet(parameterValues.split(" "));
-        return scopes;
+        if (StringUtils.isBlank(parameterValues)) {
+            return new HashSet<>(0);
+        }
+        return CollectionUtils.wrapSet(parameterValues.split(" "));
     }
 }
