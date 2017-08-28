@@ -173,7 +173,7 @@ layout: null
     *   [Overview](/$version/protocol/Protocol-Overview.html)
     *   [CAS](/$version/protocol/CAS-Protocol.html)
     *   [OpenID](/$version/protocol/OpenID-Protocol.html)
-    *   [OAuth](/$version/protocol/OAuth-Protocol.html)
+    *   [OAuth2](/$version/protocol/OAuth-Protocol.html)
     *   [OpenID Connect](/$version/protocol/OIDC-Protocol.html)
     *   [WS-Federation](/$version/protocol/WS-Federation-Protocol.html)
     *   [SAML](#samlprotocol)
