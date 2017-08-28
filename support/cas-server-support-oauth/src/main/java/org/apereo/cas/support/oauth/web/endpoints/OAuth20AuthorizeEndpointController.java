@@ -193,7 +193,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
-
+        
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
@@ -236,7 +236,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
                 registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType));
-
+        
         return builder.build(context, clientId, holder);
     }
 

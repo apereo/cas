@@ -99,12 +99,16 @@ The following fields are supported:
 |-----------------------------------|---------------------------------------------------------------------------------
 | `clientId`                        | The client identifer for the application/service.
 | `clientSecret`                    | The client secret for the application/service.
+| `supportedGrantTypes`             | Collection of supported grant types for this service.
+| `supportedResponseTypes`          | Collection of supported response types for this service.
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
 | `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
 | `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type.
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not restrict strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
 
 ### Attribute Release
 
