@@ -83,7 +83,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Name of attribute to be used for principal's DN.
      */
-    private String principalDnAttributeName = "principalDN";
+    private String principalDnAttributeName = "principalLdapDn";
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
