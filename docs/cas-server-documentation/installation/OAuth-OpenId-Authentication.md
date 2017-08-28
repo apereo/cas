@@ -77,6 +77,15 @@ when this previous access token is expired.
 
 - `/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token.
 
+
+## Grant Type Selection
+
+A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the end user will be using, and the experience you want for your users.
+
+![image](https://user-images.githubusercontent.com/1205228/29772699-235f716e-8c0f-11e7-9138-e4e09332a2d5.png) 
+
+To learn more about profiles and grant types, please [review this guide](https://alexbilbie.com/guide-to-oauth-2-grants/).
+
 ## Register Clients
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
