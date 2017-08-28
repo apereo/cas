@@ -2,8 +2,8 @@ package org.apereo.cas.adaptors.u2f;
 
 import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.DeviceRegistration;
-import com.yubico.u2f.data.messages.AuthenticateRequestData;
-import com.yubico.u2f.data.messages.AuthenticateResponse;
+import com.yubico.u2f.data.messages.SignRequestData;
+import com.yubico.u2f.data.messages.SignResponse;
 import com.yubico.u2f.exceptions.DeviceCompromisedException;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.Authentication;
@@ -51,12 +51,12 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         }
         final Principal p = authentication.getPrincipal();
 
-        final AuthenticateResponse authenticateResponse = AuthenticateResponse.fromJson(tokenCredential.getToken());
+        final SignResponse authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
         final String authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p.getId());
-        final AuthenticateRequestData authenticateRequest = AuthenticateRequestData.fromJson(authJson);
+        final SignRequestData authenticateRequest = SignRequestData.fromJson(authJson);
         DeviceRegistration registration = null;
         try {
-            registration = u2f.finishAuthentication(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p.getId()));
+            registration = u2f.finishSignature(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p.getId()));
             return createHandlerResult(tokenCredential, p, null);
         } catch (final DeviceCompromisedException e) {
             registration = e.getDeviceRegistration();
