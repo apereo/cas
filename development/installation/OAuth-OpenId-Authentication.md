@@ -44,21 +44,21 @@ The following types are supported; they allow you to get an access token represe
 
 The authorization code type is made for UI interactions: the user will enter his own credentials.
 
-- `/cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the `CALLBACK` url
-- `/cas/oauth2.0/accessToken?grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
+- `/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the `CALLBACK` url
+- `/oauth2.0/accessToken?grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
 
 ### Token
 
 The `token` type is also made for UI interactions as well as indirect non-interactive (i.e. Javascript) applications.
 
-- `/cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the `CALLBACK` url.
+- `/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the `CALLBACK` url.
 
 ### Resource Owner Credentials
 
 The `password` grant type allows the OAuth client to directly send the user's credentials to the OAuth server.
 This grant is a great user experience for trusted first party clients both on the web and in native device applications.
 
-- `/cas/oauth2.0/authorize?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
+- `/oauth2.0/authorize?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
 
 You may also pass along a `service` or `X-service` header value that identifies the target application url. The header value
 must match the OAuth service definition in the registry that is linked to the client id.
@@ -68,14 +68,14 @@ must match the OAuth service definition in the registry that is linked to the cl
 The simplest of all of the OAuth grants, this grant is suitable for machine-to-machine authentication 
 where a specific user’s permission to access data is not required.
 
-- `/cas/oauth2.0/authorize?grant_type=client_credentials&client_id=client&secret=secret`
+- `/oauth2.0/authorize?grant_type=client_credentials&client_id=client&secret=secret`
 
 ### Refresh Token
 
 The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token),
 when this previous access token is expired.
 
-- `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token.
+- `/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token.
 
 
 ## Grant Type Selection
@@ -106,7 +106,7 @@ The following fields are supported:
 
 | Field                             | Description
 |-----------------------------------|---------------------------------------------------------------------------------
-| `clientId`                        | The client identifer for the application/service.
+| `clientId`                        | The client identifier for the application/service.
 | `clientSecret`                    | The client secret for the application/service.
 | `supportedGrantTypes`             | Collection of supported grant types for this service.
 | `supportedResponseTypes`          | Collection of supported response types for this service.
