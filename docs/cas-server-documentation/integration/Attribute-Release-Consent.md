@@ -44,8 +44,8 @@ A sample definition follows:
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
     "consentPolicy": {
       "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
-      "excludedAttributes":["java.util.LinkedHashSet", ["test"]],
-      "includeOnlyAttributes":["java.util.LinkedHashSet", ["test"]],
+      "excludedAttributes": ["java.util.LinkedHashSet", ["test"]],
+      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["test"]],
       "enabled": true
     }
   }
