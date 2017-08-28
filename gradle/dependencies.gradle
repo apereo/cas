@@ -217,7 +217,7 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
-                dependencies.create("org.ow2.asm:asm:5.1") {
+                dependencies.create("org.ow2.asm:asm:$ow2AsmVersion") {
                     transitive = false
                     force = true
                 },
