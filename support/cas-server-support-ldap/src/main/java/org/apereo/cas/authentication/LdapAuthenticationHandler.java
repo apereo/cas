@@ -225,10 +225,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                         key, ldapEntry.getDn());
             }
         });
-        final String dnAttribute = (StringUtils.isNotBlank(this.principalDnAttributeName)) ? this.principalDnAttributeName : principalDnAttributeName;
-        LOGGER.debug("Recording principal DN attribute as [{}]", dnAttribute);
+        LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
 
-        attributeMap.put(dnAttribute, ldapEntry.getDn());
+        attributeMap.put(this.principalDnAttributeName, ldapEntry.getDn());
         LOGGER.debug("Created LDAP principal for id [{}] and [{}] attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
     }
