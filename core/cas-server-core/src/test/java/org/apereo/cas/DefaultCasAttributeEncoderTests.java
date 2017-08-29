@@ -11,6 +11,8 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -52,6 +54,8 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class})
