@@ -35,6 +35,8 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsConfiguration.class,
         CasJdbcAuthenticationConfiguration.class, 
         CasCoreServicesConfiguration.class})
 @EnableScheduling
