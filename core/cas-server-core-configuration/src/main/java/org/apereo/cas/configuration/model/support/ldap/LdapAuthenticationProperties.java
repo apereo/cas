@@ -52,11 +52,17 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     private String principalAttributeId;
 
     /**
+     * Name of attribute to be used for principal's DN.
+     */
+    private String principalDnAttributeName = "principalLdapDn";
+
+    /**
      * List of attributes to retrieve from LDAP.
      * Attributes can be virtually remapped to multiple names.
      * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}
      */
     private List principalAttributeList = new ArrayList();
+
     /**
      * Sets a flag that determines whether multiple values are allowed for the {@link #principalAttributeId}.
      * This flag only has an effect if {@link #principalAttributeId} is configured. If multiple values are detected
@@ -65,6 +71,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      *
      */
     private boolean allowMultiplePrincipalAttributeValues;
+
     /**
      * List of additional attributes to retrieve, if any.
      */
@@ -75,7 +82,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * if a specific/configured principal id attribute is not found.
      */
     private boolean allowMissingPrincipalAttributeValue = true;
-    
+
     /**
      * When entry DN should be called as an attribute and stored into the principal.
      */
@@ -132,6 +139,14 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
 
     public void setPrincipalAttributeId(final String principalAttributeId) {
         this.principalAttributeId = principalAttributeId;
+    }
+
+    public String getPrincipalDnAttributeName() {
+        return principalDnAttributeName;
+    }
+
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
     }
 
     public List getPrincipalAttributeList() {
