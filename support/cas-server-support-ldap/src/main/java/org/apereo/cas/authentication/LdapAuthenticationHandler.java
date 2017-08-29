@@ -81,6 +81,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
 
     /**
+     * Name of attribute to be used for principal's DN.
+     */
+    private String principalDnAttributeName = "principalLdapDn";
+
+    /**
      * Creates a new authentication handler that delegates to the given authenticator.
      *
      * @param name             the name
@@ -105,6 +110,15 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public void setPrincipalIdAttribute(final String attributeName) {
         this.principalIdAttribute = attributeName;
+    }
+
+    /**
+     * Sets the name of the principal's dn attribute.
+     *
+     * @param principalDnAttributeName principal's DN attribute name.
+     */
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
     }
 
     /**
@@ -211,10 +225,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                         key, ldapEntry.getDn());
             }
         });
-        final String dnAttribute = getName().concat(".").concat(id);
-        LOGGER.debug("Recording principal DN attribute as [{}]", dnAttribute);
+        LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
 
-        attributeMap.put(dnAttribute, ldapEntry.getDn());
+        attributeMap.put(this.principalDnAttributeName, ldapEntry.getDn());
         LOGGER.debug("Created LDAP principal for id [{}] and [{}] attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
     }

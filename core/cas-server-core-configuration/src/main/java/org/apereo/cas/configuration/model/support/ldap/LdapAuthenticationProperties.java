@@ -29,6 +29,8 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
 
     private String principalAttributeId;
 
+    private String principalDnAttributeName;
+
     private List principalAttributeList = new ArrayList();
     private boolean allowMultiplePrincipalAttributeValues;
     private List additionalAttributes = new ArrayList();
@@ -75,6 +77,14 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
 
     public void setPrincipalAttributeId(final String principalAttributeId) {
         this.principalAttributeId = principalAttributeId;
+    }
+
+    public String getPrincipalDnAttributeName() {
+        return principalDnAttributeName;
+    }
+
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
     }
 
     public List getPrincipalAttributeList() {
