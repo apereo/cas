@@ -67,7 +67,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param nameIdValue  the name id value
      * @return the name iD
      */
-    protected NameID getNameID(final String nameIdFormat, final String nameIdValue) {
+    public NameID getNameID(final String nameIdFormat, final String nameIdValue) {
         final NameID nameId = newSamlObject(NameID.class);
         nameId.setFormat(nameIdFormat);
         nameId.setValue(nameIdValue);
@@ -322,40 +322,70 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * New subject element.
+     * New subject subject.
      *
      * @param nameIdFormat the name id format
      * @param nameIdValue  the name id value
      * @param recipient    the recipient
      * @param notOnOrAfter the not on or after
      * @param inResponseTo the in response to
+     * @param notBefore    the not before
      * @return the subject
      */
     public Subject newSubject(final String nameIdFormat, final String nameIdValue,
                               final String recipient, final ZonedDateTime notOnOrAfter,
-                              final String inResponseTo) {
+                              final String inResponseTo, final ZonedDateTime notBefore) {
+        final NameID nameID = getNameID(nameIdFormat, nameIdValue);
+        return newSubject(nameID, recipient, notOnOrAfter, inResponseTo, notBefore);
+    }
 
-        LOGGER.debug("Building subject for NameID [{}]/[{}] and recipient [{}], in response to [{}]",
-                nameIdValue, nameIdFormat, recipient, inResponseTo);
+    /**
+     * New subject element.
+     *
+     * @param nameId       the nameId
+     * @param recipient    the recipient
+     * @param notOnOrAfter the not on or after
+     * @param inResponseTo the in response to
+     * @param notBefore    the not before
+     * @return the subject
+     */
+    public Subject newSubject(final NameID nameId, final String recipient, final ZonedDateTime notOnOrAfter, 
+                              final String inResponseTo, final ZonedDateTime notBefore) {
+
+        LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
         final SubjectConfirmationData data = newSamlObject(SubjectConfirmationData.class);
-        data.setRecipient(recipient);
-        data.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
-        data.setInResponseTo(inResponseTo);
+        
+        if (StringUtils.isNotBlank(recipient)) {
+            data.setRecipient(recipient);
+        }
+        
+        if (notOnOrAfter != null) {
+            data.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
+        }
 
         if (StringUtils.isNotBlank(inResponseTo)) {
+            data.setInResponseTo(inResponseTo);
+
             final String ip = InetAddressUtils.getByName(inResponseTo);
             if (StringUtils.isNotBlank(ip)) {
                 data.setAddress(ip);
             }
+            
         }
-
+        
+        if (notBefore != null) {
+            data.setNotBefore(DateTimeUtils.dateTimeOf(notBefore));
+        }
+        
         confirmation.setSubjectConfirmationData(data);
 
         final Subject subject = newSamlObject(Subject.class);
-        subject.setNameID(getNameID(nameIdFormat, nameIdValue));
+        if (nameId != null) {
+            subject.setNameID(nameId);
+        }
         subject.getSubjectConfirmations().add(confirmation);
 
         LOGGER.debug("Built subject [{}]", subject);
