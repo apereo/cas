@@ -117,7 +117,10 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
-        return new U2FMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, u2fFlowRegistry());
+        final CasWebflowConfigurer w = new U2FMultifactorWebflowConfigurer(flowBuilderServices, 
+                loginFlowDefinitionRegistry, u2fFlowRegistry(), applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")

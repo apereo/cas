@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.gauth.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -17,8 +19,10 @@ public class GoogleAuthenticatorMultifactorTrustWebflowConfigurer extends Abstra
     public GoogleAuthenticatorMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                 final boolean enableDeviceRegistration,
-                                                                final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration);
+                                                                final FlowDefinitionRegistry flowDefinitionRegistry,
+                                                                final ApplicationContext applicationContext,
+                                                                final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration, applicationContext, casProperties);
         this.flowDefinitionRegistry = flowDefinitionRegistry;
     }
 

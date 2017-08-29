@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
@@ -70,7 +71,7 @@ public class CasSupportJdbcAuditConfiguration {
                 new JpaConfigDataHolder(
                         JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaInspektrAuditContext",
-                        new String[]{"org.apereo.cas.audit.entity"},
+                        CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
                         inspektrAuditTrailDataSource()),
                 casProperties.getAudit().getJdbc());
     }

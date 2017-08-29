@@ -8,4 +8,5 @@ dependencies {
     implementation libraries.pac4j
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-tickets")
 }

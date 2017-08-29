@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,7 +43,7 @@ public class SamlMetadataUIProperties implements Serializable {
      * If each metadata resource has a signing certificate, they can be added onto the resource with a {@code ::}
      * separator. Example: {@code classpath:/sp-metadata.xml::classpath:/pub.key}.
      */
-    private List<String> resources = Arrays.asList("classpath:/sp-metadata::classpath:/pub.key,"
+    private List<String> resources = CollectionUtils.wrap("classpath:/sp-metadata::classpath:/pub.key,"
             + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");
 
     /**

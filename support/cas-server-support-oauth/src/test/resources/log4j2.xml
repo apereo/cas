@@ -15,6 +15,9 @@
         </RollingFile>
     </Appenders>
     <Loggers>
+        <Logger name="org.apereo" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>

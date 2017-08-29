@@ -23,6 +23,14 @@ import java.util.concurrent.TimeUnit;
 public class SamlIdPProperties implements Serializable {
 
     private static final long serialVersionUID = -5848075783676789852L;
+
+    /**
+     * Indicates whether attribute query profile is enabled.
+     * Enabling this setting would allow CAS to record SAML
+     * responses and have them be made available later for attribute lookups.
+     */
+    private boolean attributeQueryProfileEnabled;
+
     /**
      * The SAML entity id for the deployment.
      */
@@ -57,6 +65,14 @@ public class SamlIdPProperties implements Serializable {
      * Settings related to algorithms used for signing, etc.
      */
     private Algorithms algs = new Algorithms();
+
+    public boolean isAttributeQueryProfileEnabled() {
+        return attributeQueryProfileEnabled;
+    }
+
+    public void setAttributeQueryProfileEnabled(final boolean attributeQueryProfileEnabled) {
+        this.attributeQueryProfileEnabled = attributeQueryProfileEnabled;
+    }
 
     public Set<String> getAuthenticationContextClassMappings() {
         return authenticationContextClassMappings;

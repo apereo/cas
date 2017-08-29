@@ -1,12 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
-import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
@@ -33,9 +34,9 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
     @Override
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver, final MessageContext context,
                                                                final RequestAbstractType profileRequest) throws Exception {
-        final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(casSamlIdPMetadataResolver);
-        roleDescriptorResolver.initialize();
-        return roleDescriptorResolver;
+
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
     }
 
     @Override

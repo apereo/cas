@@ -19,7 +19,7 @@ CAS having received an authentication request via its `/login` endpoint, will co
 
 All JWTs are by default signed and encrypted by CAS based on keys generated and controlled during deployment. Such keys may be exchanged with client applications to unpack the JWT and access claims.
 
-## Web flow Diagram
+## Flow Diagram
 
 <a href="../images/cas_flow_jwt_diagram.png" target="_blank"><img src="../images/cas_flow_jwt_diagram.png" alt="CAS Web flow JWT diagram" title="CAS Web flow JWT diagram" /></a>
 
