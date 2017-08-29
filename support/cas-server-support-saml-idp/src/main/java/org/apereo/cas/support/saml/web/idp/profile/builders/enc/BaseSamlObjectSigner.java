@@ -135,8 +135,7 @@ public class BaseSamlObjectSigner {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareSamlOutboundDestinationHandler(final MessageContext<T> outboundContext)
-            throws Exception {
+    protected <T extends SAMLObject> void prepareSamlOutboundDestinationHandler(final MessageContext<T> outboundContext) throws Exception {
         final SAMLOutboundDestinationHandler handlerDest = new SAMLOutboundDestinationHandler();
         handlerDest.initialize();
         handlerDest.invoke(outboundContext);
@@ -149,8 +148,7 @@ public class BaseSamlObjectSigner {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareEndpointURLSchemeSecurityHandler(final MessageContext<T> outboundContext)
-            throws Exception {
+    protected <T extends SAMLObject> void prepareEndpointURLSchemeSecurityHandler(final MessageContext<T> outboundContext) throws Exception {
         final EndpointURLSchemeSecurityHandler handlerEnd = new EndpointURLSchemeSecurityHandler();
         handlerEnd.initialize();
         handlerEnd.invoke(outboundContext);

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import com.google.common.collect.Sets;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
@@ -14,7 +15,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
-import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
 import org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPRedirectDeflateSignatureSecurityHandler;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
@@ -43,7 +43,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SamlObjectSignatureValidator}.
@@ -141,9 +143,8 @@ public class SamlObjectSignatureValidator {
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver,
                                                                final MessageContext context,
                                                                final RequestAbstractType profileRequest) throws Exception {
-        final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(resolver);
-        roleDescriptorResolver.initialize();
-        return roleDescriptorResolver;
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        return SamlIdPUtils.getRoleDescriptorResolver(resolver, idp.getMetadata().isRequireValidMetadata());
     }
 
     private void validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest, final HttpServletRequest request,
@@ -178,24 +179,40 @@ public class SamlObjectSignatureValidator {
         }
 
         LOGGER.debug("Resolving signing credentials for [{}]", peer.getEntityId());
-        final Credential credential = getSigningCredential(roleDescriptorResolver, profileRequest);
-        if (credential == null) {
-            throw new SamlException("Signing credential for validation could not be resolved");
+        final Set<Credential> credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
+        if (credentials == null || credentials.isEmpty()) {
+            throw new SamlException("Signing credentials for validation could not be resolved");
         }
 
-        final CredentialResolver resolver = new StaticCredentialResolver(credential);
-        final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(credential);
-        final SignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
-        validationParams.setSignatureTrustEngine(trustEngine);
-        secCtx.setSignatureValidationParameters(validationParams);
+        boolean foundValidCredential = false;
+        final Iterator<Credential> it = credentials.iterator();
+        while (!foundValidCredential && it.hasNext()) {
+            try {
+                final Credential c = it.next();
+                
+                final CredentialResolver resolver = new StaticCredentialResolver(c);
+                final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(c);
+                final SignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
+                validationParams.setSignatureTrustEngine(trustEngine);
+                secCtx.setSignatureValidationParameters(validationParams);
 
-        handler.setHttpServletRequest(request);
-        LOGGER.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
-        handler.initialize();
+                handler.setHttpServletRequest(request);
+                LOGGER.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
+                handler.initialize();
+                LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
+                handler.invoke(context);
+                LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
+                
+                foundValidCredential = true;
+            } catch (final Exception e) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+        }
 
-        LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
-        handler.invoke(context);
-        LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
+        if (!foundValidCredential) {
+            LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
+            throw new SamlException("No valid signing credentials for validation could not be resolved");
+        }
     }
 
     private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
@@ -207,17 +224,32 @@ public class SamlObjectSignatureValidator {
         validator.validate(signature);
         LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
-        final Credential credential = getSigningCredential(roleDescriptorResolver, profileRequest);
-        if (credential == null) {
-            throw new SamlException("Signing credential for validation could not be resolved");
+        final Set<Credential> credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
+        if (credentials == null || credentials.isEmpty()) {
+            throw new SamlException("Signing credentials for validation could not be resolved");
         }
 
-        LOGGER.debug("Validating signature using credentials for [{}]", credential.getEntityId());
-        SignatureValidator.validate(signature, credential);
-        LOGGER.info("Successfully validated the request signature.");
+        boolean foundValidCredential = false;
+        final Iterator<Credential> it = credentials.iterator();
+        while (!foundValidCredential && it.hasNext()) {
+            try {
+                final Credential c = it.next();
+                LOGGER.debug("Validating signature using credentials for [{}]", c.getEntityId());
+                SignatureValidator.validate(signature, c);
+                LOGGER.info("Successfully validated the request signature.");
+                foundValidCredential = true;
+            } catch (final Exception e) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+        }
+
+        if (!foundValidCredential) {
+            LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
+            throw new SamlException("No valid signing credentials for validation could not be resolved");
+        }
     }
 
-    private Credential getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
+    private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
         try {
             final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
             final SignatureValidationConfiguration config = getSignatureValidationConfiguration();
@@ -231,7 +263,7 @@ public class SamlObjectSignatureValidator {
 
             buildEntityCriteriaForSigningCredential(profileRequest, criteriaSet);
 
-            return kekCredentialResolver.resolveSingle(criteriaSet);
+            return Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
