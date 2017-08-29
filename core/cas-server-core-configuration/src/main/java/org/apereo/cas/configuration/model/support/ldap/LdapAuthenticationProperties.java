@@ -136,6 +136,14 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
         this.principalAttributeId = principalAttributeId;
     }
 
+    public String getPrincipalDnAttributeName() {
+        return principalDnAttributeName;
+    }
+
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
+    }
+
     public List getPrincipalAttributeList() {
         return principalAttributeList;
     }
