@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link InCommonRSAttributeReleasePolicy}.
@@ -20,10 +21,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class InCommonRSAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
+public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(InCommonRSAttributeReleasePolicy.class);
-
     private List<String> allowedAttributes = CollectionUtils.wrapList("eduPersonPrincipalName",
             "eduPersonTargetedID", "email", "displayName", "givenName", "surname",
             "eduPersonScopedAffiliation");
@@ -31,27 +30,17 @@ public class InCommonRSAttributeReleasePolicy extends BaseSamlRegisteredServiceA
     public InCommonRSAttributeReleasePolicy() {
         setAllowedAttributes(allowedAttributes);
     }
-
+    
+    @JsonIgnore
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service,
-                                                                        final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor) {
-        final EntityAttributesPredicate.Candidate attr =
-                new EntityAttributesPredicate.Candidate("http://macedir.org/entity-category");
-        attr.setValues(CollectionUtils.wrap("http://refeds.org/category/research-and-scholarship"));
+    public String getEntityAttribute() {
+        return "http://macedir.org/entity-category";
+    }
 
-        LOGGER.debug("Loading entity attribute predicate filter for candidate [{}] with values [{}]",
-                attr.getName(), attr.getValues());
-
-        final EntityAttributesPredicate predicate = new EntityAttributesPredicate(CollectionUtils.wrap(attr), true);
-
-        if (predicate.apply(entityDescriptor)) {
-            return authorizeReleaseOfAllowedAttributes(attributes);
-        }
-        return new HashMap<>();
+    @JsonIgnore
+    @Override
+    public Set<String> getEntityAttributeValues() {
+        return CollectionUtils.wrapSet("http://refeds.org/category/research-and-scholarship");
     }
 
     @JsonIgnore
