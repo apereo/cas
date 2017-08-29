@@ -51,6 +51,8 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      */
     private String principalAttributeId;
 
+    private String principalDnAttributeName;
+
     /**
      * List of attributes to retrieve from LDAP.
      * Attributes can be virtually remapped to multiple names.

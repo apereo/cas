@@ -1867,6 +1867,7 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 
 # cas.authn.ldap[0].collectDnAttribute=false
+# cas.authn.ldap[0].principalDnAttributeName=principalLdapDn
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].credentialCriteria=
