@@ -12,14 +12,12 @@ import org.apereo.cas.util.JsonUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -50,50 +48,45 @@ public class HealthCheckController extends BaseCasMvcEndpoint {
      */
     @GetMapping
     @ResponseBody
-    protected WebAsyncTask<HealthStatus> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected void handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         ensureEndpointAccessIsAuthorized(request, response);
 
-        final Callable<HealthStatus> asyncTask = () -> {
-            final HealthStatus healthStatus = healthCheckMonitor.observe();
-            response.setStatus(healthStatus.getCode().value());
+        final HealthStatus healthStatus = healthCheckMonitor.observe();
+        response.setStatus(healthStatus.getCode().value());
 
-            if (StringUtils.equals(request.getParameter("format"), "json")) {
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                JsonUtils.render(healthStatus.getDetails(), response);
-            } else {
-                final StringBuilder sb = new StringBuilder();
-                sb.append("Health: ").append(healthStatus.getCode());
+        if (StringUtils.equals(request.getParameter("format"), "json")) {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            JsonUtils.render(healthStatus.getDetails(), response);
+        } else {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("Health: ").append(healthStatus.getCode());
 
-                final AtomicInteger i = new AtomicInteger();
-                healthStatus.getDetails().forEach((name, status) -> {
-                    response.addHeader("X-CAS-" + name, String.format("%s;%s", status.getCode(), status.getDescription()));
-                    sb.append("\n\n\t").append(i.incrementAndGet()).append('.').append(name).append(": ");
-                    sb.append(status.getCode());
-                    if (status.getDescription() != null) {
-                        sb.append(" - ").append(status.getDescription());
-                    }
-                });
-                sb.append("\n\nHost:\t\t").append(
-                        StringUtils.isBlank(casProperties.getHost().getName())
-                                ? InetAddressUtils.getCasServerHostName()
-                                : casProperties.getHost().getName()
-                );
-
-                sb.append("\nServer:\t\t").append(casProperties.getServer().getName());
-                sb.append("\nVersion:\t").append(CasVersion.getVersion());
-                
-                response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-                try (Writer writer = response.getWriter()) {
-                    IOUtils.copy(new ByteArrayInputStream(sb.toString().getBytes(response.getCharacterEncoding())),
-                            writer,
-                            StandardCharsets.UTF_8);
-                    writer.flush();
+            final AtomicInteger i = new AtomicInteger();
+            healthStatus.getDetails().forEach((name, status) -> {
+                response.addHeader("X-CAS-" + name, String.format("%s;%s", status.getCode(), status.getDescription()));
+                sb.append("\n\n\t").append(i.incrementAndGet()).append('.').append(name).append(": ");
+                sb.append(status.getCode());
+                if (status.getDescription() != null) {
+                    sb.append(" - ").append(status.getDescription());
                 }
-            }
-            return null;
-        };
+            });
+            sb.append("\n\nHost:\t\t").append(
+                    StringUtils.isBlank(casProperties.getHost().getName())
+                            ? InetAddressUtils.getCasServerHostName()
+                            : casProperties.getHost().getName()
+            );
 
-        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
+            sb.append("\nServer:\t\t").append(casProperties.getServer().getName());
+            sb.append("\nVersion:\t").append(CasVersion.getVersion());
+
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            try (Writer writer = response.getWriter()) {
+                IOUtils.copy(new ByteArrayInputStream(sb.toString().getBytes(response.getCharacterEncoding())),
+                        writer,
+                        StandardCharsets.UTF_8);
+                writer.flush();
+            }
+        }
     }
 }
