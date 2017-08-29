@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import com.google.common.collect.Sets;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -10,22 +11,32 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler;
 import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
+import org.opensaml.saml.security.impl.MetadataCredentialResolver;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
+import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.SignatureValidationConfiguration;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
+import org.opensaml.xmlsec.criterion.SignatureValidationConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +49,7 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link BaseSamlObjectSigner}.
@@ -67,16 +79,20 @@ public class BaseSamlObjectSigner {
      * The Override white listed signature signing algorithms.
      */
     protected List overrideWhiteListedAlgorithms;
+
+    private final MetadataResolver casSamlIdPMetadataResolver;
     
     @Autowired
     private CasConfigurationProperties casProperties;
 
     public BaseSamlObjectSigner(final List overrideSignatureReferenceDigestMethods, final List overrideSignatureAlgorithms,
-                                final List overrideBlackListedSignatureAlgorithms, final List overrideWhiteListedAlgorithms) {
+                                final List overrideBlackListedSignatureAlgorithms, final List overrideWhiteListedAlgorithms,
+                                final MetadataResolver casSamlIdPMetadataResolver) {
         this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
         this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
         this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
         this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+        this.casSamlIdPMetadataResolver = casSamlIdPMetadataResolver;
     }
 
     /**
@@ -119,8 +135,7 @@ public class BaseSamlObjectSigner {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext)
-            throws Exception {
+    protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext) throws Exception {
         LOGGER.debug("Attempting to sign the outbound SAML message...");
         final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
@@ -203,7 +218,7 @@ public class BaseSamlObjectSigner {
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor) throws SAMLException {
         try {
             final CriteriaSet criteria = new CriteriaSet();
-            criteria.add(new SignatureSigningConfigurationCriterion(getSignatureSigningConfiguration()));
+            criteria.add(new SignatureSigningConfigurationCriterion(getSignatureSigningConfiguration(descriptor)));
             criteria.add(new RoleDescriptorCriterion(descriptor));
             final SAMLMetadataSignatureSigningParametersResolver resolver = new SAMLMetadataSignatureSigningParametersResolver();
             LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
@@ -229,10 +244,11 @@ public class BaseSamlObjectSigner {
     /**
      * Gets signature signing configuration.
      *
+     * @param roleDescriptor the role descriptor
      * @return the signature signing configuration
      * @throws Exception the exception
      */
-    protected SignatureSigningConfiguration getSignatureSigningConfiguration() throws Exception {
+    protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor) throws Exception {
         final BasicSignatureSigningConfiguration config =
                 DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
@@ -264,10 +280,25 @@ public class BaseSamlObjectSigner {
         LOGGER.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         final PrivateKey privateKey = getSigningPrivateKey();
-        final X509Certificate certificate = getSigningCertificate();
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        
+        final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
+        kekCredentialResolver.setRoleDescriptorResolver(SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, 
+                idp.getMetadata().isRequireValidMetadata()));
+        kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
+        kekCredentialResolver.initialize();
+        final CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
+        criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
+        criteriaSet.add(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getEntityId()));
+        criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
 
+        final Set<Credential> credentials = Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
         final List<Credential> creds = new ArrayList<>();
-        creds.add(new BasicX509Credential(certificate, privateKey));
+        credentials.forEach(c -> {
+            creds.add(new BasicCredential(c.getPublicKey(), privateKey));
+        });
+       
         config.setSigningCredentials(creds);
         LOGGER.debug("Signature signing credentials configured");
 
@@ -282,6 +313,7 @@ public class BaseSamlObjectSigner {
      */
     protected X509Certificate getSigningCertificate() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
+        
         LOGGER.debug("Locating signature signing certificate file from [{}]", samlIdp.getMetadata().getSigningCertFile());
         final FileSystemResource resource = new FileSystemResource(samlIdp.getMetadata().getSigningCertFile().getFile());
         return SamlUtils.readCertificate(resource);
