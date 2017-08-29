@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
-import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostSimpleSignEncoder;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
