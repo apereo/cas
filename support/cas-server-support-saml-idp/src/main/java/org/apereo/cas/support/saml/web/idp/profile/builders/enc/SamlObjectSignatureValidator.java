@@ -229,7 +229,7 @@ public class SamlObjectSignatureValidator {
 
         final Set<Credential> credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
         if (credentials == null || credentials.isEmpty()) {
-            throw new SamlException("Signing credentials for validation could not be resolved");
+            throw new SamlException("Signing credentials for validation could not be resolved based on the provided signature");
         }
 
         boolean foundValidCredential = false;
