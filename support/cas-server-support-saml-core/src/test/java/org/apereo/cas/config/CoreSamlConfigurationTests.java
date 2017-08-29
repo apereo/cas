@@ -25,6 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreHttpConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CoreSamlConfiguration.class,
+                CasCoreTicketCatalogConfiguration.class,
+                CasCoreTicketsConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 CasCoreServicesConfiguration.class})
 @EnableScheduling

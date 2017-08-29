@@ -61,6 +61,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsConfiguration.class,
         CasCoreServicesConfiguration.class,
         RefreshAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,

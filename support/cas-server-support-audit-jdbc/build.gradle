@@ -6,6 +6,7 @@ dependencies {
     provided project(":core:cas-server-core-audit")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }
