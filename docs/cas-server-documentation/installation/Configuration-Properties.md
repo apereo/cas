@@ -5108,6 +5108,11 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.jpa.properties.propertyName=propertyValue
 ```
 
+### LDAP Attribute Consent
+
+```properties
+```
+
 ### REST Attribute Consent
 
 ```properties

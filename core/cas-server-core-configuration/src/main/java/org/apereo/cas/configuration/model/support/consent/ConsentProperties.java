@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.consent;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -33,6 +34,11 @@ public class ConsentProperties implements Serializable {
      */
     private Rest rest = new Rest();
 
+    /**
+     * Keep consent decisions stored via LDAP user records.
+     */
+    private Ldap ldap = new Ldap();
+    
     /**
      * Keep consent decisions stored via JDBC resources.
      */
@@ -76,6 +82,14 @@ public class ConsentProperties implements Serializable {
 
     public void setJpa(final Jpa jpa) {
         this.jpa = jpa;
+    }
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(Ldap ldap) {
+        this.ldap = ldap;
     }
 
     public int getReminder() {
@@ -124,6 +138,60 @@ public class ConsentProperties implements Serializable {
         public MongoDb() {
             setCollection("MongoDbCasConsentRepository");
         }
+    }
+    
+    public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = 1L;
+        
+        /**
+         * Name of LDAP attribute that holds consent decisions as JSON
+         */
+        private String consentAttributeName;        
+        /**
+         * Whether subtree searching is allowed.
+         */
+        private boolean subtreeSearch = true;
+        /**
+         * Base DN to use.
+         */
+        private String baseDn;
+        /**
+         * User filter to use for searching.
+         * Syntax is {@code cn={user}} or {@code cn={0}}.
+         */
+        private String userFilter;
+
+        public String getConsentAttributeName() {
+            return consentAttributeName;
+        }
+        
+        public void setConsentAttributeName(final String consentAttributeName) {
+            this.consentAttributeName = consentAttributeName;
+        }
+
+        public boolean isSubtreeSearch() {
+            return subtreeSearch;
+        }
+
+        public void setSubtreeSearch(final boolean subtreeSearch) {
+            this.subtreeSearch = subtreeSearch;
+        }
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getUserFilter() {
+            return userFilter;
+        }
+
+        public void setUserFilter(final String userFilter) {
+            this.userFilter = userFilter;
+	}
     }
     
     public static class Rest implements Serializable {

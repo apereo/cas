@@ -146,6 +146,18 @@ The consent decision object in transit will and must match the following structu
 
 ### LDAP
 
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-consent-ldap</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ldap-attribute-consent).
+
 
 ### Custom
 
