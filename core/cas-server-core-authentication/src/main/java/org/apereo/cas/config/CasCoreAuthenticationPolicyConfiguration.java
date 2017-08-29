@@ -12,8 +12,10 @@ import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,6 +39,10 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationPolicyConfiguration {
 
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+    
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
@@ -68,6 +74,11 @@ public class CasCoreAuthenticationPolicyConfiguration {
             return policies;
         }
 
+        if (police.getUniquePrincipal().isEnabled()) {
+            policies.add(new UniquePrincipalAuthenticationPolicy(this.ticketRegistry));
+            return policies;
+        }
+        
         if (!police.getGroovy().isEmpty()) {
             police.getGroovy().forEach(groovy -> policies.add(new GroovyScriptAuthenticationPolicy(resourceLoader, groovy.getScript())));
             return policies;
