@@ -62,7 +62,7 @@ layout: null
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [Proxying](/$version/installation/Configuring-Proxy-Authentication.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
-    *   [Surrogate](/$version/installation/Surrogate-Authentication.html)
+    *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
     
 * [Attributes](#casattributes)
@@ -173,7 +173,7 @@ layout: null
     *   [Overview](/$version/protocol/Protocol-Overview.html)
     *   [CAS](/$version/protocol/CAS-Protocol.html)
     *   [OpenID](/$version/protocol/OpenID-Protocol.html)
-    *   [OAuth](/$version/protocol/OAuth-Protocol.html)
+    *   [OAuth2](/$version/protocol/OAuth-Protocol.html)
     *   [OpenID Connect](/$version/protocol/OIDC-Protocol.html)
     *   [WS-Federation](/$version/protocol/WS-Federation-Protocol.html)
     *   [SAML](#samlprotocol)

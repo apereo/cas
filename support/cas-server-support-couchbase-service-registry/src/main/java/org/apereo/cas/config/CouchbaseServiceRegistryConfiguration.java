@@ -25,6 +25,8 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseServiceRegistryConfiguration {
 
+
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 

@@ -92,7 +92,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         this.encoding = encoding;
         this.issueLength = issueLength;
 
-        LOGGER.debug("Using [{}] seconds as skew allowance.", skewAllowance);
+        LOGGER.trace("Using [{}] seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;
     }
 

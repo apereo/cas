@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -27,12 +27,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class CouchbaseClientFactory {
 
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseClientFactory.class);
     private static final int DEFAULT_TIMEOUT = 5;
 
     private Cluster cluster;
     private Bucket bucket;
-    private final List<View> views;
+    private final Collection<View> views;
     private final Set<String> nodes;
 
     /* The name of the getBucket, will use the default getBucket unless otherwise specified. */
@@ -58,7 +59,7 @@ public class CouchbaseClientFactory {
      */
     public CouchbaseClientFactory(final Set<String> nodes, final String bucketName,
                                   final String bucketPassword, final long timeout,
-                                  final String documentName, final List<View> views) {
+                                  final String documentName, final Collection<View> views) {
         this.nodes = nodes;
         this.bucketName = bucketName;
         this.bucketPassword = bucketPassword;
@@ -126,7 +127,7 @@ public class CouchbaseClientFactory {
                 LOGGER.info("Connected to Couchbase getBucket [{}]", this.bucketName);
                 if (this.views != null && this.designDocument != null) {
                     LOGGER.debug("Ensure that indexes exist in getBucket [{}]", this.bucket.name());
-                    final DesignDocument newDocument = DesignDocument.create(this.designDocument, views);
+                    final DesignDocument newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
                     if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(this.designDocument))) {
                         LOGGER.warn("Missing indexes in getBucket [{}] for document [{}]", this.bucket.name(), this.designDocument);
                         this.bucket.bucketManager().upsertDesignDocument(newDocument);

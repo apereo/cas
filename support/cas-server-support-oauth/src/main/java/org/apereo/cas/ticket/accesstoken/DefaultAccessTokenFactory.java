@@ -9,6 +9,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import java.util.Collection;
+
 /**
  * Default OAuth access token factory.
  *
@@ -33,9 +35,11 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     @Override
-    public AccessToken create(final Service service, final Authentication authentication, final TicketGrantingTicket ticketGrantingTicket) {
+    public AccessToken create(final Service service, final Authentication authentication,
+                              final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         final String codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-        final AccessToken at = new AccessTokenImpl(codeId, service, authentication, this.expirationPolicy, ticketGrantingTicket);
+        final AccessToken at = new AccessTokenImpl(codeId, service, authentication, 
+                this.expirationPolicy, ticketGrantingTicket, scopes);
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }

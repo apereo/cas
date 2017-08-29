@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -45,6 +46,9 @@ public class DigestAuthenticationConfiguration {
     private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
@@ -55,7 +59,10 @@ public class DigestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer() {
-        return new DigestAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        final CasWebflowConfigurer w = new DigestAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, 
+                applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @Autowired

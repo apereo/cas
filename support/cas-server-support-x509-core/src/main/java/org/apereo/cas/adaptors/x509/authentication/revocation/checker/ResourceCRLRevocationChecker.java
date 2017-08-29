@@ -15,7 +15,6 @@ import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,7 +79,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     public ResourceCRLRevocationChecker(final Resource[] crl,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this(false, null, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
-                new ResourceCRLFetcher(), Arrays.asList(crl));
+                new ResourceCRLFetcher(), CollectionUtils.wrapList(crl));
 
     }
     
@@ -104,7 +103,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     }
 
     public ResourceCRLRevocationChecker(final Resource... crls) {
-        this(new ResourceCRLFetcher(), Arrays.asList(crls), DEFAULT_REFRESH_INTERVAL);
+        this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
     }
     
     /**

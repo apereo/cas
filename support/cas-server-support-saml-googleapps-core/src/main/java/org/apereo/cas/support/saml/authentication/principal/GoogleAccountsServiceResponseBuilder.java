@@ -171,9 +171,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final Conditions conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
                 currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
-
+        
         final Subject subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
-                service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId());
+                service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId(), null);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);

@@ -1,11 +1,14 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -14,8 +17,6 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
-import java.util.Arrays;
 
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.
@@ -42,8 +43,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private Action passwordChangeAction;
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                               final ApplicationContext applicationContext,
+                                               final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
@@ -103,7 +106,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private void configurePasswordResetFlow(final Flow flow, final String id) {
         createFlowVariable(flow, FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
-        final BinderConfiguration binder = createStateBinderConfiguration(Arrays.asList(FLOW_VAR_ID_PASSWORD, "confirmedPassword"));
+        final BinderConfiguration binder = createStateBinderConfiguration(CollectionUtils.wrapList(FLOW_VAR_ID_PASSWORD, "confirmedPassword"));
         final ViewState viewState = createViewState(flow, id, id, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 

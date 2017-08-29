@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * This is {@link JpaEventsConfiguration}, defines certain beans via configuration
@@ -49,8 +51,8 @@ public class JpaEventsConfiguration {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
     }
     
-    public String[] jpaEventPackagesToScan() {
-        return new String[]{CasEvent.class.getPackage().getName()};
+    public List<String> jpaEventPackagesToScan() {
+        return CollectionUtils.wrap(CasEvent.class.getPackage().getName());
     }
     
     @Lazy

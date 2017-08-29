@@ -41,6 +41,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     private boolean authorizedToReleaseCredentialPassword;
     private boolean authorizedToReleaseProxyGrantingTicket;
     private boolean excludeDefaultAttributes;
+    private boolean authorizedToReleaseAuthenticationAttributes = true;
     private String principalIdAttribute;
 
     /**
@@ -106,13 +107,22 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     public void setAuthorizedToReleaseProxyGrantingTicket(final boolean authorizedToReleaseProxyGrantingTicket) {
         this.authorizedToReleaseProxyGrantingTicket = authorizedToReleaseProxyGrantingTicket;
     }
-
+    
     public boolean isExcludeDefaultAttributes() {
         return excludeDefaultAttributes;
     }
 
     public void setExcludeDefaultAttributes(final boolean excludeDefaultAttributes) {
         this.excludeDefaultAttributes = excludeDefaultAttributes;
+    }
+
+    @Override
+    public boolean isAuthorizedToReleaseAuthenticationAttributes() {
+        return authorizedToReleaseAuthenticationAttributes;
+    }
+
+    public void setAuthorizedToReleaseAuthenticationAttributes(final boolean authorizedToReleaseAuthenticationAttributes) {
+        this.authorizedToReleaseAuthenticationAttributes = authorizedToReleaseAuthenticationAttributes;
     }
 
     @Override
@@ -127,14 +137,18 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         if (this.consentPolicy != null) {
             LOGGER.debug("Activating consent policy [{}] for service [{}]", this.consentPolicy, service);
             
-            consentPolicy.getExcludedAttributes().forEach(attributes::remove);
-            LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
+            if (consentPolicy.getExcludedAttributes() != null && !consentPolicy.getExcludedAttributes().isEmpty()) {
+                consentPolicy.getExcludedAttributes().forEach(attributes::remove);
+                LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
+            } else {
+                LOGGER.debug("No attributes are defined per the consent policy to be excluded from the consentable attributes");
+            }
 
             if (consentPolicy.getIncludeOnlyAttributes() != null && !consentPolicy.getIncludeOnlyAttributes().isEmpty()) {
                 attributes.keySet().retainAll(consentPolicy.getIncludeOnlyAttributes());
                 LOGGER.debug("Consentable attributes after force-including attributes are [{}]", attributes);
             } else {
-                LOGGER.debug("No attributes are defined per the consent policy to forcefully be included in the consentable attributes", attributes);
+                LOGGER.debug("No attributes are defined per the consent policy to forcefully be included in the consentable attributes");
             }
         } else {
             LOGGER.debug("No consent policy is defined for service [{}]. Using the collection of attributes released for consent", service);
@@ -271,7 +285,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append(getPrincipalAttributesRepository())
                 .append(isExcludeDefaultAttributes())
                 .append(getPrincipalIdAttribute())
-                .append(consentPolicy)
+                .append(getConsentPolicy())
+                .append(isAuthorizedToReleaseAuthenticationAttributes())
                 .toHashCode();
     }
 
@@ -298,7 +313,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append(getPrincipalAttributesRepository(), that.getPrincipalAttributesRepository())
                 .append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
                 .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute())
-                .append(consentPolicy, that.consentPolicy)
+                .append(getConsentPolicy(), that.getConsentPolicy())
+                .append(isAuthorizedToReleaseAuthenticationAttributes(), that.isAuthorizedToReleaseAuthenticationAttributes())
                 .isEquals();
     }
 
@@ -309,10 +325,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append("attributeFilter", getAttributeFilter())
                 .append("principalAttributesRepository", getPrincipalAttributesRepository())
                 .append("authorizedToReleaseCredentialPassword", isAuthorizedToReleaseCredentialPassword())
+                .append("authorizedToReleaseAuthenticationAttributes", isAuthorizedToReleaseAuthenticationAttributes())
                 .append("authorizedToReleaseProxyGrantingTicket", isAuthorizedToReleaseProxyGrantingTicket())
                 .append("excludeDefaultAttributes", isExcludeDefaultAttributes())
                 .append("principalIdAttribute", getPrincipalIdAttribute())
-                .append("consentPolicy", consentPolicy)
+                .append("consentPolicy", getConsentPolicy())
                 .toString();
     }
 }

@@ -65,7 +65,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoClientId() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -76,7 +75,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoRedirectUri() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -87,7 +85,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoResponseType() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -99,7 +96,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyBadResponseType() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -112,7 +108,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoCasService() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
         clearAllServices();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
@@ -125,7 +120,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyRedirectUriDoesNotStartWithServiceId() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
         clearAllServices();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
