@@ -219,8 +219,7 @@ Attribute name formats can be specified per relying party in the service registr
   "serviceId" : "the-entity-id-of-the-sp",
   "name": "SAML Service",
   "id": 100001,
-  "attributeNameFormats":
-  {
+  "attributeNameFormats": {
     "@class": "java.util.HashMap",
     "attributeName": "basic|uri|unspecified|custom-format-etc"
   }
@@ -279,6 +278,29 @@ In the event that an aggregate is defined containing multiple entity ids, the be
   }
 }
 ```
+
+#### Entity Attributes Filter
+
+This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attribute attributes that match certain values.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+    "entityAttributeValues" : [ "java.util.LinkedHashSet", [ "entity-attribute-value" ] ],
+    "entityAttribute" : "http://somewhere.org/category-x",
+    "entityAttributeFormat" : "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
+  }
+}
+```
+
+The specification of `entityAttributeFormat` is optional.
 
 ### Name ID Selection
 
