@@ -162,17 +162,18 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
                                              final Assertion assertion) {
 
         final AuthnRequest authnRequest = authenticationContext.getKey();
-        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair = 
-                getRegisteredServiceAndFacade(authnRequest);
+        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair = getRegisteredServiceAndFacade(authnRequest);
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = pair.getValue();
-        
-        final String binding = authnRequest.getProtocolBinding();
-        if (StringUtils.isNotBlank(binding) && StringUtils.equalsIgnoreCase(binding, SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
-            final AssertionConsumerService svc = facade.getAssertionConsumerServiceForArtifactBinding();
-            if (svc != null) {
-                return svc.getBinding();
-            }
+
+        final String binding = StringUtils.defaultIfBlank(authnRequest.getProtocolBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]", binding, authnRequest.getIssuer().getValue());
+
+        LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", facade.getEntityId(), binding);
+        final AssertionConsumerService svc = facade.getAssertionConsumerService(binding);
+        if (svc == null) {
+            throw new IllegalArgumentException("Requested binding [{}] is not supported by entity id " + facade.getEntityId());
         }
-        return SAMLConstants.SAML2_POST_BINDING_URI;
+        LOGGER.debug("Binding [{}] is supported by [{}]", binding, facade.getEntityId());
+        return binding;
     }
 }
