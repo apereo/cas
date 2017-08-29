@@ -16,8 +16,8 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.query.Saml2AttributeQueryProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLOSamlRedirectProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostSimpleSignProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlProfileCallbackHandlerController;
@@ -187,8 +187,8 @@ public class SamlIdPEndpointsConfiguration {
     
     @Bean
     @RefreshScope
-    public SLORedirectProfileHandlerController sloRedirectProfileHandlerController() {
-        return new SLORedirectProfileHandlerController(
+    public SLOSamlRedirectProfileHandlerController sloRedirectProfileHandlerController() {
+        return new SLOSamlRedirectProfileHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -203,8 +203,8 @@ public class SamlIdPEndpointsConfiguration {
 
     @Bean
     @RefreshScope
-    public SLOPostProfileHandlerController sloPostProfileHandlerController() {
-        return new SLOPostProfileHandlerController(
+    public SLOSamlPostProfileHandlerController sloPostProfileHandlerController() {
+        return new SLOSamlPostProfileHandlerController(
                 samlObjectSigner,
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,

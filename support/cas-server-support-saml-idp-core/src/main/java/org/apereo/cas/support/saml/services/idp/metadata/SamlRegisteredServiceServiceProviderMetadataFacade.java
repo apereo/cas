@@ -2,6 +2,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -109,7 +110,8 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
             LOGGER.debug("Located entity descriptor in metadata for [{}]", entityID);
             final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
             if (ssoDescriptor != null) {
-                LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID, ssoDescriptor.getValidUntil());
+                LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
+                        ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
                 return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver));
             }
             LOGGER.warn("Could not locate SPSSODescriptor in the metadata for [{}]", entityID);
