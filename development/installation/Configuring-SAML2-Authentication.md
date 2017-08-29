@@ -11,6 +11,10 @@ If you intend to allow CAS to delegate authentication to an external SAML2 ident
 
 <div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the concepts referred to on this page, please start with reviewing the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
 
+## Federation Interop Evaluation
+
+An evaluation of the current SAML implementation in CAS based on the [InCommon Federation Interop profile](https://spaces.internet2.edu/display/FIWG/Federation+Interoperability+Working+Group+Home) is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
+
 ## SAML Endpoints
 
 The following CAS endpoints respond to supported SAML2 profiles:
@@ -215,8 +219,7 @@ Attribute name formats can be specified per relying party in the service registr
   "serviceId" : "the-entity-id-of-the-sp",
   "name": "SAML Service",
   "id": 100001,
-  "attributeNameFormats":
-  {
+  "attributeNameFormats": {
     "@class": "java.util.HashMap",
     "attributeName": "basic|uri|unspecified|custom-format-etc"
   }
@@ -275,6 +278,29 @@ In the event that an aggregate is defined containing multiple entity ids, the be
   }
 }
 ```
+
+#### Entity Attributes Filter
+
+This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attribute attributes that match certain values.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+    "entityAttributeValues" : [ "java.util.LinkedHashSet", [ "entity-attribute-value" ] ],
+    "entityAttribute" : "http://somewhere.org/category-x",
+    "entityAttributeFormat" : "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
+  }
+}
+```
+
+The specification of `entityAttributeFormat` is optional.
 
 ### Name ID Selection
 
