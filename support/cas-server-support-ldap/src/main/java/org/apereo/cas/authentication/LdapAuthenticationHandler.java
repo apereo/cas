@@ -80,6 +80,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
 
+    /*
+     * Flag to indicate whether entry DN should be called as an attribute and stored into the principal
+     */
+    private boolean collectDnAttribute;
+
     /**
      * Name of attribute to be used for principal's DN.
      */
@@ -110,6 +115,15 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public void setPrincipalIdAttribute(final String attributeName) {
         this.principalIdAttribute = attributeName;
+    }
+
+    /*
+     * Sets a flag that determines whether entry DN should be called as an attribute and stored into the principal
+     *
+     * @param allowed True to allow collecting entry DN, false otherwise.
+     */
+    public void setCollectDnAttribute(final boolean collectDnAttribute) {
+        this.collectDnAttribute = collectDnAttribute;
     }
 
     /**
@@ -225,9 +239,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                         key, ldapEntry.getDn());
             }
         });
-        LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
 
-        attributeMap.put(this.principalDnAttributeName, ldapEntry.getDn());
+        if (this.collectDnAttribute) {
+            LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
+            attributeMap.put(this.principalDnAttributeName, ldapEntry.getDn());
+        }
         LOGGER.debug("Created LDAP principal for id [{}] and [{}] attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
     }
@@ -311,4 +327,5 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]",
                 (Object[]) this.authenticatedEntryAttributes);
     }
+
 }
