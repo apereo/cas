@@ -3,7 +3,6 @@ package org.apereo.cas.consent;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,34 +49,29 @@ public class LdapConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        final List<String> consentDecisions = (List) authentication.getPrincipal()
-                .getAttributes().get(ldap.getConsentAttributeName());
-        if (consentDecisions != null && !consentDecisions.isEmpty()) {
-        return consentDecisions.stream()
-                .map(s -> mapFromJson(s, ConsentDecision.class))
-                .filter(d -> d.getService().equals(service.getId()))
-                .findFirst()
-                .orElse(null);
+        final LdapEntry entry = readConsentEntry(authentication.getPrincipal().getId());
+        if (entry != null) {
+            final LdapAttribute consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
+            if (consentDecisions != null) {
+                return consentDecisions.getStringValues()
+                        .stream()
+                        .map(s -> mapFromJson(s, ConsentDecision.class))
+                        .filter(d -> d.getService().equals(service.getId()))
+                        .findFirst()
+                        .orElse(null);
+            }
         }
         return null;
     }
     
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        try {
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, Arrays.asList(decision.getPrincipal()));
-            final String[] attributes = {ldap.getConsentAttributeName()};
-            final Response<SearchResult> response = LdapUtils
-                    .executeSearchOperation(connectionFactory, this.ldap.getBaseDn(), filter, null, attributes);
-            if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
-                final Set<String> newConsent = mergeDecision(entry.getAttribute(ldap.getConsentAttributeName()), decision);
-                final Map<String, Set<String>> attrMap = new HashMap<>();
-                attrMap.put(ldap.getConsentAttributeName(), newConsent);
-                return LdapUtils.executeModifyOperation(entry.getDn(), connectionFactory, attrMap);
-            }
-        } catch (final LdapException e) {
-            LOGGER.debug(e.getMessage(), e);
+        final LdapEntry entry = readConsentEntry(decision.getPrincipal());
+        if (entry != null) {
+            final Set<String> newConsent = mergeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), decision);
+            final Map<String, Set<String>> attrMap = new HashMap<>();
+            attrMap.put(this.ldap.getConsentAttributeName(), newConsent);
+            return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, attrMap);
         }
         return false;
     }
@@ -99,6 +93,22 @@ public class LdapConsentRepository implements ConsentRepository {
         return result;
     }
         
+    private LdapEntry readConsentEntry(final String principal) {
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, Arrays.asList(principal));
+        final String[] attributes = {this.ldap.getConsentAttributeName()};
+        final Response<SearchResult> response;
+        try {
+            response = LdapUtils
+                    .executeSearchOperation(this.connectionFactory, this.ldap.getBaseDn(), filter, null, attributes);
+            if (LdapUtils.containsResultEntry(response)) {
+                return response.getResult().getEntry();
+            }
+        } catch (final LdapException e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return null;
+    }
+    
     private static <T> ConsentDecision mapFromJson(final String s, final Class<ConsentDecision> c) {
         try {
             return MAPPER.readValue(s, c);
