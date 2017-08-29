@@ -37,8 +37,18 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
 
     private boolean allowMissingPrincipalAttributeValue = true;
 
+    private boolean collectDnAttribute;
+
     private Integer order;
-    
+
+    public boolean isCollectDnAttribute() {
+        return collectDnAttribute;
+    }
+
+    public void setCollectDnAttribute(final boolean collectDnAttribute) {
+        this.collectDnAttribute = collectDnAttribute;
+    }
+
     public Integer getOrder() {
         return order;
     }
