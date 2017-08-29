@@ -1084,9 +1084,18 @@ would only be acceptable in a multi-factor authentication situation.
 # cas.authn.policy.all.enabled=true
 ```
 
-### NotPrevented
+### Unique Principal
 
-Satisfied if an only if the authentication event is not blocked by a `PreventedException`.
+Satisfied if and only if the requesting principal has not already authenticated with CAS.
+Otherwise the authentication event is blocked, preventing multiple logins.
+
+```properties
+# cas.authn.policy.uniquePrincipal.enabled=true
+```
+
+### Not Prevented
+
+Satisfied if and only if the authentication event is not blocked by a `PreventedException`.
 
 ```properties
 # cas.authn.policy.notPrevented.enabled=true
@@ -1094,7 +1103,7 @@ Satisfied if an only if the authentication event is not blocked by a `PreventedE
 
 ### Required
 
-Satisfied if an only if a specified handler successfully authenticates its credential.
+Satisfied if and only if a specified handler successfully authenticates its credential.
 
 ```properties
 # cas.authn.policy.req.tryAll=false
