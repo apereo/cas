@@ -19,6 +19,7 @@ import org.apereo.cas.support.saml.web.idp.profile.query.Saml2AttributeQueryProf
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlPostSimpleSignProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlProfileCallbackHandlerController;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
@@ -166,6 +167,24 @@ public class SamlIdPEndpointsConfiguration {
                 samlObjectSignatureValidator());
     }
 
+    @Bean
+    @RefreshScope
+    public SSOSamlPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController() {
+        return new SSOSamlPostSimpleSignProfileHandlerController(
+                samlObjectSigner,
+                openSamlConfigBean.getParserPool(),
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver,
+                openSamlConfigBean,
+                samlProfileSamlResponseBuilder,
+                casProperties,
+                samlObjectSignatureValidator());
+    }
+    
+    
+    
     @Bean
     @RefreshScope
     public SLORedirectProfileHandlerController sloRedirectProfileHandlerController() {
