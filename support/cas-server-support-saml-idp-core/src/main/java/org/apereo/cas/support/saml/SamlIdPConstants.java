@@ -15,6 +15,11 @@ public interface SamlIdPConstants {
     String ENDPOINT_IDP_METADATA = "/idp/metadata";
 
     /**
+     * The SAML2 SSO simple-sign post profile endpoint.
+     */
+    String ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN = "/idp/profile/SAML2/POST-SimpleSign/SSO";
+
+    /**
      * The SAML2 SSO post profile endpoint.
      */
     String ENDPOINT_SAML2_SSO_PROFILE_POST = "/idp/profile/SAML2/POST/SSO";
@@ -41,6 +46,11 @@ public interface SamlIdPConstants {
 
     /**
      * The SAML2 artifact resolution endpoint.
+     */
+    String ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY = "/idp/profile/SAML2/SOAP/AttributeQuery";
+
+    /**
+     * The SAML2 attribute query endpoint.
      */
     String ENDPOINT_SAML2_SOAP_ARTIFACT_RESOLUTION = "/idp/profile/SAML2/SOAP/ArtifactResolution";
 

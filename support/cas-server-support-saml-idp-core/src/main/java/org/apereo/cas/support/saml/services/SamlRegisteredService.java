@@ -67,6 +67,21 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private boolean signAssertions;
 
     @Column(updatable = true, insertable = true)
+    private boolean skipGeneratingAssertionNameId;
+
+    @Column(updatable = true, insertable = true)
+    private boolean skipGeneratingSubjectConfirmationInResponseTo;
+
+    @Column(updatable = true, insertable = true)
+    private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
+    
+    @Column(updatable = true, insertable = true)
+    private boolean skipGeneratingSubjectConfirmationRecipient;
+
+    @Column(updatable = true, insertable = true)
+    private boolean skipGeneratingSubjectConfirmationNotBefore = true;
+
+    @Column(updatable = true, insertable = true)
     private boolean signResponses = true;
 
     @Column(updatable = true, insertable = true)
@@ -92,6 +107,46 @@ public class SamlRegisteredService extends RegexRegisteredService {
      */
     public SamlRegisteredService() {
         super();
+    }
+
+    public boolean isSkipGeneratingSubjectConfirmationInResponseTo() {
+        return skipGeneratingSubjectConfirmationInResponseTo;
+    }
+
+    public void setSkipGeneratingSubjectConfirmationInResponseTo(final boolean skipGeneratingSubjectConfirmationInResponseTo) {
+        this.skipGeneratingSubjectConfirmationInResponseTo = skipGeneratingSubjectConfirmationInResponseTo;
+    }
+
+    public boolean isSkipGeneratingSubjectConfirmationNotOnOrAfter() {
+        return skipGeneratingSubjectConfirmationNotOnOrAfter;
+    }
+
+    public void setSkipGeneratingSubjectConfirmationNotOnOrAfter(final boolean skipGeneratingSubjectConfirmationNotOnOrAfter) {
+        this.skipGeneratingSubjectConfirmationNotOnOrAfter = skipGeneratingSubjectConfirmationNotOnOrAfter;
+    }
+
+    public boolean isSkipGeneratingSubjectConfirmationRecipient() {
+        return skipGeneratingSubjectConfirmationRecipient;
+    }
+
+    public void setSkipGeneratingSubjectConfirmationRecipient(final boolean skipGeneratingSubjectConfirmationRecipient) {
+        this.skipGeneratingSubjectConfirmationRecipient = skipGeneratingSubjectConfirmationRecipient;
+    }
+
+    public boolean isSkipGeneratingSubjectConfirmationNotBefore() {
+        return skipGeneratingSubjectConfirmationNotBefore;
+    }
+
+    public void setSkipGeneratingSubjectConfirmationNotBefore(final boolean skipGeneratingSubjectConfirmationNotBefore) {
+        this.skipGeneratingSubjectConfirmationNotBefore = skipGeneratingSubjectConfirmationNotBefore;
+    }
+
+    public boolean isSkipGeneratingAssertionNameId() {
+        return skipGeneratingAssertionNameId;
+    }
+
+    public void setSkipGeneratingAssertionNameId(final boolean skipGeneratingAssertionNameId) {
+        this.skipGeneratingAssertionNameId = skipGeneratingAssertionNameId;
     }
 
     public void setMetadataLocation(final String metadataLocation) {
@@ -261,6 +316,12 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setNameIdQualifier(samlRegisteredService.getNameIdQualifier());
             setServiceProviderNameIdQualifier(samlRegisteredService.serviceProviderNameIdQualifier);
 
+            setSkipGeneratingAssertionNameId(samlRegisteredService.isSkipGeneratingAssertionNameId());
+            setSkipGeneratingSubjectConfirmationInResponseTo(samlRegisteredService.skipGeneratingSubjectConfirmationInResponseTo);
+            setSkipGeneratingSubjectConfirmationNotBefore(samlRegisteredService.skipGeneratingSubjectConfirmationNotBefore);
+            setSkipGeneratingSubjectConfirmationNotOnOrAfter(samlRegisteredService.skipGeneratingSubjectConfirmationNotOnOrAfter);
+            setSkipGeneratingSubjectConfirmationRecipient(samlRegisteredService.skipGeneratingSubjectConfirmationRecipient);
+            
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -297,6 +358,11 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.attributeNameFormats, rhs.attributeNameFormats)
                 .append(this.serviceProviderNameIdQualifier, rhs.serviceProviderNameIdQualifier)
                 .append(this.nameIdQualifier, rhs.nameIdQualifier)
+                .append(this.skipGeneratingAssertionNameId, rhs.skipGeneratingAssertionNameId)
+                .append(this.skipGeneratingSubjectConfirmationInResponseTo, rhs.skipGeneratingSubjectConfirmationInResponseTo)
+                .append(this.skipGeneratingSubjectConfirmationNotBefore, rhs.skipGeneratingSubjectConfirmationNotBefore)
+                .append(this.skipGeneratingSubjectConfirmationNotOnOrAfter, rhs.skipGeneratingSubjectConfirmationNotOnOrAfter)
+                .append(this.skipGeneratingSubjectConfirmationRecipient, rhs.skipGeneratingSubjectConfirmationRecipient)
                 .isEquals();
     }
 
@@ -321,6 +387,11 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.serviceProviderNameIdQualifier)
                 .append(this.nameIdQualifier)
                 .append(this.metadataExpirationDuration)
+                .append(this.skipGeneratingAssertionNameId)
+                .append(this.skipGeneratingSubjectConfirmationInResponseTo)
+                .append(this.skipGeneratingSubjectConfirmationNotBefore)
+                .append(this.skipGeneratingSubjectConfirmationNotOnOrAfter)
+                .append(this.skipGeneratingSubjectConfirmationRecipient)
                 .toHashCode();
     }
 
@@ -344,7 +415,12 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("attributeNameFormats", this.attributeNameFormats)
                 .append("serviceProviderNameIdQualifier", this.serviceProviderNameIdQualifier)
                 .append("nameIdQualifier", this.nameIdQualifier)
+                .append("skipGeneratingAssertionNameId", this.skipGeneratingAssertionNameId)
                 .append("metadataExpirationDuration", this.metadataExpirationDuration)
+                .append("skipGeneratingSubjectConfirmationInResponseTo", this.skipGeneratingSubjectConfirmationInResponseTo)
+                .append("skipGeneratingSubjectConfirmationNotBefore", this.skipGeneratingSubjectConfirmationNotBefore)
+                .append("skipGeneratingSubjectConfirmationNotOnOrAfter", this.skipGeneratingSubjectConfirmationNotOnOrAfter)
+                .append("skipGeneratingSubjectConfirmationRecipient", this.skipGeneratingSubjectConfirmationRecipient)
                 .toString();
     }
 }

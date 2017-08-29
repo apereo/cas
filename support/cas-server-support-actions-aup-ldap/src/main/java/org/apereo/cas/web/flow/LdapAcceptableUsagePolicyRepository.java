@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Arrays;
-
 /**
  * This is {@link LdapAcceptableUsagePolicyRepository}.
  * Examines the principal attribute collection to determine if
@@ -75,7 +73,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
         final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                Arrays.asList(id));
+                CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 }

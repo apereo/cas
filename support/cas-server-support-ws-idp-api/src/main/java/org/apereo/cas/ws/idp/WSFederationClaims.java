@@ -1,8 +1,8 @@
 package org.apereo.cas.ws.idp;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apereo.cas.util.CollectionUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -105,7 +105,7 @@ public enum WSFederationClaims {
      * All claims.
      */
     public static final List<WSFederationClaims> ALL_CLAIMS =
-            Arrays.asList(EMAIL_ADDRESS_2005,
+            CollectionUtils.wrapList(EMAIL_ADDRESS_2005,
                     EMAIL_ADDRESS,
                     GIVEN_NAME,
                     NAME,

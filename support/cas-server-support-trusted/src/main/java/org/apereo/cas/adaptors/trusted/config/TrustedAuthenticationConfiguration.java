@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolve
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -28,8 +29,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
-
-import java.util.Arrays;
 
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
@@ -79,7 +78,7 @@ public class TrustedAuthenticationConfiguration {
 
         final PrincipalBearingPrincipalResolver bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository, trustedPrincipalFactory(),
                 casProperties.getAuthn().getTrusted().isReturnNull(), casProperties.getAuthn().getTrusted().getPrincipalAttribute());
-        resolver.setChain(Arrays.asList(bearingPrincipalResolver, new EchoingPrincipalResolver()));
+        resolver.setChain(CollectionUtils.wrapList(bearingPrincipalResolver, new EchoingPrincipalResolver()));
         return resolver;
     }
 

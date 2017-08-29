@@ -44,8 +44,8 @@ A sample definition follows:
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
     "consentPolicy": {
       "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
-      "excludedAttributes":["java.util.LinkedHashSet", ["test"]],
-      "includeOnlyAttributes":["java.util.LinkedHashSet", ["test"]],
+      "excludedAttributes": ["java.util.LinkedHashSet", ["test"]],
+      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["test"]],
       "enabled": true
     }
   }
@@ -103,10 +103,10 @@ The consent decision object in transit will and must match the following structu
 
 ```json
 {
-   "id":1000,
+   "id": 1000,
    "principal": "casuser",
    "service": "https://google.com",
-   "date":[ 2017, 7, 10, 14, 10, 17 ],
+   "date": [ 2017, 7, 10, 14, 10, 17 ],
    "options": "ATTRIBUTE_NAME",
    "reminder": 14,
    "reminderTimeUnit": "DAYS",

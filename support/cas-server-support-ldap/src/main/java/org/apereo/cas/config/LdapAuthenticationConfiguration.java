@@ -98,6 +98,9 @@ public class LdapAuthenticationConfiguration {
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
                         additionalAttributes.add(l.getPrincipalAttributeId());
                     }
+                    if (StringUtils.isNotBlank(l.getPrincipalDnAttributeName())) {
+                        handler.setPrincipalDnAttributeName(l.getPrincipalDnAttributeName());
+                    }
                     handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
                     handler.setAllowMissingPrincipalAttributeValue(l.isAllowMissingPrincipalAttributeValue());
                     handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));

@@ -66,6 +66,7 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -82,6 +83,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -92,7 +94,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -210,6 +211,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory defaultOAuthCodeFactory;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -386,11 +390,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "oidcWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer oidcWebflowConfigurer() {
         final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction());
+                loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction(), applicationContext, casProperties);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
+        cfg.initialize();
         return cfg;
     }
 
@@ -468,7 +474,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         return oidc.getUserDefinedScopes().entrySet()
                 .stream()
-                .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), Arrays.asList(k.getValue().split(","))))
+                .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
                 .collect(Collectors.toSet());
     }
 

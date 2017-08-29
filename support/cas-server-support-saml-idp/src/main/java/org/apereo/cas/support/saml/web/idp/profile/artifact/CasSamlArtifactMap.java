@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
-import org.apereo.cas.ticket.SamlArtifactTicket;
-import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;

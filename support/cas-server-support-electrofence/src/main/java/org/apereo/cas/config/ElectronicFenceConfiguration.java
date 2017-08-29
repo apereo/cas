@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -101,6 +102,9 @@ public class ElectronicFenceConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector selector;
@@ -199,7 +203,10 @@ public class ElectronicFenceConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        final CasWebflowConfigurer w = new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")

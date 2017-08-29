@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Subject;
@@ -35,7 +34,8 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private final int skewAllowance;
 
-    public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean, final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
+    public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean,
+                                         final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
                                          final int skewAllowance) {
         super(configBean);
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
@@ -60,27 +60,38 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final String binding) throws SamlException {
 
         final Assertion assertion = Assertion.class.cast(casAssertion);
-        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor, binding);
+
+
         final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
 
         final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
         if (acs == null) {
-            throw new IllegalArgumentException("Failed to locate the assertion consumer service url");
+            throw new IllegalArgumentException("Failed to locate the assertion consumer service url for binding " + binding);
         }
 
-        String location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
-        if (StringUtils.isBlank(location)) {
-            final AssertionConsumerService assertionService = adaptor.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
-            location = StringUtils.isBlank(acs.getResponseLocation()) ? assertionService.getLocation() : assertionService.getResponseLocation();
-        }
-
+        final String location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
         }
-        final Subject subject = newSubject(nameID.getFormat(), nameID.getValue(),
-                location, validFromDate.plusSeconds(this.skewAllowance), authnRequest.getID());
+
+        final NameID nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion);
+        final Subject subject = newSubject(nameId,
+                service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
+                service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
+                service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
+                service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now());
+        
         LOGGER.debug("Created SAML subject [{}]", subject);
-        subject.setNameID(nameID);
         return subject;
+    }
+
+    private NameID getNameIdForService(final HttpServletRequest request, final HttpServletResponse response, final RequestAbstractType authnRequest,
+                                       final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                       final String binding, final Assertion assertion) {
+        if (service.isSkipGeneratingAssertionNameId()) {
+            LOGGER.warn("Assertion will skip assigning/generating a nameId based on service [{}]", service);
+            return null;
+        }
+        return this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor, binding);
     }
 }

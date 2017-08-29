@@ -13,24 +13,24 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
-import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
+import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link SLOPostProfileHandlerController}, responsible for
- * handling requests for SAML2 SLO.
+ * This is {@link SLOSamlRedirectProfileHandlerController}, responsible for
+ * handling requests for SAML2 SLO Redirects.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
-public class SLOPostProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SLOPostProfileHandlerController.class);
+public class SLOSamlRedirectProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SLOSamlRedirectProfileHandlerController.class);
 
     /**
      * Instantiates a new slo saml profile handler controller.
@@ -46,16 +46,16 @@ public class SLOPostProfileHandlerController extends AbstractSamlSLOProfileHandl
      * @param casProperties                                the cas properties
      * @param samlObjectSignatureValidator                 the saml object signature validator
      */
-    public SLOPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
-                                           final ParserPool parserPool,
-                                           final AuthenticationSystemSupport authenticationSystemSupport,
-                                           final ServicesManager servicesManager,
-                                           final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                           final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                           final OpenSamlConfigBean configBean,
-                                           final SamlProfileObjectBuilder<Response> responseBuilder,
-                                           final CasConfigurationProperties casProperties,
-                                           final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+    public SLOSamlRedirectProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+                                                   final ParserPool parserPool,
+                                                   final AuthenticationSystemSupport authenticationSystemSupport,
+                                                   final ServicesManager servicesManager,
+                                                   final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                                   final OpenSamlConfigBean configBean,
+                                                   final SamlProfileObjectBuilder<Response> responseBuilder,
+                                                   final CasConfigurationProperties casProperties,
+                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,
@@ -69,15 +69,15 @@ public class SLOPostProfileHandlerController extends AbstractSamlSLOProfileHandl
     }
 
     /**
-     * Handle SLO POST profile request.
+     * Handle SLO Redirect profile request.
      *
      * @param response the response
      * @param request  the request
      * @throws Exception the exception
      */
-    @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_POST)
+    @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_REDIRECT)
     protected void handleSaml2ProfileSLOPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Exception {
-        handleSloProfileRequest(response, request, new HTTPPostDecoder());
+        handleSloProfileRequest(response, request, new HTTPRedirectDeflateDecoder());
     }
 }

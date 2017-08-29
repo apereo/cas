@@ -33,7 +33,6 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,7 +49,7 @@ public class MongoDbObjectFactory {
     private static final int TIMEOUT = 5000;
     private static final int DEFAULT_PORT = 27017;
 
-    private CustomConversions customConversions = new CustomConversions(Arrays.asList(
+    private CustomConversions customConversions = new CustomConversions(CollectionUtils.wrapList(
             new BaseConverters.LoggerConverter(),
             new BaseConverters.ClassConverter(),
             new BaseConverters.CommonsLogConverter(),

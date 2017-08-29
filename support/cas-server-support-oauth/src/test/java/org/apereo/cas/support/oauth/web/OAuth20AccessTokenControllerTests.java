@@ -368,8 +368,8 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         internalVerifyClientOK(service, true, true, true);
     }
 
-    private void internalVerifyClientOK(final RegisteredService service, final boolean basicAuth, final boolean refreshToken, final boolean json)
-            throws Exception {
+    private void internalVerifyClientOK(final RegisteredService service, final boolean basicAuth, 
+                                        final boolean refreshToken, final boolean json) throws Exception {
 
         final Principal principal = createPrincipal();
         final OAuthCode code = addCode(principal, service);

@@ -16,26 +16,14 @@ import java.security.SecureRandom;
  */
 public final class RandomUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RandomUtils.class);
-    
-    private RandomUtils() {
-    }
 
-    /**
-     * Get strong SecureRandom instance from +securerandom.strongAlgorithms+ and wrap the checked exception.
-     *
-     * @return the strong instance
-     */
-    public static SecureRandom getInstanceStrong() {
-        try {
-            return SecureRandom.getInstanceStrong();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
+    private RandomUtils() {
     }
 
     /**
      * Get strong enough SecureRandom instance and wrap the checked exception.
      * TODO Try {@code NativePRNGNonBlocking} and failover to default SHA1PRNG until Java 9.
+     *
      * @return the strong instance
      */
     public static SecureRandom getInstanceNative() {
@@ -46,4 +34,5 @@ public final class RandomUtils {
             return new SecureRandom();
         }
     }
+    
 }

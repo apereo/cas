@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
         final List<String> grouperGroups = new ArrayList<>();
 
-        final List<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal);
+        final Collection<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal);
 
         if (results.isEmpty()) {
             LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);

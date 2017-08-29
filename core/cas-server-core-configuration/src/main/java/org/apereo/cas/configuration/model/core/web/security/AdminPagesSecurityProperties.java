@@ -4,11 +4,11 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,7 +29,7 @@ public class AdminPagesSecurityProperties implements Serializable {
      * in the event that access is controlled via external authentication
      * means such as Spring Security's authentication providers.
      */
-    private List<String> adminRoles = Arrays.asList("ROLE_ADMIN", "ROLE_ACTUATOR");
+    private List<String> adminRoles = CollectionUtils.wrapList("ROLE_ADMIN", "ROLE_ACTUATOR");
 
     /**
      * CAS server login URL to use. 
