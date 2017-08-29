@@ -1084,9 +1084,22 @@ would only be acceptable in a multi-factor authentication situation.
 # cas.authn.policy.all.enabled=true
 ```
 
-### NotPrevented
+### Unique Principal
 
-Satisfied if an only if the authentication event is not blocked by a `PreventedException`.
+Satisfied if and only if the requesting principal has not already authenticated with CAS.
+Otherwise the authentication event is blocked, preventing multiple logins. 
+
+<div class="alert alert-warning"><strong>Usage Warning</strong><p>Activating this policy is not without cost,
+as CAS needs to query the ticket registry and all tickets present to determine whether the current user has established
+a authentication session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
+
+```properties
+# cas.authn.policy.uniquePrincipal.enabled=true
+```
+
+### Not Prevented
+
+Satisfied if and only if the authentication event is not blocked by a `PreventedException`.
 
 ```properties
 # cas.authn.policy.notPrevented.enabled=true
@@ -1094,7 +1107,7 @@ Satisfied if an only if the authentication event is not blocked by a `PreventedE
 
 ### Required
 
-Satisfied if an only if a specified handler successfully authenticates its credential.
+Satisfied if and only if a specified handler successfully authenticates its credential.
 
 ```properties
 # cas.authn.policy.req.tryAll=false
@@ -1867,6 +1880,7 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 
 # cas.authn.ldap[0].collectDnAttribute=false
+# cas.authn.ldap[0].principalDnAttributeName=principalLdapDn
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].credentialCriteria=
