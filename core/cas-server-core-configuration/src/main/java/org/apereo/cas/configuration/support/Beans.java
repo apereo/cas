@@ -39,7 +39,6 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +87,7 @@ public final class Beans {
             final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getStub().getAttributes().forEach((key, value) -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
-                pdirMap.put(key, Arrays.asList((Object[]) vals));
+                pdirMap.put(key, CollectionUtils.wrap((Object[]) vals));
             });
             dao.setBackingMap(pdirMap);
             return dao;

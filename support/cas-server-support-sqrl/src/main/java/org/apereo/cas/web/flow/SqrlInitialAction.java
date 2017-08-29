@@ -18,6 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link SqrlInitialAction}.
@@ -61,13 +62,13 @@ public class SqrlInitialAction extends AbstractAction {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              Base64OutputStream os = new Base64OutputStream(out)) {
             QRUtils.generateQRCode(os, url, QRUtils.WIDTH_MEDIUM, QRUtils.WIDTH_MEDIUM);
-            final String result = new String(out.toByteArray());
+            final String result = new String(out.toByteArray(), StandardCharsets.UTF_8);
             LOGGER.debug("Generated SQRL QR code for [{}]", url);
             requestContext.getFlowScope().put("sqrlImage", result);
         }
 
         requestContext.getFlowScope().put("sqrlUrl", url);
-        requestContext.getFlowScope().put("sqrlUrlEncoded", EncodingUtils.encodeBase64(url.getBytes()));
+        requestContext.getFlowScope().put("sqrlUrlEncoded", EncodingUtils.encodeBase64(url.getBytes(StandardCharsets.UTF_8)));
         requestContext.getFlowScope().put("nut", sqrlNut);
         requestContext.getFlowScope().put("sfn", sfn);
         requestContext.getFlowScope().put("casServerUrl", prefix);

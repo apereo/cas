@@ -7,13 +7,19 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlResponseEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostEncoder;
-import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostSimpleSignEncoder;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.CookieUtils;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
@@ -42,11 +48,13 @@ import java.time.ZonedDateTime;
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
     private static final long serialVersionUID = 1488837627964481272L;
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSaml2ResponseBuilder.class);
+    
     private final TicketRegistry ticketRegistry;
     private final SamlArtifactTicketFactory samlArtifactTicketFactory;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final SAMLArtifactMap samlArtifactMap;
-    
+    private final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
+
     public SamlProfileSaml2ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                            final BaseSamlObjectSigner samlObjectSigner,
                                            final VelocityEngineFactory velocityEngineFactory,
@@ -55,13 +63,14 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                            final TicketRegistry ticketRegistry,
                                            final SamlArtifactTicketFactory samlArtifactTicketFactory,
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                           final SAMLArtifactMap samlArtifactMap) {
-        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
-                samlProfileSamlAssertionBuilder, samlObjectEncrypter);
+                                           final SAMLArtifactMap samlArtifactMap,
+                                           final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
+        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
         this.ticketRegistry = ticketRegistry;
         this.samlArtifactTicketFactory = samlArtifactTicketFactory;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.samlArtifactMap = samlArtifactMap;
+        this.samlAttributeQueryTicketFactory = samlAttributeQueryTicketFactory;
     }
 
     @Override
@@ -77,7 +86,11 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
-
+        
+        if (casProperties.getAuthn().getSamlIdp().isAttributeQueryProfileEnabled()) {
+            storeAttributeQueryTicketInRegistry(assertion, request, adaptor);
+        }
+        
         final SAMLObject finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
 
         if (finalAssertion instanceof EncryptedAssertion) {
@@ -112,17 +125,36 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final String binding,
                               final RequestAbstractType authnRequest,
                               final Object assertion) throws SamlException {
-        switch (binding) {
-            case SAMLConstants.SAML2_ARTIFACT_BINDING_URI:
-                final SamlResponseArtifactEncoder encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
-                        adaptor, httpRequest, httpResponse, authnRequest, 
-                        ticketRegistry, samlArtifactTicketFactory, 
-                        ticketGrantingTicketCookieGenerator, samlArtifactMap);
-                return encoder.encode(samlResponse, relayState);
-            default:
-                break;
+        
+        LOGGER.debug("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
+        
+        if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
+            final BaseSamlResponseEncoder encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
+                    adaptor, httpRequest, httpResponse, authnRequest,
+                    ticketRegistry, samlArtifactTicketFactory,
+                    ticketGrantingTicketCookieGenerator, samlArtifactMap);
+            return encoder.encode(samlResponse, relayState);
         }
-        final SamlResponsePostEncoder encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
+        
+        if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
+            final BaseSamlResponseEncoder encoder = new SamlResponsePostSimpleSignEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
+            return encoder.encode(samlResponse, relayState);
+        }
+        
+        final BaseSamlResponseEncoder encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
         return encoder.encode(samlResponse, relayState);
+    }
+
+    private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,
+                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+
+        final String value = assertion.getSubject().getNameID().getValue();
+        final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+                ticketGrantingTicketCookieGenerator, this.ticketRegistry, request);
+
+        final SamlAttributeQueryTicket ticket = samlAttributeQueryTicketFactory.create(value,
+               assertion, adaptor.getEntityId(), ticketGrantingTicket);
+        this.ticketRegistry.addTicket(ticket);
+
     }
 }

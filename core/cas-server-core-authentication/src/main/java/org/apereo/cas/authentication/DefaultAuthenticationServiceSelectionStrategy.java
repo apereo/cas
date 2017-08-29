@@ -13,7 +13,7 @@ import org.springframework.core.Ordered;
 public class DefaultAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
 
     private static final long serialVersionUID = -7458940344679793681L;
-    private final int order = Ordered.LOWEST_PRECEDENCE;
+    private int order = Ordered.LOWEST_PRECEDENCE;
     
     @Override
     public Service resolveServiceFrom(final Service service) {
@@ -28,5 +28,9 @@ public class DefaultAuthenticationServiceSelectionStrategy implements Authentica
     @Override
     public int getOrder() {
         return order;
+    }
+
+    public void setOrder(final int order) {
+        this.order = order;
     }
 }

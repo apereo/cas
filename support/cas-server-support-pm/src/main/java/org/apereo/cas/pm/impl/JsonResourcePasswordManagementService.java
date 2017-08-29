@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
-import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import org.springframework.util.Assert;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,12 +41,11 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
                                                  final Resource jsonResource) {
         super(cipherExecutor, issuer, passwordManagementProperties);
         this.jsonResource = jsonResource;
-
         readAccountsFromJsonResource();
     }
 
     private void readAccountsFromJsonResource() {
-        try (Reader reader = new InputStreamReader(jsonResource.getInputStream())) {
+        try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
             final TypeReference<Map<String, JsonBackedAccount>> personList =
                     new TypeReference<Map<String, JsonBackedAccount>>() {};
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
@@ -54,12 +53,9 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
-    @Audit(action = "CHANGE_PASSWORD",
-            actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
-            resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+    
     @Override
-    public boolean change(final Credential credential, final PasswordChangeBean bean) {
+    public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
         Assert.notNull(credential, "Credential cannot be null");
         Assert.notNull(bean, "PasswordChangeBean cannot be null");
 

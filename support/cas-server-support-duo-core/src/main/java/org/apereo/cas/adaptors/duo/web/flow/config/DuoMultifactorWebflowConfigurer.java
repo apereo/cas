@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
@@ -10,6 +11,7 @@ import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -43,8 +45,10 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     private final VariegatedMultifactorAuthenticationProvider provider;
 
     public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                           final boolean enableDeviceRegistration, final VariegatedMultifactorAuthenticationProvider provider) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration);
+                                           final boolean enableDeviceRegistration, final VariegatedMultifactorAuthenticationProvider provider,
+                                           final ApplicationContext applicationContext,
+                                           final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration, applicationContext, casProperties);
         this.provider = provider;
     }
 

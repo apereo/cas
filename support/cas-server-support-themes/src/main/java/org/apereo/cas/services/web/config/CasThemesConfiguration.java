@@ -5,16 +5,18 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.ChainingThemeResolver;
-import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
+import org.apereo.cas.services.web.ThemeBasedViewResolver;
+import org.apereo.cas.services.web.ThemeViewResolver;
+import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ThemeResolver;
@@ -53,12 +55,11 @@ public class CasThemesConfiguration {
     private ThymeleafProperties thymeleafProperties;
 
     @Autowired
-    @Qualifier("thymeleafViewResolver")
-    private ThymeleafViewResolver thymeleafViewResolver;
+    private ApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("argumentExtractor")
-    private ArgumentExtractor argumentExtractors;
+    @Qualifier("thymeleafViewResolver")
+    private ThymeleafViewResolver thymeleafViewResolver;
 
     @Autowired
     @Qualifier("serviceThemeResolverSupportedBrowsers")
@@ -66,17 +67,25 @@ public class CasThemesConfiguration {
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
-        final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
-        
-        final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver(servicesManager, argumentExtractors,
-                thymeleafProperties.getPrefix(), thymeleafProperties.getSuffix());
-        
-        r.setDefaultThemeName(defaultThemeName);
+        final ThemeBasedViewResolver resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
+        resolver.setOrder(thymeleafViewResolver.getOrder()-1);
+        return resolver;
+    }
+
+    @ConditionalOnMissingBean(name = "themeViewResolverFactory")
+    @Bean
+    public ThemeViewResolverFactory themeViewResolverFactory() {
+        final ThemeViewResolver.Factory factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(),
+                thymeleafProperties);
+        factory.setApplicationContext(applicationContext);
+        return factory;
+    }
+
+    protected ThymeleafViewResolver nonCachingThymeleafViewResolver() {
+        // clone existing ThymeleafViewResolver
+        final ThymeleafViewResolver r = new ThymeleafViewResolver();
+
         r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
-        r.setCache(this.thymeleafProperties.isCache());
-        if (!r.isCache()) {
-            r.setCacheLimit(0);
-        }
         r.setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
         r.setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
         r.setContentType(this.thymeleafViewResolver.getContentType());
@@ -107,7 +116,11 @@ public class CasThemesConfiguration {
 
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
-        
+
+        // disable the cache
+        r.setCache(false);
+
+        // return this ViewResolver
         return r;
     }
 
@@ -146,5 +159,4 @@ public class CasThemesConfiguration {
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
-
 }

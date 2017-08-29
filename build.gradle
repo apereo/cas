@@ -49,7 +49,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.5"
+        classpath "com.netflix.nebula:gradle-lint-plugin:8.2.2"
         classpath "org.standardout:gradle-versioneye-plugin:1.5.0"
         classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
         classpath "com.gradle:build-scan-plugin:1.0"

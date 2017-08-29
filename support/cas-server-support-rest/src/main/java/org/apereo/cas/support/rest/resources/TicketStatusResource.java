@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,8 +46,8 @@ public class TicketStatusResource {
     @GetMapping(value = "/v1/tickets/{id:.+}")
     public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
         try {
-            this.centralAuthenticationService.getTicket(id);
-            return new ResponseEntity<>(id, HttpStatus.OK);
+            final Ticket ticket = this.centralAuthenticationService.getTicket(id);
+            return new ResponseEntity<>(ticket.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("Ticket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {

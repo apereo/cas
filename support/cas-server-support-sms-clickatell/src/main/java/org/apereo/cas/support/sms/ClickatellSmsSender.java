@@ -3,6 +3,7 @@ package org.apereo.cas.support.sms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.SmsSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +55,7 @@ public class ClickatellSmsSender implements SmsSender {
 
             final Map<String, Object> map = new HashMap<>();
             map.put("content", message);
-            map.put("to", Arrays.asList(to));
+            map.put("to", CollectionUtils.wrap(to));
             map.put("from", from);
 
             final StringWriter stringify = new StringWriter();

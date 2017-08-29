@@ -28,6 +28,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -135,7 +136,7 @@ public class CloudWatchAppender extends AbstractAppender {
         final LogEvent event = LoggingUtils.prepareLogEvent(logEvent);
         final InputLogEvent awsLogEvent = new InputLogEvent();
         final long timestamp = event.getTimeMillis();
-        final String message = new String(getLayout().toByteArray(event));
+        final String message = new String(getLayout().toByteArray(event), StandardCharsets.UTF_8);
         awsLogEvent.setTimestamp(timestamp);
         awsLogEvent.setMessage(message);
         if (!queue.offer(awsLogEvent) && !queueFull) {

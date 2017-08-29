@@ -54,6 +54,16 @@ public class AuthenticationPolicyProperties implements Serializable {
      */
     private NotPrevented notPrevented = new NotPrevented();
 
+    /**
+     * Satisfied if an only if the principal has not already authenticated
+     * and does not have an sso session with CAS. Otherwise, prevents
+     * the user from logging in more than once. Note that this policy
+     * adds an extra burden to the ticket store/registry as CAS needs
+     * to query all relevant tickets found in the registry to cross-check
+     * the requesting username with existing tickets.
+     */
+    private UniquePrincipal uniquePrincipal = new UniquePrincipal();
+    
     public All getAll() {
         return all;
     }
@@ -68,6 +78,14 @@ public class AuthenticationPolicyProperties implements Serializable {
 
     public void setNotPrevented(final NotPrevented notPrevented) {
         this.notPrevented = notPrevented;
+    }
+
+    public UniquePrincipal getUniquePrincipal() {
+        return uniquePrincipal;
+    }
+
+    public void setUniquePrincipal(final UniquePrincipal uniquePrincipal) {
+        this.uniquePrincipal = uniquePrincipal;
     }
 
     public Any getAny() {
@@ -96,6 +114,22 @@ public class AuthenticationPolicyProperties implements Serializable {
 
     public static class NotPrevented implements Serializable {
         private static final long serialVersionUID = -4930217018850738715L;
+        /**
+         * Enables the policy.
+         */
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public static class UniquePrincipal implements Serializable {
+        private static final long serialVersionUID = -4930217087310738715L;
         /**
          * Enables the policy.
          */

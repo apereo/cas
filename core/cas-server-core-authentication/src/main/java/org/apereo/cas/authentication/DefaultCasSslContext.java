@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apache.http.ssl.SSLContexts;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -58,10 +59,10 @@ public class DefaultCasSslContext {
             final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
 
             final KeyManager[] keyManagers = {
-                new CompositeX509KeyManager(Arrays.asList(jvmKeyManager, customKeyManager))
+                new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
             };
             final TrustManager[] trustManagers = {
-                new CompositeX509TrustManager(Arrays.asList(jvmTrustManager, customTrustManager))
+                new CompositeX509TrustManager(CollectionUtils.wrapList(jvmTrustManager, customTrustManager))
             };
 
             this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
@@ -161,14 +162,14 @@ public class DefaultCasSslContext {
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            this.keyManagers.forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getClientAliases(keyType, issuers))));
+            this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getClientAliases(keyType, issuers))));
             return aliases.toArray(new String[]{});
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            this.keyManagers.forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getServerAliases(keyType, issuers))));
+            this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getServerAliases(keyType, issuers))));
             return aliases.toArray(new String[]{});
         }
     }
@@ -233,7 +234,7 @@ public class DefaultCasSslContext {
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
-            this.trustManagers.forEach(trustManager -> certificates.addAll(Arrays.asList(trustManager.getAcceptedIssuers())));
+            this.trustManagers.forEach(trustManager -> certificates.addAll(CollectionUtils.wrapList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[certificates.size()]);
         }
     }

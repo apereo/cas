@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
-import org.apereo.cas.pm.PasswordValidator;
+import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -59,6 +59,13 @@ public class PasswordManagementConfiguration {
         return NoOpCipherExecutor.getInstance();
     }
 
+    @ConditionalOnMissingBean(name = "passwordValidationService")
+    @RefreshScope
+    @Bean
+    public PasswordValidationService passwordValidationService() {
+        return (c, bean) -> true;
+    }
+    
     @ConditionalOnMissingBean(name = "passwordChangeService")
     @RefreshScope
     @Bean
@@ -82,13 +89,6 @@ public class PasswordManagementConfiguration {
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),
                 casProperties.getServer().getPrefix(),
                 casProperties.getAuthn().getPm());
-    }
-
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "passwordValidator")
-    @Bean
-    public PasswordValidator passwordValidator() {
-        return new PasswordValidator();
     }
 
     @PostConstruct

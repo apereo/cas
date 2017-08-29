@@ -1,8 +1,12 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.artifact;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.AbstractTicket;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import javax.persistence.Column;
@@ -125,7 +129,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     public ProxyGrantingTicket grantProxyGrantingTicket(
             final String id, final Authentication authentication,
             final ExpirationPolicy expirationPolicy) {
-        throw new UnsupportedOperationException("No PGT grant is available in OAuth");
+        throw new UnsupportedOperationException("No PGT grant is available");
     }
 
     @Override

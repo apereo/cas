@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
@@ -81,7 +82,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         };
         final Cas20ResponseView view = new Cas20ResponseView(true, null,
-                null, "attribute", delegatedView);
+                null, "attribute", delegatedView, 
+                new DefaultAuthenticationServiceSelectionPlan());
         view.render(modelAndView.getModel(), req, resp);
 
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));

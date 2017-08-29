@@ -91,8 +91,7 @@ public class ServiceTicketResourceTests {
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
                 .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("TicketGrantingTicket could not be found"));
+                .andExpect(status().isNotFound());
     }
 
     @Test

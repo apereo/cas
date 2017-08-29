@@ -1,4 +1,6 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.artifact;
+
+import org.apereo.cas.ticket.ServiceTicket;
 
 /**
  * This is {@link SamlArtifactTicket}.
