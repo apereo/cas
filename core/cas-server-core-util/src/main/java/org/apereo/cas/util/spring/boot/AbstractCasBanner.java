@@ -74,20 +74,22 @@ public abstract class AbstractCasBanner implements Banner {
             formatter.format("CAS Build Date/Time: %s%n", CasVersion.getDateTime());
             formatter.format("Spring Boot Version: %s%n", SpringBootVersion.getVersion());
             formatter.format("%s%n", LINE_SEPARATOR);
-
-            formatter.format("System Date/Time: %s%n", LocalDateTime.now());
-            formatter.format("System Temp Directory: %s%n", FileUtils.getTempDirectoryPath());
-            formatter.format("%s%n", LINE_SEPARATOR);
-
+            
             formatter.format("Java Home: %s%n", properties.get("java.home"));
             formatter.format("Java Vendor: %s%n", properties.get("java.vendor"));
             formatter.format("Java Version: %s%n", properties.get("java.version"));
-            formatter.format("JCE Installed: %s%n", BooleanUtils.toStringYesNo(isJceInstalled()));
+            final Runtime runtime = Runtime.getRuntime();
+            formatter.format("JVM Free Memory: %s%n", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
+            formatter.format("JVM Maximum Memory: %s%n", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
+            formatter.format("JCE Installed: %s%n", StringUtils.capitalize(BooleanUtils.toStringYesNo(isJceInstalled())));
             formatter.format("%s%n", LINE_SEPARATOR);
 
             formatter.format("OS Architecture: %s%n", properties.get("os.arch"));
             formatter.format("OS Name: %s%n", properties.get("os.name"));
             formatter.format("OS Version: %s%n", properties.get("os.version"));
+            formatter.format("OS Date/Time: %s%n", LocalDateTime.now());
+            formatter.format("OS Temp Directory: %s%n", FileUtils.getTempDirectoryPath());
+
             formatter.format("%s%n", LINE_SEPARATOR);
 
             injectUpdateInfoIntoBannerIfNeeded(formatter);
