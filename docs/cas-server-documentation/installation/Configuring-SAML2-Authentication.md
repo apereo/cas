@@ -307,6 +307,24 @@ This attribute release policy authorizes the release of defined attributes, prov
 
 The specification of `entityAttributeFormat` is optional.
 
+#### Requested Attributes Filter
+
+This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attribute attributes that match certain values.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+    "useFriendlyName" : false
+  }
+}
+```
+
 ### Name ID Selection
 
 Each service may specify a required Name ID format. If left undefined, the metadata will be consulted to find the right format.

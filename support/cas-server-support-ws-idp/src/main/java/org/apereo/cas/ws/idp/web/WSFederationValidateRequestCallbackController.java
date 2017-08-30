@@ -155,7 +155,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                           final WSFederationRequest fedRequest) throws Exception {
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         final String serviceUrl = constructServiceUrl(request, response, fedRequest);
-        LOGGER.debug("Created service url for validation: [{}]", serviceUrl);
+        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
         final Assertion assertion = this.ticketValidator.validate(ticket, serviceUrl);
         LOGGER.debug("Located CAS assertion [{}]", assertion);
         return assertion;
