@@ -12,11 +12,13 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":core:cas-server-core-webflow")
 }

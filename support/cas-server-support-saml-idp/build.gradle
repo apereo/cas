@@ -1,9 +1,10 @@
 description = "Apereo CAS SAML Identity Provider Support"
 dependencies {
+    api project(":api:cas-server-core-api-webflow")
+    
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-logout")
     implementation project(":core:cas-server-core-web")
-    api project(":api:cas-server-core-api-webflow")
     implementation project(":support:cas-server-support-saml")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-mdui-core")
@@ -26,9 +27,13 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-webflow")
-    testImplementation project(path: ":support:cas-server-support-json-service-registry")
+    testImplementation project(":support:cas-server-support-json-service-registry")
     testImplementation project(":support:cas-server-support-cookie")
 }
