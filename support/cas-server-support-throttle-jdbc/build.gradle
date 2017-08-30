@@ -3,7 +3,11 @@ dependencies {
     implementation project(":support:cas-server-support-audit-jdbc")
     implementation project(":core:cas-server-core-audit")
     implementation project(":support:cas-server-support-throttle")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
     testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

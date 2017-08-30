@@ -2,11 +2,12 @@ description = "Apereo CAS Surrogate Authentication Webflow"
 dependencies {
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-audit")
-    implementation project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-webflow")
     implementation project(":support:cas-server-support-surrogate-authentication")
 
     testImplementation project(":core:cas-server-core-services")
