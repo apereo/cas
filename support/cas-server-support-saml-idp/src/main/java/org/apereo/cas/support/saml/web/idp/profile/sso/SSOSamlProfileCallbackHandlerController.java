@@ -145,7 +145,7 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         this.ticketValidator.setRenew(authnRequest.isForceAuthn());
         final String serviceUrl = constructServiceUrl(request, response, pair);
-        LOGGER.debug("Created service url for validation: [{}]", serviceUrl);
+        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
         final Assertion assertion = this.ticketValidator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         return assertion;

@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -69,5 +72,45 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
 
     public void setEntityAttributeValues(final Set<String> entityAttributeValues) {
         this.entityAttributeValues = entityAttributeValues;
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("entityAttribute", entityAttribute)
+                .append("entityAttributeFormat", entityAttributeFormat)
+                .append("entityAttributeValues", entityAttributeValues)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final MetadataEntityAttributesAttributeReleasePolicy rhs = (MetadataEntityAttributesAttributeReleasePolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.entityAttribute, rhs.entityAttribute)
+                .append(this.entityAttributeFormat, rhs.entityAttributeFormat)
+                .append(this.entityAttributeValues, rhs.entityAttributeValues)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(entityAttribute)
+                .append(entityAttributeFormat)
+                .append(entityAttributeValues)
+                .toHashCode();
     }
 }
