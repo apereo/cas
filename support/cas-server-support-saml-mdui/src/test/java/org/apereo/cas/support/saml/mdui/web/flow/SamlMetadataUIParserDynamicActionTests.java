@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -70,7 +71,8 @@ import static org.junit.Assert.*;
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
                 CasCoreTicketIdGeneratorsConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, 
+                CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CoreSamlConfiguration.class,
                 CasCoreWebConfiguration.class,
