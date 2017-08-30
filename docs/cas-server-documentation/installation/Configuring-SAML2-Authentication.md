@@ -309,7 +309,7 @@ The specification of `entityAttributeFormat` is optional.
 
 #### Requested Attributes Filter
 
-This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attribute attributes that match certain values.
+This attribute release policy authorizes the release of defined attributes, based on the accompanying metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
 
 ```json
 {
@@ -324,6 +324,8 @@ This attribute release policy authorizes the release of defined attributes, prov
   }
 }
 ```
+
+The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
 
 ### Name ID Selection
 
