@@ -13,7 +13,7 @@ If you intend to allow CAS to delegate authentication to an external SAML2 ident
 
 ## Federation Interop Evaluation
 
-An evaluation of the current SAML implementation in CAS based on the [InCommon Federation Interop profile](https://spaces.internet2.edu/display/FIWG/Federation+Interoperability+Working+Group+Home) is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
+The CAS project strives to conform to the [SAML V2.0 Implementation Profile for Federation Interoperability](https://kantarainitiative.github.io/SAMLprofiles/fedinterop.html). An evaluation of the requirements against the current CAS release is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
 
 ## SAML Endpoints
 
