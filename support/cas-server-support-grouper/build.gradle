@@ -8,7 +8,10 @@ dependencies {
     implementation project(":core:cas-server-core-configuration")
     compileOnly project(":api:cas-server-core-api-webflow")
     compileOnly project(":core:cas-server-core-webflow")
+    
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-registry")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-json-service-registry")
 }

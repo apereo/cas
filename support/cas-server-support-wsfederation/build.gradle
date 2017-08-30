@@ -20,5 +20,5 @@ dependencies {
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-webflow")
-    
+    testImplementation project(":core:cas-server-core-tickets")
 }
