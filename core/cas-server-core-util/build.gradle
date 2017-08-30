@@ -1,8 +1,8 @@
 description = "Apereo CAS Core Utilities"
 dependencies {
-    compile project(":api:cas-server-core-api-authentication")
-    compile project(":api:cas-server-core-api-ticket")
-    compile project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-util")
     implementation libraries.shiro
     implementation libraries.zxingbarcode
     api libraries.jose4j

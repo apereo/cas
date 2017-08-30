@@ -18,7 +18,7 @@ import java.net.URL;
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceLogoutUrlBuilder.class);
 
-    private UrlValidator urlValidator; 
+    private final UrlValidator urlValidator; 
 
     public DefaultSingleLogoutServiceLogoutUrlBuilder(final UrlValidator urlValidator) {
         this.urlValidator = urlValidator;

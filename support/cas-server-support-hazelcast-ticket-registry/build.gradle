@@ -2,6 +2,8 @@ description = "Apereo CAS Hazelcast Integration"
 dependencies {
     implementation project(":core:cas-server-core-tickets")
     implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":core:cas-server-core-configuration")
+    api project(":api:cas-server-core-api-util")
     implementation libraries.hazelcast
 
     testImplementation project(":support:cas-server-support-person-directory")

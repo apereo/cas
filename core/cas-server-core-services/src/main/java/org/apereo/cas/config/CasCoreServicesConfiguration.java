@@ -80,20 +80,6 @@ public class CasCoreServicesConfiguration {
         return new WebApplicationServiceResponseBuilder();
     }
 
-    @ConditionalOnMissingBean(name = "casAttributeEncoder")
-    @RefreshScope
-    @Bean
-    public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao,
-                                                        @Qualifier("cacheCredentialsCipherExecutor") final CipherExecutor cacheCredentialsCipherExecutor) {
-        return new DefaultCasProtocolAttributeEncoder(servicesManager(serviceRegistryDao),
-                registeredServiceCipherExecutor(), cacheCredentialsCipherExecutor);
-    }
-
-    @Bean
-    public ProtocolAttributeEncoder noOpCasAttributeEncoder() {
-        return new NoOpProtocolAttributeEncoder();
-    }
-
     @ConditionalOnMissingBean(name = "registeredServiceCipherExecutor")
     @Bean
     @RefreshScope
@@ -107,7 +93,7 @@ public class CasCoreServicesConfiguration {
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
         return new DomainServicesManager(serviceRegistryDao);
     }
-
+    
     @Bean
     @RefreshScope
     public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {

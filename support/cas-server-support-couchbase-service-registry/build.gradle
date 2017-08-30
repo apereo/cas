@@ -1,8 +1,9 @@
 description = "Apereo CAS Couchbase Service Registry"
 dependencies {
-
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-services-registry")
     implementation project(":support:cas-server-support-couchbase-core")
 
     testImplementation project(":core:cas-server-core-services")

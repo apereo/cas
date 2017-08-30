@@ -10,7 +10,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")
-    implementation project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-webflow")
     implementation project(":support:cas-server-support-spnego")
     implementation project(":support:cas-server-support-ldap-core")
 
