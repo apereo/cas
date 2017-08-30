@@ -15,7 +15,9 @@ dependencies {
     implementation libraries.casclient
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
