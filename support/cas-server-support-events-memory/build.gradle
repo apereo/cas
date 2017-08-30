@@ -1,12 +1,16 @@
 description = "Apereo CAS Event Memory Repository"
 dependencies {
-    implementation project(":api:cas-server-core-api-ticket")
-    implementation project(":api:cas-server-core-api-services")
-    implementation project(":api:cas-server-core-api-validation")
-    implementation project(":api:cas-server-core-api-events")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-validation")
+    api project(":api:cas-server-core-api-events")
+    
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-events")
+    
+    
     implementation libraries.caffein
 
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

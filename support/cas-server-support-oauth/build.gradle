@@ -1,15 +1,18 @@
 description = "Apereo CAS Server OAuth Provider Support"
 dependencies {
-    
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
     implementation project(":support:cas-server-support-oauth-api")
-    
+
     compileOnly project(":core:cas-server-core-tickets")
     compileOnly project(":support:cas-server-support-cookie")
-    
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-person-directory")
