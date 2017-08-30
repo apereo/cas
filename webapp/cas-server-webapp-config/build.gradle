@@ -23,6 +23,10 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
     
     compileOnly libraries.bouncycastle
 }
