@@ -1,10 +1,13 @@
 description = "Apereo CAS JWT Token Authentication Support"
 dependencies {
-    implementation project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api")
+    implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
     implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-pac4j-authentication")
 

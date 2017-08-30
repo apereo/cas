@@ -1,12 +1,15 @@
 description = "Apereo CAS WS-Federation Support"
 dependencies {
     implementation project(":support:cas-server-support-saml")
+    implementation project(":core:cas-server-core-web")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    api project(":api:cas-server-core-api-webflow")
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
