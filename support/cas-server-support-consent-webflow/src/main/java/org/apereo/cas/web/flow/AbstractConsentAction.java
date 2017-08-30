@@ -56,10 +56,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
      * @return the registered service for consent
      */
     protected RegisteredService getRegisteredServiceForConsent(final RequestContext requestContext, final Service service) {
-        RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
-        if (registeredService == null) {
-            registeredService = this.servicesManager.findServiceBy(service);
-        }
+        RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         return registeredService;
     }
