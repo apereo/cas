@@ -142,8 +142,11 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the description
      */
     public String getDescription(final String locale) {
-        final String description = loadLocalizedValues(locale, List.class.cast(this.getDescriptions()));
-        return (description != null) ? description : super.getDescription();
+        if (this.uiInfo != null) {
+            final String description = loadLocalizedValues(locale, this.uiInfo.getDescriptions());
+            return (description != null) ? description : super.getDescription();
+        }
+        return super.getDescription();
     }
 
     @Override
@@ -158,8 +161,11 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the displayName
      */
     public String getDisplayName(final String locale) {
-        final String displayName = loadLocalizedValues(locale, List.class.cast(this.getDisplayNames()));
-        return (displayName != null) ? displayName : super.getDisplayName();
+        if (this.uiInfo != null) {
+            final String displayName = loadLocalizedValues(locale, this.uiInfo.getDisplayNames());
+            return (displayName != null) ? displayName : super.getDisplayName();
+        }
+        return super.getDisplayName();
     }
 
     @Override
@@ -174,8 +180,11 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the informationURL
      */
     public String getInformationURL(final String locale) {
-        final String informationUrl = loadLocalizedValues(locale, List.class.cast(this.getInformationURLs()));
-        return (informationUrl != null) ? informationUrl : super.getInformationURL();
+        if (this.uiInfo != null) {
+            final String informationUrl = loadLocalizedValues(locale, this.uiInfo.getInformationURLs());
+            return (informationUrl != null) ? informationUrl : super.getInformationURL();
+        }
+        return super.getInformationURL();
     }
 
     @Override
@@ -190,8 +199,11 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the privacyStatementURL
      */
     public String getPrivacyStatementURL(final String locale) {
-        final String privacyStatementURL = loadLocalizedValues(locale, List.class.cast(this.getPrivacyStatementURLs()));
-        return (privacyStatementURL != null) ? privacyStatementURL : super.getPrivacyStatementURL();
+        if (this.uiInfo != null) {
+            final String privacyStatementURL = loadLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
+            return (privacyStatementURL != null) ? privacyStatementURL : super.getPrivacyStatementURL();
+        }
+        return super.getPrivacyStatementURL();
     }
 
     @Override
