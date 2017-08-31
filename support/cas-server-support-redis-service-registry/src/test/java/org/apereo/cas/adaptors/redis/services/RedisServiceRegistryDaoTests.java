@@ -2,8 +2,13 @@ package org.apereo.cas.adaptors.redis.services;
 
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,7 +24,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import redis.embedded.RedisServer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link RedisServiceRegistryDao} class.
@@ -30,11 +39,11 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RedisServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @EnableScheduling
-@TestPropertySource(locations={"classpath:/svc-redis.properties"})
+@TestPropertySource(locations = {"classpath:/svc-redis.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisServiceRegistryDaoTests {
     private static RedisServer REDIS_SERVER;
-    
+
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
@@ -55,9 +64,38 @@ public class RedisServiceRegistryDaoTests {
     public static void stopRedis() {
         REDIS_SERVER.stop();
     }
-    
+
     @Test
-    public void verify() {
-        
+    public void execSaveMethodWithDefaultUsernameAttribute() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("execSaveMethodWithDefaultUsernameAttribute");
+        r.setServiceId("testing");
+        r.setDescription("New service");
+        r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
+                CollectionUtils.wrapSet("test")));
+        r.setAttributeReleasePolicy(policy);
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r2, r);
     }
+
+    @Test
+    public void verifyServiceRemovals() throws Exception {
+        final List<RegisteredService> list = new ArrayList<>(5);
+        IntStream.range(1, 3).forEach(i -> {
+            final RegexRegisteredService r = new RegexRegisteredService();
+            r.setServiceId("serviceId" + i);
+            r.setName("testServiceType");
+            r.setTheme("testtheme");
+            r.setEvaluationOrder(1000);
+            r.setId(i * 100);
+            list.add(this.dao.save(r));
+        });
+        this.dao.load().forEach(r2 -> {
+            this.dao.delete(r2);
+            assertNull(this.dao.findServiceById(r2.getId()));
+        });
+    }
+
 }
