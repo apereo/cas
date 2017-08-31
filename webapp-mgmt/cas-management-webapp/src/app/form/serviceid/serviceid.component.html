@@ -1,11 +1,11 @@
 <div>
   <md-input-container class="textInput">
     <input mdInput i18n-placeholder required
-           [placeholder]="messages.services_form_label_serviceId"
+           [placeholder]="placeholder()"
            [(ngModel)]="data.service.serviceId">
   </md-input-container>
   <md-icon style="font-size: medium;"
            i18n-mdTooltip="services.form.label.serviceId"
-           [mdTooltip]="messages.services_form_tooltip_serviceId">help
+           [mdTooltip]="tooltip()">help
   </md-icon>
 </div>
