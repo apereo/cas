@@ -276,6 +276,9 @@ export class FormComponent implements OnInit {
       if (!attrProvider.usernameAttribute) {
         return Tabs.USERNAME_ATTRIBUTE;
       }
+      if (attrProvider.encryptUserName && !data.publicKey) {
+        return Tabs.ADVANCED;
+      }
     }
     if (AnonymousRegisteredServiceUsernameProvider.instanceOf(data.usernameAttributeProvider)) {
       let anonProvider: AnonymousRegisteredServiceUsernameProvider = data.usernameAttributeProvider as AnonymousRegisteredServiceUsernameProvider;

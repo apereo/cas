@@ -55,19 +55,21 @@
   </div>
 
   <div>
-    <md-checkbox [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
-      <ng-container i18n="services.form.label.uap.canonicalizationMode">
-        {{ messages.services_form_label_uap_canonicalizationMode }}
+    <md-checkbox [(ngModel)]="data.service.usernameAttributeProvider.encryptUserName">
+      <ng-container i18n>
+        Encrypt Username
       </ng-container>
     </md-checkbox>
     <md-icon style="font-size: medium;"
-             i18n-mdTooltip="services.form.tooltip.uap.canonicalizationMode"
-             [mdTooltip]="messages.services_form_tooltip_uap_canonicalizationMode">help
+             i18n-mdTooltip="encpytUsername"
+             mdTooltip="If checked the username attribute will be encrypted using the defined public key for the service">help
     </md-icon>
   </div>
 
-  <div *ngIf="data.service.usernameAttributeProvider.canonicalizationMode">
+  <div>
     <md-select style="width:400px;padding-top:25px;"
+               i18n-placeholder="services.form.label.uap.canonicalizationMode"
+               [placeholder]="messages.services_form_label_uap_canonicalizationMode"
                [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
       <md-option *ngFor="let opt of canonicalizations" [value]="opt">
         {{ opt }}
