@@ -2,9 +2,12 @@ description = "Apereo CAS MongoDB Ticket Registry"
 dependencies {
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-mongo-core")
-    implementation project(":api:cas-server-core-api-logout")
+    
+    api project(":api:cas-server-core-api-logout")
     implementation libraries.mongo
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")
@@ -12,6 +15,9 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(path: ":core:cas-server-core-services")
     

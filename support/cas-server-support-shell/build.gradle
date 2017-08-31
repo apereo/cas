@@ -10,7 +10,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-services-api")
-    implementation project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-services")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-saml-idp-core")

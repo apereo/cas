@@ -483,7 +483,7 @@ public abstract class AbstractSamlProfileHandlerController {
                             SAMLBindingSupport.getRelayState(messageContext)));
             final String url = builder.buildURL();
 
-            LOGGER.debug("Built service callback url [{}]", url);
+            LOGGER.trace("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
                     url, casProperties.getServer().getName(),
                     CasProtocolConstants.PARAMETER_SERVICE,
@@ -620,7 +620,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
 
-        LOGGER.debug("Located SAML metadata for [{}]", registeredService);
+        LOGGER.debug("Located SAML metadata for [{}]", registeredService.getServiceId());
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
                 getSamlMetadataFacadeFor(registeredService, request);
 

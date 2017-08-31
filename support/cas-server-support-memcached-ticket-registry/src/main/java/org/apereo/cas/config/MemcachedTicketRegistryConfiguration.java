@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
+import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -63,7 +63,7 @@ public class MemcachedTicketRegistryConfiguration {
     @Autowired
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) {
-        final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
+        final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(memcachedClientIF);
         final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
         final CipherExecutor cipherExecutor = Beans.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
         registry.setCipherExecutor(cipherExecutor);
