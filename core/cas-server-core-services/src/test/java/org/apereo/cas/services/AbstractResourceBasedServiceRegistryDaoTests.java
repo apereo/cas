@@ -73,7 +73,6 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
 
         final RegisteredService r2 = this.dao.save(r);
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());
-
         assertEquals(r, r2);
         assertEquals(r2, r3);
     }
