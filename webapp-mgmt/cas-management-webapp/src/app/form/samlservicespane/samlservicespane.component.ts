@@ -2,7 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
 import {SamlRegisteredService} from "../../../domain/saml-service";
 import {Data} from "../data";
-import {DataSource} from "@angular/cdk";
+
+import {DataSource} from "@angular/cdk/table";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/startWith';
