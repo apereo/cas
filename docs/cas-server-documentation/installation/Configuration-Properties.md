@@ -2980,7 +2980,6 @@ Control core SAML functionality within CAS.
 # cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
 ```
 
-
 ## SAML IdP
 
 Allow CAS to become a SAML2 identity provider.
@@ -2997,7 +2996,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 | `uri`                | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.
 | `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
 | `urn:my:own:format`  | Map the attribute to `urn:my:own:format`.
-
 
 
 ```properties
@@ -4569,41 +4567,64 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.crypto.alg=AES
 ```
 
+### Redis Service Registry
+
+To learn more about this topic, [please review this guide](Redis-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.redis.host=localhost
+# cas.serviceRegistry.redis.database=0
+# cas.serviceRegistry.redis.port=6380
+# cas.serviceRegistry.redis.password=
+# cas.serviceRegistry.redis.timeout=2000
+# cas.serviceRegistry.redis.useSsl=false
+# cas.serviceRegistry.redis.usePool=true
+
+# cas.serviceRegistry.redis.pool.max-active=20
+# cas.serviceRegistry.redis.pool.maxIdle=8
+# cas.serviceRegistry.redis.pool.minIdle=0
+# cas.serviceRegistry.redis.pool.maxActive=8
+# cas.serviceRegistry.redis.pool.maxWait=-1
+# cas.serviceRegistry.redis.pool.numTestsPerEvictionRun=0
+# cas.serviceRegistry.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.minEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.lifo=true
+# cas.serviceRegistry.redis.pool.fairness=false
+
+# cas.serviceRegistry.redis.pool.testOnCreate=false
+# cas.serviceRegistry.redis.pool.testOnBorrow=false
+# cas.serviceRegistry.redis.pool.testOnReturn=false
+# cas.serviceRegistry.redis.pool.testWhileIdle=false
+```
+
 ### Redis Ticket Registry
 
 To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html).
 
 ```properties
-## Redis server host.
 # cas.ticket.registry.redis.host=localhost
-#
-## Database index used by the connection factory.
 # cas.ticket.registry.redis.database=0
-#
-## Redis server port.
 # cas.ticket.registry.redis.port=6379
-#
-## Login password of the redis server.
 # cas.ticket.registry.redis.password=
-#
-## Connection timeout in milliseconds
 # cas.ticket.registry.redis.timeout=
-#
-##
+# cas.ticket.registry.redis.useSsl=false
+# cas.ticket.registry.redis.usePool=true
+
 # cas.ticket.registry.redis.pool.max-active=20
-#
-## Max number of "idle" connections in the pool. Use a negative value to indicate an unlimited number of idle connections.
 # cas.ticket.registry.redis.pool.maxIdle=8
-#
-## Target for the minimum number of idle connections to maintain in the pool. This setting only has an effect if it is positive.
 # cas.ticket.registry.redis.pool.minIdle=0
-#
-## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
 # cas.ticket.registry.redis.pool.maxActive=8
-#
-## Maximum amount of time (in milliseconds) a connection allocation should block
-#  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
 # cas.ticket.registry.redis.pool.maxWait=-1
+# cas.ticket.registry.redis.pool.numTestsPerEvictionRun=0
+# cas.ticket.registry.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.ticket.registry.redis.pool.minEvictableIdleTimeMillis=0
+# cas.ticket.registry.redis.pool.lifo=true
+# cas.ticket.registry.redis.pool.fairness=false
+
+# cas.ticket.registry.redis.pool.testOnCreate=false
+# cas.ticket.registry.redis.pool.testOnBorrow=false
+# cas.ticket.registry.redis.pool.testOnReturn=false
+# cas.ticket.registry.redis.pool.testWhileIdle=false
 
 # cas.ticket.registry.redis.crypto.signing.key=
 # cas.ticket.registry.redis.crypto.signing.keySize=512

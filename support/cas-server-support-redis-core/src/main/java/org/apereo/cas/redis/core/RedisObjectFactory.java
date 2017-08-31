@@ -34,8 +34,7 @@ public class RedisObjectFactory {
             factory.setTimeout(redis.getTimeout());
         }
         factory.setUseSsl(redis.isUseSsl());
-        factory.setTimeout(redis.getTimeout());
-        factory.setUseSsl(redis.isUseSsl());
+        factory.setUsePool(redis.isUsePool());
         
         return factory;
     }
