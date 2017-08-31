@@ -4086,6 +4086,36 @@ to locate YAML service definitions, decide how those resources should be found.
 
 To learn more about this topic, [please review this guide](YAML-Service-Management.html).
 
+### Redis Service Registry
+
+To learn more about this topic, [please review this guide](Redis-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.redis.host=localhost
+# cas.serviceRegistry.redis.database=0
+# cas.serviceRegistry.redis.port=6380
+# cas.serviceRegistry.redis.password=
+# cas.serviceRegistry.redis.timeout=2000
+# cas.serviceRegistry.redis.useSsl=false
+# cas.serviceRegistry.redis.usePool=true
+
+# cas.serviceRegistry.redis.pool.max-active=20
+# cas.serviceRegistry.redis.pool.maxIdle=8
+# cas.serviceRegistry.redis.pool.minIdle=0
+# cas.serviceRegistry.redis.pool.maxActive=8
+# cas.serviceRegistry.redis.pool.maxWait=-1
+# cas.serviceRegistry.redis.pool.numTestsPerEvictionRun=0
+# cas.serviceRegistry.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.minEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.lifo=true
+# cas.serviceRegistry.redis.pool.fairness=false
+
+# cas.serviceRegistry.redis.pool.testOnCreate=false
+# cas.serviceRegistry.redis.pool.testOnBorrow=false
+# cas.serviceRegistry.redis.pool.testOnReturn=false
+# cas.serviceRegistry.redis.pool.testWhileIdle=false
+```
+
 ### DynamoDb Service Registry
 
 To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
@@ -4565,36 +4595,6 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.crypto.encryption.key=
 # cas.ticket.registry.mongo.crypto.encryption.keySize=16
 # cas.ticket.registry.mongo.crypto.alg=AES
-```
-
-### Redis Service Registry
-
-To learn more about this topic, [please review this guide](Redis-Service-Management.html).
-
-```properties
-# cas.serviceRegistry.redis.host=localhost
-# cas.serviceRegistry.redis.database=0
-# cas.serviceRegistry.redis.port=6380
-# cas.serviceRegistry.redis.password=
-# cas.serviceRegistry.redis.timeout=2000
-# cas.serviceRegistry.redis.useSsl=false
-# cas.serviceRegistry.redis.usePool=true
-
-# cas.serviceRegistry.redis.pool.max-active=20
-# cas.serviceRegistry.redis.pool.maxIdle=8
-# cas.serviceRegistry.redis.pool.minIdle=0
-# cas.serviceRegistry.redis.pool.maxActive=8
-# cas.serviceRegistry.redis.pool.maxWait=-1
-# cas.serviceRegistry.redis.pool.numTestsPerEvictionRun=0
-# cas.serviceRegistry.redis.pool.softMinEvictableIdleTimeMillis=0
-# cas.serviceRegistry.redis.pool.minEvictableIdleTimeMillis=0
-# cas.serviceRegistry.redis.pool.lifo=true
-# cas.serviceRegistry.redis.pool.fairness=false
-
-# cas.serviceRegistry.redis.pool.testOnCreate=false
-# cas.serviceRegistry.redis.pool.testOnBorrow=false
-# cas.serviceRegistry.redis.pool.testOnReturn=false
-# cas.serviceRegistry.redis.pool.testWhileIdle=false
 ```
 
 ### Redis Ticket Registry
