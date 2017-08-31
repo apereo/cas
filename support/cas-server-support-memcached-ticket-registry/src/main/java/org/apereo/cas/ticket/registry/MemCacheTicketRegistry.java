@@ -4,7 +4,6 @@ import net.spy.memcached.MemcachedClientIF;
 import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.Collection;
  */
 public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemCacheTicketRegistry.class);
-    private static final String NO_MEMCACHED_CLIENT_IS_DEFINED = "No memcached client is defined.";
 
     /**
      * Memcached client.
@@ -38,18 +36,10 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
-        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
-
         final Ticket ticket = encodeTicket(ticketToUpdate);
         LOGGER.debug("Updating ticket [{}]", ticket);
         try {
-            if (!this.client.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket).get()) {
-                LOGGER.error("Failed to update [{}]", ticket);
-                return null;
-            }
-        } catch (final InterruptedException e) {
-            LOGGER.warn("Interrupted while waiting for response to async replace operation for ticket [{}]. "
-                    + "Cannot determine whether update was successful.", ticket);
+            this.client.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed updating [{}]", ticket, e);
         }
@@ -58,22 +48,10 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             LOGGER.debug("Adding ticket [{}]", ticket);
-            final int timeout = getTimeout(ticketToAdd);
-            if (!this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
-                LOGGER.error("Failed to add [{}] without timeout [{}]", ticketToAdd, timeout);
-            }
-            // Sanity check to ensure ticket can retrieved
-            if (this.client.get(ticket.getId()) == null) {
-                LOGGER.warn("Ticket [{}] was added to memcached with timeout [{}], yet it cannot be retrieved. "
-                        + "Ticket expiration policy may be too aggressive ?", ticketToAdd, timeout);
-            }
-        } catch (final InterruptedException e) {
-            LOGGER.warn("Interrupted while waiting for response to async add operation for ticket [{}]."
-                    + "Cannot determine whether add was successful.", ticketToAdd);
+            this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]", ticketToAdd, e);
         }
@@ -87,13 +65,8 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
         try {
-            if (this.client.delete(ticketId).get()) {
-                LOGGER.debug("Removed ticket [{}] from the cache", ticketId);
-            } else {
-                LOGGER.info("Ticket [{}] not found or is already removed.", ticketId);
-            }
+            this.client.delete(ticketId);
         } catch (final Exception e) {
             LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
         }
@@ -102,8 +75,6 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
-
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
             final Ticket t = (Ticket) this.client.get(ticketId);
