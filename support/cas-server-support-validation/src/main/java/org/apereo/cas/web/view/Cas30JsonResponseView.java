@@ -72,7 +72,6 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
             casModel.put("serviceResponse", casResponse);
             model.clear();
             model.putAll(casModel);
-            setView(createDelegatedView());
         }
     }
 
