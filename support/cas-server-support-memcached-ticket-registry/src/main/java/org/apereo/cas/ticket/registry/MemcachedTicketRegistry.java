@@ -16,8 +16,8 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @since 3.3
  */
-public class MemCacheTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemCacheTicketRegistry.class);
+public class MemcachedTicketRegistry extends AbstractTicketRegistry {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedTicketRegistry.class);
     /**
      * Memcached client.
      */
@@ -29,7 +29,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
      *
      * @param client Memcached client.
      */
-    public MemCacheTicketRegistry(final MemcachedClientIF client) {
+    public MemcachedTicketRegistry(final MemcachedClientIF client) {
         this.client = client;
     }
 
