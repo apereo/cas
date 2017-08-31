@@ -276,7 +276,7 @@ export class FormComponent implements OnInit {
       if (!attrProvider.usernameAttribute) {
         return Tabs.USERNAME_ATTRIBUTE;
       }
-      if (attrProvider.encryptUserName && !data.publicKey) {
+      if (attrProvider.encryptUserName && (!data.publicKey || !data.publicKey.location)) {
         return Tabs.ADVANCED;
       }
     }
@@ -310,6 +310,12 @@ export class FormComponent implements OnInit {
     if (data.attributeReleasePolicy.attributeFilter != null) {
       if (!this.validateRegex(data.attributeReleasePolicy.attributeFilter.pattern)) {
         return Tabs.ATTRIBUTE_RELEASE;
+      }
+    }
+    if (data.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket ||
+        data.attributeReleasePolicy.authorizedToReleaseCredentialPassword) {
+      if (!data.publicKey || !data.publicKey.location) {
+        return Tabs.ADVANCED;
       }
     }
 
