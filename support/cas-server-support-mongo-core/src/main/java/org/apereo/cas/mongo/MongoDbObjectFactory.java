@@ -7,6 +7,7 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
@@ -30,13 +31,16 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link MongoDbObjectFactory}.
@@ -75,7 +79,7 @@ public class MongoDbObjectFactory {
      * @return the mongo template
      */
     public MongoTemplate buildMongoTemplate(final AbstractMongoInstanceProperties mongo) {
-        final MongoDbFactory mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo.getDatabaseName());
+        final MongoDbFactory mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo);
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
@@ -107,6 +111,10 @@ public class MongoDbObjectFactory {
         return converter;
     }
 
+    private MongoDbFactory mongoDbFactory(final Mongo mongo, final AbstractMongoInstanceProperties props) {
+        return new SimpleMongoDbFactory(mongo, props.getDatabaseName(), null, props.getAuthenticationDatabaseName());
+    }
+
     private MongoDbFactory mongoDbFactory(final Mongo mongo, final String databaseName) {
         return new SimpleMongoDbFactory(mongo, databaseName, null, null);
     }
@@ -124,13 +132,13 @@ public class MongoDbObjectFactory {
     }
 
     private Set<Class<?>> scanForEntities(final String basePackage) {
-        if (!StringUtils.hasText(basePackage)) {
+        if (!StringUtils.isBlank(basePackage)) {
             return new HashSet<>();
         }
 
         final Set<Class<?>> initialEntitySet = new HashSet<>();
 
-        if (StringUtils.hasText(basePackage)) {
+        if (StringUtils.isNotBlank(basePackage)) {
             final ClassPathScanningCandidateComponentProvider componentProvider = new ClassPathScanningCandidateComponentProvider(
                     false);
             componentProvider.addIncludeFilter(new AnnotationTypeFilter(Document.class));
@@ -169,6 +177,13 @@ public class MongoDbObjectFactory {
             bean.setConnectionsPerHost(mongo.getConns().getPerHost());
             bean.setSocketTimeout((int) mongo.getTimeout());
             bean.setConnectTimeout((int) mongo.getTimeout());
+            if (StringUtils.isNotBlank(mongo.getReplicaSet())) {
+                bean.setRequiredReplicaSetName(mongo.getReplicaSet());
+            }
+            bean.setSsl(mongo.isSslEnabled());
+            if (mongo.isSslEnabled()) {
+                bean.setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault());
+            }
             bean.afterPropertiesSet();
             return bean;
         } catch (final Exception e) {
@@ -197,39 +212,52 @@ public class MongoDbObjectFactory {
         }
     }
 
-
     private Mongo buildMongoDbClient(final AbstractMongoInstanceProperties mongo) {
-        final ServerAddress addr = new ServerAddress(
-                mongo.getHost(),
-                mongo.getPort());
-        return new MongoClient(addr,
-                CollectionUtils.wrap(
-                        MongoCredential.createCredential(
-                                mongo.getUserId(),
-                                mongo.getDatabaseName(),
-                                mongo.getPassword().toCharArray())),
-                buildMongoDbClientOptions(mongo));
+        final String[] serverAddresses = mongo.getHost().split(",");
+        if (serverAddresses == null || serverAddresses.length == 0) {
+            throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
+        }
+
+        List<ServerAddress> servers = new ArrayList<>();
+        if (serverAddresses.length > 1) {
+            LOGGER.debug("Multiple MongoDb server addresses are defined. Ignoring port [{}], "
+                    + "assuming ports are defined as part of the address", mongo.getPort());
+            servers = Arrays.stream(serverAddresses)
+                    .filter(StringUtils::isNotBlank)
+                    .map(ServerAddress::new)
+                    .collect(Collectors.toList());
+        } else {
+            final int port = mongo.getPort() > 0 ? mongo.getPort() : DEFAULT_PORT;
+            LOGGER.debug("Found single MongoDb server address [{}] using port [{}]" + mongo.getHost(), port);
+            final ServerAddress addr = new ServerAddress(mongo.getHost(), port);
+            servers.add(addr);
+        }
+
+        final MongoCredential credential = buildMongoCredential(mongo);
+        return new MongoClient(servers, CollectionUtils.wrap(credential), buildMongoDbClientOptions(mongo));
     }
 
     private Mongo buildMongoDbClient(final String clientUri) {
-        final MongoClientURI mongoClientUri = buildMongoClientURI(clientUri);
-        final MongoCredential credential = MongoCredential.createCredential(
-                mongoClientUri.getUsername(),
-                mongoClientUri.getDatabase(),
-                mongoClientUri.getPassword());
+        final MongoClientURI uri = buildMongoClientURI(clientUri);
+        final MongoCredential credential = buildMongoCredential(uri);
 
-        final String hostUri = mongoClientUri.getHosts().get(0);
+        final String hostUri = uri.getHosts().get(0);
         final String[] host = hostUri.split(":");
-        final ServerAddress addr = new ServerAddress(
-                host[0], host.length > 1 ? Integer.parseInt(host[1]) : DEFAULT_PORT);
-        final MongoClient client = new MongoClient(addr,
-                Collections.singletonList(credential),
-                buildMongoDbClientOptions());
+        final ServerAddress addr = new ServerAddress(host[0], host.length > 1 ? Integer.parseInt(host[1]) : DEFAULT_PORT);
+        final MongoClient client = new MongoClient(addr, Collections.singletonList(credential), buildMongoDbClientOptions());
         return client;
+    }
+
+    private MongoCredential buildMongoCredential(final MongoClientURI uri) {
+        return MongoCredential.createCredential(uri.getUsername(), uri.getDatabase(), uri.getPassword());
+    }
+
+    private MongoCredential buildMongoCredential(final AbstractMongoInstanceProperties mongo) {
+        final String dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
+        return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
     }
 
     private MongoClientURI buildMongoClientURI(final String clientUri) {
         return new MongoClientURI(clientUri);
     }
-
 }
