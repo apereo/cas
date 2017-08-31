@@ -14,9 +14,9 @@ import {
   MdRadioModule, MdRippleModule,
   MdSelectModule, MdTableModule,
   MdTabsModule,
-  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule
+  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule, MdAutocompleteModule
 } from "@angular/material";
-import {CdkTableModule} from "@angular/cdk";
+import {CdkTableModule} from "@angular/cdk/table";
 
 @NgModule({
   imports: [
@@ -42,7 +42,8 @@ import {CdkTableModule} from "@angular/cdk";
     MdCoreModule,
     MdMenuModule,
     MdChipsModule,
-    MdDialogModule
+    MdDialogModule,
+    MdAutocompleteModule
   ],
   declarations: [
     AlertComponent,
@@ -73,7 +74,8 @@ import {CdkTableModule} from "@angular/cdk";
     MdCoreModule,
     MdMenuModule,
     MdChipsModule,
-    MdDialogModule
+    MdDialogModule,
+    MdAutocompleteModule
   ]
 })
 export class SharedModule {
