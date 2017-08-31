@@ -2,7 +2,11 @@ description = "Apereo CAS Infinispan Integration"
 dependencies {
     implementation libraries.infinispan
     implementation libraries.caffein
-    implementation project(":api:cas-server-core-api")
+    
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api")
+    
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-tickets")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

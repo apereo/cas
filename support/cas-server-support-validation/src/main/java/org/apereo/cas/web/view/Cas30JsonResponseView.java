@@ -43,7 +43,6 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     private static MappingJackson2JsonView createDelegatedView() {
         final MappingJackson2JsonView view = new MappingJackson2JsonView();
         view.setPrettyPrint(true);
-        view.setDisableCaching(true);
         view.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).findAndRegisterModules();
         return view;
     }
@@ -74,7 +73,6 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
             casModel.put("serviceResponse", casResponse);
             model.clear();
             model.putAll(casModel);
-            setView(createDelegatedView());
         }
     }
 

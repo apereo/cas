@@ -3,7 +3,9 @@ dependencies {
     implementation project(":support:cas-server-support-gauth-core")
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":core:cas-server-core-authentication")
-    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    api project(":api:cas-server-core-api-webflow")
     implementation project(":core:cas-server-core-webflow")
     
     compileOnly project(":support:cas-server-support-trusted-mfa")

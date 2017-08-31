@@ -2,13 +2,17 @@ description = "Apereo CAS Core Webflow"
 dependencies {
     implementation libraries.groovy
 
-    implementation project(":api:cas-server-core-api-authentication")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-web")
-    implementation project(":api:cas-server-core-api-ticket")
-    implementation project(":api:cas-server-core-api")
-    implementation project(":api:cas-server-core-api-webflow")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-tickets")
+    
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-webflow")
 }
 
 

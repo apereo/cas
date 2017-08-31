@@ -13,7 +13,7 @@ If you intend to allow CAS to delegate authentication to an external SAML2 ident
 
 ## Federation Interop Evaluation
 
-An evaluation of the current SAML implementation in CAS based on the [InCommon Federation Interop profile](https://spaces.internet2.edu/display/FIWG/Federation+Interoperability+Working+Group+Home) is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
+The CAS project strives to conform to the [SAML V2.0 Implementation Profile for Federation Interoperability](https://kantarainitiative.github.io/SAMLprofiles/fedinterop.html). An evaluation of the requirements against the current CAS release is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
 
 ## SAML Endpoints
 
@@ -185,7 +185,7 @@ The following fields are available for SAML services:
 | `skipGeneratingSubjectConfirmationInResponseTo` | Whether generation of the `InResponseTo` element should be skipped for subject confirmations. Default is `false`.
 | `skipGeneratingSubjectConfirmationNotOnOrAfter` | Whether generation of the `NotOnOrBefore` element should be skipped for subject confirmations. Default is `false`.
 | `skipGeneratingSubjectConfirmationRecipient` | Whether generation of the `Recipient` element should be skipped for subject confirmations. Default is `false`.
-| `skipGeneratingSubjectConfirmationNotBefore` | Whether generation of the `NotBefore` element should be skipped for subject confirmations. Default is `false`.
+| `skipGeneratingSubjectConfirmationNotBefore` | Whether generation of the `NotBefore` element should be skipped for subject confirmations. Default is `true`.
 
 
 ### Metadata Aggregates
@@ -306,6 +306,26 @@ This attribute release policy authorizes the release of defined attributes, prov
 ```
 
 The specification of `entityAttributeFormat` is optional.
+
+#### Requested Attributes Filter
+
+This attribute release policy authorizes the release of defined attributes, based on the accompanying metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+    "useFriendlyName" : false
+  }
+}
+```
+
+The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
 
 ### Name ID Selection
 

@@ -17,19 +17,19 @@ import java.net.Socket;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * This is {@link MemCacheTestUtils}.
+ * This is {@link MemcachedTestUtils}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class MemCacheTestUtils {
+public final class MemcachedTestUtils {
 
     private static final int PORT = 14938;
 
     private static MemcachedExecutable MEMCACHED_EXECUTABLE;
     private static MemcachedProcess MEMCACHED;
 
-    private MemCacheTestUtils() {
+    private MemcachedTestUtils() {
     }
 
     public static void bootstrap() {
@@ -39,7 +39,7 @@ public final class MemCacheTestUtils {
             MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, PORT));
             MEMCACHED = MEMCACHED_EXECUTABLE.start();
         } catch (final Exception e) {
-            getLogger(MemCacheTestUtils.class).warn("Aborting since no memcached server could be started.", e);
+            getLogger(MemcachedTestUtils.class).warn("Aborting since no memcached server could be started.", e);
         }
     }
 

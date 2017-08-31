@@ -1,0 +1,18 @@
+description = "Apereo CAS Redis Service Registry Support"
+dependencies {
+    implementation libraries.springbootredis
+    
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":support:cas-server-support-redis-core")
+    
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":support:cas-server-support-oauth-core")
+    testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-logout")
+}

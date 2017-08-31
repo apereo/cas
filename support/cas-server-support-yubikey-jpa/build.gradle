@@ -1,9 +1,10 @@
 description = "Apereo CAS YubiKey Jpa Support"
 dependencies {
-    
     implementation libraries.yubicoapi
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
     implementation project(":support:cas-server-support-yubikey-core")
     implementation project(":core:cas-server-core-authentication")

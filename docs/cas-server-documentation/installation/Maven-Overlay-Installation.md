@@ -83,62 +83,6 @@ See [this guide](Docker-Installation.html) for more info.
 
 CAS can be deployed to a number of servlet containers. See [this guide](Configuring-Servlet-Container.html) for more info.
 
-## Spring Configuration
-
-CAS server depends heavily on the Spring framework. Two modes of configuration are available. Note that both modes
-can be used at the same time.
-
-### XML
-
-There is a `src/main/resources/deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings.
-Note that in most cases, modifying this file should be unnecessary.
-
-### Groovy
-
-The CAS application context is able to load a `src/main/resources/deployerConfigContext.groovy`.
-For advanced use cases, CAS beans can be dynamically defined via the [Groovy programming language](http://www.groovy-lang.org/).
-
-
-```groovy
-beans {
-    xmlns([context:'http://www.springframework.org/schema/context'])
-    xmlns([lang:'http://www.springframework.org/schema/lang'])
-    xmlns([util:'http://www.springframework.org/schema/util'])
-
-    exampleBean(org.apereo.cas.example.ExampleBean) {
-        beanProperty = propertyValue
-    }
-}
-```
-
-Additionally, dynamic reloadable Groovy beans can be defined in the `src/main/resources/deployerConfigContext.xml`. These definitions
-are directly read from a `.groovy` script which is monitored for changes and reloaded automatically.
-Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
-and is monitored for changes every 5 seconds.
-
-```xml
-<lang:groovy id="messenger"
-    refresh-check-delay="5000"
-    script-source="classpath:Messenger.groovy">
-    <lang:property name="message" value="Hello, CAS!" />
-</lang:groovy>
-```
-
-The contents of the `Messenger.groovy` must resolve to a valid Java/Groovy class:
-
-```groovy
-class ExampleMessenger implements Messenger {
-    String message = "Welcome"
-
-    String getMessage() {
-        this.message
-    }
-    void setMessage(String message) {
-        this.message = message
-    }
-}
-```
-
 ## Custom and Third-Party Source
 
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
