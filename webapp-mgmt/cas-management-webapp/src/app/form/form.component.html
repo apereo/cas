@@ -19,9 +19,9 @@
     -->
     <md-tab *ngIf="isSaml() || isOauth() || isOidc() || isWsFed()">
       <ng-template md-tab-label>
-        <ng-container *ngIf="isSaml()" i18n>SAML</ng-container>
-        <ng-container i18n *ngIf="isOauth()">OAuth</ng-container>
-        <ng-container *ngIf="isOidc()" i18n>OIDC</ng-container>
+        <ng-container *ngIf="isSaml()" i18n>SAML2 SP</ng-container>
+        <ng-container i18n *ngIf="isOauth()">OAuth2</ng-container>
+        <ng-container *ngIf="isOidc()" i18n>OpenID Connect</ng-container>
         <ng-container *ngIf="isWsFed()" i18n>WS Federation</ng-container>
       </ng-template>
     </md-tab>
