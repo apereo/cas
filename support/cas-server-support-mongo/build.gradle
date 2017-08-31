@@ -3,6 +3,8 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":support:cas-server-support-pac4j-authentication")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation libraries.pac4j
     implementation libraries.mongo
 

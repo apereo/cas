@@ -2,7 +2,9 @@ description = "Apereo CAS Twillio SMS Support"
 dependencies {
 
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-authentication")
     
     implementation libraries.twillio
