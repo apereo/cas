@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {DataSource} from "@angular/cdk";
+import {DataSource} from "@angular/cdk/table";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/startWith';

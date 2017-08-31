@@ -9,10 +9,11 @@
         <md-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</md-header-cell>
         <md-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
           <md-input-container>
-            <input mdInput #text
-                   [ngModel]="row.key"
+            <input mdInput #text [mdAutocomplete]="auto"
+                   [ngModel]="row.key" (click)="selectedRow = row"
                    (change)="doChange(row,$event.target.value)">
           </md-input-container>
+
         </md-cell>
       </ng-container>
 
@@ -21,7 +22,7 @@
         <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
           <md-input-container>
             <input mdInput [disabled]="row.key == ''"
-                   [ngModel]="data.service.properties[row.key] ?  service.properties[row.key].values : ''"
+                   [ngModel]="data.service.properties[row.key] ?  data.service.properties[row.key].values : ''"
                    (ngModelChange)="data.service.properties[row.key].values = $event.split(',')">
           </md-input-container>
         </md-cell>
@@ -37,9 +38,16 @@
       <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
       <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
 
+
     </md-table>
     <div style="height:25px;padding-top: 5px;">
       <button md-mini-fab (click)="addRow()" style="float:right;">+</button>
     </div>
   </div>
+
+
 </md-card>
+<md-autocomplete style="width:300px" #auto="mdAutocomplete" (optionSelected)="selection($event)">
+  <md-option *ngFor="let opt of options" [value]="opt">{{ opt.display }}</md-option>
+</md-autocomplete>
+
