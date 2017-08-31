@@ -17,7 +17,7 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
     /**
      * core connection-related settings.
      */
-    private Conns conns = new Conns();
+    private MongoConnections conns = new MongoConnections();
 
     /**
      * MongoDb database port.
@@ -36,6 +36,9 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
 
     /**
      * MongoDb database host for authentication.
+     * Multiple host addresses may be defined, separated by comma.
+     * If more than one host is defined, it is assumed that each host contains the port as well, if any.
+     * Otherwise the configuration may fallback onto {@link #getPort()}.
      */
     private String host = "localhost";
 
@@ -76,7 +79,23 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
      * Whether collections should be dropped on startup and re-created.
      */
     private boolean dropCollection;
-    
+
+    /**
+     * Name of the database to use for authentication.
+     */
+    private String authenticationDatabaseName;
+
+    /**
+     * A replica set in MongoDB is a group of {@code mongod} processes that maintain
+     * the same data set. Replica sets provide redundancy and high availability, and are the basis for all production deployments.
+     */
+    private String replicaSet;
+
+    /**
+     * Whether connections require SSL.
+     */
+    private boolean sslEnabled;
+
     public String getHost() {
         return host;
     }
@@ -149,11 +168,11 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
         this.socketKeepAlive = socketKeepAlive;
     }
 
-    public Conns getConns() {
+    public MongoConnections getConns() {
         return conns;
     }
 
-    public void setConns(final Conns conns) {
+    public void setConns(final MongoConnections conns) {
         this.conns = conns;
     }
 
@@ -173,7 +192,31 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
         this.databaseName = databaseName;
     }
 
-    public static class Conns implements Serializable {
+    public String getAuthenticationDatabaseName() {
+        return authenticationDatabaseName;
+    }
+
+    public void setAuthenticationDatabaseName(final String authenticationDatabaseName) {
+        this.authenticationDatabaseName = authenticationDatabaseName;
+    }
+
+    public String getReplicaSet() {
+        return replicaSet;
+    }
+
+    public void setReplicaSet(final String replicaSet) {
+        this.replicaSet = replicaSet;
+    }
+
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(final boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
+
+    public static class MongoConnections implements Serializable {
 
         private static final long serialVersionUID = -2398415870062168474L;
         /**
