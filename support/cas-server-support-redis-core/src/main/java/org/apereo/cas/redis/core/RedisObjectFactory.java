@@ -53,6 +53,16 @@ public class RedisObjectFactory {
         config.setTestOnBorrow(props.isTestOnBorrow());
         config.setTestOnReturn(props.isTestOnReturn());
         config.setTestOnCreate(props.isTestOnCreate());
+        
+        if (props.getMinEvictableIdleTimeMillis() > 0) {
+            config.setMinEvictableIdleTimeMillis(props.getMinEvictableIdleTimeMillis());
+        }
+        if (props.getNumTestsPerEvictionRun() > 0) {
+            config.setNumTestsPerEvictionRun(props.getNumTestsPerEvictionRun());
+        }
+        if (props.getSoftMinEvictableIdleTimeMillis() > 0) {
+            config.setSoftMinEvictableIdleTimeMillis(props.getSoftMinEvictableIdleTimeMillis());
+        }
         return config;
     }
 }

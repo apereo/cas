@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.redis.services.RedisServiceRegistryDao;
 import org.apereo.cas.adaptors.redis.services.RegisteredServiceRedisTemplate;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +15,12 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 /**
- * This is {@link RedisTicketRegistryConfiguration}.
+ * This is {@link RedisServiceRegistryConfiguration}.
  *
- * @author serv
- * @since 5.0.0
+ * @author Misagh Moayyed
+ * @since 5.2.0
  */
-@Configuration("redisTicketRegistryConfiguration")
+@Configuration("redisServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisServiceRegistryConfiguration {
 
@@ -31,7 +30,7 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public RedisConnectionFactory redisConnectionFactory() {
-        final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
+        final RedisServiceRegistryProperties redis = casProperties.getServiceRegistry().getRedis();
         final RedisObjectFactory obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
@@ -45,7 +44,6 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
-        final RedisServiceRegistryProperties redis = casProperties.getServiceRegistry().getRedis();
         return new RedisServiceRegistryDao(registeredServiceRedisTemplate());
     }
 }
