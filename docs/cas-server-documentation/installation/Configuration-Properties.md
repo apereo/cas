@@ -4174,8 +4174,9 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.timeout=5000
 # cas.serviceRegistry.mongo.userId=
 # cas.serviceRegistry.mongo.writeConcern=NORMAL
-# cas.serviceRegistry.mongo.host=localhost
-
+# cas.serviceRegistry.mongo.authenticationDatabaseName=
+# cas.serviceRegistry.mongo.replicaSet=
+# cas.serviceRegistry.mongo.ssEnabled=false
 # cas.serviceRegistry.mongo.conns.lifetime=60000
 # cas.serviceRegistry.mongo.conns.perHost=10
 ```
@@ -4586,6 +4587,9 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.userId=
 # cas.ticket.registry.mongo.writeConcern=NORMAL
 # cas.ticket.registry.mongo.host=localhost
+# cas.ticket.registry.mongo.authenticationDatabaseName=
+# cas.ticket.registry.mongo.replicaSet=
+# cas.ticket.registry.mongo.ssEnabled=false
 
 # cas.ticket.registry.mongo.conns.lifetime=60000
 # cas.ticket.registry.mongo.conns.perHost=10
