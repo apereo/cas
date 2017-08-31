@@ -146,6 +146,8 @@ The consent decision object in transit will and must match the following structu
 
 ### LDAP
 
+Consent decisions can be stored on LDAP user objects. The decisions are serialized into JSON and stored one-by-one in a multi-valued string attribute.
+
 Support is enabled by including the following module in the Overlay:
 
 ```xml
