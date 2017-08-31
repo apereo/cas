@@ -6,6 +6,7 @@ dependencies {
     implementation libraries.casclient
     implementation libraries.groovy
     implementation libraries.springcloudconfigclient
+    implementation libraries.thymeleaf
 
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")
