@@ -146,7 +146,7 @@ public class ConsentProperties implements Serializable {
         /**
          * Name of LDAP attribute that holds consent decisions as JSON
          */
-        private String consentAttributeName;        
+        private String consentAttributeName = "casConsentDecision";        
         /**
          * Whether subtree searching is allowed.
          */
