@@ -33,7 +33,7 @@ The default mapper has support for the following optional items:
 
 Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as
 JSON objects. The format and syntax of the JSON is identical to that of
-[JSON Service Registry](JSON-Service-Management.html).
+[JSON Service Registry](JSON-Service-Management.html). That's all, as far as the schema goes.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-service-registry).
 
