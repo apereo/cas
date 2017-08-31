@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.MemCacheTestUtils;
+import org.apereo.cas.MemcachedTestUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -29,23 +29,23 @@ import java.util.Collection;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for MemCacheTicketRegistry class.
+ * Unit test for MemcachedTicketRegistry class.
  *
  * @author Middleware Services
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-public class MemCacheTicketRegistryTests extends AbstractTicketRegistryTests {
+public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemCacheTicketRegistryTests.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedTicketRegistryTests.class);
     private static final String TGT_ID = "TGT";
     private static final String ST_1_ID = "ST1";
     private static final String PGT_1_ID = "PGT-1";
 
-    private MemCacheTicketRegistry registry;
+    private MemcachedTicketRegistry registry;
     private final String registryBean;
 
-    public MemCacheTicketRegistryTests(final String beanName, final boolean useEncryption) {
+    public MemcachedTicketRegistryTests(final String beanName, final boolean useEncryption) {
         super(useEncryption);
         registryBean = beanName;
     }
@@ -70,13 +70,13 @@ public class MemCacheTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Before
     public void setUp() throws Exception {
-        final boolean environmentOk = MemCacheTestUtils.isMemcachedListening();
+        final boolean environmentOk = MemcachedTestUtils.isMemcachedListening();
         if (!environmentOk) {
             LOGGER.warn("Aborting test since no memcached server is available on localhost.");
         }
         Assume.assumeTrue(environmentOk);
         final ApplicationContext context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
-        registry = context.getBean(registryBean, MemCacheTicketRegistry.class);
+        registry = context.getBean(registryBean, MemcachedTicketRegistry.class);
         super.setUp();
     }
 
