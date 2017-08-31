@@ -4,5 +4,7 @@ dependencies {
     implementation libraries.bouncycastle
     implementation libraries.apachecxf
     implementation libraries.apachefediz
+    implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-authentication-attributes")
 }

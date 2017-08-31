@@ -4,9 +4,14 @@ dependencies {
     implementation libraries.memcached
     implementation libraries.kryo
 
+    api project(":api:cas-server-core-api-logout")
     implementation project(":core:cas-server-core-logging")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")
 
     testImplementation project(":core:cas-server-core-util")

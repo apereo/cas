@@ -2,7 +2,7 @@ description = "Apereo CAS GeoLocation Tracking Support"
 
 dependencies {
     implementation project(":core:cas-server-core-configuration")
-    implementation project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-authentication")
     implementation libraries.groovy
     implementation libraries.userinfogeocoding
 }

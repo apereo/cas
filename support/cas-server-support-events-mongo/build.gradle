@@ -3,9 +3,8 @@ description = "Apereo CAS Events Consumer MongoDb"
 dependencies {
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation libraries.mongo
-    
-
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
