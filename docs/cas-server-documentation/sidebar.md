@@ -132,7 +132,7 @@ layout: null
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
         *   [JSON](/$version/installation/JSON-Service-Management.html)
         *   [YAML](/$version/installation/YAML-Service-Management.html)
-        *   [Mongo](/$version/installation/Mongo-Service-Management.html)
+        *   [MongoDb](/$version/installation/Mongo-Service-Management.html)
         *   [LDAP](/$version/installation/LDAP-Service-Management.html)
         *   [JPA](/$version/installation/JPA-Service-Management.html)
         *   [Redis](/$version/installation/Redis-Service-Management.html)
@@ -168,6 +168,8 @@ layout: null
 * [High Availability](#highavailability)
     *   [Overview](/$version/planning/High-Availability-Guide.html)
     *   [Performance Testing](/$version/planning/High-Availability-Performance-Testing.html)
+        *   [Locust](/$version/planning/Performance-Testing-Locust.html)
+        *   [JMeter](/$version/planning/Performance-Testing-JMeter.html)
     *   [Service Discovery](/$version/installation/Service-Discovery-Guide.html)
     
 * [Protocols](#protocols)
