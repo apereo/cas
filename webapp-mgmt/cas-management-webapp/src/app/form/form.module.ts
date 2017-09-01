@@ -60,6 +60,7 @@ import { TabOauthComponent } from './tab-oauth/tab-oauth.component';
 import { TabSamlComponent } from './tab-saml/tab-saml.component';
 import { TabWsfedComponent } from './tab-wsfed/tab-wsfed.component';
 import {TabBase} from "./tab-base";
+import { AttributeReleaseConsentComponent } from './attribute-release-consent/attribute-release-consent.component';
 
 @NgModule({
   imports: [
@@ -123,6 +124,7 @@ import {TabBase} from "./tab-base";
     TabOauthComponent,
     TabSamlComponent,
     TabWsfedComponent,
+    AttributeReleaseConsentComponent,
   ],
   providers: [
     FormResolve,
