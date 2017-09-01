@@ -7,7 +7,7 @@ import {
   RegisteredServiceUsernameAttributeProvider
 } from "./attribute-provider";
 import {
-  RegisteredServiceAttributeReleasePolicy, ReturnAllAttributeReleasePolicy,
+  RegisteredServiceAttributeReleasePolicy, RegisteredServiceConsentPolicy, ReturnAllAttributeReleasePolicy,
   ReturnAllowedAttributeReleasePolicy
 } from "./attribute-release";
 import {RegisteredServicePublicKey} from "./public-key";
