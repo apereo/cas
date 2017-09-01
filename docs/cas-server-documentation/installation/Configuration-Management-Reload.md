@@ -41,6 +41,13 @@ CAS will begin to automatically watch and monitor the configuration files indica
 application context automatically. You may also attempt to [refresh settings manually](Monitoring-Statistics.html)
 via the CAS admin screens.
 
+**Tip:** If you find that changes to `cas.properties` are not taking immediate effect (i.e. manually editing on the server), you can easily force detection of changes by touching the file:
+
+````
+# touch /etc/cas/config/cas.properties
+INFO [org.apereo.cas.support.events.listener.CasConfigurationEventListener] - <Received event [org.apereo.cas.support.events.config.CasConfigurationModifiedEvent@353ebd1c[],/etc/cas/config/cas.properties,false]. Refreshing CAS configuration...>
+````
+
 ### Spring Cloud
 
 Any changes you make to the externally-defined `[application|cas].[properties|yml]` file
