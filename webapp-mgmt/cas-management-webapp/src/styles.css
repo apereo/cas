@@ -20,7 +20,7 @@
   margin:5px;
 }
 
-.textInput {
+.textInput.mat-form-field {
   width:500px;
 }
 
@@ -37,6 +37,3 @@
   width:550px;
 }
 
-.mat-autocomplete-panel.mat-autocomplete-visible {
-  width: 300px;
-}

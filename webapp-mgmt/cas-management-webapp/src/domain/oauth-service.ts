@@ -40,6 +40,8 @@ export class OidcRegisteredService extends OAuthRegisteredService {
   implicit: boolean;
   dynamicRegistrationDateTime: String;
   scopes: String[];
+  subjectType: String;
+  sectorIdentifierUri: String;
 
   static cName = "org.apereo.cas.services.OidcRegisteredService";
 
@@ -47,6 +49,7 @@ export class OidcRegisteredService extends OAuthRegisteredService {
     super(service);
     this.jsonFormat = true;
     this.signIdToken = true;
+    this.subjectType = "public";
     this["@class"] = OidcRegisteredService.cName;
   }
 
