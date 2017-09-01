@@ -38,5 +38,7 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
                                       @JsonProperty("validationCode") final int validationCode,
                                       @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
         super(username, secretKey, validationCode, scratchCodes);
+		long v =  java.lang.System.currentTimeMillis();
+        this.setId(v);
     }
 }
