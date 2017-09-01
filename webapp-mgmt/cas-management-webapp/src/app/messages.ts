@@ -168,6 +168,9 @@ export class Messages {
  readonly services_form_label_oidc_encryptEnc = "Encryption Encoding Algorithm";
  readonly services_form_label_oidc_encryptAlg = "Encryption Algorithm";
  readonly services_form_label_oidc_jwks = "JSON Web Keystore";
+ readonly services_form_label_oidc_user_defined_scopes = "User Defined Scopes";
+ readonly services_form_label_oidc_subject_type = "Subject Type";
+ readonly services_form_label_oidc_sector_identifier_uri = "Sector Identifier URI";
 
  readonly services_form_header_page_addService = "Add Service";
  readonly services_form_header_page_editService = "Edit Service";
@@ -283,6 +286,9 @@ export class Messages {
  readonly services_form_tooltip_oidc_implicit = "Indicates whether this service should support the implicit flow.";
  readonly services_form_tooltip_oidc_jwks = "Location of the JSON web keystore to sign id tokens with. ";
  readonly services_form_tooltip_oidc_scopes = "Scopes";
+ readonly services_form_tooltip_oidc_user_defined_scopes = "List any custom defined scopes that should be released."
+ readonly services_form_tooltip_oidc_subject_type = "Type to use when generating principal identifiers. Default is public."
+ readonly services_form_tooltip_oidc_sector_identifier_uri = "Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the serviceId will be used instead."
 
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy = "Decides how attributes that are retrieved from the cache "+
     "should be merged into the existing attribute repository. Attributes may be replaced, ignored or contain multiple " +
