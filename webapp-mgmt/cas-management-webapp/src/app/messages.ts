@@ -124,6 +124,9 @@ export class Messages {
  readonly services_form_label_attrRelease_policies_returnMapped = "Return Mapped";
  readonly services_form_label_attrRelease_policies_sourceAttribute = "Source Attribute";
  readonly services_form_label_attrRelease_policies_casAttribute = "CAS Attribute";
+ readonly services_form_label_attrRelease_consent_enabled = "User Consent Enabled";
+ readonly services_form_label_attrRelease_consent_excludedAttributes = "Excluded Attributes";
+ readonly services_form_label_attrRelease_consent_includeOnlyAttributes = "Include Only Attributes";
  readonly services_form_label_sas_authorizedCodes = "Acceptable HTTP Codes";
  readonly services_form_label_sas_casEnabled = "Enable Service";
  readonly services_form_label_sas_ssoEnabled = "Allow Single Sign-On";
@@ -243,6 +246,9 @@ export class Messages {
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_expiration = "The cache expiration time. ";
  readonly services_form_tooltip_attrRelease_policies_returnAllowed = "List of resolved attributes out of the available collection of attributes from the attribute repository. Select attributes that are allowed to be released to the application";
  readonly services_form_tooltip_attrRelease_policies_returnMapped = "List of resolved attributes out of the available collection of attributes from the attribute repository. Select and virtually rename attributes that are allowed to be released to the application";
+ readonly services_form_tooltip_attrRelease_consent_enabled = "Control whether consent is active/inactive for this service.";
+ readonly services_form_tooltip_attrRelease_consent_excludedAttributes = "Exclude the indicated attributes from consent.";
+ readonly services_form_tooltip_attrRelease_consent_includeOnlyAttributes = "Force-include the indicated attributes in consent, provided attributes are resolved.";
  readonly services_form_tooltip_sas_starttime = "Determines the starting date/time from which service access is allowed.";
  readonly services_form_tooltip_sas_endtime = "Determines the ending date/time from which service access is allowed.";
  readonly services_form_tooltip_sas_casEnabled = "Decides whether access to this service is authorized by CAS.";

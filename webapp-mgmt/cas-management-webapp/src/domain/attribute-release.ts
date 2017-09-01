@@ -7,6 +7,7 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
   authorizedToReleaseProxyGrantingTicket: boolean;
   excludeDefaultAttributes: boolean;
   principalIdAttribute: String;
+  consentPolicy: RegisteredServiceConsentPolicy;
 
   constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
     this.attributeFilter = policy && policy.attributeFilter;
@@ -15,6 +16,7 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
     this.authorizedToReleaseProxyGrantingTicket = policy && policy.authorizedToReleaseProxyGrantingTicket;
     this.excludeDefaultAttributes = policy && policy.excludeDefaultAttributes;
     this.principalIdAttribute = policy && policy.principalIdAttribute;
+    this.consentPolicy = policy && policy.consentPolicy;
   }
 }
 
@@ -175,3 +177,32 @@ export class PatternMatchingEntityIdAttributeReleasePolicy extends RegisteredSer
   }
 }
 
+export class RegisteredServiceConsentPolicy {
+  enabled: boolean;
+  excludedAttributes: String[];
+  includeOnlyAttributes: String[];
+
+  static cName = "org.apereo.cas.services.RegisteredServiceConsentPolicy";
+
+  constructor() {
+    this.enabled = true;
+    this["@class"] = RegisteredServiceConsentPolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === RegisteredServiceConsentPolicy.cName
+  }
+}
+
+export class DefaultRegisteredServiceConsentPolicy extends RegisteredServiceConsentPolicy {
+  static cName = "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy";
+
+  constructor() {
+    super();
+    this["@class"] = DefaultRegisteredServiceConsentPolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj["@class"] === DefaultRegisteredServiceConsentPolicy.cName;
+  }
+}
