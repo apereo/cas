@@ -32,9 +32,14 @@
     <div>
       <md-input-container class="textInput" *ngIf="service.scopes.indexOf('user_defined') > -1">
         <input mdInput
-               placeholder="Enter User Defined values"
-               [ngModel]="service.scopes_userdefined"/>
+               i18n-placeholder="services.form.label.oidc.user.defined.scopes"
+               [placeholder]="messages.services_form_label_oidc_user_defined_scopes"
+               [(ngModel)]="service.scopes_userdefined"/>
       </md-input-container>
+      <md-icon style="font-size: medium"
+               i18n-mdTooltip="services.form.tooltip.oidc.user.defined.scopes"
+               [mdTooltip]="messages.services_form_tooltip_oidc_user_defined_scopes">help
+      </md-icon>
     </div>
 
     <div>
@@ -103,6 +108,32 @@
       <md-autocomplete #encodingAlgAuto="mdAutocomplete">
         <md-option *ngFor="let opt of encodingAlgOptions" [value]="opt">{{ opt }}</md-option>
       </md-autocomplete>
+    </div>
+
+    <div>
+      <md-select style="width:400px;padding-top: 25px;padding-bottom: 25px;"
+                 i18n-placeholder="services.form.label.oidc.subject.type"
+                 [placeholder]="messages.services_form_label_oidc_subject_type"
+                 [(ngModel)]="service.subjectType">
+        <md-option *ngFor="let opt of subjectType" [value]="opt.value">{{ opt.name }}</md-option>
+      </md-select>
+      <md-icon style="font-size: medium"
+               i18n-mdTooltip="services.form.tooltip.oidc.subject.type"
+               [mdTooltip]="messages.services_form_tooltip_oidc_subject_type">help
+      </md-icon>
+    </div>
+
+    <div>
+      <md-input-container class="textInput">
+        <input mdInput
+               i18n-placeholder="services.form.label.oidc.sector.identifier.uri"
+               [placeholder]="messages.services_form_label_oidc_sector_identifier_uri"
+               [(ngModel)]="service.sectorIdentifierUri"/>
+      </md-input-container>
+      <md-icon style="font-size: medium"
+               i18n-mdTooltip="services.form.tooltip.oidc.sector.identifier.uri"
+               [mdTooltip]="messages.services_form_tooltip_oidc_sector_identifier_uri">help
+      </md-icon>
     </div>
 
     <div *ngIf="service.dynamicallyRegistered">
