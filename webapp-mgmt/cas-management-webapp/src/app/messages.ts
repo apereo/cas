@@ -165,7 +165,7 @@ export class Messages {
  readonly services_form_label_oidc_signToken = "Sign ID Token";
  readonly services_form_label_oidc_implicit = "Enable Implicit";
  readonly services_form_label_oidc_encrypt = "Encrypt ID Token";
- readonly services_form_label_oidc_encryptEnc = "Encrypt Encoding Algorithm";
+ readonly services_form_label_oidc_encryptEnc = "Encryption Encoding Algorithm";
  readonly services_form_label_oidc_encryptAlg = "Encryption Algorithm";
  readonly services_form_label_oidc_jwks = "JSON Web Keystore";
 
