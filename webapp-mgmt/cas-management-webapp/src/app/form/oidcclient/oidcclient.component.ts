@@ -19,6 +19,11 @@ export class OidcclientComponent implements OnInit {
     {name: "User Defined", value: "user_defined"}
   ];
 
+  subjectType = [
+    {name: "Public", value: "public"},
+    {name: "Pairwise", value: "pairwise"}
+  ];
+
   encryptAlgOptions = [
     "RSA1-5","RSA-OAEP","RSA-OAEP-256",
     "ECDH-ES","ECDH-ES+A128KW", "ECDH-ES+A192KW","ECDH-ES+A256KW",
