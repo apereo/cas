@@ -75,7 +75,7 @@
 
     <div>
       <md-input-container class="textInput">
-        <input mdInput required
+        <input mdInput required [mdAutocomplete]="encryptAlgAuto"
                i18n-placeholder="services.form.label.oidc.encryptAlg"
                [placeholder]="messages.services_form_label_oidc_encryptAlg"
                [(ngModel)]="service.idTokenEncryptionAlg">
@@ -84,11 +84,14 @@
                i18n-mdTooltip="services.form.tooltip.oidc.encryptAlg"
                [mdTooltip]="messages.services_form_tooltip_oidc_encryptAlg">help
       </md-icon>
+      <md-autocomplete #encryptAlgAuto="mdAutocomplete">
+        <md-option *ngFor="let opt of encryptAlgOptions" [value]="opt">{{ opt }}</md-option>
+      </md-autocomplete>
     </div>
 
     <div>
       <md-input-container class="textInput">
-        <input mdInput required
+        <input mdInput required [mdAutocomplete]="encodingAlgAuto"
                i18n-placeholder="ervices.form.label.oidc.encryptEnc"
                [placeholder]="messages.services_form_label_oidc_encryptEnc"
                [(ngModel)]="service.idTokenEncryptionEncoding">
@@ -97,6 +100,9 @@
                i18n-mdTooltip="services.form.tooltip.oidc.encryptEnc"
                [mdTooltip]="messages.services_form_tooltip_oidc_encryptEnc">help
       </md-icon>
+      <md-autocomplete #encodingAlgAuto="mdAutocomplete">
+        <md-option *ngFor="let opt of encodingAlgOptions" [value]="opt">{{ opt }}</md-option>
+      </md-autocomplete>
     </div>
 
     <div *ngIf="service.dynamicallyRegistered">

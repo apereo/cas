@@ -19,6 +19,19 @@ export class OidcclientComponent implements OnInit {
     {name: "User Defined", value: "user_defined"}
   ];
 
+  encryptAlgOptions = [
+    "RSA1-5","RSA-OAEP","RSA-OAEP-256",
+    "ECDH-ES","ECDH-ES+A128KW", "ECDH-ES+A192KW","ECDH-ES+A256KW",
+    "A128KW","A192KW","A256KW",
+    "A128GCMKW","A192GXMKW","A256GCMKW",
+    "PBES2-HS256+A128KW","PBES2-HS384+A192KW","PBES2-HS512+A256KW"
+  ]
+
+  encodingAlgOptions = [
+    "A128CBC-HS256","A192CBC-HS384","A256CBC-HS512",
+    "A128GCM","A192GCM","A256GCM"
+  ]
+
   constructor(public messages: Messages,
               public data: Data) {
     this.service = data.service as OidcRegisteredService;
