@@ -78,13 +78,13 @@ public class CasMongoAuthenticationConfiguration {
         final MongoClient client = new MongoClient(uri);
         LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]", uri.getHosts(), uri.getDatabase());
 
-        final SpringSecurityPasswordEncoder mongoPasswordEncoder = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder()));
-        final MongoProfileService mongoAuthenticator = new MongoProfileService(client, mongo.getAttributes());
-        mongoAuthenticator.setUsersCollection(mongo.getCollectionName());
-        mongoAuthenticator.setUsersDatabase(uri.getDatabase());
-        mongoAuthenticator.setUsernameAttribute(mongo.getUsernameAttribute());
-        mongoAuthenticator.setPasswordAttribute(mongo.getPasswordAttribute());
-        mongoAuthenticator.setPasswordEncoder(mongoPasswordEncoder);
-        return mongoAuthenticator;
+        final SpringSecurityPasswordEncoder encoder = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder()));
+        final MongoProfileService auth = new MongoProfileService(client, mongo.getAttributes());
+        auth.setUsersCollection(mongo.getCollectionName());
+        auth.setUsersDatabase(uri.getDatabase());
+        auth.setUsernameAttribute(mongo.getUsernameAttribute());
+        auth.setPasswordAttribute(mongo.getPasswordAttribute());
+        auth.setPasswordEncoder(encoder);
+        return auth;
     }
 }
