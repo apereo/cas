@@ -1,6 +1,7 @@
 description = "Apereo CAS Memcached Monitor Integration"
 dependencies {
     implementation project(":core:cas-server-core-monitor")
+    implementation project(":support:cas-server-support-memcached-core")
     implementation project(":core:cas-server-core-configuration")
     
     implementation libraries.memcached

@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.support.kryo.serial;
+package org.apereo.cas.memcached.kryo.serial;
 
 import java.net.MalformedURLException;
 import java.net.URL;

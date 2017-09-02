@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.support.kryo;
+package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -30,10 +30,10 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.EncodedTicket;
-import org.apereo.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
-import org.apereo.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
-import org.apereo.cas.ticket.registry.support.kryo.serial.URLSerializer;
-import org.apereo.cas.ticket.registry.support.kryo.serial.ZonedDateTimeTranscoder;
+import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
+import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerializer;
+import org.apereo.cas.memcached.kryo.serial.URLSerializer;
+import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeTranscoder;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -67,7 +67,6 @@ import java.util.regex.Pattern;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SuppressWarnings("rawtypes")
 public class KryoTranscoder implements Transcoder<Object> {
 
     /**

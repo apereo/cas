@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.support.kryo;
+package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
@@ -6,6 +6,7 @@ import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.memcached.kryo.KryoTranscoder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;

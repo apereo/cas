@@ -1,11 +1,11 @@
-package org.apereo.cas.ticket.registry.support.kryo.serial;
+package org.apereo.cas.memcached.kryo.serial;
 
 import java.lang.reflect.Constructor;
 
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
-import org.apereo.cas.ticket.registry.support.kryo.FieldHelper;
+import org.apereo.cas.memcached.kryo.FieldHelper;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
