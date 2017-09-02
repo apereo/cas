@@ -268,7 +268,7 @@ Browse the report at the above link to see which dependencies might need attenti
 
 ## Continuous Integration
 
-CAS uses [Travis CI](https://travis-ci.org/apereo/cas/builds) as its main continuous integration tool. The build primaryly is
+CAS uses [Travis CI](https://travis-ci.org/apereo/cas/builds) as its main continuous integration tool. The build primarily is
 controlled by the `.travis.yml` file, defined at the root of the project directory. 
 
 The following special commit messages are recognized by Travis CI to control aspects
