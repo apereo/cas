@@ -22,6 +22,9 @@ public class BaseMemcachedProperties implements Serializable {
      */
     private boolean daemon = true;
 
+    /**
+     * Set the maximum reconnect delay.
+     */
     private long maxReconnectDelay = -1;
 
     /**
