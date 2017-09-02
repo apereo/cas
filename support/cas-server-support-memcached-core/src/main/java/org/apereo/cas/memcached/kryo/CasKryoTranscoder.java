@@ -67,7 +67,7 @@ import java.util.regex.Pattern;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public class KryoTranscoder implements Transcoder<Object> {
+public class CasKryoTranscoder implements Transcoder<Object> {
 
     /**
      * Kryo serializer.
@@ -82,7 +82,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Creates a Kryo-based transcoder.
      */
-    public KryoTranscoder() {
+    public CasKryoTranscoder() {
     }
 
     /**

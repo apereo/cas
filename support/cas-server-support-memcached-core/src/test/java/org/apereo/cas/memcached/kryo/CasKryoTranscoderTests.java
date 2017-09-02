@@ -6,7 +6,6 @@ import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.memcached.kryo.KryoTranscoder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -39,13 +38,13 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link KryoTranscoder} class.
+ * Unit test for {@link CasKryoTranscoder} class.
  *
  * @author Marvin S. Addison
  * @since 3.0.0
  */
 @SuppressWarnings("rawtypes")
-public class KryoTranscoderTests {
+public class CasKryoTranscoderTests {
 
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
     private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
@@ -55,12 +54,12 @@ public class KryoTranscoderTests {
     private static final String NICKNAME_KEY = "nickname";
     private static final String NICKNAME_VALUE = "bob";
 
-    private final KryoTranscoder transcoder;
+    private final CasKryoTranscoder transcoder;
 
     private final Map<String, Object> principalAttributes;
 
-    public KryoTranscoderTests() {
-        transcoder = new KryoTranscoder();
+    public CasKryoTranscoderTests() {
+        transcoder = new CasKryoTranscoder();
         final Map<Class<?>, Serializer> serializerMap = new HashMap<>();
         serializerMap.put(
                 MockServiceTicket.class,
