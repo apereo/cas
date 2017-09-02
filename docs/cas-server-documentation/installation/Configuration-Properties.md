@@ -3840,6 +3840,17 @@ Decide how CAS should monitor the internal state of various cache storage servic
 # cas.monitor.warn.evictionThreshold=0
 ```
 
+### Memcached Monitors
+
+Decide how CAS should monitor the internal state of a memcached connection pool.
+
+```properties
+# cas.monitor.memcached.servers=memcached.server.net:14938
+# cas.monitor.memcached.failureMode=Redistribute
+# cas.monitor.memcached.locatorType=ARRAY_MOD
+# cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH
+```
+
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
@@ -4522,6 +4533,13 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.locatorType=ARRAY_MOD
 # cas.ticket.registry.memcached.failureMode=Redistribute
 # cas.ticket.registry.memcached.hashAlgorithm=FNV1_64_HASH
+# cas.ticket.registry.memcached.shouldOptimize=false
+# cas.ticket.registry.memcached.daemon=true
+# cas.ticket.registry.memcached.maxReconnectDelay=-1
+# cas.ticket.registry.memcached.useNagleAlgorithm=false
+# cas.ticket.registry.memcached.shutdownTimeoutSeconds=-1
+# cas.ticket.registry.memcached.opTimeout=-1
+# cas.ticket.registry.memcached.timeoutExceptionThreshold=2
 
 # cas.ticket.registry.memcached.crypto.signing.key=
 # cas.ticket.registry.memcached.crypto.signing.keySize=512
