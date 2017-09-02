@@ -3,8 +3,6 @@ package org.apereo.cas.configuration.model.support.memcached;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.io.Serializable;
-
 /**
  * This is {@link MemcachedTicketRegistryProperties}.
  *
