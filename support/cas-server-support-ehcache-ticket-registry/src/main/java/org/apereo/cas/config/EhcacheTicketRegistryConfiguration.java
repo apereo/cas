@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,30 +86,44 @@ public class EhcacheTicketRegistryConfiguration {
 
     @Lazy
     @Bean
-    public EhCacheManagerFactoryBean cacheManager() {
+    public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-        bean.setConfigLocation(cache.getConfigLocation());
+
+        final boolean configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
+        if (configExists) {
+            bean.setConfigLocation(cache.getConfigLocation());
+        } else {
+            LOGGER.warn("Ehcache configuration file [{}] cannot be found", cache.getConfigLocation());
+        }
+
         bean.setShared(cache.isShared());
         bean.setCacheManagerName(cache.getCacheManagerName());
         return bean;
     }
 
     private Ehcache buildCache(final TicketDefinition ticketDefinition) {
+        final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
+        final boolean configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
+
         final EhcacheProperties ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
         final EhCacheFactoryBean bean = new EhCacheFactoryBean();
 
         bean.setCacheName(ticketDefinition.getProperties().getStorageName());
         LOGGER.debug("Constructing Ehcache cache [{}]", bean.getName());
 
-        bean.setCacheEventListeners(CollectionUtils.wrapSet(ticketRMISynchronousCacheReplicator()));
+        if (configExists) {
+            bean.setCacheEventListeners(CollectionUtils.wrapSet(ticketRMISynchronousCacheReplicator()));
+            bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
+        } else {
+            LOGGER.warn("Ehcache configuration file [{}] cannot be found so no cache event listeners will be configured to bootstrap. "
+                            + "The ticket registry will operate in standalone mode",
+                    cache.getConfigLocation());
+        }
 
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setTimeToLive((int) ticketDefinition.getProperties().getStorageTimeout());
-
-        bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
         bean.setDiskExpiryThreadIntervalSeconds(ehcacheProperties.getDiskExpiryThreadIntervalSeconds());
-
         bean.setEternal(ehcacheProperties.isEternal());
         bean.setMaxEntriesLocalHeap(ehcacheProperties.getMaxElementsInMemory());
         bean.setMaxEntriesInCache(ehcacheProperties.getMaxElementsInCache());
@@ -126,7 +141,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Autowired
     @RefreshScope
     @Bean
-    public TicketRegistry ticketRegistry(@Qualifier("cacheManager") final CacheManager manager,
+    public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketCacheManager") final CacheManager manager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final EncryptionRandomizedSigningJwtCryptographyProperties crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
 
