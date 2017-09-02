@@ -60,21 +60,34 @@ public final class Beans {
 
     protected Beans() {
     }
-    
+
     /**
-     * New thread pool executor factory bean thread pool executor factory bean.
+     * New thread pool executor factory bean.
      *
      * @param config the config
      * @return the thread pool executor factory bean
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
-        final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
+        final ThreadPoolExecutorFactoryBean bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
-        bean.setMaxPoolSize(config.getMaxSize());
-        bean.setKeepAliveSeconds((int) config.getMaxWait());
         return bean;
     }
-    
+
+    /**
+     * New thread pool executor factory bean.
+     *
+     * @param keepAlive the keep alive
+     * @param maxSize   the max size
+     * @return the thread pool executor factory bean
+     */
+    public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final long keepAlive,
+                                                                                 final long maxSize) {
+        final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
+        bean.setMaxPoolSize((int) maxSize);
+        bean.setKeepAliveSeconds((int) keepAlive);
+        return bean;
+    }
+
     /**
      * New attribute repository person attribute dao.
      *
@@ -156,7 +169,7 @@ public final class Beans {
                 return NoOpPasswordEncoder.getInstance();
         }
     }
-    
+
     /**
      * New principal name transformer.
      *
@@ -190,7 +203,7 @@ public final class Beans {
         }
         return res;
     }
-    
+
     /**
      * Transform principal attributes list into map map.
      *
@@ -202,7 +215,7 @@ public final class Beans {
         return CollectionUtils.wrap(map);
     }
 
-    
+
     /**
      * Transform principal attributes into map.
      * Items in the list are defined in the syntax of "cn", or "cn:commonName" for virtual renaming and maps.
@@ -232,7 +245,7 @@ public final class Beans {
         }
         return multimap;
     }
-    
+
     /**
      * Gets credential selection predicate.
      *
