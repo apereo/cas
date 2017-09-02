@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.support.kryo;
+package org.apereo.cas.memcached.kryo;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

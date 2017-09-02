@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.support.kryo.serial;
+package org.apereo.cas.memcached.kryo.serial;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
