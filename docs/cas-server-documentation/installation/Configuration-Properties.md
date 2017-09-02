@@ -3851,6 +3851,26 @@ Decide how CAS should monitor the internal state of a memcached connection pool.
 # cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH
 ```
 
+### MongoDb Monitors
+
+Decide how CAS should monitor the internal state of a MongoDb instance.
+
+```properties
+# cas.monitor.mongo.idleTimeout=30000
+# cas.monitor.mongo.port=27017
+# cas.monitor.mongo.socketKeepAlive=false
+# cas.monitor.mongo.password=
+# cas.monitor.mongo.databaseName=cas-mongo-database
+# cas.monitor.mongo.timeout=5000
+# cas.monitor.mongo.userId=
+# cas.monitor.mongo.writeConcern=NORMAL
+# cas.monitor.mongo.authenticationDatabaseName=
+# cas.monitor.mongo.replicaSet=
+# cas.monitor.mongo.ssEnabled=false
+# cas.monitor.mongo.conns.lifetime=60000
+# cas.monitor.mongo.conns.perHost=10
+```
+
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used

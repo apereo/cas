@@ -59,11 +59,7 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
      * mongo db instances will pass the write concern on to the shards.
      */
     private String writeConcern = "NORMAL";
-
-    /**
-     * MongoDb database collection name to fetch and/or create.
-     */
-    private String collectionName;
+    
 
     /**
      * MongoDb database instance name.
@@ -74,12 +70,7 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
      * Whether the database socket connection should be tagged with keep-alive.
      */
     private boolean socketKeepAlive;
-
-    /**
-     * Whether collections should be dropped on startup and re-created.
-     */
-    private boolean dropCollection;
-
+    
     /**
      * Name of the database to use for authentication.
      */
@@ -127,15 +118,7 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
     public void setPassword(final String password) {
         this.password = password;
     }
-
-    public boolean isDropCollection() {
-        return dropCollection;
-    }
-
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
-    }
-
+    
     public long getTimeout() {
         return Beans.newDuration(timeout).toMillis();
     }
@@ -175,15 +158,7 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
     public void setConns(final MongoConnections conns) {
         this.conns = conns;
     }
-
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public void setCollectionName(final String collectionName) {
-        this.collectionName = collectionName;
-    }
-
+    
     public String getDatabaseName() {
         return databaseName;
     }
