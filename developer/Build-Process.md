@@ -101,6 +101,31 @@ You may also need to adjust the 'Compiler' settings so modules are built in para
 
 ![image](https://cloud.githubusercontent.com/assets/1205228/23251099/31d8f250-f9c1-11e6-9ca1-64489bc1a948.png)
 
+Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
+
+```bash
+-server
+-Xms2g
+-Xmx8g
+-XX:NewRatio=3
+-Xss16m
+-XX:+UseConcMarkSweepGC
+-XX:+CMSParallelRemarkEnabled
+-XX:ConcGCThreads=4
+-XX:ReservedCodeCacheSize=840m
+-XX:+AlwaysPreTouch
+-XX:+TieredCompilation
+-XX:+UseCompressedOops
+-XX:SoftRefLRUPolicyMSPerMB=50
+-Dsun.io.useCanonCaches=false
+-Djava.net.preferIPv4Stack=true
+-Djsse.enableSNIExtension=false
+-ea
+-XX:MaxPermSize=512m
+-XX:PermSize=512m
+-Xverify:none
+```
+
 ### Eclipse
 
 For Eclipse, execute the following commands:
