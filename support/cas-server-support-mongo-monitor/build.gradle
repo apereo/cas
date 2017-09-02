@@ -1,0 +1,8 @@
+description = "Apereo CAS MongoDB Monitoring"
+dependencies {
+    implementation project(":core:cas-server-core-monitor")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-mongo-core")
+    implementation libraries.mongo
+}
