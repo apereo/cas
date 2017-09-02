@@ -55,7 +55,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 The following CAS endpoints handle the generation of SAML2 metadata:
 
-- `/cas/idp/metadata`
+- `/idp/metadata`
 
 This endpoint will display the CAS IdP SAML2 metadata upon receiving a GET request. If metadata is already available and generated,
 it will be displayed. If metadata is absent, one will be generated automatically.
