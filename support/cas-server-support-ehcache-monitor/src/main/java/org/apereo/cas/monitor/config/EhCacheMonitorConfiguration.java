@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor.config;
 
-import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.EhCacheMonitor;
 import org.apereo.cas.monitor.Monitor;
@@ -22,7 +22,7 @@ public class EhCacheMonitorConfiguration {
     
     @Autowired
     @Bean
-    public Monitor ehcacheMonitor(@Qualifier("ehcacheTicketsCache") final Cache ehcacheTicketsCache) {
-        return new EhCacheMonitor(ehcacheTicketsCache);
+    public Monitor ehcacheMonitor(@Qualifier("ehcacheTicketCacheManager") final CacheManager ehcacheTicketCacheManager) {
+        return new EhCacheMonitor(ehcacheTicketCacheManager);
     }
 }
