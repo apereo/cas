@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -62,6 +63,11 @@ public class MonitorProperties implements Serializable {
      * Options for monitoring Memcached resources.
      */
     private Memcached memcached = new Memcached();
+
+    /**
+     * Options for monitoring MongoDb resources.
+     */
+    private Mongodb mongo = new Mongodb();
 
     public Memcached getMemcached() {
         return memcached;
@@ -125,6 +131,14 @@ public class MonitorProperties implements Serializable {
 
     public void setLdap(final Ldap ldap) {
         this.ldap = ldap;
+    }
+
+    public Mongodb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final Mongodb mongo) {
+        this.mongo = mongo;
     }
 
     public static class St implements Serializable {
@@ -232,6 +246,10 @@ public class MonitorProperties implements Serializable {
 
     public static class Memcached extends BaseMemcachedProperties {
         private static final long serialVersionUID = -9139788158851782673L;
+    }
+
+    public static class Mongodb extends AbstractMongoInstanceProperties {
+        private static final long serialVersionUID = -1918436901491275547L;
     }
     
     public static class Jdbc extends AbstractJpaProperties {
