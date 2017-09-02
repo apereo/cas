@@ -43,6 +43,7 @@ import org.apereo.cas.oidc.web.controllers.OidcDynamicClientRegistrationEndpoint
 import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcProfileEndpointController;
+import org.apereo.cas.oidc.web.controllers.OidcRevocationEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventEventResolver;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
@@ -194,7 +195,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory defaultAccessTokenFactory;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -213,7 +214,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -307,6 +308,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
+    public OidcRevocationEndpointController oidcRevocationEndpointController() {
+        return new OidcRevocationEndpointController(
+                servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator);
+    }
+
+    @RefreshScope
+    @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         return new OidcAccessTokenEndpointController(
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
@@ -345,7 +356,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") 
                                                                    final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
                 oAuth20Validator, defaultAccessTokenFactory,
@@ -380,7 +391,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @RefreshScope
     @Bean
-    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
+    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
                                                                                  final AuthenticationSystemSupport authenticationSystemSupport) {
         final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
