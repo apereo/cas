@@ -4,7 +4,7 @@ import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.memcached.MemcachedConnectionFactory;
+import org.apereo.cas.memcached.MemcachedPooledConnectionFactory;
 import org.apereo.cas.monitor.MemcachedMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     public Monitor memcachedMonitor() {
-        final MemcachedConnectionFactory factory = new MemcachedConnectionFactory(casProperties.getMonitor().getMemcached());
+        final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(casProperties.getMonitor().getMemcached());
         final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
         return new MemcachedMonitor(pool);
     }

@@ -1,12 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import net.spy.memcached.MemcachedClientIF;
-import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.PooledObject;
-import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apereo.cas.memcached.MemcachedConnectionFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,20 +24,6 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
      */
     private final ObjectPool<MemcachedClientIF> connectionPool;
 
-    public MemcachedTicketRegistry(final MemcachedClientIF client) {
-        this.connectionPool = new GenericObjectPool<>(new BasePooledObjectFactory<MemcachedClientIF>() {
-            @Override
-            public MemcachedClientIF create() throws Exception {
-                return client;
-            }
-
-            @Override
-            public PooledObject<MemcachedClientIF> wrap(final MemcachedClientIF memcachedClientIF) {
-                return new DefaultPooledObject<>(memcachedClientIF);
-            }
-        });
-    }
-
     /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
      * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
@@ -57,22 +38,28 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticketToUpdate) {
         final Ticket ticket = encodeTicket(ticketToUpdate);
         LOGGER.debug("Updating ticket [{}]", ticket);
+        final MemcachedClientIF clientFromPool = getClientFromPool();
         try {
-            getClientFromPool().replace(ticket.getId(), getTimeout(ticketToUpdate), ticket);
+            clientFromPool.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed updating [{}]", ticket, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
+        final MemcachedClientIF clientFromPool = getClientFromPool();
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             LOGGER.debug("Adding ticket [{}]", ticket);
-            getClientFromPool().set(ticket.getId(), getTimeout(ticketToAdd), ticket);
+            clientFromPool.set(ticket.getId(), getTimeout(ticketToAdd), ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]", ticketToAdd, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
     }
 
@@ -84,25 +71,31 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        final MemcachedClientIF clientFromPool = getClientFromPool();
         final String ticketId = encodeTicketId(ticketIdToDelete);
         try {
-            getClientFromPool().delete(ticketId);
+            clientFromPool.delete(ticketId);
         } catch (final Exception e) {
             LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
         return true;
     }
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
+        final MemcachedClientIF clientFromPool = getClientFromPool();
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
-            final Ticket t = (Ticket) getClientFromPool().get(ticketId);
+            final Ticket t = (Ticket) clientFromPool.get(ticketId);
             if (t != null) {
                 return decodeTicket(t);
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}] ", ticketId, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
         return null;
     }
@@ -135,7 +128,21 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
         return ttl;
     }
 
-    private MemcachedClientIF getClientFromPool() throws Exception {
-        return this.connectionPool.borrowObject();
+    private MemcachedClientIF getClientFromPool() {
+        try {
+            return this.connectionPool.borrowObject();
+        } catch (final Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    private void returnClientToPool(final MemcachedClientIF clientFromPool) {
+        try {
+            if (clientFromPool != null) {
+                this.connectionPool.returnObject(clientFromPool);
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

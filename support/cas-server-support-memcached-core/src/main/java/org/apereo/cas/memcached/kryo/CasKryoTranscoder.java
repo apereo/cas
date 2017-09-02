@@ -22,18 +22,19 @@ import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.ticket.ServiceTicketImpl;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
 import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeTranscoder;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.ticket.ServiceTicketImpl;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -41,7 +42,6 @@ import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
-import org.apereo.cas.authentication.DefaultAuthentication;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
@@ -132,14 +132,14 @@ public class CasKryoTranscoder implements Transcoder<Object> {
 
         // we add these ones for tests only
         this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
-        
+
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(this.kryo);
         ImmutableListSerializer.registerSerializers(this.kryo);
         ImmutableSetSerializer.registerSerializers(this.kryo);
         ImmutableMapSerializer.registerSerializers(this.kryo);
         ImmutableMultimapSerializer.registerSerializers(this.kryo);
-
+        
         this.kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
         this.kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
         this.kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
