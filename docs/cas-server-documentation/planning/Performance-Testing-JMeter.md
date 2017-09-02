@@ -9,22 +9,9 @@ Apache JMeter is a great performance testing tool that is used heavily within th
 
 ### Java Version
 
-As of this writing, the latest stable version of JMeter is 3.2 which will require **Java 8 or later**. 
+As of this writing, the latest stable version of JMeter is `3.2` which will require **Java 8+**. 
 
-**To Verify Java Version**
-
-* Linux and Mac
-  * Open a Linux command prompt and type
-  
-    ```bash
-    prompt$ java -version
-    ```
-* For All Windows Versions
-
-  * Access the following site for instructions on verifying your Java version
-    * [https://www.java.com/en/download/help/version_manual.xml](https://www.java.com/en/download/help/version_manual.xml)
-
-**To Install JMeter**
+### Install JMeter
 
 * Linux and Mac:
   * Download the JMeter binary.
@@ -42,7 +29,7 @@ Below you will find three generic runnable login scripts for the three most popu
 
 Although the scripts support different login methodologies, they do share some common traits.
 
-**Common Settings Tabs**
+#### Common Settings Tabs
 
 * _User Defined Variables_
   * _ThreadCount_ - Number of Threads (Kind of like Users).  Recommend starting with 100 users or so.
