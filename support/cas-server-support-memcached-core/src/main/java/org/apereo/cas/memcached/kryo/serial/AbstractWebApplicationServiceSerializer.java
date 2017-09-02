@@ -1,7 +1,7 @@
-package org.apereo.cas.ticket.registry.support.kryo.serial;
+package org.apereo.cas.memcached.kryo.serial;
 
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.ticket.registry.support.kryo.FieldHelper;
+import org.apereo.cas.memcached.kryo.FieldHelper;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
