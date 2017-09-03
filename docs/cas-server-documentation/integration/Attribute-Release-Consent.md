@@ -111,6 +111,8 @@ Endpoints must be designed to accept/process `application/json`.
 | Operation                 | Method    | Data                                 | Expected Response
 |---------------------------|-----------|--------------------------------------------------------------------------------------
 | Locate consent decision   | `GET`     | `service`, `principal` as headers    | `200`. The consent decision object in the body.
+| Locate consent decision for user   | `GET`     | `principal` as headers    | `200`. The consent decisions object in the body.
+| Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
 | Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
 
 The consent decision object in transit will and must match the following structure:
@@ -120,7 +122,7 @@ The consent decision object in transit will and must match the following structu
    "id": 1000,
    "principal": "casuser",
    "service": "https://google.com",
-   "date": [ 2017, 7, 10, 14, 10, 17 ],
+   "createdDate": [ 2017, 7, 10, 14, 10, 17 ],
    "options": "ATTRIBUTE_NAME",
    "reminder": 14,
    "reminderTimeUnit": "DAYS",
