@@ -67,7 +67,7 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring MongoDb resources.
      */
-    private Mongodb mongo = new Mongodb();
+    private MongoDb mongo = new MongoDb();
 
     public Memcached getMemcached() {
         return memcached;
@@ -133,11 +133,11 @@ public class MonitorProperties implements Serializable {
         this.ldap = ldap;
     }
 
-    public Mongodb getMongo() {
+    public MongoDb getMongo() {
         return mongo;
     }
 
-    public void setMongo(final Mongodb mongo) {
+    public void setMongo(final MongoDb mongo) {
         this.mongo = mongo;
     }
 
@@ -248,7 +248,7 @@ public class MonitorProperties implements Serializable {
         private static final long serialVersionUID = -9139788158851782673L;
     }
 
-    public static class Mongodb extends BaseMongoDbProperties {
+    public static class MongoDb extends BaseMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
     }
     

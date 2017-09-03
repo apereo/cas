@@ -27,7 +27,7 @@ public class MongoDbMonitoringConfiguration {
     @Bean
     public Monitor mongoMonitor() {
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        final MonitorProperties.Mongodb mongoProps = casProperties.getMonitor().getMongo();
+        final MonitorProperties.MongoDb mongoProps = casProperties.getMonitor().getMongo();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
         return new MongoDbMonitor(mongoTemplate);
     }

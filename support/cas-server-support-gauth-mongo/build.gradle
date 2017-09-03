@@ -5,6 +5,7 @@ dependencies {
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-otp-mfa")
+    implementation project(":support:cas-server-support-mongo-core")
     implementation libraries.mongo
     
     testImplementation project(":core:cas-server-core")
