@@ -46,7 +46,7 @@ public class ConsentProperties implements Serializable {
     /**
      * Keep consent decisions stored via a MongoDb database resource.
      */
-    private Mongodb mongo = new Mongodb();
+    private MongoDb mongo = new MongoDb();
     
     /**
      * Signing/encryption settings.
@@ -102,11 +102,11 @@ public class ConsentProperties implements Serializable {
         this.rest = rest;
     }
 
-    public Mongodb getMongo() {
+    public MongoDb getMongo() {
         return mongo;
     }
 
-    public void setMongo(final Mongodb mongo) {
+    public void setMongo(final MongoDb mongo) {
         this.mongo = mongo;
     }
 
@@ -118,10 +118,10 @@ public class ConsentProperties implements Serializable {
         private static final long serialVersionUID = 1646689616653363554L;
     }
 
-    public static class Mongodb extends SingleCollectionMongoDbProperties {
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
 
-        public Mongodb() {
+        public MongoDb() {
             setCollection("MongoDbCasConsentRepository");
         }
     }

@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
-import com.mongodb.MongoClientURI;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.MongoDbYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
-import org.springframework.beans.factory.BeanCreationException;
+import org.apereo.cas.mongo.MongoDbObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,9 +13,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 /**
  * This is {@link MongoDbYubiKeyConfiguration}.
@@ -44,20 +41,11 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoYubiKeyTemplate() {
-        return new MongoTemplate(mongoYubiKeyDbFactory());
+        final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
+        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        return factory.buildMongoTemplate(yubi.getMongodb());
     }
-
-    @RefreshScope
-    @Bean
-    public MongoDbFactory mongoYubiKeyDbFactory() {
-        try {
-            final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
-            return new SimpleMongoDbFactory(new MongoClientURI(yubi.getMongodb().getClientUri()));
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
-    }
-
+    
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
