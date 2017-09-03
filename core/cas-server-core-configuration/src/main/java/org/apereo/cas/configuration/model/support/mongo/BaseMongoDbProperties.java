@@ -6,12 +6,12 @@ import org.apereo.cas.configuration.support.Beans;
 import java.io.Serializable;
 
 /**
- * This is {@link AbstractMongoInstanceProperties}.
+ * This is {@link BaseMongoDbProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class AbstractMongoInstanceProperties implements Serializable {
+public abstract class BaseMongoDbProperties implements Serializable {
     private static final long serialVersionUID = -2471243083598934186L;
 
     /**
@@ -19,6 +19,14 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
      */
     private MongoConnections conns = new MongoConnections();
 
+    /**
+     * The connection uri to the mongodb instance.
+     * This typically takes on the form of {@code mongodb://user:psw@ds135522.somewhere.com:35522/db}.
+     * If not specified, will fallback onto other individual settings.
+     * If specified, takes over all other settings where applicable.
+     */
+    private String clientUri = StringUtils.EMPTY;
+    
     /**
      * MongoDb database port.
      */
@@ -86,6 +94,14 @@ public abstract class AbstractMongoInstanceProperties implements Serializable {
      * Whether connections require SSL.
      */
     private boolean sslEnabled;
+
+    public String getClientUri() {
+        return clientUri;
+    }
+
+    public void setClientUri(final String clientUri) {
+        this.clientUri = clientUri;
+    }
 
     public String getHost() {
         return host;

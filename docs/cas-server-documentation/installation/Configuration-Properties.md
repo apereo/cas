@@ -4200,7 +4200,7 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.dropCollection=false
 # cas.serviceRegistry.mongo.socketKeepAlive=false
 # cas.serviceRegistry.mongo.password=
-# cas.serviceRegistry.mongo.collectionName=cas-service-registry
+# cas.serviceRegistry.mongo.collection=cas-service-registry
 # cas.serviceRegistry.mongo.databaseName=cas-mongo-database
 # cas.serviceRegistry.mongo.timeout=5000
 # cas.serviceRegistry.mongo.userId=
@@ -4560,6 +4560,9 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.shutdownTimeoutSeconds=-1
 # cas.ticket.registry.memcached.opTimeout=-1
 # cas.ticket.registry.memcached.timeoutExceptionThreshold=2
+# cas.ticket.registry.memcached.maxTotal=20
+# cas.ticket.registry.memcached.maxIdle=8
+# cas.ticket.registry.memcached.minIdle=0
 
 # cas.ticket.registry.memcached.crypto.signing.key=
 # cas.ticket.registry.memcached.crypto.signing.keySize=512
