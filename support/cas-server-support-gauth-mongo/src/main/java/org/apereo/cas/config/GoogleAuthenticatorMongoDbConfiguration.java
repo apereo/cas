@@ -1,14 +1,13 @@
 package org.apereo.cas.config;
 
-import com.mongodb.MongoClientURI;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
+import org.apereo.cas.mongo.MongoDbObjectFactory;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,9 +15,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -46,20 +43,12 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoDbGoogleAuthenticatorTemplate() {
-        return new MongoTemplate(mongoDbGoogleAuthenticatorFactory());
+        final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
+        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        return factory.buildMongoTemplate(mongo);
     }
 
-    @RefreshScope
-    @Bean
-    public MongoDbFactory mongoDbGoogleAuthenticatorFactory() {
-        try {
-            final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
-            return new SimpleMongoDbFactory(new MongoClientURI(mongo.getClientUri()));
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
-    }
-
+    
     @Autowired
     @Bean
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") 
