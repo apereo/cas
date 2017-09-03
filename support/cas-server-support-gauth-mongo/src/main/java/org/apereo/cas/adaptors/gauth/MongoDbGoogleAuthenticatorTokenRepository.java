@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.Assert;
 
 import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
@@ -33,9 +32,6 @@ public class MongoDbGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenR
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.expireTokensInSeconds = expireTokensInSeconds;
-
-        Assert.notNull(this.mongoTemplate);
-        Assert.notNull(this.collectionName);
 
         if (dropCollection) {
             LOGGER.debug("Dropping database collection: [{}]", this.collectionName);

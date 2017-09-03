@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 
 import java.security.PrivateKey;
@@ -116,9 +115,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                                                 @JsonProperty("publicKeyLocation") final String publicKeyLocation,
                                                 @JsonProperty("keyAlgorithm") final String keyAlgorithm,
                                                 @JsonProperty("skewAllowance") final int skewAllowance) {
-        Assert.notNull(privateKeyLocation);
-        Assert.notNull(publicKeyLocation);
-
         try {
             this.privateKeyLocation = privateKeyLocation;
             this.publicKeyLocation = publicKeyLocation;
