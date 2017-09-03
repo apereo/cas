@@ -37,13 +37,13 @@ public class EventsProperties implements Serializable {
     /**
      * Track authentication events inside a mongodb instance.
      */
-    private Mongodb mongodb = new Mongodb();
+    private MongoDb mongodb = new MongoDb();
 
-    public Mongodb getMongodb() {
+    public MongoDb getMongodb() {
         return mongodb;
     }
 
-    public void setMongodb(final Mongodb mongodb) {
+    public void setMongodb(final MongoDb mongodb) {
         this.mongodb = mongodb;
     }
 
@@ -75,10 +75,10 @@ public class EventsProperties implements Serializable {
         private static final long serialVersionUID = 7647381223153797806L;
     }
 
-    public static class Mongodb extends SingleCollectionMongoDbProperties {
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
 
-        public Mongodb() {
+        public MongoDb() {
             setCollection("MongoDbCasEventRepository");
         }
     }

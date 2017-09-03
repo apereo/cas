@@ -72,7 +72,7 @@ public class MongoDbObjectFactory {
         converters.add(new BaseConverters.CaffeinCacheConverter());
         converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
         converters.add(new BaseConverters.CacheConverter());
-        
+
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
 
@@ -98,7 +98,7 @@ public class MongoDbObjectFactory {
      */
     public MongoTemplate buildMongoTemplate(final String clientUri) {
         final MongoClientURI uri = buildMongoClientURI(clientUri);
-        final Mongo mongo = buildMongoDbClient(clientUri);
+        final Mongo mongo = buildMongoDbClient(clientUri, buildMongoDbClientOptions());
         final MongoDbFactory mongoDbFactory = mongoDbFactory(mongo, uri.getDatabase());
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
@@ -221,6 +221,12 @@ public class MongoDbObjectFactory {
     }
 
     private Mongo buildMongoDbClient(final BaseMongoDbProperties mongo) {
+
+        if (StringUtils.isNotBlank(mongo.getClientUri())) {
+            LOGGER.debug("Using MongoDb client URI [{}] to connect to MongoDb instance", mongo.getClientUri());
+            return buildMongoDbClient(mongo.getClientUri(), buildMongoDbClientOptions(mongo));
+        }
+
         final String[] serverAddresses = mongo.getHost().split(",");
         if (serverAddresses == null || serverAddresses.length == 0) {
             throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
@@ -245,14 +251,14 @@ public class MongoDbObjectFactory {
         return new MongoClient(servers, CollectionUtils.wrap(credential), buildMongoDbClientOptions(mongo));
     }
 
-    private Mongo buildMongoDbClient(final String clientUri) {
+    private Mongo buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
         final MongoClientURI uri = buildMongoClientURI(clientUri);
         final MongoCredential credential = buildMongoCredential(uri);
 
         final String hostUri = uri.getHosts().get(0);
         final String[] host = hostUri.split(":");
         final ServerAddress addr = new ServerAddress(host[0], host.length > 1 ? Integer.parseInt(host[1]) : DEFAULT_PORT);
-        final MongoClient client = new MongoClient(addr, Collections.singletonList(credential), buildMongoDbClientOptions());
+        final MongoClient client = new MongoClient(addr, Collections.singletonList(credential), clientOptions);
         return client;
     }
 
