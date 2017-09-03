@@ -10,8 +10,10 @@ import net.spy.memcached.transcoders.WhalinTranscoder;
 import net.spy.memcached.transcoders.WhalinV1Transcoder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
 import org.slf4j.Logger;
@@ -78,7 +80,6 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
             if (memcachedProperties.getTimeoutExceptionThreshold() > 0) {
                 factoryBean.setTimeoutExceptionThreshold(memcachedProperties.getTimeoutExceptionThreshold());
             }
-
             factoryBean.afterPropertiesSet();
             return (MemcachedClientIF) factoryBean.getObject();
         } catch (final Exception e) {
@@ -102,4 +103,16 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
     }
 
 
+    /**
+     * Gets object pool.
+     *
+     * @return the object pool
+     */
+    public ObjectPool<MemcachedClientIF> getObjectPool() {
+        final GenericObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(this);
+        pool.setMaxIdle(memcachedProperties.getMaxIdle());
+        pool.setMinIdle(memcachedProperties.getMinIdle());
+        pool.setMaxTotal(memcachedProperties.getMaxTotal());
+        return pool;
+    }
 }

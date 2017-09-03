@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.events;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 
 import java.io.Serializable;
 
@@ -75,7 +75,7 @@ public class EventsProperties implements Serializable {
         private static final long serialVersionUID = 7647381223153797806L;
     }
 
-    public static class Mongodb extends AbstractMongoClientProperties {
+    public static class Mongodb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
 
         public Mongodb() {

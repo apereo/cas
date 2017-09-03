@@ -8,15 +8,18 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
+import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
+import org.springframework.data.convert.JodaTimeConverters;
+import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.mapping.model.CamelCaseAbbreviatingFieldNamingStrategy;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
@@ -53,23 +56,27 @@ public class MongoDbObjectFactory {
     private static final int TIMEOUT = 5000;
     private static final int DEFAULT_PORT = 27017;
 
-    private CustomConversions customConversions = new CustomConversions(CollectionUtils.wrapList(
-            new BaseConverters.LoggerConverter(),
-            new BaseConverters.ClassConverter(),
-            new BaseConverters.CommonsLogConverter(),
-            new BaseConverters.PersonAttributesConverter(),
-            new BaseConverters.CacheLoaderConverter(),
-            new BaseConverters.RunnableConverter(),
-            new BaseConverters.ReferenceQueueConverter(),
-            new BaseConverters.ThreadLocalConverter(),
-            new BaseConverters.CertPathConverter(),
-            new BaseConverters.CaffeinCacheConverter(),
-            new BaseConverters.CaffeinCacheLoaderConverter(),
-            new BaseConverters.CacheConverter()
-    ));
+    private final CustomConversions customConversions;
 
     public MongoDbObjectFactory() {
-        this.customConversions = new CustomConversions(new ArrayList<>());
+        final List<Converter> converters = new ArrayList();
+        converters.add(new BaseConverters.LoggerConverter());
+        converters.add(new BaseConverters.ClassConverter());
+        converters.add(new BaseConverters.CommonsLogConverter());
+        converters.add(new BaseConverters.PersonAttributesConverter());
+        converters.add(new BaseConverters.CacheLoaderConverter());
+        converters.add(new BaseConverters.RunnableConverter());
+        converters.add(new BaseConverters.ReferenceQueueConverter());
+        converters.add(new BaseConverters.ThreadLocalConverter());
+        converters.add(new BaseConverters.CertPathConverter());
+        converters.add(new BaseConverters.CaffeinCacheConverter());
+        converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
+        converters.add(new BaseConverters.CacheConverter());
+        
+        converters.addAll(JodaTimeConverters.getConvertersToRegister());
+        converters.addAll(Jsr310Converters.getConvertersToRegister());
+
+        this.customConversions = new CustomConversions(converters);
     }
 
     /**
@@ -78,7 +85,7 @@ public class MongoDbObjectFactory {
      * @param mongo the mongo
      * @return the mongo template
      */
-    public MongoTemplate buildMongoTemplate(final AbstractMongoInstanceProperties mongo) {
+    public MongoTemplate buildMongoTemplate(final BaseMongoDbProperties mongo) {
         final MongoDbFactory mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo);
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
@@ -108,10 +115,11 @@ public class MongoDbObjectFactory {
         final DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         final MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
         converter.setCustomConversions(customConversions);
+        converter.afterPropertiesSet();
         return converter;
     }
 
-    private MongoDbFactory mongoDbFactory(final Mongo mongo, final AbstractMongoInstanceProperties props) {
+    private MongoDbFactory mongoDbFactory(final Mongo mongo, final BaseMongoDbProperties props) {
         return new SimpleMongoDbFactory(mongo, props.getDatabaseName(), null, props.getAuthenticationDatabaseName());
     }
 
@@ -165,7 +173,7 @@ public class MongoDbObjectFactory {
                 : PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
-    private MongoClientOptionsFactoryBean buildMongoDbClientOptionsFactoryBean(final AbstractMongoInstanceProperties mongo) {
+    private MongoClientOptionsFactoryBean buildMongoDbClientOptionsFactoryBean(final BaseMongoDbProperties mongo) {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
             bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
@@ -191,7 +199,7 @@ public class MongoDbObjectFactory {
         }
     }
 
-    private MongoClientOptions buildMongoDbClientOptions(final AbstractMongoInstanceProperties mongo) {
+    private MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
         try {
             return buildMongoDbClientOptionsFactoryBean(mongo).getObject();
         } catch (final Exception e) {
@@ -212,7 +220,7 @@ public class MongoDbObjectFactory {
         }
     }
 
-    private Mongo buildMongoDbClient(final AbstractMongoInstanceProperties mongo) {
+    private Mongo buildMongoDbClient(final BaseMongoDbProperties mongo) {
         final String[] serverAddresses = mongo.getHost().split(",");
         if (serverAddresses == null || serverAddresses.length == 0) {
             throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
@@ -252,7 +260,7 @@ public class MongoDbObjectFactory {
         return MongoCredential.createCredential(uri.getUsername(), uri.getDatabase(), uri.getPassword());
     }
 
-    private MongoCredential buildMongoCredential(final AbstractMongoInstanceProperties mongo) {
+    private MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
         final String dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
         return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
     }

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.Assert;
 
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -37,7 +36,6 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.googleAuthenticator = googleAuthenticator;
-        Assert.notNull(this.mongoTemplate);
 
         if (dropCollection) {
             LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
