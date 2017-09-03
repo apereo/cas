@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -128,7 +128,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
         private static final long serialVersionUID = -4420099402220880361L;
     }
 
-    public static class Mongodb extends AbstractMongoClientProperties {
+    public static class Mongodb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = 6876845341227039713L;
 
         public Mongodb() {

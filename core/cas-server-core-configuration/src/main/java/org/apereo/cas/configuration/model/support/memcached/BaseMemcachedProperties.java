@@ -47,7 +47,7 @@ public class BaseMemcachedProperties implements Serializable {
      * Set the default operation timeout in milliseconds.
      */
     private long opTimeout = -1;
-    
+
     /**
      * Indicate the transcoder type. Accepted values are {@code KRYO,SERIAL}.
      * The default is {code KRYO}.
@@ -65,7 +65,7 @@ public class BaseMemcachedProperties implements Serializable {
     private String failureMode = "Redistribute";
 
     /**
-     * Locator mode. Acceptable values are {@code ARRAY_MOD,CONSISTENT,VBUCKET}.
+     * Locator mode. Acceptable values are {@code ARRAY_MOD, CONSISTENT, VBUCKET}.
      */
     private String locatorType = "ARRAY_MOD";
 
@@ -73,6 +73,46 @@ public class BaseMemcachedProperties implements Serializable {
      * Hash algorithm. Acceptable values are {@code NATIVE_HASH,CRC_HASH,FNV1_64_HASH,FNV1A_64_HASH,FNV1_32_HASH,FNV1A_32_HASH,KETAMA_HASH}.
      */
     private String hashAlgorithm = "FNV1_64_HASH";
+
+    /**
+     * Sets the cap on the number of objects that can be allocated by
+     * the pool (checked out to clients, or idle awaiting checkout) at a given time. Use a negative value for no limit.
+     */
+    private int maxTotal = 20;
+
+    /**
+     * Set the value for the maxTotal configuration attribute for pools created with this configuration instance.
+     */
+    private int maxIdle = 8;
+
+    /**
+     * Get the value for the minIdle configuration attribute for pools created with this configuration instance.
+     */
+    private int minIdle;
+
+    public int getMaxTotal() {
+        return maxTotal;
+    }
+
+    public void setMaxTotal(final int maxTotal) {
+        this.maxTotal = maxTotal;
+    }
+
+    public int getMaxIdle() {
+        return maxIdle;
+    }
+
+    public void setMaxIdle(final int maxIdle) {
+        this.maxIdle = maxIdle;
+    }
+
+    public int getMinIdle() {
+        return minIdle;
+    }
+
+    public void setMinIdle(final int minIdle) {
+        this.minIdle = minIdle;
+    }
 
     public String getServers() {
         return servers;

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.consent;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -41,6 +42,11 @@ public class ConsentProperties implements Serializable {
      * Keep consent decisions stored via a static JSON resource.
      */
     private Json json = new Json();
+
+    /**
+     * Keep consent decisions stored via a MongoDb database resource.
+     */
+    private Mongodb mongo = new Mongodb();
     
     /**
      * Signing/encryption settings.
@@ -96,6 +102,14 @@ public class ConsentProperties implements Serializable {
         this.rest = rest;
     }
 
+    public Mongodb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final Mongodb mongo) {
+        this.mongo = mongo;
+    }
+
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
@@ -104,6 +118,14 @@ public class ConsentProperties implements Serializable {
         private static final long serialVersionUID = 1646689616653363554L;
     }
 
+    public static class Mongodb extends SingleCollectionMongoDbProperties {
+        private static final long serialVersionUID = -1918436901491275547L;
+
+        public Mongodb() {
+            setCollection("MongoDbCasConsentRepository");
+        }
+    }
+    
     public static class Rest implements Serializable {
         private static final long serialVersionUID = -6909617495470495341L;
 

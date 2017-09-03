@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import net.spy.memcached.MemcachedClientIF;
-import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
@@ -33,8 +30,7 @@ public class MemcachedTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry() {
         final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(casProperties.getTicket().getRegistry().getMemcached());
-        final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
-        final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(pool);
+        final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(factory.getObjectPool());
 
         final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
         final CipherExecutor cipherExecutor = Beans.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
