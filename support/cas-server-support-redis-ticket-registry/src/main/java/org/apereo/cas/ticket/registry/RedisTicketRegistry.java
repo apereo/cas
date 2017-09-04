@@ -71,8 +71,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             final String redisKey = getTicketRedisKey(ticketId);
             final Ticket t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
-                //Decoding add first
-                return decodeTicket(t);
+                final Ticket result = decodeTicket(t);
+                if (result != null && result.isExpired()) {
+                    LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
+                    deleteSingleTicket(ticketId);
+                    return null;
+                }
+                return result;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}] ", ticketId, e);

@@ -336,15 +336,15 @@ public abstract class AbstractTicketRegistryTests {
 
     @Test
     public void verifyWriteGetDelete() throws Exception {
-        final String id = "ST-1234567890ABCDEFGHIJKL123-crud";
-        final ServiceTicket ticket = new MockServiceTicket(id, RegisteredServiceTestUtils.getService(),
-                new MockTicketGrantingTicket("test"));
+        final Ticket ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
-        final ServiceTicket ticketFromRegistry = (ServiceTicket) ticketRegistry.getTicket(id);
+        final Ticket ticketFromRegistry = ticketRegistry.getTicket(TicketGrantingTicket.PREFIX);
         assertNotNull(ticketFromRegistry);
-        assertEquals(id, ticketFromRegistry.getId());
-        ticketRegistry.deleteTicket(id);
-        assertNull(ticketRegistry.getTicket(id));
+        assertEquals(TicketGrantingTicket.PREFIX, ticketFromRegistry.getId());
+        ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX);
+        assertNull(ticketRegistry.getTicket(TicketGrantingTicket.PREFIX));
     }
 
     @Test
@@ -353,7 +353,7 @@ public abstract class AbstractTicketRegistryTests {
         final MockServiceTicket ticket = new MockServiceTicket(id, RegisteredServiceTestUtils.getService(), new MockTicketGrantingTicket("test"));
         ticket.setExpiration(new AlwaysExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
-        Thread.sleep(1500);
+        Thread.sleep(500);
         assertNull(ticketRegistry.getTicket(id, ServiceTicket.class));
     }
 
