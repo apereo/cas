@@ -30,7 +30,6 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.Collection;
 
@@ -83,8 +82,7 @@ public class EhcacheTicketRegistryConfiguration {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
-
-    @Lazy
+    
     @Bean
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
@@ -151,6 +149,7 @@ public class EhcacheTicketRegistryConfiguration {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
 
+                
                 final CacheConfiguration config = ehcache.getCacheConfiguration();
                 LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
                 LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());

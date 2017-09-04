@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
@@ -63,10 +64,17 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        if (ticketId == null) {
+        if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        return decodeTicket(this.cache.get(encTicketId));
+        final Ticket found = this.cache.get(encTicketId);
+        final Ticket result = decodeTicket(found);
+        if (result != null && result.isExpired()) {
+            LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
+            this.cache.remove(encTicketId);
+            return null;
+        }
+        return result;
     }
 
     @Override
