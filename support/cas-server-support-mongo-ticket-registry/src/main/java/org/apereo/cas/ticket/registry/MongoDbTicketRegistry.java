@@ -97,7 +97,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             }
             final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId()));
             final Update update = Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson());
-            this.mongoTemplate.updateFirst(query, update, collectionName);
+            this.mongoTemplate.upsert(query, update, collectionName);
             LOGGER.debug("Updated ticket [{}]", ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
@@ -147,8 +147,15 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(encTicketId));
             final TicketHolder d = this.mongoTemplate.findOne(query, TicketHolder.class, collectionName);
             if (d != null) {
-                final Ticket result = deserializeTicketFromMongoDocument(d);
-                return decodeTicket(result);
+                final Ticket decoded = deserializeTicketFromMongoDocument(d);
+                final Ticket result = decodeTicket(decoded);
+
+                if (result != null && result.isExpired()) {
+                    LOGGER.debug("Ticket [{}] has expired and is now removed from the collection", result.getId());
+                    deleteSingleTicket(encTicketId);
+                    return null;
+                }
+                return result;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);

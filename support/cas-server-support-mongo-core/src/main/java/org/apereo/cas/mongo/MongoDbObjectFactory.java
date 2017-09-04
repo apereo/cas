@@ -120,7 +120,14 @@ public class MongoDbObjectFactory {
     }
 
     private MongoDbFactory mongoDbFactory(final Mongo mongo, final BaseMongoDbProperties props) {
-        return new SimpleMongoDbFactory(mongo, props.getDatabaseName(), null, props.getAuthenticationDatabaseName());
+        final String dbName;
+        if (StringUtils.isNotBlank(props.getClientUri())) {
+            final MongoClientURI uri = buildMongoClientURI(props.getClientUri());
+            dbName = uri.getDatabase();
+        } else {
+            dbName = props.getDatabaseName();
+        }
+        return new SimpleMongoDbFactory(mongo, dbName, null, props.getAuthenticationDatabaseName());
     }
 
     private MongoDbFactory mongoDbFactory(final Mongo mongo, final String databaseName) {
@@ -258,8 +265,7 @@ public class MongoDbObjectFactory {
         final String hostUri = uri.getHosts().get(0);
         final String[] host = hostUri.split(":");
         final ServerAddress addr = new ServerAddress(host[0], host.length > 1 ? Integer.parseInt(host[1]) : DEFAULT_PORT);
-        final MongoClient client = new MongoClient(addr, Collections.singletonList(credential), clientOptions);
-        return client;
+        return new MongoClient(addr, Collections.singletonList(credential), clientOptions);
     }
 
     private MongoCredential buildMongoCredential(final MongoClientURI uri) {

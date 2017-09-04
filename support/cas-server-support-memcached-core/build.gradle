@@ -13,4 +13,9 @@ dependencies {
 
     compileOnly project(":support:cas-server-support-saml")
     compileOnly project(":support:cas-server-support-saml-googleapps-core")
+
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }

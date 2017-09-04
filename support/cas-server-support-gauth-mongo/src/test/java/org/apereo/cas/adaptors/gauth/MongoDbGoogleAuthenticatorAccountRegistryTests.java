@@ -82,6 +82,7 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class MongoDbGoogleAuthenticatorAccountRegistryTests {
+    
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
