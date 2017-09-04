@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.ldaptive.ConnectionFactory;
@@ -71,11 +72,19 @@ public class LdapConsentRepository implements ConsentRepository {
             final Set<String> newConsent = mergeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), decision);
             final Map<String, Set<String>> attrMap = new HashMap<>();
             attrMap.put(this.ldap.getConsentAttributeName(), newConsent);
-            return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, attrMap);
+            return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, CollectionUtils.wrap(attrMap));
         }
         return false;
     }
 
+    /**
+     * Merges a new decision into existing decisions.
+     * Decisions are matched by ID.
+     * 
+     * @param ldapConsent existing consent decisions
+     * @param decision new decision
+     * @return new decision set
+     */
     private Set<String> mergeDecision(final LdapAttribute ldapConsent, final ConsentDecision decision) {
         final Set<String> result = new HashSet<>();
         if (ldapConsent != null && ldapConsent.size() != 0) {
@@ -90,11 +99,17 @@ public class LdapConsentRepository implements ConsentRepository {
             decision.setId(Math.abs(RandomUtils.getInstanceNative().nextInt()));
         }
         result.add(mapToJson(decision, String.class));
-        return result;
+        return CollectionUtils.wrap(result);
     }
-        
+    
+    /**
+     * Fetches a User Entry from LDAP along with its consent attributes. 
+     * 
+     * @param principal user name
+     * @return the user's LDAP entry
+     */
     private LdapEntry readConsentEntry(final String principal) {
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, Arrays.asList(principal));
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, CollectionUtils.wrap(Arrays.asList(principal)));
         final String[] attributes = {this.ldap.getConsentAttributeName()};
         final Response<SearchResult> response;
         try {
