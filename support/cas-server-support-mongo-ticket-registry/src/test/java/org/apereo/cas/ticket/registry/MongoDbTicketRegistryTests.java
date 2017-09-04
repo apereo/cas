@@ -84,11 +84,12 @@ public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Before
     public void before() {
-        ticketRegistry.getTickets().forEach(t -> this.ticketRegistry.deleteTicket(t.getId()));
+        ticketRegistry.deleteAll();
     }
 
     @Override
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return this.ticketRegistry;
     }
+    
 }
