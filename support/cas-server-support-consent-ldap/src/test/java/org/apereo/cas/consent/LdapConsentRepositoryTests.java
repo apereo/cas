@@ -84,7 +84,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     }
     
     @Test
-    public void verifyConsentDecisionIsNotMistaken() throws Exception {        
+    public void verifyConsentDecisionIsNotMistaken() throws Exception {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals("success", DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode().getName());
@@ -105,7 +105,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         
         final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
         assertNotNull(d);
-        assertEquals(d.getPrincipal(), USER_CN);        
+        assertEquals(d.getPrincipal(), USER_CN);
     }
     
     @Test
@@ -167,5 +167,5 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         assertNotNull(d);
         assertEquals(d.getId(), decision.getId());
         assertEquals(d.getCreatedDate(), t);
-    }    
+    }
 }

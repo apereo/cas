@@ -69,7 +69,7 @@ public class LdapConsentRepository implements ConsentRepository {
     
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
-        final LdapEntry entry = readConsentEntry(principal);        
+        final LdapEntry entry = readConsentEntry(principal);
         if (entry != null) {
             final LdapAttribute consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
             if (consentDecisions != null) {
@@ -139,7 +139,7 @@ public class LdapConsentRepository implements ConsentRepository {
     }
     
     /**
-     * Fetches a User Entry from LDAP along with its consent attributes. 
+     * Fetches a User Entry from LDAP along with its consent attributes.
      * 
      * @param principal user name
      * @return the user's LDAP entry
@@ -195,7 +195,7 @@ public class LdapConsentRepository implements ConsentRepository {
         try {
             return MAPPER.writeValueAsString(s);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);            
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
