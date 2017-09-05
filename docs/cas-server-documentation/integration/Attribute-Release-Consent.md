@@ -77,6 +77,20 @@ Support is enabled by including the following module in the Overlay:
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jpa-attribute-consent).
 
+### MongoDb
+
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-consent-mongo</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#mongodb-attribute-consent).
+
 
 ### REST
 
@@ -97,6 +111,8 @@ Endpoints must be designed to accept/process `application/json`.
 | Operation                 | Method    | Data                                 | Expected Response
 |---------------------------|-----------|--------------------------------------------------------------------------------------
 | Locate consent decision   | `GET`     | `service`, `principal` as headers    | `200`. The consent decision object in the body.
+| Locate consent decision for user   | `GET`     | `principal` as headers    | `200`. The consent decisions object in the body.
+| Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
 | Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
 
 The consent decision object in transit will and must match the following structure:
@@ -106,7 +122,7 @@ The consent decision object in transit will and must match the following structu
    "id": 1000,
    "principal": "casuser",
    "service": "https://google.com",
-   "date": [ 2017, 7, 10, 14, 10, 17 ],
+   "createdDate": [ 2017, 7, 10, 14, 10, 17 ],
    "options": "ATTRIBUTE_NAME",
    "reminder": 14,
    "reminderTimeUnit": "DAYS",
@@ -115,12 +131,12 @@ The consent decision object in transit will and must match the following structu
 }
 ```
 
-| Field                     | Description    
+| Field                     | Description
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------
 | `id`                      | `-1` for new decision records or a valid numeric value for existing records.      
 | `principal`               | The authenticated user id.
 | `service`                 | Target application url to which attributes are about to be released.
-| `date`                    | Date/Time of the decision record.
+| `createdDate`             | Date/Time of the decision record.
 | `options`                 | Indicates how changes in attributes are determined for this application. (i.e. `ATTRIBUTE_NAME`, `ATTRIBUTE_VALUE`, `ALWAYS`)
 | `reminder`                | Indicates the period after which user will be reminded to consent again, in case no changes are found.
 | `reminderTimeUnit`        | The reminder time unit (i.e. `MONTHS`, `DAYS`, `HOURS`, etc).
@@ -147,4 +163,3 @@ public class MyConfiguration {
 ```
 
 [See this guide](../installation/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
-

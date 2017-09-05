@@ -69,7 +69,7 @@ public class DefaultConsentEngine implements ConsentEngine {
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
         final ChronoUnit unit = DateTimeUtils.toChronoUnit(decision.getReminderTimeUnit());
-        final LocalDateTime dt = decision.getDate().plus(decision.getReminder(), unit);
+        final LocalDateTime dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
         final LocalDateTime now = LocalDateTime.now();
 
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);

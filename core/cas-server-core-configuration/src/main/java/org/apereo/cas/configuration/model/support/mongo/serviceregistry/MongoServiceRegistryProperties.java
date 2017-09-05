@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.mongo.serviceregistry;
 
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 
 /**
  * Configuration properties class mongodb service registry.
@@ -8,10 +8,10 @@ import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstancePro
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class MongoServiceRegistryProperties extends AbstractMongoInstanceProperties {
+public class MongoServiceRegistryProperties extends SingleCollectionMongoDbProperties {
     private static final long serialVersionUID = -227092724742371662L;
-
+    
     public MongoServiceRegistryProperties() {
-        setCollectionName("cas-service-registry");
+        setCollection("cas-service-registry");
     }
 }

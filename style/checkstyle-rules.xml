@@ -347,6 +347,15 @@
 
         <!-- Custom checks based on regular expressions -->
         <module name="RegexpSinglelineJava">
+            <property name="id" value="secureRandom"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Do not create a standalone instance of SecureRandom"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="new SecureRandom\(.*\)"/>
+            <property name="message" 
+                      value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
+        </module>
+        
+        <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>
             <property name="severity" value="error"/>

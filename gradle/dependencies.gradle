@@ -270,6 +270,9 @@ ext.libraries = [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
                 },
+                dependencies.create("org.apache.commons:commons-pool2:$commonsPoolVersion") {
+                    force = true
+                },
                 dependencies.create("commons-cli:commons-cli:$commonsCliVersion") {
                     force = true
                 },
@@ -1156,6 +1159,7 @@ ext.libraries = [
                 dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
                 dependencies.create("org.skyscreamer:jsonassert:$jsonassertVersion") {
                     exclude(group: "org.json", module: "json")
+                    exclude(group: "com.vaadin.external.google", module:"android-json")
                     force = true
                 },
                 dependencies.create("org.springframework:spring-test:$springVersion"),

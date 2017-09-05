@@ -37,7 +37,7 @@ public class MongoDbServiceRegistryConfiguration {
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistryDao(
                 mongoDbServiceRegistryTemplate(),
-                mongo.getCollectionName(),
+                mongo.getCollection(),
                 mongo.isDropCollection());
     }
 }
