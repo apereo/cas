@@ -10,7 +10,6 @@ import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.openid4java.association.Association;
-import org.openid4java.message.ParameterList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -70,7 +69,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
             final Response response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager, centralAuthenticationService)
-                    .build(openIdService, "something");
+                    .build(openIdService, "something", CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 
             assertEquals(association.getHandle(), response.getAttributes().get(OpenIdProtocolConstants.OPENID_ASSOCHANDLE));
@@ -78,7 +77,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             assertEquals(OPEN_ID_PREFIX_URL, response.getAttributes().get(OpenIdProtocolConstants.OPENID_IDENTITY));
 
             final Response response2 = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager, centralAuthenticationService)
-                    .build(openIdService, null);
+                    .build(openIdService, null, CoreAuthenticationTestUtils.getAuthentication());
             assertEquals("cancel", response2.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
         } catch (final Exception e) {
             LOGGER.debug("Exception during verification of service ticket", e);
@@ -104,9 +103,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
                     fail("Could not wait long enough to check association expiry date");
                 }
             }
-            final ParameterList paramList = new ParameterList(request.getParameterMap());
             final Response response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager, centralAuthenticationService)
-                    .build(openIdService, st);
+                    .build(openIdService, st, CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 
             assertEquals(2, response.getAttributes().size());

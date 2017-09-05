@@ -22,7 +22,7 @@ import java.util.Collection;
 @SpringBootTest(classes = {MemcachedTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/memcached.properties"})
 public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
-
+  
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry registry;
@@ -41,7 +41,7 @@ public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
         return registry;
     }
 
-    
+
     @Override
     protected boolean isIterableRegistry() {
         return false;
