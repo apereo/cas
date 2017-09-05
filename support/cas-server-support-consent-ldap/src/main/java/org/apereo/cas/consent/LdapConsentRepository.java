@@ -4,10 +4,12 @@ import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -63,6 +65,40 @@ public class LdapConsentRepository implements ConsentRepository {
             }
         }
         return null;
+    }
+    
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+        final LdapEntry entry = readConsentEntry(principal);        
+        if (entry != null) {
+            final LdapAttribute consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
+            if (consentDecisions != null) {
+                return consentDecisions.getStringValues()
+                        .stream()
+                        .map(s -> mapFromJson(s, ConsentDecision.class))
+                        .collect(Collectors.toSet());
+            }
+        }
+        return new HashSet<>();
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions() {
+        final Collection<LdapEntry> entries = readConsentEntries();
+        if (entries != null && !entries.isEmpty()) {
+            final HashSet<ConsentDecision> decisions = new HashSet<>();
+            entries.stream()
+                    .forEach(e -> {
+                        final LdapAttribute attr = e.getAttribute(this.ldap.getConsentAttributeName());
+                        if (attr != null) {
+                            attr.getStringValues()
+                                    .stream()
+                                    .forEach(a -> decisions.add(mapFromJson(a, ConsentDecision.class)));
+                        }
+                    });
+            return CollectionUtils.wrap(decisions);
+        }
+        return new HashSet<>();
     }
     
     @Override
@@ -122,6 +158,28 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.debug(e.getMessage(), e);
         }
         return null;
+    }
+    
+    /**
+     * Fetches all user entries that contain consent attributes along with these.
+     * 
+     * @return the collection of user entries
+     */
+    private Collection<LdapEntry> readConsentEntries() {
+        final String att = this.ldap.getConsentAttributeName();
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter("(" + att + "=*)");
+        final String[] attributes = {att};
+        final Response<SearchResult> response;
+        try {
+            response = LdapUtils
+                    .executeSearchOperation(this.connectionFactory, this.ldap.getBaseDn(), filter, null, attributes);
+            if (LdapUtils.containsResultEntry(response)) {
+                return response.getResult().getEntries();
+            }
+        } catch (final LdapException e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return new HashSet<>();
     }
     
     private static <T> ConsentDecision mapFromJson(final String s, final Class<ConsentDecision> c) {
