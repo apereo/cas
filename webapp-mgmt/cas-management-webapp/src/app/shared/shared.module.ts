@@ -4,7 +4,6 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms"
-import {AlertComponent} from "../alert/alert.component";
 import 'hammerjs';
 import {MyTooltipDirective} from "../my-tooltip.directive";
 import {
@@ -14,7 +13,7 @@ import {
   MdRadioModule, MdRippleModule,
   MdSelectModule, MdTableModule,
   MdTabsModule,
-  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule, MdAutocompleteModule
+  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule, MdAutocompleteModule, MdSnackBarModule
 } from "@angular/material";
 import {CdkTableModule} from "@angular/cdk/table";
 
@@ -39,20 +38,18 @@ import {CdkTableModule} from "@angular/cdk/table";
     MdCardModule,
     MdExpansionModule,
     MdListModule,
-    MdCoreModule,
     MdMenuModule,
     MdChipsModule,
     MdDialogModule,
-    MdAutocompleteModule
+    MdAutocompleteModule,
+    MdSnackBarModule
   ],
   declarations: [
-    AlertComponent,
     MyTooltipDirective,
   ],
   providers: [
   ],
   exports: [
-    AlertComponent,
     MyTooltipDirective,
     MdTabsModule,
     MdCheckboxModule,
@@ -71,11 +68,11 @@ import {CdkTableModule} from "@angular/cdk/table";
     MdCardModule,
     MdExpansionModule,
     MdListModule,
-    MdCoreModule,
     MdMenuModule,
     MdChipsModule,
     MdDialogModule,
-    MdAutocompleteModule
+    MdAutocompleteModule,
+    MdSnackBarModule
   ]
 })
 export class SharedModule {

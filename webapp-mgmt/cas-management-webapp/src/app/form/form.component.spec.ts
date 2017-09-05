@@ -5,7 +5,6 @@ import { ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
 
 import { FormComponent } from './form.component';
-import {AlertComponent} from "../alert/alert.component";
 import {SaveformtopComponent} from "./saveformtop/saveformtop.component";
 import {Messages} from "../messages";
 import {FormService} from "./form.service";
@@ -49,7 +48,7 @@ describe('FormComponent', () => {
       imports: [
         RouterTestingModule
       ],
-      declarations: [ FormComponent, AlertComponent, SaveformtopComponent ],
+      declarations: [ FormComponent, SaveformtopComponent ],
       providers: [
         Messages,
         Data,

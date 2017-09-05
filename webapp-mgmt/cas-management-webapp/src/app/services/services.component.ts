@@ -4,8 +4,7 @@ import {Messages} from "../messages";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ServiceViewService} from "./service.service";
 import {Location} from "@angular/common";
-import {AlertComponent} from "../alert/alert.component";
-import {MdDialog} from "@angular/material";
+import {MdDialog, MdSnackBar} from "@angular/material";
 import {DeleteComponent} from "../delete/delete.component";
 
 @Component({
@@ -15,8 +14,6 @@ import {DeleteComponent} from "../delete/delete.component";
 })
 export class ServicesComponent implements OnInit {
 
-  @ViewChild('alert')
-  alert: AlertComponent;
   dataTable: ServiceViewBean[];
   detailRow: String;
   deleteItem: ServiceViewBean;
@@ -28,7 +25,8 @@ export class ServicesComponent implements OnInit {
               private router: Router,
               private service: ServiceViewService,
               private location: Location,
-              public dialog: MdDialog) {
+              public dialog: MdDialog,
+              public snackBar: MdSnackBar) {
     this.dataTable = [];
   }
 
@@ -37,7 +35,9 @@ export class ServicesComponent implements OnInit {
       .subscribe((data: { resp: ServiceViewBean[]}) => {
         this.dataTable = data.resp;
         if (!this.dataTable) {
-          this.alert.show(this.messages.management_services_status_listfail,'danger');
+          this.snackBar.open(this.messages.management_services_status_listfail,'dismiss',{
+            duration: 5000
+          });
         }
       });
   }
@@ -77,11 +77,15 @@ export class ServicesComponent implements OnInit {
 
     this.service.delete(Number.parseInt(this.deleteItem.assignedId as string))
       .then(resp => this.handleDelete(resp))
-      .catch((e: any) => this.alert.show(this.messages.management_services_status_notdeleted, 'danger'));
+      .catch((e: any) => this.snackBar.open(this.messages.management_services_status_notdeleted, 'Dismiss', {
+        duration: 5000
+      }));
   };
 
   handleDelete(name: String) {
-    this.alert.show(name+" "+this.messages.management_services_status_deleted,'info');
+    this.snackBar.open(name+" "+this.messages.management_services_status_deleted,'Dismiss', {
+      duration: 5000
+    });
     this.refresh();
   }
 
@@ -94,7 +98,9 @@ export class ServicesComponent implements OnInit {
   getServices() {
     this.service.getServices()
       .then(resp => this.dataTable = resp)
-      .catch((e: any) => this.alert.show(this.messages.management_services_status_listfail,'danger'));
+      .catch((e: any) => this.snackBar.open(this.messages.management_services_status_listfail,'Dismiss', {
+        duration: 5000
+      }));
   }
 
   goBack() {

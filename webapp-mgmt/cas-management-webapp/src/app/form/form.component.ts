@@ -4,7 +4,6 @@ import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
 import {Location} from "@angular/common";
 import {FormService} from "./form.service";
 import {Data} from "./data";
-import {AlertComponent} from "../alert/alert.component";
 import {AbstractRegisteredService, RegexRegisteredService} from "../../domain/registered-service";
 import {CachingPrincipalAttributesRepository} from "../../domain/attribute-repo";
 import {
@@ -17,7 +16,7 @@ import {
 import {OAuthRegisteredService, OidcRegisteredService} from "../../domain/oauth-service";
 import {SamlRegisteredService} from "../../domain/saml-service";
 import {WSFederationRegisterdService} from "../../domain/wsed-service";
-import {MdTabGroup} from "@angular/material";
+import {MdSnackBar, MdTabGroup} from "@angular/material";
 import {GrouperRegisteredServiceAccessStrategy} from "../../domain/access-strategy";
 
 enum Tabs {
@@ -44,9 +43,6 @@ export class FormComponent implements OnInit {
   id: String;
   path: String;
 
-  @ViewChild('alert')
-  alert: AlertComponent;
-
   @ViewChild('tabGroup')
   tabGroup: MdTabGroup;
 
@@ -55,7 +51,8 @@ export class FormComponent implements OnInit {
               private router: Router,
               private service: FormService,
               public data: Data,
-              private location: Location) {
+              private location: Location,
+              public snackBar: MdSnackBar) {
   }
 
   ngOnInit() {
@@ -168,7 +165,9 @@ export class FormComponent implements OnInit {
     this.clearErrors();
     formErrors = this.validateForm();
     if (formErrors > -1) {
-      this.alert.show(this.messages.services_form_alert_formHasErrors, 'danger');
+      this.snackBar.open(this.messages.services_form_alert_formHasErrors, 'Dismiss',{
+        duration: 5000
+      });
       this.tabGroup.selectedIndex = (formErrors > 0 && this.isCas()) ? formErrors - 1 : formErrors;
     } else {
       this.service.saveService(this.data.service)
@@ -192,10 +191,13 @@ export class FormComponent implements OnInit {
 
     if (!hasIdAssignedAlready && id && id != -1) {
       this.data.service.id = id;
-      this.alert.show(this.messages.services_form_alert_serviceAdded,'info');
-    }
-    else {
-      this.alert.show(this.messages.services_form_alert_serviceUpdated,'info');
+      this.snackBar.open(this.messages.services_form_alert_serviceAdded,"Dismiss", {
+        duration: 5000
+      });
+    } else {
+      this.snackBar.open(this.messages.services_form_alert_serviceUpdated,"Dismiss", {
+        duration: 5000
+      });
     }
 
     this.data.service.id = id;
@@ -203,7 +205,9 @@ export class FormComponent implements OnInit {
   }
 
   handleNotSaved(e: any) {
-    this.alert.show(this.messages.services_form_alert_unableToSave,'danger');
+    this.snackBar.open(this.messages.services_form_alert_unableToSave,'Dismiss', {
+      duration: 5000
+    });
   }
 
   validateRegex(pattern) {
