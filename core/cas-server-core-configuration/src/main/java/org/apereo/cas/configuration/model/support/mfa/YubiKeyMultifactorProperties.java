@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Keep device registration records inside a MongoDb resource.
      */
-    private Mongodb mongodb = new Mongodb();
+    private MongoDb mongodb = new MongoDb();
 
     public YubiKeyMultifactorProperties() {
         setId("mfa-yubikey");
@@ -116,11 +116,11 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
         this.jpa = jpa;
     }
 
-    public Mongodb getMongodb() {
+    public MongoDb getMongodb() {
         return mongodb;
     }
 
-    public void setMongodb(final Mongodb mongodb) {
+    public void setMongodb(final MongoDb mongodb) {
         this.mongodb = mongodb;
     }
 
@@ -128,10 +128,10 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
         private static final long serialVersionUID = -4420099402220880361L;
     }
 
-    public static class Mongodb extends AbstractMongoClientProperties {
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = 6876845341227039713L;
 
-        public Mongodb() {
+        public MongoDb() {
             setCollection("MongoDbYubiKeyRepository");
         }
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -145,6 +146,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
                 || isExpiredInternal();
     }
 
+    @JsonIgnore
     protected boolean isExpiredInternal() {
         return false;
     }
