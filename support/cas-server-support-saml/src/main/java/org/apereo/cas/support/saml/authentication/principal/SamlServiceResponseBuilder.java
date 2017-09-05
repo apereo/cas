@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -21,7 +22,7 @@ public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceRes
     private static final long serialVersionUID = -4584738964007702003L;
 
     @Override
-    public Response build(final WebApplicationService service, final String ticketId) {
+    public Response build(final WebApplicationService service, final String ticketId, final Authentication authentication) {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
         return buildRedirect(service, parameters);
