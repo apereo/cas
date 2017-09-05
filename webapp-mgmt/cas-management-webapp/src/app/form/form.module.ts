@@ -61,6 +61,7 @@ import { TabSamlComponent } from './tab-saml/tab-saml.component';
 import { TabWsfedComponent } from './tab-wsfed/tab-wsfed.component';
 import {TabBase} from "./tab-base";
 import { AttributeReleaseConsentComponent } from './attribute-release-consent/attribute-release-consent.component';
+import { SurrogateComponent } from './access-strategy/surrogate/surrogate.component';
 
 @NgModule({
   imports: [
@@ -125,6 +126,7 @@ import { AttributeReleaseConsentComponent } from './attribute-release-consent/at
     TabSamlComponent,
     TabWsfedComponent,
     AttributeReleaseConsentComponent,
+    SurrogateComponent,
   ],
   providers: [
     FormResolve,

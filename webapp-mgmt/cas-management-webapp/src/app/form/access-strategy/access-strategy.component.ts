@@ -2,7 +2,8 @@ import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from "../../messages";
 import {
   DefaultRegisteredServiceAccessStrategy, GrouperRegisteredServiceAccessStrategy,
-  RemoteEndpointServiceAccessStrategy, TimeBasedRegisteredServiceAccessStrategy
+  RemoteEndpointServiceAccessStrategy, SurrogateRegisteredServiceAccessStrategy,
+  TimeBasedRegisteredServiceAccessStrategy
 } from "../../../domain/access-strategy";
 import {FormData} from "../../../domain/service-view-bean";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
@@ -11,7 +12,7 @@ import {Data} from "../data";
 
 
 enum Type{
-  DEFAULT,TIME,GROUPER,REMOTE
+  DEFAULT,TIME,GROUPER,REMOTE,SURROGATE
 }
 
 @Component({
@@ -26,7 +27,7 @@ export class AccessStrategyComponent implements OnInit {
   selectOptions;
   type: Type;
   TYPE = Type;
-  types = [Type.DEFAULT,Type.TIME,Type.GROUPER,Type.REMOTE];
+  types = [Type.DEFAULT,Type.TIME,Type.GROUPER,Type.REMOTE,Type.SURROGATE];
 
   constructor(public messages: Messages,
               public data: Data) {
@@ -56,6 +57,8 @@ export class AccessStrategyComponent implements OnInit {
       this.type = Type.TIME;
     } else if (GrouperRegisteredServiceAccessStrategy.instanceOf(service.accessStrategy)) {
       this.type = Type.GROUPER;
+    } else if (SurrogateRegisteredServiceAccessStrategy.instanceOf(service.accessStrategy)) {
+      this.type = Type.SURROGATE;
     } else {
       this.type = Type.DEFAULT;
     }
@@ -74,6 +77,9 @@ export class AccessStrategyComponent implements OnInit {
         break;
       case Type.GROUPER :
         this.data.service.accessStrategy = new GrouperRegisteredServiceAccessStrategy(this.data.service.accessStrategy);
+        break;
+      case Type.SURROGATE :
+        this.data.service.accessStrategy = new SurrogateRegisteredServiceAccessStrategy(this.data.service.accessStrategy);
         break;
       default:
     }
