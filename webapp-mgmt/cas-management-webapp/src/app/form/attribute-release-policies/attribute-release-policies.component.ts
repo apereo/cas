@@ -4,6 +4,7 @@ import {Messages} from "../../messages";
 import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {
   DenyAllAttributeReleasePolicy, GroovyScriptAttributeReleasePolicy, InCommonRSAttributeReleasePolicy,
+  MetadataEntityAttributesAttributeReleasePolicy,
   PatternMatchingEntityIdAttributeReleasePolicy,
   ReturnAllAttributeReleasePolicy,
   ReturnAllowedAttributeReleasePolicy,
@@ -20,7 +21,8 @@ enum Type {
   SCRIPT,
   GROOVY,
   INCOMMON,
-  MATCHING
+  MATCHING,
+  METADATA
 }
 
 @Component({
@@ -64,6 +66,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       this.type = Type.INCOMMON;
     } else if (PatternMatchingEntityIdAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.MATCHING;
+    } else if (MetadataEntityAttributesAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
+      this.type = Type.METADATA;
     }
 
     this.isSaml = SamlRegisteredService.instanceOf(this.data.service);
@@ -73,11 +77,15 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       this.display.push("InCommon");
       this.types.push(Type.MATCHING);
       this.display.push("Matching");
+      this.types.push(Type.METADATA);
+      this.display.push("Metadata Entity Attributes");
     } else {
       this.types.splice(this.types.indexOf(Type.INCOMMON), 1);
       this.display.splice(this.display.indexOf("InCommon"), 1);
       this.types.splice(this.types.indexOf(Type.MATCHING), 1);
       this.display.splice(this.display.indexOf("Matching"), 1);
+      this.types.splice(this.types.indexOf(Type.METADATA), 1);
+      this.display.splice(this.display.indexOf("Metadata Entity Attributes"), 1);
     }
   }
 
@@ -112,6 +120,9 @@ export class AttributeReleasePoliciesComponent implements OnInit {
         break;
       case Type.MATCHING :
         this.data.service.attributeReleasePolicy = new PatternMatchingEntityIdAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        break;
+      case Type.METADATA :
+        this.data.service.attributeReleasePolicy = new MetadataEntityAttributesAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
     }
   }

@@ -128,6 +128,9 @@ export class Messages {
  readonly services_form_label_attrRelease_consent_excludedAttributes = "Excluded Attributes";
  readonly services_form_label_attrRelease_consent_includeOnlyAttributes = "Include Only Attributes";
  readonly services_form_label_attrRelease_releaseAuthenticationAttributes = "Authorized to release authentication attributes";
+ readonly services_form_label_attrRelease_entityAttributeValues = "Metadata Entity Attribute Values";
+ readonly services_form_label_attrRelease_entityAttribute = "Metadata Entity Attribute";
+ readonly services_form_label_attrRelease_entityAttributeFormat = "Metadata Entity Attribute Format";
  readonly services_form_label_sas_authorizedCodes = "Acceptable HTTP Codes";
  readonly services_form_label_sas_casEnabled = "Enable Service";
  readonly services_form_label_sas_ssoEnabled = "Allow Single Sign-On";
@@ -259,6 +262,9 @@ export class Messages {
  readonly services_form_tooltip_attrRelease_consent_excludedAttributes = "Exclude the indicated attributes from consent.";
  readonly services_form_tooltip_attrRelease_consent_includeOnlyAttributes = "Force-include the indicated attributes in consent, provided attributes are resolved.";
  readonly services_form_tooltip_attrRelease_releaseAuthenticationAttributes = "Determines whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplamentary metadata about the authentication event itself, such as the commencement date.";
+ readonly services_form_tooltip_attrRelease_entityAttributeValues = "List of attributes that are defined as part of the SP Metadata";
+ readonly services_form_tooltip_attrRelease_entityAttribute = "The EntityId for the SP providing the metadata attributes";
+ readonly services_form_tooltip_attrRelease_entityAttributeFormat = "Format description for the entity attribute.  This field is optional"
  readonly services_form_tooltip_sas_starttime = "Determines the starting date/time from which service access is allowed.";
  readonly services_form_tooltip_sas_endtime = "Determines the ending date/time from which service access is allowed.";
  readonly services_form_tooltip_sas_casEnabled = "Decides whether access to this service is authorized by CAS.";
