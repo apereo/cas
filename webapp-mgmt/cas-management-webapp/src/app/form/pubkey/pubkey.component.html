@@ -1,13 +1,13 @@
 
 <div>
-  <md-input-container class="textInput">
+  <md-form-field class="textInput">
     <input mdInput [required]="data.service.usernameAttributeProvider.encryptUserName ||
                                data.service.attributeReleasePolicy.authorizedToReleaseCredentialPassword ||
                                data.service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket"
            i18n-placeholder="services.form.label.pubKey.location"
            [placeholder]="messages.services_form_label_pubKey_location"
            [(ngModel)]="data.service.publicKey.location">
-  </md-input-container>
+  </md-form-field>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.pubKey.location"
            [mdTooltip]="messages.services_form_tooltip_pubKey_location">help

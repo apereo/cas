@@ -4,12 +4,12 @@
   </md-card-title>
   <div class="cardContent">
 <div>
-  <md-input-container class="textInput">
+  <md-form-field class="textInput">
     <input mdInput required
            i18n-placeholder="services.form.label.oauthClientId"
            [placeholder]="messages.services_form_label_oauthClientId"
            [(ngModel)]="service.clientId">
-  </md-input-container>
+  </md-form-field>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.oauthClientId"
            [mdTooltip]="messages.services_form_tooltip_oauthClientId">help
@@ -17,12 +17,12 @@
 </div>
 
 <div>
-  <md-input-container class="textInput">
+  <md-form-field class="textInput">
     <input mdInput required [type]="showOAuthSecret ? 'text' : 'password'"
            i18n-placeholder="services.form.label.oauthClientSecret"
            [placeholder]="messages.services_form_label_oauthClientSecret"
            [(ngModel)]="service.clientSecret">
-  </md-input-container>
+  </md-form-field>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.oauthClientSecret"
            [mdTooltip]="messages.services_form_tooltip_oauthClientSecret">help
