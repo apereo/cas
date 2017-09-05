@@ -2176,6 +2176,8 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ### JWT Service Tickets
 
 ```properties
+# cas.authn.token.crypto.enabled=true
+# cas.authn.token.crypto.encryptionEnabled=true
 # cas.authn.token.crypto.signing.key=
 # cas.authn.token.crypto.signing.keySize=512
 # cas.authn.token.crypto.encryption.key=
