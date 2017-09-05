@@ -36,6 +36,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public abstract class AbstractTicketRegistryTests {
+    
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -353,7 +354,6 @@ public abstract class AbstractTicketRegistryTests {
         final MockServiceTicket ticket = new MockServiceTicket(id, RegisteredServiceTestUtils.getService(), new MockTicketGrantingTicket("test"));
         ticket.setExpiration(new AlwaysExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
-        Thread.sleep(500);
         assertNull(ticketRegistry.getTicket(id, ServiceTicket.class));
     }
 

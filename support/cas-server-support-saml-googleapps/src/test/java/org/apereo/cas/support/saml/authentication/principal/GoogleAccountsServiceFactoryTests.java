@@ -62,9 +62,10 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
         final GoogleAccountsService service = (GoogleAccountsService) this.factory.createService(request);
-        service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
+        service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal().getId());
         assertNotNull(service);
-        final Response response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET");
+        final Response response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET",
+                CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
     }
 
