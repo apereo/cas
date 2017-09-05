@@ -96,7 +96,7 @@
   </ng-container>
 </div>
 
-<div *ngIf="type == TYPE.RETURN_ALLOWED && !isEmpty( formData.availableAttributes )">
+<div *ngIf="(type == TYPE.RETURN_ALLOWED || type == TYPE.METADATA) && !isEmpty( formData.availableAttributes )">
   <md-select multiple style="width:400px;padding-top:25px;"
              i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
              [placeholder]="messages.services_form_label_attrRelease_policies_returnAllowed"
@@ -114,3 +114,48 @@
 <div *ngIf="type == TYPE.RETURN_MAPPED && !isEmpty( formData.availableAttributes )">
   <app-mappedattributes [attributes]="data.service.attributeReleasePolicy.allowedAttributes"></app-mappedattributes>
 </div>
+
+<div *ngIf="type == TYPE.METADATA" style="padding-top:25px;">
+  <div>
+    <md-input-container class="textInput">
+      <input mdInput
+             i18n-placeholder="services.form.label.attrRelease.entityAttribute"
+             [placeholder]="messages.services_form_label_attrRelease_entityAttribute"
+             [(ngModel)]="data.service.attributeReleasePolicy.entityAttribute">
+    </md-input-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttribute"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_entityAttribute">help
+    </md-icon>
+  </div>
+
+  <div>
+    <md-input-container class="textInput">
+      <input mdInput
+             i18n-placeholder="services.form.label.attrRelease.entityAttributeFormat"
+             [placeholder]="messages.services_form_label_attrRelease_entityAttributeFormat"
+             [(ngModel)]="data.service.attributeReleasePolicy.entityAttributeFormat">
+    </md-input-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttributeFormat"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeFormat">help
+    </md-icon>
+  </div>
+
+  <div>
+    <md-input-container class="textInput">
+      <input mdInput
+             i18n-placeholder="services.form.label.attrRelease.entityAttributeValues"
+             [placeholder]="messages.services_form_label_attrRelease_entityAttributeValues"
+             [ngModel]="data.service.attributeReleasePolicy.entityAttributeValues"
+             (ngModelChange)="data.service.attributeReleasePolicy.entityAttributeValues = $event.split(',')">
+    </md-input-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttribute"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeValues">help
+    </md-icon>
+  </div>
+
+</div>
+
+
