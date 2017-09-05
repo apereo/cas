@@ -19,6 +19,12 @@ export class SamlRegisteredService extends RegexRegisteredService {
   metadataCriteriaRemoveEmptyEntitiesDescriptors: boolean;
   metadataCriteriaRemoveRolelessEntityDescriptors: boolean;
   attributeNameFormats: Map<String, String>;
+  skipGeneratingAssertionNameId: boolean;
+  skipGeneratingSubjectConfirmationInResponseTo: boolean;
+  skipGeneratingSubjectConfirmationNotOnOrAfter: boolean;
+  skipGeneratingSubjectConfirmationRecipient: boolean;
+  skipGeneratingSubjectConfirmationNotBefore: boolean;
+
 
   static cName = "org.apereo.cas.support.saml.services.SamlRegisteredService";
 
@@ -29,6 +35,7 @@ export class SamlRegisteredService extends RegexRegisteredService {
     this.signResponses = true;
     this.metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
     this.metadataCriteriaRemoveRolelessEntityDescriptors = true;
+    this.skipGeneratingSubjectConfirmationNotBefore = true;
     this["@class"] = SamlRegisteredService.cName;
   }
 
