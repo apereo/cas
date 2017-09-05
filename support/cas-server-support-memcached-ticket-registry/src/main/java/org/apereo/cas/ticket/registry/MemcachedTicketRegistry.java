@@ -88,9 +88,15 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
         final MemcachedClientIF clientFromPool = getClientFromPool();
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
-            final Ticket t = (Ticket) clientFromPool.get(ticketId);
-            if (t != null) {
-                return decodeTicket(t);
+            final Ticket ticketFromCache = (Ticket) clientFromPool.get(ticketId);
+            if (ticketFromCache != null) {
+                final Ticket result = decodeTicket(ticketFromCache);
+                if (result != null && result.isExpired()) {
+                    LOGGER.debug("Ticket [{}] has expired and is now removed from the memcached", result.getId());
+                    deleteSingleTicket(ticketId);
+                    return null;
+                }
+                return result;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}] ", ticketId, e);

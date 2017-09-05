@@ -3,6 +3,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services-authentication")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":core:cas-server-core-configuration")
     
