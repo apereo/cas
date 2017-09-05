@@ -165,6 +165,11 @@ export class Messages {
  readonly services_form_label_saml_metadata_pattern = "Metadata Filter Regex";
  readonly services_form_label_saml_metadata_dir = "Metadata Filter Criteria";
  readonly services_form_label_saml_metadata_role = "Whitelisted Metadata Roles";
+ readonly services_form_label_saml_skipAssertionNameId = "Skip generating assertion name id";
+ readonly services_form_label_saml_skipInResponseTo = "Skip generating subject confirmation InRespsonseTo";
+ readonly services_form_label_saml_skipNotOnOrAfter = "Skip generating subject confirmation NotOnOrAfter";
+ readonly services_form_label_saml_skipRecipient = "Skip generating subject confirmation Recipient";
+ readonly services_form_label_saml_skipNotBefore = "Skip generating subject confirmation NotBefore";
 
  readonly services_form_label_oidc_scopes = "Scopes";
  readonly services_form_label_oidc_dynamic = "Dynamically Registered";
@@ -292,6 +297,11 @@ export class Messages {
  readonly services_form_tooltip_saml_metadata_pattern = "Regex applied to entity ids in a metadata aggregate";
  readonly services_form_tooltip_saml_metadata_dir = "Whether to include/exclude entity ids that match the filter pattern";
  readonly services_form_tooltip_saml_metadata_role = "Whitelisted roles to keep in the metadata.";
+ readonly services_form_tooltip_saml_skipAssertioNameId = "Whether generation of a name identifer should be skipped for assertions";
+ readonly services_form_tooltip_saml_skipInResponseTo = "Whether generation of the InResponseTo element should be skipped for subject confirmations";
+ readonly services_form_tooltip_saml_skipNotOnOrAfter = "Whether generation of the NotOnOrAfter element should be skipped for subject confirmations";
+ readonly services_form_tooltip_saml_skipRecipient = "Whether generation of the Recipient element should be skipped for subject confirmations";
+ readonly services_form_tooltip_saml_skipNotBefore = "Whether generation of the NotBefore element should be skipped for subject confirmations";
 
  readonly services_form_tooltip_oidc_signToken = "Whether ID tokens should be signed.";
  readonly services_form_tooltip_oidc_encrypt = "Whether ID tokens should be encrypted.";

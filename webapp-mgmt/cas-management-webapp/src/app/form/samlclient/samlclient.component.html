@@ -103,6 +103,66 @@
     </div>
 
     <div>
+      <md-checkbox [(ngModel)]="service.skipGeneratingAssertionNameId">
+        <ng-container i18n="services.form.label.saml.skipAssertionNameId">
+          {{ messages.services_form_label_saml_skipAssertionNameId }}
+        </ng-container>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="services.form.tooltip.saml.skipAssertionNameID"
+                 [mdTooltip]="messages.services_form_tooltip_saml_skipAssertioNameId">help
+        </md-icon>
+      </md-checkbox>
+    </div>
+
+    <div>
+      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationInResponseTo">
+        <ng-container i18n="services.form.label.saml.skipInResponseTo">
+          {{ messages.services_form_label_saml_skipInResponseTo }}
+        </ng-container>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="services.form.tooltip.saml.skipInResponseTo"
+                 [mdTooltip]="messages.services_form_tooltip_saml_skipInResponseTo">help
+        </md-icon>
+      </md-checkbox>
+    </div>
+
+    <div>
+      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotOnOrAfter">
+        <ng-container i18n="services.form.label.saml.skipNotOnOrAfter">
+          {{ messages.services_form_label_saml_skipNotOnOrAfter }}
+        </ng-container>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="services.form.tooltip.saml.skipNotOnOrAfter"
+                 [mdTooltip]="messages.services_form_tooltip_saml_skipNotOnOrAfter">help
+        </md-icon>
+      </md-checkbox>
+    </div>
+
+    <div>
+      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationRecipient">
+        <ng-container i18n="services.form.label.saml.skipRecipient">
+          {{ messages.services_form_label_saml_skipRecipient }}
+        </ng-container>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="services.form.tooltip.saml.skipRecipient"
+                 [mdTooltip]="messages.services_form_tooltip_saml_skipRecipient">help
+        </md-icon>
+      </md-checkbox>
+    </div>
+
+    <div>
+      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotBefore">
+        <ng-container i18n="services.form.label.saml.skipNotBefore">
+          {{ messages.services_form_label_saml_skipNotBefore }}
+        </ng-container>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="services.form.tooltip.saml.skipNotBefore"
+                 [mdTooltip]="messages.services_form_tooltip_saml_skipNotBefore">help
+        </md-icon>
+      </md-checkbox>
+    </div>
+
+    <div>
       <md-checkbox [(ngModel)]="service.metadataCriteriaRemoveEmptyEntitiesDescriptors">
         <ng-container i18n="services.form.saml.removeEmptyEntities">
           {{ messages.services_form_label_saml_removeEmptyEntities }}
