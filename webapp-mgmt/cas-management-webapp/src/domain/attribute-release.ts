@@ -179,6 +179,23 @@ export class PatternMatchingEntityIdAttributeReleasePolicy extends RegisteredSer
   }
 }
 
+export class MetadataEntityAttributesAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
+  entityAttribute: String;
+  entityAttributeFormat: String;
+  entityAttributeValues: String[];
+
+  static cName = "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy";
+
+  constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
+    super(policy);
+    this["@class"] = MetadataEntityAttributesAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj["@class"] === MetadataEntityAttributesAttributeReleasePolicy.cName;
+  }
+}
+
 export class RegisteredServiceConsentPolicy {
   enabled: boolean;
   excludedAttributes: String[];
