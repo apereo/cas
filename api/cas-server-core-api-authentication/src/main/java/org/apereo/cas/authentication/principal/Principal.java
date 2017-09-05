@@ -19,7 +19,8 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@FunctionalInterface
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface Principal extends Serializable {
 
     /**
@@ -28,7 +29,6 @@ public interface Principal extends Serializable {
     String getId();
 
     /**
-     *
      * @return the map of configured attributes for this principal
      */
     default Map<String, Object> getAttributes() {

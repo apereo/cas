@@ -15,6 +15,7 @@
     <suppress id="collectionsUnmodifiable" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="collectionsEmpty" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="sysOutConsoleLogs" files="\.xml" />
+    <suppress id="secureRandom" files="RandomUtils\.java" />
     <suppress id="namedAnnotations" files="(Base.*|Abstract.*|Root.*)\.java" />
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade|Support|Beans|Tickets))\.java" />

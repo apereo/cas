@@ -4,12 +4,13 @@ import org.apereo.cas.adaptors.generic.FileAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +64,11 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
         final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
                 fileProperties.getFilename(), fileProperties.getSeparator());
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(fileProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder()));
         if (filePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
 
         return h;
     }

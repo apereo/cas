@@ -5,16 +5,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
+@Entity
+@DiscriminatorValue("openid")
 public class OpenIdService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 5776500133123291301L;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String identity;
 
+    private OpenIdService() {}
     /**
      * Instantiates a new OpenID service.
      *

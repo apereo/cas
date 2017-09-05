@@ -8,18 +8,12 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
-import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
-import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -29,15 +23,8 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
@@ -60,21 +47,34 @@ public final class Beans {
 
     protected Beans() {
     }
-    
+
     /**
-     * New thread pool executor factory bean thread pool executor factory bean.
+     * New thread pool executor factory bean.
      *
      * @param config the config
      * @return the thread pool executor factory bean
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
-        final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
+        final ThreadPoolExecutorFactoryBean bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
-        bean.setMaxPoolSize(config.getMaxSize());
-        bean.setKeepAliveSeconds((int) config.getMaxWait());
         return bean;
     }
-    
+
+    /**
+     * New thread pool executor factory bean.
+     *
+     * @param keepAlive the keep alive
+     * @param maxSize   the max size
+     * @return the thread pool executor factory bean
+     */
+    public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final long keepAlive,
+                                                                                 final long maxSize) {
+        final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
+        bean.setMaxPoolSize((int) maxSize);
+        bean.setKeepAliveSeconds((int) keepAlive);
+        return bean;
+    }
+
     /**
      * New attribute repository person attribute dao.
      *
@@ -95,102 +95,8 @@ public final class Beans {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
-    /**
-     * New password encoder password encoder.
-     *
-     * @param properties the properties
-     * @return the password encoder
-     */
-    public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
-        final String type = properties.getType();
-        if (StringUtils.isBlank(type)) {
-            LOGGER.debug("No password encoder type is defined, and so none shall be created");
-            return NoOpPasswordEncoder.getInstance();
-        }
-
-        if (type.contains(".")) {
-            try {
-                LOGGER.debug("Configuration indicates use of a custom password encoder [{}]", type);
-                final Class<PasswordEncoder> clazz = (Class<PasswordEncoder>) Class.forName(type);
-                return clazz.newInstance();
-            } catch (final Exception e) {
-                LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
-                        + "an instance of the custom password encoder class " + type, e);
-                return NoOpPasswordEncoder.getInstance();
-            }
-        }
-
-        final PasswordEncoderProperties.PasswordEncoderTypes encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
-        switch (encoderType) {
-            case DEFAULT:
-                LOGGER.debug("Creating default password encoder with encoding alg [{}] and character encoding [{}]",
-                        properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
-                return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
-            case STANDARD:
-                LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
-                return new StandardPasswordEncoder(properties.getSecret());
-            case BCRYPT:
-                LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
-                        properties.getStrength());
-                if (StringUtils.isBlank(properties.getSecret())) {
-                    LOGGER.debug("Creating BCRYPT encoder without secret");
-                    return new BCryptPasswordEncoder(properties.getStrength());
-                }
-                LOGGER.debug("Creating BCRYPT encoder with secret");
-                return new BCryptPasswordEncoder(properties.getStrength(),
-                        new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
-            case SCRYPT:
-                LOGGER.debug("Creating SCRYPT encoder");
-                return new SCryptPasswordEncoder();
-            case PBKDF2:
-                if (StringUtils.isBlank(properties.getSecret())) {
-                    LOGGER.debug("Creating PBKDF2 encoder without secret");
-                    return new Pbkdf2PasswordEncoder();
-                }
-                final int hashWidth = 256;
-                return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), hashWidth);
-            case NONE:
-            default:
-                LOGGER.debug("No password encoder shall be created given the requested encoder type [{}]", type);
-                return NoOpPasswordEncoder.getInstance();
-        }
-    }
     
-    /**
-     * New principal name transformer.
-     *
-     * @param p the p
-     * @return the principal name transformer
-     */
-    public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
 
-        final PrincipalNameTransformer res;
-        if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
-            final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
-            t.setPrefix(p.getPrefix());
-            t.setSuffix(p.getSuffix());
-            res = t;
-        } else {
-            res = formUserId -> formUserId;
-        }
-
-        switch (p.getCaseConversion()) {
-            case UPPERCASE:
-                final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer(res);
-                t.setToUpperCase(true);
-                return t;
-
-            case LOWERCASE:
-                final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
-                t1.setToUpperCase(false);
-                return t1;
-            default:
-                //nothing
-        }
-        return res;
-    }
-    
     /**
      * Transform principal attributes list into map map.
      *
@@ -201,7 +107,6 @@ public final class Beans {
         final Multimap<String, String> map = transformPrincipalAttributesListIntoMultiMap(list);
         return CollectionUtils.wrap(map);
     }
-
     
     /**
      * Transform principal attributes into map.
@@ -232,7 +137,7 @@ public final class Beans {
         }
         return multimap;
     }
-    
+
     /**
      * Gets credential selection predicate.
      *

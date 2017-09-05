@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -12,15 +13,15 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.mock.MockService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -58,7 +59,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         SessionMonitorJpaTests.JpaTestConfiguration.class,
         RefreshAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
+        CasCoreAuthenticationConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
@@ -96,7 +97,7 @@ public class SessionMonitorJpaTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
     @Test
     @Rollback(false)
     public void verifyObserveOkJpaTicketRegistry() throws Exception {
@@ -117,8 +118,12 @@ public class SessionMonitorJpaTests {
         }
 
         if (ticket != null) {
+            final Service testService = RegisteredServiceTestUtils.getService("junit");
             for (int i = 0; i < stCount; i++) {
-                registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"), new MockService("junit"), TEST_EXP_POLICY, false, true));
+                registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
+                        testService,
+                        TEST_EXP_POLICY,
+                        false, true));
             }
         }
     }

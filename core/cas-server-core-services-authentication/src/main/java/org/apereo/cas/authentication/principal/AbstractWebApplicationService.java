@@ -9,6 +9,13 @@ import org.apereo.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +25,11 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Entity
+@Inheritance
+@DiscriminatorColumn(name = "service_type", length = 50, discriminatorType = DiscriminatorType.STRING,
+        columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
+@Table(name = "WebApplicationServices")
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
     private static final long serialVersionUID = 610105280927740076L;
@@ -27,6 +39,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     /**
      * The id of the service.
      */
+    @Id
     @JsonProperty
     private String id;
 
@@ -34,17 +47,23 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
      * The original url provided, used to reconstruct the redirect url.
      */
     @JsonProperty
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String originalUrl;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String artifactId;
 
     @JsonProperty
-    private Principal principal;
+    private String principal;
 
+    @Column(updatable = true, insertable = true, nullable = false)
     private boolean loggedOutAlready;
 
+    @Column(updatable = true, insertable = true, nullable = false)
     private ValidationResponseType format = ValidationResponseType.XML;
 
+    protected AbstractWebApplicationService() {}
+    
     /**
      * Instantiates a new abstract web application service.
      *
@@ -86,12 +105,12 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     }
 
 
-    public Principal getPrincipal() {
+    public String getPrincipal() {
         return this.principal;
     }
 
     @Override
-    public void setPrincipal(final Principal principal) {
+    public void setPrincipal(final String principal) {
         this.principal = principal;
     }
     

@@ -10,7 +10,9 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.BindJdbcAuthenticationProperties;
@@ -90,14 +92,14 @@ public class CasJdbcAuthenticationConfiguration {
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b) {
         final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (bindSearchPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
         }
 
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(b.getCredentialCriteria()));
@@ -113,14 +115,14 @@ public class CasJdbcAuthenticationConfiguration {
                 b.getSaltFieldName(), b.getExpiredFieldName(), b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
                 b.getStaticSalt());
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (queryAndEncodePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryAndEncodePasswordPolicyConfiguration);
         }
 
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(b.getCredentialCriteria()));
@@ -140,14 +142,14 @@ public class CasJdbcAuthenticationConfiguration {
                 b.getFieldExpired(), b.getFieldDisabled(),
                 CollectionUtils.wrap(attributes));
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (queryPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration);
         }
 
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(b.getCredentialCriteria()));
@@ -161,9 +163,9 @@ public class CasJdbcAuthenticationConfiguration {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (searchModePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(searchModePasswordPolicyConfiguration);

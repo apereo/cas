@@ -2,7 +2,6 @@ package org.apereo.cas.token.authentication.principal;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
@@ -72,17 +71,6 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
             return this.tokenTicketBuilder.build(ticketId, service);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Token/JWT web application service.
-     */
-    public static class TokenWebApplicationService extends AbstractWebApplicationService {
-        private static final long serialVersionUID = -8844121291312069964L;
-
-        public TokenWebApplicationService(final String id, final String originalUrl, final String artifactId) {
-            super(id, originalUrl, artifactId);
         }
     }
 }

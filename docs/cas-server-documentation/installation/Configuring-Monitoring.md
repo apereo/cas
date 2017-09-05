@@ -24,7 +24,7 @@ and [this guide](Configuration-Properties.html#memory).
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cache-monitors).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#memcached-monitors).
 
 ## Ehcache
 
@@ -37,6 +37,19 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cache-monitors).
+
+## MongoDb
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-mongo-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-monitors).
+
 
 
 ## Hazelcast

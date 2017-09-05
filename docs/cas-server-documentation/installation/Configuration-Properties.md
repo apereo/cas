@@ -2176,6 +2176,8 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ### JWT Service Tickets
 
 ```properties
+# cas.authn.token.crypto.enabled=true
+# cas.authn.token.crypto.encryptionEnabled=true
 # cas.authn.token.crypto.signing.key=
 # cas.authn.token.crypto.signing.keySize=512
 # cas.authn.token.crypto.encryption.key=
@@ -3840,6 +3842,37 @@ Decide how CAS should monitor the internal state of various cache storage servic
 # cas.monitor.warn.evictionThreshold=0
 ```
 
+### Memcached Monitors
+
+Decide how CAS should monitor the internal state of a memcached connection pool.
+
+```properties
+# cas.monitor.memcached.servers=memcached.server.net:14938
+# cas.monitor.memcached.failureMode=Redistribute
+# cas.monitor.memcached.locatorType=ARRAY_MOD
+# cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH
+```
+
+### MongoDb Monitors
+
+Decide how CAS should monitor the internal state of a MongoDb instance.
+
+```properties
+# cas.monitor.mongo.idleTimeout=30000
+# cas.monitor.mongo.port=27017
+# cas.monitor.mongo.socketKeepAlive=false
+# cas.monitor.mongo.password=
+# cas.monitor.mongo.databaseName=cas-mongo-database
+# cas.monitor.mongo.timeout=5000
+# cas.monitor.mongo.userId=
+# cas.monitor.mongo.writeConcern=NORMAL
+# cas.monitor.mongo.authenticationDatabaseName=
+# cas.monitor.mongo.replicaSet=
+# cas.monitor.mongo.ssEnabled=false
+# cas.monitor.mongo.conns.lifetime=60000
+# cas.monitor.mongo.conns.perHost=10
+```
+
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
@@ -4169,7 +4202,7 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.dropCollection=false
 # cas.serviceRegistry.mongo.socketKeepAlive=false
 # cas.serviceRegistry.mongo.password=
-# cas.serviceRegistry.mongo.collectionName=cas-service-registry
+# cas.serviceRegistry.mongo.collection=cas-service-registry
 # cas.serviceRegistry.mongo.databaseName=cas-mongo-database
 # cas.serviceRegistry.mongo.timeout=5000
 # cas.serviceRegistry.mongo.userId=
@@ -4522,6 +4555,16 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.locatorType=ARRAY_MOD
 # cas.ticket.registry.memcached.failureMode=Redistribute
 # cas.ticket.registry.memcached.hashAlgorithm=FNV1_64_HASH
+# cas.ticket.registry.memcached.shouldOptimize=false
+# cas.ticket.registry.memcached.daemon=true
+# cas.ticket.registry.memcached.maxReconnectDelay=-1
+# cas.ticket.registry.memcached.useNagleAlgorithm=false
+# cas.ticket.registry.memcached.shutdownTimeoutSeconds=-1
+# cas.ticket.registry.memcached.opTimeout=-1
+# cas.ticket.registry.memcached.timeoutExceptionThreshold=2
+# cas.ticket.registry.memcached.maxTotal=20
+# cas.ticket.registry.memcached.maxIdle=8
+# cas.ticket.registry.memcached.minIdle=0
 
 # cas.ticket.registry.memcached.crypto.signing.key=
 # cas.ticket.registry.memcached.crypto.signing.keySize=512

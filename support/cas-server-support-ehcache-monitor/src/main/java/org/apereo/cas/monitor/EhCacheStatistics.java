@@ -17,10 +17,10 @@ public class EhCacheStatistics implements CacheStatistics {
 
     private static final double TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE = 1048510.0;
     private static final int PERCENTAGE_VALUE = 100;
-    private Cache cache;
+    
+    private final Cache cache;
 
-    // Flag to determine whether size units are in bytes or simple object counts
-    private boolean useBytes;
+    private final boolean useBytes;
 
     private long diskSize;
 
@@ -36,9 +36,7 @@ public class EhCacheStatistics implements CacheStatistics {
      */
     public EhCacheStatistics(final Cache cache) {
         this.cache = cache;
-        if (cache.getCacheConfiguration().getMaxBytesLocalDisk() > 0) {
-            this.useBytes = true;
-        }
+        this.useBytes = cache.getCacheConfiguration().getMaxBytesLocalDisk() > 0;
     }
 
     /**
@@ -49,14 +47,12 @@ public class EhCacheStatistics implements CacheStatistics {
     @Override
     public long getSize() {
         final StatisticsGateway statistics = this.cache.getStatistics();
-        // Store component sizes on each call to avoid recalculating
-        // sizes in other methods that need them
         if (this.useBytes) {
             this.diskSize = statistics.getLocalDiskSizeInBytes();
             this.heapSize = statistics.getLocalHeapSizeInBytes();
         } else {
-            this.diskSize = this.cache.getDiskStoreSize();
-            this.heapSize = this.cache.getMemoryStoreSize();
+            this.diskSize = statistics.getLocalDiskSize();
+            this.heapSize = statistics.getLocalHeapSize();
         }
         this.offHeapSize = statistics.getLocalOffHeapSizeInBytes();
         return this.heapSize;
@@ -73,7 +69,7 @@ public class EhCacheStatistics implements CacheStatistics {
         if (this.useBytes) {
             return config.getMaxBytesLocalDisk();
         }
-        return config.getMaxElementsOnDisk();
+        return config.getMaxEntriesLocalDisk();
     }
 
     @Override

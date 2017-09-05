@@ -88,14 +88,9 @@ public class OpenSamlConfigBean {
         registry.setParserPool(this.parserPool);
 
         this.builderFactory = registry.getBuilderFactory();
-        Assert.notNull(this.builderFactory, "parserPool cannot be null");
-
         this.marshallerFactory = registry.getMarshallerFactory();
-        Assert.notNull(this.marshallerFactory, "marshallerFactory cannot be null");
-
         this.unmarshallerFactory = registry.getUnmarshallerFactory();
-        Assert.notNull(this.unmarshallerFactory, "unmarshallerFactory cannot be null");
 
-        LOGGER.debug("Initialized OpenSaml successfully.");
+        LOGGER.info("Initialized OpenSaml successfully.");
     }
 }

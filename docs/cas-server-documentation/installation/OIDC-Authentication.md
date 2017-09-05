@@ -39,7 +39,8 @@ The current implementation provides support for:
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
 | `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
-| `/oidc/accessToken`, `/oidc/token`    | Produces authorized access tokens.
+| `/oidc/accessToken`, `/oidc/token`        | Produces authorized access tokens.
+| `/oidc/revoke`                            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens.
 | `/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
 ## Register Clients

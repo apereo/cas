@@ -158,12 +158,12 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Before
     public void setUp() throws Exception {
         this.googleAccountsService = getGoogleAccountsService();
-        this.googleAccountsService.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
     }
 
     @Test
     public void verifyResponse() {
-        final Response resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET");
+        final Response resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
+                CoreAuthenticationTestUtils.getAuthentication());
         assertEquals(resp.getResponseType(), DefaultResponse.ResponseType.POST);
         final String response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
         assertNotNull(response);

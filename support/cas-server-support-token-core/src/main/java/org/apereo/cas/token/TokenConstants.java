@@ -16,7 +16,7 @@ public interface TokenConstants {
      * Produce a JWT as a response.
      **/
     String PROPERTY_NAME_TOKEN_AS_RESPONSE = "jwtAsResponse";
-
+    
     /**
      * Jwt signing secret defined for a given service.
      **/

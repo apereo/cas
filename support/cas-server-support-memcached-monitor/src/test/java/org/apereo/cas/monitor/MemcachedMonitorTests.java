@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -18,14 +18,13 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, MemcachedMonitorConfiguration.class})
-@ContextConfiguration(locations = "/monitor-test.xml")
+@TestPropertySource(locations = {"classpath:/monitor.properties"})
 public class MemcachedMonitorTests {
 
     @Autowired
     @Qualifier("memcachedMonitor")
     private MemcachedMonitor monitor;
-
-
+    
     @Test
     public void verifyMonitorRunning() {
         this.monitor.observe();

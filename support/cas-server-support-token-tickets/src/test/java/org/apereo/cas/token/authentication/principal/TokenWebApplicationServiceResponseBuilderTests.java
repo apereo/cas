@@ -97,7 +97,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
         final String signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         final String encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
-        final TokenTicketCipherExecutor cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret);
+        final TokenTicketCipherExecutor cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
         final String result = cipher.decode(jwt);
         assertNotNull(result);
     }

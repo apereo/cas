@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -33,7 +34,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         final SamlService impl = new SamlServiceFactory().createService(request);
 
-        final Response response = new SamlServiceResponseBuilder().build(impl, "ticketId");
+        final Response response = new SamlServiceResponseBuilder().build(impl, "ticketId",
+                CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertTrue(response.getUrl().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
@@ -53,7 +55,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         final SamlService impl = new SamlServiceFactory().createService(request);
-        final Response response = new SamlServiceResponseBuilder().build(impl, null);
+        final Response response = new SamlServiceResponseBuilder().build(impl, null,
+                CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
