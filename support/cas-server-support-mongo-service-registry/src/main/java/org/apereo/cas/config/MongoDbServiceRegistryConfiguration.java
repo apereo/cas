@@ -30,7 +30,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Override
     protected String getDatabaseName() {
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
@@ -42,7 +42,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return Beans.newMongoDbClient(mongo);
     }
-    
+
     @RefreshScope
     @Bean
     public MongoClientOptions mongoClientOptions() throws Exception {
@@ -52,7 +52,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Override
     public CustomConversions customConversions() {
-        return new CustomConversions(Arrays.asList(
+        final CustomConversions conversions = new CustomConversions(Arrays.asList(
                 new BaseConverters.LoggerConverter(),
                 new BaseConverters.ClassConverter(),
                 new BaseConverters.CommonsLogConverter(),
@@ -64,6 +64,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
                 new BaseConverters.CertPathConverter(),
                 new BaseConverters.CacheConverter()
         ));
+        return conversions;
     }
 
     @Bean

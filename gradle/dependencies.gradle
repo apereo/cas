@@ -168,6 +168,9 @@ ext.libraries = [
             force = true
         },
         commons                 : [
+                dependencies.create("org.apache.commons:commons-pool2:$commonsPoolVersion") {
+                    force = true
+                },
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
                 },

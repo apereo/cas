@@ -1,6 +1,7 @@
 description = "Apereo CAS Memcached Monitor Integration"
 dependencies {
     compile project(":core:cas-server-core-monitor")
+    compile project(":support:cas-server-support-memcached-ticket-registry")
     
     implementation libraries.memcached
     implementation libraries.kryo

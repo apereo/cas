@@ -14,8 +14,7 @@
             </bean>
         </constructor-arg>
     </bean>
-
-
+    
     <bean id="testCase2" class="org.apereo.cas.ticket.registry.MemCacheTicketRegistry">
         <constructor-arg index="0">
             <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
