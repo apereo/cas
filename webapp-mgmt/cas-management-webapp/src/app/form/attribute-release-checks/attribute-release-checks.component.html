@@ -33,3 +33,15 @@
     </md-icon>
   </md-checkbox>
 </div>
+
+<div>
+  <md-checkbox [(ngModel)]="data.service.attributeReleasePolicy.authorizedToReleaseAuthenticationAttributes">
+    <ng-container i18n="services.form.label.attrRelease.releaseAuthenticationAttributes">
+      {{ messages.services_form_label_attrRelease_releaseAuthenticationAttributes }}
+    </ng-container>
+    <md-icon style="font-size: medium"
+             i18n-mdTooltip="services.form.tooltip.attrRelease.releaseAuthenticationAttributes"
+             [mdTooltip]="messages.services_form_tooltip_attrRelease_releaseAuthenticationAttributes">help
+    </md-icon>
+  </md-checkbox>
+</div>

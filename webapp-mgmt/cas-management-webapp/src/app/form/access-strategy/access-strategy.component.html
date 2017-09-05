@@ -64,29 +64,34 @@
       <h5>Type</h5>
     </md-card-title>
     <div class="cardContent">
-    <div>
-      <md-select i18n-placeHolder="services.form.label.sas.selecttype" style="width:400px;padding-top:25px;padding-bottom: 25px;"
-                 [placeholder]="messages.services_form_label_sas_selecttype"
-                 [(ngModel)]="type" (change)="changeType()">
-        <md-option *ngFor="let opt of types" [value]="opt">{{ TYPE[opt] }}</md-option>
-      </md-select>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.sas.selecttype"
-               [mdTooltip]="messages.services_form_tooltip_sas_selecttype">help
-      </md-icon>
-    </div>
+      <div>
+        <md-select i18n-placeHolder="services.form.label.sas.selecttype" style="width:400px;padding-top:25px;padding-bottom: 25px;"
+                   [placeholder]="messages.services_form_label_sas_selecttype"
+                   [(ngModel)]="type" (change)="changeType()">
+          <md-option *ngFor="let opt of types" [value]="opt">{{ TYPE[opt] }}</md-option>
+        </md-select>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="services.form.tooltip.sas.selecttype"
+                 [mdTooltip]="messages.services_form_tooltip_sas_selecttype">help
+        </md-icon>
+      </div>
 
-    <div *ngIf="type == TYPE.REMOTE">
-      <app-remote></app-remote>
-    </div>
+      <div *ngIf="type == TYPE.REMOTE">
+        <app-remote></app-remote>
+      </div>
 
-    <div *ngIf="type != TYPE.DEFAULT && type != TYPE.REMOTE">
-      <app-time></app-time>
-    </div>
+      <div *ngIf="type == TYPE.TIME || type == TYPE.GROUPER">
+        <app-time></app-time>
+      </div>
 
-    <div *ngIf="type == TYPE.GROUPER">
-      <app-grouper></app-grouper>
-    </div>
+      <div *ngIf="type == TYPE.GROUPER">
+        <app-grouper></app-grouper>
+      </div>
+
+      <div *ngIf="type == TYPE.SURROGATE">
+        <app-surrogate></app-surrogate>
+      </div>
+
     </div>
   </md-card>
 
