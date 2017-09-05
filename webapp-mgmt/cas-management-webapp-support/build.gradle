@@ -7,20 +7,23 @@ dependencies {
     implementation libraries.groovy
     implementation libraries.springcloudconfigclient
 
+    api project(":api:cas-server-core-api-authentication")
+
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-logging-config")
+
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-grouper")
-    implementation project(":core:cas-server-core-logging-config")
-    api project(":api:cas-server-core-api-authentication")
-    implementation project(":core:cas-server-core-authentication-attributes")
-
+    implementation project(":support:cas-server-support-surrogate-api")
+    
     testImplementation project(":core:cas-server-core-services-authentication")
 }
