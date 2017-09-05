@@ -6,7 +6,6 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { ServicesComponent } from './services.component';
-import {AlertComponent} from "../alert/alert.component";
 import {Messages} from "../messages";
 import {ServiceViewBean} from "../../domain/service-view-bean";
 import {ServiceViewService} from "./service.service";
@@ -59,7 +58,7 @@ describe('ServicesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, RouterTestingModule ],
-      declarations: [ ServicesComponent, AlertComponent ],
+      declarations: [ ServicesComponent ],
       providers: [
         Messages,
         {provide: ServiceViewService, useValue: serviceViewServiceStub}

@@ -1,8 +1,0 @@
-<div class="alert alert-{{ type }}" role="alert" *ngIf="showing">
-  <p>
-    <i class="fa fa-lg fa-{{ type === 'danger' ? 'exclamation-triangle' : 'info-circle' }}"></i>
-    {{ msg }}
-    <a class="fa fa-2x fa-times close-link" (click)="showing = false;">
-    </a>
-  </p>
-</div>
