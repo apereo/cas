@@ -1,58 +1,3 @@
-<!--
-<div>
-  <md-radio-group [(ngModel)]="type" (change)="changeType()">
-
-    <md-radio-button [value]="TYPE.SCRIPT">
-      <ng-container i18n="services.form.label.attrRelease.policies.script">
-        {{ messages.services_form_label_attrRelease_policies_script }}
-      </ng-container>
-    </md-radio-button>
-
-    <md-radio-button  [value]="TYPE.GROOVY">
-      <ng-container i18n="services.form.label.attrRelease.policies.groovy">
-        {{ messages.services_form_label_attrRelease_policies_groovy }}
-      </ng-container>
-    </md-radio-button>
-
-    <md-radio-button [value]="TYPE.RETURN_ALL">
-      <ng-container i18n="services.form.label.attrRelease.policies.returnAll">
-        {{ messages.services_form_label_attrRelease_policies_returnAll }}
-      </ng-container>
-    </md-radio-button>
-
-    <md-radio-button [value]="TYPE.DENY_ALL">
-      <ng-container i18n="services.form.label.attrRelease.policies.denyAll">
-        {{ messages.services_form_label_attrRelease_policies_denyAll }}
-      </ng-container>
-    </md-radio-button>
-
-    <md-radio-button [value]="TYPE.RETURN_ALLOWED"  [disabled]="isEmpty( formData.availableAttributes )">
-      <ng-container i18n="services.form.label.attrRelease.policies.returnAllowed">
-        {{ messages.services_form_label_attrRelease_policies_returnAllowed }}
-      </ng-container>
-    </md-radio-button>
-
-    <md-radio-button  [value]="TYPE.RETURN_MAPPED" [disabled]="isEmpty( formData.availableAttributes )">
-      <ng-container i18n="services.form.label.attrRelease.policies.returnMapped">
-        {{ messages.services_form_label_attrRelease_policies_returnMapped }}
-      </ng-container>
-    </md-radio-button>
-
-    <md-radio-button *ngIf="isSaml" [value]="TYPE.MATCHING" [disabled]="isEmpty( formData.availableAttributes )">
-      <ng-container i18n="services.form.label.attrRelease.policies.patternMatching">
-        {{ messaes.services_form_label_attrRelease_policies_patternMatching }}
-      </ng-container>
-    </md-radio-button>
-
-    <md-radio-button *ngIf="isSaml" [value]="TYPE.INCOMMON">
-      <ng-container i18n="services.form.label.attrRelease.policies.releaseIncommon">
-        {{ messages.services_form_label_attrRelease_policies_releaseInCommon }}
-      </ng-container>
-    </md-radio-button>
-
-  </md-radio-group>
-</div>
--->
 <div>
   <md-select style="width:500px;padding-top: 25px;padding-bottom: 25px;"
              placeholder="Policy"
@@ -65,12 +10,12 @@
 </div>
 
 <div *ngIf="type == TYPE.SCRIPT">
-  <md-input-container class="textInput">
+  <md-form-field class="textInput">
     <input mdInput
            i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
            [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
            [(ngModel)]="data.service.attributeReleasePolicy.scriptFile">
-  </md-input-container>
+  </md-form-field>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
            [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
@@ -78,12 +23,12 @@
 </div>
 
 <div *ngIf="type == TYPE.GROOVY">
-  <md-input-container class="textInput">
+  <md-form-field class="textInput">
     <input mdInput
            i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
            [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
            [(ngModel)]="data.service.attributeReleasePolicy.groovyScript">
-  </md-input-container>
+  </md-form-field>
   <md-icon style="font-size: medium"
            i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
            [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
@@ -117,12 +62,12 @@
 
 <div *ngIf="type == TYPE.METADATA" style="padding-top:25px;">
   <div>
-    <md-input-container class="textInput">
+    <md-form-field class="textInput">
       <input mdInput
              i18n-placeholder="services.form.label.attrRelease.entityAttribute"
              [placeholder]="messages.services_form_label_attrRelease_entityAttribute"
              [(ngModel)]="data.service.attributeReleasePolicy.entityAttribute">
-    </md-input-container>
+    </md-form-field>
     <md-icon style="font-size: medium"
              i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttribute"
              [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_entityAttribute">help
@@ -130,12 +75,12 @@
   </div>
 
   <div>
-    <md-input-container class="textInput">
+    <md-form-field class="textInput">
       <input mdInput
              i18n-placeholder="services.form.label.attrRelease.entityAttributeFormat"
              [placeholder]="messages.services_form_label_attrRelease_entityAttributeFormat"
              [(ngModel)]="data.service.attributeReleasePolicy.entityAttributeFormat">
-    </md-input-container>
+    </md-form-field>
     <md-icon style="font-size: medium"
              i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttributeFormat"
              [mdTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeFormat">help
@@ -143,13 +88,13 @@
   </div>
 
   <div>
-    <md-input-container class="textInput">
+    <md-form-field class="textInput">
       <input mdInput
              i18n-placeholder="services.form.label.attrRelease.entityAttributeValues"
              [placeholder]="messages.services_form_label_attrRelease_entityAttributeValues"
              [ngModel]="data.service.attributeReleasePolicy.entityAttributeValues"
              (ngModelChange)="data.service.attributeReleasePolicy.entityAttributeValues = $event.split(',')">
-    </md-input-container>
+    </md-form-field>
     <md-icon style="font-size: medium"
              i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttribute"
              [mdTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeValues">help
@@ -157,5 +102,3 @@
   </div>
 
 </div>
-
-

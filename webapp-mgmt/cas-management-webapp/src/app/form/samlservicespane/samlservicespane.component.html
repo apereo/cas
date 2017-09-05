@@ -3,11 +3,11 @@
   <ng-container cdkColumnDef="source">
     <md-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</md-header-cell>
     <md-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
-      <md-input-container>
+      <md-form-field>
         <input mdInput #text
                [ngModel]="row.key"
                (change)="doChange(row,$event.target.value)">
-      </md-input-container>
+      </md-form-field>
     </md-cell>
   </ng-container>
 

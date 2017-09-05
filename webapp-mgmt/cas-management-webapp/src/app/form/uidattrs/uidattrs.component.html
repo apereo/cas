@@ -27,12 +27,12 @@
 </div>
 
 <div *ngIf="type == TYPE.ANONYMOUS">
-  <md-input-container class="textInput">
+  <md-form-field class="textInput">
     <input mdInput required
            i18n-placeholder="services.form.label.uap.saltSetting"
            [placeholder]="messages.services_form_label_uap_saltSetting"
            [(ngModel)]="data.service.usernameAttributeProvider.persistentIdGenerator.salt">
-  </md-input-container>
+  </md-form-field>
   <md-icon style="font-size: medium;"
            i18n-myTooltip="services.form.tooltip.uap.saltSetting"
            [mdTooltip]="messages.services_form_tooltip_uap_saltSetting">help
@@ -42,12 +42,12 @@
 <div *ngIf="type == TYPE.PRINCIPAL_ATTRIBUTE">
 
   <div>
-    <md-input-container class="textInput">
+    <md-form-field class="textInput">
       <input mdInput required
              i18n-placeholder="services.form.label.uap.usernameAttribute"
              [placeholder]="messages.services_form_label_uap_usernameAttribute"
              [(ngModel)]="data.service.usernameAttributeProvider.usernameAttribute">
-    </md-input-container>
+    </md-form-field>
     <md-icon style="font-size: medium;"
              i18n-mdTooltip="services.form.tooltip.uap.usernameAttribute"
              [mdTooltip]="messages.services_form_tooltip_uap_usernameAttribute">help
