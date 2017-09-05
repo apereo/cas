@@ -127,6 +127,7 @@ export class Messages {
  readonly services_form_label_attrRelease_consent_enabled = "User Consent Enabled";
  readonly services_form_label_attrRelease_consent_excludedAttributes = "Excluded Attributes";
  readonly services_form_label_attrRelease_consent_includeOnlyAttributes = "Include Only Attributes";
+ readonly services_form_label_attrRelease_releaseAuthenticationAttributes = "Authorized to release authentication attributes";
  readonly services_form_label_sas_authorizedCodes = "Acceptable HTTP Codes";
  readonly services_form_label_sas_casEnabled = "Enable Service";
  readonly services_form_label_sas_ssoEnabled = "Allow Single Sign-On";
@@ -142,6 +143,9 @@ export class Messages {
  readonly services_form_label_sas_rejectedattributes_value = "'Values'";
  readonly services_form_label_sas_selecttype = "Select Type";
  readonly services_form_label_sas_grouper_groupfield = "Group Field";
+ readonly services_form_label_sas_surrogate_enabled = "Surrogate Enabled";
+ readonly services_form_label_sas_surrogate_ssoEnabled = "Surragate SSO Enabled";
+ readonly services_form_label_sas_surrogate_requiredAttributes = "Surrogate Required Attributes";
  readonly services_form_label_multiauth_providers = "Providers";
  readonly services_form_label_multiauth_failuremode = "Failure Mode";
  readonly services_form_label_multiauth_principalattribute_nametrigger = "Principal Attribute Name Trigger";
@@ -249,6 +253,7 @@ export class Messages {
  readonly services_form_tooltip_attrRelease_consent_enabled = "Control whether consent is active/inactive for this service.";
  readonly services_form_tooltip_attrRelease_consent_excludedAttributes = "Exclude the indicated attributes from consent.";
  readonly services_form_tooltip_attrRelease_consent_includeOnlyAttributes = "Force-include the indicated attributes in consent, provided attributes are resolved.";
+ readonly services_form_tooltip_attrRelease_releaseAuthenticationAttributes = "Determines whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplamentary metadata about the authentication event itself, such as the commencement date.";
  readonly services_form_tooltip_sas_starttime = "Determines the starting date/time from which service access is allowed.";
  readonly services_form_tooltip_sas_endtime = "Determines the ending date/time from which service access is allowed.";
  readonly services_form_tooltip_sas_casEnabled = "Decides whether access to this service is authorized by CAS.";
@@ -263,6 +268,9 @@ export class Messages {
  readonly services_form_tooltip_sas_authorizedCodes = "Acceptable HTTP codes before granting access to this service.";
  readonly services_form_tooltip_sas_grouper = "This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by " +
     "Grouper are collected as CAS attributes and examined against the list of required attributes for service access."
+ readonly services_form_tooltip_sas_surrogate_enabled = "Determines whether this service is allowed to use surrogate authentication.";
+ readonly services_form_tooltip_sas_surrogate_ssoEnabled = "Determines whether a surrogater authentication should participate in SSO";
+ readonly services_form_tooltip_sas_surrogate_requiredAttributes = "List of attributes and values that must be present for the primary user in order to allow surrogate authentication";
  readonly services_form_tooltip_multiauth_providers = "List of multifactor provider ids to assign to this service.";
  readonly services_form_tooltip_multiauth_failuremode = "Decide what CAS should do in the event that a provider is not available.";
  readonly services_form_tooltip_multiauth_principalattribute_nametrigger = "Principal attribute name to trigger MFA when accessing this service.";
