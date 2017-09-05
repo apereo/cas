@@ -6,6 +6,7 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
   authorizedToReleaseCredentialPassword: boolean;
   authorizedToReleaseProxyGrantingTicket: boolean;
   excludeDefaultAttributes: boolean;
+  authorizedToReleaseAuthenticationAttributes: boolean;
   principalIdAttribute: String;
   consentPolicy: RegisteredServiceConsentPolicy;
 
@@ -16,7 +17,8 @@ export abstract class RegisteredServiceAttributeReleasePolicy {
     this.authorizedToReleaseProxyGrantingTicket = policy && policy.authorizedToReleaseProxyGrantingTicket;
     this.excludeDefaultAttributes = policy && policy.excludeDefaultAttributes;
     this.principalIdAttribute = policy && policy.principalIdAttribute;
-    this.consentPolicy = policy && policy.consentPolicy;
+    this.authorizedToReleaseAuthenticationAttributes = policy && policy.authorizedToReleaseAuthenticationAttributes || true;
+    this.consentPolicy = policy && policy.consentPolicy || new DefaultRegisteredServiceConsentPolicy();
   }
 }
 

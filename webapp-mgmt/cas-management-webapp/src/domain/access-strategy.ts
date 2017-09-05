@@ -78,3 +78,20 @@ export class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     return obj["@class"] === GrouperRegisteredServiceAccessStrategy.cName;
   }
 }
+
+export class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+  surrogateEnabled: boolean;
+  surrogateSsoEnabled: boolean;
+  surrogateRequiredAttributes: Map<String, String[]>;
+
+  static cName: string = "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy";
+
+  constructor(strat?: RegisteredServiceAccessStrategy) {
+    super(strat);
+    this["@class"] = SurrogateRegisteredServiceAccessStrategy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj["@class"] === SurrogateRegisteredServiceAccessStrategy.cName;
+  }
+}
