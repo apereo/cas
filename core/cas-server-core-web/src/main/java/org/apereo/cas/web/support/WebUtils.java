@@ -422,7 +422,7 @@ public final class WebUtils {
      *
      * @return the authenticated username.
      */
-    public static String getAuthenticatedUsername() {
+    public static String getPac4jAuthenticatedUsername() {
         final HttpServletRequest request = getHttpServletRequestFromRequestAttributes();
         final HttpServletResponse response = getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
