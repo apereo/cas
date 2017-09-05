@@ -559,6 +559,42 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+      <version>2.4.2</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>ognl</artifactId>
+          <groupId>ognl</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>servlet-api</artifactId>
+          <groupId>javax.servlet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.servlet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.5</version>
