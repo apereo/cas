@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class JpaTicketRegistry extends AbstractTicketRegistry {
-   
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
 
     private final TicketCatalog ticketCatalog;
@@ -65,7 +65,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 .mapToLong(Query::executeUpdate)
                 .sum();
     }
-    
+
     @Override
     public Ticket getTicket(final String ticketId) {
         return getRawTicket(ticketId);
@@ -140,6 +140,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         final TicketDefinition st = this.ticketCatalog.find(ServiceTicket.PREFIX);
 
         Query query = entityManager.createQuery("delete from " + getTicketEntityName(st) + " s where s.ticketGrantingTicket.id = :id");
+
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
 
@@ -154,7 +155,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
         return totalCount;
     }
-
+    
     private static long countToLong(final Object result) {
         return ((Number) result).longValue();
     }

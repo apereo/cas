@@ -56,9 +56,12 @@ public class JpaTicketRegistryConfiguration {
                 new Reflections(new ConfigurationBuilder()
                         .setUrls(ClasspathHelper.forPackage("org.apereo.cas"))
                         .setScanners(new SubTypesScanner(false)));
-        final Set<Class<? extends AbstractTicket>> subTypes = reflections.getSubTypesOf(AbstractTicket.class);
-        return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toList());
-       
+        final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
+        final List<String> packages = subTypes
+                .stream()
+                .map(t -> t.getPackage().getName())
+                .collect(Collectors.toList());
+        return packages;
     }
     
     @Lazy
