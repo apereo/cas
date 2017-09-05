@@ -32,21 +32,18 @@ env:
 before_script:
  - export JAVA_OPTS="-Xmx2048m"
 before_install:
+- chmod -R 777 ./gradlew
 - sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 - sudo unzip -j -o ./etc/jce8.zip *.jar -d `jdk_switcher home oraclejdk8`/jre/lib/security
 - sudo ls `jdk_switcher home oraclejdk8`/jre/lib/security
 - sudo cp ./etc/java.security `jdk_switcher home oraclejdk8`/jre/lib/security
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
-- chmod -R 777 ./gradlew
-- sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-- sudo apt-get update
-- sudo apt-get install -y nodejs
-- sudo ./gradlew npmInstall gulpSetup --stacktrace -q
 install:
 - sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
 script:
-- travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
+- chmod -R 777 ./travis/script.sh
+- ./travis/script.sh
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
