@@ -8,11 +8,11 @@
       <ng-container cdkColumnDef="source">
         <md-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</md-header-cell>
         <md-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
-          <md-input-container>
+          <md-form-field>
             <input mdInput #text [mdAutocomplete]="auto"
                    [ngModel]="row.key" (click)="selectedRow = row"
                    (change)="doChange(row,$event.target.value)">
-          </md-input-container>
+          </md-form-field>
 
         </md-cell>
       </ng-container>
@@ -20,11 +20,11 @@
       <ng-container cdkColumnDef="mapped">
         <md-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</md-header-cell>
         <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
-          <md-input-container>
+          <md-form-field>
             <input mdInput [disabled]="row.key == ''"
                    [ngModel]="data.service.properties[row.key] ?  data.service.properties[row.key].values : ''"
                    (ngModelChange)="data.service.properties[row.key].values = $event.split(',')">
-          </md-input-container>
+          </md-form-field>
         </md-cell>
       </ng-container>
 

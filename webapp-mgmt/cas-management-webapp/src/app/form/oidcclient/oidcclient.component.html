@@ -4,12 +4,12 @@
   </md-card-title>
   <div class="cardContent">
     <div>
-      <md-input-container class="textInput">
+      <md-form-field class="textInput">
         <input mdInput required
                i18n-placeholder="services.form.label.oidc.jwks"
                [placeholder]="messages.services_form_label_oidc_jwks"
                [(ngModel)]="service.jwks">
-      </md-input-container>
+      </md-form-field>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.oidc.jwks"
                [mdTooltip]="messages.services_form_tooltip_oidc_jwks">help
@@ -30,12 +30,12 @@
     </div>
 
     <div>
-      <md-input-container class="textInput" *ngIf="service.scopes.indexOf('user_defined') > -1">
+      <md-form-field class="textInput" *ngIf="service.scopes.indexOf('user_defined') > -1">
         <input mdInput
                i18n-placeholder="services.form.label.oidc.user.defined.scopes"
                [placeholder]="messages.services_form_label_oidc_user_defined_scopes"
                [(ngModel)]="service.scopes_userdefined"/>
-      </md-input-container>
+      </md-form-field>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.oidc.user.defined.scopes"
                [mdTooltip]="messages.services_form_tooltip_oidc_user_defined_scopes">help
@@ -79,12 +79,12 @@
     </div>
 
     <div>
-      <md-input-container class="textInput">
+      <md-form-field class="textInput">
         <input mdInput required [mdAutocomplete]="encryptAlgAuto"
                i18n-placeholder="services.form.label.oidc.encryptAlg"
                [placeholder]="messages.services_form_label_oidc_encryptAlg"
                [(ngModel)]="service.idTokenEncryptionAlg">
-      </md-input-container>
+      </md-form-field>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.oidc.encryptAlg"
                [mdTooltip]="messages.services_form_tooltip_oidc_encryptAlg">help
@@ -95,12 +95,12 @@
     </div>
 
     <div>
-      <md-input-container class="textInput">
+      <md-form-field class="textInput">
         <input mdInput required [mdAutocomplete]="encodingAlgAuto"
                i18n-placeholder="ervices.form.label.oidc.encryptEnc"
                [placeholder]="messages.services_form_label_oidc_encryptEnc"
                [(ngModel)]="service.idTokenEncryptionEncoding">
-      </md-input-container>
+      </md-form-field>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.oidc.encryptEnc"
                [mdTooltip]="messages.services_form_tooltip_oidc_encryptEnc">help
@@ -124,12 +124,12 @@
     </div>
 
     <div>
-      <md-input-container class="textInput">
+      <md-form-field class="textInput">
         <input mdInput
                i18n-placeholder="services.form.label.oidc.sector.identifier.uri"
                [placeholder]="messages.services_form_label_oidc_sector_identifier_uri"
                [(ngModel)]="service.sectorIdentifierUri"/>
-      </md-input-container>
+      </md-form-field>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.oidc.sector.identifier.uri"
                [mdTooltip]="messages.services_form_tooltip_oidc_sector_identifier_uri">help
@@ -137,12 +137,12 @@
     </div>
 
     <div *ngIf="service.dynamicallyRegistered">
-      <md-input-container class="textInput">
+      <md-form-field class="textInput">
         <input mdInput
                i18n-placeholder="services.form.label.oidc.dynamicDate"
                [placeholder]="messages.services_form_label_oidc_dynamicDate"
                [(ngModel)]="service.dynamicRegistrationDateTime">
-      </md-input-container>
+      </md-form-field>
       <md-icon style="font-size: medium"
                i18n-mdTooltip="services.form.tooltip.oidc.dynamicDate"
                [mdTooltip]="messages.services_form_tooltip_oidc_dynamicDate">help
