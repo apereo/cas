@@ -53,8 +53,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
     public static Collection<Object> getTestParameters() throws Exception {
         return Arrays.asList(new Object[]{"testCase1"}, new Object[]{"testCase2"});
     }
-
-
+    
     @Before
     public void setUp() throws IOException {
         final boolean environmentOk = isMemcachedListening();
