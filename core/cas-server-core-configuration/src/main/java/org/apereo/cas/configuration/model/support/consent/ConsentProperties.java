@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -205,6 +206,14 @@ public class ConsentProperties implements Serializable {
         public void setUserFilter(final String userFilter) {
             this.userFilter = userFilter;
 	}
+    }
+    
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
+        private static final long serialVersionUID = -1918436901491275547L;
+
+        public MongoDb() {
+            setCollection("MongoDbCasConsentRepository");
+        }
     }
     
     public static class Rest implements Serializable {

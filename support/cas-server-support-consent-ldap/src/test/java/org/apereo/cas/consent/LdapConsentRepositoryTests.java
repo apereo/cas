@@ -120,8 +120,8 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         assertEquals("success", DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode().getName());
                 
         final LocalDateTime t = LocalDateTime.now();
-        assertNotEquals(t, decision.getDate());
-        decision.setDate(t);
+        assertNotEquals(t, decision.getCreatedDate());
+        decision.setCreatedDate(t);
         this.repository.storeConsentDecision(decision);
         
         final SearchResult r2 = DIRECTORY.getConnection().search(USER_DN, SearchScope.SUB, "(objectClass=*)", ATTR_NAME);
@@ -129,6 +129,6 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision d = MAPPER.readValue(r2.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
         assertNotNull(d);
         assertEquals(d.getId(), decision.getId());
-        assertEquals(d.getDate(), t);
+        assertEquals(d.getCreatedDate(), t);
     }    
 }
