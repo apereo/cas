@@ -41,8 +41,8 @@ import java.util.Set;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
-        columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
+@DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING,
+        columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class AbstractRegisteredService implements RegisteredService {
