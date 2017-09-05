@@ -48,7 +48,7 @@ public class CasCoreServicesConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
@@ -89,7 +89,7 @@ public class CasCoreServicesConfiguration {
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
         return new DomainServicesManager(serviceRegistryDao);
     }
-    
+
     @Bean
     @RefreshScope
     public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
@@ -101,7 +101,8 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime WILL be LOST upon container restarts.");
+                + "Changes that are made to service definitions during runtime WILL be LOST upon container restarts. "
+                + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
 
         final List<RegisteredService> services = new ArrayList<>();
         if (applicationContext.containsBean("inMemoryRegisteredServices")) {

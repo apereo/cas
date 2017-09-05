@@ -131,7 +131,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         }
         final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service,
                 this.getGrantingTicket(), authentication, expirationPolicy);
-        getGrantingTicket().getProxyGrantingTickets().add(pgt);
+        getGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }
 

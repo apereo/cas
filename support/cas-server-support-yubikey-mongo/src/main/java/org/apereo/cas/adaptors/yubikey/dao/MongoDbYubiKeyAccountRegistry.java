@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.Assert;
 
 /**
  * This is {@link MongoDbYubiKeyAccountRegistry}.
@@ -29,8 +28,6 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-
-        Assert.notNull(this.mongoTemplate);
 
         if (dropCollection) {
             LOGGER.debug("Dropping database collection: [{}]", this.collectionName);

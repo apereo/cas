@@ -1,9 +1,11 @@
 package org.apereo.cas.monitor;
 
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Monitors a {@link Cache} instance.
@@ -18,24 +20,27 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
     /**
      * The Ticket granting tickets cache.
      */
-    private final Cache ehcacheTicketsCache;
+    private final CacheManager ehcacheTicketsCache;
 
     /**
      * Instantiates a new Eh cache monitor.
      *
      * @param ehcacheTicketsCache the tickets cache
      */
-    public EhCacheMonitor(final Cache ehcacheTicketsCache) {
+    public EhCacheMonitor(final CacheManager ehcacheTicketsCache) {
         super(EhCacheMonitor.class.getSimpleName());
         this.ehcacheTicketsCache = ehcacheTicketsCache;
     }
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> list = new ArrayList<>();
-        if (this.ehcacheTicketsCache != null) {
-            list.add(new EhCacheStatistics(this.ehcacheTicketsCache));
-        }
+        final List<CacheStatistics> list = Arrays.stream(this.ehcacheTicketsCache.getCacheNames())
+                .map(c -> {
+                    final Cache cache = this.ehcacheTicketsCache.getCache(c);
+                    return new EhCacheStatistics(cache);
+                })
+                .collect(Collectors.toList());
+
         return list.toArray(new CacheStatistics[]{});
     }
 }

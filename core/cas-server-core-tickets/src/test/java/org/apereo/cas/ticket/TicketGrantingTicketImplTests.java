@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.mock.MockService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -78,8 +77,6 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyNullAuthentication() {
         this.thrown.expect(Exception.class);
-        this.thrown.expectMessage("authentication cannot be null");
-
         new TicketGrantingTicketImpl(TGT_ID, null, null, null, new NeverExpiresExpirationPolicy());
     }
 
@@ -203,7 +200,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyWebApplicationServices() {
-        final MockService testService = new MockService(TGT_ID);
+        final Service testService = RegisteredServiceTestUtils.getService(TGT_ID);
         final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(ID_GENERATOR
@@ -220,7 +217,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyWebApplicationExpire() {
-        final MockService testService = new MockService(TGT_ID);
+        final Service testService = RegisteredServiceTestUtils.getService(TGT_ID);
         final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(ID_GENERATOR

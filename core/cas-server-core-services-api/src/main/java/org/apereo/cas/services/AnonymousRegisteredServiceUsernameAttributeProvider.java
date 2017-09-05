@@ -9,8 +9,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 /**
  * Generates a persistent id as username for anonymous service access.
  * By default, the generation is handled by
@@ -57,10 +55,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
             throw new IllegalArgumentException("No persistent id generator is defined");
         }
         final String id = this.persistentIdGenerator.generate(principal, new Service() {
-            @Override
-            public void setPrincipal(final Principal principal) {
-
-            }
+            private static final long serialVersionUID = 178464253829044870L;
 
             @Override
             public boolean matches(final Service service) {
@@ -69,11 +64,6 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
 
             @Override
             public String getId() {
-                return null;
-            }
-
-            @Override
-            public Map<String, Object> getAttributes() {
                 return null;
             }
         });

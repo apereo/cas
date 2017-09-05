@@ -6,6 +6,7 @@ dependencies {
 
     api project(":api:cas-server-core-api-logout")
     implementation project(":core:cas-server-core-logging")
+    implementation project(":support:cas-server-support-memcached-core")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-services-authentication")
@@ -19,6 +20,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-    compileOnly project(":support:cas-server-support-saml")
-    compileOnly project(":support:cas-server-support-saml-googleapps-core")
 }

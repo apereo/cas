@@ -14,12 +14,13 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.clouddirectory.CloudDirectoryRepository;
 import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +70,8 @@ public class CloudDirectoryAuthenticationConfiguration {
 
         final CloudDirectoryAuthenticationHandler handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager,
                 cloudDirectoryPrincipalFactory(), cloudDirectoryRepository(), cloud);
-        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
-        handler.setPasswordEncoder(Beans.newPasswordEncoder(cloud.getPasswordEncoder()));
+        handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder()));
         return handler;
     }
 
