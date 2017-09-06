@@ -1,8 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,7 @@ public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredS
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateRegisteredServiceAccessStrategy.class);
 
     private boolean surrogateEnabled;
-    private boolean surrogateSsoEnabled;
+    
     private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>();
 
     public boolean isSurrogateEnabled() {
@@ -31,14 +28,6 @@ public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     public void setSurrogateEnabled(final boolean surrogateEnabled) {
         this.surrogateEnabled = surrogateEnabled;
-    }
-
-    public boolean isSurrogateSsoEnabled() {
-        return surrogateSsoEnabled;
-    }
-
-    public void setSurrogateSsoEnabled(final boolean surrogateSsoEnabled) {
-        this.surrogateSsoEnabled = surrogateSsoEnabled;
     }
 
     public Map<String, Set<String>> getSurrogateRequiredAttributes() {
@@ -50,24 +39,23 @@ public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredS
     }
 
     @Override
-    public boolean isServiceAccessAllowed() {
-        return isSurrogateAuthenticationSession() ? this.surrogateEnabled : super.isEnabled();
-    }
-
-    @Override
-    public boolean isServiceAccessAllowedForSso() {
-        return isSurrogateAuthenticationSession() ? this.surrogateSsoEnabled : super.isSsoEnabled();
-    }
-
-    @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        if (isSurrogateAuthenticationSession()) {
-            return doPrincipalAttributesAllowSurrogateServiceAccess(principalAttributes);
+    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
+        if (isSurrogateAuthenticationSession(attributes)) {
+            if (!isSurrogateEnabled()) {
+                return false;
+            }
+            return doPrincipalAttributesAllowSurrogateServiceAccess(attributes);
         }
-        return super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes);
+        return super.doPrincipalAttributesAllowServiceAccess(principal, attributes);
     }
 
-    private boolean doPrincipalAttributesAllowSurrogateServiceAccess(final Map<String, Object> principalAttributes) {
+    /**
+     * Do principal attributes allow surrogate service access?.
+     *
+     * @param principalAttributes the principal attributes
+     * @return the boolean
+     */
+    protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final Map<String, Object> principalAttributes) {
         if (!enoughRequiredAttributesAvailableToProcess(principalAttributes, this.surrogateRequiredAttributes)) {
             LOGGER.debug("Surrogate access is denied. There are not enough attributes available to satisfy requirements");
             return false;
@@ -81,19 +69,12 @@ public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredS
     }
 
     /**
-     * Is surrogate authentication session ?.
+     * Is surrogate authentication session?.
      *
-     * @return true/false
+     * @param attributes the attributes
+     * @return true /false
      */
-    protected boolean isSurrogateAuthenticationSession() {
-        final AuthenticationBuilder authBuilder = AuthenticationCredentialsLocalBinder.getCurrentAuthenticationBuilder();
-        if (authBuilder != null) {
-            return authBuilder.hasAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
-        }
-        final Authentication auth = AuthenticationCredentialsLocalBinder.getCurrentAuthentication();
-        if (auth != null) {
-            return auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
-        }
-        return false;
+    protected boolean isSurrogateAuthenticationSession(final Map<String, Object> attributes) {
+        return attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
     }
 }

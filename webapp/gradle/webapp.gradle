@@ -102,9 +102,7 @@ dependencies {
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
 
-    implementation project(":support:cas-server-support-ehcache-ticket-registry")
-    implementation project(":support:cas-server-support-ehcache-monitor")
-    
+
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 
