@@ -136,12 +136,12 @@ public class ConsentProperties implements Serializable {
         private static final long serialVersionUID = 1L;
         
         /**
-         * Type of LDAP directory
+         * Type of LDAP directory.
          */
         private LdapType type;
         
         /**
-         * Name of LDAP attribute that holds consent decisions as JSON
+         * Name of LDAP attribute that holds consent decisions as JSON.
          */
         private String consentAttributeName = "casConsentDecision";
         /**
@@ -196,7 +196,7 @@ public class ConsentProperties implements Serializable {
 
         public void setUserFilter(final String userFilter) {
             this.userFilter = userFilter;
-	}
+        }
     }
     
     public static class MongoDb extends SingleCollectionMongoDbProperties {
