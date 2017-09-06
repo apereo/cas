@@ -138,7 +138,6 @@ A sample service definition follows:
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
     "surrogateEnabled" : true,
-    "surrogateSsoEnabled" : false,
     "enabled": true,
     "ssoEnabled": true,
     "surrogateRequiredAttributes" : {
