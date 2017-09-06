@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.gauth;
 
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -11,17 +12,17 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorMongoDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,20 +41,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
 /**
- * This is {@link MongoDbGoogleAuthenticatorAccountRegistryTests}.
+ * This is {@link MongoDbGoogleAuthenticatorTokenRepositoryTests}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {
-                MongoDbGoogleAuthenticatorAccountRegistryTests.MongoTestConfiguration.class,
+                MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
                 GoogleAuthenticatorMongoDbConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
@@ -61,7 +61,7 @@ import static org.junit.Assert.*;
                 CasCoreHttpConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, 
+                CasCoreAuthenticationConfiguration.class,
                 CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
@@ -81,19 +81,33 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-public class MongoDbGoogleAuthenticatorAccountRegistryTests {
-    
+public class MongoDbGoogleAuthenticatorTokenRepositoryTests {
+
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
-    private OneTimeTokenCredentialRepository registry;
+    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+    private OneTimeTokenRepository repository;
 
     @Test
-    public void verifySave() {
-        registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
-        final String s = registry.getSecret("uid");
-        assertEquals(s, "secret");
+    public void verifyTokenSave() {
+        final GoogleAuthenticatorToken token = new GoogleAuthenticatorToken(1234, "casuser");
+        repository.store(token);
+        assertTrue(repository.exists("casuser", 1234));
+        assertTrue(token.getId() > 0);
     }
 
+    @Test
+    public void verifyTokensWithUniqueIdsSave() {
+        final GoogleAuthenticatorToken token = new GoogleAuthenticatorToken(1234, "casuser");
+        repository.store(token);
+
+        final GoogleAuthenticatorToken token2 = new GoogleAuthenticatorToken(5678, "casuser");
+        repository.store(token2);
+        
+        assertTrue(token.getId() > 0);
+        assertTrue(token2.getId() > 0);
+        assertNotEquals(token.getId(), token2.getId());
+    }
+    
     @TestConfiguration
     public static class MongoTestConfiguration {
         @Autowired
@@ -104,4 +118,5 @@ public class MongoDbGoogleAuthenticatorAccountRegistryTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
+    
 }

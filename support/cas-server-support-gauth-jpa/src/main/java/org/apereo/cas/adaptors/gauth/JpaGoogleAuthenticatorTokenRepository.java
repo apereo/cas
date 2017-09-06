@@ -47,7 +47,6 @@ public class JpaGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepos
         this.entityManager.merge(token);
     }
     
-
     @Override
     public boolean exists(final String uid, final Integer otp) {
         try {
