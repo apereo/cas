@@ -1,0 +1,80 @@
+<md-radio-group [(ngModel)]="type" (change)="changeType()">
+
+  <md-radio-button [value]="TYPE.DEFAULT">
+    <ng-container i18n="services.form.label.uap.default">
+      {{ messages.services_form_label_uap_default }}
+    </ng-container>
+  </md-radio-button>
+
+  <md-radio-button [value]="TYPE.ANONYMOUS">
+    <ng-container i18n="services.form.label.uap.anon">
+      {{ messages.services_form_label_uap_anon }}
+    </ng-container>
+  </md-radio-button>
+
+  <md-radio-button [value]="TYPE.PRINCIPAL_ATTRIBUTE">
+    <ng-container i18n="services.form.label.uap.principleAtt">
+      {{ messages.services_form_label_uap_principleAtt }}
+    </ng-container>
+  </md-radio-button>
+
+</md-radio-group>
+
+<div class="well well-sm" *ngIf="type == TYPE.DEFAULT">
+  <ng-container i18n="management.services.service.noAction">
+    {{ messages.management_services_service_noAction }}
+  </ng-container>
+</div>
+
+<div *ngIf="type == TYPE.ANONYMOUS">
+  <md-form-field class="textInput">
+    <input mdInput required
+           i18n-placeholder="services.form.label.uap.saltSetting"
+           [placeholder]="messages.services_form_label_uap_saltSetting"
+           [(ngModel)]="data.service.usernameAttributeProvider.persistentIdGenerator.salt">
+  </md-form-field>
+  <md-icon style="font-size: medium;"
+           i18n-myTooltip="services.form.tooltip.uap.saltSetting"
+           [mdTooltip]="messages.services_form_tooltip_uap_saltSetting">help
+  </md-icon>
+</div>
+
+<div *ngIf="type == TYPE.PRINCIPAL_ATTRIBUTE">
+
+  <div>
+    <md-form-field class="textInput">
+      <input mdInput required
+             i18n-placeholder="services.form.label.uap.usernameAttribute"
+             [placeholder]="messages.services_form_label_uap_usernameAttribute"
+             [(ngModel)]="data.service.usernameAttributeProvider.usernameAttribute">
+    </md-form-field>
+    <md-icon style="font-size: medium;"
+             i18n-mdTooltip="services.form.tooltip.uap.usernameAttribute"
+             [mdTooltip]="messages.services_form_tooltip_uap_usernameAttribute">help
+    </md-icon>
+  </div>
+
+  <div>
+    <md-checkbox [(ngModel)]="data.service.usernameAttributeProvider.encryptUserName">
+      <ng-container i18n>
+        Encrypt Username
+      </ng-container>
+    </md-checkbox>
+    <md-icon style="font-size: medium;"
+             i18n-mdTooltip="encpytUsername"
+             mdTooltip="If checked the username attribute will be encrypted using the defined public key for the service">help
+    </md-icon>
+  </div>
+
+  <div>
+    <md-select style="width:400px;padding-top:25px;"
+               i18n-placeholder="services.form.label.uap.canonicalizationMode"
+               [placeholder]="messages.services_form_label_uap_canonicalizationMode"
+               [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
+      <md-option *ngFor="let opt of canonicalizations" [value]="opt">
+        {{ opt }}
+      </md-option>
+    </md-select>
+  </div>
+
+</div>

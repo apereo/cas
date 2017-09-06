@@ -19,10 +19,25 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredService extends Cloneable, Serializable, Comparable<RegisteredService> {
 
+    enum LogoutType {
+        /**
+         * For no SLO.
+         */
+        NONE,
+        /**
+         * For back channel SLO.
+         */
+        BACK_CHANNEL,
+        /**
+         * For front channel SLO.
+         */
+        FRONT_CHANNEL
+    }
+
     /**
      * Initial ID value of newly created (but not persisted) registered service.
      */
-    long INITIAL_IDENTIFIER_VALUE = -Long.MAX_VALUE;
+    long INITIAL_IDENTIFIER_VALUE = -1;
 
     /**
      * Get the proxy policy rules for this service.

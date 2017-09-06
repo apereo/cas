@@ -6,6 +6,7 @@ dependencies {
     implementation libraries.casclient
     implementation libraries.groovy
     implementation libraries.springcloudconfigclient
+    implementation libraries.thymeleaf
 
     api project(":api:cas-server-core-api-authentication")
 

@@ -1,0 +1,35 @@
+
+<md-radio-group [(ngModel)]="type" (change)="changeType()">
+
+  <md-radio-button [value]="TYPE.REFUSE">
+    <ng-container i18n="services.form.label.proxyPolicy.refuse">
+      {{ messages.services_form_label_proxyPolicy_refuse }}
+    </ng-container>
+  </md-radio-button>
+
+  <md-radio-button  [value]="TYPE.REGEX">
+    <ng-container i18n="services.form.label.proxyPolicy.regex">
+      {{ messages.services_form_label_proxyPolicy_regex }}
+    </ng-container>
+  </md-radio-button>
+
+</md-radio-group>
+
+<div class="well well-sm" *ngIf="type == TYPE.REFUSE">
+  <ng-container i18n="management.services.service.noAction">
+    {{ messages.management_services_service_noAction }}
+  </ng-container>
+</div>
+
+<div *ngIf="type == TYPE.REGEX">
+  <md-form-field class="textInput">
+    <input mdInput required
+           i18n-placeholder="services.form.label.proxyPolicy.regex"
+           [placeholder]="messages.services_form_label_proxyPolicy_regex"
+           [(ngModel)]="data.service.proxyPolicy.pattern">
+  </md-form-field>
+  <md-icon style="font-size: medium"
+           i18n-mdTooltip="services.form.tooltip.proxyPolicy.regex"
+           [mdTooltip]="messages.services_form_tooltip_proxyPolicy_regex">help
+  </md-icon>
+</div>
