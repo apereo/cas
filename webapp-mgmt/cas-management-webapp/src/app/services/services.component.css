@@ -1,0 +1,50 @@
+.serviceName {
+  display:inline-block;
+  position:relative;
+}
+
+.middle {
+  bottom:5px;
+}
+
+.first {
+
+}
+
+.last {
+
+}
+
+.modified {
+  color: blue;
+  font-style: italic;
+}
+
+.added {
+  color:green;
+  font-style: italic;
+}
+
+.deleted {
+  color:red;
+  font-style: italic;
+}
+
+
+
+.titleBar {
+  display:inline-flex;
+  width:100%;
+}
+
+.title {
+  display:inline;
+  width:100%;
+  float:left;
+}
+
+.nav {
+  display:inline;
+  float:right;
+  margin:auto;
+}
