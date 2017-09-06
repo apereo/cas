@@ -125,4 +125,16 @@ public class RegexRegisteredServiceTests {
 
         assertEquals(serviceWritten, serviceRead);
     }
+
+    @Test
+    public void verifySerializeARegexRegisteredServiceWithLogoutTypeToJson() throws IOException {
+        final RegexRegisteredService serviceWritten = newService("serviceId");
+        serviceWritten.setLogoutType(LogoutType.FRONT_CHANNEL);
+
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
+
+        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
+
+        assertEquals(serviceWritten, serviceRead);
+    }
 }
