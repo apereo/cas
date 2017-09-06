@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -80,12 +81,15 @@ public final class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                 final RegisteredService registeredService,
-                                                                final Authentication authentication)
+                                                                final Authentication authentication) 
             throws UnauthorizedServiceException, PrincipalException {
         ensureServiceAccessIsAllowed(service, registeredService);
         final Principal principal = authentication.getPrincipal();
         final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principalAttrs)) {
+
+        final Map<String, Object> attributes = new LinkedHashMap<>(principalAttrs);
+        attributes.putAll(authentication.getAttributes());
+        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), attributes)) {
             LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principal);
 
             final Map<String, Class<? extends Throwable>> handlerErrors = new HashMap<>();
