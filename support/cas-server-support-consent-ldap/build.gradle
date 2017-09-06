@@ -1,0 +1,14 @@
+description = "Apereo CAS Consent LDAP Support"
+dependencies {
+    implementation project(":support:cas-server-support-consent-api")
+    implementation project(":support:cas-server-support-consent-core")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":support:cas-server-support-ldap-core")
+    
+    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-services")
+}

@@ -5108,6 +5108,58 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.jpa.properties.propertyName=propertyValue
 ```
 
+### LDAP Attribute Consent
+
+```properties
+# cas.consent.ldap.consentAttributeName=casConsentDecision
+# cas.consent.ldap.userFilter=cn={user}
+# cas.consent.ldap.subtreeSearch=true
+
+# cas.consent.ldap.type=GENERIC|AD|FreeIPA|EDirectory
+# cas.consent.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.consent.ldap.connectionStrategy=
+# cas.consent.ldap.baseDn=dc=example,dc=org
+# cas.consent.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.consent.ldap.bindCredential=Password
+# cas.consent.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.consent.ldap.connectTimeout=PT5S
+# cas.consent.ldap.trustCertificates=
+# cas.consent.ldap.keystore=
+# cas.consent.ldap.keystorePassword=
+# cas.consent.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.consent.ldap.poolPassivator=NONE|CLOSE|BIND
+# cas.consent.ldap.minPoolSize=3
+# cas.consent.ldap.maxPoolSize=10
+# cas.consent.ldap.validateOnCheckout=true
+# cas.consent.ldap.validatePeriodically=true
+# cas.consent.ldap.validatePeriod=PT5M
+# cas.consent.ldap.validateTimeout=PT5S
+# cas.consent.ldap.failFast=true
+# cas.consent.ldap.idleTime=PT10M
+# cas.consent.ldap.prunePeriod=PT2H
+# cas.consent.ldap.blockWaitTime=PT3S
+# cas.consent.ldap.useSsl=true
+# cas.consent.ldap.useStartTls=false
+# cas.consent.ldap.responseTimeout=PT5S
+# cas.consent.ldap.allowMultipleDns=false
+# cas.consent.ldap.name=
+
+# cas.consent.ldap.saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+# cas.consent.ldap.saslRealm=EXAMPLE.COM
+# cas.consent.ldap.saslAuthorizationId=
+# cas.consent.ldap.saslMutualAuth=
+# cas.consent.ldap.saslQualityOfProtection=
+# cas.consent.ldap.saslSecurityStrength=
+
+# cas.consent.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.consent.ldap.validator.baseDn=
+# cas.consent.ldap.validator.searchFilter=(objectClass=*)
+# cas.consent.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.consent.ldap.validator.attributeName=objectClass
+# cas.consent.ldap.validator.attributeValues=top
+# cas.consent.ldap.validator.dn=
+```
+
 ### REST Attribute Consent
 
 ```properties
