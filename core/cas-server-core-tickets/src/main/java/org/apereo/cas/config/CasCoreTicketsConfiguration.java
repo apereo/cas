@@ -55,6 +55,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -166,6 +167,8 @@ public class CasCoreTicketsConfiguration {
                 Beans.newTicketRegistryCipherExecutor(
                         casProperties.getTicket().getRegistry().getInMemory().getCrypto())
         );
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
+                + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
         return r;
     }
 
