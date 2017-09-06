@@ -8,9 +8,7 @@
     </h4>
   </div>
   <div style="flex: 1 1 auto;text-align: center">
-    <md-form-field floatPlaceholder="never" style="width:500px;">
-      <input mdInput #filter placeholder="Filter Domains" >
-    </md-form-field>
+
   </div>
 </div>
 
@@ -18,7 +16,9 @@
 <md-table #table [dataSource]="dataSource">
 
   <ng-container mdColumnDef="row">
-     <md-header-cell *mdHeaderCellDef>Domains</md-header-cell>
+     <md-header-cell *mdHeaderCellDef style="text-align: center"> <md-form-field floatPlaceholder="never" style="width:500px;">
+       <input mdInput (keyup)="doFilter($event.target.value)" placeholder="Filter Domains" >
+     </md-form-field></md-header-cell>
      <md-cell *mdCellDef="let row">
        <div style="display: flex;">
          <div style="padding-right:20px" [mdMenuTriggerFor]="serviceMenu" (click)="selectedItem = row">
@@ -29,7 +29,7 @@
      </md-cell>
   </ng-container>
 
-  <md-header-row *mdHeaderRowDef="displayedColumns" style="display: none"></md-header-row>
+  <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
   <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
 </md-table>
 

@@ -26,9 +26,9 @@ export class DomainsComponent implements OnInit {
   dataSource: DomainDataSource | null;
   selectedItem: String;
   serviceList: ServiceData[];
+  filter: String;
 
   @ViewChild(MdPaginator) paginator: MdPaginator;
-  @ViewChild('filter') filter: ElementRef;
 
   constructor(public messages: Messages,
               private router: Router,
@@ -37,17 +37,16 @@ export class DomainsComponent implements OnInit {
               private location: Location) { }
 
   ngOnInit() {
-    this.dataSource = new DomainDataSource(this.domainDatabase,this.paginator);
+    this.dataSource = new DomainDataSource(this.domainDatabase, this.paginator);
     this.domainService.getDomains()
       .then(resp => this.domainDatabase.load(resp))
-      .catch(e => this.snackBar.open("Failed to load domains","Dismiss"));
-    Observable.fromEvent(this.filter.nativeElement, 'keyup')
-      .debounceTime(150)
-      .distinctUntilChanged()
-      .subscribe(() => {
-        if (!this.dataSource) { return; }
-        this.dataSource.filter = this.filter.nativeElement.value;
-      });
+      .catch(e => this.snackBar.open("Failed to load domains", "Dismiss"));
+  }
+
+  doFilter(val: string) {
+    console.log("in do filter - "+val);
+    if (!this.dataSource) { return; }
+    this.dataSource.filter = val;
   }
 
   view(domain: String) {
