@@ -132,9 +132,7 @@ public class RegexRegisteredServiceTests {
         serviceWritten.setLogoutType(LogoutType.FRONT_CHANNEL);
 
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
-
         assertEquals(serviceWritten, serviceRead);
     }
 }
