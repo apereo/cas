@@ -1,0 +1,105 @@
+<div style="padding-top: 3px; margin-bottom:10px;">
+  <md-icon style="padding-top: 3px;">build</md-icon>
+  <h4 style="display: inline;position: relative;top: -5px;">
+    <ng-container i18n>
+      Manage Services
+    </ng-container>
+  </h4>
+</div>
+
+<md-card *ngFor="let item of dataTable; let i = index;" style="margin-bottom: 1px;margin-right:25px;margin-left:25px;">
+  <div style="display: flex;">
+    <div style="padding-right:20px" [mdMenuTriggerFor]="serviceMenu" (click)="selectedItem = item">
+        <md-icon>menu</md-icon>
+    </div>
+    <div style="padding-right:20px;flex: 0 0 200px;font-weight: 700;text-overflow: ellipsis"> {{item.name}}</div>
+    <div style="padding-right:20px;flex: 0 0 200px;font-weight: 300;text-overflow: ellipsis">
+      {{ item.serviceId }}
+    </div>
+    <div style="flex: 1 1 auto;text-overflow: ellipsis">{{ item.description }}</div>
+  </div>
+  <div *ngIf="detailRow == item.assignedId">
+    <table class="table-details">
+      <tr>
+        <td class="col-sm-2 detail-label">
+          <ng-container i18n="management.services.table.details.description">
+            {{messages.management_services_table_details_description }}
+          </ng-container>
+        </td>
+        <td class="col-sm-8">{{ item.description }}</td>
+        <td class="col-sm-2 detail-logo" colspan="2" rowspan="5" *ngIf="item.logoUrl">
+          <img src="{{ item.logoUrl }}" alt="{{ item.name }}"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="col-sm-2 detail-label">
+          <ng-container i18n="management.services.table.details.proxyPolicy">
+            {{messages.management_services_table_details_proxyPolicy }}
+          </ng-container>
+        </td>
+        <td class="col-sm-8">
+          <span *ngIf="!item.proxyPolicy.value">{{ item.proxyPolicy.type | uppercase }}</span>
+          <span *ngIf="item.proxyPolicy.value">{{ item.proxyPolicy.value }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="col-sm-2 detail-label">
+          <ng-container i18n="managemnt.services.table.details.attrPolicy">
+            {{ messages.management_services_table_details_attrPolicy }}
+          </ng-container>
+        </td>
+        <td class="col-sm-8">{{ item.attrRelease.attrPolicy | uppercase }}</td>
+      </tr>
+      <tr>
+        <td class="col-sm-2 detail-label">
+          <ng-container i18n="management.services.table.details.releaseCred">
+            {{ messages.management_services_table_details_releaseCred }}
+          </ng-container>
+        </td>
+        <td class="col-sm-8">{{ item.attrRelease.releasePassword }} </td>
+      </tr>
+      <tr>
+        <td class="col-sm-2 detail-label">
+          <ng-container i18n="management.services.table.details.releaseProxy">
+            {{ messages.management_services_table_details_releaseProxy }}
+          </ng-container>
+        </td>
+        <td class="col-sm-8">{{ item.attrRelease.releaseTicket }}</td>
+      </tr>
+    </table>
+  </div>
+</md-card>
+
+<md-menu #serviceMenu>
+  <button md-menu-item (click)="serviceEdit( selectedItem.assignedId )">
+    <md-icon>edit</md-icon>
+    <ng-container i18n="management.services.table.button.edit">
+      {{ messages.management_services_table_button_edit }}
+    </ng-container>
+  </button>
+  <button md-menu-item (click)="serviceDuplicate( selectedItem.assignedId )">
+    <md-icon>content_copy</md-icon>
+    <ng-container i18n="management.services.table.button.duplicate">
+      {{ messages.management_services_table_button_duplicate }}
+    </ng-container>
+  </button>
+  <button md-menu-item (click)="openModalDelete(selectedItem)">
+    <md-icon>delete</md-icon>
+    <ng-container i18n="management.services.table.button.delete">
+      {{ messages.management_services_table_button_delete }}
+    </ng-container>
+  </button>
+  <button md-menu-item (click)="toggleDetail(selectedItem.assignedId)">
+    <md-icon>format_list_bulleted</md-icon>
+    <ng-container i18n>Details</ng-container>
+  </button>
+  <button md-menu-item (click)="moveUp(selectedItem)" *ngIf="dataTable.indexOf(selectedItem) > 0">
+    <md-icon>arrow_upward</md-icon>
+    <ng-container>Move Up</ng-container>
+  </button>
+  <button md-menu-item (click)="moveDown(selectedItem)" *ngIf="dataTable.indexOf(selectedItem) < dataTable.length - 1">
+    <md-icon>arrow_downward</md-icon>
+    <ng-container>Move Down</ng-container>
+  </button>
+</md-menu>
+

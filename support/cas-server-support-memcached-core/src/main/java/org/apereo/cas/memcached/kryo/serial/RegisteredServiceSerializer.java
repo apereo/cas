@@ -9,7 +9,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
-import org.apereo.cas.services.LogoutType;
+import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
