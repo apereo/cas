@@ -94,7 +94,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
-                || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+                || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)
+                || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS)) {
             LOGGER.debug("Returning webflow event as [{}]", id);
             return CollectionUtils.wrapSet(event);
         }
