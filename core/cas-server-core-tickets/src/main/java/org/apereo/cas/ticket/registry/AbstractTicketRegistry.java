@@ -140,7 +140,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             count.addAndGet(c);
         }
         if (hasPgts) {
-            LOGGER.debug("Removing proxy-granting tickets from parent ticket-granting ticket", tgt.getId());
+            LOGGER.debug("Removing proxy-granting tickets from parent ticket-granting ticket");
             tgt.getProxyGrantingTickets().clear();
             updateTicket(tgt);
         }
