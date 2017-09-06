@@ -1,0 +1,46 @@
+<header id="casmgmt-header">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+
+      <div class="navbar-header">
+        <a href="manage.html" target="_self" id="homepageUrlLink">
+          <div class="navbar-brand">
+            <img src="images/logo_cas.png" alt="apereo CAS logo" />
+          </div>
+          <h4>
+            <ng-container i18n="management.services.header.apptitle">
+              {{ messages.management_services_header_apptitle }}
+            </ng-container>
+          </h4>
+        </a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="casmgt-navbar-collapse">
+        <ul class="nav navbar-nav navbar-right quicklinks">
+          <li>
+            <a id="manageServices" routerLink="/services">
+              <i class="fa fa-th" aria-hidden="true"></i>
+              <ng-container i18n>Manage Services</ng-container>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/form/-1">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>
+              <ng-container i18n="managment.services.header.navitem.addNewService">
+                {{ messages.management_services_header_navbar_navitem_addNewService }}
+              </ng-container>
+            </a>
+          </li>
+          <li>
+            <a href="logout?url=/logout.html" target="_self" id="logoutUrlLink">
+              <i class="fa fa-sign-out" aria-hidden="true"></i>
+              <ng-container i18n="management.services.header.navbar.navitem.logout">
+                {{ messages.management_services_header_navbar_navitem_logout }}
+              </ng-container>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
