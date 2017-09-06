@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 
 /**
- * Simple container for holding a service principal and its corresponding registered serivce.
+ * Simple container for holding a service principal and its corresponding registered service.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
