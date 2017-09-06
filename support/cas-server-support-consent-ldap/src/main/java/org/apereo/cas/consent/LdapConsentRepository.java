@@ -131,11 +131,6 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private Set<String> mergeDecision(final LdapAttribute ldapConsent, final ConsentDecision decision) {
         final Set<String> result = new HashSet<>();
-
-        if (decision.getId() < 0) {
-            decision.setId(System.currentTimeMillis());
-        }
-        
         if (ldapConsent != null && ldapConsent.size() != 0) {
             ldapConsent.getStringValues()
                     .stream()
@@ -144,6 +139,9 @@ public class LdapConsentRepository implements ConsentRepository {
                     .map(LdapConsentRepository::mapToJson)
                     .forEach(result::add);
             LOGGER.debug("Merged consent decision [{}] with LDAP attribute [{}]", decision, ldapConsent.getName());
+        }
+        if (decision.getId() < 0) {
+            decision.setId(System.currentTimeMillis());
         }
         result.add(mapToJson(decision));
         return CollectionUtils.wrap(result);
