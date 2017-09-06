@@ -144,6 +144,23 @@ The consent decision object in transit will and must match the following structu
 | `attributeValues`         | SHA-512 of attribute values for this application, signed and encrypted.
 
 
+### LDAP
+
+Consent decisions can be stored on LDAP user objects. The decisions are serialized into JSON and stored one-by-one in a multi-valued string attribute.
+
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-consent-ldap</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ldap-attribute-consent).
+
+
 ### Custom
 
 You may also inject your own implementation for attribute consent management into CAS that would itself handle storing consent decisions, etc. In order to do this, you will need to design a configuration class that roughly matches the following: 
