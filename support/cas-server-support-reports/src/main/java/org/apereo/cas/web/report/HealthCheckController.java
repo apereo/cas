@@ -44,7 +44,6 @@ public class HealthCheckController {
      *
      * @param request  the request
      * @param response the response
-     * @return the model and view
      * @throws Exception the exception
      */
     @RequestMapping(method = RequestMethod.GET)
