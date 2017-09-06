@@ -1,0 +1,43 @@
+dn: cn=consentTest,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: ad
+objectClass: account
+cn: Consent Test
+givenName: Consent
+sn: Consent
+uid: ConsentTest
+displayName: Consent Test
+sAMAccountName: consentTest
+distinguishedName: CN=consentTest,ou=people,dc=example,dc=org
+mail: consentTest@example.org
+password: thePassw0rd
+unicodePwd: ignoredForTests
+userPrincipalName: consenttest@example.org
+userAccountControl: 66048
+host: localhost
+userPassword: misagh
+
+dn: cn=consentTest2,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: ad
+objectClass: account
+cn: Consent Test2
+givenName: Consent
+sn: Consent
+uid: ConsentTest
+displayName: Consent Test2
+sAMAccountName: consentTest2
+distinguishedName: CN=consentTest2,ou=people,dc=example,dc=org
+mail: consentTest2@example.org
+password: thePassw0rd
+unicodePwd: ignoredForTests
+userPrincipalName: consenttest2@example.org
+userAccountControl: 66048
+host: localhost
+userPassword: misagh
