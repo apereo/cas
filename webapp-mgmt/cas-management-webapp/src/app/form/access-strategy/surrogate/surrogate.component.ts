@@ -32,7 +32,7 @@ export class SurrogateComponent implements OnInit {
     if (Util.isEmpty(this.accessStrategy.surrogateRequiredAttributes)) {
       this.accessStrategy.surrogateRequiredAttributes = new Map();
     }
-    for (let p of Array.from(Object.keys(this.data.service.accessStrategy.rejectedAttributes))) {
+    for (let p of Array.from(Object.keys(this.accessStrategy.surrogateRequiredAttributes))) {
       this.attributeDatabase.addRow(new Row(p));
     }
     this.dataSource = new AttributeDataSource(this.attributeDatabase);
