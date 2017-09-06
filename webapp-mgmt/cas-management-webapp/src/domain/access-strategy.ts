@@ -81,7 +81,6 @@ export class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
 
 export class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
   surrogateEnabled: boolean;
-  surrogateSsoEnabled: boolean;
   surrogateRequiredAttributes: Map<String, String[]>;
 
   static cName: string = "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy";
