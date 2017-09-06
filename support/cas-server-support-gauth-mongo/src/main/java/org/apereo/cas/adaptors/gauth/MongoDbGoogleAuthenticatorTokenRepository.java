@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  */
 public class MongoDbGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbGoogleAuthenticatorTokenRepository.class);
-    
+
     private final long expireTokensInSeconds;
     private final String collectionName;
     private final MongoOperations mongoTemplate;

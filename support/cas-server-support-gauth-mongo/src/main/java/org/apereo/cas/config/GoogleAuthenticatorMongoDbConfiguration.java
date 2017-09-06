@@ -48,11 +48,11 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         return factory.buildMongoTemplate(mongo);
     }
 
-    
+
     @Autowired
     @Bean
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") 
-                                                                                   final IGoogleAuthenticator googleAuthenticatorInstance) {
+                                                                               final IGoogleAuthenticator googleAuthenticatorInstance) {
         final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
         return new MongoDbGoogleAuthenticatorTokenCredentialRepository(
                 googleAuthenticatorInstance,
@@ -61,7 +61,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
                 mongo.isDropCollection()
         );
     }
-
+    
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
