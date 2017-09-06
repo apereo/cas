@@ -88,7 +88,7 @@ public class ConsentProperties implements Serializable {
         return ldap;
     }
 
-    public void setLdap(Ldap ldap) {
+    public void setLdap(final Ldap ldap) {
         this.ldap = ldap;
     }
 
@@ -162,7 +162,7 @@ public class ConsentProperties implements Serializable {
             return type;
         }
 
-        public void setType(LdapType type) {
+        public void setType(final LdapType type) {
             this.type = type;
         }
         

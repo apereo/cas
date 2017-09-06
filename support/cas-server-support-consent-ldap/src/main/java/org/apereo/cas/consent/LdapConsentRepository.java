@@ -128,13 +128,13 @@ public class LdapConsentRepository implements ConsentRepository {
                 .stream()
                 .map(s -> mapFromJson(s, ConsentDecision.class))
                 .filter(d -> d.getId() != decision.getId())
-                .map(d -> mapToJson(d, String.class))
+                .map(d -> mapToJson(d))
                 .forEach(s -> result.add(s));
         }
         if (decision.getId() < 0) {
             decision.setId(Math.abs(RandomUtils.getInstanceNative().nextInt()));
         }
-        result.add(mapToJson(decision, String.class));
+        result.add(mapToJson(decision));
         return CollectionUtils.wrap(result);
     }
     
@@ -191,7 +191,7 @@ public class LdapConsentRepository implements ConsentRepository {
         return null;
     }
         
-    private static <T> String mapToJson(final ConsentDecision s, final Class<String> c) {
+    private static <T> String mapToJson(final ConsentDecision s) {
         try {
             return MAPPER.writeValueAsString(s);
         } catch (final IOException e) {
