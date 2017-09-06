@@ -1,7 +1,6 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -14,11 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;

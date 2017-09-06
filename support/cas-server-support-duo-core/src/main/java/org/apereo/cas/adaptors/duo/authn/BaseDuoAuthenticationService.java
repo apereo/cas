@@ -24,12 +24,14 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 public abstract class BaseDuoAuthenticationService implements DuoAuthenticationService {
-
+    private static final long serialVersionUID = -8044100706027708789L;
+    
     private static final int AUTH_API_VERSION = 2;
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
-    private static final long serialVersionUID = -8044100706027708789L;
+    private static final String RESULT_KEY_RESULT= "result";
+
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseDuoAuthenticationService.class);
     
@@ -126,7 +128,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                     && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
                 final JsonNode response = result.get(RESULT_KEY_RESPONSE);
-                final String authResult = response.get("result").asText().toUpperCase();
+                final String authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
                 return DuoUserAccountAuthStatus.valueOf(authResult);
             }
         } catch (final Exception e) {
