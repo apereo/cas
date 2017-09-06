@@ -45,10 +45,10 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests}.
+ * This is {@link MongoDbGoogleAuthenticatorAccountRegistryTests}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.4
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -84,14 +84,14 @@ import static org.junit.Assert.*;
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
-    private OneTimeTokenCredentialRepository registry;
+    @Qualifier("googleAuthenticatorTokenCredentialRepository")
+    private GoogleAuthenticatorAccount registry;
 
     @Test
     public void verifySave() {
-        registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
-        final String s = registry.getSecret("uid");
-        assertEquals(s, "secret");
+        registry.GoogleAuthenticatorAccount("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
+        final long id = registry.getId();
+        assertNotEquals(id, 2147483647);
     }
 
     @TestConfiguration
