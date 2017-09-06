@@ -52,7 +52,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
      * This regular expression is used to strip the domain form the serviceId that is set in
      * the Service and also passed as the service parameter to the login endpoint.
      */
-    private final Pattern domainPattern = RegexUtils.createPattern("^(https?|imaps?)://([^:/]+)/i");
+    private final Pattern domainPattern = RegexUtils.createPattern("^\\^?https?://([^:/]+)");
 
     /**
      * Instantiates a new default services manager impl.
@@ -223,7 +223,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     private String getDomain(final String service) {
         final Matcher match = domainPattern.matcher(service.toLowerCase());
         final String domain = match.lookingAt() && !match.group(1).contains("*") ? match.group(1) : "default";
-        LOGGER.debug("Domain found for service identifier [{}]", domain);
+        LOGGER.warn("Domain [{}] found for service [{}] ", domain, service);
         return domain;
     }
 

@@ -40,6 +40,7 @@ export class ServicesComponent implements OnInit {
           });
         }
       });
+    this.route.params.subscribe((params) => this.domain = params['domain']);
   }
 
   serviceEdit(selectedItem: String) {
@@ -96,7 +97,7 @@ export class ServicesComponent implements OnInit {
   }
 
   getServices() {
-    this.service.getServices()
+    this.service.getServices(this.domain)
       .then(resp => this.dataTable = resp)
       .catch((e: any) => this.snackBar.open(this.messages.management_services_status_listfail,'Dismiss', {
         duration: 5000

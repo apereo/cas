@@ -12,6 +12,7 @@ import {HeaderComponent} from "./header/header.component";
 import {SharedModule} from "./shared/shared.module";
 import {FormModule} from "./form/form.module";
 import { DeleteComponent } from './delete/delete.component';
+import {DomainsModule} from "./domains/domains.module";
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { DeleteComponent } from './delete/delete.component';
     BrowserAnimationsModule,
     FormsModule,
     HttpModule,
+    DomainsModule,
     ServicesModule,
     FormModule,
     SharedModule,
