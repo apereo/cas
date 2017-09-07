@@ -20,7 +20,7 @@ node {
 
 npm_install.dependsOn(npm_cache_clean)
 
-task buildClientDev(type: NpmTask, dependsOn: 'npm_install', group: 'build', description: "Compile client side folder for development") {
+task buildClientDev(type: NpmTask, dependsOn: 'npm_install', group: 'bootRun', description: "Compile client side folder for development") {
   args = ['run', 'buildDev']
 }
 
