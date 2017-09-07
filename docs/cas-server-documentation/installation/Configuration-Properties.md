@@ -4464,6 +4464,9 @@ This is typically the default ticket registry instance where tickets
 are kept inside the runtime environment memory.
 
 ```properties
+# Enable the backing map to be cacheable
+# cas.ticket.registry.inMemory.cache=true
+
 # cas.ticket.registry.inMemory.loadFactor=1
 # cas.ticket.registry.inMemory.concurrency=20
 # cas.ticket.registry.inMemory.initialCapacity=1000
