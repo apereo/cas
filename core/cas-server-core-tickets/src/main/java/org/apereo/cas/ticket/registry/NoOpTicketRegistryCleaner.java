@@ -1,9 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.io.Serializable;
 
 /**
  * This is {@link NoOpTicketRegistryCleaner} that simply disables support for ticket cleanup.
@@ -14,11 +17,20 @@ import javax.annotation.PostConstruct;
 public class NoOpTicketRegistryCleaner implements TicketRegistryCleaner {
     private static final Logger LOGGER = LoggerFactory.getLogger(NoOpTicketRegistryCleaner.class);
 
+    private static TicketRegistryCleaner INSTANCE;
+
+    protected NoOpTicketRegistryCleaner() {
+    }
+
     /**
-     * Initialize cleaner.
+     * Gets instance.
+     *
+     * @return the instance
      */
-    @PostConstruct
-    public void init() {
-        LOGGER.debug("Ticket registry cleaner is a no-op task. No ticket cleaning will take place");
+    public static TicketRegistryCleaner getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new NoOpTicketRegistryCleaner();
+        }
+        return INSTANCE;
     }
 }
