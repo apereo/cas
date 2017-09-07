@@ -41,9 +41,11 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     private LocalDateTime issuedDateTime = LocalDateTime.now();
 
     public OneTimeToken() {
+        setId(java.lang.System.currentTimeMillis());
     }
 
     public OneTimeToken(final Integer token, final String userId) {
+        this();
         this.token = token;
         this.userId = userId;
     }
