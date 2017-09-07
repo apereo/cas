@@ -196,6 +196,9 @@ public class TicketRegistryProperties implements Serializable {
     public static class InMemory implements Serializable {
 
         private static final long serialVersionUID = -2600525447128979994L;
+        
+        private boolean cache;
+        
         /**
          * The initial capacity of the underlying memory store.
          * The implementation performs internal sizing to accommodate this many elements.
@@ -254,6 +257,14 @@ public class TicketRegistryProperties implements Serializable {
 
         public void setConcurrency(final int concurrency) {
             this.concurrency = concurrency;
+        }
+
+        public boolean isCache() {
+            return cache;
+        }
+
+        public void setCache(final boolean cache) {
+            this.cache = cache;
         }
     }
 }
