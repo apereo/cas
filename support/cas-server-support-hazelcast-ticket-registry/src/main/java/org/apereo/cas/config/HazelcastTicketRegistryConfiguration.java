@@ -57,10 +57,10 @@ public class HazelcastTicketRegistryConfiguration {
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
     }
-    
+
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new NoOpTicketRegistryCleaner();
+        return NoOpTicketRegistryCleaner.getInstance();
     }
 
     @Autowired
@@ -81,7 +81,7 @@ public class HazelcastTicketRegistryConfiguration {
 
         final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
-        
+
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
             final MapConfig mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(), t.getProperties().getStorageTimeout());

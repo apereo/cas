@@ -26,10 +26,12 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
+import org.apereo.cas.ticket.registry.CachingTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
@@ -211,17 +213,19 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator());
     }
 
+    @Autowired
     @ConditionalOnMissingBean(name = "ticketRegistry")
     @Bean
-    public TicketRegistry ticketRegistry() {
+    public TicketRegistry ticketRegistry(@Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                 + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
-        return new DefaultTicketRegistry(
-                mem.getInitialCapacity(),
-                mem.getLoadFactor(),
-                mem.getConcurrency(),
-                Beans.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory"));
+        final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
+
+        if (mem.isCache()) {
+            return new CachingTicketRegistry(cipher, ticketRegistryCleaner);
+        }
+        return new DefaultTicketRegistry(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency(), cipher);
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
