@@ -223,7 +223,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
     private String getDomain(final String service) {
         final Matcher match = domainPattern.matcher(service.toLowerCase());
         final String domain = match.lookingAt() && !match.group(1).contains("*") ? match.group(1) : "default";
-        LOGGER.warn("Domain [{}] found for service [{}] ", domain, service);
+        LOGGER.debug("Domain [{}] found for service [{}] ", domain, service);
         return domain;
     }
 

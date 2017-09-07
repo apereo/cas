@@ -156,19 +156,10 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return new ResponseEntity<Collection<String>>(data, HttpStatus.OK);
     }
 
-    @GetMapping(value="/services")
-    public ResponseEntity<Collection<ServiceItem>> getServiceList(@RequestParam final String domain) throws Exception {
-        final Collection<RegisteredService> services = this.servicesManager.getServicesForDomain(domain);
-        final List<ServiceItem> list = services.stream()
-                .map(s -> new ServiceItem(s.getName(),s.getServiceId()))
-                .collect(Collectors.toList());
-        return new ResponseEntity<Collection<ServiceItem>>(list,HttpStatus.OK);
-    }
-
     /**
      * Gets services.
      *
-     * @param response the response
+     * @param domain the domain for which services will be retrieved
      * @return the services
      */
     @GetMapping(value = "/getServices")
@@ -206,24 +197,5 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         this.servicesManager.save(svcA);
         this.servicesManager.save(svcB);
     }
-
-    private class ServiceItem {
-        public String name;
-        public String serviceId;
-
-        public ServiceItem(String name, String serviceId) {
-            this.name = name;
-            this.serviceId = serviceId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getServiceId() {
-            return serviceId;
-        }
-    }
-
 }
 
