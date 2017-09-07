@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller("registeredServiceSimpleFormController")
 public class RegisteredServiceSimpleFormController extends AbstractManagementController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceSimpleFormController.class);
-    
+
     /**
      * Instance of the RegisteredServiceFactory.
      */
@@ -45,8 +45,14 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     /**
      * Adds the service to the Service Registry.
      *
-     * @param service  the edit bean
+     * @param service the edit bean
+     * @return the response entity
      */
+    @PostMapping(value = "saveService", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> saveService(@RequestBody final RegisteredService service) {
+        final RegisteredService newSvc = this.servicesManager.save(service);
+        LOGGER.info("Saved changes to service [{}]", service.getId());
+        return new ResponseEntity<>(String.valueOf(newSvc.getId()), HttpStatus.OK);
     @PostMapping(value = "saveService", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveService(@RequestBody final RegisteredService service) {
         final RegisteredService newSvc = this.servicesManager.save(service);
@@ -57,11 +63,13 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     /**
      * Gets service by id.
      *
-     * @param id       the id
+     * @param id the id
+     * @return the service by id
+     * @throws Exception the exception
      */
     @GetMapping(value = "getService")
     public ResponseEntity<RegisteredService> getServiceById(@RequestParam(value = "id", required = false) final Long id) throws Exception {
-        RegisteredService service;
+        final RegisteredService service;
         if (id == -1) {
             service = new RegexRegisteredService();
         } else {
@@ -71,11 +79,17 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
                 throw new IllegalArgumentException("Service id " + id + " cannot be found");
             }
         }
-        return new ResponseEntity<RegisteredService>(service,HttpStatus.OK);
+        return new ResponseEntity<>(service, HttpStatus.OK);
     }
 
+    /**
+     * Gets form data.
+     *
+     * @return the form data
+     * @throws Exception the exception
+     */
     @GetMapping(value = "formData")
     public ResponseEntity<FormData> getFormData() throws Exception {
-        return new ResponseEntity<>(this.registeredServiceFactory.createFormData(),HttpStatus.OK);
+        return new ResponseEntity<>(this.registeredServiceFactory.createFormData(), HttpStatus.OK);
     }
 }

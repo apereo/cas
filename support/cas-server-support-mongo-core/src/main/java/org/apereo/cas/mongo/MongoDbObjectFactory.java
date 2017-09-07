@@ -124,8 +124,15 @@ public class MongoDbObjectFactory {
         if (StringUtils.isNotBlank(props.getClientUri())) {
             final MongoClientURI uri = buildMongoClientURI(props.getClientUri());
             dbName = uri.getDatabase();
+            LOGGER.debug("Using database [{}] from the connection client URI", dbName);
         } else {
             dbName = props.getDatabaseName();
+            LOGGER.debug("Using database [{}] from individual settings", dbName);
+        }
+
+        if (StringUtils.isBlank(dbName)) {
+            LOGGER.error("Database name cannot be undefined. It must be specified as part of the client URI connection string if used, or "
+                    + "as an individual setting for the MongoDb connection");
         }
         return new SimpleMongoDbFactory(mongo, dbName, null, props.getAuthenticationDatabaseName());
     }

@@ -50,51 +50,49 @@ public class RegexRegisteredServiceTests {
         return Arrays.asList(new Object[][]{
                 // CAS-1071 domain-specific HTTP catch-all #1
                 {
-                newService(domainCatchallHttp),
-                "https://service.vt.edu/webapp?a=1",
-                true,
+                        newService(domainCatchallHttp),
+                        "https://service.vt.edu/webapp?a=1",
+                        true,
                 },
-                // CAS-1071 domain-specific HTTP catch-all #2
                 {
-                newService(domainCatchallHttp),
-                "http://test-01.service.vt.edu/webapp?a=1",
-                true,
+                        newService(domainCatchallHttp),
+                        "http://test-01.service.vt.edu/webapp?a=1",
+                        true,
                 },
-                // CAS-1071 domain-specific HTTP catch-all #3
                 {
-                newService(domainCatchallHttp),
-                "https://thepiratebay.se?service.vt.edu/webapp?a=1",
-                false,
+                        newService(domainCatchallHttp),
+                        "https://thepiratebay.se?service.vt.edu/webapp?a=1",
+                        false,
                 },
                 // Domain-specific catch-all for HTTP(S)/IMAP(S) #1
                 {
-                newService(domainCatchallHttpImap),
-                "http://test_service.vt.edu/login",
-                true,
+                        newService(domainCatchallHttpImap),
+                        "http://test_service.vt.edu/login",
+                        true,
                 },
                 // Domain-specific catch-all for HTTP(S)/IMAP(S) #2
                 {
-                newService(domainCatchallHttpImap),
-                "imaps://imap-server-01.vt.edu/",
-                true,
+                        newService(domainCatchallHttpImap),
+                        "imaps://imap-server-01.vt.edu/",
+                        true,
                 },
                 // Global catch-all for HTTP(S)/IMAP(S) #1
                 {
-                newService(globalCatchallHttpImap),
-                "https://host-01.example.com/",
-                true,
+                        newService(globalCatchallHttpImap),
+                        "https://host-01.example.com/",
+                        true,
                 },
                 // Global catch-all for HTTP(S)/IMAP(S) #2
                 {
-                newService(globalCatchallHttpImap),
-                "imap://host-02.example.edu/",
-                true,
+                        newService(globalCatchallHttpImap),
+                        "imap://host-02.example.edu/",
+                        true,
                 },
                 // Null case
                 {
-                newService(globalCatchallHttpImap),
-                null,
-                false,
+                        newService(globalCatchallHttpImap),
+                        null,
+                        false,
                 },
         });
     }
@@ -119,23 +117,9 @@ public class RegexRegisteredServiceTests {
     @Test
     public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
         final RegexRegisteredService serviceWritten = newService("serviceId");
-
+        serviceWritten.setLogoutType(RegisteredService.LogoutType.FRONT_CHANNEL);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
-
-        assertEquals(serviceWritten, serviceRead);
-    }
-
-    @Test
-    public void verifySerializeARegexRegisteredServiceWithLogoutTypeToJson() throws IOException {
-        final RegexRegisteredService serviceWritten = newService("serviceId");
-        serviceWritten.setLogoutType(LogoutType.FRONT_CHANNEL);
-
-        MAPPER.writeValue(JSON_FILE, serviceWritten);
-
-        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
-
         assertEquals(serviceWritten, serviceRead);
     }
 }

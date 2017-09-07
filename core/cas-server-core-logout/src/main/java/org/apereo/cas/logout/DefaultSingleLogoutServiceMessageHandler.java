@@ -77,7 +77,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
             return null;
         }
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
-        
+
         final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrl, selectedService);
         if (logoutUrl == null) {
@@ -89,7 +89,8 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
 
-        final LogoutType type = registeredService.getLogoutType() == null ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+        final RegisteredService.LogoutType type = registeredService.getLogoutType() == null
+                ? RegisteredService.LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
         LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
 
         switch (type) {
@@ -135,7 +136,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
 
     /**
      * Service supports back channel single logout?
-     * Service must be found in the registry. enabled and logout type must not be {@link LogoutType#NONE}.
+     * Service must be found in the registry. enabled and logout type must not be {@link RegisteredService.LogoutType#NONE}.
      *
      * @param registeredService the registered service
      * @return true, if support is available.
@@ -143,7 +144,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     private static boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
         return registeredService != null
                 && registeredService.getAccessStrategy().isServiceAccessAllowed()
-                && registeredService.getLogoutType() != LogoutType.NONE;
+                && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
     }
 
     public ServicesManager getServicesManager() {

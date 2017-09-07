@@ -36,6 +36,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private static final long serialVersionUID = -8289105320642735252L;
 
     @Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = Integer.MAX_VALUE;
 
@@ -54,6 +55,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private String username;
 
     public OneTimeTokenAccount() {
+        setId(java.lang.System.currentTimeMillis());
     }
 
     /**
@@ -69,6 +71,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
                                @JsonProperty("secretKey") final String secretKey,
                                @JsonProperty("validationCode") final int validationCode,
                                @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
+        this();
         this.secretKey = secretKey;
         this.validationCode = validationCode;
         this.scratchCodes = scratchCodes;
@@ -89,6 +92,10 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     public String getUsername() {
         return username;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public void setId(final long id) {

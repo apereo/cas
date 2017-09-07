@@ -13,19 +13,19 @@ import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
 
 /**
- * This is {@link MongoDbGoogleAuthenticatorTokenRepository}.
+ * This is {@link GoogleAuthenticatorMongoDbTokenRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class MongoDbGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbGoogleAuthenticatorTokenRepository.class);
-    
+public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorMongoDbTokenRepository.class);
+
     private final long expireTokensInSeconds;
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
-    public MongoDbGoogleAuthenticatorTokenRepository(final MongoOperations mongoTemplate,
+    public GoogleAuthenticatorMongoDbTokenRepository(final MongoOperations mongoTemplate,
                                                      final String collectionName,
                                                      final boolean dropCollection,
                                                      final long expireTokensInSeconds) {
@@ -50,16 +50,16 @@ public class MongoDbGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenR
     }
 
     @Override
-    public boolean exists(final String uid, final Integer otp) {
+    public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
             final Query query = new Query();
             query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
             final GoogleAuthenticatorToken r = this.mongoTemplate.findOne(query, GoogleAuthenticatorToken.class, this.collectionName);
-            return r != null;
+            return r;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
         }
-        return false;
+        return null;
     }
 
     @Override
