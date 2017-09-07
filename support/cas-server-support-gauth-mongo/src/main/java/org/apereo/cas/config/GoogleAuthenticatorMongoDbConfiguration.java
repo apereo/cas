@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenCredentialRepository;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.mongo.MongoDbObjectFactory;
@@ -54,7 +54,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") 
                                                                                final IGoogleAuthenticator googleAuthenticatorInstance) {
         final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
-        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(
+        return new GoogleAuthenticatorMongoDbTokenCredentialRepository(
                 googleAuthenticatorInstance,
                 mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getCollection(),
@@ -65,7 +65,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
-        return new MongoDbGoogleAuthenticatorTokenRepository(mongoDbGoogleAuthenticatorTemplate(),
+        return new GoogleAuthenticatorMongoDbTokenRepository(mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getTokenCollection(),
                 mongo.isDropCollection(),
                 casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
