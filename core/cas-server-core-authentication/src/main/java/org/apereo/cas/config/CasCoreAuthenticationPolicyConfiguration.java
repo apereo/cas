@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -38,10 +39,9 @@ import java.util.List;
 @Configuration("casCoreAuthenticationPolicyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationPolicyConfiguration {
-
+    
     @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ApplicationContext applicationContext;
     
     @Autowired(required = false)
     @Qualifier("geoLocationService")
@@ -75,7 +75,12 @@ public class CasCoreAuthenticationPolicyConfiguration {
         }
 
         if (police.getUniquePrincipal().isEnabled()) {
-            policies.add(new UniquePrincipalAuthenticationPolicy(this.ticketRegistry));
+            /*
+             * This is explicitly retrieved from the application context
+             * in order to avoid circular and leaking dependencies.
+             */
+            final TicketRegistry ticketRegistry = this.applicationContext.getBean("ticketRegistry", TicketRegistry.class);
+            policies.add(new UniquePrincipalAuthenticationPolicy(ticketRegistry));
             return policies;
         }
         

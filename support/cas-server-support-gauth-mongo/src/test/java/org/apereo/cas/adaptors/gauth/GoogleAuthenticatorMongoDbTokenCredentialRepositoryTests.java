@@ -11,16 +11,17 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorMongoDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
@@ -45,7 +46,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link MongoDbGoogleAuthenticatorAccountRegistryTests}.
+ * This is {@link GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -53,7 +54,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {
-                MongoDbGoogleAuthenticatorAccountRegistryTests.MongoTestConfiguration.class,
+                GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests.MongoTestConfiguration.class,
                 GoogleAuthenticatorMongoDbConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
@@ -61,7 +62,7 @@ import static org.junit.Assert.*;
                 CasCoreHttpConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, 
+                CasCoreAuthenticationConfiguration.class,
                 CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
@@ -81,8 +82,8 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-public class MongoDbGoogleAuthenticatorAccountRegistryTests {
-    
+public class GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests {
+
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
@@ -90,8 +91,8 @@ public class MongoDbGoogleAuthenticatorAccountRegistryTests {
     @Test
     public void verifySave() {
         registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
-        final String s = registry.getSecret("uid");
-        assertEquals(s, "secret");
+        final OneTimeTokenAccount s = registry.get("uid");
+        assertEquals(s.getSecretKey(), "secret");
     }
 
     @TestConfiguration
