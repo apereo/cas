@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -21,6 +22,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration("spnegoWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoWebflowConfiguration {
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
     
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -33,7 +39,9 @@ public class SpnegoWebflowConfiguration {
     @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
-        return new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        final CasWebflowConfigurer w = new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
 }

@@ -7,9 +7,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlResponseEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostSimpleSignEncoder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
@@ -36,8 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link SamlProfileSaml2ResponseBuilder}.
@@ -125,17 +125,23 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final String binding,
                               final RequestAbstractType authnRequest,
                               final Object assertion) throws SamlException {
-        switch (binding) {
-            case SAMLConstants.SAML2_ARTIFACT_BINDING_URI:
-                final SamlResponseArtifactEncoder encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
-                        adaptor, httpRequest, httpResponse, authnRequest,
-                        ticketRegistry, samlArtifactTicketFactory,
-                        ticketGrantingTicketCookieGenerator, samlArtifactMap);
-                return encoder.encode(samlResponse, relayState);
-            default:
-                break;
+        
+        LOGGER.debug("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
+        
+        if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
+            final BaseSamlResponseEncoder encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
+                    adaptor, httpRequest, httpResponse, authnRequest,
+                    ticketRegistry, samlArtifactTicketFactory,
+                    ticketGrantingTicketCookieGenerator, samlArtifactMap);
+            return encoder.encode(samlResponse, relayState);
         }
-        final SamlResponsePostEncoder encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
+        
+        if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
+            final BaseSamlResponseEncoder encoder = new SamlResponsePostSimpleSignEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
+            return encoder.encode(samlResponse, relayState);
+        }
+        
+        final BaseSamlResponseEncoder encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
         return encoder.encode(samlResponse, relayState);
     }
 

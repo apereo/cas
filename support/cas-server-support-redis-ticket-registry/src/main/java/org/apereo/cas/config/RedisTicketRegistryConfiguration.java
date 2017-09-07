@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRedisTemplate;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -12,8 +14,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import redis.clients.jedis.JedisPoolConfig;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link RedisTicketRegistryConfiguration}.
@@ -32,37 +33,13 @@ public class RedisTicketRegistryConfiguration {
     @RefreshScope
     public RedisConnectionFactory redisConnectionFactory() {
         final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
-        final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig() : new JedisPoolConfig();
-
-        final JedisConnectionFactory factory = new JedisConnectionFactory(poolConfig);
-        factory.setHostName(redis.getHost());
-        factory.setPort(redis.getPort());
-        if (redis.getPassword() != null) {
-            factory.setPassword(redis.getPassword());
-        }
-        factory.setDatabase(redis.getDatabase());
-        if (redis.getTimeout() > 0) {
-            factory.setTimeout(redis.getTimeout());
-        }
-        return factory;
+        final RedisObjectFactory obj = new RedisObjectFactory();
+        return obj.newRedisConnectionFactory(redis);
     }
-
-    private JedisPoolConfig jedisPoolConfig() {
-        final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
-
-        final JedisPoolConfig config = new JedisPoolConfig();
-        final RedisTicketRegistryProperties.Pool props = redis.getPool();
-        config.setMaxTotal(props.getMaxActive());
-        config.setMaxIdle(props.getMaxIdle());
-        config.setMinIdle(props.getMinIdle());
-        config.setMaxWaitMillis(props.getMaxWait());
-        return config;
-    }
-
 
     @Bean
     @RefreshScope
-    public TicketRedisTemplate ticketRedisTemplate() {
+    public RedisTemplate<String, Ticket> ticketRedisTemplate() {
         return new TicketRedisTemplate(redisConnectionFactory());
     }
 

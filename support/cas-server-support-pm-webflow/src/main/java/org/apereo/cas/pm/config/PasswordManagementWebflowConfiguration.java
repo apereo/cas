@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerAdapter;
@@ -41,6 +42,12 @@ public class PasswordManagementWebflowConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
@@ -120,7 +127,10 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
-        return new PasswordManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        final CasWebflowConfigurer w = new PasswordManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 }
 

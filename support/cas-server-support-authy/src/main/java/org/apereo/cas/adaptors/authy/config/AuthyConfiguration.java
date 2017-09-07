@@ -107,7 +107,11 @@ public class AuthyConfiguration {
     @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
-        return new AuthyMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry());
+        final CasWebflowConfigurer w = new AuthyMultifactorWebflowConfigurer(flowBuilderServices, 
+                loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
+        
+        w.initialize();
+        return w;
     }
 
     @RefreshScope
@@ -129,9 +133,11 @@ public class AuthyConfiguration {
         @Bean
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices, 
+            final CasWebflowConfigurer w = new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices, 
                     loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-                    authyAuthenticatorFlowRegistry());
+                    authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            w.initialize();
+            return w;
         }
     }
 }

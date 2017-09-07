@@ -5,14 +5,14 @@ import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -301,13 +301,12 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
-            LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request",
-                    registeredService, selectedService);
+            LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
             final TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
-            final Authentication authentication = getAuthenticationSatisfiedByPolicy(
-                    root.getAuthentication(), new ServiceContext(selectedService, registeredService));
+            final Authentication authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(), 
+                    new ServiceContext(selectedService, registeredService));
             final Principal principal = authentication.getPrincipal();
 
             final RegisteredServiceAttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
@@ -316,14 +315,19 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final Map<String, Object> attributesToRelease = attributePolicy != null
                     ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<>();
 
+            LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
+            
             final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
-
+            LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
+            
             final Authentication finalAuthentication = builder.build();
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, finalAuthentication);
+            
             AuthenticationCredentialsLocalBinder.bindCurrent(finalAuthentication);
-
+            
             final Assertion assertion = new ImmutableAssertion(
                     finalAuthentication,
                     serviceTicket.getGrantingTicket().getChainedAuthentications(),

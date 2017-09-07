@@ -61,13 +61,19 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
         if (ticketId == null) {
             return null;
         }
-        return decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
+        final Ticket result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
+        if (result != null && result.isExpired()) {
+            LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
+            this.cache.remove(encTicketId);
+            return null;
+        }
+        return result;
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         this.cache.remove(encodeTicketId(ticketId));
-        return getTicket(ticketId) == null;
+        return true;
     }
 
     @Override
@@ -79,9 +85,6 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     /**
      * Retrieve all tickets from the registry.
-     * <p>
-     * Note! Usage of this method can be computational and I/O intensive and should not be used for other than
-     * debugging.
      *
      * @return collection of tickets currently stored in the registry. Tickets
      * might or might not be valid i.e. expired.

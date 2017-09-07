@@ -2,11 +2,14 @@ description = "Apereo CAS Web Application Security Configuration"
 dependencies {
     implementation libraries.pac4j
     implementation libraries.groovy
-
     implementation libraries.springsecurity
     implementation libraries.springsecuritywebconfig
+    
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

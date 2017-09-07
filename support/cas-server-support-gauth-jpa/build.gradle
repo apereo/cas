@@ -7,8 +7,16 @@ dependencies {
     implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-jpa-util")
+    
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

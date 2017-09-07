@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {RefreshAutoConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
@@ -25,6 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreHttpConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CoreSamlConfiguration.class,
+                CasCoreTicketCatalogConfiguration.class,
+                CasCoreTicketsConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 CasCoreServicesConfiguration.class})
 @EnableScheduling

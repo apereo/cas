@@ -1,7 +1,7 @@
 description = "Apereo CAS Person Directory & Attribute Resolution Support"
 dependencies {
     implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-authentication")
+    compileOnly project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-web")

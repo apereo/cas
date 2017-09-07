@@ -56,10 +56,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
      * @return the registered service for consent
      */
     protected RegisteredService getRegisteredServiceForConsent(final RequestContext requestContext, final Service service) {
-        RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
-        if (registeredService == null) {
-            registeredService = this.servicesManager.findServiceBy(service);
-        }
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         return registeredService;
     }
@@ -80,8 +77,8 @@ public abstract class AbstractConsentAction extends AbstractAction {
         final ConsentDecision decision = consentEngine.findConsentDecision(service, registeredService, authentication);
         requestContext.getFlowScope().put("option", decision == null
                 ? ConsentOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
-        requestContext.getFlowScope().put("reminder", decision == null
-                ? casProperties.getConsent().getReminder() : decision.getReminder());
+        final long reminder = decision == null ? casProperties.getConsent().getReminder() : decision.getReminder();
+        requestContext.getFlowScope().put("reminder", Long.valueOf(reminder));
         requestContext.getFlowScope().put("reminderTimeUnit", decision == null
                 ? casProperties.getConsent().getReminderTimeUnit().name() : decision.getReminderTimeUnit().name());
     }

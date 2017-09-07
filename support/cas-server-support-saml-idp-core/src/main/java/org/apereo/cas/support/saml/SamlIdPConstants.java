@@ -15,6 +15,11 @@ public interface SamlIdPConstants {
     String ENDPOINT_IDP_METADATA = "/idp/metadata";
 
     /**
+     * The SAML2 SSO simple-sign post profile endpoint.
+     */
+    String ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN = "/idp/profile/SAML2/POST-SimpleSign/SSO";
+
+    /**
      * The SAML2 SSO post profile endpoint.
      */
     String ENDPOINT_SAML2_SSO_PROFILE_POST = "/idp/profile/SAML2/POST/SSO";

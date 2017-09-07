@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link AccessTokenAuthorizationCodeGrantRequestExtractor}.
@@ -41,6 +42,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     public AccessTokenRequestDataHolder extract() {
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+        final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
+        
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
         final Optional<UserProfile> profile = manager.get(true);
@@ -52,7 +55,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter());
         }
-        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(), isAllowedToGenerateRefreshToken());
+        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(), 
+                isAllowedToGenerateRefreshToken(), scopes);
     }
     
     /**

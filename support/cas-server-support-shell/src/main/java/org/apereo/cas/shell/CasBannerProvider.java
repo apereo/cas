@@ -44,7 +44,7 @@ public class CasBannerProvider extends DefaultBannerProvider {
         }
         
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            final PrintStream ps = new PrintStream(baos);
+            final PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8.name());
             new DefaultCasBanner().printBanner(environment, getClass(), ps);
             final String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
             return content;

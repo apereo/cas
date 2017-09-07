@@ -1,0 +1,65 @@
+
+
+<div *ngIf="!isOidc && !isWsFed">
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Release Options</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <app-attribute-release-checks></app-attribute-release-checks>
+      <app-attribute-release-filters></app-attribute-release-filters>
+    </div>
+  </md-card>
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Principal Attribute Repository</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
+    </div>
+  </md-card>
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Policy</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <app-attribute-release-policies></app-attribute-release-policies>
+    </div>
+  </md-card>
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Release Consent</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <app-attribute-release-consent></app-attribute-release-consent>
+    </div>
+  </md-card>
+</div>
+
+
+<div *ngIf="isOidc">
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Release Options</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <div class="well well-sm">
+        <ng-container i18n="management.services.service.noAction">
+          {{ messages.management_services_service_noAction }}
+        </ng-container>
+      </div>
+    </div>
+  </md-card>
+</div>
+
+<div *ngIf="isWsFed">
+  <md-card class="tabCard">
+    <md-card-title>
+      <h5>Attribute Release Options</h5>
+    </md-card-title>
+    <div class="cardContent">
+      <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
+      <app-wsfedattrrelpolicies></app-wsfedattrrelpolicies>
+    </div>
+  </md-card>
+</div>

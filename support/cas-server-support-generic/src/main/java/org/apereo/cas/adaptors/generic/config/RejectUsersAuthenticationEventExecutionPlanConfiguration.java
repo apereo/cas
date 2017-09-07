@@ -5,12 +5,13 @@ import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +66,11 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
         final Set<String> users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
         final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
                 rejectUsersPrincipalFactory(), users);
-        h.setPasswordEncoder(Beans.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         if (rejectPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
         return h;
     }
 

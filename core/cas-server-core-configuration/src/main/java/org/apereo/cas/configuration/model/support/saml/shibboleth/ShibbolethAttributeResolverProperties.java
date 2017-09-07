@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.shibboleth;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,7 +21,7 @@ public class ShibbolethAttributeResolverProperties implements Serializable {
      * Each resource can either be found on the file system, as a classpath entry
      * or via a URL if needed.
      */
-    private List<Resource> resources = Arrays.asList(new ClassPathResource("attribute-resolver.xml"));
+    private List<Resource> resources = CollectionUtils.wrap(new ClassPathResource("attribute-resolver.xml"));
 
     public List<Resource> getResources() {
         return resources;

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
@@ -33,12 +34,18 @@ public class CasCaptchaConfiguration {
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer captchaWebflowConfigurer() {
-        return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        final CasWebflowConfigurer w = new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @RefreshScope

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -154,7 +155,7 @@ public class OidcIdTokenGeneratorService {
 
     private String generateAccessTokenHash(final AccessToken accessTokenId,
                                            final OidcRegisteredService service) {
-        final byte[] tokenBytes = accessTokenId.getId().getBytes();
+        final byte[] tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
         final String hashAlg;
 
         switch (signingService.getJsonWebKeySigningAlgorithm()) {

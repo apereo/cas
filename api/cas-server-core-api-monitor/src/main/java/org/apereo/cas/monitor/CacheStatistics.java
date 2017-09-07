@@ -13,32 +13,36 @@ public interface CacheStatistics {
      *
      * @return Current cache size.
      */
-    long getSize();
-
+    default long getSize() {
+        return Status.UNKNOWN.getCode().value();
+    }
 
     /**
      * Gets the current capacity of the cache in a unit specific to the cache being monitored (e.g. bytes, items, etc).
      *
      * @return Current cache capacity.
      */
-    long getCapacity();
-
+    default long getCapacity() {
+        return Status.UNKNOWN.getCode().value();
+    }
 
     /**
      * Gets the number of items evicted from the cache in order to make space for new items.
      *
      * @return Eviction count.
      */
-    long getEvictions();
-
+    default long getEvictions() {
+        return Status.UNKNOWN.getCode().value();
+    }
 
     /**
      * Gets the percent free capacity remaining in the cache.
      *
      * @return Percent of space/capacity free.
      */
-    int getPercentFree();
-
+    default int getPercentFree() {
+        return Status.UNKNOWN.getCode().value();
+    }
 
     /**
      * Gets a descriptive name of the cache instance for which statistics apply.
@@ -46,7 +50,6 @@ public interface CacheStatistics {
      * @return Name of cache instance/host to which statistics apply.
      */
     String getName();
-
 
     /**
      * Writes a string representation of cache statistics to the given string builder.
