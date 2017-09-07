@@ -13,7 +13,6 @@ import {DomainService} from "./domain.service";
 import {Messages} from "app/messages";
 import {Router} from "@angular/router";
 import {Location} from "@angular/common";
-import ServiceData from "../../domain/service-data";
 
 @Component({
   selector: 'app-domains',
@@ -25,8 +24,6 @@ export class DomainsComponent implements OnInit {
   domainDatabase = new DomainDatabase();
   dataSource: DomainDataSource | null;
   selectedItem: String;
-  serviceList: ServiceData[];
-  filter: String;
 
   @ViewChild(MdPaginator) paginator: MdPaginator;
 
@@ -44,7 +41,6 @@ export class DomainsComponent implements OnInit {
   }
 
   doFilter(val: string) {
-    console.log("in do filter - "+val);
     if (!this.dataSource) { return; }
     this.dataSource.filter = val;
   }
@@ -57,11 +53,6 @@ export class DomainsComponent implements OnInit {
     this.location.back();
   }
 
-  toggleDetail(rowId: String) {
-    this.selectedItem = rowId;
-    this.domainService.getServiceList(rowId)
-      .then(resp => this.serviceList = resp);
-  }
 }
 
 export class DomainDatabase {

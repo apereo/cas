@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.ServicesManager;
@@ -68,8 +69,8 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         final String uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]", uid);
-        final String secKey = this.credentialRepository.getSecret(uid);
-        if (StringUtils.isBlank(secKey)) {
+        final OneTimeTokenAccount acct = this.credentialRepository.get(uid);
+        if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
@@ -77,7 +78,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
 
-        final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(secKey, otp);
+        final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
         if (isCodeValid) {
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid), null);

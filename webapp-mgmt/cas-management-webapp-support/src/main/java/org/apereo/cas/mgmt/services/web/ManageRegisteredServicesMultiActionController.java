@@ -8,7 +8,6 @@ import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -42,7 +41,7 @@ import java.util.stream.Collectors;
 @Controller("manageRegisteredServicesMultiActionController")
 public class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageRegisteredServicesMultiActionController.class);
-    
+
     private static final String STATUS = "status";
 
     private RegisteredServiceFactory registeredServiceFactory;
@@ -118,10 +117,11 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      *
      * @param idAsLong the id
      * @param response the response
+     * @return the response entity
      */
     @GetMapping(value = "/deleteRegisteredService")
     public ResponseEntity<String> deleteRegisteredService(@RequestParam("id") final long idAsLong,
-                                                  final HttpServletResponse response) {
+                                                          final HttpServletResponse response) {
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
         if (svc == null || svc.getId() == idAsLong) {
             throw new IllegalArgumentException("The default service " + this.defaultService.getId() + " cannot be deleted. "
@@ -156,17 +156,11 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return new ResponseEntity<Collection<String>>(data, HttpStatus.OK);
     }
 
-    @GetMapping(value="/services")
-    public ResponseEntity<Collection<ServiceItem>> getServiceList(@RequestParam final String domain) throws Exception {
-        final Collection<RegisteredService> services = this.servicesManager.getServicesForDomain(domain);
-        final List<ServiceItem> list = services.stream()
-                .map(s -> new ServiceItem(s.getName(),s.getServiceId()))
-                .collect(Collectors.toList());
-        return new ResponseEntity<Collection<ServiceItem>>(list,HttpStatus.OK);
-    }
-
     /**
      * Gets services.
+     *
+     * @param domain the domain for which services will be retrieved
+     * @return the services
      */
     @GetMapping(value = "/getServices")
     public ResponseEntity<List<RegisteredServiceViewBean>> getServices(@RequestParam String domain) {
@@ -174,45 +168,34 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getServicesForDomain(domain));
         serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
-        return new ResponseEntity<List<RegisteredServiceViewBean>>(serviceBeans,HttpStatus.OK);
+        return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
     }
 
     /**
      * Method will update the order of two services passed in.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
-     * @param svcs the services to be updated
+     * @param svcs     the services to be updated
      */
     @PostMapping(value = "/updateOrder", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void updateOrder(final HttpServletRequest request, final HttpServletResponse response,
                             @RequestBody final RegisteredServiceViewBean[] svcs) {
-        final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(svcs[0].getAssignedId()));
-        final RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(svcs[1].getAssignedId()));
+        final String id = svcs[0].getAssignedId();
+        final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(id));
+        if (svcA == null) {
+            throw new IllegalArgumentException("Service " + id + " cannot be found");
+        }
+        final String id2 = svcs[1].getAssignedId();
+        final RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(id2));
+        if (svcB == null) {
+            throw new IllegalArgumentException("Service " + id2 + " cannot be found");
+        }
         svcA.setEvaluationOrder(svcs[0].getEvalOrder());
         svcB.setEvaluationOrder(svcs[1].getEvalOrder());
         this.servicesManager.save(svcA);
         this.servicesManager.save(svcB);
     }
-
-    private class ServiceItem {
-        public String name;
-        public String serviceId;
-
-        public ServiceItem(String name, String serviceId) {
-            this.name = name;
-            this.serviceId = serviceId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getServiceId() {
-            return serviceId;
-        }
-    }
-
 }
 
