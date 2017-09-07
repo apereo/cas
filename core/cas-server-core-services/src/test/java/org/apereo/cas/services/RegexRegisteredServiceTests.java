@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.apereo.cas.services.RegisteredService.LogoutType;
 
 import java.io.File;
 import java.io.IOException;
