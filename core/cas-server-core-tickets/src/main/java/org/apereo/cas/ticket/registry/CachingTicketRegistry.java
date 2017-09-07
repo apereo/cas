@@ -6,8 +6,9 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +28,9 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private final Map<String, Ticket> cache;
     private final LoadingCache<String, Ticket> storage;
+    private final LogoutManager logoutManager;
 
-    private TicketRegistryCleaner ticketRegistryCleaner;
-
-    public CachingTicketRegistry() {
-        this(NoOpCipherExecutor.getInstance(), NoOpTicketRegistryCleaner.getInstance());
-    }
-
-    public CachingTicketRegistry(final CipherExecutor cipherExecutor, final TicketRegistryCleaner cleaner) {
+    public CachingTicketRegistry(final CipherExecutor cipherExecutor, final LogoutManager logoutManager) {
         super(cipherExecutor);
         this.storage = Caffeine.newBuilder()
                 .initialCapacity(INITIAL_CACHE_SIZE)
@@ -47,6 +43,7 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
                 });
 
         this.cache = this.storage.asMap();
+        this.logoutManager = logoutManager;
     }
 
     @Override
@@ -54,19 +51,28 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         return this.cache;
     }
 
+    /**
+     * The cached ticket removal listener.
+     */
     public class CachedTicketRemovalListener implements RemovalListener<String, Ticket> {
         @Override
         public void onRemoval(final String key, final Ticket value, final RemovalCause cause) {
             if (cause == RemovalCause.EXPIRED) {
-                ticketRegistryCleaner.clean();
+                LOGGER.warn("Received removal notification for ticket [{}] with cause [{}]. Cleaning...", key, cause);
+                if (value instanceof TicketGrantingTicket) {
+                    logoutManager.performLogout(TicketGrantingTicket.class.cast(value));
+                }
             }
         }
     }
 
+    /**
+     * The cached ticket expiration policy.
+     */
     public static class CachedTicketExpirationPolicy implements Expiry<String, Ticket> {
         private long getExpiration(final Ticket value, final long currentTime) {
             if (value.isExpired()) {
-                LOGGER.warn("Ticket [{}] has expired and shall be evicted from the cache", value.getId());
+                LOGGER.debug("Ticket [{}] has expired and shall be evicted from the cache", value.getId());
                 return 0;
             }
             return currentTime;

@@ -1,12 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.PostConstruct;
-import java.io.Serializable;
 
 /**
  * This is {@link NoOpTicketRegistryCleaner} that simply disables support for ticket cleanup.

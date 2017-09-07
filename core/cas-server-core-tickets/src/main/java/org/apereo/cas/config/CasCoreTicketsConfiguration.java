@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
@@ -31,7 +32,6 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
@@ -216,14 +216,14 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Autowired
     @ConditionalOnMissingBean(name = "ticketRegistry")
     @Bean
-    public TicketRegistry ticketRegistry(@Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) {
+    public TicketRegistry ticketRegistry(@Qualifier("logoutManager") final LogoutManager logoutManager) {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                 + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
         final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
 
         if (mem.isCache()) {
-            return new CachingTicketRegistry(cipher, ticketRegistryCleaner);
+            return new CachingTicketRegistry(cipher, logoutManager);
         }
         return new DefaultTicketRegistry(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency(), cipher);
     }
