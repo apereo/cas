@@ -19,21 +19,6 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredService extends Cloneable, Serializable, Comparable<RegisteredService> {
 
-    enum LogoutType {
-        /**
-         * For no SLO.
-         */
-        NONE,
-        /**
-         * For back channel SLO.
-         */
-        BACK_CHANNEL,
-        /**
-         * For front channel SLO.
-         */
-        FRONT_CHANNEL
-    }
-
     /**
      * The logout type.
      */

@@ -2,7 +2,6 @@ package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
