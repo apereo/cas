@@ -93,8 +93,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     }
 
     public long getId() {
-		return id;
-	}
+	return id;
+    }
 
     public void setId(final long id) {
         this.id = id;
