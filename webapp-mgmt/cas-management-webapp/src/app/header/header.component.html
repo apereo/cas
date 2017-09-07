@@ -1,34 +1,34 @@
-<div style="display: flex;height:50px;background-color: #153e50;color: #ffffff;border: none;border-radius: 0;margin-bottom: 0;">
+<div class="header">
   <div>
-    <a href="manage.html" target="_self" id="homepageUrlLink">
-      <img style="height:25px;" src="images/logo_cas.png" alt="apereo CAS logo" />
-      <h4 style="display: inline-block; margin-top: 16px; font-weight: normal;color:#ffffff;">
+    <a class="brand" href="manage.html" target="_self" id="homepageUrlLink">
+      <img src="images/logo_cas.png" alt="apereo CAS logo" />
+      <h4>
         <ng-container i18n="management.services.header.apptitle">
           {{ messages.management_services_header_apptitle }}
         </ng-container>
       </h4>
     </a>
   </div>
-  <div style="flex: 1 1 auto;text-align: center;padding-top:11px;">
-    <input class="search" placeholder="Search">
+  <div class="searchbox">
+    <input class="search" placeholder="Search Services">
   </div>
-  <div style="padding:15px;color:#ffffff;">
-    <a style="color:#ffffff;" id="manageServices" routerLink="/domains">
-      <i class="fa fa-th" aria-hidden="true"></i>
-      <ng-container i18n>Domains</ng-container>
-    </a>
-    <a style="color:#ffffff;" routerLink="/form/-1">
-      <i class="fa fa-plus-circle" aria-hidden="true"></i>
-      <ng-container i18n="managment.services.header.navitem.addNewService">
+  <div class="links">
+    <button md-button routerLink="/domains">
+      <md-icon>apps</md-icon>
+      <span i18n>Domains</span>
+    </button>
+    <button md-button routerLink="/form/-1">
+      <md-icon>add_circle</md-icon>
+      <span i18n="managment.services.header.navitem.addNewService">
         {{ messages.management_services_header_navbar_navitem_addNewService }}
-      </ng-container>
-    </a>
-    <a style="color:#ffffff;"  href="logout?url=/logout.html" target="_self" id="logoutUrlLink">
-      <i class="fa fa-sign-out" aria-hidden="true"></i>
+      </span>
+    </button>
+    <button md-button target="_self" id="logoutUrlLink">
+      <md-icon>exit_to_app</md-icon>
       <ng-container i18n="management.services.header.navbar.navitem.logout">
         {{ messages.management_services_header_navbar_navitem_logout }}
       </ng-container>
-    </a>
+    </button>
   </div>
 </div>
 
