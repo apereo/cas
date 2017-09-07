@@ -176,8 +176,16 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     @ResponseStatus(HttpStatus.OK)
     public void updateOrder(final HttpServletRequest request, final HttpServletResponse response,
                             @RequestBody final RegisteredServiceViewBean[] svcs) {
-        final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(svcs[0].getAssignedId()));
-        final RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(svcs[1].getAssignedId()));
+        final String id = svcs[0].getAssignedId();
+        final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(id));
+        if (svcA == null) {
+            throw new IllegalArgumentException("Service " + id + " cannot be found");
+        }
+        final String id2 = svcs[1].getAssignedId();
+        final RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(id2));
+        if (svcB == null) {
+            throw new IllegalArgumentException("Service " + id2 + " cannot be found");
+        }
         svcA.setEvaluationOrder(svcs[0].getEvalOrder());
         svcB.setEvaluationOrder(svcs[1].getEvalOrder());
         this.servicesManager.save(svcA);

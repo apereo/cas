@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
-import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.junit.Before;
@@ -36,11 +36,11 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     private ManageRegisteredServicesMultiActionController controller;
     private DefaultRegisteredServiceFactory registeredServiceFactory;
-    private DefaultServicesManager servicesManager;
+    private DomainServicesManager servicesManager;
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry());
+        this.servicesManager = new DomainServicesManager(new InMemoryServiceRegistry());
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new ArrayList<>(0));
 
@@ -63,7 +63,6 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.controller.deleteRegisteredService(1200, response);
 
         assertNull(this.servicesManager.findServiceBy(1200));
-        assertTrue(response.getContentAsString().contains("serviceName"));
     }
 
     @Test
@@ -87,7 +86,6 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         r.setEvaluationOrder(2);
 
         this.thrown.expect(IllegalArgumentException.class);
-        this.thrown.expectMessage("Service id 5000 cannot be found.");
 
         this.servicesManager.save(r);
         final RegisteredServiceViewBean[] svcs = new RegisteredServiceViewBean[2];
@@ -116,41 +114,5 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         assertTrue(mv.getModel().containsKey("defaultServiceUrl"));
         assertTrue(mv.getModel().containsKey("status"));
-
-        this.controller.getServices(response);
-        final String content = response.getContentAsString();
-        assertTrue(content.contains(SERVICES));
-        assertTrue(content.contains(UNIQUE_DESCRIPTION));
-    }
-
-    @Test
-    public void verifyCustomComponents() throws Exception {
-        // override the RegisteredServiceMapper
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new ArrayList<>(0));
-
-        this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
-                .registeredServiceFactory, new WebApplicationServiceFactory(), "https://cas.example.org");
-
-        final RegexRegisteredService r = new RegexRegisteredService();
-        r.setId(1200);
-        r.setName(NAME);
-        r.setDescription(UNIQUE_DESCRIPTION);
-        r.setServiceId("test");
-        r.setEvaluationOrder(2);
-
-        this.servicesManager.save(r);
-
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ModelAndView mv = this.controller.manage(response);
-
-        assertTrue(mv.getModel().containsKey("defaultServiceUrl"));
-        assertTrue(mv.getModel().containsKey("status"));
-
-        this.controller.getServices(response);
-        final String content = response.getContentAsString();
-        assertTrue(content.contains(SERVICES));
-        assertTrue(content.contains(UNIQUE_DESCRIPTION));
-        assertTrue(content.contains("customComponent1"));
-        assertTrue(content.contains("key2"));
     }
 }
