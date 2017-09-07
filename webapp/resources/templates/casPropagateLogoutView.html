@@ -30,7 +30,7 @@
         <p th:utext="#{screen.logout.fc.success}"/>
         <br/><br/>
         <div>
-            <ol start="a">
+            <ul start="a">
                 <li th:each="entry,iterStat : ${logoutUrls}">
                     <script type="text/javascript" th:inline="javascript">
                         
@@ -52,10 +52,10 @@
                     </script>
                     <p>
                         <i data-toggle="tooltip" data-placement="top" th:id="${'service'+iterStat.index}"/> 
-                        <kbd th:text="${entry.key.service}"/>
+                        <a class="btn btn-link" th:href="${entry.key.service.id}" th:text="${entry.key.service.id}"/>
                     </p>
                 </li>
-            </ol>
+            </ul>
 
             
         </div>
