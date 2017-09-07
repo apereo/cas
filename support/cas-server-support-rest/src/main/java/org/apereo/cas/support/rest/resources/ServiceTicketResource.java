@@ -1,6 +1,8 @@
 package org.apereo.cas.support.rest.resources;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -67,18 +69,21 @@ public class ServiceTicketResource {
     public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
+            final Authentication authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
-            final AuthenticationResultBuilder builder =
-                    new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            if (authn == null) {
+                throw new InvalidTicketException(tgtId);
+            }
+            if (StringUtils.isBlank(serviceId)) {
+                throw new InvalidTicketException(serviceId);
+            }
+            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
 
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
-            final AuthenticationResult authenticationResult =
-                    builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
-
+            final AuthenticationResult authenticationResult = builder.collect(authn).build(service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
-
         } catch (final InvalidTicketException e) {
-            return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage() + " could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

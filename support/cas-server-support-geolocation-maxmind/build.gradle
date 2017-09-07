@@ -3,6 +3,6 @@ description = "Apereo CAS GeoLocation Tracking Maxmind Support"
 dependencies {
     implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-geolocation")
-    implementation project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-authentication")
     implementation libraries.maxmind
 }

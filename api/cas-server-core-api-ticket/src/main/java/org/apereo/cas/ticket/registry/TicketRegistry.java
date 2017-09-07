@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apereo.cas.ticket.Ticket;
@@ -67,6 +68,16 @@ public interface TicketRegistry {
     Collection<Ticket> getTickets();
 
     /**
+     * Gets tickets as a stream having applied a predicate.
+     *
+     * @param predicate the predicate
+     * @return the tickets
+     */
+    default Stream<Ticket> getTickets(final Predicate<Ticket> predicate) {
+        return getTicketsStream().filter(predicate);
+    }
+    
+    /**
      * Update the received ticket.
      *
      * @param ticket the ticket
@@ -77,18 +88,24 @@ public interface TicketRegistry {
     /**
      * Computes the number of SSO sessions stored in the ticket registry.
      *
-     * @return Number of ticket-granting tickets in the registry at time of invocation         or {@link Integer#MIN_VALUE} if unknown.
+     * @return Number of ticket-granting tickets in the registry at time of invocation or {@link Integer#MIN_VALUE} if unknown.
      */
     long sessionCount();
 
     /**
      * Computes the number of service tickets stored in the ticket registry.
      *
-     * @return Number of service tickets in the registry at time of invocation         or {@link Integer#MIN_VALUE} if unknown.
+     * @return Number of service tickets in the registry at time of invocation or {@link Integer#MIN_VALUE} if unknown.
      */
     long serviceTicketCount();
 
+    /**
+     * Gets tickets stream.
+     *
+     * @return the tickets stream
+     */
     default Stream<Ticket> getTicketsStream() {
         return getTickets().stream();
     }
+    
 }

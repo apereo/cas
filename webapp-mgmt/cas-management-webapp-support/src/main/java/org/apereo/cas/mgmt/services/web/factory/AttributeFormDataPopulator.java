@@ -1,6 +1,6 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.FormData;
+import org.apereo.cas.mgmt.services.web.beans.FormData;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.ArrayList;

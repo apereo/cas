@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(CachingOneTimeTokenRepository.class);
-    
+
     private final LoadingCache<String, Collection<OneTimeToken>> storage;
 
     public CachingOneTimeTokenRepository(final LoadingCache<String, Collection<OneTimeToken>> storage) {
@@ -52,14 +52,20 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     }
 
     @Override
-    public boolean exists(final String uid, final Integer otp) {
+    public OneTimeToken get(final String uid, final Integer otp) {
         try {
             final Collection<OneTimeToken> tokens = this.storage.getIfPresent(uid);
             LOGGER.debug("Found used tokens [{}]", tokens);
-            return tokens != null && tokens.stream().anyMatch(t -> t.getToken().equals(otp));
+            if (tokens != null) {
+                return tokens
+                        .stream()
+                        .filter(t -> t.getToken().equals(otp))
+                        .findFirst()
+                        .orElse(null);
+            }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
-        return false;
+        return null;
     }
 }

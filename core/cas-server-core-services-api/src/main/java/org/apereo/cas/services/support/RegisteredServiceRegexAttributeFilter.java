@@ -6,10 +6,10 @@ import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +98,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
                         }
                     } else if (attributeValue.getClass().isArray()) {
                         LOGGER.trace("Attribute value [{}] is an array", attributeValue);
-                        final List filteredAttributes = filterAttributes(Arrays.asList((String[]) attributeValue), attributeName);
+                        final List filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
                         if (!filteredAttributes.isEmpty()) {
                             attributesToRelease.put(attributeName, filteredAttributes);
                         }

@@ -1084,9 +1084,22 @@ would only be acceptable in a multi-factor authentication situation.
 # cas.authn.policy.all.enabled=true
 ```
 
-### NotPrevented
+### Unique Principal
 
-Satisfied if an only if the authentication event is not blocked by a `PreventedException`.
+Satisfied if and only if the requesting principal has not already authenticated with CAS.
+Otherwise the authentication event is blocked, preventing multiple logins. 
+
+<div class="alert alert-warning"><strong>Usage Warning</strong><p>Activating this policy is not without cost,
+as CAS needs to query the ticket registry and all tickets present to determine whether the current user has established
+a authentication session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
+
+```properties
+# cas.authn.policy.uniquePrincipal.enabled=true
+```
+
+### Not Prevented
+
+Satisfied if and only if the authentication event is not blocked by a `PreventedException`.
 
 ```properties
 # cas.authn.policy.notPrevented.enabled=true
@@ -1094,7 +1107,7 @@ Satisfied if an only if the authentication event is not blocked by a `PreventedE
 
 ### Required
 
-Satisfied if an only if a specified handler successfully authenticates its credential.
+Satisfied if and only if a specified handler successfully authenticates its credential.
 
 ```properties
 # cas.authn.policy.req.tryAll=false
@@ -1867,6 +1880,7 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 
 # cas.authn.ldap[0].collectDnAttribute=false
+# cas.authn.ldap[0].principalDnAttributeName=principalLdapDn
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].credentialCriteria=
@@ -2162,6 +2176,8 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ### JWT Service Tickets
 
 ```properties
+# cas.authn.token.crypto.enabled=true
+# cas.authn.token.crypto.encryptionEnabled=true
 # cas.authn.token.crypto.signing.key=
 # cas.authn.token.crypto.signing.keySize=512
 # cas.authn.token.crypto.encryption.key=
@@ -2966,7 +2982,6 @@ Control core SAML functionality within CAS.
 # cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
 ```
 
-
 ## SAML IdP
 
 Allow CAS to become a SAML2 identity provider.
@@ -2983,7 +2998,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 | `uri`                | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.
 | `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
 | `urn:my:own:format`  | Map the attribute to `urn:my:own:format`.
-
 
 
 ```properties
@@ -3828,6 +3842,37 @@ Decide how CAS should monitor the internal state of various cache storage servic
 # cas.monitor.warn.evictionThreshold=0
 ```
 
+### Memcached Monitors
+
+Decide how CAS should monitor the internal state of a memcached connection pool.
+
+```properties
+# cas.monitor.memcached.servers=memcached.server.net:14938
+# cas.monitor.memcached.failureMode=Redistribute
+# cas.monitor.memcached.locatorType=ARRAY_MOD
+# cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH
+```
+
+### MongoDb Monitors
+
+Decide how CAS should monitor the internal state of a MongoDb instance.
+
+```properties
+# cas.monitor.mongo.idleTimeout=30000
+# cas.monitor.mongo.port=27017
+# cas.monitor.mongo.socketKeepAlive=false
+# cas.monitor.mongo.password=
+# cas.monitor.mongo.databaseName=cas-mongo-database
+# cas.monitor.mongo.timeout=5000
+# cas.monitor.mongo.userId=
+# cas.monitor.mongo.writeConcern=NORMAL
+# cas.monitor.mongo.authenticationDatabaseName=
+# cas.monitor.mongo.replicaSet=
+# cas.monitor.mongo.ssEnabled=false
+# cas.monitor.mongo.conns.lifetime=60000
+# cas.monitor.mongo.conns.perHost=10
+```
+
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
@@ -4074,6 +4119,36 @@ to locate YAML service definitions, decide how those resources should be found.
 
 To learn more about this topic, [please review this guide](YAML-Service-Management.html).
 
+### Redis Service Registry
+
+To learn more about this topic, [please review this guide](Redis-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.redis.host=localhost
+# cas.serviceRegistry.redis.database=0
+# cas.serviceRegistry.redis.port=6380
+# cas.serviceRegistry.redis.password=
+# cas.serviceRegistry.redis.timeout=2000
+# cas.serviceRegistry.redis.useSsl=false
+# cas.serviceRegistry.redis.usePool=true
+
+# cas.serviceRegistry.redis.pool.max-active=20
+# cas.serviceRegistry.redis.pool.maxIdle=8
+# cas.serviceRegistry.redis.pool.minIdle=0
+# cas.serviceRegistry.redis.pool.maxActive=8
+# cas.serviceRegistry.redis.pool.maxWait=-1
+# cas.serviceRegistry.redis.pool.numTestsPerEvictionRun=0
+# cas.serviceRegistry.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.minEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.lifo=true
+# cas.serviceRegistry.redis.pool.fairness=false
+
+# cas.serviceRegistry.redis.pool.testOnCreate=false
+# cas.serviceRegistry.redis.pool.testOnBorrow=false
+# cas.serviceRegistry.redis.pool.testOnReturn=false
+# cas.serviceRegistry.redis.pool.testWhileIdle=false
+```
+
 ### DynamoDb Service Registry
 
 To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
@@ -4127,13 +4202,14 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.dropCollection=false
 # cas.serviceRegistry.mongo.socketKeepAlive=false
 # cas.serviceRegistry.mongo.password=
-# cas.serviceRegistry.mongo.collectionName=cas-service-registry
+# cas.serviceRegistry.mongo.collection=cas-service-registry
 # cas.serviceRegistry.mongo.databaseName=cas-mongo-database
 # cas.serviceRegistry.mongo.timeout=5000
 # cas.serviceRegistry.mongo.userId=
 # cas.serviceRegistry.mongo.writeConcern=NORMAL
-# cas.serviceRegistry.mongo.host=localhost
-
+# cas.serviceRegistry.mongo.authenticationDatabaseName=
+# cas.serviceRegistry.mongo.replicaSet=
+# cas.serviceRegistry.mongo.ssEnabled=false
 # cas.serviceRegistry.mongo.conns.lifetime=60000
 # cas.serviceRegistry.mongo.conns.perHost=10
 ```
@@ -4479,6 +4555,16 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.locatorType=ARRAY_MOD
 # cas.ticket.registry.memcached.failureMode=Redistribute
 # cas.ticket.registry.memcached.hashAlgorithm=FNV1_64_HASH
+# cas.ticket.registry.memcached.shouldOptimize=false
+# cas.ticket.registry.memcached.daemon=true
+# cas.ticket.registry.memcached.maxReconnectDelay=-1
+# cas.ticket.registry.memcached.useNagleAlgorithm=false
+# cas.ticket.registry.memcached.shutdownTimeoutSeconds=-1
+# cas.ticket.registry.memcached.opTimeout=-1
+# cas.ticket.registry.memcached.timeoutExceptionThreshold=2
+# cas.ticket.registry.memcached.maxTotal=20
+# cas.ticket.registry.memcached.maxIdle=8
+# cas.ticket.registry.memcached.minIdle=0
 
 # cas.ticket.registry.memcached.crypto.signing.key=
 # cas.ticket.registry.memcached.crypto.signing.keySize=512
@@ -4544,6 +4630,9 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.userId=
 # cas.ticket.registry.mongo.writeConcern=NORMAL
 # cas.ticket.registry.mongo.host=localhost
+# cas.ticket.registry.mongo.authenticationDatabaseName=
+# cas.ticket.registry.mongo.replicaSet=
+# cas.ticket.registry.mongo.ssEnabled=false
 
 # cas.ticket.registry.mongo.conns.lifetime=60000
 # cas.ticket.registry.mongo.conns.perHost=10
@@ -4560,36 +4649,29 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html).
 
 ```properties
-## Redis server host.
 # cas.ticket.registry.redis.host=localhost
-#
-## Database index used by the connection factory.
 # cas.ticket.registry.redis.database=0
-#
-## Redis server port.
 # cas.ticket.registry.redis.port=6379
-#
-## Login password of the redis server.
 # cas.ticket.registry.redis.password=
-#
-## Connection timeout in milliseconds
 # cas.ticket.registry.redis.timeout=
-#
-##
+# cas.ticket.registry.redis.useSsl=false
+# cas.ticket.registry.redis.usePool=true
+
 # cas.ticket.registry.redis.pool.max-active=20
-#
-## Max number of "idle" connections in the pool. Use a negative value to indicate an unlimited number of idle connections.
 # cas.ticket.registry.redis.pool.maxIdle=8
-#
-## Target for the minimum number of idle connections to maintain in the pool. This setting only has an effect if it is positive.
 # cas.ticket.registry.redis.pool.minIdle=0
-#
-## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
 # cas.ticket.registry.redis.pool.maxActive=8
-#
-## Maximum amount of time (in milliseconds) a connection allocation should block
-#  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
 # cas.ticket.registry.redis.pool.maxWait=-1
+# cas.ticket.registry.redis.pool.numTestsPerEvictionRun=0
+# cas.ticket.registry.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.ticket.registry.redis.pool.minEvictableIdleTimeMillis=0
+# cas.ticket.registry.redis.pool.lifo=true
+# cas.ticket.registry.redis.pool.fairness=false
+
+# cas.ticket.registry.redis.pool.testOnCreate=false
+# cas.ticket.registry.redis.pool.testOnBorrow=false
+# cas.ticket.registry.redis.pool.testOnReturn=false
+# cas.ticket.registry.redis.pool.testWhileIdle=false
 
 # cas.ticket.registry.redis.crypto.signing.key=
 # cas.ticket.registry.redis.crypto.signing.keySize=512
@@ -5024,6 +5106,58 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.jpa.dataSourceProxy=false
 # Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
 # cas.consent.jpa.properties.propertyName=propertyValue
+```
+
+### LDAP Attribute Consent
+
+```properties
+# cas.consent.ldap.consentAttributeName=casConsentDecision
+# cas.consent.ldap.userFilter=cn={user}
+# cas.consent.ldap.subtreeSearch=true
+
+# cas.consent.ldap.type=GENERIC|AD|FreeIPA|EDirectory
+# cas.consent.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.consent.ldap.connectionStrategy=
+# cas.consent.ldap.baseDn=dc=example,dc=org
+# cas.consent.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.consent.ldap.bindCredential=Password
+# cas.consent.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.consent.ldap.connectTimeout=PT5S
+# cas.consent.ldap.trustCertificates=
+# cas.consent.ldap.keystore=
+# cas.consent.ldap.keystorePassword=
+# cas.consent.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.consent.ldap.poolPassivator=NONE|CLOSE|BIND
+# cas.consent.ldap.minPoolSize=3
+# cas.consent.ldap.maxPoolSize=10
+# cas.consent.ldap.validateOnCheckout=true
+# cas.consent.ldap.validatePeriodically=true
+# cas.consent.ldap.validatePeriod=PT5M
+# cas.consent.ldap.validateTimeout=PT5S
+# cas.consent.ldap.failFast=true
+# cas.consent.ldap.idleTime=PT10M
+# cas.consent.ldap.prunePeriod=PT2H
+# cas.consent.ldap.blockWaitTime=PT3S
+# cas.consent.ldap.useSsl=true
+# cas.consent.ldap.useStartTls=false
+# cas.consent.ldap.responseTimeout=PT5S
+# cas.consent.ldap.allowMultipleDns=false
+# cas.consent.ldap.name=
+
+# cas.consent.ldap.saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+# cas.consent.ldap.saslRealm=EXAMPLE.COM
+# cas.consent.ldap.saslAuthorizationId=
+# cas.consent.ldap.saslMutualAuth=
+# cas.consent.ldap.saslQualityOfProtection=
+# cas.consent.ldap.saslSecurityStrength=
+
+# cas.consent.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.consent.ldap.validator.baseDn=
+# cas.consent.ldap.validator.searchFilter=(objectClass=*)
+# cas.consent.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.consent.ldap.validator.attributeName=objectClass
+# cas.consent.ldap.validator.attributeValues=top
+# cas.consent.ldap.validator.dn=
 ```
 
 ### REST Attribute Consent

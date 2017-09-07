@@ -53,20 +53,20 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
                                         final CasConfigurationProperties casProperties) {
         final String endpointName = endpoint.getClass().getSimpleName();
         if (endpoint.isSensitive() == null) {
-            LOGGER.debug("Sensitivity for endpoint [{}] is undefined. Checking defaults...", endpointName);
+            LOGGER.trace("Sensitivity for endpoint [{}] is undefined. Checking defaults...", endpointName);
             final Boolean defaultSensitive = casProperties.getMonitor().getEndpoints().isSensitive();
             if (defaultSensitive != null) {
                 final boolean s = BooleanUtils.toBoolean(defaultSensitive);
                 setSensitive(s);
-                LOGGER.debug("Default sensitivity for endpoint [{}] is set to [{}]", endpointName, s);
+                LOGGER.trace("Default sensitivity for endpoint [{}] is set to [{}]", endpointName, s);
             } else {
-                LOGGER.debug("Default sensitivity for endpoint [{}] is undefined.", endpointName);
+                LOGGER.trace("Default sensitivity for endpoint [{}] is undefined.", endpointName);
                 setSensitive(DEFAULT_SENSITIVE_VALUE);
             }
         } else {
             final boolean s = BooleanUtils.toBoolean(endpoint.isSensitive());
             setSensitive(s);
-            LOGGER.debug("Explicitly marking endpoint [{}] sensitivity as [{}]", endpointName, s);
+            LOGGER.trace("Explicitly marking endpoint [{}] sensitivity as [{}]", endpointName, s);
         }
     }
 
@@ -81,19 +81,19 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
                                                final CasConfigurationProperties casProperties) {
         final String endpointName = endpoint.getClass().getSimpleName();
         if (endpoint.isEnabled() == null) {
-            LOGGER.debug("Capability for endpoint [{}] is undefined. Checking defaults...", endpointName);
+            LOGGER.trace("Capability for endpoint [{}] is undefined. Checking defaults...", endpointName);
             final Boolean defaultEnabled = casProperties.getMonitor().getEndpoints().isEnabled();
             if (defaultEnabled != null) {
                 final boolean s = BooleanUtils.toBoolean(defaultEnabled);
-                LOGGER.debug("Default capability for endpoint [{}] is set to [{}]", endpointName, s);
+                LOGGER.trace("Default capability for endpoint [{}] is set to [{}]", endpointName, s);
                 return s;
             }
-            LOGGER.debug("Default capability for endpoint [{}] is undefined.", endpointName);
+            LOGGER.trace("Default capability for endpoint [{}] is undefined.", endpointName);
             return false;
 
         }
         final boolean s = BooleanUtils.toBoolean(endpoint.isEnabled());
-        LOGGER.debug("Explicitly marking endpoint [{}] capability as [{}]", endpointName, s);
+        LOGGER.trace("Explicitly marking endpoint [{}] capability as [{}]", endpointName, s);
         return s;
     }
 
@@ -101,7 +101,7 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
                                        final CasConfigurationProperties casProperties) {
         final String endpointName = endpoint.getClass().getSimpleName();
         final boolean s = isEndpointCapable(endpoint, casProperties);
-        LOGGER.debug("Finalized capability for endpoint [{}] is [{}].", endpointName, s);
+        LOGGER.trace("Finalized capability for endpoint [{}] is [{}].", endpointName, s);
         setEnabled(s);
     }
 

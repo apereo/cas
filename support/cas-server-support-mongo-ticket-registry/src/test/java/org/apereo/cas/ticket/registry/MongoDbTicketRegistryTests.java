@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -44,7 +45,8 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
         CasCoreUtilConfiguration.class,
         AopAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, 
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -82,11 +84,12 @@ public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Before
     public void before() {
-        ticketRegistry.getTickets().forEach(t -> this.ticketRegistry.deleteTicket(t.getId()));
+        ticketRegistry.deleteAll();
     }
 
     @Override
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return this.ticketRegistry;
     }
+    
 }

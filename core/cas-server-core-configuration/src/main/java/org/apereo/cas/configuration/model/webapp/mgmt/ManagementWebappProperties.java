@@ -2,13 +2,13 @@ package org.apereo.cas.configuration.model.webapp.mgmt;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,7 +22,7 @@ public class ManagementWebappProperties implements Serializable {
     /**
      * List of roles required to accept the web application.
      */
-    private List<String> adminRoles = Arrays.asList("ROLE_ADMIN");
+    private List<String> adminRoles = CollectionUtils.wrap("ROLE_ADMIN");
 
     /**
      * The server name/address of the management web application.

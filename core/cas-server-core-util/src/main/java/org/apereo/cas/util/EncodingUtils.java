@@ -60,7 +60,7 @@ public final class EncodingUtils {
     public static String hexDecode(final char[] data) {
         try {
             final byte[] result = Hex.decodeHex(data);
-            return new String(result);
+            return new String(result, StandardCharsets.UTF_8);
         } catch (final Exception e) {
             return null;
         }

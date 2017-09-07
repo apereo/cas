@@ -60,7 +60,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the security questions
      */
-    default Map<String, String> getSecurityQuestions(String username)   {
+    default Map<String, String> getSecurityQuestions(String username) {
         return new LinkedHashMap<>();
     }
 }

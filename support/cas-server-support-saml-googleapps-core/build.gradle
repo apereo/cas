@@ -3,6 +3,10 @@ dependencies {
     implementation project(":support:cas-server-support-saml")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-configuration")
 }

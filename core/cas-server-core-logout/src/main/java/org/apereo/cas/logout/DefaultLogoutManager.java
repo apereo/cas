@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,8 +69,10 @@ public class DefaultLogoutManager implements LogoutManager {
     }
 
     private List<LogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
-        return Stream.concat(Stream.of(ticketToBeLoggedOut), ticketToBeLoggedOut.getProxyGrantingTickets().stream())
-                .map(ticket -> ticket.getServices().entrySet())
+        final Stream<Map<String, Service>> streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()),
+                Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
+        return streamServices
+                .map(Map::entrySet)
                 .flatMap(Set::stream)
                 .filter(entry -> entry.getValue() instanceof WebApplicationService)
                 .map(entry -> {

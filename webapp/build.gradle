@@ -36,3 +36,4 @@ if (!rootProject.publishReleases) {
 processResources.dependsOn compileSass
 
 clean.delete << file("./node_modules")
+clean.delete << fileTree(dir: './resources/static/js' , include: '*-bundle.js')

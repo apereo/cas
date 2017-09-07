@@ -1,9 +1,9 @@
 description = "Apereo CAS Core AAPI Events"
 dependencies {
-    compile project(":api:cas-server-core-api-ticket")
-    compile project(":api:cas-server-core-api-services")
-    compile project(":api:cas-server-core-api-validation")
-    compile project(":core:cas-server-core-util")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-validation")
+    implementation project(":core:cas-server-core-util")
 }
 
 

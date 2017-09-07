@@ -67,8 +67,4 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     public View getView() {
         return this.view;
     }
-
-    public void setView(final View view) {
-        this.view = view;
-    }
 }

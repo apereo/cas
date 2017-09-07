@@ -25,7 +25,6 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,6 +82,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
 
     private boolean collectDnAttribute;
+    /**
+     * Name of attribute to be used for principal's DN.
+     */
+    private String principalDnAttributeName = "principalLdapDn";
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -108,6 +111,15 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public void setPrincipalIdAttribute(final String attributeName) {
         this.principalIdAttribute = attributeName;
+    }
+
+    /**
+     * Sets the name of the principal's dn attribute.
+     *
+     * @param principalDnAttributeName principal's DN attribute name.
+     */
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
     }
 
     /**
@@ -226,9 +238,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         });
 
         if (this.collectDnAttribute) {
-            final String dnAttribute = getName().concat(".").concat(username.trim());
-            LOGGER.debug("Recording principal DN attribute as [{}]", dnAttribute);
-            attributeMap.put(dnAttribute, ldapEntry.getDn());
+            LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
+            attributeMap.put(this.principalDnAttributeName, ldapEntry.getDn());
         }
         
         return attributeMap;
@@ -302,7 +313,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
 
         if (authenticator.getReturnAttributes() != null) {
-            final List<String> authenticatorAttributes = Arrays.asList(authenticator.getReturnAttributes());
+            final List<String> authenticatorAttributes = CollectionUtils.wrapList(authenticator.getReturnAttributes());
             if (!authenticatorAttributes.isEmpty()) {
                 LOGGER.debug("Filtering authentication entry attributes [{}] based on authenticator attributes [{}]",
                         authenticatedEntryAttributes, authenticatorAttributes);

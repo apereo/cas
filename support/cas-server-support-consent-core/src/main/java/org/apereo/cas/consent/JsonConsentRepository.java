@@ -12,8 +12,12 @@ import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link JsonConsentRepository}.
@@ -45,6 +49,19 @@ public class JsonConsentRepository implements ConsentRepository {
     }
 
     @Override
+    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+        return this.consentDecisions
+                .stream()
+                .filter(d -> d.getPrincipal().equals(principal))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions() {
+        return new ArrayList<>(this.consentDecisions);
+    }
+
+    @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         final ConsentDecision consent = this.consentDecisions
                 .stream()
@@ -64,7 +81,7 @@ public class JsonConsentRepository implements ConsentRepository {
     private void readDecisionsFromJsonResource() {
         this.consentDecisions = new LinkedHashSet<>();
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            try (Reader reader = new InputStreamReader(jsonResource.getInputStream())) {
+            try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                 final TypeReference<Set<ConsentDecision>> personList = new TypeReference<Set<ConsentDecision>>() {
                 };
                 this.consentDecisions = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);

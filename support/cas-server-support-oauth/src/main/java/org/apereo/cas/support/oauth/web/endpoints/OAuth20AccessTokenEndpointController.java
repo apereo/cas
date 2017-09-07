@@ -30,6 +30,7 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
@@ -44,8 +45,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -165,7 +165,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
-        final List<BaseAccessTokenGrantRequestExtractor> list = Arrays.asList(
+        final Collection<BaseAccessTokenGrantRequestExtractor> list = CollectionUtils.wrapList(
                 new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry,
                         request, response, centralAuthenticationService, casProperties.getAuthn().getOauth()),
                 new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry,

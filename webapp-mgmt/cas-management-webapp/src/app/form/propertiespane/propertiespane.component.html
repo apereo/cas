@@ -1,0 +1,53 @@
+<md-card class="tabCard">
+  <md-card-title>
+    <h5>Properties</h5>
+  </md-card-title>
+  <div class="cardContent">
+    <md-table [dataSource]="dataSource">
+
+      <ng-container cdkColumnDef="source">
+        <md-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</md-header-cell>
+        <md-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
+          <md-form-field>
+            <input mdInput #text [mdAutocomplete]="auto"
+                   [ngModel]="row.key" (click)="selectedRow = row"
+                   (change)="doChange(row,$event.target.value)">
+          </md-form-field>
+
+        </md-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="mapped">
+        <md-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</md-header-cell>
+        <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
+          <md-form-field>
+            <input mdInput [disabled]="row.key == ''"
+                   [ngModel]="data.service.properties[row.key] ?  data.service.properties[row.key].values : ''"
+                   (ngModelChange)="data.service.properties[row.key].values = $event.split(',')">
+          </md-form-field>
+        </md-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="delete">
+        <md-header-cell *cdkHeaderCellDef [ngClass]="'actionWidth'"></md-header-cell>
+        <md-cell *cdkCellDef="let row" [ngClass]="'actionWidth'">
+          <button md-icon-button (click)="delete(row)"><md-icon style="font-size: medium">delete</md-icon></button>
+        </md-cell>
+      </ng-container>
+
+      <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+      <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+
+
+    </md-table>
+    <div style="height:25px;padding-top: 5px;">
+      <button md-mini-fab (click)="addRow()" style="float:right;">+</button>
+    </div>
+  </div>
+
+
+</md-card>
+<md-autocomplete style="width:300px" #auto="mdAutocomplete" (optionSelected)="selection($event)">
+  <md-option *ngFor="let opt of options" [value]="opt">{{ opt.display }}</md-option>
+</md-autocomplete>
+

@@ -44,6 +44,7 @@ To build the project locally, please follow [this guide](https://apereo.github.i
 ## Documentation [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter] [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas) [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
 
 - [Documentation][wiki]
+- [Blog][blog]
 - [Release Notes][releasenotes]
 - [Support][cassupport]
 
@@ -68,4 +69,4 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 [casimg]: https://cloud.githubusercontent.com/assets/1205228/14939607/7cd35c3c-0f02-11e6-9564-80d8dfc0a064.png
 [cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-
+[blog]: https://apereo.github.io/

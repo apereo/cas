@@ -2,6 +2,7 @@ package org.apereo.cas.web.ldap;
 
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.ldaptive.LdapEntry;
@@ -25,7 +26,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -84,7 +84,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
 
                 final J2EContext context = WebUtils.getPac4jJ2EContext();
 
-                if (authorizer.isAllAuthorized(context, Arrays.asList(profile))) {
+                if (authorizer.isAllAuthorized(context, CollectionUtils.wrap(profile))) {
                     return new UsernamePasswordAuthenticationToken(username, password, authorities);
                 }
                 LOGGER.warn("User [{}] is not authorized to access the requested resource allowed to roles [{}]",

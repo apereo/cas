@@ -44,8 +44,8 @@ A sample definition follows:
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
     "consentPolicy": {
       "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
-      "excludedAttributes":["java.util.LinkedHashSet", ["test"]],
-      "includeOnlyAttributes":["java.util.LinkedHashSet", ["test"]],
+      "excludedAttributes": ["java.util.LinkedHashSet", ["test"]],
+      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["test"]],
       "enabled": true
     }
   }
@@ -77,6 +77,20 @@ Support is enabled by including the following module in the Overlay:
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jpa-attribute-consent).
 
+### MongoDb
+
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-consent-mongo</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#mongodb-attribute-consent).
+
 
 ### REST
 
@@ -97,16 +111,18 @@ Endpoints must be designed to accept/process `application/json`.
 | Operation                 | Method    | Data                                 | Expected Response
 |---------------------------|-----------|--------------------------------------------------------------------------------------
 | Locate consent decision   | `GET`     | `service`, `principal` as headers    | `200`. The consent decision object in the body.
+| Locate consent decision for user   | `GET`     | `principal` as headers    | `200`. The consent decisions object in the body.
+| Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
 | Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
 
 The consent decision object in transit will and must match the following structure:
 
 ```json
 {
-   "id":1000,
+   "id": 1000,
    "principal": "casuser",
    "service": "https://google.com",
-   "date":[ 2017, 7, 10, 14, 10, 17 ],
+   "createdDate": [ 2017, 7, 10, 14, 10, 17 ],
    "options": "ATTRIBUTE_NAME",
    "reminder": 14,
    "reminderTimeUnit": "DAYS",
@@ -115,17 +131,34 @@ The consent decision object in transit will and must match the following structu
 }
 ```
 
-| Field                     | Description    
+| Field                     | Description
 |---------------------------|-----------------------------------------------------------------------------------------------------------------------
 | `id`                      | `-1` for new decision records or a valid numeric value for existing records.      
 | `principal`               | The authenticated user id.
 | `service`                 | Target application url to which attributes are about to be released.
-| `date`                    | Date/Time of the decision record.
+| `createdDate`             | Date/Time of the decision record.
 | `options`                 | Indicates how changes in attributes are determined for this application. (i.e. `ATTRIBUTE_NAME`, `ATTRIBUTE_VALUE`, `ALWAYS`)
 | `reminder`                | Indicates the period after which user will be reminded to consent again, in case no changes are found.
 | `reminderTimeUnit`        | The reminder time unit (i.e. `MONTHS`, `DAYS`, `HOURS`, etc).
 | `attributeNames`          | SHA-512 of attribute names for this application, signed and encrypted.
 | `attributeValues`         | SHA-512 of attribute values for this application, signed and encrypted.
+
+
+### LDAP
+
+Consent decisions can be stored on LDAP user objects. The decisions are serialized into JSON and stored one-by-one in a multi-valued string attribute.
+
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-consent-ldap</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ldap-attribute-consent).
 
 
 ### Custom
@@ -147,4 +180,3 @@ public class MyConfiguration {
 ```
 
 [See this guide](../installation/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
-

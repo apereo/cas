@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -53,6 +54,12 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(DuoSecurityAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
+    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
@@ -62,10 +69,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -129,7 +133,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             }
             h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
         } else {
-            h = new DuoAuthenticationHandler(StringUtils.EMPTY, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
         return h;
@@ -141,8 +144,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-        return new DuoMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-                duoMultifactorAuthenticationProvider());
+        final CasWebflowConfigurer w = new DuoMultifactorWebflowConfigurer(flowBuilderServices, 
+                loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                duoMultifactorAuthenticationProvider(), applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")

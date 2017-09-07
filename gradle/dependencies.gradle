@@ -217,7 +217,7 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
-                dependencies.create("org.ow2.asm:asm:5.1") {
+                dependencies.create("org.ow2.asm:asm:$ow2AsmVersion") {
                     transitive = false
                     force = true
                 },
@@ -268,6 +268,9 @@ ext.libraries = [
         },
         commons                 : [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
+                    force = true
+                },
+                dependencies.create("org.apache.commons:commons-pool2:$commonsPoolVersion") {
                     force = true
                 },
                 dependencies.create("commons-cli:commons-cli:$commonsCliVersion") {
@@ -1156,6 +1159,7 @@ ext.libraries = [
                 dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
                 dependencies.create("org.skyscreamer:jsonassert:$jsonassertVersion") {
                     exclude(group: "org.json", module: "json")
+                    exclude(group: "com.vaadin.external.google", module:"android-json")
                     force = true
                 },
                 dependencies.create("org.springframework:spring-test:$springVersion"),
@@ -2153,6 +2157,7 @@ ext.libraries = [
                     exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
+                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
                     force = true
                 },
                 dependencies.create("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
@@ -2165,6 +2170,7 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "javax.servlet", module: "servlet-api")
+                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 }
@@ -2241,6 +2247,7 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
                     force = true
                 },
                 dependencies.create("com.netflix.ribbon:ribbon-transport:$ribbonVersion") {

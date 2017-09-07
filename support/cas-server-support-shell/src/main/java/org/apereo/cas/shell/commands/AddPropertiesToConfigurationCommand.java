@@ -96,9 +96,10 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
         final Yaml yaml = new Yaml(options);
-        final FileWriter writer = new FileWriter(filePath);
-        putResultsIntoProperties(results, yamlProps);
-        yaml.dump(yamlProps, writer);
+        try (FileWriter writer = new FileWriter(filePath)) {
+            putResultsIntoProperties(results, yamlProps);
+            yaml.dump(yamlProps, writer);
+        }
     }
 
     private Properties loadYamlPropertiesFromConfigurationFile(final File filePath) {
@@ -137,7 +138,9 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
 
     private Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
         final Properties p = new Properties();
-        p.load(new FileReader(filePath));
+        try (FileReader f = new FileReader(filePath)) {
+            p.load(f);
+        }
         return p;
     }
 
@@ -149,8 +152,11 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
 
     private void createConfigurationFileIfNeeded(final File filePath) throws IOException {
         if (!filePath.exists()) {
-            LOGGER.info("Creating configuration file [{}]", filePath.getCanonicalPath());
-            filePath.createNewFile();
+            LOGGER.debug("Creating configuration file [{}]", filePath.getCanonicalPath());
+            final boolean created = filePath.createNewFile();
+            if (created) {
+                LOGGER.info("Created configuration file [{}]", filePath.getCanonicalPath());
+            }
         }
     }
 }

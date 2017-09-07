@@ -40,7 +40,7 @@ public class ConsentDecisionBuilder {
         final String encodedValues = buildAndEncodeConsentAttributeValues(attributes);
         consent.setAttributeValues(encodedValues);
 
-        consent.setDate(LocalDateTime.now());
+        consent.setCreatedDate(LocalDateTime.now());
         return consent;
     }
     

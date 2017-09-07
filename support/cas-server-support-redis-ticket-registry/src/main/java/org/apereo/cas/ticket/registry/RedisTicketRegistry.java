@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -23,12 +23,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisTicketRegistry.class);
     
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
-    private static final String NO_REDIS_CLIENT_IS_DEFINED = "No redis client is defined.";
 
     @NotNull
-    private final TicketRedisTemplate client;
+    private final RedisTemplate<String, Ticket> client;
 
-    public RedisTicketRegistry(final TicketRedisTemplate client) {
+    public RedisTicketRegistry(final RedisTemplate<String, Ticket> client) {
         this.client = client;
     }
 
@@ -42,7 +41,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
         try {
             final String redisKey = getTicketRedisKey(ticketId);
             this.client.delete(redisKey);
@@ -55,10 +53,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticket) {
-        Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
-            final String redisKey = RedisTicketRegistry.getTicketRedisKey(ticket.getId());
+            final String redisKey = getTicketRedisKey(ticket.getId());
             // Encode first, then add
             final Ticket encodeTicket = this.encodeTicket(ticket);
             this.client.boundValueOps(redisKey)
@@ -70,13 +67,17 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
         try {
-            final String redisKey = RedisTicketRegistry.getTicketRedisKey(ticketId);
+            final String redisKey = getTicketRedisKey(ticketId);
             final Ticket t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
-                //Decoding add first
-                return decodeTicket(t);
+                final Ticket result = decodeTicket(t);
+                if (result != null && result.isExpired()) {
+                    LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
+                    deleteSingleTicket(ticketId);
+                    return null;
+                }
+                return result;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}] ", ticketId, e);
@@ -86,9 +87,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
-
-        return this.client.keys(RedisTicketRegistry.getPatternTicketRedisKey()).stream()
+        return this.client.keys(getPatternTicketRedisKey()).stream()
                 .map(redisKey -> {
                     final Ticket ticket = this.client.boundValueOps(redisKey).get();
                     if (ticket == null) {
@@ -104,11 +103,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
         try {
             LOGGER.debug("Updating ticket [{}]", ticket);
             final Ticket encodeTicket = this.encodeTicket(ticket);
-            final String redisKey = RedisTicketRegistry.getTicketRedisKey(ticket.getId());
+            final String redisKey = getTicketRedisKey(ticket.getId());
             this.client.boundValueOps(redisKey).set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {

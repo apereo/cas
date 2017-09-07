@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -33,8 +35,9 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                   final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-                                  final Action saml2ClientLogoutAction) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                  final Action saml2ClientLogoutAction, final ApplicationContext applicationContext,
+                                  final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         this.saml2ClientLogoutAction = saml2ClientLogoutAction;
     }

@@ -23,6 +23,12 @@ public interface OidcConstants {
         PROTECTED
     }
 
+    /** The token. */
+    String TOKEN = "token";
+    
+    /** Token type hint. */
+    String TOKEN_TYPE_HINT = "token_type_hint";
+    
     /**
      * ACR passed in the id token.
      */
@@ -123,6 +129,11 @@ public interface OidcConstants {
      */
     String JWKS_URL = "jwks";
 
+    /**
+     * Revocation Endpoint url.
+     */
+    String REVOCATION_URL = "revoke";
+    
     /**
      * Registration endpoint URL.
      */

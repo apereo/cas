@@ -1,15 +1,23 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.FormData;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.apereo.cas.mgmt.services.web.beans.AbstractRegisteredServiceAttributeReleasePolicyStrategyBean;
+import org.apereo.cas.mgmt.services.web.beans.FormData;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleasePolicyStrategyViewBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleasePolicyViewBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceProxyPolicyBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
+import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
+import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
+import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 
 import java.util.List;
 
@@ -21,23 +29,9 @@ import java.util.List;
  */
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
 
-    private final MultifactorAuthenticationMapper multifactorAuthenticationMapper = new DefaultMultifactorAuthenticationMapper();
-    private final AccessStrategyMapper accessStrategyMapper;
-    private final AttributeReleasePolicyMapper attributeReleasePolicyMapper;
-    private final ProxyPolicyMapper proxyPolicyMapper;
-    private final RegisteredServiceMapper registeredServiceMapper;
-    private final UsernameAttributeProviderMapper usernameAttributeProviderMapper;
     private final List<? extends FormDataPopulator> formDataPopulators;
 
-    public DefaultRegisteredServiceFactory(final AccessStrategyMapper accessStrategyMapper, final AttributeReleasePolicyMapper attributeReleasePolicyMapper,
-                                           final ProxyPolicyMapper proxyPolicyMapper, final RegisteredServiceMapper registeredServiceMapper,
-                                           final DefaultUsernameAttributeProviderMapper defaultUsernameAttributeProviderMapper,
-                                           final List<? extends FormDataPopulator> formDataPopulators) {
-        this.accessStrategyMapper = accessStrategyMapper;
-        this.attributeReleasePolicyMapper = attributeReleasePolicyMapper;
-        this.proxyPolicyMapper = proxyPolicyMapper;
-        this.registeredServiceMapper = registeredServiceMapper;
-        this.usernameAttributeProviderMapper = defaultUsernameAttributeProviderMapper;
+    public DefaultRegisteredServiceFactory(final List<? extends FormDataPopulator> formDataPopulators) {
         this.formDataPopulators = formDataPopulators;
     }
 
@@ -49,67 +43,67 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
     }
 
     @Override
-    public ServiceData createServiceData(final RegisteredService svc) {
-        final ServiceData bean = new ServiceData();
-
-        this.registeredServiceMapper.mapRegisteredService(svc, bean);
-        this.accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
-        this.usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
-        this.proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
-        this.attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
-        this.multifactorAuthenticationMapper.mapMultifactorPolicy(svc.getMultifactorPolicy(), bean);
-        
-        return bean;
-    }
-
-    @Override
     public RegisteredServiceViewBean createServiceViewBean(final RegisteredService svc) {
         final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
-
-        this.registeredServiceMapper.mapRegisteredService(svc, bean);
-        this.accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
-        this.usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
-        this.proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
-        this.attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
+        bean.setEvalOrder(svc.getEvaluationOrder());
+        bean.setAssignedId(String.valueOf(svc.getId()));
+        bean.setSasCASEnabled(svc.getAccessStrategy().isServiceAccessAllowed());
+        bean.setServiceId(svc.getServiceId());
+        bean.setName(svc.getName());
+        bean.setDescription(svc.getDescription());
+        if (svc.getLogo() != null) {
+            bean.setLogoUrl(svc.getLogo().toString());
+        }
+        mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
+        mapProxyPolicy(svc.getProxyPolicy(), bean);
 
         return bean;
     }
 
-    @Override
-    public RegisteredService createRegisteredService(final ServiceData data) {
-        final RegisteredService svc = this.registeredServiceMapper.toRegisteredService(data);
+    private void mapAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy, final RegisteredServiceViewBean bean) {
+        if (policy instanceof AbstractRegisteredServiceAttributeReleasePolicy) {
+            final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy = (AbstractRegisteredServiceAttributeReleasePolicy) policy;
 
-        if (svc instanceof AbstractRegisteredService) {
-            final AbstractRegisteredService absSvc = (AbstractRegisteredService) svc;
+            final RegisteredServiceAttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
+            attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
+            attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
+            attrPolicyBean.setExcludeDefault(attrPolicy.isExcludeDefaultAttributes());
 
-            final RegisteredServiceAccessStrategy accessStrategy = this.accessStrategyMapper.toAccessStrategy(data);
-            if (accessStrategy != null) {
-                absSvc.setAccessStrategy(accessStrategy);
-            }
-
-            final RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
-                    this.usernameAttributeProviderMapper.toUsernameAttributeProvider(data);
-            if (usernameAttributeProvider != null) {
-                absSvc.setUsernameAttributeProvider(usernameAttributeProvider);
-            }
-
-            final RegisteredServiceProxyPolicy proxyPolicy = this.proxyPolicyMapper.toProxyPolicy(data);
-            if (proxyPolicy != null) {
-                absSvc.setProxyPolicy(proxyPolicy);
-            }
-
-            final RegisteredServiceAttributeReleasePolicy attrPolicy = this.attributeReleasePolicyMapper
-                    .toAttributeReleasePolicy(data);
-            if (attrPolicy != null) {
-                absSvc.setAttributeReleasePolicy(attrPolicy);
-            }
-            
-            final RegisteredServiceMultifactorPolicy mfaPolicy = this.multifactorAuthenticationMapper.toMultifactorPolicy(data);
-            if (mfaPolicy != null) {
-                absSvc.setMultifactorPolicy(mfaPolicy);
+            if (attrPolicy instanceof ScriptedRegisteredServiceAttributeReleasePolicy) {
+                attrPolicyBean.setAttrPolicy(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString());
+            } else if (attrPolicy instanceof GroovyScriptAttributeReleasePolicy) {
+                attrPolicyBean.setAttrPolicy(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.GROOVY.toString());
+            } else if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
+                attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALL.toString());
+            } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
+                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
+                if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
+                } else {
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALLOWED.toString());
+                }
+            } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
+                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
+                if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
+                } else {
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.MAPPED.toString());
+                }
+            } else if (attrPolicy instanceof DenyAllAttributeReleasePolicy) {
+                attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.DENY.toString());
             }
         }
+    }
 
-        return svc;
+    private void mapProxyPolicy(final RegisteredServiceProxyPolicy policy, final RegisteredServiceViewBean bean) {
+        final RegisteredServiceProxyPolicyBean proxyPolicyBean = bean.getProxyPolicy();
+
+        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
+            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE);
+        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
+            final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
+            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX);
+            proxyPolicyBean.setValue(option.getPattern().toString());
+        }
     }
 }

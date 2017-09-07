@@ -6,7 +6,7 @@ title: CAS - Overlay Installation
 # Servlet Container Configuration
 
 A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide
-describes how to build and deploy CAS. 
+describes how to build and deploy CAS.
 
 ## Embedded
 
@@ -31,6 +31,17 @@ Note that by default, the embedded container attempts to enable the HTTP2 protoc
      <version>${cas.version}</version>
 </dependency>
 ```
+
+#### IPv4 Configuration
+
+In order to force Apache Tomcat to use IPv4, add the following to as a system property:
+
+```bash
+-Djava.net.preferIPv4Stack=true 
+```
+
+The same sort of configuration needs to be applied to your `$CATALINA_OPTS` environment variable
+in case of an external container.
 
 #### Logging
 

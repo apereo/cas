@@ -181,8 +181,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final TicketGrantingTicket ticket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticket.getId(), getService(), ctx);
 
-        final Service service = serviceTicketId.getService();
-        assertSame(((AbstractWebApplicationService) service).getPrincipal(), ticket.getAuthentication().getPrincipal());
+        final AbstractWebApplicationService service = AbstractWebApplicationService.class.cast(serviceTicketId.getService());
+        assertEquals(service.getPrincipal(), ticket.getAuthentication().getPrincipal().getId());
     }
 
     @Test

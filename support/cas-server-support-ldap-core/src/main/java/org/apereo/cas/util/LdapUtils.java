@@ -227,6 +227,23 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param baseDn            the base dn
      * @param filter            the filter
+     * @param returnAttributes  the return attributes
+     * @return the response
+     * @throws LdapException the ldap exception
+     */
+    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
+                                                                final String baseDn,
+                                                                final SearchFilter filter,
+                                                                final String... returnAttributes) throws LdapException {
+        return executeSearchOperation(connectionFactory, baseDn, filter, null, returnAttributes);
+    }
+
+    /**
+     * Execute search operation.
+     *
+     * @param connectionFactory the connection factory
+     * @param baseDn            the base dn
+     * @param filter            the filter
      * @param binaryAttributes  the binary attributes
      * @param returnAttributes  the return attributes
      * @return the response
@@ -750,7 +767,7 @@ public final class LdapUtils {
         }
         if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
-            
+
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
             switch (Mechanism.valueOf(l.getSaslMechanism())) {
@@ -937,7 +954,7 @@ public final class LdapUtils {
                 case CASE_CHANGE:
                     final CaseChangeEntryHandler eh = new CaseChangeEntryHandler();
                     eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeNameCaseChange()));
-                    eh.setAttributeNames(h.getCasChange().getAttributeNames());
+                    eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(new String[]{}));
                     eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeValueCaseChange()));
                     eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getDnCaseChange()));
                     handlers.add(eh);
@@ -950,7 +967,7 @@ public final class LdapUtils {
                     break;
                 case MERGE:
                     final MergeAttributeEntryHandler ehm = new MergeAttributeEntryHandler();
-                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames());
+                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(new String[]{}));
                     ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
                     handlers.add(ehm);
                     break;
@@ -970,7 +987,8 @@ public final class LdapUtils {
                     handlers.add(new RangeEntryHandler());
                     break;
                 case RECURSIVE_ENTRY:
-                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(), h.getRecursive().getMergeAttributes()));
+                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(),
+                            h.getRecursive().getMergeAttributes().toArray(new String[]{})));
                     break;
                 default:
                     break;

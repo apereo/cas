@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -29,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 
 import java.security.PrivateKey;
@@ -116,9 +117,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                                                 @JsonProperty("publicKeyLocation") final String publicKeyLocation,
                                                 @JsonProperty("keyAlgorithm") final String keyAlgorithm,
                                                 @JsonProperty("skewAllowance") final int skewAllowance) {
-        Assert.notNull(privateKeyLocation);
-        Assert.notNull(publicKeyLocation);
-
         try {
             this.privateKeyLocation = privateKeyLocation;
             this.publicKeyLocation = publicKeyLocation;
@@ -133,10 +131,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     }
 
     @Override
-    public Response build(final WebApplicationService webApplicationService, final String serviceTicket) {
+    public Response build(final WebApplicationService webApplicationService, final String serviceTicket,
+                          final Authentication authentication) {
         final GoogleAccountsService service = (GoogleAccountsService) webApplicationService;
         final Map<String, String> parameters = new HashMap<>();
-        final String samlResponse = constructSamlResponse(service);
+        final String samlResponse = constructSamlResponse(service, authentication);
         final String signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
@@ -147,17 +146,22 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * Construct SAML response.
      * <a href="http://bit.ly/1uI8Ggu">See this reference for more info.</a>
      *
-     * @param service the service
+     * @param service        the service
+     * @param authentication the authentication
      * @return the SAML response
      */
-    protected String constructSamlResponse(final GoogleAccountsService service) {
+    protected String constructSamlResponse(final GoogleAccountsService service,
+                                           final Authentication authentication) {
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
         final RegisteredService registeredService = servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        final String userId = registeredService.getUsernameAttributeProvider().resolveUsername(service.getPrincipal(), service, registeredService);
+        
+        final Principal principal = authentication.getPrincipal();
+        final String userId = registeredService.getUsernameAttributeProvider()
+                .resolveUsername(principal, service, registeredService);
 
         final org.opensaml.saml.saml2.core.Response response = this.samlObjectBuilder.newResponse(
                 this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
@@ -171,9 +175,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final Conditions conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
                 currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
-
+        
         final Subject subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
-                service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId());
+                service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId(), null);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);

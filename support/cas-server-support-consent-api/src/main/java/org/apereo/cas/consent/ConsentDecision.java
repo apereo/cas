@@ -35,7 +35,7 @@ public class ConsentDecision {
     private String service;
 
     @Column(nullable = false)
-    private LocalDateTime date = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private ConsentOptions options = ConsentOptions.ATTRIBUTE_NAME;
@@ -52,12 +52,12 @@ public class ConsentDecision {
     @Column(length = 4096, updatable = true, insertable = true, nullable = false)
     private String attributeValues;
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    public void setDate(final LocalDateTime date) {
-        this.date = date;
+    public void setCreatedDate(final LocalDateTime date) {
+        this.createdDate = date;
     }
 
     public TimeUnit getReminderTimeUnit() {
@@ -123,14 +123,13 @@ public class ConsentDecision {
     public Long getReminder() {
         return reminder;
     }
-
     
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("principal", principal)
                 .append("service", service)
-                .append("date", date)
+                .append("date", createdDate)
                 .append("options", options)
                 .append("reminder", reminder)
                 .append("reminderTimeUnit", reminderTimeUnit)

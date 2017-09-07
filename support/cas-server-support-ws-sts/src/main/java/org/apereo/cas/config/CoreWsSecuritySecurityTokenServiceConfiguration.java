@@ -61,7 +61,6 @@ import org.springframework.context.annotation.ImportResource;
 
 import javax.xml.ws.Provider;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,13 +138,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdp().getIdp();
 
         final ClaimsManager claimsManager = new ClaimsManager();
-        claimsManager.setClaimHandlers(Arrays.asList(new WrappingSecurityTokenServiceClaimsHandler(
+        claimsManager.setClaimHandlers(CollectionUtils.wrap(new WrappingSecurityTokenServiceClaimsHandler(
                 idp.getRealmName(),
                 wsfed.getRealm().getIssuer())));
 
         final TokenIssueOperation op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
-        op.setServices(Arrays.asList(transportService()));
+        op.setServices(CollectionUtils.wrap(transportService()));
         op.setStsProperties(transportSTSProperties());
         op.setClaimsManager(claimsManager);
         op.setTokenValidators(transportTokenValidators());
@@ -234,7 +233,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         c.setAcceptClientLifetime(true);
 
         final SAMLTokenProvider provider = new SAMLTokenProvider();
-        provider.setAttributeStatementProviders(Arrays.asList(new ClaimsAttributeStatementProvider()));
+        provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
         provider.setRealmMap(realms());
         provider.setConditionsProvider(c);
         provider.setSubjectProvider(s);
@@ -260,7 +259,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public StaticService transportService() {
         final StaticService s = new StaticService();
-        s.setEndpoints(Arrays.asList(".*"));
+        s.setEndpoints(CollectionUtils.wrap(".*"));
         return s;
     }
 
@@ -282,7 +281,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         rel.setSourceRealm(idp.getRealmName());
         rel.setTargetRealm(idp.getRealmName());
 
-        s.setRelationships(Arrays.asList(rel));
+        s.setRelationships(CollectionUtils.wrap(rel));
         return s;
     }
 

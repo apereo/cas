@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -16,8 +18,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    public TokenWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    public TokenWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                  final ApplicationContext applicationContext,
+                                  final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -76,7 +77,8 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
         GoogleAccountsServiceTests.CasTestConfiguration.class,
         SamlGoogleAppsConfiguration.class, 
-        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, 
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -93,7 +95,8 @@ import static org.mockito.Mockito.*;
         RefreshAutoConfiguration.class,
         AopAutoConfiguration.class,
         CasCookieConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, 
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasValidationConfiguration.class,
@@ -155,12 +158,12 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Before
     public void setUp() throws Exception {
         this.googleAccountsService = getGoogleAccountsService();
-        this.googleAccountsService.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
     }
 
     @Test
     public void verifyResponse() {
-        final Response resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET");
+        final Response resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
+                CoreAuthenticationTestUtils.getAuthentication());
         assertEquals(resp.getResponseType(), DefaultResponse.ResponseType.POST);
         final String response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
         assertNotNull(response);

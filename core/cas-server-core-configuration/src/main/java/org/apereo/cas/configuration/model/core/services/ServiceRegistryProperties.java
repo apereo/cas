@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaService
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
+import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
@@ -23,6 +24,12 @@ public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;
 
+    /**
+     * Properties pertaining to redis service registry.
+     */
+    @NestedConfigurationProperty
+    private RedisServiceRegistryProperties redis = new RedisServiceRegistryProperties();
+    
     /**
      * Properties pertaining to JSON service registry.
      */
@@ -175,5 +182,13 @@ public class ServiceRegistryProperties implements Serializable {
 
     public void setSchedule(final SchedulingProperties schedule) {
         this.schedule = schedule;
+    }
+
+    public RedisServiceRegistryProperties getRedis() {
+        return redis;
+    }
+
+    public void setRedis(final RedisServiceRegistryProperties redis) {
+        this.redis = redis;
     }
 }

@@ -24,12 +24,16 @@ import java.util.stream.IntStream;
  */
 public final class QRUtils {
 
-    /** Large width size. */
+    /**
+     * Large width size.
+     */
     public static final int WIDTH_LARGE = 250;
 
-    /** Medium width size. */
+    /**
+     * Medium width size.
+     */
     public static final int WIDTH_MEDIUM = 125;
-    
+
     private QRUtils() {
     }
 
@@ -68,7 +72,7 @@ public final class QRUtils {
             } finally {
                 graphics.dispose();
             }
-            
+
             ImageIO.write(image, "png", stream);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);

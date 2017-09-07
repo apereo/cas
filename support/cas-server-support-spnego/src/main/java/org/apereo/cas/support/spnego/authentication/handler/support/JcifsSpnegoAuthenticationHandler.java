@@ -14,6 +14,7 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.regex.Pattern;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@NotThreadSafe
 public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JcifsSpnegoAuthenticationHandler.class);
     
@@ -35,6 +37,8 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     private boolean principalWithDomainName;
     private boolean isNTLMallowed;
 
+    private final Object lock = new Object();
+    
     public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                             final Authentication authentication, final boolean principalWithDomainName, final boolean isNTLMallowed) {
         super(name, servicesManager, principalFactory, null);
@@ -53,7 +57,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         }
         try {
             // proceed authentication using jcifs
-            synchronized (this) {
+            synchronized (this.lock) {
                 this.authentication.reset();
                 
                 LOGGER.debug("Processing SPNEGO authentication");

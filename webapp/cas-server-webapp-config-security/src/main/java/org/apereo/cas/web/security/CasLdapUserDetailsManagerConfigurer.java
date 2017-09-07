@@ -5,6 +5,7 @@ import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenera
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.ldap.LdapAuthenticationProvider;
 import org.ldaptive.ConnectionFactory;
@@ -19,7 +20,6 @@ import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.ProviderManagerBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This is {@link CasLdapUserDetailsManagerConfigurer}.
@@ -70,13 +70,13 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
         return LdapUtils.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
-                new ArrayList<>(0), Arrays.asList(ldapAuthz.getRoleAttribute()));
+                new ArrayList<>(0), CollectionUtils.wrap(ldapAuthz.getRoleAttribute()));
     }
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
         return LdapUtils.newLdaptiveSearchExecutor(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
-                new ArrayList<>(0), Arrays.asList(ldapAuthz.getGroupAttribute()));
+                new ArrayList<>(0), CollectionUtils.wrap(ldapAuthz.getGroupAttribute()));
     }
 
     @Override

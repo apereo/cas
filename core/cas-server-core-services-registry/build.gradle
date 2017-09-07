@@ -1,9 +1,9 @@
 description = "Apereo CAS Core Services Registry and Manager"
 dependencies {
-    compile project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-services")
     implementation libraries.groovy
     compileOnly project(":core:cas-server-core-util")
     compileOnly project(":api:cas-server-core-api-events")
-    compile project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-api")
 }
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link CaseChangeSearchEntryHandlersProperties}.
@@ -25,7 +26,7 @@ public class CaseChangeSearchEntryHandlersProperties implements Serializable {
     /**
      * The Attribute names.
      */
-    private String[] attributeNames;
+    private List<String> attributeNames;
 
     public String getDnCaseChange() {
         return dnCaseChange;
@@ -51,11 +52,11 @@ public class CaseChangeSearchEntryHandlersProperties implements Serializable {
         this.attributeValueCaseChange = attributeValueCaseChange;
     }
 
-    public String[] getAttributeNames() {
+    public List<String> getAttributeNames() {
         return attributeNames;
     }
 
-    public void setAttributeNames(final String[] attributeNames) {
+    public void setAttributeNames(final List<String> attributeNames) {
         this.attributeNames = attributeNames;
     }
 }

@@ -14,7 +14,7 @@
  */
 ext["hibernateVersion"] = "5.2.10.Final"
 ext["springBootTomcatVersion"] = "8.5.20"
-ext["hazelcastVersion"] = "3.8.3"
+ext["hazelcastVersion"] = "3.8.4"
 ext["infinispanVersion"] = "9.1.0.Final"
 ext["springVersion"] = "4.3.10.RELEASE"
 ext["jacksonDatabindVersion"] = "2.9.0"
@@ -28,7 +28,7 @@ ext["groovyVersion"] = "2.4.12"
 ext["log4jVersion"] = "2.8.2"
 ext["commonsBeansVersion"] = "1.9.3"
 ext["dropwizardMetricsVersion"] = "3.2.4"
-ext["caffeinVersion"] = "2.5.4"
+ext["caffeinVersion"] = "2.5.5"
 
 ext["caffeine.version"] = ext["caffeinVersion"]
 ext["commons-beanutils.version"] = "1.8.3"

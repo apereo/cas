@@ -11,13 +11,15 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
     public TokenTicketCipherExecutor(final String secretKeyEncryption,
                                      final String secretKeySigning,
-                                     final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                     final String alg, 
+                                     final boolean encryptionEnabled) {
+        super(secretKeyEncryption, secretKeySigning, alg, encryptionEnabled);
     }
 
     public TokenTicketCipherExecutor(final String secretKeyEncryption,
-                                     final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning);
+                                     final String secretKeySigning,
+                                     final boolean encryptionEnabled) {
+        super(secretKeyEncryption, secretKeySigning, encryptionEnabled);
     }
 
     @Override

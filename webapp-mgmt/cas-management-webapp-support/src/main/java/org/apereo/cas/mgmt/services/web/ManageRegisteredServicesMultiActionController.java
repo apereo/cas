@@ -8,13 +8,17 @@ import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +41,7 @@ import java.util.stream.Collectors;
 @Controller("manageRegisteredServicesMultiActionController")
 public class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageRegisteredServicesMultiActionController.class);
-    
+
     private static final String STATUS = "status";
 
     private RegisteredServiceFactory registeredServiceFactory;
@@ -113,10 +117,11 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      *
      * @param idAsLong the id
      * @param response the response
+     * @return the response entity
      */
-    @PostMapping(value = "/deleteRegisteredService")
-    public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
-                                        final HttpServletResponse response) {
+    @GetMapping(value = "/deleteRegisteredService")
+    public ResponseEntity<String> deleteRegisteredService(@RequestParam("id") final long idAsLong,
+                                                          final HttpServletResponse response) {
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
         if (svc == null || svc.getId() == idAsLong) {
             throw new IllegalArgumentException("The default service " + this.defaultService.getId() + " cannot be deleted. "
@@ -127,10 +132,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         if (r == null) {
             throw new IllegalArgumentException("Service id " + idAsLong + " cannot be found.");
         }
-        final Map<String, Object> model = new HashMap<>();
-        model.put("serviceName", r.getName());
-        model.put(STATUS, HttpServletResponse.SC_OK);
-        JsonUtils.render(model, response);
+        return new ResponseEntity<String>(r.getName(), HttpStatus.OK);
     }
 
     /**
@@ -152,44 +154,42 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * Gets services.
      *
      * @param response the response
+     * @return the services
      */
     @GetMapping(value = "/getServices")
-    public void getServices(final HttpServletResponse response) {
+    public ResponseEntity<List<RegisteredServiceViewBean>> getServices(final HttpServletResponse response) {
         ensureDefaultServiceExists();
-        final Map<String, Object> model = new HashMap<>();
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
         serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
-        model.put("services", serviceBeans);
-        model.put(STATUS, HttpServletResponse.SC_OK);
-        JsonUtils.render(model, response);
+        return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
     }
 
     /**
-     * Updates the {@link RegisteredService#getEvaluationOrder()}.
+     * Method will update the order of two services passed in.
      *
+     * @param request  the request
      * @param response the response
-     * @param id       the service ids, whose order also determines the service evaluation order
+     * @param svcs     the services to be updated
      */
-    @PostMapping(value = "/updateRegisteredServiceEvaluationOrder")
-    public void updateRegisteredServiceEvaluationOrder(final HttpServletResponse response,
-                                                       @RequestParam("id") final long... id) {
-        if (id == null || id.length == 0) {
-            throw new IllegalArgumentException("No service id was received. Re-examine the request");
+    @PostMapping(value = "/updateOrder", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void updateOrder(final HttpServletRequest request, final HttpServletResponse response,
+                            @RequestBody final RegisteredServiceViewBean[] svcs) {
+        final String id = svcs[0].getAssignedId();
+        final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(id));
+        if (svcA == null) {
+            throw new IllegalArgumentException("Service " + id + " cannot be found");
         }
-        for (int i = 0; i < id.length; i++) {
-            final long svcId = id[i];
-            final RegisteredService svc = this.servicesManager.findServiceBy(svcId);
-            if (svc == null) {
-                throw new IllegalArgumentException("Service id " + svcId + " cannot be found.");
-            }
-            svc.setEvaluationOrder(i);
-            this.servicesManager.save(svc);
+        final String id2 = svcs[1].getAssignedId();
+        final RegisteredService svcB = this.servicesManager.findServiceBy(Long.parseLong(id2));
+        if (svcB == null) {
+            throw new IllegalArgumentException("Service " + id2 + " cannot be found");
         }
-        final Map<String, Object> model = new HashMap<>();
-        model.put(STATUS, HttpServletResponse.SC_OK);
-        JsonUtils.render(model, response);
+        svcA.setEvaluationOrder(svcs[0].getEvalOrder());
+        svcB.setEvaluationOrder(svcs[1].getEvalOrder());
+        this.servicesManager.save(svcA);
+        this.servicesManager.save(svcB);
     }
-
 
 }

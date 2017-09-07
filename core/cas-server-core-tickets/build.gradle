@@ -1,12 +1,16 @@
 description = "Apereo CAS Core Tickets"
 dependencies {
-    compile project(":api:cas-server-core-api-ticket")
-    
+    api project(":api:cas-server-core-api-ticket")
     implementation libraries.casclient
-    compile project(":core:cas-server-core-authentication")
+    
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    
     compileOnly project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-web")
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(":core:cas-server-core-services")

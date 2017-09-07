@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -163,7 +162,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
         clientResponse.setSubjectType("public");
         clientResponse.setTokenEndpointAuthMethod(registrationRequest.getTokenEndpointAuthMethod());
         clientResponse.setClientName(registeredService.getName());
-        clientResponse.setGrantTypes(Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
+        clientResponse.setGrantTypes(CollectionUtils.wrapList(OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
                 OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase()));
         clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
         clientResponse.setResponseTypes(CollectionUtils.wrap(OAuth20ResponseTypes.CODE.name().toLowerCase()));

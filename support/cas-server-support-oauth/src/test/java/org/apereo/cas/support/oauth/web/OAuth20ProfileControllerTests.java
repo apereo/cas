@@ -90,7 +90,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy());
         final AccessToken accessToken = expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
-                new MockTicketGrantingTicket("casuser"));
+                new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
@@ -113,7 +113,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
-                new MockTicketGrantingTicket("casuser"));
+                new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
@@ -147,7 +147,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
-                new MockTicketGrantingTicket("casuser"));
+                new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);

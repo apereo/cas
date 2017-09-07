@@ -55,8 +55,10 @@ public class AzureAuthenticatorConfiguration {
     @ConditionalOnMissingBean(name = "azureAuthenticatorMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer azureAuthenticatorMultifactorWebflowConfigurer() {
-        return new AzureAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                azureAuthenticatorFlowRegistry());
+        final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                azureAuthenticatorFlowRegistry(), applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
     
     /**
@@ -70,8 +72,11 @@ public class AzureAuthenticatorConfiguration {
         @ConditionalOnMissingBean(name = "azureMultifactorTrustWebflowConfigurer")
         @Bean
         public CasWebflowConfigurer azureMultifactorTrustWebflowConfigurer() {
-            return new AzureAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), azureAuthenticatorFlowRegistry());
+            final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), azureAuthenticatorFlowRegistry(),
+                    applicationContext, casProperties);
+            w.initialize();
+            return w;
         }
     }
     

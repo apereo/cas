@@ -3,12 +3,12 @@ package org.apereo.cas.grouper;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is {@link GrouperFacade} that acts as a wrapper
@@ -52,7 +52,7 @@ public class GrouperFacade {
      * @param subjectId the principal
      * @return the groups for subject id
      */
-    public static List<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
+    public static Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
         try {
             final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(subjectId);
             final WsGetGroupsResult[] results = groupsClient.execute().getResults();
@@ -62,7 +62,7 @@ public class GrouperFacade {
                 return new ArrayList<>();
             }
             LOGGER.debug("Found [{}] groups for [{}]", results.length, subjectId);
-            return Arrays.asList(results);
+            return CollectionUtils.wrapList(results);
         } catch (final Exception e) {
             LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
                     + ", the url endpoint for Grouper WS is correctly configured and the subject [{}]"

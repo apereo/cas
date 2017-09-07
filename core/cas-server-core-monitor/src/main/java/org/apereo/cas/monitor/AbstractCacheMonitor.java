@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.Arrays;
  */
 public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheStatus> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCacheMonitor.class);
-    
+
     /**
      * CAS properties.
      */
@@ -63,9 +64,12 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
      */
     protected StatusCode status(final CacheStatistics statistics) {
         final StatusCode code;
-        if (statistics.getEvictions() > casProperties.getMonitor().getWarn().getEvictionThreshold()) {
+        final MonitorProperties.Warn warn = casProperties.getMonitor().getWarn();
+        if (statistics.getEvictions() != PoolStatus.UNKNOWN_COUNT
+                && statistics.getEvictions() > warn.getEvictionThreshold()) {
             code = StatusCode.WARN;
-        } else if (statistics.getPercentFree() < casProperties.getMonitor().getWarn().getThreshold()) {
+        } else if (statistics.getPercentFree() != PoolStatus.UNKNOWN_COUNT
+                && statistics.getPercentFree() < warn.getThreshold()) {
             code = StatusCode.WARN;
         } else {
             code = StatusCode.OK;

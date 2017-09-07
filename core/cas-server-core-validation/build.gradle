@@ -1,8 +1,10 @@
 description = "Apereo CAS Core Validation"
 dependencies {
-    implementation project(":api:cas-server-core-api-authentication")
-    implementation project(":api:cas-server-core-api-validation")
-    implementation project(":api:cas-server-core-api-protocol")
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-validation")
+    api project(":api:cas-server-core-api-protocol")
+
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-webflow")

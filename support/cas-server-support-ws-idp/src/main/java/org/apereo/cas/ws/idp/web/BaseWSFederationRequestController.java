@@ -190,7 +190,7 @@ public abstract class BaseWSFederationRequestController {
 
             final URI url = builder.build();
 
-            LOGGER.debug("Built service callback url [{}]", url);
+            LOGGER.trace("Built service callback url [{}]", url);
             return org.jasig.cas.client.util.CommonUtils.constructServiceUrl(request, response,
                     url.toString(), casProperties.getServer().getName(),
                     CasProtocolConstants.PARAMETER_SERVICE,

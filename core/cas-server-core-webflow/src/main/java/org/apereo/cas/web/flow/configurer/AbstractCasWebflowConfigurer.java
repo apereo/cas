@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -61,7 +60,6 @@ import org.springframework.webflow.expression.spel.MapAdaptablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor;
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,26 +93,28 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Application context.
      */
-    @Autowired
-    protected ApplicationContext applicationContext;
+    protected final ApplicationContext applicationContext;
 
     /**
      * CAS Properties.
      */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
 
     /**
      * Flow builder services.
      */
     protected final FlowBuilderServices flowBuilderServices;
 
-    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                        final ApplicationContext applicationContext,
+                                        final CasConfigurationProperties casProperties) {
         this.flowBuilderServices = flowBuilderServices;
         this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
+        this.applicationContext = applicationContext;
+        this.casProperties = casProperties;
     }
 
-    @PostConstruct
     @Override
     public void initialize() {
         try {
@@ -148,7 +148,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public Flow getLoginFlow() {
         if (this.loginFlowDefinitionRegistry == null) {
-            LOGGER.error("Login flow registry is not configured correctly.");
+            LOGGER.error("Login flow registry is not configured and/or initialized correctly.");
             return null;
         }
         final boolean found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
@@ -309,7 +309,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
         return new Transition(resolver);
     }
-    
+
     @Override
     public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
         final TransitionCriteria criteria;
@@ -363,7 +363,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return parser;
 
     }
-    
+
 
     @Override
     public EndState createEndState(final Flow flow, final String id) {
@@ -626,7 +626,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final List<FlowExecutionExceptionHandler> list = (List<FlowExecutionExceptionHandler>)
                 ReflectionUtils.getField(field, target.getExceptionHandlerSet());
         list.forEach(h -> source.getExceptionHandlerSet().add(h));
-        
+
         target.setDescription(source.getDescription());
         target.setCaption(source.getCaption());
     }

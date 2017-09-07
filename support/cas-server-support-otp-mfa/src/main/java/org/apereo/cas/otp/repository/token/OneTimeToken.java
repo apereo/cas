@@ -26,9 +26,10 @@ import java.time.LocalDateTime;
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     private static final long serialVersionUID = -1329938047176583075L;
 
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = Integer.MAX_VALUE;
+    private long id;
 
     @Column(nullable = false)
     private Integer token;
@@ -40,9 +41,11 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     private LocalDateTime issuedDateTime = LocalDateTime.now();
 
     public OneTimeToken() {
+        setId(java.lang.System.currentTimeMillis());
     }
 
     public OneTimeToken(final Integer token, final String userId) {
+        this();
         this.token = token;
         this.userId = userId;
     }
@@ -75,11 +78,16 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
         this.issuedDateTime = issuedDateTime;
     }
 
+    public long getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("token", token)
                 .append("userId", userId)
+                .append("id", id)
                 .append("issuedDateTime", issuedDateTime)
                 .toString();
     }
@@ -99,6 +107,7 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
         return new EqualsBuilder()
                 .append(this.token, rhs.token)
                 .append(this.userId, rhs.userId)
+                .append(this.id, rhs.id)
                 .append(this.issuedDateTime, rhs.issuedDateTime)
                 .isEquals();
     }
@@ -109,6 +118,7 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
                 .append(token)
                 .append(userId)
                 .append(issuedDateTime)
+                .append(id)
                 .toHashCode();
     }
 
@@ -118,6 +128,7 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
                 .append(token, o.getToken())
                 .append(userId, o.getUserId())
                 .append(issuedDateTime, o.getIssuedDateTime())
+                .append(id, o.id)
                 .build();
     }
 }

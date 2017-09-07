@@ -40,6 +40,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -84,6 +85,10 @@ public class SamlIdPConfiguration {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
+    @Autowired
+    @Qualifier("casSamlIdPMetadataResolver")
+    private MetadataResolver casSamlIdPMetadataResolver;
+    
     @Autowired
     @Qualifier("shibbolethCompatiblePersistentIdGenerator")
     private PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator;
@@ -288,7 +293,8 @@ public class SamlIdPConfiguration {
                 algs.getOverrideSignatureReferenceDigestMethods(),
                 algs.getOverrideSignatureAlgorithms(),
                 algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-                algs.getOverrideWhiteListedSignatureSigningAlgorithms());
+                algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
+                casSamlIdPMetadataResolver);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")

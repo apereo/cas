@@ -58,7 +58,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     /**
      * The code factory instance.
      */
-    protected OAuthCodeFactory oAuthCodeFactory;
+    protected final OAuthCodeFactory oAuthCodeFactory;
 
     /**
      * The Consent approval view resolver.
@@ -193,7 +193,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
-
+        
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
@@ -234,9 +234,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         final String grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
                 OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
+        final Set<String> scopes = OAuth20Utils.parseRequestScopes(context);
         final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
-                registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType));
-
+                registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType), scopes);
+        
         return builder.build(context, clientId, holder);
     }
 
@@ -251,7 +252,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 .stream()
                 .filter(b -> b.supports(context))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Could not validate the request given it's unsupported"));
+                .orElse(null);
+        if (validator == null) {
+            LOGGER.warn("Ignoring malformed request [{}] no OAuth20 validator could declare support for its syntax", context.getFullRequestURL());
+            return false;
+        }
         return validator.validate(context);
     }
 }

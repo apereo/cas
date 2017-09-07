@@ -39,7 +39,8 @@ The current implementation provides support for:
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
 | `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
-| `/oidc/accessToken`, `/oidc/token`    | Produces authorized access tokens.
+| `/oidc/accessToken`, `/oidc/token`        | Produces authorized access tokens.
+| `/oidc/revoke`                            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens.
 | `/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
 ## Register Clients
@@ -72,6 +73,8 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 |-------------------------------|---------------------------------------------------------------------------------------
 | `serviceId`                   | The authorized redirect URI for this OIDC client.
 | `implicit`                    | Whether the response produced for this service should be [implicit](https://openid.net/specs/openid-connect-implicit-1_0.html).
+| `supportedGrantTypes`         | Collection of supported grant types for this service.
+| `supportedResponseTypes`      | Collection of supported response types for this service.
 | `signIdToken`                 | Whether ID tokens should be signed. Default is `true`.
 | `jwks`                        | Resource path to the keystore location that holds the keys for this application.
 | `encryptIdToken`              | Whether ID tokens should be encrypted. Default is `false`.
@@ -81,6 +84,8 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 | `sectoreIdentifierUri`        | Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
 
 ### Dynamically
 

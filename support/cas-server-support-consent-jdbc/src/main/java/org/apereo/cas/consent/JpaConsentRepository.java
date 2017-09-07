@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is {@link JpaConsentRepository}.
@@ -33,6 +35,33 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+        try {
+            return this.entityManager.createQuery(
+                    SELECT_QUERY.concat("where r.principal = :principal"), ConsentDecision.class)
+                    .setParameter("principal", principal)
+                    .getResultList();
+        } catch (final NoResultException e) {
+            LOGGER.debug(e.getMessage());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions() {
+        try {
+            return this.entityManager.createQuery(SELECT_QUERY, ConsentDecision.class).getResultList();
+        } catch (final NoResultException e) {
+            LOGGER.debug(e.getMessage());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
     @Override
