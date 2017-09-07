@@ -17,8 +17,8 @@
       <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
         <md-form-field>
           <input mdInput
-                 [ngModel]="data.service.accessStrategy.rejectedAttributes[row.key]"
-                 (ngModelChange)="data.service.accessStrategy.rejectedAttributes[row.key] = $event.split(',')">
+                 [ngModel]="attributes[row.key]"
+                 (ngModelChange)="attributes[row.key] = $event.split(',')">
         </md-form-field>
       </md-cell>
     </ng-container>

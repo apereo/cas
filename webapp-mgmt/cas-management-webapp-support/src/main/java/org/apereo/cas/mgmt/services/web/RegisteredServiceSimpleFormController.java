@@ -52,7 +52,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     public ResponseEntity<String> saveService(@RequestBody final RegisteredService service) {
         final RegisteredService newSvc = this.servicesManager.save(service);
         LOGGER.info("Saved changes to service [{}]", service.getId());
-        return new ResponseEntity<>(String.valueOf(newSvc.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(String.valueOf(newSvc.getId()),HttpStatus.OK);
     }
 
     /**
