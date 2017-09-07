@@ -5,11 +5,11 @@ apply plugin: "com.moowork.node"
 description = "Apereo CAS Management Web Application"
 
 if (rootProject.enableJRebelAgent) {
-    war.dependsOn(generateRebel)
+  war.dependsOn(generateRebel)
 }
 
 javadoc {
-    enabled false
+  enabled false
 }
 
 node {
@@ -55,16 +55,16 @@ bootRun {
 }
 
 springBoot {
-    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+  mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
 }
 
 bootRepackage {
-    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
-    enabled = !rootProject.publishReleases
+  mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+  enabled = !rootProject.publishReleases
 }
 
 war {
-    def currentTime = java.time.ZonedDateTime.now()
+  def currentTime = java.time.ZonedDateTime.now()
 
     manifest {
         attributes("Implementation-Title": project.name,
@@ -85,11 +85,10 @@ task angularTest(type: NpmTask, dependsOn: 'npm_install')  {
 }
 
 dependencies {
-    runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
-    providedRuntime libraries.springboottomcat
-    runtimeOnly libraries.groovy
-    implementation libraries.thymeleaf
-    implementation libraries.thymeleafdialect
-    implementation libraries.thymeleafboot
-    implementation libraries.webjars
+  runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
+  providedRuntime libraries.springboottomcat
+  runtimeOnly libraries.groovy
+  implementation libraries.thymeleaf
+  implementation libraries.thymeleafdialect
+  implementation libraries.thymeleafboot
 }
