@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -46,6 +47,12 @@ public class TokenAuthenticationWebflowConfiguration {
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
+    @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
@@ -56,7 +63,9 @@ public class TokenAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "tokenWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer tokenWebflowConfigurer() {
-        return new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        final CasWebflowConfigurer w = new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @Bean

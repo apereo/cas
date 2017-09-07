@@ -2,7 +2,11 @@ description = "Apereo CAS Token Authentication Webflow Support"
 dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-services")
-    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication")
+    api project(":api:cas-server-core-api-webflow")
     implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-token-authentication")
 }

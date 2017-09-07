@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -12,6 +13,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -22,7 +24,7 @@ import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.mock.MockService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -74,7 +76,8 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         JpaTicketRegistryTests.JpaTestConfiguration.class,
         RefreshAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, 
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -163,6 +166,7 @@ public class JpaTicketRegistryTests {
 
         // PGT
         final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
+        updateTicketInTransaction(stFromDb.getGrantingTicket());
         final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         assertNotNull(pgtFromDb);
         assertEquals(newPgt.getId(), pgtFromDb.getId());
@@ -185,6 +189,7 @@ public class JpaTicketRegistryTests {
 
         // PGT 2
         final ProxyGrantingTicket newPgt2 = grantProxyGrantingTicketInTransaction(st2FromDb);
+        updateTicketInTransaction(st2FromDb.getGrantingTicket());
         final ProxyGrantingTicket pgt2FromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt2.getId());
         assertNotNull(pgt2FromDb);
         assertEquals(newPgt2.getId(), pgt2FromDb.getId());
@@ -244,9 +249,10 @@ public class JpaTicketRegistryTests {
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
+        final Service testService = RegisteredServiceTestUtils.getService("https://service.example.com");
         return parent.grantServiceTicket(
                 ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
-                new MockService("https://service.example.com"),
+                testService,
                 EXP_POLICY_ST,
                 false,
                 true);
@@ -264,9 +270,10 @@ public class JpaTicketRegistryTests {
     }
 
     static ProxyTicket newPT(final ProxyGrantingTicket parent) {
+        final Service testService = RegisteredServiceTestUtils.getService("https://proxy-service.example.com");
         return parent.grantProxyTicket(
                 ID_GENERATOR.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX),
-                new MockService("https://proxy-service.example.com"),
+                testService,
                 EXP_POLICY_PT,
                 false);
     }
@@ -274,6 +281,13 @@ public class JpaTicketRegistryTests {
     private void addTicketInTransaction(final Ticket ticket) {
         new TransactionTemplate(txManager).execute(status -> {
             ticketRegistry.addTicket(ticket);
+            return null;
+        });
+    }
+
+    private void updateTicketInTransaction(final Ticket ticket) {
+        new TransactionTemplate(txManager).execute(status -> {
+            ticketRegistry.updateTicket(ticket);
             return null;
         });
     }

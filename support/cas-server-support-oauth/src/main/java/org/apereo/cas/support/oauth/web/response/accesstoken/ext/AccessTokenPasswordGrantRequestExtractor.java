@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link AccessTokenPasswordGrantRequestExtractor}.
@@ -52,6 +53,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     @Override
     public AccessTokenRequestDataHolder extract() {
         final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
@@ -78,7 +80,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
 
         return new AccessTokenRequestDataHolder(service, authentication,
-                registeredService, ticketGrantingTicket, getGrantType());
+                registeredService, ticketGrantingTicket, getGrantType(), scopes);
     }
 
     @Override

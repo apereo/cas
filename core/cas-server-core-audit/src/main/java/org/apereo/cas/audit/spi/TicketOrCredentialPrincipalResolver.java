@@ -123,7 +123,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
             }
             LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         }
-        return WebUtils.getAuthenticatedUsername();
+        return WebUtils.getPac4jAuthenticatedUsername();
     }
 
     /**

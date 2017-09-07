@@ -1,10 +1,12 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -30,8 +32,10 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasMultifactorWebflowConfigurer.class);
 
     public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                   final ApplicationContext applicationContext,
+                                                   final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     /**

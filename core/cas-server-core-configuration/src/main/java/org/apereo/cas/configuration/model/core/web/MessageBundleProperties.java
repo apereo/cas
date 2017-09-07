@@ -1,7 +1,10 @@
 package org.apereo.cas.configuration.model.core.web;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Configuration properties class for message.bundle.
@@ -36,7 +39,7 @@ public class MessageBundleProperties implements Serializable {
     /**
      * A list of strings representing base names for this message bundle.
      */
-    private String[] baseNames = new String[] {"classpath:custom_messages", "classpath:messages"};
+    private List<String> baseNames = CollectionUtils.wrapList("classpath:custom_messages", "classpath:messages");
 
     /**
      * A list of strings representing common names for this message bundle.
@@ -77,11 +80,11 @@ public class MessageBundleProperties implements Serializable {
         this.useCodeMessage = useCodeMessage;
     }
 
-    public String[] getBaseNames() {
+    public List<String> getBaseNames() {
         return baseNames;
     }
 
-    public void setBaseNames(final String[] baseNames) {
+    public void setBaseNames(final List<String> baseNames) {
         this.baseNames = baseNames;
     }
 

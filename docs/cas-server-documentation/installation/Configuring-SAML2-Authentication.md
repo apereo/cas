@@ -11,12 +11,17 @@ If you intend to allow CAS to delegate authentication to an external SAML2 ident
 
 <div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the concepts referred to on this page, please start with reviewing the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
 
+## Federation Interop Evaluation
+
+The CAS project strives to conform to the [SAML V2.0 Implementation Profile for Federation Interoperability](https://kantarainitiative.github.io/SAMLprofiles/fedinterop.html). An evaluation of the requirements against the current CAS release is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
+
 ## SAML Endpoints
 
 The following CAS endpoints respond to supported SAML2 profiles:
 
 - `/idp/profile/SAML2/Redirect/SSO`
 - `/idp/profile/SAML2/POST/SSO`
+- `/idp/profile/SAML2/POST-SimpleSign/SSO`
 - `/idp/profile/SAML2/POST/SLO`
 - `/idp/profile/SAML2/Redirect/SLO`
 - `/idp/profile/SAML2/Unsolicited/SSO`
@@ -50,7 +55,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 The following CAS endpoints handle the generation of SAML2 metadata:
 
-- `/cas/idp/metadata`
+- `/idp/metadata`
 
 This endpoint will display the CAS IdP SAML2 metadata upon receiving a GET request. If metadata is already available and generated,
 it will be displayed. If metadata is absent, one will be generated automatically.
@@ -176,6 +181,11 @@ The following fields are available for SAML services:
 | `attributeNameFormats` | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response.
 | `nameIdQualifier` | If defined, will overwrite the `NameQualifier` attribute of the produced subject's name id.
 | `serviceProviderNameIdQualifier` | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject's name id.
+| `skipGeneratingAssertionNameId` | Whether generation of a name identifer should be skipped for assertions. Default is `false`.
+| `skipGeneratingSubjectConfirmationInResponseTo` | Whether generation of the `InResponseTo` element should be skipped for subject confirmations. Default is `false`.
+| `skipGeneratingSubjectConfirmationNotOnOrAfter` | Whether generation of the `NotOnOrBefore` element should be skipped for subject confirmations. Default is `false`.
+| `skipGeneratingSubjectConfirmationRecipient` | Whether generation of the `Recipient` element should be skipped for subject confirmations. Default is `false`.
+| `skipGeneratingSubjectConfirmationNotBefore` | Whether generation of the `NotBefore` element should be skipped for subject confirmations. Default is `true`.
 
 
 ### Metadata Aggregates
@@ -214,8 +224,7 @@ Attribute name formats can be specified per relying party in the service registr
   "serviceId" : "the-entity-id-of-the-sp",
   "name": "SAML Service",
   "id": 100001,
-  "attributeNameFormats":
-  {
+  "attributeNameFormats": {
     "@class": "java.util.HashMap",
     "attributeName": "basic|uri|unspecified|custom-format-etc"
   }
@@ -274,6 +283,49 @@ In the event that an aggregate is defined containing multiple entity ids, the be
   }
 }
 ```
+
+#### Entity Attributes Filter
+
+This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attribute attributes that match certain values.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+    "entityAttributeValues" : [ "java.util.LinkedHashSet", [ "entity-attribute-value" ] ],
+    "entityAttribute" : "http://somewhere.org/category-x",
+    "entityAttributeFormat" : "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
+  }
+}
+```
+
+The specification of `entityAttributeFormat` is optional.
+
+#### Requested Attributes Filter
+
+This attribute release policy authorizes the release of defined attributes, based on the accompanying metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+    "useFriendlyName" : false
+  }
+}
+```
+
+The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
 
 ### Name ID Selection
 

@@ -132,7 +132,7 @@ public final class DigestUtils {
         try {
             final MessageDigest digest = getMessageDigestInstance(alg);
             Arrays.stream(data).forEach(d -> digest.update(d.getBytes()));
-            return digest.digest(salt.getBytes());
+            return digest.digest(salt.getBytes(StandardCharsets.UTF_8));
         } catch (final Exception cause) {
             throw new SecurityException(cause);
         }

@@ -10,11 +10,13 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.Response;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
@@ -45,8 +47,10 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flowDefinitionRegistry the flow definition registry
      */
     public DefaultWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                    final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices, flowDefinitionRegistry);
+                                    final FlowDefinitionRegistry flowDefinitionRegistry,
+                                    final ApplicationContext applicationContext,
+                                    final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override

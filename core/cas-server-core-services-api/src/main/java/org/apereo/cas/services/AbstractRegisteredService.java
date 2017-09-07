@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -41,8 +40,8 @@ import java.util.Set;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
-        columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
+@DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING,
+        columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class AbstractRegisteredService implements RegisteredService {
@@ -337,7 +336,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.usernameAttributeProvider = usernameProvider;
     }
 
-    @JsonIgnore
     @Override
     public LogoutType getLogoutType() {
         return this.logoutType;
