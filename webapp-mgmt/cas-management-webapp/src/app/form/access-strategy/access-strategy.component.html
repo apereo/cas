@@ -55,7 +55,7 @@
     <h5>Required Attributes</h5>
   </md-card-title>
   <div class="cardContent">
-    <app-mappedattributes [attributes]="data.service.accessStrategy.requiredAttributes"></app-mappedattributes>
+    <app-rejectedattributes [attributes]="data.service.accessStrategy.requiredAttributes"></app-rejectedattributes>
   </div>
 </md-card>
 
@@ -100,7 +100,7 @@
       <h5>Rejected Attributes</h5>
     </md-card-title>
     <div class="cardContent">
-    <app-rejectedattributes></app-rejectedattributes>
+    <app-rejectedattributes [attributes]="data.service.accessStrategy.rejectedAttributes"></app-rejectedattributes>
     </div>
   </md-card>
 
