@@ -20,38 +20,32 @@ node {
 
 npm_install.dependsOn(npm_cache_clean)
 
-task buildClientDev(type: NpmTask, dependsOn: 'npm_install') {
-  group = 'bootRun'
-  description = 'Compile client side folder for development'
-  args = ['run','buildDev']
+task buildClientDev(type: NpmTask, dependsOn: 'npm_install', group: 'bootRun', description: "Compile client side folder for development") {
+  args = ['run', 'buildDev']
 }
 
-task buildClient(type:NpmTask, dependsOn:'npm_install')   {
-  group = 'build'
-  description = "Compile client side folder for production"
-  args = ['run','build']
+task buildClient(type: NpmTask, dependsOn: 'npm_install', group: 'build', description: "Compile client side folder for production") {
+  args = ['run', 'build']
 }
 
-task buildClientWatch(type: NpmTask, dependsOn: 'npm_install')  {
-  group = 'application'
-  description = "Build and watches the client side assets for rebuilding"
-  args = ['run','buildWatch']
+task buildClientWatch(type: NpmTask, dependsOn: 'npm_install', group: 'application', description: "Build and watches the client side assets for rebuilding") {
+  args = ['run', 'buildWatch']
 }
 
 bootRun {
-    addResources = true
-    systemProperties = System.properties
-    def list = []
-    if (rootProject.enableRemoteDebugging) {
-        list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
-    }
-    if (rootProject.enableJRebelAgent) {
-        def lib = System.getProperty("JREBEL_LIB_PATH")
-        list.add("-agentpath:$lib")
-        list.add("-Drebel.remoting_plugin=true")
-    }
-    jvmArgs = list
-    dependsOn(buildClientDev)
+  addResources = true
+  systemProperties = System.properties
+  def list = []
+  if (rootProject.enableRemoteDebugging) {
+    list.add("-Xrunjdwp:transport=dt_socket,address=5006,server=y,suspend=n")
+  }
+  if (rootProject.enableJRebelAgent) {
+    def lib = System.getProperty("JREBEL_LIB_PATH")
+    list.add("-agentpath:$lib")
+    list.add("-Drebel.remoting_plugin=true")
+  }
+  jvmArgs = list
+  dependsOn(buildClientDev)
 }
 
 springBoot {
@@ -66,22 +60,20 @@ bootRepackage {
 war {
   def currentTime = java.time.ZonedDateTime.now()
 
-    manifest {
-        attributes("Implementation-Title": project.name,
-                "Implementation-Vendor": project.group,
-                "Created-By": project.group,
-                "Implementation-Date": currentTime,
-                "Specification-Version": rootProject.currentRevision,
-                "Implementation-Version": project.version)
-    }
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
-    dependsOn(buildClient)
+  manifest {
+    attributes("Implementation-Title": project.name,
+      "Implementation-Vendor": project.group,
+      "Created-By": project.group,
+      "Implementation-Date": currentTime,
+      "Specification-Version": rootProject.currentRevision,
+      "Implementation-Version": project.version)
+  }
+  enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+  dependsOn(buildClient)
 }
 
-task angularTest(type: NpmTask, dependsOn: 'npm_install')  {
-  group = 'test'
-  description = "Run Angular unit tests"
-  args = ['run','testSingleRun']
+task angularTest(type: NpmTask, dependsOn: 'npm_install', group: 'test', description: "Run Angular unit tests") {
+  args = ['run', 'testSingleRun']
 }
 
 dependencies {
