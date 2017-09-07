@@ -26,7 +26,18 @@ public interface OneTimeTokenRepository {
      *
      * @param uid the uid
      * @param otp the otp
-     * @return true/false.
+     * @return true /false.
      */
-    boolean exists(String uid, Integer otp);
+    default boolean exists(final String uid, final Integer otp) {
+        return get(uid, otp) != null;
+    }
+
+    /**
+     * Get one time token.
+     *
+     * @param uid the uid
+     * @param opt the opt
+     * @return the one time token
+     */
+    OneTimeToken get(String uid, Integer opt);
 }

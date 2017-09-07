@@ -55,6 +55,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private String username;
 
     public OneTimeTokenAccount() {
+        setId(java.lang.System.currentTimeMillis());
     }
 
     /**
@@ -70,6 +71,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
                                @JsonProperty("secretKey") final String secretKey,
                                @JsonProperty("validationCode") final int validationCode,
                                @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
+        this();
         this.secretKey = secretKey;
         this.validationCode = validationCode;
         this.scratchCodes = scratchCodes;
@@ -93,8 +95,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     }
 
     public long getId() {
-		return id;
-	}
+        return id;
+    }
 
     public void setId(final long id) {
         this.id = id;

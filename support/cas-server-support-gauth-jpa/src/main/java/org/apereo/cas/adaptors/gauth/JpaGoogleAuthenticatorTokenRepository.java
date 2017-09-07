@@ -48,7 +48,7 @@ public class JpaGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepos
     }
     
     @Override
-    public boolean exists(final String uid, final Integer otp) {
+    public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
             final GoogleAuthenticatorToken r =
                     this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorToken.class.getSimpleName()
@@ -56,10 +56,10 @@ public class JpaGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepos
                             .setParameter("userId", uid)
                             .setParameter("token", otp)
                             .getSingleResult();
-            return r != null;
+            return r;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
         }
-        return false;
+        return null;
     }
 }

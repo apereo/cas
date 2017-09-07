@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -22,7 +21,8 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,19 +41,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
 /**
- * This is {@link MongoDbGoogleAuthenticatorTokenRepositoryTests}.
+ * This is {@link GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {
-                MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
+                GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests.MongoTestConfiguration.class,
                 GoogleAuthenticatorMongoDbConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
@@ -81,33 +82,19 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-public class MongoDbGoogleAuthenticatorTokenRepositoryTests {
+public class GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests {
 
     @Autowired
-    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
-    private OneTimeTokenRepository repository;
+    @Qualifier("googleAuthenticatorAccountRegistry")
+    private OneTimeTokenCredentialRepository registry;
 
     @Test
-    public void verifyTokenSave() {
-        final GoogleAuthenticatorToken token = new GoogleAuthenticatorToken(1234, "casuser");
-        repository.store(token);
-        assertTrue(repository.exists("casuser", 1234));
-        assertTrue(token.getId() > 0);
+    public void verifySave() {
+        registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
+        final OneTimeTokenAccount s = registry.get("uid");
+        assertEquals(s.getSecretKey(), "secret");
     }
 
-    @Test
-    public void verifyTokensWithUniqueIdsSave() {
-        final GoogleAuthenticatorToken token = new GoogleAuthenticatorToken(1234, "casuser");
-        repository.store(token);
-
-        final GoogleAuthenticatorToken token2 = new GoogleAuthenticatorToken(5678, "casuser");
-        repository.store(token2);
-        
-        assertTrue(token.getId() > 0);
-        assertTrue(token2.getId() > 0);
-        assertNotEquals(token.getId(), token2.getId());
-    }
-    
     @TestConfiguration
     public static class MongoTestConfiguration {
         @Autowired
@@ -118,5 +105,4 @@ public class MongoDbGoogleAuthenticatorTokenRepositoryTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
 }

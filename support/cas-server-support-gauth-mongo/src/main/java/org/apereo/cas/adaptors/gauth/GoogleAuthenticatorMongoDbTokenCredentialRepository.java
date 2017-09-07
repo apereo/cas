@@ -15,21 +15,21 @@ import javax.persistence.NoResultException;
 import java.util.List;
 
 /**
- * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepository}.
+ * This is {@link GoogleAuthenticatorMongoDbTokenCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
+public class GoogleAuthenticatorMongoDbTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbGoogleAuthenticatorTokenCredentialRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorMongoDbTokenCredentialRepository.class);
 
     private final IGoogleAuthenticator googleAuthenticator;
 
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
-    public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
+    public GoogleAuthenticatorMongoDbTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                                final MongoOperations mongoTemplate,
                                                                final String collectionName,
                                                                final boolean dropCollection) {
@@ -54,15 +54,12 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
     }
 
     @Override
-    public String getSecret(final String username) {
+    public OneTimeTokenAccount get(final String username) {
         try {
             final Query query = new Query();
             query.addCriteria(Criteria.where("username").is(username));
             final GoogleAuthenticatorAccount r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
-
-            if (r != null) {
-                return r.getSecretKey();
-            }
+            return r;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }

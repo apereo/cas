@@ -22,8 +22,9 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
     private static final long serialVersionUID = 2441775052626253711L;
 
     public GoogleAuthenticatorAccount() {
-       super();
+        super();
     }
+
     /**
      * Instantiates a new Google authenticator account.
      *
@@ -38,6 +39,5 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
                                       @JsonProperty("validationCode") final int validationCode,
                                       @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
         super(username, secretKey, validationCode, scratchCodes);
-	this.setId(java.lang.System.currentTimeMillis());
     }
 }

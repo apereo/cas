@@ -22,9 +22,9 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     }
 
     @Override
-    public String getSecret(final String userName) {
+    public OneTimeTokenAccount get(final String userName) {
         if (contains(userName)) {
-            return this.accounts.get(userName).getSecretKey();
+            return this.accounts.get(userName);
         }
         return null;
     }
