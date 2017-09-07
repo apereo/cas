@@ -8,17 +8,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -87,9 +83,9 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The PGTs associated to this ticket.
      */
-    @OneToMany(targetEntity = TicketGrantingTicketImpl.class, mappedBy = "ticketGrantingTicket", fetch = FetchType.EAGER)
-    @JsonIgnore
-    private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
+    @Lob
+    @Column(name = "PROXY_GRANTING_TICKETS", nullable = false, length = Integer.MAX_VALUE)
+    private HashMap<String, Service> proxyGrantingTickets = new HashMap<>();
 
     /**
      * The ticket ids which are tied to this ticket.
@@ -97,7 +93,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Lob
     @Column(name = "DESCENDANT_TICKETS", nullable = false, length = Integer.MAX_VALUE)
     private HashSet<String> descendantTickets = new HashSet<>();
-    
+
     /**
      * Instantiates a new ticket granting ticket impl.
      */
@@ -183,8 +179,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     protected void trackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         update();
 
-        service.setPrincipal(getRoot().getAuthentication().getPrincipal());
-
+        service.setPrincipal(getRoot().getAuthentication().getPrincipal().getId());
         if (onlyTrackMostRecentSession) {
             final String path = normalizePath(service);
             final Collection<Service> existingServices = this.services.values();
@@ -219,9 +214,9 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public synchronized Map<String, Service> getServices() {
         return new HashMap<>(this.services);
     }
-
+    
     @Override
-    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+    public Map<String, Service> getProxyGrantingTickets() {
         return this.proxyGrantingTickets;
     }
 
@@ -264,6 +259,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return if the TGT is expired.
      */
     @Override
+    @JsonIgnore
     public boolean isExpiredInternal() {
         return this.expired;
     }
@@ -287,7 +283,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public Service getProxiedBy() {
         return this.proxiedBy;
     }
-    
+
     @Override
     public String getPrefix() {
         return TicketGrantingTicket.PREFIX;

@@ -5,8 +5,8 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
-        final PasswordEncoder encoder = Beans.newPasswordEncoder(properties.getJdbc().getPasswordEncoder());
+        final PasswordEncoder encoder = PasswordEncoderUtils.newPasswordEncoder(properties.getJdbc().getPasswordEncoder());
         final String password = encoder.encode(bean.getPassword());
         final int count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, c.getId());
         return count > 0;

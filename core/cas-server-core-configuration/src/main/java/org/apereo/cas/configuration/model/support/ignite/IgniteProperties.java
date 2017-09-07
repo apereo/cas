@@ -2,11 +2,11 @@ package org.apereo.cas.configuration.model.support.ignite;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,7 +40,7 @@ public class IgniteProperties implements Serializable {
      * <li>Both port1 and port2 should be greater than 0.</li>
      * </ul>
      */
-    private List<String> igniteAddress = Arrays.asList("localhost:47500");
+    private List<String> igniteAddress = CollectionUtils.wrap("localhost:47500");
 
     /**
      * Settings related to tickets cache.

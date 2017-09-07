@@ -51,8 +51,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                         final HttpServletResponse response,
                         final Object assertion, final SamlRegisteredService service,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                        final String binding)
-            throws SamlException {
+                        final String binding) throws SamlException {
         return buildNameId(authnRequest, assertion, service, adaptor);
     }
 

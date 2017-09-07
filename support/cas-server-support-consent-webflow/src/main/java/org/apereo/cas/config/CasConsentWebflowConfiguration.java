@@ -1,12 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
-import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
@@ -18,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -43,27 +41,18 @@ public class CasConsentWebflowConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
+    
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
-
+    
     @Autowired
     @Qualifier("consentEngine")
     private ConsentEngine consentEngine;
 
     @Autowired
-    @Qualifier("consentRepository")
-    private ConsentRepository consentRepository;
-
+    private ApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -85,8 +74,12 @@ public class CasConsentWebflowConfiguration {
                 authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer consentWebflowConfigurer() {
-        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        final CasWebflowConfigurer w = new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 }

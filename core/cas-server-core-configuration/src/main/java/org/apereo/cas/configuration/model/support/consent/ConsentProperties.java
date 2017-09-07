@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.consent;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -33,6 +35,11 @@ public class ConsentProperties implements Serializable {
     private Rest rest = new Rest();
 
     /**
+     * Keep consent decisions stored via LDAP user records.
+     */
+    private Ldap ldap = new Ldap();
+    
+    /**
      * Keep consent decisions stored via JDBC resources.
      */
     private Jpa jpa = new Jpa();
@@ -41,6 +48,11 @@ public class ConsentProperties implements Serializable {
      * Keep consent decisions stored via a static JSON resource.
      */
     private Json json = new Json();
+
+    /**
+     * Keep consent decisions stored via a MongoDb database resource.
+     */
+    private MongoDb mongo = new MongoDb();
     
     /**
      * Signing/encryption settings.
@@ -72,6 +84,14 @@ public class ConsentProperties implements Serializable {
         this.jpa = jpa;
     }
 
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
+    }
+
     public int getReminder() {
         return reminder;
     }
@@ -96,6 +116,14 @@ public class ConsentProperties implements Serializable {
         this.rest = rest;
     }
 
+    public MongoDb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
+    }
+
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
@@ -103,7 +131,82 @@ public class ConsentProperties implements Serializable {
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 1646689616653363554L;
     }
+    
+    public static class Ldap extends AbstractLdapProperties {
+        private static final long serialVersionUID = 1L;
+        
+        /**
+         * Type of LDAP directory.
+         */
+        private LdapType type;
+        
+        /**
+         * Name of LDAP attribute that holds consent decisions as JSON.
+         */
+        private String consentAttributeName = "casConsentDecision";
+        /**
+         * Whether subtree searching is allowed.
+         */
+        private boolean subtreeSearch = true;
+        /**
+         * Base DN to use.
+         */
+        private String baseDn;
+        /**
+         * User filter to use for searching.
+         * Syntax is {@code cn={user}} or {@code cn={0}}.
+         */
+        private String userFilter;
 
+        public LdapType getType() {
+            return type;
+        }
+
+        public void setType(final LdapType type) {
+            this.type = type;
+        }
+        
+        public String getConsentAttributeName() {
+            return consentAttributeName;
+        }
+        
+        public void setConsentAttributeName(final String consentAttributeName) {
+            this.consentAttributeName = consentAttributeName;
+        }
+
+        public boolean isSubtreeSearch() {
+            return subtreeSearch;
+        }
+
+        public void setSubtreeSearch(final boolean subtreeSearch) {
+            this.subtreeSearch = subtreeSearch;
+        }
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getUserFilter() {
+            return userFilter;
+        }
+
+        public void setUserFilter(final String userFilter) {
+            this.userFilter = userFilter;
+        }
+    }
+    
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
+        private static final long serialVersionUID = -1918436901491275547L;
+
+        public MongoDb() {
+            setCollection("MongoDbCasConsentRepository");
+        }
+    }
+    
     public static class Rest implements Serializable {
         private static final long serialVersionUID = -6909617495470495341L;
 

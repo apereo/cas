@@ -108,7 +108,10 @@ public class RadiusMultifactorConfiguration {
     @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
-        return new RadiusMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, radiusFlowRegistry());
+        final CasWebflowConfigurer w = new RadiusMultifactorWebflowConfigurer(flowBuilderServices, 
+                loginFlowDefinitionRegistry, radiusFlowRegistry(), applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
     
     /**
@@ -123,8 +126,11 @@ public class RadiusMultifactorConfiguration {
         @Bean
         public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-                    loginFlowDefinitionRegistry);
+            final CasWebflowConfigurer w = new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices, 
+                    loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                    loginFlowDefinitionRegistry, applicationContext, casProperties);
+            w.initialize();
+            return w;
         }
     }
 }
