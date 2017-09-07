@@ -1,3 +1,38 @@
+<div style="display: flex;height:50px;background-color: #153e50;color: #ffffff;border: none;border-radius: 0;margin-bottom: 0;">
+  <div>
+    <a href="manage.html" target="_self" id="homepageUrlLink">
+      <img style="height:25px;" src="images/logo_cas.png" alt="apereo CAS logo" />
+      <h4 style="display: inline-block; margin-top: 16px; font-weight: normal;color:#ffffff;">
+        <ng-container i18n="management.services.header.apptitle">
+          {{ messages.management_services_header_apptitle }}
+        </ng-container>
+      </h4>
+    </a>
+  </div>
+  <div style="flex: 1 1 auto;text-align: center;padding-top:11px;">
+    <input class="search" placeholder="Search">
+  </div>
+  <div style="padding:15px;color:#ffffff;">
+    <a style="color:#ffffff;" id="manageServices" routerLink="/domains">
+      <i class="fa fa-th" aria-hidden="true"></i>
+      <ng-container i18n>Domains</ng-container>
+    </a>
+    <a style="color:#ffffff;" routerLink="/form/-1">
+      <i class="fa fa-plus-circle" aria-hidden="true"></i>
+      <ng-container i18n="managment.services.header.navitem.addNewService">
+        {{ messages.management_services_header_navbar_navitem_addNewService }}
+      </ng-container>
+    </a>
+    <a style="color:#ffffff;"  href="logout?url=/logout.html" target="_self" id="logoutUrlLink">
+      <i class="fa fa-sign-out" aria-hidden="true"></i>
+      <ng-container i18n="management.services.header.navbar.navitem.logout">
+        {{ messages.management_services_header_navbar_navitem_logout }}
+      </ng-container>
+    </a>
+  </div>
+</div>
+
+<!--
 <header id="casmgmt-header">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -44,3 +79,4 @@
     </div>
   </nav>
 </header>
+-->
