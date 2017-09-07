@@ -1,11 +1,10 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -14,11 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +40,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     private static final String DESCRIPTION = "description";
     private static final String TEST_ID = "test";
     private RegisteredServiceSimpleFormController controller;
-    private DefaultServicesManager manager;
+    private DomainServicesManager manager;
     private StubPersonAttributeDao repository;
     private DefaultRegisteredServiceFactory registeredServiceFactory;
 
@@ -58,7 +54,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory(Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
 
-        this.manager = new DefaultServicesManager(new InMemoryServiceRegistry());
+        this.manager = new DomainServicesManager(new InMemoryServiceRegistry());
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
     }
 
@@ -103,7 +99,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
 
-        this.controller.saveService(r);
+        this.controller.saveService(svc);
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
@@ -158,7 +154,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
 
-        final MockRegisteredService svc = new MockRegisteredService();
+        final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription(DESCRIPTION);
         svc.setServiceId("^serviceId");
         svc.setName(NAME);
@@ -169,7 +165,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
+        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof RegexRegisteredService));
     }
 
     @Test
@@ -179,7 +175,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
 
-        final MockRegisteredService r = new MockRegisteredService();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId(TEST_ID);
@@ -194,16 +190,6 @@ public class RegisteredServiceSimpleFormControllerTests {
         final RegisteredService r2 = this.manager.findServiceBy(1000);
 
         assertEquals("serviceId1", r2.getServiceId());
-        assertTrue(r2 instanceof MockRegisteredService);
+        assertTrue(r2 instanceof RegexRegisteredService);
     }
-
-    private static class MockRegisteredService extends RegexRegisteredService {
-        private static final long serialVersionUID = -7746061989010390744L;
-
-        @Override
-        protected AbstractRegisteredService newInstance() {
-            return new MockRegisteredService();
-        }
-    }
-
 }
