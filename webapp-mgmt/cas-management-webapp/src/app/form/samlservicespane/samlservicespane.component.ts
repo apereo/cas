@@ -48,13 +48,14 @@ export class SamlservicespaneComponent implements OnInit {
 
   doChange(row: Row, val: string) {
     let service: SamlRegisteredService = this.data.service as SamlRegisteredService;
-    service.properties[val] = service.properties[row.key as string];
-    delete service.properties[row.key as string];
+    service.attributeNameFormats[val] = service.attributeNameFormats[row.key as string];
+    delete service.attributeNameFormats[row.key as string];
     row.key = val;
   }
 
   delete(row: Row) {
-    delete this.data.service.properties[row.key as string];
+    let service: SamlRegisteredService = this.data.service as SamlRegisteredService
+    delete service.attributeNameFormats[row.key as string];
     this.attributeDatabase.removeRow(row);
   }
 }
