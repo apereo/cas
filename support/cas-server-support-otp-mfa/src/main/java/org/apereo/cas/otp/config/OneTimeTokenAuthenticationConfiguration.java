@@ -46,7 +46,7 @@ public class OneTimeTokenAuthenticationConfiguration {
     private static final int EXPIRE_TOKENS_IN_SECONDS = 30;
 
     private static final int INITIAL_CACHE_SIZE = 50;
-    private static final long MAX_CACHE_SIZE = 1_000;
+    private static final long MAX_CACHE_SIZE = 1_000_000;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OneTimeTokenAuthenticationConfiguration.class);
 

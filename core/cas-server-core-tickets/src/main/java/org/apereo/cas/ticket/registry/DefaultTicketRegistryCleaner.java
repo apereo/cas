@@ -26,14 +26,14 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     private final TicketRegistry ticketRegistry;
     private final LockingStrategy lockingStrategy;
 
-    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, 
-                                        final LogoutManager logoutManager, 
+    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy,
+                                        final LogoutManager logoutManager,
                                         final TicketRegistry ticketRegistry) {
         this.lockingStrategy = lockingStrategy;
         this.logoutManager = logoutManager;
         this.ticketRegistry = ticketRegistry;
     }
-    
+
     @Override
     public void clean() {
         try {
@@ -73,10 +73,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
                     } else if (ticket instanceof ServiceTicket) {
                         LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
                         return ticketRegistry.deleteTicket(ticket.getId());
-                    } else {
-                        LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
-                        return 0;
                     }
+                    LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
+                    return 0;
                 })
                 .sum();
 
