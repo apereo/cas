@@ -40,4 +40,9 @@ public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
     protected void setEventPublisher(final ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
+
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

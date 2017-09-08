@@ -21,4 +21,7 @@ org.apereo.cas.config.CasSamlSPEvernoteConfiguration,\
 org.apereo.cas.config.CasSamlSPAsanaConfiguration,\
 org.apereo.cas.config.CasSamlSPArcGISConfiguration,\
 org.apereo.cas.config.CasSamlSPOpenAthensConfiguration,\
+org.apereo.cas.config.CasSamlSPEverBridgeConfiguration,\
+org.apereo.cas.config.CasSamlSPCherWellConfiguration,\
+org.apereo.cas.config.CasSamlSPBynderConfiguration,\
 org.apereo.cas.config.CasSamlSPInCommonConfiguration

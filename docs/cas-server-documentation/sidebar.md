@@ -64,6 +64,7 @@ layout: null
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
+    *   [GUA](/$version/installation/GUA-Authentication.html)
     
 * [Attributes](#casattributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
@@ -89,7 +90,6 @@ layout: null
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
-    *   [GUA](/$version/installation/GUA-Authentication.html)
     
 *   [SSO & SLO](#ssoandslo) 
     *   [SSO Session](/$version/installation/Configuring-SSO-Session-Cookie.html)
