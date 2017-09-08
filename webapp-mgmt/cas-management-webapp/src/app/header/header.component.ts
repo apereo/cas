@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Messages} from "../messages";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-header',
@@ -10,9 +11,14 @@ export class HeaderComponent implements OnInit {
 
   isAdmin: boolean = false;
 
-  constructor(public messages: Messages) { }
+  constructor(public messages: Messages,
+              public router: Router) { }
 
   ngOnInit() {
+  }
+
+  search(query: String) {
+    this.router.navigate(['search']);
   }
 
 }

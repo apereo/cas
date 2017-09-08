@@ -10,7 +10,7 @@
     </a>
   </div>
   <div class="searchbox">
-    <input class="search" placeholder="Search Services">
+    <input (change)="search($event)" class="search" placeholder="Search Services">
   </div>
   <div class="links">
     <button md-button routerLink="/domains">

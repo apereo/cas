@@ -171,6 +171,14 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<RegisteredServiceViewBean>> search(@RequestParam String query) {
+        final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
+        final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
+        serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
+        return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
+    }
+
     /**
      * Method will update the order of two services passed in.
      *

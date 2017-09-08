@@ -7,6 +7,10 @@
   border-radius: 0;
   margin-bottom: 0;
   border-bottom: 1px solid #6ec066;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  top:0px;
 }
 
 .brand > img {
