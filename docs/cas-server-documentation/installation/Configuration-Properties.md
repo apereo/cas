@@ -3042,6 +3042,30 @@ A given attribute that is to be encoded in the final SAML response may contain a
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
 
+<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here simply attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time.</p></div>
+
+The settings defined for each service provider simply attempt to automate the creation of a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering SAML service providers with CAS which would depend on your service registry of choice.
+
+Each SAML service provider supports the following settings:
+
+| Name                  |  Description
+|-----------------------|---------------------------------------------------------------------------
+| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
+| `name`                | The name of the service provider registered in the service registry.
+| `description`         | The description of the service provider registered in the service registry.
+| `nameIdAttribute`     | Attribute to use when generating name ids for this service provider.
+| `nameIdFormat`        | The name of the service provider registered in the service registry.
+| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
+| `signatureLocation`   | Signature location to verify metadata.
+| `entityIds`           | List of entity ids allowed for this service provider.
+| `signResponses`       | Indicate whether responses should be signed. Default is `true`.
+| `signAssertions`      | Indicate whether assertions should be signed. Default is `false`.
+
+
+The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
+
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>The adopter is encouraged to only keep and maintain properties needed for their particular deployment and remove all other optional settings for which there exist sane defaults.</p></div>
+
 ### Dropbox
 
 ```properties
@@ -3069,6 +3093,30 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSp.openAthens.name=openAthens
 # cas.samlSp.openAthens.description=openAthens Integration
 # cas.samlSp.openAthens.attributes=eduPersonPrincipalName,email
+```
+
+### EverBridge
+
+```properties
+# cas.samlSp.everBridge.metadata=/path/to/everBridge-metadata.xml
+# cas.samlSp.everBridge.name=Everbridge
+# cas.samlSp.everBridge.description=EverBridge Integration
+```
+
+### CherWell
+
+```properties
+# cas.samlSp.cherWell.metadata=/path/to/cherwell-metadata.xml
+# cas.samlSp.cherWell.name=CherWell
+# cas.samlSp.cherWell.description=CherWell Integration
+```
+
+### Bynder
+
+```properties
+# cas.samlSp.bynder.metadata=/path/to/bynder-metadata.xml
+# cas.samlSp.bynder.name=Bynder
+# cas.samlSp.bynder.description=Bynder Integration
 ```
 
 ### Web Advisor
@@ -4464,6 +4512,9 @@ This is typically the default ticket registry instance where tickets
 are kept inside the runtime environment memory.
 
 ```properties
+# Enable the backing map to be cacheable
+# cas.ticket.registry.inMemory.cache=true
+
 # cas.ticket.registry.inMemory.loadFactor=1
 # cas.ticket.registry.inMemory.concurrency=20
 # cas.ticket.registry.inMemory.initialCapacity=1000

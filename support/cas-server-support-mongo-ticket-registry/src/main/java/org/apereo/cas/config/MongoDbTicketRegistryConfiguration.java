@@ -57,7 +57,7 @@ public class MongoDbTicketRegistryConfiguration {
         LOGGER.debug("Ticket registry cleaner is not enabled. "
                 + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
                 + "clean up tickets based on expiration and eviction policies.");
-        return new NoOpTicketRegistryCleaner();
+        return NoOpTicketRegistryCleaner.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")

@@ -26,7 +26,7 @@ public class CasEventsInMemoryRepositoryConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEventsInMemoryRepositoryConfiguration.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
-    private static final long MAX_CACHE_SIZE = 1000;
+    private static final long MAX_CACHE_SIZE = 1_000_000;
     private static final long EXPIRATION_TIME = 2;
     
     @Bean

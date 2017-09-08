@@ -26,14 +26,14 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     private final TicketRegistry ticketRegistry;
     private final LockingStrategy lockingStrategy;
 
-    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, 
-                                        final LogoutManager logoutManager, 
+    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy,
+                                        final LogoutManager logoutManager,
                                         final TicketRegistry ticketRegistry) {
         this.lockingStrategy = lockingStrategy;
         this.logoutManager = logoutManager;
         this.ticketRegistry = ticketRegistry;
     }
-    
+
     @Override
     public void clean() {
         try {
@@ -65,22 +65,24 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     protected void cleanInternal() {
         final int ticketsDeleted = ticketRegistry.getTicketsStream()
                 .filter(Ticket::isExpired)
-                .mapToInt(ticket -> {
-                    if (ticket instanceof TicketGrantingTicket) {
-                        LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                        logoutManager.performLogout((TicketGrantingTicket) ticket);
-                        return ticketRegistry.deleteTicket(ticket.getId());
-                    } else if (ticket instanceof ServiceTicket) {
-                        LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                        return ticketRegistry.deleteTicket(ticket.getId());
-                    } else {
-                        LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
-                        return 0;
-                    }
-                })
+                .mapToInt(this::cleanTicket)
                 .sum();
-
         LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+    }
+
+    @Override
+    public int cleanTicket(final Ticket ticket) {
+        if (ticket instanceof TicketGrantingTicket) {
+            LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+            logoutManager.performLogout((TicketGrantingTicket) ticket);
+            return ticketRegistry.deleteTicket(ticket.getId());
+        }
+        if (ticket instanceof ServiceTicket) {
+            LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+            return ticketRegistry.deleteTicket(ticket.getId());
+        }
+        LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
+        return 0;
     }
 
     /**

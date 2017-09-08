@@ -18,16 +18,10 @@ public class ServiceRegistryInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializer.class);
 
-    private ServiceRegistryDao serviceRegistryDao;
-
-    private ServiceRegistryDao jsonServiceRegistryDao;
-
-    private ServicesManager servicesManager;
-
-    private boolean initFromJson;
-
-    public ServiceRegistryInitializer() {
-    }
+    private final ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistryDao jsonServiceRegistryDao;
+    private final ServicesManager servicesManager;
+    private final boolean initFromJson;
 
     public ServiceRegistryInitializer(final ServiceRegistryDao jsonServiceRegistryDao,
                                       final ServiceRegistryDao serviceRegistryDao,
@@ -47,39 +41,45 @@ public class ServiceRegistryInitializer {
         LOGGER.debug("Service registry contains [{}] service definitions", size);
 
         if (!this.initFromJson) {
-            LOGGER.info("The service registry database will not be initialized from JSON services. "
+            LOGGER.info("The service registry database backed by [{}] will not be initialized from JSON services. "
                     + "If the service registry database ends up empty, CAS will refuse to authenticate services "
                     + "until service definitions are added to the registry. To auto-initialize the service registry, "
-                    + "set 'cas.serviceRegistry.initFromJson=true' in your CAS settings.");
+                    + "set 'cas.serviceRegistry.initFromJson=true' in your CAS settings.",
+                    this.serviceRegistryDao.getName());
             return;
         }
 
-        LOGGER.warn("Service registry will be auto-initialized from JSON service definitions. "
+        LOGGER.warn("Service registry [{}] will be auto-initialized from JSON service definitions. "
                 + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
                 + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
-                + "and explicitly register definitions in the services registry.");
-        
+                + "and explicitly register definitions in the services registry.", this.serviceRegistryDao.getName());
+
         final List<RegisteredService> servicesLoaded = this.jsonServiceRegistryDao.load();
         LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
 
         for (final RegisteredService r : servicesLoaded) {
-            RegisteredService match = this.serviceRegistryDao.findServiceById(r.getServiceId());
-            if (match != null) {
-                LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry",
-                        r.getName(), match.getName());
-                continue;
-            }
-            match = this.serviceRegistryDao.findServiceById(r.getId());
-            if (match != null) {
-                LOGGER.warn("Skipping [{}] JSON service definition as a matching numeric id [{}] is found in the registry",
-                        r.getName(), match.getId());
+            if (findExistingMatchForService(r)) {
                 continue;
             }
             LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r);
             this.serviceRegistryDao.save(r);
         }
         this.servicesManager.load();
-        LOGGER.info("Service registry contains [{}] service definitions", this.servicesManager.count());
+        LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistryDao.getName(), this.servicesManager.count());
 
+    }
+
+    private boolean findExistingMatchForService(final RegisteredService r) {
+        RegisteredService match = this.serviceRegistryDao.findServiceById(r.getServiceId());
+        if (match != null) {
+            LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
+            return true;
+        }
+        match = this.serviceRegistryDao.findServiceById(r.getId());
+        if (match != null) {
+            LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match.getId());
+            return true;
+        }
+        return false;
     }
 }

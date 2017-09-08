@@ -40,6 +40,6 @@ public class MemcachedTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new NoOpTicketRegistryCleaner();
+        return NoOpTicketRegistryCleaner.getInstance();
     }
 }

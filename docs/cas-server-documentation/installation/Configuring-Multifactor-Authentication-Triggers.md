@@ -61,7 +61,7 @@ to know what provider to next activate.
 - Trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider.
 This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning provider ids to attributes as values.
 
-Needless to say, the attributes need to have been resolved for the principal prior to this step.
+Needless to say, the attributes need to have been resolved for the principal prior to this step. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 ## Global Principal Attribute Predicate
 
@@ -172,6 +172,16 @@ class SampleGroovyEventResolver {
     }
 }
 ```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `service`             | The object representing the incoming service provided in the request, if any.
+| `registeredServuce`   | The object representing the corresponding service definition in the registry.
+| `authentication`      | The object representing the established authentication event, containing the principal.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
 
 ## REST
 
