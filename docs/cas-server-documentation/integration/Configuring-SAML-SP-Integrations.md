@@ -94,6 +94,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.everbridge.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30205910-a560ec90-949f-11e7-8485-e3a833f8109b.png" height="48" width="120"></a>
 
+<a href="https://sserca.fau.edu/">
+<img src="https://user-images.githubusercontent.com/1205228/30221936-5e90af04-94da-11e7-8046-483fc26a1c01.png" height="48" width="120"></a>
+
 <a href="Google-Apps-Integration.html">
 <img src="https://cloud.githubusercontent.com/assets/1205228/25385497/18e09c84-2979-11e7-94c1-5ad430b3d768.png" height="48" width="120"></a>
 
