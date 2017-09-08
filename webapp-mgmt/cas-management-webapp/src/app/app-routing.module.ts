@@ -23,8 +23,8 @@ import {SearchComponent} from "./search/search.component";
         }
       },
       {
-        path: 'search',
-        component: SearchComponent,
+        path: 'search/:query',
+        component: SearchComponent
       },
       {
         path: 'manage.html',

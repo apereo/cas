@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
@@ -11,7 +11,7 @@ import {ServiceViewBean} from "../../domain/service-view-bean";
 import {DataSource} from "@angular/cdk/collections";
 import {MdPaginator, MdSnackBar} from "@angular/material";
 import {Messages} from "../messages";
-import {Router} from "@angular/router";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {SearchService} from "./SearchService";
 
@@ -24,23 +24,22 @@ export class SearchComponent implements OnInit {
   displayedColumns = ['name','serviceId','description'];
   serviceDatabase = new ServiceDatabase();
   dataSource: ServiceDataSource | null;
+  query: String;
 
   @ViewChild(MdPaginator) paginator: MdPaginator;
 
-  @Input()
-  query: String;
-
   constructor(public messages: Messages,
               public router: Router,
+              public route: ActivatedRoute,
               public location: Location,
               private service: SearchService,
               public snackBar: MdSnackBar) { }
 
   ngOnInit() {
     this.dataSource = new ServiceDataSource(this.serviceDatabase, this.paginator);
-    this.service.search(this.query)
-      .then(resp => this.serviceDatabase.load(resp))
-      .catch(e => this.snackBar.open("Error executing search", "Dismiss"))
+    this.route.paramMap
+        .switchMap((params: ParamMap) => this.service.search(params.get('query')))
+        .subscribe(resp => this.serviceDatabase.load(resp));
   }
 
   goBack() {
@@ -61,6 +60,7 @@ export class ServiceDatabase {
   }
 
   load(services: ServiceViewBean[]) {
+    this.dataChange.next([]);
     for(let service of services) {
       this.addService(service);
     }

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Messages} from "../messages";
 import {Router} from "@angular/router";
+import {Observable} from "rxjs/Observable";
 
 @Component({
   selector: 'app-header',
@@ -9,16 +10,18 @@ import {Router} from "@angular/router";
 })
 export class HeaderComponent implements OnInit {
 
-  isAdmin: boolean = false;
+  @ViewChild("search") search: ElementRef;
 
   constructor(public messages: Messages,
               public router: Router) { }
 
   ngOnInit() {
-  }
-
-  search(query: String) {
-    this.router.navigate(['search']);
+    Observable.fromEvent(this.search.nativeElement, 'keyup')
+      .debounceTime(250)
+      .distinctUntilChanged()
+      .subscribe(() => {
+        this.router.navigate(['search', this.search.nativeElement.value]);
+      });
   }
 
 }
