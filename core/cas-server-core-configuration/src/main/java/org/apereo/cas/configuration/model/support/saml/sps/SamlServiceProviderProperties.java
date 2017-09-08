@@ -130,6 +130,11 @@ public class SamlServiceProviderProperties implements Serializable {
     private Bynder bynder = new Bynder();;
 
     /**
+     * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
+     */
+    private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();;
+    
+    /**
      * Settings related to EverBridge acting as a SAML service provider.
      */
     private EverBridge everBridge = new EverBridge();;
@@ -138,6 +143,14 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to CherWell acting as a SAML service provider.
      */
     private CherWell cherWell = new CherWell();;
+
+    public SunshineStateEdResearchAlliance getSserca() {
+        return sserca;
+    }
+
+    public void setSserca(final SunshineStateEdResearchAlliance sserca) {
+        this.sserca = sserca;
+    }
 
     public CherWell getCherWell() {
         return cherWell;
@@ -624,6 +637,13 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -3168960591734555088L;
 
         public EverBridge() {
+        }
+    }
+
+    public static class SunshineStateEdResearchAlliance extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3168960591734555088L;
+
+        public SunshineStateEdResearchAlliance() {
         }
     }
 

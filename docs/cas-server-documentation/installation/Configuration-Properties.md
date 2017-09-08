@@ -3103,6 +3103,14 @@ The only required setting that would activate the automatic configuration for a 
 # cas.samlSp.everBridge.description=EverBridge Integration
 ```
 
+### Sunshine State Education and Research Computing Alliance
+
+```properties
+# cas.samlSp.sserca.metadata=/path/to/sserca-metadata.xml
+# cas.samlSp.sserca.name=SSERCA
+# cas.samlSp.sserca.description=SSERCA Integration
+```
+
 ### CherWell
 
 ```properties
