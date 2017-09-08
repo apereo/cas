@@ -3095,6 +3095,30 @@ The only required setting that would activate the automatic configuration for a 
 # cas.samlSp.openAthens.attributes=eduPersonPrincipalName,email
 ```
 
+### EverBridge
+
+```properties
+# cas.samlSp.everBridge.metadata=/path/to/everBridge-metadata.xml
+# cas.samlSp.everBridge.name=Everbridge
+# cas.samlSp.everBridge.description=EverBridge Integration
+```
+
+### CherWell
+
+```properties
+# cas.samlSp.cherWell.metadata=/path/to/cherwell-metadata.xml
+# cas.samlSp.cherWell.name=CherWell
+# cas.samlSp.cherWell.description=CherWell Integration
+```
+
+### Bynder
+
+```properties
+# cas.samlSp.bynder.metadata=/path/to/bynder-metadata.xml
+# cas.samlSp.bynder.name=Bynder
+# cas.samlSp.bynder.description=Bynder Integration
+```
+
 ### Web Advisor
 
 ```properties
