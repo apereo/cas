@@ -18,9 +18,11 @@ A cache-backed implementation is recommended for HA deployments, while the defau
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ticket-registry).
 
-### Default (In-Memory) Ticket Registry
+### Default Ticket Registry
 
-The default registry uses a memory-backed internal map for ticket storage and retrieval.
+The default registry uses a memory-backed internal conurrent map for ticket storage and retrieval, though there is also the option
+to use an implementation that is backed by a caching engine to gain slightly better performance when it comes to eviciting expired tickets.
+
 This component does not preserve ticket state across restarts and is not a suitable solution
 for clustered CAS environments that are deployed in active/active mode.
 

@@ -58,4 +58,12 @@ public interface ServiceRegistryDao {
      * @since 5.0.0
      */
     long size();
+
+    /**
+     * Returns the friendly name of this registry.
+     *
+     * @return the name.
+     * @since 5.2.0
+     */
+    String getName();
 }
