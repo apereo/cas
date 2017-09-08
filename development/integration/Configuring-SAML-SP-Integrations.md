@@ -85,6 +85,15 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.gartner.com/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/25349422/a29a98f6-28d6-11e7-9d10-e286d0080cbe.png" height="48" width="120"></a>
 
+<a href="https://www.cherwell.com/">
+<img src="https://user-images.githubusercontent.com/1205228/30205883-84174ebc-949f-11e7-9afc-a66c2ab19f59.png" height="48" width="120"></a>
+
+<a href="https://www.bynder.com">
+<img src="https://user-images.githubusercontent.com/1205228/30205852-69921a5e-949f-11e7-8326-ba4c00fceba4.png" height="48" width="120"></a>
+
+<a href="https://www.everbridge.com/">
+<img src="https://user-images.githubusercontent.com/1205228/30205910-a560ec90-949f-11e7-8485-e3a833f8109b.png" height="48" width="120"></a>
+
 <a href="Google-Apps-Integration.html">
 <img src="https://cloud.githubusercontent.com/assets/1205228/25385497/18e09c84-2979-11e7-94c1-5ad430b3d768.png" height="48" width="120"></a>
 
