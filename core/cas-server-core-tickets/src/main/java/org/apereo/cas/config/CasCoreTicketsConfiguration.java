@@ -57,6 +57,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -90,6 +91,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketsConfiguration.class);
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -213,16 +217,16 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator());
     }
 
-    @Autowired
     @ConditionalOnMissingBean(name = "ticketRegistry")
     @Bean
-    public TicketRegistry ticketRegistry(@Qualifier("logoutManager") final LogoutManager logoutManager) {
+    public TicketRegistry ticketRegistry() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                 + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
         final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
 
         if (mem.isCache()) {
+            final LogoutManager logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
         return new DefaultTicketRegistry(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency(), cipher);

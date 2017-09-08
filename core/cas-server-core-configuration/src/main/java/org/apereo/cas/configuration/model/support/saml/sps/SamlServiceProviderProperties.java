@@ -124,6 +124,58 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private Zendesk zendesk = new Zendesk();
 
+    /**
+     * Settings related to Bynder acting as a SAML service provider.
+     */
+    private Bynder bynder = new Bynder();;
+
+    /**
+     * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
+     */
+    private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();;
+    
+    /**
+     * Settings related to EverBridge acting as a SAML service provider.
+     */
+    private EverBridge everBridge = new EverBridge();;
+
+    /**
+     * Settings related to CherWell acting as a SAML service provider.
+     */
+    private CherWell cherWell = new CherWell();;
+
+    public SunshineStateEdResearchAlliance getSserca() {
+        return sserca;
+    }
+
+    public void setSserca(final SunshineStateEdResearchAlliance sserca) {
+        this.sserca = sserca;
+    }
+
+    public CherWell getCherWell() {
+        return cherWell;
+    }
+
+    public void setCherWell(final CherWell cherWell) {
+        this.cherWell = cherWell;
+    }
+
+    public EverBridge getEverBridge() {
+        return everBridge;
+    }
+
+    public void setEverBridge(final EverBridge everBridge) {
+        this.everBridge = everBridge;
+    }
+
+    public Bynder getBynder() {
+        return bynder;
+    }
+
+    public void setBynder(final Bynder bynder) {
+        this.bynder = bynder;
+    }
+
     public Gartner getGartner() {
         return gartner;
     }
@@ -564,6 +616,34 @@ public class SamlServiceProviderProperties implements Serializable {
             setNameIdFormat("emailAddress");
             setNameIdAttribute("email");
             setAttributes(CollectionUtils.wrapList("organization", "tags", "phone", "role"));
+        }
+    }
+
+    public static class Bynder extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3168960591734555088L;
+
+        public Bynder() {
+        }
+    }
+
+    public static class CherWell extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3168960591734555088L;
+
+        public CherWell() {
+        }
+    }
+    
+    public static class EverBridge extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3168960591734555088L;
+
+        public EverBridge() {
+        }
+    }
+
+    public static class SunshineStateEdResearchAlliance extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3168960591734555088L;
+
+        public SunshineStateEdResearchAlliance() {
         }
     }
 
