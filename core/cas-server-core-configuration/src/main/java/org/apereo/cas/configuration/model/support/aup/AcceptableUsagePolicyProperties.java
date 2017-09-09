@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.aup;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import java.io.Serializable;
 
@@ -23,7 +24,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      * Control AUP via Redis.
      */
     private Jdbc jdbc = new Jdbc();
-    
+
+    /**
+     * Control AUP via Redis.
+     */
+    private Rest rest = new Rest();
+
     /**
      * AUP attribute to choose in order to determine whether policy
      * has been accepted or not.
@@ -36,6 +42,14 @@ public class AcceptableUsagePolicyProperties implements Serializable {
 
     public void setAupAttributeName(final String aupAttributeName) {
         this.aupAttributeName = aupAttributeName;
+    }
+
+    public Rest getRest() {
+        return rest;
+    }
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
     }
 
     public Jdbc getJdbc() {
@@ -70,7 +84,11 @@ public class AcceptableUsagePolicyProperties implements Serializable {
             this.tableName = tableName;
         }
     }
-    
+
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = -8102345678378393382L;
+    }
+
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -7991011278378393382L;
         /**
@@ -99,5 +117,5 @@ public class AcceptableUsagePolicyProperties implements Serializable {
             this.userFilter = userFilter;
         }
     }
-    
+
 }
