@@ -4994,6 +4994,17 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 ```
 
+#### REST
+
+```properties
+# cas.acceptableUsagePolicy.rest.method=GET|POST
+# cas.acceptableUsagePolicy.rest.order=0
+# cas.acceptableUsagePolicy.rest.caseInsensitive=false
+# cas.acceptableUsagePolicy.rest.basicAuthUsername=uid
+# cas.acceptableUsagePolicy.rest.basicAuthPassword=password
+# cas.acceptableUsagePolicy.rest.url=https://rest.somewhere.org/attributes
+```
+
 #### JDBC
 
 If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance.
