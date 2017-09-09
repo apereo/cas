@@ -4994,6 +4994,37 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 ```
 
+#### JDBC
+
+If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance.
+
+```properties
+# cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
+
+# cas.acceptableUsagePolicy.jdbc.validationQuery=SELECT 1
+# cas.acceptableUsagePolicy.jdbc.maxWait=5000
+# cas.acceptableUsagePolicy.jdbc.healthQuery=
+# cas.acceptableUsagePolicy.jdbc.isolateInternalQueries=false
+# cas.acceptableUsagePolicy.jdbc.url=jpa:hsqldb:mem:cas-hsql-database
+# cas.acceptableUsagePolicy.jdbc.failFastTimeout=1
+# cas.acceptableUsagePolicy.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.acceptableUsagePolicy.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.acceptableUsagePolicy.jdbc.leakThreshold=10
+# cas.acceptableUsagePolicy.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.acceptableUsagePolicy.jdbc.batchSize=1
+# cas.acceptableUsagePolicy.jdbc.user=sa
+# cas.acceptableUsagePolicy.jdbc.ddlAuto=create-drop
+# cas.acceptableUsagePolicy.jdbc.maxAgeDays=180
+# cas.acceptableUsagePolicy.jdbc.password=
+# cas.acceptableUsagePolicy.jdbc.autocommit=false
+# cas.acceptableUsagePolicy.jdbc.driverClass=org.hsqldb.jpaDriver
+# cas.acceptableUsagePolicy.jdbc.idleTimeout=5000
+# cas.acceptableUsagePolicy.jdbc.dataSourceName=
+# cas.acceptableUsagePolicy.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.acceptableUsagePolicy.jdbc.properties.propertyName=propertyValue
+```
+
 #### LDAP
 
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.

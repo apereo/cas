@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 
 import java.io.Serializable;
@@ -19,6 +20,11 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private Ldap ldap = new Ldap();
 
     /**
+     * Control AUP via Redis.
+     */
+    private Jdbc jdbc = new Jdbc();
+    
+    /**
      * AUP attribute to choose in order to determine whether policy
      * has been accepted or not.
      */
@@ -32,6 +38,14 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         this.aupAttributeName = aupAttributeName;
     }
 
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc redis) {
+        this.jdbc = redis;
+    }
+
     public Ldap getLdap() {
         return ldap;
     }
@@ -40,6 +54,23 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         this.ldap = ldap;
     }
 
+    public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = -1325011278378393385L;
+
+        /**
+         * The table name in the database that holds the AUP attribute to update for the user.
+         */
+        private String tableName;
+
+        public String getTableName() {
+            return tableName;
+        }
+
+        public void setTableName(final String tableName) {
+            this.tableName = tableName;
+        }
+    }
+    
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -7991011278378393382L;
         /**

@@ -16,7 +16,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-actions-aup-webflow</artifactId>
+  <artifactId>cas-server-support-aup-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
@@ -52,7 +52,32 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-actions-aup-ldap</artifactId>
+  <artifactId>cas-server-support-aup-ldap</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-1).
+
+### JDBC
+
+CAS can be configured to use a database as the storage mechanism. This option allows the deployer
+to detect the current user's policy choice via a CAS single-valued `boolean` attribute.
+The attribute must be resolved using
+the [CAS attribute resolution strategy](../integration/Attribute-Resolution.html).
+If the attribute contains a value of `false`, CAS will attempt to
+ask for policy acceptance. Upon accepting the policy, the result will be stored back into the database and
+remembered via the same attribute. The adopter is expected to provide a table name where the decision is kept
+and the table is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-aup-jdbc</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
