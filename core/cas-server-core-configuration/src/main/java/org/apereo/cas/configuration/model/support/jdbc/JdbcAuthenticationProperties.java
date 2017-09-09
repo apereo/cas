@@ -24,7 +24,7 @@ public class JdbcAuthenticationProperties implements Serializable {
      * Supports settings for number of iterations as well as private salt.
      * This password encoding method combines the private Salt and the public salt which it prepends to the password
      * before hashing. If multiple iterations
-     * are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
+     * are used, the byte code hash of the first iteration is rehashed without the salt values. The final hash
      * is converted to hex before comparing it to the database value.
      */
     private List<QueryEncodeJdbcAuthenticationProperties> encode = new ArrayList();
