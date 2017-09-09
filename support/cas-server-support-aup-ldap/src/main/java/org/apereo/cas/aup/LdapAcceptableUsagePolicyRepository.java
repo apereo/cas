@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.aup.AbstractPrincipalAttributeAcceptableUsagePolicyRepository;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
