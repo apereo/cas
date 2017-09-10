@@ -123,26 +123,49 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Zendesk acting as a SAML service provider.
      */
     private Zendesk zendesk = new Zendesk();
-
     /**
      * Settings related to Bynder acting as a SAML service provider.
      */
-    private Bynder bynder = new Bynder();;
-
+    private Bynder bynder = new Bynder();
     /**
      * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
      */
-    private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();;
+    private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();
     
     /**
      * Settings related to EverBridge acting as a SAML service provider.
      */
-    private EverBridge everBridge = new EverBridge();;
-
+    private EverBridge everBridge = new EverBridge();
     /**
      * Settings related to CherWell acting as a SAML service provider.
      */
-    private CherWell cherWell = new CherWell();;
+    private CherWell cherWell = new CherWell();
+    /**
+     * Settings related to CherWell acting as a SAML service provider.
+     */
+    private Egnyte egnyte = new Egnyte();
+    
+    /**
+     * Settings related to CherWell acting as a SAML service provider.
+     */
+    private NewRelic newRelic = new NewRelic();
+    
+
+    public Egnyte getEgnyte() {
+        return egnyte;
+    }
+
+    public void setEgnyte(final Egnyte egnyte) {
+        this.egnyte = egnyte;
+    }
+
+    public NewRelic getNewRelic() {
+        return newRelic;
+    }
+
+    public void setNewRelic(final NewRelic newRelic) {
+        this.newRelic = newRelic;
+    }
 
     public SunshineStateEdResearchAlliance getSserca() {
         return sserca;
@@ -632,7 +655,21 @@ public class SamlServiceProviderProperties implements Serializable {
         public CherWell() {
         }
     }
-    
+
+    public static class NewRelic extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3168960591734555088L;
+
+        public NewRelic() {
+        }
+    }
+
+    public static class Egnyte extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3168960591734555088L;
+
+        public Egnyte() {
+        }
+    }
+
     public static class EverBridge extends AbstractSamlSPProperties {
         private static final long serialVersionUID = -3168960591734555088L;
 
