@@ -3095,12 +3095,28 @@ The only required setting that would activate the automatic configuration for a 
 # cas.samlSp.openAthens.attributes=eduPersonPrincipalName,email
 ```
 
+### Egnyte
+
+```properties
+# cas.samlSp.egnyte.metadata=/path/to/egnyte-metadata.xml
+# cas.samlSp.egnyte.name=Egnyte
+# cas.samlSp.egnyte.description=Egnyte Integration
+```
+
 ### EverBridge
 
 ```properties
 # cas.samlSp.everBridge.metadata=/path/to/everBridge-metadata.xml
 # cas.samlSp.everBridge.name=Everbridge
 # cas.samlSp.everBridge.description=EverBridge Integration
+```
+
+### New Relic
+
+```properties
+# cas.samlSp.newRelic.metadata=/path/to/newRelic-metadata.xml
+# cas.samlSp.newRelic.name=NewRelic
+# cas.samlSp.newRelic.description=New Relic Integration
 ```
 
 ### Sunshine State Education and Research Computing Alliance
