@@ -63,6 +63,20 @@ If you intend to use a database for auditing functionality, enable the following
 To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-audits).
 
+## MongoDb Audits
+
+If you intend to use a MongoDb database for auditing functionality, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-mongo</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-audits).
+
 ## Audit Events
 
 The following events are tracked and recorded in the audit log:
