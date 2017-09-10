@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 
 import java.io.Serializable;
@@ -67,6 +68,11 @@ public class AuditProperties implements Serializable {
     private Jdbc jdbc = new Jdbc();
 
     /**
+     * Family of sub-properties pertaining to MongoDb-based audit destinations.
+     */
+    private MongoDb mongo = new MongoDb();
+
+    /**
      * The audit format to use in the logs.
      */
     private AbstractStringAuditTrailManager.AuditFormats auditFormat =
@@ -77,6 +83,14 @@ public class AuditProperties implements Serializable {
      * or whether errors should bubble up and thrown back.
      */
     private boolean ignoreAuditFailures;
+
+    public MongoDb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
+    }
 
     public Jdbc getJdbc() {
         return jdbc;
@@ -193,6 +207,14 @@ public class AuditProperties implements Serializable {
 
         public void setIsolationLevelName(final String isolationLevelName) {
             this.isolationLevelName = isolationLevelName;
+        }
+    }
+
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
+        private static final long serialVersionUID = 4940497540189318943L;
+
+        public MongoDb() {
+            setCollection("MongoDbCasAuditRepository");
         }
     }
 }
