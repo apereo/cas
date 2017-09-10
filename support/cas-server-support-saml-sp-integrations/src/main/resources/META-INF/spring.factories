@@ -20,6 +20,8 @@ org.apereo.cas.config.CasSamlSPZoomConfiguration,\
 org.apereo.cas.config.CasSamlSPSunshineStateEdResearchAllianceConfiguration,\
 org.apereo.cas.config.CasSamlSPEvernoteConfiguration,\
 org.apereo.cas.config.CasSamlSPAsanaConfiguration,\
+org.apereo.cas.config.CasSamlSPNewRelicConfiguration,\
+org.apereo.cas.config.CasSamlSPEgnyteConfiguration,\
 org.apereo.cas.config.CasSamlSPArcGISConfiguration,\
 org.apereo.cas.config.CasSamlSPOpenAthensConfiguration,\
 org.apereo.cas.config.CasSamlSPEverBridgeConfiguration,\
