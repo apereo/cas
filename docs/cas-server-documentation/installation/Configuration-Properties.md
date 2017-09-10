@@ -3839,6 +3839,28 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.useServerHostAddress=false
 ```
 
+### MongoDb Audits
+
+Store audit logs inside a MongoDb database.
+
+```properties
+# cas.audit.mongo.idleTimeout=30000
+# cas.audit.mongo.port=27017
+# cas.audit.mongo.dropCollection=false
+# cas.audit.mongo.socketKeepAlive=false
+# cas.audit.mongo.password=
+# cas.audit.mongo.collection=cas-audit-database
+# cas.audit.mongo.databaseName=cas-mongo-database
+# cas.audit.mongo.timeout=5000
+# cas.audit.mongo.userId=
+# cas.audit.mongo.writeConcern=NORMAL
+# cas.audit.mongo.authenticationDatabaseName=
+# cas.audit.mongo.replicaSet=
+# cas.audit.mongo.ssEnabled=false
+# cas.audit.mongo.conns.lifetime=60000
+# cas.audit.mongo.conns.perHost=10
+```
+
 ### Database Audits
 
 Store audit logs inside a database.
