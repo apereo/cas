@@ -22,7 +22,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Services Registry
 
-The [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and settings, needs to be configured in the same exact way for the management web application. 
+The [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and settings, needs to be configured in the same exact way for the management web application.
 
 ## Authentication Method
 
