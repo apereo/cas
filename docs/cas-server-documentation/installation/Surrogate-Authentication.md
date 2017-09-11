@@ -153,7 +153,7 @@ Upon a successful surrogate authentication event, the following attributes are c
 | Attribute             | Instructions
 |-----------------------|-----------------|--------------------------------------------------------------
 | `surrogateEnabled`    | Boolean to indicate whether session is impersonated.
-| `surrogatePrincipal`  | The admin user whose credentials are validated and acts as as the impersonator.
+| `surrogatePrincipal`  | The admin user whose credentials are validated and acts as the impersonator.
 | `surrogateUser`       | The surrogate user that is impersonated.
 
 ## Surrogate Authorization
