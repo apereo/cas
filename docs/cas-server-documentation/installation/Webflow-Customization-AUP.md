@@ -92,3 +92,24 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+
+### Custom
+
+If you wish to design your own storage mechanism, you may follow the below approach:
+
+```java
+package org.apereo.cas.custom;
+
+@Configuration("myUsagePolicyConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyUsagePolicyConfiguration {
+
+    @Bean
+    public SurrogateAuthenticationService surrogateAuthenticationService() {
+      ...
+    }
+
+}
+```
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
