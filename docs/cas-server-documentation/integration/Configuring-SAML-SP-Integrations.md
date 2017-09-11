@@ -103,6 +103,12 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.egnyte.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30247063-218f3962-9620-11e7-9ba4-54f7112fee13.png" height="48" width="120"></a>
 
+<a href="https://www.yuja.com/">
+<img src="https://user-images.githubusercontent.com/1205228/30271142-6dd0b58c-9704-11e7-9138-0b86d5799403.png" height="48" width="100"></a>
+
+<a href="https://www.symplicity.com/">
+<img src="https://user-images.githubusercontent.com/1205228/30271318-192b48fc-9705-11e7-9c18-3be401a39e84.png" height="48" width="120"></a>
+
 <a href="Google-Apps-Integration.html">
 <img src="https://cloud.githubusercontent.com/assets/1205228/25385497/18e09c84-2979-11e7-94c1-5ad430b3d768.png" height="48" width="120"></a>
 
