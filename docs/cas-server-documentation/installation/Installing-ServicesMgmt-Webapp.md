@@ -15,8 +15,7 @@ You <strong>MUST</strong> keep in mind that both applications (the CAS server an
 share the <strong>same</strong> service registry configuration for CAS services.
 </p></div>
 
-A sample overlay for the services management webapp is provided
- here: [https://github.com/apereo/cas-services-management-overlay](https://github.com/apereo/cas-services-management-overlay)
+A template overlay for the services management webapp is [provided here](https://github.com/apereo/cas-services-management-overlay).
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
