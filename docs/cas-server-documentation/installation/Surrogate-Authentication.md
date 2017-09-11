@@ -108,7 +108,7 @@ package org.apereo.cas.custom;
 public class MySurrogateConfiguration {
 
     @Bean
-    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
+    public SurrogateAuthenticationService surrogateAuthenticationService() {
       ...
     }
 
