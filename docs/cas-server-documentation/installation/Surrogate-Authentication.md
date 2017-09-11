@@ -91,10 +91,31 @@ REST support for surrogate authentication is enabled by including the following 
 
 | Method       | Description                                                   | Parameter(s)             | Response
 |--------------|---------------------------------------------------------------|--------------------------------------
-| `GET`        | Whether principal can authenricate as a surrogate account.    | `surrogate`, `principal` | `202`
+| `GET`        | Whether principal can authenticate as a surrogate account.    | `surrogate`, `principal` | `202`
 | `GET`        | List of accounts principal is eligible to impersonate.        | `principal` | JSON list of usernames.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-surrogate-accounts).
+
+### Custom
+
+If you wish to design your own account store, you may follow the below approach:
+
+```java
+package org.apereo.cas.custom;
+
+@Configuration("mySurrogateConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MySurrogateConfiguration {
+
+    @Bean
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
+      ...
+    }
+
+}
+```
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 ## Account Selection
 
