@@ -1,0 +1,38 @@
+<header id="casmgmt-header">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+
+            <div class="navbar-header">
+                <a href="manage.html" target="_self" id="homepageUrlLink">
+                    <div class="navbar-brand">
+                        <img th:src="@{/images/logo_cas.png}" alt="apereo CAS logo" />
+                    </div>
+                    <h4 th:text="#{management.services.header.apptitle}"/>
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="casmgt-navbar-collapse">
+                <ul class="nav navbar-nav navbar-right quicklinks">
+                    <li>
+                        <a id="manageServices" href="javascript://" ng-click="action.homepage()">
+                            <i class="fa fa-th" aria-hidden="true"></i>
+                            <span th:text="#{management.services.header.navbar.navitem.manageService}" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript://" ng-click="action.serviceAdd()">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                            <span th:text="#{management.services.header.navbar.navitem.addNewService}" />
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/logout?url=/logout.html}" target="_self" id="logoutUrlLink">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            <span th:text="#{management.services.header.navbar.navitem.logout}" />
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

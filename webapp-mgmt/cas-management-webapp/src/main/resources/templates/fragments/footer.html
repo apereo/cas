@@ -1,0 +1,32 @@
+<footer id="casmgmt-footer">
+    <div class="row">
+        <div class="col-sm-10">
+            <span th:text="#{footer.links}" />
+            <ul class="nav-campus-sites list-inline">
+                <li><a href="https://www.apereo.org/cas"
+                       rel="_blank" th:text="#{footer.homePage}"/></li>
+
+                <li><a href="https://apereo.github.io/cas"
+                       rel="_blank" th:text="#{footer.wiki}"/></li>
+
+                <li><a href="https://github.com/apereo/cas/issues"
+                       rel="_blank" th:text="#{footer.issueTracker}" /></li>
+
+                <li><a href="https://apereo.github.io/cas/Mailing-Lists.html" rel="_blank" th:text="#{footer.mailingLists}"/></li>
+            </ul>
+            <div class="copyright">
+                <p>
+                    <span th:utext="#{footer.copyright}" />
+                    <span th:utext="#{footer.poweredBy(${T(org.apereo.cas.util.CasVersion).getVersion()})}" />
+                </p>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="jasig-link">
+                <a href="https://www.apereo.org" _target="blank" title="Apereo CAS Home Page">
+                    <img th:src="@{/images/logo_apereo.png}" /></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
