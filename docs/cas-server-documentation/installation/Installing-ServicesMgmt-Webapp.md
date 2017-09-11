@@ -44,6 +44,8 @@ and will grant access if an attribute name matches the value of `adminRoles` def
 
 ### LDAP
 
+Access to the management web application may also be controlled directly by querying an LDAP server.
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
