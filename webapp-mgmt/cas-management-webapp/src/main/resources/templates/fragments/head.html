@@ -1,0 +1,9 @@
+<head>
+    <title th:text="#{management.services.header.apptitle}"/>
+    <meta name="version" th:content="${T(org.apereo.cas.util.CasVersion).getVersion()}" />
+    <meta name="_csrf" content="${pac4jCsrfToken}"/>
+    <meta name="_csrf_header" content="pac4jCsrfToken"/>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/cas-management.css}" />
+
+</head>
