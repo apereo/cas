@@ -361,10 +361,11 @@ public final class LdapUtils {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
             final List<AttributeModification> mods = attributes.entrySet()
-                    .stream().map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
-                            new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{})))).collect(Collectors.toList());
-            final ModifyRequest request = new ModifyRequest(currentDn,
-                    mods.toArray(new AttributeModification[]{}));
+                    .stream()
+                    .map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
+                            new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{}))))
+                    .collect(Collectors.toList());
+            final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
             request.setReferralHandler(new ModifyReferralHandler());
             operation.execute(request);
             return true;
