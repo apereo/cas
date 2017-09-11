@@ -131,7 +131,7 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
      */
     private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();
-    
+
     /**
      * Settings related to EverBridge acting as a SAML service provider.
      */
@@ -144,15 +144,37 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to CherWell acting as a SAML service provider.
      */
     private Egnyte egnyte = new Egnyte();
-    
     /**
      * Settings related to CherWell acting as a SAML service provider.
      */
     private NewRelic newRelic = new NewRelic();
-    
+    /**
+     * Settings related to Yuja acting as a SAML service provider.
+     */
+    private Yuja yuja = new Yuja();
+    /**
+     * Settings related to Symplicity acting as a SAML service provider.
+     */
+    private Symplicity symplicity = new Symplicity();
 
     public Egnyte getEgnyte() {
         return egnyte;
+    }
+
+    public Yuja getYuja() {
+        return yuja;
+    }
+
+    public void setYuja(final Yuja yuja) {
+        this.yuja = yuja;
+    }
+
+    public Symplicity getSymplicity() {
+        return symplicity;
+    }
+
+    public void setSymplicity(final Symplicity symplicity) {
+        this.symplicity = symplicity;
     }
 
     public void setEgnyte(final Egnyte egnyte) {
@@ -657,28 +679,42 @@ public class SamlServiceProviderProperties implements Serializable {
     }
 
     public static class NewRelic extends AbstractSamlSPProperties {
-        private static final long serialVersionUID = -3168960591734555088L;
+        private static final long serialVersionUID = -3268960591734555088L;
 
         public NewRelic() {
         }
     }
 
+    public static class Yuja extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -1168960591734555088L;
+
+        public Yuja() {
+        }
+    }
+
+    public static class Symplicity extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -3178960591734555088L;
+
+        public Symplicity() {
+        }
+    }
+
     public static class Egnyte extends AbstractSamlSPProperties {
-        private static final long serialVersionUID = -3168960591734555088L;
+        private static final long serialVersionUID = -3168760591734555088L;
 
         public Egnyte() {
         }
     }
 
     public static class EverBridge extends AbstractSamlSPProperties {
-        private static final long serialVersionUID = -3168960591734555088L;
+        private static final long serialVersionUID = -5168960591734555088L;
 
         public EverBridge() {
         }
     }
 
     public static class SunshineStateEdResearchAlliance extends AbstractSamlSPProperties {
-        private static final long serialVersionUID = -3168960591734555088L;
+        private static final long serialVersionUID = -5558960591734555088L;
 
         public SunshineStateEdResearchAlliance() {
         }
