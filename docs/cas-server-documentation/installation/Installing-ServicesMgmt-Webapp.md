@@ -5,9 +5,9 @@ title: CAS - Services Management Webapp
 # Services Management Webapp
 
 The services management webapp is no longer part of the CAS server and
-is a standalone web application.
+is a standalone Spring Boot web application that ships with an embedded Apache Tomcat container.
 
-* The management webapp is used to add/edit/delete all the CAS services
+* The management webapp is used to add/edit/delete all the CAS services.
 * The CAS server loads/relies on all these defined CAS services to process all incoming requests.
 
 <div class="alert alert-warning"><strong>Synchronized Configuration</strong><p>
@@ -15,14 +15,13 @@ You <strong>MUST</strong> keep in mind that both applications (the CAS server an
 share the <strong>same</strong> service registry configuration for CAS services.
 </p></div>
 
-A sample overlay for the services management webapp is provided
- here: [https://github.com/apereo/cas-services-management-overlay](https://github.com/apereo/cas-services-management-overlay)
+A template overlay for the services management webapp is [provided here](https://github.com/apereo/cas-services-management-overlay).
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
 ## Services Registry
 
-The [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server.
+The [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and settings, needs to be configured in the same exact way for the management web application.
 
 ## Authentication Method
 
@@ -44,6 +43,8 @@ Alternatively, the authorization generator examines the CAS validation response 
 and will grant access if an attribute name matches the value of `adminRoles` defined in the configuration.
 
 ### LDAP
+
+Access to the management web application may also be controlled directly by querying an LDAP server.
 
 Support is enabled by including the following dependency in the WAR overlay:
 

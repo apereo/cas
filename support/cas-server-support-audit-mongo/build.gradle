@@ -1,0 +1,15 @@
+description = "Apereo CAS MongoDb Audit Support"
+dependencies {
+	api project(":api:cas-server-core-api")
+ 
+    implementation libraries.mongo
+    implementation project(":core:cas-server-core-util")
+    implementation project(":support:cas-server-support-mongo-core")
+ 
+    provided project(":core:cas-server-core-audit")
+ 
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}
