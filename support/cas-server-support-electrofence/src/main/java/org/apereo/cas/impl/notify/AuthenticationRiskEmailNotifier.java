@@ -1,7 +1,7 @@
 package org.apereo.cas.impl.notify;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
 
     @Override
     public void publish() {
-        final RiskBasedAuthenticationProperties.Response.Mail mail =
+        final EmailProperties mail =
                 casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
 
         final Principal principal = authentication.getPrincipal();

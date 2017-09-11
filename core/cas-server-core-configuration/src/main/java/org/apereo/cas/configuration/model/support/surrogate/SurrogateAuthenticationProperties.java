@@ -1,9 +1,12 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -48,6 +51,36 @@ public class SurrogateAuthenticationProperties implements Serializable {
      */
     private Tgt tgt = new Tgt();
 
+    /**
+     * Email settings for notifications,
+     * If an authentication attempt is deemed risky.
+     */
+    @NestedConfigurationProperty
+    private EmailProperties mail = new EmailProperties();
+
+    /**
+     * SMS settings for notifications,
+     * If an authentication attempt is deemed risky.
+     */
+    @NestedConfigurationProperty
+    private SmsProperties sms = new SmsProperties();
+
+    public EmailProperties getMail() {
+        return mail;
+    }
+
+    public void setMail(final EmailProperties mail) {
+        this.mail = mail;
+    }
+
+    public SmsProperties getSms() {
+        return sms;
+    }
+
+    public void setSms(final SmsProperties sms) {
+        this.sms = sms;
+    }
+    
     public Rest getRest() {
         return rest;
     }
