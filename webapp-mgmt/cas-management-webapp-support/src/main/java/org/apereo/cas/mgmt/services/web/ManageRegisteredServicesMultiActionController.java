@@ -105,7 +105,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param session the session
      * @return the view name.
      */
-    @GetMapping(value = "/logout")
+    @GetMapping(value = "/logout.html")
     public String logoutView(final HttpServletRequest request, final HttpSession session) {
         LOGGER.debug("Invalidating application session...");
         session.invalidate();

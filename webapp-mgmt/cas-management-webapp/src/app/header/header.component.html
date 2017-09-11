@@ -23,7 +23,7 @@
         {{ messages.management_services_header_navbar_navitem_addNewService }}
       </span>
     </button>
-    <button md-button target="_self" id="logoutUrlLink">
+    <button md-button target="_self" id="logoutUrlLink" (click)="logout()">
       <md-icon>exit_to_app</md-icon>
       <ng-container i18n="management.services.header.navbar.navitem.logout">
         {{ messages.management_services_header_navbar_navitem_logout }}

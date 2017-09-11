@@ -2,6 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Messages} from "../messages";
 import {Router} from "@angular/router";
 import {Observable} from "rxjs/Observable";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,8 @@ export class HeaderComponent implements OnInit {
   @ViewChild("search") search: ElementRef;
 
   constructor(public messages: Messages,
-              public router: Router) { }
+              public router: Router,
+              public location: Location) { }
 
   ngOnInit() {
     Observable.fromEvent(this.search.nativeElement, 'keyup')
@@ -22,6 +24,10 @@ export class HeaderComponent implements OnInit {
       .subscribe(() => {
         this.router.navigate(['search', this.search.nativeElement.value]);
       });
+  }
+
+  logout() {
+    window.location.href = "logout.html";
   }
 
 }
