@@ -7,11 +7,11 @@ title: CAS - Delegate Authentication
 
 CAS can act as a client using the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
 
-* A CAS server
-* A SAML identity provider
-* An OAuth2 provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers.
-* An OpenID provider
-* An OpenID Connect identity provider
+* CAS servers
+* SAML2 identity providers
+* OAuth2 providers such as Facebook, Twitter, Google, LinkedIn, Yahoo, etc
+* OpenID providers
+* OpenID Connect identity providers
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -24,7 +24,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 <div class="alert alert-info"><strong>Remember</strong><p>Delegated authentication always assumes the originator of the authentication request is a CAS client; an
-application that understands CAS protocol and can validate a service ticket. Clients that use other protocols (SAML2, OAuth, etc) with CAS cannot today take advantage of delegated authentication scenarios though support for this behavior may be worked out in future releases.</p></div>
+application that understands CAS protocol and can validate a service ticket. Clients that use other protocols (SAML2, OAuth, etc) with CAS cannot today take advantage of delegated authentication scenarios. Support for this behavior may be worked out in future releases.</p></div>
 
 ## Register Providers
 
