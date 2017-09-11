@@ -16,7 +16,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-actions-aup-webflow</artifactId>
+  <artifactId>cas-server-support-aup-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
@@ -31,6 +31,13 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Usage policy user decisions are stored and remembered via the following ways. 
 
+In almost all storage strategies, CAS allows the deployer
+to detect the current user's policy choice via a CAS single-valued `boolean` attribute.
+The attribute must be resolved using
+the [CAS attribute resolution strategy](../integration/Attribute-Resolution.html).
+If the attribute contains a value of `false`, CAS will attempt to
+ask for policy acceptance. Upon accepting the policy, the result will be stored back into storage.
+
 ### Default
 
 By default the task of remembering the user's choice is kept in memory by default and will be lost upon
@@ -39,20 +46,49 @@ and demos and is not at all suitable for production.
 
 ### LDAP
 
-Alternatively, CAS can be configured to use LDAP as the storage mechanism. This option allows the deployer
-to detect the current user's policy choice via a CAS single-valued `boolean` attribute.
-The attribute must be resolved using
-the [CAS attribute resolution strategy](../integration/Attribute-Resolution.html).
-If the attribute contains a value of `false`, CAS will attempt to
-ask for policy acceptance. Upon accepting the policy, the result will be stored back into LDAP and
-remembered via the same attribute.
+Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon accepting the policy, the result will be stored back into LDAP and
+remembered via the same attribute. Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-aup-ldap</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-1).
+
+### JDBC
+
+CAS can be configured to use a database as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a table name where the 
+decision is kept and the table is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-actions-aup-ldap</artifactId>
+  <artifactId>cas-server-support-aup-jdbc</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+
+### REST
+
+CAS can be configured to use a REST API as the storage mechanism. Upon accepting the policy, the API is contacted passing along a `username` parameter
+who has accepted the policy. The expected response status code is `200`.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-aup-rest</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).

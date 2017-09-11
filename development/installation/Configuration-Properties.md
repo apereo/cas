@@ -3095,12 +3095,36 @@ The only required setting that would activate the automatic configuration for a 
 # cas.samlSp.openAthens.attributes=eduPersonPrincipalName,email
 ```
 
+### Egnyte
+
+```properties
+# cas.samlSp.egnyte.metadata=/path/to/egnyte-metadata.xml
+# cas.samlSp.egnyte.name=Egnyte
+# cas.samlSp.egnyte.description=Egnyte Integration
+```
+
 ### EverBridge
 
 ```properties
 # cas.samlSp.everBridge.metadata=/path/to/everBridge-metadata.xml
 # cas.samlSp.everBridge.name=Everbridge
 # cas.samlSp.everBridge.description=EverBridge Integration
+```
+
+### New Relic
+
+```properties
+# cas.samlSp.newRelic.metadata=/path/to/newRelic-metadata.xml
+# cas.samlSp.newRelic.name=NewRelic
+# cas.samlSp.newRelic.description=New Relic Integration
+```
+
+### Sunshine State Education and Research Computing Alliance
+
+```properties
+# cas.samlSp.sserca.metadata=/path/to/sserca-metadata.xml
+# cas.samlSp.sserca.name=SSERCA
+# cas.samlSp.sserca.description=SSERCA Integration
 ```
 
 ### CherWell
@@ -3813,6 +3837,28 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
 # cas.audit.useServerHostAddress=false
+```
+
+### MongoDb Audits
+
+Store audit logs inside a MongoDb database.
+
+```properties
+# cas.audit.mongo.idleTimeout=30000
+# cas.audit.mongo.port=27017
+# cas.audit.mongo.dropCollection=false
+# cas.audit.mongo.socketKeepAlive=false
+# cas.audit.mongo.password=
+# cas.audit.mongo.collection=cas-audit-database
+# cas.audit.mongo.databaseName=cas-mongo-database
+# cas.audit.mongo.timeout=5000
+# cas.audit.mongo.userId=
+# cas.audit.mongo.writeConcern=NORMAL
+# cas.audit.mongo.authenticationDatabaseName=
+# cas.audit.mongo.replicaSet=
+# cas.audit.mongo.ssEnabled=false
+# cas.audit.mongo.conns.lifetime=60000
+# cas.audit.mongo.conns.perHost=10
 ```
 
 ### Database Audits
@@ -4984,6 +5030,48 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
+```
+
+#### REST
+
+```properties
+# cas.acceptableUsagePolicy.rest.method=GET|POST
+# cas.acceptableUsagePolicy.rest.order=0
+# cas.acceptableUsagePolicy.rest.caseInsensitive=false
+# cas.acceptableUsagePolicy.rest.basicAuthUsername=uid
+# cas.acceptableUsagePolicy.rest.basicAuthPassword=password
+# cas.acceptableUsagePolicy.rest.url=https://rest.somewhere.org/attributes
+```
+
+#### JDBC
+
+If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance.
+
+```properties
+# cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
+
+# cas.acceptableUsagePolicy.jdbc.validationQuery=SELECT 1
+# cas.acceptableUsagePolicy.jdbc.maxWait=5000
+# cas.acceptableUsagePolicy.jdbc.healthQuery=
+# cas.acceptableUsagePolicy.jdbc.isolateInternalQueries=false
+# cas.acceptableUsagePolicy.jdbc.url=jpa:hsqldb:mem:cas-hsql-database
+# cas.acceptableUsagePolicy.jdbc.failFastTimeout=1
+# cas.acceptableUsagePolicy.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.acceptableUsagePolicy.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.acceptableUsagePolicy.jdbc.leakThreshold=10
+# cas.acceptableUsagePolicy.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.acceptableUsagePolicy.jdbc.batchSize=1
+# cas.acceptableUsagePolicy.jdbc.user=sa
+# cas.acceptableUsagePolicy.jdbc.ddlAuto=create-drop
+# cas.acceptableUsagePolicy.jdbc.maxAgeDays=180
+# cas.acceptableUsagePolicy.jdbc.password=
+# cas.acceptableUsagePolicy.jdbc.autocommit=false
+# cas.acceptableUsagePolicy.jdbc.driverClass=org.hsqldb.jpaDriver
+# cas.acceptableUsagePolicy.jdbc.idleTimeout=5000
+# cas.acceptableUsagePolicy.jdbc.dataSourceName=
+# cas.acceptableUsagePolicy.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.acceptableUsagePolicy.jdbc.properties.propertyName=propertyValue
 ```
 
 #### LDAP
