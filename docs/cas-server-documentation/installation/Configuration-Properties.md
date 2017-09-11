@@ -3127,6 +3127,22 @@ The only required setting that would activate the automatic configuration for a 
 # cas.samlSp.everBridge.description=EverBridge Integration
 ```
 
+### Symplicity
+
+```properties
+# cas.samlSp.symplicity.metadata=/path/to/symplicity-metadata.xml
+# cas.samlSp.symplicity.name=Symplicity
+# cas.samlSp.symplicity.description=Symplicity Integration
+```
+
+### Yuja
+
+```properties
+# cas.samlSp.yuja.metadata=/path/to/yuja-metadata.xml
+# cas.samlSp.yuja.name=Yuja
+# cas.samlSp.yuja.description=Yuja Integration
+```
+
 ### New Relic
 
 ```properties
