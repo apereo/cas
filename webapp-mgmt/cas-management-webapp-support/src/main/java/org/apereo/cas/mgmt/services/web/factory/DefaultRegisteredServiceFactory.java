@@ -54,8 +54,8 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
         if (svc.getLogo() != null) {
             bean.setLogoUrl(svc.getLogo().toString());
         }
-        mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(),bean);
-        mapProxyPolicy(svc.getProxyPolicy(),bean);
+        mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
+        mapProxyPolicy(svc.getProxyPolicy(), bean);
 
         return bean;
     }
