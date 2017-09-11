@@ -181,7 +181,7 @@ A sample service definition follows:
 }
 ```
 
-The surrogate access strategy is only activated if the establish authentication and SSO session is one of impersonation. In the above example, surrogate access to the application matching `testId` is allowed only if the authenticated primary user carries an attribute `givenName` which contains a value of `Administrator`. While the surrogate authentication session will also not take part in SSO, a *normal* authentication session however will.
+The surrogate access strategy is only activated if the establish authentication and SSO session is one of impersonation. In the above example, surrogate access to the application matching `testId` is allowed only if the authenticated primary user carries an attribute `givenName` which contains a value of `Administrator`. 
 
 ## Surrogate Audits
 
