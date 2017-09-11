@@ -1,6 +1,5 @@
 package org.apereo.cas.support.events.authentication.surrogate;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
