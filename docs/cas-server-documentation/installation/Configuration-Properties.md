@@ -1341,6 +1341,22 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.rest.basicAuthPassword=
 ```
 
+### Notifications
+
+```properties
+# cas.authn.surrogate.sms.from=
+# cas.authn.surrogate.sms.text=
+# cas.authn.surrogate.sms.attributeName=phone
+
+# cas.authn.surrogate.mail.from=
+# cas.authn.surrogate.mail.text=
+# cas.authn.surrogate.mail.subject=
+# cas.authn.surrogate.mail.cc=
+# cas.authn.surrogate.mail.bcc=
+# cas.authn.surrogate.mail.attributeName=mail
+
+```
+
 ## Risk-based Authentication
 
 Evaluate suspicious authentication requests and take action.
