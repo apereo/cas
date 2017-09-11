@@ -95,7 +95,13 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/30205910-a560ec90-949f-11e7-8485-e3a833f8109b.png" height="48" width="120"></a>
 
 <a href="https://sserca.fau.edu/">
-<img src="https://user-images.githubusercontent.com/1205228/30221936-5e90af04-94da-11e7-8046-483fc26a1c01.png" height="48" width="120"></a>
+<img src="https://user-images.githubusercontent.com/1205228/30221936-5e90af04-94da-11e7-8046-483fc26a1c01.png" height="48" width="220"></a>
+
+<a href="https://newrelic.com/new">
+<img src="https://user-images.githubusercontent.com/1205228/30247067-541cef96-9620-11e7-88d7-c3749ba55ecf.png" height="48" width="90"></a>
+
+<a href="https://www.egnyte.com/">
+<img src="https://user-images.githubusercontent.com/1205228/30247063-218f3962-9620-11e7-9ba4-54f7112fee13.png" height="48" width="120"></a>
 
 <a href="Google-Apps-Integration.html">
 <img src="https://cloud.githubusercontent.com/assets/1205228/25385497/18e09c84-2979-11e7-94c1-5ad430b3d768.png" height="48" width="120"></a>
