@@ -12,6 +12,9 @@ import {HeaderComponent} from "./header/header.component";
 import {SharedModule} from "./shared/shared.module";
 import {FormModule} from "./form/form.module";
 import { DeleteComponent } from './delete/delete.component';
+import {DomainsModule} from "./domains/domains.module";
+import { SearchComponent } from './search/search.component';
+import {SearchService} from "./search/SearchService";
 
 
 @NgModule({
@@ -20,6 +23,7 @@ import { DeleteComponent } from './delete/delete.component';
     BrowserAnimationsModule,
     FormsModule,
     HttpModule,
+    DomainsModule,
     ServicesModule,
     FormModule,
     SharedModule,
@@ -28,13 +32,15 @@ import { DeleteComponent } from './delete/delete.component';
   declarations: [
     AppComponent,
     HeaderComponent,
-    DeleteComponent
+    DeleteComponent,
+    SearchComponent
   ],
   entryComponents: [
     DeleteComponent
   ],
   providers: [
-    Messages
+    Messages,
+    SearchService
   ],
   bootstrap: [AppComponent]
 })

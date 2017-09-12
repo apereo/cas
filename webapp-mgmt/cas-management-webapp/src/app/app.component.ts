@@ -10,7 +10,7 @@ import {Messages} from "./messages";
 export class AppComponent {
 
   constructor(private router: Router, public messages: Messages) {
-    router.navigate(['/services']);
+    router.navigate(['/domains']);
   }
 
 }

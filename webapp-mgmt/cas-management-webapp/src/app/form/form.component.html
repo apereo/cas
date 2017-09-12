@@ -1,5 +1,4 @@
-<div class="casmgmt-form service-editor form-horizontal" autocomplete="off" id="serviceForm"
-      novalidate="novalidate">
+<div style="position:fixed;width: 100%; z-index: 1000;background-color: #f2f2f2; top: 51px" autocomplete="off" novalidate="novalidate">
 
   <app-saveformtop (save)="saveForm()"></app-saveformtop>
 
@@ -65,7 +64,7 @@
       </ng-template>
     </md-tab>
   </md-tab-group>
-
+</div>
+<div style="position:relative;top:90px;margin-bottom:30px;">
   <router-outlet name="form"></router-outlet>
-
 </div>
