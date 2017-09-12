@@ -14,7 +14,7 @@ The default monitors report back brief memory and ticket stats. There is nothing
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#monitoring)
 and [this guide](Configuration-Properties.html#memory).
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably report on ticket statistics, you are at the mercy of the underlying ticket registry to support the behavior in a performant manner which means thatthe infrastructure and network capabilities and latencies must be considered. This might have become relevant in clustered deployments as depending on the ticket registry of choice, CAS may need to <i>interrogate</i> the entire cluster to calculate ticket usage.</p></div>
+<div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably report on ticket statistics, you are at the mercy of the underlying ticket registry to support the behavior in a performant manner which means that the infrastructure and network capabilities and latencies must be considered and carefully tuned. This might have become specially relevant in clustered deployments as depending on the ticket registry of choice, CAS may need to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
 
 ## Memcached
 
