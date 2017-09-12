@@ -49,7 +49,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:8.2.2"
+        classpath "com.netflix.nebula:gradle-lint-plugin:8.3.1"
         classpath "org.standardout:gradle-versioneye-plugin:1.5.0"
         classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
         classpath "com.gradle:build-scan-plugin:1.0"
@@ -57,7 +57,7 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
-        classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.5"
+        classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.7"
     }
 }
 

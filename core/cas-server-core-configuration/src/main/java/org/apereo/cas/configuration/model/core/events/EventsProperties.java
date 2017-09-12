@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.events;
 
+import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 
@@ -33,11 +34,22 @@ public class EventsProperties implements Serializable {
      * Track authentication events inside a database.
      */
     private Jpa jpa = new Jpa();
-
+    /**
+     * Track authentication events inside an influxdb database.
+     */
+    private InfluxDb influxDb = new InfluxDb();
     /**
      * Track authentication events inside a mongodb instance.
      */
     private MongoDb mongodb = new MongoDb();
+
+    public InfluxDb getInfluxDb() {
+        return influxDb;
+    }
+
+    public void setInfluxDb(final InfluxDb influxDb) {
+        this.influxDb = influxDb;
+    }
 
     public MongoDb getMongodb() {
         return mongodb;
@@ -80,6 +92,13 @@ public class EventsProperties implements Serializable {
 
         public MongoDb() {
             setCollection("MongoDbCasEventRepository");
+        }
+    }
+
+    public static class InfluxDb extends InfluxDbProperties {
+        private static final long serialVersionUID = -3918436901491275547L;
+
+        public InfluxDb() {
         }
     }
 }
