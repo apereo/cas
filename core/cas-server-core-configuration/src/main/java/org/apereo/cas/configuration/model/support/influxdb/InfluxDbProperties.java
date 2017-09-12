@@ -2,13 +2,15 @@ package org.apereo.cas.configuration.model.support.influxdb;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link InfluxDbProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class InfluxDbProperties {
+public class InfluxDbProperties implements Serializable {
     private static final long serialVersionUID = -1945287308473842616L;
 
     /**
@@ -36,6 +38,12 @@ public class InfluxDbProperties {
      */
     private String retentionPolicy = "autogen";
 
+    /**
+     * Whether the indicated database should be dropped
+     * and recreated.
+     */
+    private boolean dropDatabase;
+    
     /**
      * The number of point to flush and write to the database
      * as part of the batch.
@@ -122,5 +130,13 @@ public class InfluxDbProperties {
 
     public void setPassword(final String password) {
         this.password = password;
+    }
+
+    public boolean isDropDatabase() {
+        return dropDatabase;
+    }
+
+    public void setDropDatabase(final boolean dropDatabase) {
+        this.dropDatabase = dropDatabase;
     }
 }
