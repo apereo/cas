@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
+import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -18,6 +19,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -49,11 +52,18 @@ public class SurrogateAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
 
     @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("communicationsManager")
+    private CommunicationsManager communicationsManager;
 
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") 
@@ -97,7 +107,8 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
-        return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService(), servicesManager);
+        return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService(),
+                servicesManager, eventPublisher);
     }
 
     @Bean
@@ -109,5 +120,11 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationPostProcessor(surrogateAuthenticationPostProcessor());
+    }
+
+    @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
+    @Bean
+    public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener() {
+        return new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
     }
 }

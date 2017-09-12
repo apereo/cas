@@ -44,7 +44,7 @@ export class ServicesComponent implements OnInit {
   }
 
   serviceEdit(selectedItem: String) {
-    this.router.navigate(['/form',selectedItem]);
+    this.router.navigate(['/form',selectedItem, {duplicate: false}]);
   }
 
   serviceDuplicate(selectedItem: String) {

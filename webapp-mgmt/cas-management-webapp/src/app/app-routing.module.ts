@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import {ServicesComponent} from "./services/services.component";
 import {ServicesResolve} from "./services/services.resolover";
 import {DomainsComponent} from "./domains/domains.component";
+import {SearchComponent} from "./search/search.component";
 
 @NgModule({
   imports: [
@@ -20,6 +21,10 @@ import {DomainsComponent} from "./domains/domains.component";
         resolve: {
           resp: ServicesResolve
         }
+      },
+      {
+        path: 'search/:query',
+        component: SearchComponent
       },
       {
         path: 'manage.html',

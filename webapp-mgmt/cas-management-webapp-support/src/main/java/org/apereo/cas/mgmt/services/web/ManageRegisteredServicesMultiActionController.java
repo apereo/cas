@@ -8,6 +8,7 @@ import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -103,7 +105,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param session the session
      * @return the view name.
      */
-    @GetMapping(value = "/logout")
+    @GetMapping(value = "/logout.html")
     public String logoutView(final HttpServletRequest request, final HttpSession session) {
         LOGGER.debug("Invalidating application session...");
         session.invalidate();
@@ -167,6 +169,27 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         ensureDefaultServiceExists();
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getServicesForDomain(domain));
+        serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
+        return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
+    }
+
+    /**
+     * Method will filter all services in the register using the passed string a regular expression against the
+     * service name, service id, and service description.
+     *
+     * @param query - a string representing text to search for
+     * @return - the resulting services
+     */
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<RegisteredServiceViewBean>> search(@RequestParam String query) {
+        final Pattern pattern = RegexUtils.createPattern("^.*"+query+".*$");
+        final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
+        final List<RegisteredService> services = this.servicesManager.getAllServices()
+                .stream()
+                .filter((service) -> pattern.matcher(service.getServiceId()).lookingAt() ||
+                                     pattern.matcher(service.getName()).lookingAt() ||
+                                     pattern.matcher(service.getDescription()).lookingAt())
+              .collect(Collectors.toList());
         serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
     }

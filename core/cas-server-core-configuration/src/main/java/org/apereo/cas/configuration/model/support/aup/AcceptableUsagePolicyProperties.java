@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import java.io.Serializable;
 
@@ -19,6 +21,16 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private Ldap ldap = new Ldap();
 
     /**
+     * Control AUP via Redis.
+     */
+    private Jdbc jdbc = new Jdbc();
+
+    /**
+     * Control AUP via Redis.
+     */
+    private Rest rest = new Rest();
+
+    /**
      * AUP attribute to choose in order to determine whether policy
      * has been accepted or not.
      */
@@ -32,12 +44,49 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         this.aupAttributeName = aupAttributeName;
     }
 
+    public Rest getRest() {
+        return rest;
+    }
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
+    }
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc redis) {
+        this.jdbc = redis;
+    }
+
     public Ldap getLdap() {
         return ldap;
     }
 
     public void setLdap(final Ldap ldap) {
         this.ldap = ldap;
+    }
+
+    public static class Jdbc extends AbstractJpaProperties {
+        private static final long serialVersionUID = -1325011278378393385L;
+
+        /**
+         * The table name in the database that holds the AUP attribute to update for the user.
+         */
+        private String tableName;
+
+        public String getTableName() {
+            return tableName;
+        }
+
+        public void setTableName(final String tableName) {
+            this.tableName = tableName;
+        }
+    }
+
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = -8102345678378393382L;
     }
 
     public static class Ldap extends AbstractLdapProperties {
@@ -68,5 +117,5 @@ public class AcceptableUsagePolicyProperties implements Serializable {
             this.userFilter = userFilter;
         }
     }
-    
+
 }

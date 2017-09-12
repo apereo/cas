@@ -32,10 +32,11 @@ import java.util.Map;
 @Table(name = "CasEvent")
 public class CasEvent {
 
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = Integer.MAX_VALUE;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String type;
@@ -45,13 +46,20 @@ public class CasEvent {
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String creationTime;
-
+    
     @ElementCollection
     @MapKeyColumn(name = "name")
     @Column(name = "value")
     @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "id"))
     private Map<String, String> properties = new HashMap<>();
 
+    /**
+     * Instantiates a new Cas event.
+     */
+    public CasEvent() {
+        this.id = System.currentTimeMillis();
+    }
+    
     public void setType(final String type) {
         this.type = type;
     }
@@ -63,7 +71,7 @@ public class CasEvent {
     public String getType() {
         return this.type;
     }
-
+    
     /**
      * Gets creation time. Attempts to parse the value
      * as a {@link ZonedDateTime}. Otherwise, assumes a
@@ -110,6 +118,10 @@ public class CasEvent {
      */
     public void putId(final String id) {
         put("id", id);
+    }
+
+    public void setId(final long id) {
+        this.id = id;
     }
 
     /**
