@@ -158,7 +158,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return the domains
      * @throws Exception the exception
      */
-    @GetMapping(value="/domains")
+    @GetMapping(value = "/domains")
     public ResponseEntity<Collection<String>> getDomains() throws Exception {
         final Collection<String> data = this.servicesManager.getDomains();
         return new ResponseEntity<Collection<String>>(data, HttpStatus.OK);
@@ -188,14 +188,14 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      */
     @GetMapping(value = "/search")
     public ResponseEntity<List<RegisteredServiceViewBean>> search(@RequestParam final String query) {
-        final Pattern pattern = RegexUtils.createPattern("^.*"+query+".*$");
+        final Pattern pattern = RegexUtils.createPattern("^.*" + query + ".*$");
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = this.servicesManager.getAllServices()
                 .stream()
-                .filter((service) -> pattern.matcher(service.getServiceId()).lookingAt() 
-                                     || pattern.matcher(service.getName()).lookingAt()
-                                     || pattern.matcher(service.getDescription()).lookingAt())
-              .collect(Collectors.toList());
+                .filter(service -> pattern.matcher(service.getServiceId()).lookingAt()
+                        || pattern.matcher(service.getName()).lookingAt()
+                        || pattern.matcher(service.getDescription()).lookingAt())
+                .collect(Collectors.toList());
         serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
     }
