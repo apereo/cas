@@ -23,6 +23,7 @@ import java.time.LocalDate;
 @Table(name = "U2FDeviceRegistration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public class U2FDeviceRegistration {
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")

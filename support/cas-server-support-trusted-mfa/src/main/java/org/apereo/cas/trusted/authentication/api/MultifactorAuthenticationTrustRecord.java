@@ -27,9 +27,10 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
     @Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = Integer.MAX_VALUE;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
@@ -46,7 +47,11 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     @Column(length = 500, updatable = true, insertable = true, nullable = false)
     private String name;
-    
+
+    public MultifactorAuthenticationTrustRecord() {
+        this.id = System.currentTimeMillis();
+    }
+
     public String getRecordKey() {
         return recordKey;
     }

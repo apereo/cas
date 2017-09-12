@@ -21,15 +21,20 @@ import javax.persistence.Table;
 public class YubiKeyAccount {
 
     @Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = Integer.MAX_VALUE;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String publicId;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String username;
+
+    public YubiKeyAccount() {
+        this.id = System.currentTimeMillis();
+    }
 
     public long getId() {
         return id;

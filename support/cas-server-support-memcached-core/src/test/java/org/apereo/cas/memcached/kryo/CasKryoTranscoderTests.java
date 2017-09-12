@@ -77,8 +77,7 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTImpl() throws Exception {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
-        final AuthenticationBuilder bldr = new DefaultAuthenticationBuilder(
-                new DefaultPrincipalFactory()
+        final AuthenticationBuilder bldr = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
                         .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now());
