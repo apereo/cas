@@ -75,7 +75,7 @@ issues and such. Examine your CAS logs and you will find the cause.
 If your client application is not receiving attributes, you will need to make sure:
 
 1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
-2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation.
+2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation (i.e. `/p3/serviceValidate`).
 3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
 4. The CAS server is authorized to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
 
