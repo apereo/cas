@@ -38,7 +38,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Id
     @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = Integer.MAX_VALUE;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String secretKey;

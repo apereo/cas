@@ -66,6 +66,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String privacyUrl;
 
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
