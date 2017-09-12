@@ -7,4 +7,5 @@ dependencies {
     implementation libraries.groovy
     implementation libraries.googlegeocoding
     implementation libraries.userinfogeocoding
+    implementation libraries.okhttp
 }
