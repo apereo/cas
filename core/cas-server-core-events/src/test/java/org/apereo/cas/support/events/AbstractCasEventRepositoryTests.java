@@ -26,7 +26,7 @@ public abstract class AbstractCasEventRepositoryTests {
         final CasEvent dto2 = getCasEvent();
         getRepositoryInstance().save(dto2);
         
-        final Collection<CasEvent> col = getRepositoryInstance().load();
+        final Collection<? extends CasEvent> col = getRepositoryInstance().load();
         assertEquals(2, col.size());
         
         assertNotEquals(dto1.getId(), 0);

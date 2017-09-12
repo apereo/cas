@@ -41,6 +41,11 @@ public class InfluxDbConnectionFactory implements Closeable {
     public InfluxDbConnectionFactory(final String url, final String uid,
                                      final String psw, final String dbName,
                                      final boolean dropDatabase) {
+        
+        if (StringUtils.isBlank(dbName) || StringUtils.isBlank(url)) {
+            throw new IllegalArgumentException("Database name/url cannot be blank and must be specified");
+        }
+        
         final OkHttpClient.Builder builder = new OkHttpClient.Builder();
         this.influxDb = InfluxDBFactory.connect(url, uid, psw, builder);
         this.influxDb.enableGzip();
@@ -60,7 +65,7 @@ public class InfluxDbConnectionFactory implements Closeable {
      * @param props the props
      */
     public InfluxDbConnectionFactory(final InfluxDbProperties props) {
-        this(props.getUrl(), props.getUsername(), props.getPassword(), props.getDatabase(), false);
+        this(props.getUrl(), props.getUsername(), props.getPassword(), props.getDatabase(), props.isDropDatabase());
 
         if (StringUtils.isNotBlank(props.getRetentionPolicy())) {
             this.influxDb.setRetentionPolicy(props.getRetentionPolicy());
