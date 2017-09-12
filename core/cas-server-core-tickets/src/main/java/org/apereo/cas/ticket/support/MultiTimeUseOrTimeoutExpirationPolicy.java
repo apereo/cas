@@ -22,7 +22,7 @@ import java.time.temporal.ChronoUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = -5704993954986738308L;
@@ -50,27 +50,27 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * Instantiates a new multi time use or timeout expiration policy.
      *
-     * @param numberOfUses             the number of uses
+     * @param numberOfUses        the number of uses
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, 
+    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
                                                  @JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
         Assert.isTrue(this.timeToKillInSeconds > 0, "timeToKillInSeconds must be greater than 0.");
     }
-    
+
     @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState == null) {
-            LOGGER.debug("Ticket state is null for [{}]", this.getClass().getSimpleName());
+            LOGGER.debug("Ticket state is null for [{}]. Ticket has expired.", this.getClass().getSimpleName());
             return true;
         }
         final long countUses = ticketState.getCountOfUses();
         if (countUses >= this.numberOfUses) {
-            LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]", countUses, this.numberOfUses);
+            LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket has expired", countUses, this.numberOfUses);
             return true;
         }
 
@@ -80,7 +80,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
         if (systemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket has expired because the difference between current time [{}] "
-                            + "and ticket time [{}] is greater than or equal to [{}]", systemTime, lastTimeUsed,
+                            + "and ticket time [{}] is greater than or equal to [{}]. Ticket has expired", systemTime, lastTimeUsed,
                     this.timeToKillInSeconds);
             return true;
         }
@@ -127,7 +127,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Proxy ticket expiration policy.
      */
-    @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
     public static class ProxyTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;
@@ -151,7 +151,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Service ticket expiration policy.
      */
-    @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
     public static class ServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;
@@ -167,7 +167,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          */
         @JsonCreator
         public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
-                                             @JsonProperty("timeToLive")final long timeToKillInSeconds) {
+                                             @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }

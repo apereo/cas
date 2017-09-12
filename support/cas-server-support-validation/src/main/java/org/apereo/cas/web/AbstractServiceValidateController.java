@@ -247,6 +247,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         try {
+            prepareForTicketValidation(request, service, serviceTicketId);
             return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
@@ -258,6 +259,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
         }
+    }
+
+    /**
+     * Prepare for ticket validation.
+     *
+     * @param request         the request
+     * @param service         the service
+     * @param serviceTicketId the service ticket id
+     */
+    protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
     }
 
     /**
