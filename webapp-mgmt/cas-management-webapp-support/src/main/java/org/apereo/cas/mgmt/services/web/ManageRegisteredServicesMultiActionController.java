@@ -152,6 +152,12 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return new ModelAndView("manage", model);
     }
 
+    /**
+     * Gets domains.
+     *
+     * @return the domains
+     * @throws Exception the exception
+     */
     @GetMapping(value="/domains")
     public ResponseEntity<Collection<String>> getDomains() throws Exception {
         final Collection<String> data = this.servicesManager.getDomains();
@@ -165,7 +171,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return the services
      */
     @GetMapping(value = "/getServices")
-    public ResponseEntity<List<RegisteredServiceViewBean>> getServices(@RequestParam String domain) {
+    public ResponseEntity<List<RegisteredServiceViewBean>> getServices(@RequestParam final String domain) {
         ensureDefaultServiceExists();
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getServicesForDomain(domain));
@@ -181,14 +187,14 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return - the resulting services
      */
     @GetMapping(value = "/search")
-    public ResponseEntity<List<RegisteredServiceViewBean>> search(@RequestParam String query) {
+    public ResponseEntity<List<RegisteredServiceViewBean>> search(@RequestParam final String query) {
         final Pattern pattern = RegexUtils.createPattern("^.*"+query+".*$");
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = this.servicesManager.getAllServices()
                 .stream()
-                .filter((service) -> pattern.matcher(service.getServiceId()).lookingAt() ||
-                                     pattern.matcher(service.getName()).lookingAt() ||
-                                     pattern.matcher(service.getDescription()).lookingAt())
+                .filter((service) -> pattern.matcher(service.getServiceId()).lookingAt() 
+                                     || pattern.matcher(service.getName()).lookingAt()
+                                     || pattern.matcher(service.getDescription()).lookingAt())
               .collect(Collectors.toList());
         serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
