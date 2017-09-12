@@ -7,15 +7,15 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         function redirectToApp() {
-            window.location = /*[[${logoutRedirectUrl}]]*/ ;
+            window.location = [[${logoutRedirectUrl}]] ;
         }
         
         function handleCallback(index, status) {
             if (status == 200) {
-                $("#service" + index).addClass("fa fa-check")
+                $("#service" + index).addClass("fa-check").removeClass("fa-question");
                 $("#service" + index).prop('title', 'Logout request was successfully received.');
             } else {
-                $("#service" + index).addClass("fa fa-error")
+                $("#service" + index).addClass("fa-warning").removeClass("fa-question");
                 $("#service" + index).prop('title', 'Logout notification could not be sent.');
             }
         }
@@ -30,32 +30,33 @@
         <p th:utext="#{screen.logout.fc.success}"/>
         <br/><br/>
         <div>
-            <ul start="a">
+            <ol start="a">
                 <li th:each="entry,iterStat : ${logoutUrls}">
                     <script type="text/javascript" th:inline="javascript">
-                        
+                        /*<![CDATA[*/
                         $.ajax({
-                            url:/*[[${entry.key.logoutUrl.toExternalForm()}]]*/,
+                            url: [[${entry.key.logoutUrl.toExternalForm()}]],
                             dataType: 'jsonp',
                             async: true,
-                            contentType: /*[[${entry.value.contentType}]]*/
-                            , data: /*[[${entry.value.message}]]*/
+                            contentType: [[${entry.value.contentType}]]
+                            , data: [[${entry.value.message}]]
                             , success: function (data) {
-                                var index = /*[[${iterStat.index}]]*/;
+                                var index = [[${iterStat.index}]];
                                 handleCallback(index, 200);
                             },
                             error: function (err, textStatus, errorThrown) {
-                                var index = /*[[${iterStat.index}]]*/;
+                                var index = [[${iterStat.index}]];
                                 handleCallback(index, err.status);
                             }
                         });
+                        /*]]>*/
                     </script>
                     <p>
-                        <i data-toggle="tooltip" data-placement="top" th:id="${'service'+iterStat.index}"/> 
-                        <a class="btn btn-link" th:href="${entry.key.service.id}" th:text="${entry.key.service.id}"/>
+                        <i data-toggle="tooltip" data-placement="top" class="fa fa-question" th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
+                        <kbd th:text="${entry.key.service.id}"/>
                     </p>
                 </li>
-            </ul>
+            </ol>
 
             
         </div>

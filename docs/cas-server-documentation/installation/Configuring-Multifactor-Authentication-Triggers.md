@@ -178,7 +178,7 @@ The parameters passed are as follows:
 | Parameter             | Description
 |-----------------------|-----------------------------------------------------------------------
 | `service`             | The object representing the incoming service provided in the request, if any.
-| `registeredServuce`   | The object representing the corresponding service definition in the registry.
+| `registeredService`   | The object representing the corresponding service definition in the registry.
 | `authentication`      | The object representing the established authentication event, containing the principal.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
