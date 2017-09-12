@@ -19,7 +19,8 @@
       "tsconfig": "tsconfig.json",
       "prefix": "app",
       "styles": [
-        "styles.css"
+        "styles.css",
+        "cas-theme.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",

@@ -1,0 +1,16 @@
+import {Injectable} from "@angular/core";
+import {Service} from "../service";
+import {Http} from "@angular/http";
+import {ServiceViewBean} from "../../domain/service-view-bean";
+
+@Injectable()
+export class SearchService extends Service {
+
+  constructor(protected http: Http) {
+    super(http);
+  }
+
+  search(query: String): Promise<ServiceViewBean[]> {
+    return this.get("search?query="+query);
+  }
+}

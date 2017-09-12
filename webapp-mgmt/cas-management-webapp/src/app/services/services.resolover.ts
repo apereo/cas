@@ -13,7 +13,12 @@ export class ServicesResolve implements Resolve<ServiceViewBean[]> {
   constructor(private service: ServiceViewService, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot): Promise<ServiceViewBean[]> {
+    let param: String = route.params['domain'];
 
-    return this.service.getServices().then(resp => resp ? resp : null);
+    if(!param) {
+      return new Promise((resolve, reject) => resolve([]));
+    } else {
+      return this.service.getServices(param).then(resp => resp ? resp : null);
+    }
   }
 }
