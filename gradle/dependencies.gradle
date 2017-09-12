@@ -74,6 +74,24 @@ ext.libraries = [
                     force = true
                 }
         ],
+        influxdb : [
+                dependencies.create("org.influxdb:influxdb-java:$influxDbVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.squareup.retrofit2", module: "retrofit")
+                    exclude(group: "com.squareup.okio", module: "okio")
+                    force = true
+                },
+                dependencies.create("com.squareup.retrofit2:retrofit:$retrofitVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.squareup.okhttp3", module: "okhttp")
+                    exclude(group: "com.squareup.okio", module: "okio")
+                    force = true
+                },
+                dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         bouncycastle            : [
                 dependencies.create("org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -396,7 +414,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.okio", module: "okio")
                     force = true
-                },
+                }
+        ],
+        okhttp : [
                 dependencies.create("com.squareup.okhttp:okhttp-urlconnection:$okioHttpVersion") {
                     exclude(group: "com.squareup.okio", module: "okio")
                     force = true
