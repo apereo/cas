@@ -35,7 +35,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type) {
-        final Collection<CasEvent> events = load();
+        final Collection<? extends CasEvent> events = load();
         return events.stream().filter(event -> event.getType().equals(type)).collect(Collectors.toSet());
     }
 

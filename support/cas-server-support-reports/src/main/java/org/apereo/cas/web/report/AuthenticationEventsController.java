@@ -53,7 +53,7 @@ public class AuthenticationEventsController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getEvents")
     @ResponseBody
-    public Collection<CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Collection<? extends CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
         return this.eventRepository.load();
     }

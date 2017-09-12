@@ -24,7 +24,7 @@ public interface CasEventRepository {
      *
      * @return the collection
      */
-    Collection<CasEvent> load();
+    Collection<? extends CasEvent> load();
 
     /**
      * Load collection of events created after the given date.

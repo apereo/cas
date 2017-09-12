@@ -120,6 +120,10 @@ public class CasEvent {
         put("id", id);
     }
 
+    public void setId(final long id) {
+        this.id = id;
+    }
+
     /**
      * Put client ip.
      *

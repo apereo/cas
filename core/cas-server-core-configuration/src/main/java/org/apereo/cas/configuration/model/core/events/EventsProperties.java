@@ -99,6 +99,7 @@ public class EventsProperties implements Serializable {
         private static final long serialVersionUID = -3918436901491275547L;
 
         public InfluxDb() {
+            setDatabase("CasInfluxDbEvents");
         }
     }
 }
