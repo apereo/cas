@@ -22,6 +22,42 @@ Automatic support for drivers includes the following databases.
 All other drivers need to be manually added to the build configuration.
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#hibernate--jdbc).
 
+### Oracle
+
+Download manually from [this link](http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html).
+
+<div class="alert alert-info"><strong>Why not ship directly?</strong><p>We recommend that you review the <a href="http://www.oracle.com/technetwork/licenses/distribution-license-152002.html">Oracle Technology Network License Agreement</a>, section "Programs Redistribution".</p></div>
+
+#### Apache Maven
+
+You need to install it into your local repository that houses and caches all artifacts.
+
+```bash
+mvnw install:install-file -Dfile=[path/to/your/ojdbc.jar] -DgroupId=com.oracle -DartifactId=[ojdbc-jar-name] -Dversion=[ojdbc-version] -Dpackaging=jar
+```
+
+Then include in your build as such:
+
+```xml
+<dependency>
+   <groupId>com.oracle</groupId>
+   <artifactId>[ojdbc-jar-name]</artifactId>
+   <version>[ojdbc-version]</version>
+</dependency>
+```
+
+#### Gradle
+
+You may reference the downloaded JAR directly in your build script:
+
+```gradle
+dependencies {
+   ... 
+   runtime files("[path/to/your/ojdbc.jar]")
+   ...
+}
+```
+
 ### HSQLDB
 
 Available drivers are:
