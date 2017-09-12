@@ -1,10 +1,18 @@
-<div style="padding-top: 3px; margin-bottom:10px;">
-  <md-icon style="padding-top: 3px;">build</md-icon>
-  <h4 style="display: inline;position: relative;top: -5px;">
-    <ng-container i18n>
-      Manage Services
-    </ng-container>
-  </h4>
+<div style="display:flex;margin-bottom:10px;">
+  <div style="padding-top: 3px;">
+    <md-icon style="padding-top: 3px;">build</md-icon>
+    <h4 style="display: inline;position: relative;top: -5px;">
+      <ng-container i18n>
+        Manage Services - {{ domain }}
+      </ng-container>
+    </h4>
+  </div>
+  <div style="flex: 1 1 auto"></div>
+  <div>
+    <button md-button (click)="goBack();">
+      <md-icon>arrow_back</md-icon>
+    </button>
+  </div>
 </div>
 
 <md-card *ngFor="let item of dataTable; let i = index;" style="margin-bottom: 1px;margin-right:25px;margin-left:25px;">
@@ -12,7 +20,11 @@
     <div style="padding-right:20px" [mdMenuTriggerFor]="serviceMenu" (click)="selectedItem = item">
         <md-icon>menu</md-icon>
     </div>
-    <div style="padding-right:20px;flex: 0 0 200px;font-weight: 700;text-overflow: ellipsis"> {{item.name}}</div>
+    <div style="padding-right:20px;flex: 0 0 200px;font-weight: 700;text-overflow: ellipsis">
+      <a (click)="serviceEdit(item.assignedId)">
+        {{item.name}}
+      </a>
+    </div>
     <div style="padding-right:20px;flex: 0 0 200px;font-weight: 300;text-overflow: ellipsis">
       {{ item.serviceId }}
     </div>

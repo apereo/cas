@@ -1,0 +1,68 @@
+<div style="display:flex;margin-bottom:10px;">
+  <div style="padding-top: 10px;">
+    <md-icon style="padding-top: 3px;">search</md-icon>
+    <h4 style="display: inline;position: relative;top: -5px;">
+      <ng-container i18n>
+        Search Results
+      </ng-container>
+    </h4>
+  </div>
+  <div style="flex: 1 1 auto"></div>
+  <div>
+    <button md-button (click)="goBack()">
+      <md-icon>arrow_back</md-icon>
+    </button>
+  </div>
+</div>
+
+<div style="margin-right:25px;margin-left:25px;">
+  <md-table #table [dataSource]="dataSource">
+
+    <ng-container mdColumnDef="name">
+      <md-header-cell *mdHeaderCellDef>
+        <ng-container i18n>
+          Name
+        </ng-container>
+      </md-header-cell>
+      <md-cell *mdCellDef="let row">
+        <a (click)="serviceEdit(row.assignedId)">
+          {{ row.name }}
+        </a>
+      </md-cell>
+    </ng-container>
+
+    <ng-container mdColumnDef="serviceId">
+      <md-header-cell *mdHeaderCellDef>
+        <ng-container i18n>
+          Service Url
+        </ng-container>
+      </md-header-cell>
+      <md-cell *mdCellDef="let row">
+        {{ row.serviceId }}
+      </md-cell>
+    </ng-container>
+
+    <ng-container mdColumnDef="description">
+      <md-header-cell *mdHeaderCellDef>
+        <ng-container i18n>
+          Description
+        </ng-container>
+      </md-header-cell>
+      <md-cell *mdCellDef="let row">
+        {{ row.description }}
+      </md-cell>
+    </ng-container>
+
+
+    <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
+    <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+  </md-table>
+
+  <md-paginator #paginator
+                [length]="serviceDatabase.data.length"
+                [pageIndex]="0"
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+  </md-paginator>
+</div>
+

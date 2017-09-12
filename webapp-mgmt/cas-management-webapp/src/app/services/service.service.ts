@@ -13,8 +13,8 @@ export class ServiceViewService extends Service {
     super(http);
   }
 
-  getServices(): Promise<ServiceViewBean[]> {
-    return this.get<ServiceViewBean[]>("getServices");
+  getServices(domain: String): Promise<ServiceViewBean[]> {
+    return this.get<ServiceViewBean[]>("getServices?domain="+domain);
   }
 
   delete(id: number): Promise<String> {

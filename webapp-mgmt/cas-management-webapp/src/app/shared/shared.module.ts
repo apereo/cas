@@ -13,7 +13,8 @@ import {
   MdRadioModule, MdRippleModule,
   MdSelectModule, MdTableModule,
   MdTabsModule,
-  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule, MdAutocompleteModule, MdSnackBarModule
+  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule, MdAutocompleteModule, MdSnackBarModule,
+  MdPaginatorModule
 } from "@angular/material";
 import {CdkTableModule} from "@angular/cdk/table";
 
@@ -42,7 +43,8 @@ import {CdkTableModule} from "@angular/cdk/table";
     MdChipsModule,
     MdDialogModule,
     MdAutocompleteModule,
-    MdSnackBarModule
+    MdSnackBarModule,
+    MdPaginatorModule
   ],
   declarations: [
     MyTooltipDirective,
@@ -72,7 +74,8 @@ import {CdkTableModule} from "@angular/cdk/table";
     MdChipsModule,
     MdDialogModule,
     MdAutocompleteModule,
-    MdSnackBarModule
+    MdSnackBarModule,
+    MdPaginatorModule
   ]
 })
 export class SharedModule {

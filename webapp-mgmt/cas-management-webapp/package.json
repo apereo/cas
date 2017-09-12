@@ -47,7 +47,7 @@
     "hammerjs": "^2.0.8",
     "jasmine-core": "2.5.2",
     "jasmine-spec-reporter": "2.5.0",
-    "karma": "1.2.0",
+    "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.0.0",
     "karma-cli": "^1.0.1",
     "karma-coverage-istanbul-reporter": "^0.2.0",
