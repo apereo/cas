@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +46,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @RefreshScope
     @Autowired
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("servicesManager") final ServicesManager servicesManager,
