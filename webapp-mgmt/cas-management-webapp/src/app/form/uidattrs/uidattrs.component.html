@@ -37,6 +37,16 @@
            i18n-myTooltip="services.form.tooltip.uap.saltSetting"
            [mdTooltip]="messages.services_form_tooltip_uap_saltSetting">help
   </md-icon>
+  <md-form-field class="textInput">
+    <input mdInput
+           i18n-placeholder="services.form.label.uap.anonAttribute"
+           [placeholder]="messages.services_form_label_uap_anonAttribute"
+           [(ngModel)]="data.service.usernameAttributeProvider.persistentIdGenerator.attribute">
+  </md-form-field>
+  <md-icon style="font-size: medium;"
+           i18n-myTooltip="services.form.tooltip.uap.anonAttribute"
+           [mdTooltip]="messages.services_form_tooltip_uap_anonAttribute">help
+  </md-icon>
 </div>
 
 <div *ngIf="type == TYPE.PRINCIPAL_ATTRIBUTE">

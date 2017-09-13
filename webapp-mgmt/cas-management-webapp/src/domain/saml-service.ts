@@ -7,7 +7,7 @@ export class SamlRegisteredService extends RegexRegisteredService {
   requiredAuthenticationContextClass: String;
   metadataCriteriaDirection: String;
   metadataCriteriaPattern: String;
-  requiredNamedIdFormat: String;
+  requiredNameIdFormat: String;
   metadataSignatureLocation: String;
   serviceProviderNameIdQualifier: String;
   nameIdQualifier: String;
