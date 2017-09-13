@@ -38,7 +38,7 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalMultifactorAuthenticationPolicyEventResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyScriptMultifactorAuthenticationPolicyEventResolver.class);
 
     private final Resource groovyScript;
 
