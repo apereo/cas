@@ -82,6 +82,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
         final Map<String, Object> attributes = consentEngine.getConsentableAttributes(authentication, service, registeredService);
         requestContext.getFlowScope().put("attributes", attributes);
         requestContext.getFlowScope().put("principal", authentication.getPrincipal().getId());
+        requestContext.getFlashScope().put("service", service);
 
         final ConsentDecision decision = consentEngine.findConsentDecision(service, registeredService, authentication);
         requestContext.getFlowScope().put("option", decision == null
