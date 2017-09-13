@@ -73,7 +73,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         if (service != null) {
             this.serviceRegistryDao.delete(service);
             this.services.remove(id);
-            this.domains.get(getDomain(service.getServiceId())).remove(service);
+            this.domains.get(extractDomain(service.getServiceId())).remove(service);
             publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         }
         return service;
@@ -100,7 +100,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     @Override
     public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
-        return getServicesForDomain(getDomain(serviceId)).stream()
+        return getServicesForDomain(extractDomain(serviceId)).stream()
                 .filter(s -> s.getClass().isAssignableFrom(clazz) && s.matches(serviceId))
                 .map(clazz::cast)
                 .findFirst()
@@ -120,7 +120,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     @Override
     public RegisteredService findServiceBy(final String serviceId) {
-        String domain = serviceId != null ? getDomain(serviceId) : StringUtils.EMPTY;
+        String domain = serviceId != null ? extractDomain(serviceId) : StringUtils.EMPTY;
         LOGGER.debug("Domain mapped to the service identifier is [{}]", serviceId);
 
         domain = domains.containsKey(domain) ? domain : "default";
@@ -221,22 +221,19 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         }
     }
 
-    private String getDomain(final String service) {
+    private String extractDomain(final String service) {
         final Matcher extractor = domainExtractor.matcher(service.toLowerCase());
-        final String domain;
-        if (extractor.lookingAt()) {
-           final String group1 = StringUtils.remove(extractor.group(1),"\\");
-           final Matcher match = domainPattern.matcher(group1);
-           domain = match.matches() ? group1 : "default";
-        } else {
-           domain = "default";
-        }
-        LOGGER.debug("Domain [{}] found for service [{}] ", domain, service);
-        return domain;
+        return extractor.lookingAt() ? validateDomain(extractor.group(1)) : "default";
+    }
+
+    private String validateDomain(String domain) {
+        domain = StringUtils.remove(domain,"\\");
+        final Matcher match = domainPattern.matcher(StringUtils.remove(domain,"\\"));
+        return match.matches() ? domain : "default";
     }
 
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
-        final String domain = getDomain(r.getServiceId());
+        final String domain = extractDomain(r.getServiceId());
         final TreeSet<RegisteredService> services;
         if (map.containsKey(domain)) {
             services = map.get(domain);
