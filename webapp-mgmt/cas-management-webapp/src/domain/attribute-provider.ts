@@ -59,6 +59,7 @@ export class AnonymousRegisteredServiceUsernameProvider extends RegisteredServic
 
 export class ShibbolethCompatiblePersistentIdGenerator {
   salt: String;
+  attribute: String;
   constructor() {
     this["@class"] = "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator";
   }
