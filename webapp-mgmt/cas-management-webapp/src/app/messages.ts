@@ -93,6 +93,7 @@ export class Messages {
  readonly services_form_label_assignedId = "Assigned ID";
  readonly services_form_label_uap_default = "Default";
  readonly services_form_label_uap_anon = "Anonymous";
+ readonly services_form_label_uap_anonAttribute = "Username Attribute";
  readonly services_form_label_uap_principleAtt = "Principle Attribute";
  readonly services_form_label_uap_saltSetting = "Salt Setting";
  readonly services_form_label_uap_usernameAttribute = "Username Attribute";
@@ -168,6 +169,9 @@ export class Messages {
  readonly services_form_label_saml_metadata_pattern = "Metadata Filter Regex";
  readonly services_form_label_saml_metadata_dir = "Metadata Filter Criteria";
  readonly services_form_label_saml_metadata_role = "Whitelisted Metadata Roles";
+ readonly services_form_label_saml_requiredNameIdFormat = "Required NameID Format";
+ readonly services_form_label_saml_serviceProviderNameQualifier = "Service Provider Name Qualifier";
+ readonly services_form_label_saml_nameQualifier = "Name Qualifier";
  readonly services_form_label_saml_skipAssertionNameId = "Skip generating assertion name id";
  readonly services_form_label_saml_skipInResponseTo = "Skip generating subject confirmation InRespsonseTo";
  readonly services_form_label_saml_skipNotOnOrAfter = "Skip generating subject confirmation NotOnOrAfter";
@@ -241,6 +245,7 @@ export class Messages {
  readonly services_form_tooltip_privacyUrl = "Url that describes the privacy policies for this service.";
  readonly services_form_tooltip_logoUrl = "The logo representing this service that would be displayed on the login page. Could be a file/classpath path or an actual http url.";
  readonly services_form_tooltip_logoutType = "Defines how CAS should execute logout operations when dealing with this service.";
+ readonly services_form_tooltip_uap_anonAttribute = "Username attribute used for anonymous id generation.";
  readonly services_form_tooltip_uap_saltSetting = "The salt used for anonymous id generation.";
  readonly services_form_tooltip_uap_usernameAttribute = "Username attribute used to return back to the service as the identifier.";
  readonly services_form_tooltip_pubKey_location = "The location to the public key file used to authenticate and sign the CAS response. " +
@@ -303,6 +308,9 @@ export class Messages {
  readonly services_form_tooltip_saml_metadata_pattern = "Regex applied to entity ids in a metadata aggregate";
  readonly services_form_tooltip_saml_metadata_dir = "Whether to include/exclude entity ids that match the filter pattern";
  readonly services_form_tooltip_saml_metadata_role = "Whitelisted roles to keep in the metadata.";
+ readonly services_form_tooltip_saml_requiredNameIdFormat = "Force the indicated Name ID format in the final SAML response";
+ readonly services_form_tooltip_saml_serviceProviderNameQualifier = "Overwrite the SPNameQualifier attribute of the produced subject name id";
+ readonly services_form_tooltip_saml_nameQualifier = "Overwrite the NameQualifier attribute of the produced subject name id";
  readonly services_form_tooltip_saml_skipAssertioNameId = "Whether generation of a name identifer should be skipped for assertions";
  readonly services_form_tooltip_saml_skipInResponseTo = "Whether generation of the InResponseTo element should be skipped for subject confirmations";
  readonly services_form_tooltip_saml_skipNotOnOrAfter = "Whether generation of the NotOnOrAfter element should be skipped for subject confirmations";
