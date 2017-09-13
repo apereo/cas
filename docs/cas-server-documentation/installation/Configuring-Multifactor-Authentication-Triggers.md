@@ -182,6 +182,31 @@ The parameters passed are as follows:
 | `authentication`      | The object representing the established authentication event, containing the principal.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
+As an example, the following script triggers multifactor authentication via Duo Security, if the requesting application is `https://www.example.com` and the authenticated principal contains a `mail` attribute whose values contain `email@example.org`.
+
+```groovy
+import java.util.*
+
+class MyExampleScript {
+    def String run(final Object... args) {
+        def service = args[0]
+        def registeredService = args[1]
+        def authentication = args[2]
+        def logger = args[3]
+
+        if (service.id == "https://www.example.com") {
+            logger.warn("Evaluating principal attributes [{}]", authentication.principal.attributes)
+
+            def mail = authentication.principal.attributes['mail']
+            if (mail.contains("email@example.org")) {
+                logger.warn("Found mail attribute with value [{}]", mail)
+                return "mfa-duo"
+            }
+        }
+        return null
+    }
+}
+```
 
 ## REST
 
