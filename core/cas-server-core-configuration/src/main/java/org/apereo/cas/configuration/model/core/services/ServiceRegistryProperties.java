@@ -25,6 +25,20 @@ public class ServiceRegistryProperties implements Serializable {
     private static final long serialVersionUID = -368826011744304210L;
 
     /**
+     * Types of service managers that one can control.
+     */
+    public enum ServiceManagementTypes {
+        /**
+         * Group service definitions by their domain.
+         */
+        DOMAIN,
+        /**
+         * Default option to keep definitions in a map as they arrive.
+         */
+        DEFAULT
+    }
+    
+    /**
      * Properties pertaining to redis service registry.
      */
     @NestedConfigurationProperty
@@ -95,6 +109,25 @@ public class ServiceRegistryProperties implements Serializable {
      * from persistent data store.
      */
     private boolean watcherEnabled = true;
+
+    /**
+     * Determine how services are internally managed, queried, cached and reloaded by CAS.
+     * Accepted values are the following:
+     * 
+     * <ul>
+     *     <li>DEFAULT: Keep all services inside a concurrent map.</li>
+     *     <li>DOMAIN: Group registered services by their domain having been explicitly defined.</li>
+     * </ul>
+     */
+    private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
+
+    public ServiceManagementTypes getManagementType() {
+        return managementType;
+    }
+
+    public void setManagementType(final ServiceManagementTypes managementType) {
+        this.managementType = managementType;
+    }
 
     public boolean isInitFromJson() {
         return initFromJson;

@@ -134,7 +134,7 @@ public class DomainServicesManagerTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(10000);
         r.setName("regex test");
-        r.setServiceId("^http://www.test.edu.+");
+        r.setServiceId("^http://www.test.edu/.+");
         r.setEvaluationOrder(10000);
 
         this.domainServicesManager.save(r);

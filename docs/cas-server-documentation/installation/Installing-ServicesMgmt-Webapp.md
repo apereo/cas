@@ -44,7 +44,15 @@ and will grant access if an attribute name matches the value of `adminRoles` def
 
 ### LDAP
 
-Access to the management web application may also be controlled directly by querying an LDAP server.
+Access to the management web application may also be controlled directly by querying an LDAP server, via the following modes.
+
+#### Groups
+
+The authorization framework will search for groups of which the user is a member. Retrieved groups and roles are the compared with the management webapp configuration to find a match (i.e. `ROLE_ADMIN`).
+
+#### Attributes
+
+The authorization framework will examine the attributes assigned to the user, looking for a predefined role attribute to compare with the configuration for access (i.e. `ROLE_ADMIN`).
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -56,4 +64,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-authorization).
