@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -57,7 +58,10 @@ import static org.junit.Assert.*;
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         LdapAuthenticationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldap.properties"})

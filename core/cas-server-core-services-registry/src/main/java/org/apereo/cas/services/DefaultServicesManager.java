@@ -31,9 +31,7 @@ import java.util.stream.Collectors;
  *
  * @author Scott Battaglia
  * @since 3.1
- * @deprecated As of 5.2 in favor of {@link DomainServicesManager}.
  */
-@Deprecated
 public class DefaultServicesManager implements ServicesManager, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManager.class);
@@ -156,8 +154,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     /**
      * Load services that are provided by the DAO.
      */
-    @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:PT20S}",
-            fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:PT60S}")
+    @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
+            fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
     @PostConstruct
     public void load() {

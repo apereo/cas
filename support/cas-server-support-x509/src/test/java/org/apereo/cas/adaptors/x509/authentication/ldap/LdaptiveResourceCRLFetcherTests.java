@@ -19,8 +19,10 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.SchedulingUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.security.cert.X509Certificate;
 
 
@@ -54,16 +59,27 @@ import java.security.cert.X509Certificate;
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class})
 @TestPropertySource(locations = {"classpath:/x509.properties"})
+@EnableScheduling
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
     
     @Autowired
     @Qualifier("crlFetcher")
     private CRLFetcher fetcher;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @PostConstruct
+    public void init() {
+        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+    }
+    
     @BeforeClass
     public static void bootstrap() throws Exception {
         AbstractX509LdapTests.bootstrap();
@@ -97,5 +113,4 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
             checker.check(cert);
         }
     }
-
 }

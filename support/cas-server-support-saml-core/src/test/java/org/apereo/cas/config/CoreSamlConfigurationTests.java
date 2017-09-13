@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +17,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {RefreshAutoConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreWebConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
+                CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
