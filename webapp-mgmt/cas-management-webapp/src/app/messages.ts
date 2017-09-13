@@ -93,6 +93,7 @@ export class Messages {
  readonly services_form_label_assignedId = "Assigned ID";
  readonly services_form_label_uap_default = "Default";
  readonly services_form_label_uap_anon = "Anonymous";
+ readonly services_form_label_uap_anonAttribute = "Username Attribute";
  readonly services_form_label_uap_principleAtt = "Principle Attribute";
  readonly services_form_label_uap_saltSetting = "Salt Setting";
  readonly services_form_label_uap_usernameAttribute = "Username Attribute";
@@ -241,6 +242,7 @@ export class Messages {
  readonly services_form_tooltip_privacyUrl = "Url that describes the privacy policies for this service.";
  readonly services_form_tooltip_logoUrl = "The logo representing this service that would be displayed on the login page. Could be a file/classpath path or an actual http url.";
  readonly services_form_tooltip_logoutType = "Defines how CAS should execute logout operations when dealing with this service.";
+ readonly services_form_tooltip_uap_anonAttribute = "Username attribute used for anonymous id generation.";
  readonly services_form_tooltip_uap_saltSetting = "The salt used for anonymous id generation.";
  readonly services_form_tooltip_uap_usernameAttribute = "Username attribute used to return back to the service as the identifier.";
  readonly services_form_tooltip_pubKey_location = "The location to the public key file used to authenticate and sign the CAS response. " +
