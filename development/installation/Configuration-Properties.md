@@ -4112,6 +4112,21 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 # cas.events.trackConfigurationModifications=true
 ```
 
+### InfluxDb Events
+
+Decide how CAS should store authentication events inside an InfluxDb instance.
+
+```properties
+# cas.events.influxDb.url=http://localhost:8086
+# cas.events.influxDb.username=root
+# cas.events.influxDb.password=root
+# cas.events.influxDb.retentionPolicy=autogen
+# cas.events.influxDb..dropDatabase=false
+# cas.events.influxDb.pointsToFlush=100
+# cas.events.influxDb.batchInterval=PT5S
+# cas.events.influxDb.consistencyLevel=ALL
+```
+
 ### Database Events
 
 Decide how CAS should store authentication events inside a database instance.
@@ -4221,6 +4236,7 @@ The default options are avaiable for hostname verification:
 # cas.serviceRegistry.schedule.repeatInterval=120000
 # cas.serviceRegistry.schedule.startDelay=15000
 # cas.serviceRegistry.initFromJson=false
+# cas.serviceRegistry.managementType=DEFAULT|DOMAIN
 ```
 
 ### JSON Service Registry
@@ -4903,6 +4919,8 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
+The configuration of the CAS management web application is handled inside a `management.properties|yml` file. Some of the settings, specially those that deal with service registry and loading services are shared between this application and the core CAS web application. You have to note that the [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and all settings that affect the behavior of services, needs to be configured in the same exact way for the management web application.
+
 ```properties
 # server.contextPath=/cas-management
 
@@ -4920,12 +4938,16 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 ### LDAP Authorization
 
 ```properties
+# Enable authorization based on groups
 # cas.mgmt.ldap.ldapAuthz.groupAttribute=
 # cas.mgmt.ldap.ldapAuthz.groupPrefix=
 # cas.mgmt.ldap.ldapAuthz.groupFilter=
 # cas.mgmt.ldap.ldapAuthz.groupBaseDn=
+
+# Enable authorization based on attributes and roles
 # cas.mgmt.ldap.ldapAuthz.rolePrefix=ROLE_
 # cas.mgmt.ldap.ldapAuthz.roleAttribute=uugid
+
 # cas.mgmt.ldap.ldapAuthz.searchFilter=cn={user}
 # cas.mgmt.ldap.ldapAuthz.baseDn=
 
