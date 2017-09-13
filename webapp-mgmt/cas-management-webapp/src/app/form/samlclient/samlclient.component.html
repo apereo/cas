@@ -228,6 +228,45 @@
                [mdTooltip]="messages.services_form_tooltip_saml_metadata_role">help
       </md-icon>
     </div>
+
+    <div>
+      <md-form-field class="textInput">
+        <input mdInput
+               i18n-placeholder="services.form.label.saml.requiredNameIdFormat"
+               [placeholder]=" messages.services_form_label_saml_requiredNameIdFormat"
+               [(ngModel)]="service.requiredNameIdFormat">
+      </md-form-field>
+      <md-icon style="font-size: medium"
+               i18n-mdTooltip="services.form.tooltip.saml.requiredNameIdFormat"
+               [mdTooltip]="messages.services_form_tooltip_saml_requiredNameIdFormat">help
+      </md-icon>
+    </div>
+
+    <div>
+      <md-form-field class="textInput">
+        <input mdInput
+               i18n-placeholder="services.form.label.saml.serviceProviderNameQualifier"
+               [placeholder]=" messages.services_form_label_saml_serviceProviderNameQualifier"
+               [(ngModel)]="service.serviceProviderNameIdQualifier">
+      </md-form-field>
+      <md-icon style="font-size: medium"
+               i18n-mdTooltip="services.form.tooltip.saml.serviceProviderNameQualifier"
+               [mdTooltip]="messages.services_form_tooltip_saml_serviceProviderNameQualifier">help
+      </md-icon>
+    </div>
+
+    <div>
+      <md-form-field class="textInput">
+        <input mdInput
+               i18n-placeholder="services.form.label.saml.nameQualifier"
+               [placeholder]=" messages.services_form_label_saml_nameQualifier"
+               [(ngModel)]="service.nameIdQualifier">
+      </md-form-field>
+      <md-icon style="font-size: medium"
+               i18n-mdTooltip="services.form.tooltip.saml.nameQualifier"
+               [mdTooltip]="messages.services_form_tooltip_saml_nameQualifier">help
+      </md-icon>
+    </div>
   </div>
 </md-card>
 

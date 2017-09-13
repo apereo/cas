@@ -288,7 +288,7 @@ export class FormComponent implements OnInit {
     }
     if (AnonymousRegisteredServiceUsernameProvider.instanceOf(data.usernameAttributeProvider)) {
       let anonProvider: AnonymousRegisteredServiceUsernameProvider = data.usernameAttributeProvider as AnonymousRegisteredServiceUsernameProvider;
-      if (anonProvider.persistentIdGenerator) {
+      if (!anonProvider.persistentIdGenerator) {
         return Tabs.USERNAME_ATTRIBUTE;
       }
     }
