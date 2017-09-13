@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.BeforeClass;
@@ -54,7 +55,9 @@ import java.security.cert.X509Certificate;
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class})
 @TestPropertySource(locations = {"classpath:/x509.properties"})

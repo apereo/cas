@@ -19,8 +19,10 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRestAuthenticationConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,6 +67,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreServicesConfiguration.class,
