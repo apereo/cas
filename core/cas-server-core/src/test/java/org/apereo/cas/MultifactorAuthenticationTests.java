@@ -128,24 +128,18 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
-
         this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
-
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-
         cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
     }
 
     @Test
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
-
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-
         this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
-
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
         assertNotNull(st);
     }

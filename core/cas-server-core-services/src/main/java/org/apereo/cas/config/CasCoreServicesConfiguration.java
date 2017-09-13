@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
@@ -87,7 +88,15 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DomainServicesManager(serviceRegistryDao);
+        switch (casProperties.getServiceRegistry().getManagementType()) {
+            case DOMAIN:
+                LOGGER.debug("Managing CAS service definitions via domains");
+                return new DomainServicesManager(serviceRegistryDao);
+            case DEFAULT:
+            default:
+                break;
+        }
+        return new DefaultServicesManager(serviceRegistryDao);
     }
 
     @Bean
