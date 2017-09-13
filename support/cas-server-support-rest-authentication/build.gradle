@@ -11,4 +11,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-web")
 }

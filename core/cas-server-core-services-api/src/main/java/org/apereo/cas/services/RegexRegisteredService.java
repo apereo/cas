@@ -24,11 +24,14 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     private transient Pattern servicePattern;
 
+    /**
+     * {@inheritDoc}
+     * Resets the pattern because we just changed the id.
+     * @param id the new service id
+     */
     @Override
     public void setServiceId(final String id) {
         this.serviceId = id;
-
-        // reset the servicePattern because we just changed the serviceId
         this.servicePattern = null;
     }
     

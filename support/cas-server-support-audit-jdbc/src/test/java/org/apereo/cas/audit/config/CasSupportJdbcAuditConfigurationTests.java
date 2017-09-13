@@ -13,7 +13,9 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -43,8 +45,10 @@ import static org.junit.Assert.*;
         CasCoreHttpConfiguration.class,
         CasSupportJdbcAuditConfiguration.class,
         CasCoreAuditConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreWebConfiguration.class,
         CasCoreAuthenticationConfiguration.class, 
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,

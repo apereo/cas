@@ -18,6 +18,7 @@ import java.util.Set;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredService extends Cloneable, Serializable, Comparable<RegisteredService> {
+    
 
     /**
      * The logout type.
@@ -199,7 +200,7 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * @return the link to privacy policy
      */
     String getPrivacyUrl();
-
+    
     /**
      * Identifies the logout url that that will be invoked
      * upon sending single-logout callback notifications.

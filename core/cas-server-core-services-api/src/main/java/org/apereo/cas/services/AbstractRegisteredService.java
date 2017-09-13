@@ -168,6 +168,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     public URL getLogoutUrl() {
         return this.logoutUrl;
     }
+    
 
     /**
      * Initializes the registered service with default values
@@ -383,7 +384,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         setMultifactorPolicy(source.getMultifactorPolicy());
         setInformationUrl(source.getInformationUrl());
         setPrivacyUrl(source.getPrivacyUrl());
-
     }
 
     /**
