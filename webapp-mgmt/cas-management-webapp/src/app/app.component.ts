@@ -1,4 +1,4 @@
-import {Component, ElementRef} from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {Messages} from "./messages";
 import {element} from "protractor";
@@ -8,7 +8,7 @@ import {element} from "protractor";
   templateUrl: './app.component.html',
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   type: String;
 
@@ -16,10 +16,13 @@ export class AppComponent {
               public messages: Messages,
               public elRef: ElementRef) {
     this.type = this.elRef.nativeElement.getAttribute('type');
+  }
+
+  ngOnInit() {
     if (this.type === "DOMAIN") {
-      router.navigate(['/domains']);
+      this.router.navigate(['/domains']);
     } else {
-      router.navigate(['services','default']);
+      this.router.navigate(['services','default']);
     }
   }
 

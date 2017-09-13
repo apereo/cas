@@ -8,11 +8,6 @@
     </h4>
   </div>
   <div style="flex: 1 1 auto"></div>
-  <div>
-    <button md-button (click)="goBack();">
-      <md-icon>arrow_back</md-icon>
-    </button>
-  </div>
 </div>
 
 <md-card *ngFor="let item of dataTable; let i = index;" style="margin-bottom: 1px;margin-right:25px;margin-left:25px;">
@@ -82,6 +77,13 @@
   </div>
 </md-card>
 
+<md-paginator #paginator style="margin-right:25px;margin-left:25px;"
+              [length]="servicesDatabase.data.length"
+              [pageIndex]="0"
+              [pageSize]="10"
+              [pageSizeOptions]="[5, 10, 25, 100]">
+</md-paginator>
+
 <md-menu #serviceMenu>
   <button md-menu-item (click)="serviceEdit( selectedItem.assignedId )">
     <md-icon>edit</md-icon>
@@ -105,11 +107,11 @@
     <md-icon>format_list_bulleted</md-icon>
     <ng-container i18n>Details</ng-container>
   </button>
-  <button md-menu-item (click)="moveUp(selectedItem)" *ngIf="dataTable.indexOf(selectedItem) > 0">
+  <button md-menu-item (click)="moveUp(selectedItem)" *ngIf="servicesDatabase.data.indexOf(selectedItem) > 0">
     <md-icon>arrow_upward</md-icon>
     <ng-container>Move Up</ng-container>
   </button>
-  <button md-menu-item (click)="moveDown(selectedItem)" *ngIf="dataTable.indexOf(selectedItem) < dataTable.length - 1">
+  <button md-menu-item (click)="moveDown(selectedItem)" *ngIf="servicesDatabase.data.indexOf(selectedItem) < servicesDatabase.data.length - 1">
     <md-icon>arrow_downward</md-icon>
     <ng-container>Move Down</ng-container>
   </button>
