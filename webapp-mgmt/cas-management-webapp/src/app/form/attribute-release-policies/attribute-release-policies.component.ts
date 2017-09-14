@@ -72,14 +72,14 @@ export class AttributeReleasePoliciesComponent implements OnInit {
 
     this.isSaml = SamlRegisteredService.instanceOf(this.data.service);
 
-    if (this.isSaml) {
+    if (this.isSaml && this.types.indexOf(Type.INCOMMON) < 0) {
       this.types.push(Type.INCOMMON);
       this.display.push("InCommon");
       this.types.push(Type.MATCHING);
       this.display.push("Matching");
       this.types.push(Type.METADATA);
       this.display.push("Metadata Entity Attributes");
-    } else {
+    } else if (!this.isSaml && this.types.indexOf(Type.INCOMMON) > -1) {
       this.types.splice(this.types.indexOf(Type.INCOMMON), 1);
       this.display.splice(this.display.indexOf("InCommon"), 1);
       this.types.splice(this.types.indexOf(Type.MATCHING), 1);
