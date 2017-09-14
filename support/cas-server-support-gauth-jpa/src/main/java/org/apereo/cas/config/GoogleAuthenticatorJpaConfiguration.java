@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorJpaTokenRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -99,7 +99,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
-        return new JpaGoogleAuthenticatorTokenRepository(
+        return new GoogleAuthenticatorJpaTokenRepository(
                 casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()
         );
     }

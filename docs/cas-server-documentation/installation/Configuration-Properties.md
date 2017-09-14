@@ -2618,9 +2618,9 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 ### MongoDb Storage
 
 ```properties
-# cas.authn.mfa.trusted.mongodb.clientUri=
-# cas.authn.mfa.trusted.mongodb.dropCollection=false
-# cas.authn.mfa.trusted.mongodb.collection=MongoDbCasTrustedAuthnMfaRepository
+# cas.authn.mfa.trusted.mongo.clientUri=
+# cas.authn.mfa.trusted.mongo.dropCollection=false
+# cas.authn.mfa.trusted.mongo.collection=MongoDbCasTrustedAuthnMfaRepository
 ```
 
 ### REST Storage
@@ -2683,10 +2683,10 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator MongoDb
 
 ```properties
-# cas.authn.mfa.gauth.mongodb.clientUri=
-# cas.authn.mfa.gauth.mongodb.dropCollection=false
-# cas.authn.mfa.gauth.mongodb.collection=MongoDbGoogleAuthenticatorRepository
-# cas.authn.mfa.gauth.mongodb.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
+# cas.authn.mfa.gauth.mongo.clientUri=
+# cas.authn.mfa.gauth.mongo.dropCollection=false
+# cas.authn.mfa.gauth.mongo.collection=MongoDbGoogleAuthenticatorRepository
+# cas.authn.mfa.gauth.mongo.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
 #### Google Authenticator JPA
@@ -2782,9 +2782,9 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 ### YubiKey MongoDb Device Store
 
 ```properties
-# cas.authn.mfa.yubikey.mongodb.clientUri=
-# cas.authn.mfa.yubikey.mongodb.dropCollection=false
-# cas.authn.mfa.yubikey.mongodb.collection=MongoDbYubiKeyRepository
+# cas.authn.mfa.yubikey.mongo.clientUri=
+# cas.authn.mfa.yubikey.mongo.dropCollection=false
+# cas.authn.mfa.yubikey.mongo.collection=MongoDbYubiKeyRepository
 ```
 
 ### Radius OTP
@@ -2888,6 +2888,28 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.cleaner.schedule.enabled=true
 # cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
 # cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
+```
+
+#### FIDO U2F MongoDb
+
+```properties
+# cas.authn.mfa.u2f.mongo.host=localhost
+# cas.authn.mfa.u2f.mongo.clientUri=localhost
+# cas.authn.mfa.u2f.mongo.idleTimeout=30000
+# cas.authn.mfa.u2f.mongo.port=27017
+# cas.authn.mfa.u2f.mongo.dropCollection=false
+# cas.authn.mfa.u2f.mongo.socketKeepAlive=false
+# cas.authn.mfa.u2f.mongo.password=
+# cas.authn.mfa.u2f.mongo.collection=cas-fido-repository
+# cas.authn.mfa.u2f.mongo.databaseName=cas-mongo-database
+# cas.authn.mfa.u2f.mongo.timeout=5000
+# cas.authn.mfa.u2f.mongo.userId=
+# cas.authn.mfa.u2f.mongo.writeConcern=NORMAL
+# cas.authn.mfa.u2f.mongo.authenticationDatabaseName=
+# cas.authn.mfa.u2f.mongo.replicaSet=
+# cas.authn.mfa.u2f.mongo.ssEnabled=false
+# cas.authn.mfa.u2f.mongo.conns.lifetime=60000
+# cas.authn.mfa.u2f.mongo.conns.perHost=10
 ```
 
 #### FIDO U2F JPA
@@ -3876,6 +3898,8 @@ To learn more about this topic, [please review this guide](Audits.html).
 Store audit logs inside a MongoDb database.
 
 ```properties
+# cas.audit.mongo.host=localhost
+# cas.audit.mongo.clientUri=localhost
 # cas.audit.mongo.idleTimeout=30000
 # cas.audit.mongo.port=27017
 # cas.audit.mongo.dropCollection=false
@@ -3984,6 +4008,8 @@ Decide how CAS should monitor the internal state of a memcached connection pool.
 Decide how CAS should monitor the internal state of a MongoDb instance.
 
 ```properties
+# cas.monitor.mongo.host=localhost
+# cas.monitor.mongo.clientUri=localhost
 # cas.monitor.mongo.idleTimeout=30000
 # cas.monitor.mongo.port=27017
 # cas.monitor.mongo.socketKeepAlive=false
@@ -4163,9 +4189,9 @@ Decide how CAS should store authentication events inside a database instance.
 Decide how CAS should store authentication events inside a MongoDb instance.
 
 ```properties
-# cas.events.mongodb.clientUri=
-# cas.events.mongodb.dropCollection=false
-# cas.events.mongodb.collection=MongoDbCasEventRepository
+# cas.events.mongo.clientUri=
+# cas.events.mongo.dropCollection=false
+# cas.events.mongo.collection=MongoDbCasEventRepository
 ```
 
 ## Http Web Requests
@@ -4339,6 +4365,8 @@ Store CAS service definitions inside a MongoDb instance.
 To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
 
 ```properties
+# cas.serviceRegistry.mongo.host=localhost
+# cas.serviceRegistry.mongo.clientUri=localhost
 # cas.serviceRegistry.mongo.idleTimeout=30000
 # cas.serviceRegistry.mongo.port=27017
 # cas.serviceRegistry.mongo.dropCollection=false
@@ -4775,6 +4803,7 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.userId=
 # cas.ticket.registry.mongo.writeConcern=NORMAL
 # cas.ticket.registry.mongo.host=localhost
+# cas.ticket.registry.mongo.clientUri=
 # cas.ticket.registry.mongo.authenticationDatabaseName=
 # cas.ticket.registry.mongo.replicaSet=
 # cas.ticket.registry.mongo.ssEnabled=false

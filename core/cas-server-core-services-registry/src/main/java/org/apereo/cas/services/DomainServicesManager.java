@@ -226,9 +226,9 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         return extractor.lookingAt() ? validateDomain(extractor.group(1)) : "default";
     }
 
-    private String validateDomain(String domain) {
-        domain = StringUtils.remove(domain,"\\");
-        final Matcher match = domainPattern.matcher(StringUtils.remove(domain,"\\"));
+    private String validateDomain(final String providedDomain) {
+        final String domain = StringUtils.remove(providedDomain, "\\");
+        final Matcher match = domainPattern.matcher(StringUtils.remove(domain, "\\"));
         return match.matches() ? domain : "default";
     }
 

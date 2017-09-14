@@ -27,16 +27,24 @@ import java.util.Map;
 public abstract class AbstractConsentAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractConsentAction.class);
 
-    /** CAS Settings. */
+    /**
+     * CAS Settings.
+     */
     protected final CasConfigurationProperties casProperties;
 
-    /** The services manager. */
+    /**
+     * The services manager.
+     */
     protected final ServicesManager servicesManager;
 
-    /** Service selection strategies. */
+    /**
+     * Service selection strategies.
+     */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
-    /** The consent engine that handles calculations. */
+    /**
+     * The consent engine that handles calculations.
+     */
     protected final ConsentEngine consentEngine;
 
     public AbstractConsentAction(final CasConfigurationProperties casProperties, final ServicesManager servicesManager,
@@ -56,7 +64,8 @@ public abstract class AbstractConsentAction extends AbstractAction {
      * @return the registered service for consent
      */
     protected RegisteredService getRegisteredServiceForConsent(final RequestContext requestContext, final Service service) {
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final Service serviceToUse = this.authenticationRequestServiceSelectionStrategies.resolveService(service);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceToUse);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         return registeredService;
     }

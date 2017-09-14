@@ -28,8 +28,12 @@ public class MongoDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
+        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(casProperties.getServiceRegistry().getMongo());
+
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return mongoTemplate;
     }
     
     @Bean
@@ -37,7 +41,6 @@ public class MongoDbServiceRegistryConfiguration {
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistryDao(
                 mongoDbServiceRegistryTemplate(),
-                mongo.getCollection(),
-                mongo.isDropCollection());
+                mongo.getCollection());
     }
 }

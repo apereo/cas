@@ -14,22 +14,22 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 
 /**
- * This is {@link JpaGoogleAuthenticatorTokenRepository}.
+ * This is {@link GoogleAuthenticatorJpaTokenRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
-public class JpaGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorTokenRepository.class);
+public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorJpaTokenRepository.class);
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
 
     private final long expireTokensInSeconds;
     
-    public JpaGoogleAuthenticatorTokenRepository(final long expireTokensInSeconds) {
+    public GoogleAuthenticatorJpaTokenRepository(final long expireTokensInSeconds) {
         this.expireTokensInSeconds = expireTokensInSeconds;
     }
 
