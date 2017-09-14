@@ -12,6 +12,6 @@ import org.junit.runners.Suite;
  * @since 5.0.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({MongoServiceRegistryDaoCloudTests.class})
+@Suite.SuiteClasses(MongoServiceRegistryDaoCloudTests.class)
 public class AllTestsSuite {
 }
