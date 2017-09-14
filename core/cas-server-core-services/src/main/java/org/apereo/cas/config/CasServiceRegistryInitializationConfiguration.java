@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,9 +42,6 @@ public class CasServiceRegistryInitializationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     @RefreshScope
     @Autowired
     @Bean
@@ -64,6 +60,7 @@ public class CasServiceRegistryInitializationConfiguration {
         return initializer;
     }
 
+    @RefreshScope
     @Bean
     public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
