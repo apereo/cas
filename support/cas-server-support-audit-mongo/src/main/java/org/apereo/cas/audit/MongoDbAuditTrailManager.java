@@ -18,19 +18,9 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
     private final String collectionName;
     private final MongoTemplate mongoTemplate;
 
-    public MongoDbAuditTrailManager(final MongoTemplate mongoTemplate, final String collectionName, final boolean dropCollection) {
+    public MongoDbAuditTrailManager(final MongoTemplate mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-
-        if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
-
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
-        }
     }
 
     @Override

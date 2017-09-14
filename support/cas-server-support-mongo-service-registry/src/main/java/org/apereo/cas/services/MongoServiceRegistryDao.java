@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -25,38 +24,18 @@ public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
 
-    private String collectionName;
-
-    private boolean dropCollection;
-
-    private MongoOperations mongoTemplate;
+    private final String collectionName;
+    private final MongoOperations mongoTemplate;
 
     /**
      * Ctor.
      *
      * @param mongoTemplate  mongoTemplate
      * @param collectionName collectionName
-     * @param dropCollection dropCollection
      */
-    public MongoServiceRegistryDao(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
+    public MongoServiceRegistryDao(final MongoOperations mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-        this.dropCollection = dropCollection;
-
-        Assert.notNull(this.mongoTemplate);
-
-        if (this.dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
-
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
-        }
-    }
-
-    public MongoServiceRegistryDao() {
     }
 
     @Override

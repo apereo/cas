@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;

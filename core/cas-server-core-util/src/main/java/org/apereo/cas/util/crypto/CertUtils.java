@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.x509.util;
+package org.apereo.cas.util.crypto;
 
 import org.apereo.cas.util.DateTimeUtils;
 

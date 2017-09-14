@@ -28,10 +28,11 @@ public class CasSupportMongoDbAuditConfiguration {
 
     @Bean
     public AuditTrailManager mongoDbAuditTrailManager() {
+        final AuditProperties.MongoDb mongo = casProperties.getAudit().getMongo();
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        final AuditProperties.MongoDb mongoProps = casProperties.getAudit().getMongo();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
-        return new MongoDbAuditTrailManager(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
     }
 
     @Bean
