@@ -37,24 +37,25 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     public PersistenceExceptionTranslationPostProcessor persistenceMfaTrustedAuthnExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
-
-
+    
     @RefreshScope
     @Bean
     public MongoTemplate mongoMfaTrustedAuthnTemplate() {
-        final TrustedDevicesMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getTrusted().getMongodb();
+        final TrustedDevicesMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(mongo);
+
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return mongoTemplate;
     }
 
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final TrustedDevicesMultifactorProperties.MongoDb mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongodb();
+        final TrustedDevicesMultifactorProperties.MongoDb mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
         final MongoDbMultifactorAuthenticationTrustStorage m = 
                 new MongoDbMultifactorAuthenticationTrustStorage(
                         mongodb.getCollection(),
-                        mongodb.isDropCollection(), 
                         mongoMfaTrustedAuthnTemplate());
         m.setCipherExecutor(this.mfaTrustCipherExecutor);
         return m;

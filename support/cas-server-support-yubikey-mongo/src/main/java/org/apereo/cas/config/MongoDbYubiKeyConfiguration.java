@@ -41,9 +41,11 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoYubiKeyTemplate() {
-        final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
+        final YubiKeyMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(yubi.getMongodb());
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return mongoTemplate;
     }
     
     @RefreshScope
@@ -52,7 +54,6 @@ public class MongoDbYubiKeyConfiguration {
         final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
         return new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
                 mongoYubiKeyTemplate(),
-                yubi.getMongodb().getCollection(),
-                yubi.getMongodb().isDropCollection());
+                yubi.getMongo().getCollection());
     }
 }
