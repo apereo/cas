@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link JpaGoogleAuthenticatorTokenRepositoryTests}.
+ * This is {@link GoogleAuthenticatorJpaTokenRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -73,7 +73,7 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-public class JpaGoogleAuthenticatorTokenRepositoryTests {
+public class GoogleAuthenticatorJpaTokenRepositoryTests {
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")

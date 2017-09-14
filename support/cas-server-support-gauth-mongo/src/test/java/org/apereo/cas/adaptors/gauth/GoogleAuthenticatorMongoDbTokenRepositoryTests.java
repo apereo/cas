@@ -108,11 +108,10 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
         final OneTimeToken t1 = repository.get("casuser", 1111);
         final OneTimeToken t2 = repository.get("casuser", 5678);
         
-        assertTrue(token.getId() > 0);
-        assertTrue(token2.getId() > 0);
-        assertEquals(token.getId(), t1.getId());
-        assertEquals(token2.getId(), t2.getId());
+        assertTrue(t1.getId() > 0);
+        assertTrue(t2.getId() > 0);
         assertNotEquals(token.getId(), token2.getId());
+        assertTrue(t1.getToken() == 1111);
     }
     
     @TestConfiguration
