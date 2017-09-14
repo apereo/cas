@@ -41,7 +41,7 @@ public class MongoDbTicketRegistryConfiguration {
     @Autowired
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) throws Exception {
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        return new MongoDbTicketRegistry(ticketCatalog, mongo.isDropCollection(), mongoDbTicketRegistryTemplate());
+        return new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
     }
 
     @Autowired
@@ -64,6 +64,7 @@ public class MongoDbTicketRegistryConfiguration {
     @Bean
     public MongoTemplate mongoDbTicketRegistryTemplate() {
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(casProperties.getTicket().getRegistry().getMongo());
+        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
+        return factory.buildMongoTemplate(mongo);
     }
 }

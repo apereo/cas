@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.math.BigInteger;

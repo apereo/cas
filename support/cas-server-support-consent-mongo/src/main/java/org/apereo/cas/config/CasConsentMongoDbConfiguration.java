@@ -26,9 +26,10 @@ public class CasConsentMongoDbConfiguration {
 
     @Bean
     public ConsentRepository consentRepository() {
+        final ConsentProperties.MongoDb mongo = casProperties.getConsent().getMongo();
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        final ConsentProperties.MongoDb mongoProps = casProperties.getConsent().getMongo();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
-        return new MongoDbConsentRepository(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return new MongoDbConsentRepository(mongoTemplate, mongo.getCollection());
     }
 }

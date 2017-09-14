@@ -22,22 +22,11 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private final MongoOperations mongoTemplate;
 
     public MongoDbYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator,
-                                         final MongoOperations mongoTemplate, final String collectionName,
-                                         final boolean dropCollection) {
+                                         final MongoOperations mongoTemplate, final String collectionName) {
         super(accountValidator);
 
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-
-        if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
-
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
-        }
     }
 
     @Override

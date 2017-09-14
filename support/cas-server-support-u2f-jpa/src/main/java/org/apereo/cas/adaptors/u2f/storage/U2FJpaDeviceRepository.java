@@ -49,7 +49,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         try {
             final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
-                    SELECT_QUERY.concat("where r.username = :username and r.date >= :expdate"), U2FDeviceRegistration.class)
+                    SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"), U2FDeviceRegistration.class)
                     .setParameter("username", username)
                     .setParameter("expdate", expirationDate)
                     .getResultList()
@@ -74,7 +74,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         final U2FDeviceRegistration jpa = new U2FDeviceRegistration();
         jpa.setUsername(username);
         jpa.setRecord(registration.toJson());
-        jpa.setDate(LocalDate.now());
+        jpa.setCreatedDate(LocalDate.now());
         this.entityManager.merge(jpa);
     }
 
@@ -89,7 +89,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
             final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
             this.entityManager.createQuery(
-                    DELETE_QUERY.concat("where r.date <= :expdate"))
+                    DELETE_QUERY.concat("where r.createdDate <= :expdate"))
                     .setParameter("expdate", expirationDate)
                     .executeUpdate();
         } catch (final Exception e) {

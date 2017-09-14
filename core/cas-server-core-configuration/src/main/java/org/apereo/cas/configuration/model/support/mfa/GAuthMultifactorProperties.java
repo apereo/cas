@@ -44,7 +44,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Store google authenticator devices inside a MongoDb instance.
      */
-    private MongoDb mongodb = new MongoDb();
+    private MongoDb mongo = new MongoDb();
     /**
      * Store google authenticator devices inside a jdbc instance.
      */
@@ -92,12 +92,12 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         this.json = json;
     }
 
-    public MongoDb getMongodb() {
-        return mongodb;
+    public MongoDb getMongo() {
+        return mongo;
     }
 
-    public void setMongodb(final MongoDb mongodb) {
-        this.mongodb = mongodb;
+    public void setMongo(final MongoDb mongodb) {
+        this.mongo = mongodb;
     }
 
     public Jpa getJpa() {

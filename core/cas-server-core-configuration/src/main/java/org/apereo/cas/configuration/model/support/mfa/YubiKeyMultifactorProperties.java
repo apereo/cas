@@ -54,7 +54,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Keep device registration records inside a MongoDb resource.
      */
-    private MongoDb mongodb = new MongoDb();
+    private MongoDb mongo = new MongoDb();
 
     public YubiKeyMultifactorProperties() {
         setId("mfa-yubikey");
@@ -116,12 +116,12 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
         this.jpa = jpa;
     }
 
-    public MongoDb getMongodb() {
-        return mongodb;
+    public MongoDb getMongo() {
+        return mongo;
     }
 
-    public void setMongodb(final MongoDb mongodb) {
-        this.mongodb = mongodb;
+    public void setMongo(final MongoDb mongodb) {
+        this.mongo = mongodb;
     }
 
     public static class Jpa extends AbstractJpaProperties {

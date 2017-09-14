@@ -25,6 +25,7 @@ import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
@@ -103,6 +104,25 @@ public class MongoDbObjectFactory {
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
+    /**
+     * Create collection.
+     *
+     * @param mongoTemplate  the mongo template
+     * @param collectionName the collection name
+     * @param dropCollection the drop collection
+     */
+    public void createCollection(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
+        if (dropCollection) {
+            LOGGER.debug("Dropping database collection: [{}]", collectionName);
+            mongoTemplate.dropCollection(collectionName);
+        }
+
+        if (!mongoTemplate.collectionExists(collectionName)) {
+            LOGGER.debug("Creating database collection: [{}]", collectionName);
+            mongoTemplate.createCollection(collectionName);
+        }
+    }
+    
     private MongoMappingContext mongoMappingContext() {
         final MongoMappingContext mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());

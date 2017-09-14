@@ -41,7 +41,7 @@ public class EventsProperties implements Serializable {
     /**
      * Track authentication events inside a mongodb instance.
      */
-    private MongoDb mongodb = new MongoDb();
+    private MongoDb mongo = new MongoDb();
 
     public InfluxDb getInfluxDb() {
         return influxDb;
@@ -51,12 +51,12 @@ public class EventsProperties implements Serializable {
         this.influxDb = influxDb;
     }
 
-    public MongoDb getMongodb() {
-        return mongodb;
+    public MongoDb getMongo() {
+        return mongo;
     }
 
-    public void setMongodb(final MongoDb mongodb) {
-        this.mongodb = mongodb;
+    public void setMongo(final MongoDb mongodb) {
+        this.mongo = mongodb;
     }
 
     public boolean isTrackGeolocation() {

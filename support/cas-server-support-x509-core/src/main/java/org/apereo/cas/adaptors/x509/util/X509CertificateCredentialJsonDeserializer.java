@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.InputStreamResource;
 
 import java.io.ByteArrayInputStream;

@@ -31,21 +31,10 @@ public class GoogleAuthenticatorMongoDbTokenCredentialRepository extends BaseOne
 
     public GoogleAuthenticatorMongoDbTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                                final MongoOperations mongoTemplate,
-                                                               final String collectionName,
-                                                               final boolean dropCollection) {
+                                                               final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.googleAuthenticator = googleAuthenticator;
-
-        if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
-
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
-        }
     }
 
     @Override

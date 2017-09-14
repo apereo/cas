@@ -36,16 +36,18 @@ public class MongoDbEventsConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoEventsTemplate() {
+        final EventsProperties.MongoDb mongo = casProperties.getEvents().getMongo();
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(casProperties.getEvents().getMongodb());
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return mongoTemplate;
     }
 
     @Bean
     public CasEventRepository casEventRepository() {
-        final EventsProperties.MongoDb mongo = casProperties.getEvents().getMongodb();
+        final EventsProperties.MongoDb mongo = casProperties.getEvents().getMongo();
         return new MongoDbCasEventRepository(
                 mongoEventsTemplate(),
-                mongo.getCollection(),
-                mongo.isDropCollection());
+                mongo.getCollection());
     }
 }

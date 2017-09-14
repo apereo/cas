@@ -62,7 +62,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Store devices records inside MongoDb.
      */
-    private MongoDb mongodb = new MongoDb();
+    private MongoDb mongo = new MongoDb();
 
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
@@ -91,12 +91,12 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
         this.rest = rest;
     }
 
-    public MongoDb getMongodb() {
-        return mongodb;
+    public MongoDb getMongo() {
+        return mongo;
     }
 
-    public void setMongodb(final MongoDb mongodb) {
-        this.mongodb = mongodb;
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
     }
 
     public Jpa getJpa() {

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -30,24 +29,11 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
      * Instantiates a new Mongo db multifactor authentication trust storage.
      *
      * @param collectionName the collection name
-     * @param dropCollection id the configured collection should be dropped or recreated
      * @param mongoTemplate  the mongo template
      */
-    public MongoDbMultifactorAuthenticationTrustStorage(final String collectionName, final boolean dropCollection, final MongoOperations mongoTemplate) {
+    public MongoDbMultifactorAuthenticationTrustStorage(final String collectionName, final MongoOperations mongoTemplate) {
         this.collectionName = collectionName;
         this.mongoTemplate = mongoTemplate;
-
-        Assert.notNull(this.mongoTemplate);
-
-        if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
-
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
-        }
     }
 
     @Override
