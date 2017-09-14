@@ -52,7 +52,8 @@ public class DomainServicesManager implements ServicesManager, Serializable {
      * This regular expression is used to strip the domain form the serviceId that is set in
      * the Service and also passed as the service parameter to the login endpoint.
      */
-    private final Pattern domainPattern = RegexUtils.createPattern("^\\^?https?://([^:/]+)");
+    private final Pattern domainExtractor = RegexUtils.createPattern("^\\^?https?://([^:/]+)");
+    private final Pattern domainPattern = RegexUtils.createPattern("^[a-z0-9-.]*$");
 
     /**
      * Instantiates a new default services manager impl.
@@ -72,7 +73,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         if (service != null) {
             this.serviceRegistryDao.delete(service);
             this.services.remove(id);
-            this.domains.get(getDomain(service.getServiceId())).remove(service);
+            this.domains.get(extractDomain(service.getServiceId())).remove(service);
             publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         }
         return service;
@@ -99,7 +100,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     @Override
     public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
-        return getServicesForDomain(getDomain(serviceId)).stream()
+        return getServicesForDomain(extractDomain(serviceId)).stream()
                 .filter(s -> s.getClass().isAssignableFrom(clazz) && s.matches(serviceId))
                 .map(clazz::cast)
                 .findFirst()
@@ -119,7 +120,7 @@ public class DomainServicesManager implements ServicesManager, Serializable {
 
     @Override
     public RegisteredService findServiceBy(final String serviceId) {
-        String domain = serviceId != null ? getDomain(serviceId) : StringUtils.EMPTY;
+        String domain = serviceId != null ? extractDomain(serviceId) : StringUtils.EMPTY;
         LOGGER.debug("Domain mapped to the service identifier is [{}]", serviceId);
 
         domain = domains.containsKey(domain) ? domain : "default";
@@ -220,16 +221,19 @@ public class DomainServicesManager implements ServicesManager, Serializable {
         }
     }
 
-    private String getDomain(final String service) {
-        final Matcher match = domainPattern.matcher(service.toLowerCase());
-        String domain = match.lookingAt() && !match.group(1).contains("*") ? match.group(1) : "default";
-        domain = StringUtils.remove(domain, "\\");
-        LOGGER.debug("Domain [{}] found for service [{}] ", domain, service);
-        return domain;
+    private String extractDomain(final String service) {
+        final Matcher extractor = domainExtractor.matcher(service.toLowerCase());
+        return extractor.lookingAt() ? validateDomain(extractor.group(1)) : "default";
+    }
+
+    private String validateDomain(String domain) {
+        domain = StringUtils.remove(domain,"\\");
+        final Matcher match = domainPattern.matcher(StringUtils.remove(domain,"\\"));
+        return match.matches() ? domain : "default";
     }
 
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
-        final String domain = getDomain(r.getServiceId());
+        final String domain = extractDomain(r.getServiceId());
         final TreeSet<RegisteredService> services;
         if (map.containsKey(domain)) {
             services = map.get(domain);
