@@ -13,7 +13,7 @@ may want to peek inside the CAS configuration, invoke its API and perhaps report
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
 Functionality provided by this module is deprecated and will be removed in future CAS versions, 
-as support for CRaSH (the framework handling shell operations) is removed from Spring Boot v2.</p></div>
+as support for CRaSH (the framework handling shell operations) is removed from Spring Boot v2. Consider using the <a href="Configuring-Commandline-Shell.html">CAS Shell</a> instead as a more viable replacement.</p></div>
 
 Support is provided via the following dependency:
 
