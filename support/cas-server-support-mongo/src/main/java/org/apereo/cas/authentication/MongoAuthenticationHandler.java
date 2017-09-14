@@ -11,6 +11,9 @@ import org.pac4j.mongo.credentials.authenticator.MongoAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 /**
  * An authentication handler to verify credentials against a MongoDb instance.
  * @author Misagh Moayyed
@@ -25,13 +28,24 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     private String attributes;
     private String usernameAttribute;
     private String passwordAttribute;
-    
+    private MongoClientURI uri;
+    private MongoClient client;
+
     private PasswordEncoder mongoPasswordEncoder = new NopPasswordEncoder();
+
+    @PostConstruct
+    private void createMongoClient() {
+        uri = new MongoClientURI(this.mongoHostUri);
+        client = new MongoClient(uri);
+    }
+
+    @PreDestroy
+    private void cleanupResources() {
+        client.close();
+    }
 
     @Override
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
-        final MongoClientURI uri = new MongoClientURI(this.mongoHostUri);
-        final MongoClient client = new MongoClient(uri);
         LOGGER.info("Connected to MongoDb instance @ {} using database [{}]",
                 uri.getHosts(), uri.getDatabase());
 
