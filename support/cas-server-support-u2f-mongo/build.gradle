@@ -11,4 +11,6 @@ dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":support:cas-server-support-u2f")
     implementation project(":support:cas-server-support-mongo-core")
+
+    testImplementation project(path: ":support:cas-server-support-u2f", configuration: "tests")
 }
