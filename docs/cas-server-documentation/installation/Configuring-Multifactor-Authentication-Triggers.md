@@ -195,11 +195,11 @@ class MyExampleScript {
         def logger = args[3]
 
         if (service.id == "https://www.example.com") {
-            logger.warn("Evaluating principal attributes [{}]", authentication.principal.attributes)
+            logger.info("Evaluating principal attributes [{}]", authentication.principal.attributes)
 
             def mail = authentication.principal.attributes['mail']
             if (mail.contains("email@example.org")) {
-                logger.warn("Found mail attribute with value [{}]", mail)
+                logger.info("Found mail attribute with value [{}]", mail)
                 return "mfa-duo"
             }
         }

@@ -58,6 +58,9 @@ customizations to further ease future upgrades and maintenance.
 **Note: Do NOT clone or download the CAS codebase directly. That is ONLY required if you wish to contribute to the development of 
 the project. Utilize the [WAR Overlay method][overlay] instead to build and deploy your CAS instance.**
 
+## Sponsors
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/RJa9L5XHCwE3xKoYkAzK3Qcw/apereo/cas'>  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/RJa9L5XHCwE3xKoYkAzK3Qcw/apereo/cas.svg' /></a>
+
 [wiki]: https://apereo.github.io/cas
 [overlay]: https://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
