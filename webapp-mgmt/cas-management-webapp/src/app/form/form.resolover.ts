@@ -14,14 +14,14 @@ export class FormResolve implements Resolve<AbstractRegisteredService> {
 
   resolve(route: ActivatedRouteSnapshot): Promise<AbstractRegisteredService> {
     let param: string = route.params['id'];
-    let dup: boolean = route.params['duplicate'];
+    let dup: string = route.params['duplicate'];
 
     if(!param || param === '-1') {
       return new Promise((resolve,reject) => resolve(new RegexRegisteredService()));
     } else {
       return this.service.getService(param).then(resp => {
         if (resp) {
-          if (dup) {
+          if (dup === "true") {
             resp.id = -1;
           }
           return resp;
