@@ -6,7 +6,7 @@ import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;

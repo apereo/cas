@@ -43,31 +43,30 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoDbGoogleAuthenticatorTemplate() {
-        final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
+        final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(mongo);
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return mongoTemplate;
     }
-
-
+    
     @Autowired
     @Bean
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") 
                                                                                final IGoogleAuthenticator googleAuthenticatorInstance) {
-        final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
+        final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new GoogleAuthenticatorMongoDbTokenCredentialRepository(
                 googleAuthenticatorInstance,
                 mongoDbGoogleAuthenticatorTemplate(),
-                mongo.getCollection(),
-                mongo.isDropCollection()
+                mongo.getCollection()
         );
     }
     
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
-        final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
+        final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new GoogleAuthenticatorMongoDbTokenRepository(mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getTokenCollection(),
-                mongo.isDropCollection(),
                 casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
     }
 }
