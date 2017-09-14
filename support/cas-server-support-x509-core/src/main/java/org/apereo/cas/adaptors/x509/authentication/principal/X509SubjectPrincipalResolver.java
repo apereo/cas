@@ -54,7 +54,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <bean class="X509SubjectPrincipalResolver"
      * p:descriptor="$UID@$DC.$DC"
      * }
-     * }
+     * }*
      * <p>
      * The above bean when applied to a certificate with the DN
      * <p>
@@ -62,24 +62,17 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <p>
      * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
-     * @param descriptor Descriptor string where attribute names are prefixed with "$"
-     *                   to identify replacement by real attribute values from the subject DN.
-     *                   Valid attributes include common X.509 DN attributes such as the following:
-     *                   <ul>
-     *                   <li>C</li>
-     *                   <li>CN</li>
-     *                   <li>DC</li>
-     *                   <li>EMAILADDRESS</li>
-     *                   <li>L</li>
-     *                   <li>O</li>
-     *                   <li>OU</li>
-     *                   <li>SERIALNUMBER</li>
-     *                   <li>ST</li>
-     *                   <li>UID</li>
-     *                   <li>UNIQUEIDENTIFIER</li>
-     *                   </ul>
-     *                   For a complete list of supported attributes, see
-     *                   {@link org.cryptacular.x509.dn.StandardAttributeType}.
+     * @param attributeRepository      the attribute repository
+     * @param principalFactory         the principal factory
+     * @param returnNullIfNoAttributes the return null if no attributes
+     * @param principalAttributeName   the principal attribute name
+     * @param descriptor               Descriptor string where attribute names are prefixed with "$"
+     *                                 to identify replacement by real attribute values from the subject DN.
+     *                                 Valid attributes include common X.509 DN attributes such as the following:
+     *                                 <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
+     *                                 <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
+     *                                 <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
+     *                                 For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
     public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
                                         final boolean returnNullIfNoAttributes,
