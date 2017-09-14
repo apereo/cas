@@ -1257,7 +1257,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1293,7 +1293,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1397,7 +1397,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1433,7 +1433,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1469,7 +1469,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1673,7 +1673,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jms</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1713,7 +1713,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-messaging</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1749,7 +1749,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1785,7 +1785,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1821,7 +1821,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1857,7 +1857,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -1893,7 +1893,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2073,7 +2073,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2109,7 +2109,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.8.8</version>
+      <version>2.8.10</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2149,7 +2149,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-guava</artifactId>
-      <version>2.8.8</version>
+      <version>2.8.10</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2193,7 +2193,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.8.8</version>
+      <version>2.8.10</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2229,7 +2229,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.8.8</version>
+      <version>2.8.10</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2305,7 +2305,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.8.8</version>
+      <version>2.8.10</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -2553,7 +2553,7 @@
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
-      <version>2.6.1</version>
+      <version>2.7.1</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -4025,7 +4025,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>4.3.11.RELEASE</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
