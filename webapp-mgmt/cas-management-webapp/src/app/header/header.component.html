@@ -13,9 +13,13 @@
     <input #search class="search" placeholder="Search Services">
   </div>
   <div class="links">
-    <button md-button routerLink="/domains">
+    <button *ngIf="type === 'DOMAIN' "md-button routerLink="/domains">
       <md-icon>apps</md-icon>
       <span i18n>Domains</span>
+    </button>
+    <button *ngIf="type === 'DEFAULT'" md-button routerLink="/services/defualt">
+      <md-icon>apps</md-icon>
+      <span i18n>Services</span>
     </button>
     <button md-button routerLink="/form/-1">
       <md-icon>add_circle</md-icon>

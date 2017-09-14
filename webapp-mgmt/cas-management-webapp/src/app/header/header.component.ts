@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {Messages} from "../messages";
 import {Router} from "@angular/router";
 import {Observable} from "rxjs/Observable";
@@ -12,6 +12,9 @@ import {Location} from "@angular/common";
 export class HeaderComponent implements OnInit {
 
   @ViewChild("search") search: ElementRef;
+
+  @Input()
+  type: String;
 
   constructor(public messages: Messages,
               public router: Router,

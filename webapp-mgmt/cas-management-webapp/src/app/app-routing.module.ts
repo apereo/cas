@@ -25,12 +25,7 @@ import {SearchComponent} from "./search/search.component";
       {
         path: 'search/:query',
         component: SearchComponent
-      },
-      {
-        path: 'manage.html',
-        redirectTo: 'domains',
-        pathMatch: 'full'
-      },
+      }
     ]),
   ],
   exports: [ RouterModule ]

@@ -3,6 +3,7 @@ package org.apereo.cas.mgmt.services.web;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -11,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +51,9 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     private RegisteredServiceFactory registeredServiceFactory;
 
     private Service defaultService;
+
+    @Autowired
+    CasConfigurationProperties casProperties;
 
     /**
      * Instantiates a new manage registered services multi action controller.
@@ -148,6 +153,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
         model.put("defaultServiceUrl", this.defaultService.getId());
+        model.put("type",this.casProperties.getServiceRegistry().getManagementType());
         model.put(STATUS, HttpServletResponse.SC_OK);
         return new ModelAndView("manage", model);
     }
