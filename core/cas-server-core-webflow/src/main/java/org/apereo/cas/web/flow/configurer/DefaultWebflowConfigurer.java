@@ -45,6 +45,8 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      *
      * @param flowBuilderServices    the flow builder services
      * @param flowDefinitionRegistry the flow definition registry
+     * @param applicationContext     the application context
+     * @param casProperties          the cas properties
      */
     public DefaultWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                     final FlowDefinitionRegistry flowDefinitionRegistry,

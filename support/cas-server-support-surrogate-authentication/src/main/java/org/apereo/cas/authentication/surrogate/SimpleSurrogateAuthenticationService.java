@@ -25,6 +25,7 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
      * Instantiates a new simple surrogate username password service.
      *
      * @param eligibleAccounts the eligible accounts
+     * @param servicesManager  the services manager
      */
     public SimpleSurrogateAuthenticationService(final Map<String, Set> eligibleAccounts, final ServicesManager servicesManager) {
         super(servicesManager);

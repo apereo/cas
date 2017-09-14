@@ -54,7 +54,7 @@ public class ChainingPrincipalResolverTests {
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
         when(resolver2.resolve(any(Credential.class), any(Principal.class),
                 any(AuthenticationHandler.class)))
-                .thenReturn(principalFactory.createPrincipal("output", Collections.<String, Object>singletonMap("mail", "final@example.com")));
+                .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", "final@example.com")));
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         resolver.setChain(Arrays.asList(resolver1, resolver2));
