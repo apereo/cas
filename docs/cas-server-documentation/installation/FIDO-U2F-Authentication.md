@@ -50,3 +50,17 @@ Device registrations may be kept inside a relational database by including the f
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f-jpa).
+
+### MongoDb
+
+Device registrations may be kept inside a MongoDb instance by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-u2f-mongo</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f-mongodb).
