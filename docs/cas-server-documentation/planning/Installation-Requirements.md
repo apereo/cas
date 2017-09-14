@@ -13,7 +13,7 @@ requirements.
 
 ## Java
 
-CAS at its heart is a Java-based web application. Prior to deployment, you will need [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) `v1.8` installed.
+CAS at its heart is a Java-based web application. Prior to deployment, you will need to have [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) `v1.8` installed.
 
 ## Servlet Containers
 
