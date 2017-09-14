@@ -123,7 +123,7 @@
       </md-icon>
     </div>
 
-    <div>
+    <div *ngIf="service.subjectType === 'pairwise'">
       <md-form-field class="textInput">
         <input mdInput
                i18n-placeholder="services.form.label.oidc.sector.identifier.uri"
