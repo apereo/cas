@@ -21,7 +21,6 @@ import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
-import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
@@ -42,10 +41,10 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private PasswordManagementProperties pm = new PasswordManagementProperties();
-    
+
     @NestedConfigurationProperty
     private AdaptiveAuthenticationProperties adaptive = new AdaptiveAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
@@ -71,7 +70,7 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private AuthenticationPolicyProperties policy =
             new AuthenticationPolicyProperties();
-    
+
     @NestedConfigurationProperty
     private AcceptAuthenticationProperties accept = new AcceptAuthenticationProperties();
 
@@ -123,8 +122,6 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private SpnegoProperties spnego = new SpnegoProperties();
 
-    @NestedConfigurationProperty
-    private StormpathProperties stormpath = new StormpathProperties();
 
     @NestedConfigurationProperty
     private WsFederationProperties wsfed = new WsFederationProperties();
@@ -154,7 +151,7 @@ public class AuthenticationProperties {
     public AuthenticationPolicyProperties getPolicy() {
         return policy;
     }
-    
+
     public AcceptAuthenticationProperties getAccept() {
         return accept;
     }
@@ -283,14 +280,6 @@ public class AuthenticationProperties {
         this.spnego = spnego;
     }
 
-    public StormpathProperties getStormpath() {
-        return stormpath;
-    }
-
-    public void setStormpath(final StormpathProperties stormpath) {
-        this.stormpath = stormpath;
-    }
-
     public WsFederationProperties getWsfed() {
         return wsfed;
     }
@@ -355,7 +344,7 @@ public class AuthenticationProperties {
     public void setDigest(final DigestProperties digest) {
         this.digest = digest;
     }
-    
+
     public PrincipalAttributesProperties getAttributeRepository() {
         return attributeRepository;
     }

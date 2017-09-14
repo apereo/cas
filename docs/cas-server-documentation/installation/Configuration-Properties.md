@@ -1126,20 +1126,6 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.principalTransformation.prefix=
 ```
 
-## Stormpath Authentication
-
-To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
-
-```properties
-# cas.authn.stormpath.apiKey=
-# cas.authn.stormpath.secretkey=
-# cas.authn.stormpath.applicationId=
-
-# cas.authn.stormpath.principalTransformation.suffix=
-# cas.authn.stormpath.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.stormpath.principalTransformation.prefix=
-```
-
 ## Remote Address Authentication
 
 To learn more about this topic, [please review this guide](Remote-Address-Authentication.html).
