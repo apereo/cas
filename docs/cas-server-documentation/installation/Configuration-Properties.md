@@ -4147,7 +4147,7 @@ Decide how CAS should store authentication events inside an InfluxDb instance.
 # cas.events.influxDb.username=root
 # cas.events.influxDb.password=root
 # cas.events.influxDb.retentionPolicy=autogen
-# cas.events.influxDb..dropDatabase=false
+# cas.events.influxDb.dropDatabase=false
 # cas.events.influxDb.pointsToFlush=100
 # cas.events.influxDb.batchInterval=PT5S
 # cas.events.influxDb.consistencyLevel=ALL
