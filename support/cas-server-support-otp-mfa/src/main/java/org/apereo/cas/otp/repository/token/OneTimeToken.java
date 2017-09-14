@@ -26,9 +26,10 @@ import java.time.LocalDateTime;
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     private static final long serialVersionUID = -1329938047176583075L;
 
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = Integer.MAX_VALUE;
+    private long id = -1;
 
     @Column(nullable = false)
     private Integer token;
@@ -40,9 +41,12 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     private LocalDateTime issuedDateTime = LocalDateTime.now();
 
     public OneTimeToken() {
+        setId(System.currentTimeMillis());
     }
 
     public OneTimeToken(final Integer token, final String userId) {
+        this();
+        
         this.token = token;
         this.userId = userId;
     }

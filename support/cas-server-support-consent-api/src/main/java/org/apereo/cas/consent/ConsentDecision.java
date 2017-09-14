@@ -28,10 +28,11 @@ import java.util.stream.Collectors;
 @Table(name = "ConsentDecision")
 public class ConsentDecision {
 
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
@@ -53,6 +54,10 @@ public class ConsentDecision {
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String attributeValues;
+
+    public ConsentDecision() {
+        setId(System.currentTimeMillis());
+    }
 
     public LocalDateTime getDate() {
         return date;
