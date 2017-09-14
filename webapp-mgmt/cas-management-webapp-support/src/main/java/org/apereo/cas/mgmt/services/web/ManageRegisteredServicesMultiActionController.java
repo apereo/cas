@@ -53,7 +53,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     private Service defaultService;
 
     @Autowired
-    CasConfigurationProperties casProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Instantiates a new manage registered services multi action controller.
@@ -153,7 +153,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
         model.put("defaultServiceUrl", this.defaultService.getId());
-        model.put("type",this.casProperties.getServiceRegistry().getManagementType());
+        model.put("type", this.casProperties.getServiceRegistry().getManagementType());
         model.put(STATUS, HttpServletResponse.SC_OK);
         return new ModelAndView("manage", model);
     }
