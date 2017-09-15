@@ -1,23 +1,31 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.mgmt.config.CasManagementAuditConfiguration;
+import org.apereo.cas.mgmt.config.CasManagementWebAppConfiguration;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
-import org.apereo.cas.services.DomainServicesManager;
-import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.junit.Before;
+import org.apereo.cas.services.ServicesManager;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -25,28 +33,34 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RunWith(JUnit4.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(
+        classes = {
+                AopAutoConfiguration.class,
+                RefreshAutoConfiguration.class,
+                CasManagementAuditConfiguration.class,
+                CasManagementWebAppConfiguration.class,
+                ServerPropertiesAutoConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
+                CasCoreWebConfiguration.class})
+@DirtiesContext
+@TestPropertySource(locations = "classpath:/mgmt.properties")
 public class ManageRegisteredServicesMultiActionControllerTests {
 
     private static final String NAME = "name";
     private static final String UNIQUE_DESCRIPTION = "uniqueDescription";
-    private static final String SERVICES = "services";
+    
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @Autowired
+    @Qualifier("manageRegisteredServicesMultiActionController")
     private ManageRegisteredServicesMultiActionController controller;
-    private DefaultRegisteredServiceFactory registeredServiceFactory;
-    private DomainServicesManager servicesManager;
-
-    @Before
-    public void setUp() throws Exception {
-        this.servicesManager = new DomainServicesManager(new InMemoryServiceRegistry());
-
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new ArrayList<>(0));
-
-        this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
-                .registeredServiceFactory, new WebApplicationServiceFactory(), "https://cas.example.org");
-    }
+    
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Test
     public void verifyDeleteService() throws Exception {
@@ -68,13 +82,10 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     @Test
     public void verifyDeleteServiceNoService() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        this.thrown.expect(IllegalArgumentException.class);
-        this.thrown.expectMessage("The default service https://cas.example.org cannot be deleted. The definition is required for accessing the application.");
-
-        this.controller.deleteRegisteredService(1200, response);
-        assertNull(this.servicesManager.findServiceBy(1200));
+        final ResponseEntity entity = this.controller.deleteRegisteredService(5000, response);
+        assertNull(this.servicesManager.findServiceBy(5000));
         assertFalse(response.getContentAsString().contains("serviceName"));
+        assertFalse(entity.getStatusCode().is2xxSuccessful());
     }
 
     @Test

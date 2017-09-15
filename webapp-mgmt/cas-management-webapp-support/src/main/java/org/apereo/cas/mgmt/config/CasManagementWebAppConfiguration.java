@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.DefaultCasManagementEventListener;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
@@ -18,6 +19,7 @@ import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -30,6 +32,8 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -74,7 +78,8 @@ import java.util.stream.Collectors;
 @Configuration("casManagementWebAppConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasManagementWebAppConfiguration.class);
+    
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators = new ArrayList<>();
@@ -153,7 +158,14 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public Properties userProperties() {
         try {
             final Properties p = new Properties();
-            p.load(casProperties.getMgmt().getUserPropertiesFile().getInputStream());
+
+            final ManagementWebappProperties mgmt = casProperties.getMgmt();
+            if (ResourceUtils.doesResourceExist(mgmt.getUserPropertiesFile())) {
+                p.load(mgmt.getUserPropertiesFile().getInputStream());
+            } else {
+                LOGGER.warn("Could not locate [{}]", mgmt.getUserPropertiesFile());
+            }
+
             return p;
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -227,8 +239,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
             @Qualifier("servicesManager") final ServicesManager servicesManager) {
 
-        return new ManageRegisteredServicesMultiActionController(servicesManager, registeredServiceFactory(), webApplicationServiceFactory,
-                getDefaultServiceUrl());
+        return new ManageRegisteredServicesMultiActionController(servicesManager, registeredServiceFactory(),
+                webApplicationServiceFactory, getDefaultServiceUrl(), casProperties);
     }
 
     @Bean
@@ -239,14 +251,14 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     private String getDefaultServiceUrl() {
         return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/manage.html");
     }
-    
+
     @RefreshScope
     @Bean
     public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         return oidc.getUserDefinedScopes().entrySet()
                 .stream()
-                .map(k-> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
+                .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
                 .collect(Collectors.toSet());
     }
 
@@ -254,7 +266,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public DefaultCasManagementEventListener defaultCasManagementEventListener() {
         return new DefaultCasManagementEventListener();
     }
-    
+
     /**
      * The Permit all authorization generator.
      */
