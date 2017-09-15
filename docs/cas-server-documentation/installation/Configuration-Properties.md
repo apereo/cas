@@ -4948,20 +4948,29 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
-The configuration of the CAS management web application is handled inside a `management.properties|yml` file. Some of the settings, specially those that deal with service registry and loading services are shared between this application and the core CAS web application. You have to note that the [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and all settings that affect the behavior of services, needs to be configured in the same exact way for the management web application.
+The configuration of the CAS management web application is handled inside a `management.properties|yml` file. Some of the settings, specially those that deal with service registry and loading services or those that might define an external CAS server for authentication are shared between this application and the core CAS web application. You have to note that the [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and all settings that affect the behavior of services, needs to be configured in the same exact way for the management web application.
 
 ```properties
+# server.port=8444
 # server.contextPath=/cas-management
 
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
+
 # cas.mgmt.serverName=https://localhost:8443
 # cas.mgmt.defaultLocale=en
 
 # cas.mgmt.authzAttributes[0]=memberOf
 # cas.mgmt.authzAttributes[1]=groupMembership
+
+# Connect to a CAS server for authentication
+# cas.server.name=
+# cas.server.prefix=
+
+# Use regex for authorized IPs
+#cas.mgmt.authzIpRegex=
 ```
 
 ### LDAP Authorization
