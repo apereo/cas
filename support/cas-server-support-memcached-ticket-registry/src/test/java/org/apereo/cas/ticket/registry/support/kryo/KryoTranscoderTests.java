@@ -74,7 +74,7 @@ public class KryoTranscoderTests {
          * @param numberOfUses        the number of uses
          * @param timeToKillInSeconds the time to kill in seconds
          */
-        public UnregisteredServiceTicketExpirationPolicy(int numberOfUses, long timeToKillInSeconds) {
+        public UnregisteredServiceTicketExpirationPolicy(final int numberOfUses, final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
@@ -242,7 +242,7 @@ public class KryoTranscoderTests {
         assertEquals(expectedST, transcoder.decode(cachedData));
     }
 
-    @Test
+    @Test(expected = KryoException.class)
     public void verifyEncodeDecodeNonRegisteredClass() throws Exception {
         // UnregisteredServiceTicketExpirationPolicy is not registered with Kryo...
         transcoder.getKryo().getClassResolver().reset();
@@ -253,14 +253,9 @@ public class KryoTranscoderTests {
         CachedData cachedData = transcoder.encode(expectedST);
         assertEquals(expectedST, transcoder.decode(cachedData));
         // Test it a second time - there's a Kryo 4.0.0 bug that causes the second deserialize of an object
-        // containing an unregistered class to fail...
-        try {
-            assertEquals(expectedST, transcoder.decode(cachedData));
-            fail("Expected Kryo exception due to bug in 4.0.0.  If Kryo has been updated, this test case will need adjusting.");
-        } catch (KryoException e) {
-            // expected
-        } catch (Exception e) {
-            fail("Unexpected exception testing multiple deserialize of object containing unregistered class " + e.getMessage());
-        }
+        // containing an unregistered class to fail...  When this test fails (i.e. after a new working Kryo version
+        // comes along), remove the expected KryoException from the test annotation, and remove the fail() from just below...
+        assertEquals(expectedST, transcoder.decode(cachedData));
+        fail("Expected Kryo exception due to bug in 4.0.0.  If Kryo has been updated, this test case will need adjusting.");
     }
 }
