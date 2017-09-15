@@ -1,7 +1,9 @@
 package org.apereo.cas.mgmt.web;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.exception.HttpAction;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasManagementSecurityInterceptor}.
@@ -28,7 +31,7 @@ public class CasManagementSecurityInterceptor extends SecurityInterceptor {
      * @param config the config
      */
     public CasManagementSecurityInterceptor(final Config config) {
-        super(config, "CasClient", "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
+        super(config, getClientNames(config), getAuthorizerNames(config));
         final CasManagementSecurityLogic logic = new CasManagementSecurityLogic();
         logic.setSaveProfileInSession(true);
         setSecurityLogic(logic);
@@ -37,13 +40,20 @@ public class CasManagementSecurityInterceptor extends SecurityInterceptor {
     @Override
     public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                            final Object handler, final ModelAndView modelAndView) throws Exception {
-        if (!StringUtils.isEmpty(request.getQueryString())
-                && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
+        if (!StringUtils.isEmpty(request.getQueryString()) && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
             final RedirectView v = new RedirectView(request.getRequestURL().toString());
             v.setExposeModelAttributes(false);
             v.setExposePathVariables(false);
             modelAndView.setView(v);
         }
+    }
+
+    private static String getClientNames(final Config config) {
+        return config.getClients().getClients().stream().map(Client::getName).collect(Collectors.joining(Pac4jConstants.ELEMENT_SEPRATOR));
+    }
+
+    private static String getAuthorizerNames(final Config config) {
+        return config.getAuthorizers().keySet().stream().collect(Collectors.joining(Pac4jConstants.ELEMENT_SEPRATOR));
     }
 
     /**

@@ -34,6 +34,12 @@ public class ManagementWebappProperties implements Serializable {
     private String defaultLocale = "en";
 
     /**
+     * The IP address pattern that can control access to the management webapp.
+     * When defined, extracts the IP address from the request and compares with the pattern.
+     */
+    private String authzIpRegex;
+    
+    /**
      * Collection of attributes the authorized user must have in order to authenticate into the app.
      * Th attribute value(s) must match the expected role. To permit everything, you may use {@code *}.
      */
@@ -98,6 +104,14 @@ public class ManagementWebappProperties implements Serializable {
 
     public void setDefaultLocale(final String defaultLocale) {
         this.defaultLocale = defaultLocale;
+    }
+
+    public String getAuthzIpRegex() {
+        return authzIpRegex;
+    }
+
+    public void setAuthzIpRegex(final String authzIpRegex) {
+        this.authzIpRegex = authzIpRegex;
     }
 
     public static class Ldap extends AbstractLdapProperties {

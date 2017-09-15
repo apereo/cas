@@ -19,14 +19,40 @@ A template overlay for the services management webapp is [provided here](https:/
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
+## Configuration
+
+The management web application is primarily controlled by a `management.yml|properties` file. However, all strategies outlined in [CAS configuration management](Configuration-Management.html) equally apply here as well in the way that settings are defined, passed and resolved. The primary difference of course is the name of the configuration file.
+
 ## Services Registry
 
 The [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and settings, needs to be configured in the same exact way for the management web application.
 
-## Authentication Method
+## Authentication
 
-Access to the management webapp is by default configured to authenticate against a CAS server.
+Access to the management webapp can be configured via the following strategies.
+
+### CAS Server
+
+The management web application can be configured to authenticate against a CAS server. To activate this mode, simply specify the location of the CAS server via configuration settings. To disable this mode, blank out the settings that describe the external CAS server.
+
+If this strategy is used, access strategy rules can then further be controlled via the outlined strategies for authorization.
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
+
+### IP Address
+
+The management web application can be configured to allow anonymous access if the request's IP address matches a predefined regular expression. To disable this mode, blank out the settings that describe the external CAS server. If this strategy is used, access strategy and authorized rules do not apply as the resolved identity is simply anonymous.
+
+<div class="alert alert-danger"><strong>Be Careful</strong><p>Keep in mind that this authentication
+mechanism should only be enabled for internal network clients with relatively static IP addresses.</p></div>
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
+
+### Anonymous
+
+The management web application can be configured to allow anonymous access if no other authentication strategy is defined. This mode is mostly useful for development and testing while additional warnings show up in the logs that explain the caveats of this option.
+
+<div class="alert alert-danger"><strong>Be Careful</strong><p>Be sure to specify an authentication strategy, as failure to do so would effectively leave the management web application open for access.</p></div>
 
 ## Authorization
 
