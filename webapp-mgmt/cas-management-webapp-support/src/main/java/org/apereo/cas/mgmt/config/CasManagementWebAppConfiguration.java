@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.DefaultCasManagementEventListener;
+import org.apereo.cas.mgmt.authz.CasRoleBasedAuthorizer;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
@@ -24,14 +25,14 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.authorization.authorizer.Authorizer;
-import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.authorization.generator.FromAttributesAuthorizationGenerator;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.client.Client;
+import org.pac4j.core.client.direct.AnonymousClient;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.http.client.direct.IpClient;
+import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -79,7 +81,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasManagementWebAppConfiguration.class);
-    
+
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators = new ArrayList<>();
@@ -96,15 +98,17 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
+    
     @Bean
     public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
     }
 
+    @ConditionalOnMissingBean(name = "requireAnyRoleAuthorizer")
     @Bean
+    @RefreshScope
     public Authorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(casProperties.getMgmt().getAdminRoles());
+        return new CasRoleBasedAuthorizer(casProperties.getMgmt().getAdminRoles());
     }
 
     @RefreshScope
@@ -114,18 +118,41 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
     }
 
+    @ConditionalOnMissingBean(name = "authenticationClients")
     @Bean
-    public Client casClient() {
-        final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
-        final DirectCasClient client = new DirectCasClient(cfg);
-        client.setAuthorizationGenerator(authorizationGenerator());
-        client.setName("CasClient");
-        return client;
+    public List<Client> authenticationClients() {
+        final List<Client> clients = new ArrayList<>();
+
+        if (StringUtils.hasText(casProperties.getServer().getName())) {
+            LOGGER.info("Configuring an authentication strategy based on CAS running at [{}]", casProperties.getServer().getName());
+            final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+            final DirectCasClient client = new DirectCasClient(cfg);
+            client.setAuthorizationGenerator(authorizationGenerator());
+            client.setName("CasClient");
+            clients.add(client);
+        }
+
+        if (StringUtils.hasText(casProperties.getMgmt().getAuthzIpRegex())) {
+            LOGGER.info("Configuring an authentication strategy based on authorized IP addresses matching [{}]", casProperties.getMgmt().getAuthzIpRegex());
+            final IpClient ipClient = new IpClient(new IpRegexpAuthenticator(casProperties.getMgmt().getAuthzIpRegex()));
+            ipClient.setName("IpClient");
+            ipClient.setAuthorizationGenerator(getStaticAdminRolesAuthorizationGenerator());
+            clients.add(ipClient);
+        }
+
+        if (clients.isEmpty()) {
+            LOGGER.warn("No authentication strategy is defined, CAS will establish an anonymous authentication mode whereby access is immediately granted. "
+                    + "This may NOT be relevant for production purposes. Consider configuring alternative authentication strategies for maximum security.");
+            final AnonymousClient anon = AnonymousClient.INSTANCE;
+            anon.setAuthorizationGenerator(getStaticAdminRolesAuthorizationGenerator());
+            clients.add(anon);
+        }
+        return clients;
     }
 
     @Bean
     public Config config() {
-        final Config cfg = new Config(getDefaultServiceUrl(), casClient());
+        final Config cfg = new Config(getDefaultServiceUrl(), authenticationClients());
         cfg.setAuthorizer(requireAnyRoleAuthorizer());
         return cfg;
     }
@@ -179,11 +206,18 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
         if (!authzAttributes.isEmpty()) {
             if (authzAttributes.stream().anyMatch(a -> a.equals("*"))) {
-                return new PermitAllAuthorizationGenerator();
+                return getStaticAdminRolesAuthorizationGenerator();
             }
             return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[]{}), new String[]{});
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
+    }
+
+    private AuthorizationGenerator getStaticAdminRolesAuthorizationGenerator() {
+        return (context, profile) -> {
+            profile.addRoles(casProperties.getMgmt().getAdminRoles());
+            return profile;
+        };
     }
 
     @ConditionalOnMissingBean(name = "localeResolver")
@@ -204,12 +238,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
+    public HandlerInterceptor localeChangeInterceptor() {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
         bean.setParamName(this.casProperties.getLocale().getParamName());
         return bean;
     }
-
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -222,7 +255,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-
 
     @Bean
     public RegisteredServiceFactory registeredServiceFactory() {
@@ -238,7 +270,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
             @Qualifier("servicesManager") final ServicesManager servicesManager) {
-
         return new ManageRegisteredServicesMultiActionController(servicesManager, registeredServiceFactory(),
                 webApplicationServiceFactory, getDefaultServiceUrl(), casProperties);
     }
@@ -265,17 +296,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public DefaultCasManagementEventListener defaultCasManagementEventListener() {
         return new DefaultCasManagementEventListener();
-    }
-
-    /**
-     * The Permit all authorization generator.
-     */
-    public class PermitAllAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
-        @Override
-        public CommonProfile generate(final WebContext webContext, final CommonProfile commonProfile) {
-            commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
-            return commonProfile;
-        }
     }
 
     @Bean
