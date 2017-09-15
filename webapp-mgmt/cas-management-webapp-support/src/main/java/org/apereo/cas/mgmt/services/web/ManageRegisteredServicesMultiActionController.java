@@ -12,7 +12,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,11 +47,10 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
 
     private static final String STATUS = "status";
 
-    private RegisteredServiceFactory registeredServiceFactory;
+    private final RegisteredServiceFactory registeredServiceFactory;
 
-    private Service defaultService;
+    private final Service defaultService;
 
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     /**
@@ -67,10 +65,12 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             final ServicesManager servicesManager,
             final RegisteredServiceFactory registeredServiceFactory,
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            final String defaultServiceUrl) {
+            final String defaultServiceUrl, 
+            final CasConfigurationProperties casProperties) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
         this.defaultService = webApplicationServiceFactory.createService(defaultServiceUrl);
+        this.casProperties = casProperties;
     }
 
     /**
