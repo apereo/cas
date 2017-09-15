@@ -22,6 +22,7 @@ import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
@@ -29,11 +30,15 @@ import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenExpirationPolicy;
+import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
+import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.ticket.registry.support.kryo.serial.URLSerializer;
 import org.apereo.cas.ticket.registry.support.kryo.serial.ZonedDateTimeTranscoder;
+import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -41,7 +46,6 @@ import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
-import org.apereo.cas.authentication.DefaultAuthentication;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
@@ -114,7 +118,13 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.kryo.register(DefaultHandlerResult.class);
         this.kryo.register(DefaultAuthentication.class);
         this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class);
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class);
         this.kryo.register(NeverExpiresExpirationPolicy.class);
+        this.kryo.register(OAuthAccessTokenExpirationPolicy.class);
+        this.kryo.register(OAuthCodeExpirationPolicy.class);
+        this.kryo.register(OAuthRefreshTokenExpirationPolicy.class);
+        this.kryo.register(AlwaysExpiresExpirationPolicy.class);
         this.kryo.register(RememberMeDelegatingExpirationPolicy.class);
         this.kryo.register(ServiceTicketImpl.class);
         this.kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
@@ -133,7 +143,7 @@ public class KryoTranscoder implements Transcoder<Object> {
 
         // we add these ones for tests only
         this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
-        
+
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(this.kryo);
         ImmutableListSerializer.registerSerializers(this.kryo);

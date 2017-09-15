@@ -1,24 +1,26 @@
 package org.apereo.cas.ticket.registry.support.kryo;
 
+import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.mock.MockServiceTicket;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 
@@ -35,7 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -57,6 +60,24 @@ public class KryoTranscoderTests {
     private final KryoTranscoder transcoder;
 
     private final Map<String, Object> principalAttributes;
+
+    /**
+     * Class for testing Kryo unregistered class handling.
+     */
+    public static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+
+        private static final long serialVersionUID  = -1;
+
+        /**
+         * Instantiates a new Service ticket expiration policy.
+         *
+         * @param numberOfUses        the number of uses
+         * @param timeToKillInSeconds the time to kill in seconds
+         */
+        public UnregisteredServiceTicketExpirationPolicy(int numberOfUses, long timeToKillInSeconds) {
+            super(numberOfUses, timeToKillInSeconds);
+        }
+    }
 
     public KryoTranscoderTests() {
         transcoder = new KryoTranscoder();
@@ -204,5 +225,42 @@ public class KryoTranscoderTests {
     public void verifyEncodeDecodeRegisteredService() throws Exception {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("helloworld");
         assertEquals(service, transcoder.decode(transcoder.encode(service)));
+    }
+
+    @Test
+    public void verifySTWithServiceTicketExpirationPolicy() throws Exception {
+        // ServiceTicketExpirationPolicy is not registered with Kryo...
+        transcoder.getKryo().getClassResolver().reset();
+        final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
+        final MockServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
+        final MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy step = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
+        expectedST.setExpiration(step);
+        CachedData cachedData = transcoder.encode(expectedST);
+        assertEquals(expectedST, transcoder.decode(cachedData));
+        // Test it a second time - there's a Kryo 4.0.0 bug that causes the second deserialize of an object
+        // containing an unregistered class to fail - we want to make sure it works with a registered class.
+        assertEquals(expectedST, transcoder.decode(cachedData));
+    }
+
+    @Test
+    public void verifyEncodeDecodeNonRegisteredClass() throws Exception {
+        // UnregisteredServiceTicketExpirationPolicy is not registered with Kryo...
+        transcoder.getKryo().getClassResolver().reset();
+        final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
+        final MockServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
+        final UnregisteredServiceTicketExpirationPolicy step = new UnregisteredServiceTicketExpirationPolicy(1, 600);
+        expectedST.setExpiration(step);
+        CachedData cachedData = transcoder.encode(expectedST);
+        assertEquals(expectedST, transcoder.decode(cachedData));
+        // Test it a second time - there's a Kryo 4.0.0 bug that causes the second deserialize of an object
+        // containing an unregistered class to fail...
+        try {
+            assertEquals(expectedST, transcoder.decode(cachedData));
+            fail("Expected Kryo exception due to bug in 4.0.0.  If Kryo has been updated, this test case will need adjusting.");
+        } catch (KryoException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception testing multiple deserialize of object containing unregistered class " + e.getMessage());
+        }
     }
 }
