@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link JdbcAcceptableUsagePolicyRepository}.
+ * This is {@link MongoDbAcceptableUsagePolicyRepository}.
  * Examines the principal attribute collection to determine if
  * the policy has been accepted, and if not, allows for a configurable
  * way so that user's choice can later be remembered and saved back into
