@@ -3768,6 +3768,8 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
+
+# cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
 
 ## Localization

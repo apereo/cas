@@ -130,6 +130,43 @@ The expiration policy for OAuth tokens is controlled by CAS settings and propert
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
+## OAuth User Profile
+
+The requested user profile may be rendered and consumed by the application using the following options.
+
+The following alternative options are available.
+
+### Nested
+
+By default, the requested user profile is rendered using a `NESTED` format where the authenticated principal and attributes are placed inside `id` and `attributes` tags respectively in the final structure.
+
+```json
+{
+  "id": "casuser",
+  "attributes":
+  {
+    "email": "casuser@example.org",
+    "name": "CAS"
+  },
+  "something": "else"
+}
+```
+
+### Flat
+
+This option flattens principal attributes by one degree, putting them at the same level as `id`. Other nested elements in the final payload are left untouched.
+
+```json
+{
+  "id": "casuser",
+  "email": "casuser@example.org",
+  "name": "CAS",
+  "something": "else"
+}
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
