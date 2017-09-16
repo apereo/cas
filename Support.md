@@ -26,7 +26,7 @@ Please search the archives before posting to the community discussion list.
 
 ### Chat Room  
 
-The CAS community chat room is provided by [Gitter][casgitter]: [![Gitter](https://badges.gitter.im/Join Chat.svg)][casgitter]
+The CAS community chat room is provided by [Gitter][casgitter].
 
 ### Mailing Lists
 
