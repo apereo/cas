@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached;
 
+import com.esotericsoftware.kryo.Serializer;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
@@ -19,6 +20,9 @@ import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * This is {@link MemcachedPooledConnectionFactory}.
  *
@@ -28,9 +32,15 @@ import org.slf4j.LoggerFactory;
 public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedPooledConnectionFactory.class);
     private final BaseMemcachedProperties memcachedProperties;
+    private final Map<Class<?>, Serializer> kryoSerializerMap;
 
     public MemcachedPooledConnectionFactory(final BaseMemcachedProperties memcachedProperties) {
+        this(memcachedProperties, new LinkedHashMap<>());
+    }
+
+    public MemcachedPooledConnectionFactory(final BaseMemcachedProperties memcachedProperties, final Map<Class<?>, Serializer> kryoSerializerMap) {
         this.memcachedProperties = memcachedProperties;
+        this.kryoSerializerMap = kryoSerializerMap;
     }
 
     @Override
@@ -38,7 +48,7 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
         try {
             final MemcachedClientFactoryBean factoryBean = new MemcachedClientFactoryBean();
             factoryBean.setServers(memcachedProperties.getServers());
-            
+
             switch (StringUtils.trimToEmpty(memcachedProperties.getTranscoder()).toLowerCase()) {
                 case "serial":
                     factoryBean.setTranscoder(new SerializingTranscoder());
@@ -51,7 +61,9 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
                     break;
                 case "kryo":
                 default:
-                    factoryBean.setTranscoder(new CasKryoTranscoder());
+                    final CasKryoTranscoder kryo = new CasKryoTranscoder();
+                    kryo.setSerializerMap(this.kryoSerializerMap);
+                    factoryBean.setTranscoder(kryo);
             }
 
             if (StringUtils.isNotBlank(memcachedProperties.getLocatorType())) {
