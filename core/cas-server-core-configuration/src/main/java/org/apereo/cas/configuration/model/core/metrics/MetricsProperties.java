@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.metrics;
 
+import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import java.io.Serializable;
@@ -12,8 +13,8 @@ import java.io.Serializable;
  */
 
 public class MetricsProperties implements Serializable {
-
     private static final long serialVersionUID = 345002357523418414L;
+
     /**
      * String representation of refresh interval for metrics collection.
      */
@@ -23,6 +24,45 @@ public class MetricsProperties implements Serializable {
      * Log destination name of the logging system in use for metrics output.
      */
     private String loggerName = "perfStatsLogger";
+
+    /**
+     * Export metrics to a redis database.
+     */
+    private Redis redis = new Redis();
+
+    /**
+     * Export metrics to a statsd database.
+     */
+    private Statsd statsd = new Statsd();
+
+    /**
+     * Export metrics to an open tsdb database.
+     */
+    private OpenTsdb openTsdb = new OpenTsdb();
+
+    public Statsd getStatsd() {
+        return statsd;
+    }
+
+    public void setStatsd(final Statsd statsd) {
+        this.statsd = statsd;
+    }
+
+    public OpenTsdb getOpenTsdb() {
+        return openTsdb;
+    }
+
+    public void setOpenTsdb(final OpenTsdb openTsdb) {
+        this.openTsdb = openTsdb;
+    }
+
+    public Redis getRedis() {
+        return redis;
+    }
+
+    public void setRedis(final Redis redis) {
+        this.redis = redis;
+    }
 
     public long getRefreshInterval() {
         return Beans.newDuration(this.refreshInterval).getSeconds();
@@ -38,5 +78,125 @@ public class MetricsProperties implements Serializable {
 
     public void setLoggerName(final String loggerName) {
         this.loggerName = loggerName;
+    }
+
+    public static class Statsd implements Serializable {
+        private static final long serialVersionUID = 6541713495513399930L;
+
+        /**
+         * Statsd host.
+         */
+        private String host;
+
+        /**
+         * Statd port.
+         */
+        private int port = 8125;
+
+        /**
+         * Define a prefix for statd metrics.
+         */
+        private String prefix = "cas";
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(final String host) {
+            this.host = host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(final int port) {
+            this.port = port;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(final String prefix) {
+            this.prefix = prefix;
+        }
+    }
+
+    public static class OpenTsdb implements Serializable {
+        private static final long serialVersionUID = 7419713490013390030L;
+
+        /**
+         * Connection timeout.
+         */
+        private int connectTimeout = 10_000;
+
+        /**
+         * Reading input timeout.
+         */
+        private int readTimeout = 30_000;
+
+        /**
+         * Url of the Open TSDB server.
+         * Typically, this is {@code http://localhost:4242/api/put}.
+         */
+        private String url;
+
+        public int getConnectTimeout() {
+            return connectTimeout;
+        }
+
+        public void setConnectTimeout(final int connectTimeout) {
+            this.connectTimeout = connectTimeout;
+        }
+
+        public int getReadTimeout() {
+            return readTimeout;
+        }
+
+        public void setReadTimeout(final int readTimeout) {
+            this.readTimeout = readTimeout;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(final String url) {
+            this.url = url;
+        }
+    }
+
+    public static class Redis extends BaseRedisProperties {
+        private static final long serialVersionUID = 6419713490013390030L;
+
+        /**
+         * It is best to use a prefix that is unique to the application instance (e.g. using a random value and maybe the
+         * logical name of the application to make it possible to correlate with other instances of the same application)
+         */
+        private String prefix;
+
+        /**
+         * The “key” is used to keep a global index of all metric names, so it should be unique “globally”,
+         * whatever that means for your system
+         * (e.g. two instances of the same system could share a Redis cache if they have distinct keys).
+         */
+        private String key;
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(final String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(final String key) {
+            this.key = key;
+        }
     }
 }
