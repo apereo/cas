@@ -126,6 +126,12 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -Xverify:none
 ```
 
+#### Plugins
+
+The following plugins may prove useful during development:
+
+- [Checkstyle](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
+
 ### Eclipse
 
 For Eclipse, execute the following commands:
