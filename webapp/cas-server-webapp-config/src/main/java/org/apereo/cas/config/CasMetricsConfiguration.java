@@ -78,9 +78,6 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
                 .build())
                 .start(casProperties.getMetrics().getRefreshInterval(), TimeUnit.SECONDS);
 
-        registerReporter(JmxReporter
-                .forRegistry(metricRegistry)
-                .build());
-
+        registerReporter(JmxReporter.forRegistry(metricRegistry).build());
     }
 }
