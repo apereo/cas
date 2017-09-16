@@ -35,6 +35,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.EncodedTicket;
+import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -100,49 +101,12 @@ public class CasKryoTranscoder implements Transcoder<Object> {
      */
     @PostConstruct
     public void initialize() {
-        // Register types we know about and do not require external configuration
-        this.kryo.register(EncodedTicket.class);
-        this.kryo.register(ArrayList.class);
-        this.kryo.register(BasicCredentialMetaData.class);
-        this.kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
-        this.kryo.register(ZonedDateTime.class, new ZonedDateTimeTranscoder());
-        this.kryo.register(HardTimeoutExpirationPolicy.class);
-        this.kryo.register(HashMap.class);
-        this.kryo.register(LinkedHashMap.class);
-        this.kryo.register(HashSet.class);
-        this.kryo.register(DefaultHandlerResult.class);
-        this.kryo.register(DefaultAuthentication.class);
-        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
-        this.kryo.register(NeverExpiresExpirationPolicy.class);
-        this.kryo.register(RememberMeDelegatingExpirationPolicy.class);
-        this.kryo.register(ServiceTicketImpl.class);
-        this.kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
-        this.kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
-        this.kryo.register(TicketGrantingTicketExpirationPolicy.class);
-        this.kryo.register(TicketGrantingTicketImpl.class);
-        this.kryo.register(TimeoutExpirationPolicy.class);
-        this.kryo.register(UsernamePasswordCredential.class);
-        this.kryo.register(SimplePrincipal.class);
-        this.kryo.register(URL.class, new URLSerializer());
-        this.kryo.register(URI.class, new URISerializer());
-        this.kryo.register(Pattern.class, new RegexSerializer());
-        this.kryo.register(UUID.class, new UUIDSerializer());
-        this.kryo.register(EnumMap.class, new EnumMapSerializer());
-        this.kryo.register(EnumSet.class, new EnumSetSerializer());
-
-        // we add these ones for tests only
-        this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
-
-        // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
-        UnmodifiableCollectionsSerializer.registerSerializers(this.kryo);
-        ImmutableListSerializer.registerSerializers(this.kryo);
-        ImmutableSetSerializer.registerSerializers(this.kryo);
-        ImmutableMapSerializer.registerSerializers(this.kryo);
-        ImmutableMultimapSerializer.registerSerializers(this.kryo);
-        
-        this.kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
-        this.kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
-        this.kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
+        registerCasAuthenticationWithKryo();
+        registerExpirationPoliciesWithKryo();
+        registerCasTicketsWithKryo();
+        registerNativeJdkComponentsWithKryo();
+        registerCasServicesWithKryo();
+        registerImmutableOrEmptyCollectionsWithKryo();
 
         // Register other types
         if (this.serializerMap != null) {
@@ -155,6 +119,65 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.setReferences(false);
         // Catchall for any classes not explicitly registered
         this.kryo.setRegistrationRequired(false);
+    }
+
+    private void registerImmutableOrEmptyCollectionsWithKryo() {
+        UnmodifiableCollectionsSerializer.registerSerializers(this.kryo);
+        ImmutableListSerializer.registerSerializers(this.kryo);
+        ImmutableSetSerializer.registerSerializers(this.kryo);
+        ImmutableMapSerializer.registerSerializers(this.kryo);
+        ImmutableMultimapSerializer.registerSerializers(this.kryo);
+
+        this.kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
+        this.kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
+        this.kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
+    }
+
+    private void registerCasServicesWithKryo() {
+        this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
+    }
+
+    private void registerCasAuthenticationWithKryo() {
+        this.kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
+        this.kryo.register(BasicCredentialMetaData.class);
+        this.kryo.register(DefaultHandlerResult.class);
+        this.kryo.register(DefaultAuthentication.class);
+        this.kryo.register(UsernamePasswordCredential.class);
+        this.kryo.register(SimplePrincipal.class);
+    }
+
+    private void registerCasTicketsWithKryo() {
+        this.kryo.register(TicketGrantingTicketImpl.class);
+        this.kryo.register(ServiceTicketImpl.class);
+        this.kryo.register(EncodedTicket.class);
+    }
+
+    private void registerNativeJdkComponentsWithKryo() {
+        this.kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
+        this.kryo.register(ZonedDateTime.class, new ZonedDateTimeTranscoder());
+        this.kryo.register(ArrayList.class);
+        this.kryo.register(HashMap.class);
+        this.kryo.register(LinkedHashMap.class);
+        this.kryo.register(HashSet.class);
+        this.kryo.register(URL.class, new URLSerializer());
+        this.kryo.register(URI.class, new URISerializer());
+        this.kryo.register(Pattern.class, new RegexSerializer());
+        this.kryo.register(UUID.class, new UUIDSerializer());
+        this.kryo.register(EnumMap.class, new EnumMapSerializer());
+        this.kryo.register(EnumSet.class, new EnumSetSerializer());
+    }
+
+    private void registerExpirationPoliciesWithKryo() {
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class);
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class);
+        this.kryo.register(NeverExpiresExpirationPolicy.class);
+        this.kryo.register(RememberMeDelegatingExpirationPolicy.class);
+        this.kryo.register(TimeoutExpirationPolicy.class);
+        this.kryo.register(HardTimeoutExpirationPolicy.class);
+        this.kryo.register(AlwaysExpiresExpirationPolicy.class);
+        this.kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
+        this.kryo.register(TicketGrantingTicketExpirationPolicy.class);
     }
 
     /**
