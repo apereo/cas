@@ -39,8 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -63,15 +62,12 @@ public class KryoTranscoderTests {
 
     private final Map<String, Object> principalAttributes;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     /**
      * Class for testing Kryo unregistered class handling.
      */
     public static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
-        private static final long serialVersionUID  = -1;
+        private static final long serialVersionUID = -1;
 
         /**
          * Instantiates a new Service ticket expiration policy.
@@ -83,6 +79,10 @@ public class KryoTranscoderTests {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
 
     public KryoTranscoderTests() {
         transcoder = new KryoTranscoder();
