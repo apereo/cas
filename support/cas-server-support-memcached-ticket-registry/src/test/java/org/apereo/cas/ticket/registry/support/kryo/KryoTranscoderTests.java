@@ -78,7 +78,7 @@ public class KryoTranscoderTests {
          * @param numberOfUses        the number of uses
          * @param timeToKillInSeconds the time to kill in seconds
          */
-        public UnregisteredServiceTicketExpirationPolicy(final int numberOfUses, final long timeToKillInSeconds) {
+        UnregisteredServiceTicketExpirationPolicy(final int numberOfUses, final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
