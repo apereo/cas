@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.metrics;
 
+import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
 
@@ -34,11 +36,35 @@ public class MetricsProperties implements Serializable {
      * Export metrics to a statsd database.
      */
     private Statsd statsd = new Statsd();
-
+    /**
+     * Export metrics to an mongodb database.
+     */
+    private MongoDb mongo = new MongoDb();
+    /**
+     * Export metrics to an influxdb database.
+     */
+    private InfluxDb influxDb = new InfluxDb();
+    
     /**
      * Export metrics to an open tsdb database.
      */
     private OpenTsdb openTsdb = new OpenTsdb();
+
+    public MongoDb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
+    }
+
+    public InfluxDb getInfluxDb() {
+        return influxDb;
+    }
+
+    public void setInfluxDb(final InfluxDb influxDb) {
+        this.influxDb = influxDb;
+    }
 
     public Statsd getStatsd() {
         return statsd;
@@ -80,6 +106,14 @@ public class MetricsProperties implements Serializable {
         this.loggerName = loggerName;
     }
 
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
+        private static final long serialVersionUID = 8131713495513399930L;
+    }
+    
+    public static class InfluxDb extends InfluxDbProperties {
+        private static final long serialVersionUID = 1231713495513399930L;
+    }
+    
     public static class Statsd implements Serializable {
         private static final long serialVersionUID = 6541713495513399930L;
 

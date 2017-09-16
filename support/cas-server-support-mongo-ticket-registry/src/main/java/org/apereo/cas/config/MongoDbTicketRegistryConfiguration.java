@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
@@ -63,7 +63,7 @@ public class MongoDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbTicketRegistryTemplate() {
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
         return factory.buildMongoTemplate(mongo);
     }

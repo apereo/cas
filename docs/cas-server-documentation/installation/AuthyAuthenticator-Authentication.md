@@ -10,7 +10,7 @@ via Authy's simple REST API that does all the heavy lifting.
 
 Start by visiting the [Authy documentation](https://www.authy.com/developers/).
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the overlay:
 
 ```xml
 <dependency>

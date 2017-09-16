@@ -13,12 +13,12 @@ Supported metrics include:
 - File descriptor usage
 - ...
 
-### Metric Refresh Interval
+## Refresh Interval
 
 The metrics reporting interval can be configured via CAS properties.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics--performance-stats).
 
-### Loggers
+## Logging
 
 All performance data and metrics are routed to a log file via the Log4j configuration:
 
@@ -40,7 +40,6 @@ All performance data and metrics are routed to a log file via the Log4j configur
     <AppenderRef ref="perfFileAppender" />
 </CasAppender>
 ```
-
 
 ### Sample Output
 
@@ -65,3 +64,25 @@ type=TIMER, name=org.apereo.cas.DefaultCentralAuthenticationService.GRANT_SERVIC
 min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0,
 mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
 ```
+
+## Storage
+
+CAs metrics may be routed to varying types of databases for storage and analytics. The following options are available:
+
+- Redis
+- Open TSDB
+- Statsd
+- InfluxDb
+- MongoDb
+
+Support is enabled by including the following module in the Overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-metrics</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics-storage).

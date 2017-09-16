@@ -4,7 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -50,7 +50,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
 
-    private DBCollection createTicketCollection(final TicketDefinition ticket, final MongoDbObjectFactory factory) {
+    private DBCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
         final String collectionName = ticket.getProperties().getStorageName();
         LOGGER.debug("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
         factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
@@ -64,7 +64,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private void createTicketCollections() {
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         definitions.forEach(t -> {
             final DBCollection c = createTicketCollection(t, factory);
             LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getFullName());
