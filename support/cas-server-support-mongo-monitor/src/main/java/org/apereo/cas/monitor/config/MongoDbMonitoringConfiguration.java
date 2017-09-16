@@ -2,7 +2,7 @@ package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.monitor.MongoDbMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class MongoDbMonitoringConfiguration {
 
     @Bean
     public Monitor mongoMonitor() {
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MonitorProperties.MongoDb mongoProps = casProperties.getMonitor().getMongo();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
         return new MongoDbMonitor(mongoTemplate);

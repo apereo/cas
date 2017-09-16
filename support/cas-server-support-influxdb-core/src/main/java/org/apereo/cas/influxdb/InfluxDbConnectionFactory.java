@@ -8,6 +8,8 @@ import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +21,8 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 public class InfluxDbConnectionFactory implements Closeable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InfluxDbConnectionFactory.class);
+
     /**
      * The Influx db.
      */
@@ -41,11 +45,11 @@ public class InfluxDbConnectionFactory implements Closeable {
     public InfluxDbConnectionFactory(final String url, final String uid,
                                      final String psw, final String dbName,
                                      final boolean dropDatabase) {
-        
+
         if (StringUtils.isBlank(dbName) || StringUtils.isBlank(url)) {
             throw new IllegalArgumentException("Database name/url cannot be blank and must be specified");
         }
-        
+
         final OkHttpClient.Builder builder = new OkHttpClient.Builder();
         this.influxDb = InfluxDBFactory.connect(url, uid, psw, builder);
         this.influxDb.enableGzip();
@@ -56,6 +60,17 @@ public class InfluxDbConnectionFactory implements Closeable {
 
         if (!this.influxDb.databaseExists(dbName)) {
             this.influxDb.createDatabase(dbName);
+        }
+
+        this.influxDb.setLogLevel(InfluxDB.LogLevel.NONE);
+        if (LOGGER.isDebugEnabled()) {
+            this.influxDb.setLogLevel(InfluxDB.LogLevel.FULL);
+        } else if (LOGGER.isInfoEnabled()) {
+            this.influxDb.setLogLevel(InfluxDB.LogLevel.BASIC);
+        } else if (LOGGER.isWarnEnabled()) {
+            this.influxDb.setLogLevel(InfluxDB.LogLevel.HEADERS);
+        } else if (LOGGER.isErrorEnabled()) {
+            this.influxDb.setLogLevel(InfluxDB.LogLevel.NONE);
         }
     }
 
@@ -108,7 +123,7 @@ public class InfluxDbConnectionFactory implements Closeable {
     public QueryResult query(final String measurement) {
         return query("*", measurement);
     }
-    
+
     /**
      * Query result.
      *

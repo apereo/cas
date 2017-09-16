@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +31,7 @@ public class U2FMongoDbConfiguration {
     public U2FDeviceRepository u2fDeviceRepository() {
         final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
         
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final U2FMultifactorProperties.MongoDb mongoProps = u2f.getMongo();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
 

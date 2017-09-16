@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.MongoDbPropertySource;
 import org.apereo.cas.MongoDbPropertySourceLocator;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +39,7 @@ public class MongoDbCloudConfigBootstrapConfiguration {
 
     @Bean
     public MongoTemplate mongoDbCloudConfigurationTemplate() {
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final String uri = environment.getProperty("cas.spring.cloud.mongo.uri");
         return factory.buildMongoTemplate(uri);
     }
