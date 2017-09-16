@@ -47,6 +47,8 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizat
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRenderer;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -344,6 +346,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         );
     }
 
+    @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
+    @Bean
+    @RefreshScope
+    public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
+        return new OAuth20DefaultUserProfileViewRenderer();
+    }
+
     @ConditionalOnMissingBean(name = "profileController")
     @Bean
     @RefreshScope
@@ -352,7 +361,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
                 oauthPrincipalFactory(), webApplicationServiceFactory,
                 profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator);
+                ticketGrantingTicketCookieGenerator,
+                oauthUserProfileViewRenderer());
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
@@ -417,7 +427,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20ResourceOwnerCredentialsResponseBuilder(accessTokenResponseGenerator(), oauthTokenGenerator(),
                 accessTokenExpirationPolicy());
     }
-    
+
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder() {

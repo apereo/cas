@@ -15,14 +15,13 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.hjson.JsonValue;
-import org.hjson.Stringify;
 import org.pac4j.core.context.HttpConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +50,11 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
     private static final String ID = "id";
     private static final String ATTRIBUTES = "attributes";
 
+    /**
+     * View renderer for the final profile.
+     */
+    protected final OAuth20UserProfileViewRenderer userProfileViewRenderer;
+            
     public OAuth20UserProfileControllerController(final ServicesManager servicesManager,
                                                   final TicketRegistry ticketRegistry,
                                                   final OAuth20Validator validator,
@@ -59,9 +63,11 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
                                                   final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                   final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                   final CasConfigurationProperties casProperties,
-                                                  final CookieRetrievingCookieGenerator cookieGenerator) {
+                                                  final CookieRetrievingCookieGenerator cookieGenerator,
+                                                  final OAuth20UserProfileViewRenderer userProfileViewRenderer) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
+        this.userProfileViewRenderer = userProfileViewRenderer;
     }
 
     /**
@@ -99,8 +105,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
         finalizeProfileResponse(accessTokenTicket, map);
 
-        final String value = OAuth20Utils.jsonify(map);
-        LOGGER.debug("Final user profile is [{}]", JsonValue.readHjson(value).toString(Stringify.FORMATTED));
+        final String value = this.userProfileViewRenderer.render(map, accessTokenTicket);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
 

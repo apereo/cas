@@ -62,6 +62,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
@@ -219,6 +220,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
+    @Autowired
+    @Qualifier("oauthUserProfileViewRenderer")
+    private OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer;
+    
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -372,7 +377,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
                 profileScopeToAttributesFilter(),
-                casProperties, ticketGrantingTicketCookieGenerator);
+                casProperties, ticketGrantingTicketCookieGenerator,
+                oauthUserProfileViewRenderer);
     }
 
     @RefreshScope
