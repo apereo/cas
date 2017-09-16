@@ -10,6 +10,23 @@ import java.io.Serializable;
  */
 public class OAuthProperties implements Serializable {
     private static final long serialVersionUID = 2677128037234123907L;
+
+    /**
+     * Profile view types.
+     */
+    public enum UserProfileViewTypes {
+        /**
+         * Return and render the user profile view in nested mode.
+         * This is the default option, most usually.
+         */
+        NESTED,
+        /**
+         * Return and render the user profile view in flattened mode
+         * where all attributes are flattened down to one level only.
+         */
+        FLAT
+    }
+    
     /**
      * Settings related to oauth grants.
      */
@@ -26,6 +43,20 @@ public class OAuthProperties implements Serializable {
      * Settings related to oauth refresh tokens.
      */
     private OAuthRefreshTokenProperties refreshToken = new OAuthRefreshTokenProperties();
+
+    /**
+     * User profile view type determines how the final user profile should be rendered
+     * once an access token is "validated". 
+     */
+    private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
+
+    public UserProfileViewTypes getUserProfileViewType() {
+        return userProfileViewType;
+    }
+
+    public void setUserProfileViewType(final UserProfileViewTypes userProfileViewType) {
+        this.userProfileViewType = userProfileViewType;
+    }
 
     public OAuthGrantsProperties getGrants() {
         return grants;

@@ -350,7 +350,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
-        return new OAuth20DefaultUserProfileViewRenderer();
+        return new OAuth20DefaultUserProfileViewRenderer(casProperties.getAuthn().getOauth());
     }
 
     @ConditionalOnMissingBean(name = "profileController")
