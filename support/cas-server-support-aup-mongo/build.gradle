@@ -1,4 +1,4 @@
-description = "Apereo CAS AUP JDBC Support"
+description = "Apereo CAS AUP Mongo Support"
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")
@@ -8,6 +8,6 @@ dependencies {
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-aup-core")
-
-    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    implementation libraries.mongo
+    implementation project(":support:cas-server-support-mongo-core")
 }

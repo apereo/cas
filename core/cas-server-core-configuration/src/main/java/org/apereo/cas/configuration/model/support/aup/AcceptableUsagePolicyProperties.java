@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.aup;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import java.io.Serializable;
@@ -29,6 +30,11 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      * Control AUP via Redis.
      */
     private Rest rest = new Rest();
+
+    /**
+     * Keep consent decisions stored via a MongoDb database resource.
+     */
+    private MongoDb mongo = new MongoDb();
 
     /**
      * AUP attribute to choose in order to determine whether policy
@@ -66,6 +72,22 @@ public class AcceptableUsagePolicyProperties implements Serializable {
 
     public void setLdap(final Ldap ldap) {
         this.ldap = ldap;
+    }
+
+    public MongoDb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
+    }
+
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
+        private static final long serialVersionUID = -1918436901491275547L;
+
+        public MongoDb() {
+            setCollection("MongoDbCasAUPRepository");
+        }
     }
 
     public static class Jdbc extends AbstractJpaProperties {

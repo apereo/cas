@@ -5121,7 +5121,6 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 Decide how CAS should attempt to determine whether AUP is accepted.
 To learn more about this topic, [please review this guide](Webflow-Customization-AUP.html).
 
-
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 ```
@@ -5166,6 +5165,28 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.jdbc.dataSourceProxy=false
 # Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
 # cas.acceptableUsagePolicy.jdbc.properties.propertyName=propertyValue
+```
+
+#### MongoDb
+
+```properties
+# cas.acceptableUsagePolicy.mongo.host=localhost
+# cas.acceptableUsagePolicy.mongo.clientUri=localhost
+# cas.acceptableUsagePolicy.mongo.idleTimeout=30000
+# cas.acceptableUsagePolicy.mongo.port=27017
+# cas.acceptableUsagePolicy.mongo.dropCollection=false
+# cas.acceptableUsagePolicy.mongo.socketKeepAlive=false
+# cas.acceptableUsagePolicy.mongo.password=
+# cas.acceptableUsagePolicy.mongo.collection=cas-acceptableUsagePolicy-repository
+# cas.acceptableUsagePolicy.mongo.databaseName=cas-mongo-database
+# cas.acceptableUsagePolicy.mongo.timeout=5000
+# cas.acceptableUsagePolicy.mongo.userId=
+# cas.acceptableUsagePolicy.mongo.writeConcern=NORMAL
+# cas.acceptableUsagePolicy.mongo.authenticationDatabaseName=
+# cas.acceptableUsagePolicy.mongo.replicaSet=
+# cas.acceptableUsagePolicy.mongo.ssEnabled=false
+# cas.acceptableUsagePolicy.mongo.conns.lifetime=60000
+# cas.acceptableUsagePolicy.mongo.conns.perHost=10
 ```
 
 #### LDAP
@@ -5391,6 +5412,28 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.ldap.validator.attributeName=objectClass
 # cas.consent.ldap.validator.attributeValues=top
 # cas.consent.ldap.validator.dn=
+```
+
+### MongoDb Attribute Consent
+
+```properties
+# cas.consent.mongo.host=localhost
+# cas.consent.mongo.clientUri=localhost
+# cas.consent.mongo.idleTimeout=30000
+# cas.consent.mongo.port=27017
+# cas.consent.mongo.dropCollection=false
+# cas.consent.mongo.socketKeepAlive=false
+# cas.consent.mongo.password=
+# cas.consent.mongo.collection=cas-consent-repository
+# cas.consent.mongo.databaseName=cas-mongo-database
+# cas.consent.mongo.timeout=5000
+# cas.consent.mongo.userId=
+# cas.consent.mongo.writeConcern=NORMAL
+# cas.consent.mongo.authenticationDatabaseName=
+# cas.consent.mongo.replicaSet=
+# cas.consent.mongo.ssEnabled=false
+# cas.consent.mongo.conns.lifetime=60000
+# cas.consent.mongo.conns.perHost=10
 ```
 
 ### REST Attribute Consent
