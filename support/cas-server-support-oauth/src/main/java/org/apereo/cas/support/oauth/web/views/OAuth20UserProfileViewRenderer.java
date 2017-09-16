@@ -14,6 +14,15 @@ import java.util.Map;
 public interface OAuth20UserProfileViewRenderer {
 
     /**
+     * Attribute in the model that represents the id.
+     */
+    String MODEL_ATTRIBUTE_ID = "id";
+    /**
+     * Attribute in the model that represents collection of attributes.
+     */
+    String MODEL_ATTRIBUTE_ATTRIBUTES = "attributes";
+    
+    /**
      * Render.
      *
      * @param model       the model

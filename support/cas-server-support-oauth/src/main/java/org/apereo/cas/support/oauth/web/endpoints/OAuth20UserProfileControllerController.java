@@ -47,9 +47,6 @@ import java.util.Map;
 public class OAuth20UserProfileControllerController extends BaseOAuth20Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileControllerController.class);
 
-    private static final String ID = "id";
-    private static final String ATTRIBUTES = "attributes";
-
     /**
      * View renderer for the final profile.
      */
@@ -159,8 +156,8 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", principal);
         final Map<String, Object> map = new HashMap<>();
-        map.put(ID, principal.getId());
-        map.put(ATTRIBUTES, principal.getAttributes());
+        map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
+        map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, principal.getAttributes());
         return map;
     }
 
