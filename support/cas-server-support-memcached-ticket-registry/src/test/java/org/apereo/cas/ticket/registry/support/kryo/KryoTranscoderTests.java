@@ -22,7 +22,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.MalformedURLException;
@@ -61,6 +63,9 @@ public class KryoTranscoderTests {
 
     private final Map<String, Object> principalAttributes;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     /**
      * Class for testing Kryo unregistered class handling.
      */
@@ -74,7 +79,7 @@ public class KryoTranscoderTests {
          * @param numberOfUses        the number of uses
          * @param timeToKillInSeconds the time to kill in seconds
          */
-        public UnregisteredServiceTicketExpirationPolicy(final int numberOfUses, final long timeToKillInSeconds) {
+        public UnregisteredServiceTicketExpirationPolicy (final int numberOfUses, final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
@@ -233,29 +238,33 @@ public class KryoTranscoderTests {
         transcoder.getKryo().getClassResolver().reset();
         final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
         final MockServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
-        final MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy step = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
+        final MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy step
+                = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
         expectedST.setExpiration(step);
-        CachedData cachedData = transcoder.encode(expectedST);
+        final CachedData cachedData = transcoder.encode(expectedST);
         assertEquals(expectedST, transcoder.decode(cachedData));
         // Test it a second time - there's a Kryo 4.0.0 bug that causes the second deserialize of an object
         // containing an unregistered class to fail - we want to make sure it works with a registered class.
         assertEquals(expectedST, transcoder.decode(cachedData));
     }
 
-    @Test(expected = KryoException.class)
+    @Test
     public void verifyEncodeDecodeNonRegisteredClass() throws Exception {
+        thrown.expect(KryoException.class);
+
         // UnregisteredServiceTicketExpirationPolicy is not registered with Kryo...
         transcoder.getKryo().getClassResolver().reset();
         final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
         final MockServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
-        final UnregisteredServiceTicketExpirationPolicy step = new UnregisteredServiceTicketExpirationPolicy(1, 600);
+        final UnregisteredServiceTicketExpirationPolicy step
+                = new UnregisteredServiceTicketExpirationPolicy(1, 600);
         expectedST.setExpiration(step);
-        CachedData cachedData = transcoder.encode(expectedST);
+        final CachedData cachedData = transcoder.encode(expectedST);
         assertEquals(expectedST, transcoder.decode(cachedData));
-        // Test it a second time - there's a Kryo 4.0.0 bug that causes the second deserialize of an object
-        // containing an unregistered class to fail...  When this test fails (i.e. after a new working Kryo version
-        // comes along), remove the expected KryoException from the test annotation, and remove the fail() from just below...
+        // Test it a second time - because KryoTranscoder sets the Kryo auto reset to false, and nothing explicitly
+        // calls reset, there's a potential problem with the second deserialize of an object containing an
+        // unregistered class failing...
         assertEquals(expectedST, transcoder.decode(cachedData));
-        fail("Expected Kryo exception due to bug in 4.0.0.  If Kryo has been updated, this test case will need adjusting.");
+        fail("Expected Kryo exception due to not resetting Kryo between deserializations.");
     }
 }
