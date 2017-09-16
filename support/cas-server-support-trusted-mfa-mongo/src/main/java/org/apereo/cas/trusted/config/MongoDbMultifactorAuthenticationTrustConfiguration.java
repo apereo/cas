@@ -3,7 +3,7 @@ package org.apereo.cas.trusted.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MongoDbMultifactorAuthenticationTrustStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @Bean
     public MongoTemplate mongoMfaTrustedAuthnTemplate() {
         final TrustedDevicesMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
 
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());

@@ -47,19 +47,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link MongoDbObjectFactory}.
+ * This is {@link MongoDbConnectionFactory}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class MongoDbObjectFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbObjectFactory.class);
+public class MongoDbConnectionFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbConnectionFactory.class);
     private static final int TIMEOUT = 5000;
     private static final int DEFAULT_PORT = 27017;
 
     private final CustomConversions customConversions;
 
-    public MongoDbObjectFactory() {
+    public MongoDbConnectionFactory() {
         final List<Converter> converters = new ArrayList();
         converters.add(new BaseConverters.LoggerConverter());
         converters.add(new BaseConverters.ClassConverter());
