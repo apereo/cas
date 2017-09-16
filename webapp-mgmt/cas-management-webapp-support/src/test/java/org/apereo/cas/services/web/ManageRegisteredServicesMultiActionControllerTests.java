@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mgmt.config.CasManagementAuditConfiguration;
+import org.apereo.cas.mgmt.config.CasManagementAuthenticationConfiguration;
 import org.apereo.cas.mgmt.config.CasManagementWebAppConfiguration;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
@@ -42,6 +43,7 @@ import static org.junit.Assert.*;
                 CasManagementWebAppConfiguration.class,
                 ServerPropertiesAutoConfiguration.class,
                 CasCoreServicesConfiguration.class,
+                CasManagementAuthenticationConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
                 CasCoreWebConfiguration.class})
 @DirtiesContext
