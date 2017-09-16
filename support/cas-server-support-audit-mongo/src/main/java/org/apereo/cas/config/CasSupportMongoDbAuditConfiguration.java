@@ -5,7 +5,7 @@ import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,7 +29,7 @@ public class CasSupportMongoDbAuditConfiguration {
     @Bean
     public AuditTrailManager mongoDbAuditTrailManager() {
         final AuditProperties.MongoDb mongo = casProperties.getAudit().getMongo();
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
