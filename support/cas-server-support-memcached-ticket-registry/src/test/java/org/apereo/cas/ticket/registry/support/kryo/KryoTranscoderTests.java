@@ -58,6 +58,9 @@ public class KryoTranscoderTests {
     private static final String NICKNAME_KEY = "nickname";
     private static final String NICKNAME_VALUE = "bob";
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     private final KryoTranscoder transcoder;
 
     private final Map<String, Object> principalAttributes;
@@ -65,7 +68,7 @@ public class KryoTranscoderTests {
     /**
      * Class for testing Kryo unregistered class handling.
      */
-    public static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+    private static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -1;
 
@@ -79,10 +82,6 @@ public class KryoTranscoderTests {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
 
     public KryoTranscoderTests() {
         transcoder = new KryoTranscoder();
