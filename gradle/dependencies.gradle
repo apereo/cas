@@ -1260,7 +1260,7 @@ ext.libraries = [
                 dependencies.create("com.lmax:disruptor:$disruptorVersion")
         ],
         metrics                 : [
-                dependencies.create("com.timgroup:java-statsd-client:$statdVersion") {
+                dependencies.create("com.timgroup:java-statsd-client:$statsdVersion") {
                     force = true
                 },
                 dependencies.create("io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion") {
