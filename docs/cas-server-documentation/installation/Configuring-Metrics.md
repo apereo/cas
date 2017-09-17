@@ -67,7 +67,7 @@ mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_u
 
 ## Storage
 
-CAs metrics may be routed to varying types of databases for storage and analytics. The following options are available:
+CAS metrics may be routed to varying types of databases for storage and analytics. The following options are available:
 
 - Redis
 - Open TSDB
