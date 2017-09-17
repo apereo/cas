@@ -4289,6 +4289,16 @@ to locate YAML service definitions, decide how those resources should be found.
 
 To learn more about this topic, [please review this guide](YAML-Service-Management.html).
 
+### RESTful Service Registry
+
+To learn more about this topic, [please review this guide](REST-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.rest.url=classpath:/services
+# cas.serviceRegistry.rest.basicAuthUsername=
+# cas.serviceRegistry.rest.basicAuthPassword=
+```
+
 ### Redis Service Registry
 
 To learn more about this topic, [please review this guide](Redis-Service-Management.html).
