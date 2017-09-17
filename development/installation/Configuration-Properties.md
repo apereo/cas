@@ -2618,9 +2618,9 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 ### MongoDb Storage
 
 ```properties
-# cas.authn.mfa.trusted.mongodb.clientUri=
-# cas.authn.mfa.trusted.mongodb.dropCollection=false
-# cas.authn.mfa.trusted.mongodb.collection=MongoDbCasTrustedAuthnMfaRepository
+# cas.authn.mfa.trusted.mongo.clientUri=
+# cas.authn.mfa.trusted.mongo.dropCollection=false
+# cas.authn.mfa.trusted.mongo.collection=MongoDbCasTrustedAuthnMfaRepository
 ```
 
 ### REST Storage
@@ -2683,10 +2683,10 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator MongoDb
 
 ```properties
-# cas.authn.mfa.gauth.mongodb.clientUri=
-# cas.authn.mfa.gauth.mongodb.dropCollection=false
-# cas.authn.mfa.gauth.mongodb.collection=MongoDbGoogleAuthenticatorRepository
-# cas.authn.mfa.gauth.mongodb.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
+# cas.authn.mfa.gauth.mongo.clientUri=
+# cas.authn.mfa.gauth.mongo.dropCollection=false
+# cas.authn.mfa.gauth.mongo.collection=MongoDbGoogleAuthenticatorRepository
+# cas.authn.mfa.gauth.mongo.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
 #### Google Authenticator JPA
@@ -2782,9 +2782,9 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 ### YubiKey MongoDb Device Store
 
 ```properties
-# cas.authn.mfa.yubikey.mongodb.clientUri=
-# cas.authn.mfa.yubikey.mongodb.dropCollection=false
-# cas.authn.mfa.yubikey.mongodb.collection=MongoDbYubiKeyRepository
+# cas.authn.mfa.yubikey.mongo.clientUri=
+# cas.authn.mfa.yubikey.mongo.dropCollection=false
+# cas.authn.mfa.yubikey.mongo.collection=MongoDbYubiKeyRepository
 ```
 
 ### Radius OTP
@@ -2888,6 +2888,28 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.cleaner.schedule.enabled=true
 # cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
 # cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
+```
+
+#### FIDO U2F MongoDb
+
+```properties
+# cas.authn.mfa.u2f.mongo.host=localhost
+# cas.authn.mfa.u2f.mongo.clientUri=localhost
+# cas.authn.mfa.u2f.mongo.idleTimeout=30000
+# cas.authn.mfa.u2f.mongo.port=27017
+# cas.authn.mfa.u2f.mongo.dropCollection=false
+# cas.authn.mfa.u2f.mongo.socketKeepAlive=false
+# cas.authn.mfa.u2f.mongo.password=
+# cas.authn.mfa.u2f.mongo.collection=cas-fido-repository
+# cas.authn.mfa.u2f.mongo.databaseName=cas-mongo-database
+# cas.authn.mfa.u2f.mongo.timeout=5000
+# cas.authn.mfa.u2f.mongo.userId=
+# cas.authn.mfa.u2f.mongo.writeConcern=NORMAL
+# cas.authn.mfa.u2f.mongo.authenticationDatabaseName=
+# cas.authn.mfa.u2f.mongo.replicaSet=
+# cas.authn.mfa.u2f.mongo.ssEnabled=false
+# cas.authn.mfa.u2f.mongo.conns.lifetime=60000
+# cas.authn.mfa.u2f.mongo.conns.perHost=10
 ```
 
 #### FIDO U2F JPA
@@ -3746,6 +3768,8 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
+
+# cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
 
 ## Localization
@@ -3876,6 +3900,8 @@ To learn more about this topic, [please review this guide](Audits.html).
 Store audit logs inside a MongoDb database.
 
 ```properties
+# cas.audit.mongo.host=localhost
+# cas.audit.mongo.clientUri=localhost
 # cas.audit.mongo.idleTimeout=30000
 # cas.audit.mongo.port=27017
 # cas.audit.mongo.dropCollection=false
@@ -3984,6 +4010,8 @@ Decide how CAS should monitor the internal state of a memcached connection pool.
 Decide how CAS should monitor the internal state of a MongoDb instance.
 
 ```properties
+# cas.monitor.mongo.host=localhost
+# cas.monitor.mongo.clientUri=localhost
 # cas.monitor.mongo.idleTimeout=30000
 # cas.monitor.mongo.port=27017
 # cas.monitor.mongo.socketKeepAlive=false
@@ -4163,9 +4191,9 @@ Decide how CAS should store authentication events inside a database instance.
 Decide how CAS should store authentication events inside a MongoDb instance.
 
 ```properties
-# cas.events.mongodb.clientUri=
-# cas.events.mongodb.dropCollection=false
-# cas.events.mongodb.collection=MongoDbCasEventRepository
+# cas.events.mongo.clientUri=
+# cas.events.mongo.dropCollection=false
+# cas.events.mongo.collection=MongoDbCasEventRepository
 ```
 
 ## Http Web Requests
@@ -4339,6 +4367,8 @@ Store CAS service definitions inside a MongoDb instance.
 To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
 
 ```properties
+# cas.serviceRegistry.mongo.host=localhost
+# cas.serviceRegistry.mongo.clientUri=localhost
 # cas.serviceRegistry.mongo.idleTimeout=30000
 # cas.serviceRegistry.mongo.port=27017
 # cas.serviceRegistry.mongo.dropCollection=false
@@ -4775,6 +4805,7 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.userId=
 # cas.ticket.registry.mongo.writeConcern=NORMAL
 # cas.ticket.registry.mongo.host=localhost
+# cas.ticket.registry.mongo.clientUri=
 # cas.ticket.registry.mongo.authenticationDatabaseName=
 # cas.ticket.registry.mongo.replicaSet=
 # cas.ticket.registry.mongo.ssEnabled=false
@@ -4919,20 +4950,29 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
-The configuration of the CAS management web application is handled inside a `management.properties|yml` file. Some of the settings, specially those that deal with service registry and loading services are shared between this application and the core CAS web application. You have to note that the [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and all settings that affect the behavior of services, needs to be configured in the same exact way for the management web application.
+The configuration of the CAS management web application is handled inside a `management.properties|yml` file. Some of the settings, specially those that deal with service registry and loading services or those that might define an external CAS server for authentication are shared between this application and the core CAS web application. You have to note that the [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and all settings that affect the behavior of services, needs to be configured in the same exact way for the management web application.
 
 ```properties
+# server.port=8444
 # server.contextPath=/cas-management
 
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
+
 # cas.mgmt.serverName=https://localhost:8443
 # cas.mgmt.defaultLocale=en
 
 # cas.mgmt.authzAttributes[0]=memberOf
 # cas.mgmt.authzAttributes[1]=groupMembership
+
+# Connect to a CAS server for authentication
+# cas.server.name=
+# cas.server.prefix=
+
+# Use regex for authorized IPs
+#cas.mgmt.authzIpRegex=
 ```
 
 ### LDAP Authorization
@@ -5081,7 +5121,6 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 Decide how CAS should attempt to determine whether AUP is accepted.
 To learn more about this topic, [please review this guide](Webflow-Customization-AUP.html).
 
-
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 ```
@@ -5126,6 +5165,28 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.jdbc.dataSourceProxy=false
 # Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
 # cas.acceptableUsagePolicy.jdbc.properties.propertyName=propertyValue
+```
+
+#### MongoDb
+
+```properties
+# cas.acceptableUsagePolicy.mongo.host=localhost
+# cas.acceptableUsagePolicy.mongo.clientUri=localhost
+# cas.acceptableUsagePolicy.mongo.idleTimeout=30000
+# cas.acceptableUsagePolicy.mongo.port=27017
+# cas.acceptableUsagePolicy.mongo.dropCollection=false
+# cas.acceptableUsagePolicy.mongo.socketKeepAlive=false
+# cas.acceptableUsagePolicy.mongo.password=
+# cas.acceptableUsagePolicy.mongo.collection=cas-acceptableUsagePolicy-repository
+# cas.acceptableUsagePolicy.mongo.databaseName=cas-mongo-database
+# cas.acceptableUsagePolicy.mongo.timeout=5000
+# cas.acceptableUsagePolicy.mongo.userId=
+# cas.acceptableUsagePolicy.mongo.writeConcern=NORMAL
+# cas.acceptableUsagePolicy.mongo.authenticationDatabaseName=
+# cas.acceptableUsagePolicy.mongo.replicaSet=
+# cas.acceptableUsagePolicy.mongo.ssEnabled=false
+# cas.acceptableUsagePolicy.mongo.conns.lifetime=60000
+# cas.acceptableUsagePolicy.mongo.conns.perHost=10
 ```
 
 #### LDAP
@@ -5351,6 +5412,28 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.ldap.validator.attributeName=objectClass
 # cas.consent.ldap.validator.attributeValues=top
 # cas.consent.ldap.validator.dn=
+```
+
+### MongoDb Attribute Consent
+
+```properties
+# cas.consent.mongo.host=localhost
+# cas.consent.mongo.clientUri=localhost
+# cas.consent.mongo.idleTimeout=30000
+# cas.consent.mongo.port=27017
+# cas.consent.mongo.dropCollection=false
+# cas.consent.mongo.socketKeepAlive=false
+# cas.consent.mongo.password=
+# cas.consent.mongo.collection=cas-consent-repository
+# cas.consent.mongo.databaseName=cas-mongo-database
+# cas.consent.mongo.timeout=5000
+# cas.consent.mongo.userId=
+# cas.consent.mongo.writeConcern=NORMAL
+# cas.consent.mongo.authenticationDatabaseName=
+# cas.consent.mongo.replicaSet=
+# cas.consent.mongo.ssEnabled=false
+# cas.consent.mongo.conns.lifetime=60000
+# cas.consent.mongo.conns.perHost=10
 ```
 
 ### REST Attribute Consent
