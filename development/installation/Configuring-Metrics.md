@@ -16,7 +16,7 @@ Supported metrics include:
 ## Refresh Interval
 
 The metrics reporting interval can be configured via CAS properties.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics--performance-stats).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics).
 
 ## Logging
 
@@ -67,7 +67,7 @@ mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_u
 
 ## Storage
 
-CAs metrics may be routed to varying types of databases for storage and analytics. The following options are available:
+CAS metrics may be routed to varying types of databases for storage and analytics. The following options are available:
 
 - Redis
 - Open TSDB
