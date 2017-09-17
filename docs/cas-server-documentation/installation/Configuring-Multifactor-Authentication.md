@@ -5,16 +5,15 @@ title: CAS - Multifactor Authentication
 
 # Multifactor Authentication (MFA)
 
-CAS provides a framework for multifactor authentication (MFA). The design philosophy for MFA support follows from
-the observation that institutional security policies with respect to MFA vary dramatically. We provide first class
-API support for authenticating multiple credentials and a policy framework around authentication. The components
-could be extended in a straightforward fashion to provide higher-level behaviors such as Webflow logic to assist,
-for example, a credential upgrade scenario where a SSO session is started by a weaker credential but a particular
-service demands re-authentication with a stronger credential.
+CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should be the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a susccessful multifactor authentication event.
 
-The authentication subsystem in CAS natively supports handling multiple credentials. While the default login form
-and Webflow tier are designed for the simple case of accepting a single credential, all core API components that
-interface with the authentication subsystem accept one or more credentials to authenticate.
+At a minimum, you need answer the following questions:
+
+- Which provider(s) are we using for multifactor authentication?
+- How and for whom are we triggering multifactor authentication?
+
+<div class="alert alert-info"><strong>Remember</strong><p>CAS itself is not a multifactor authentication provider. It simply lends itself to support services and products in the wild that already do so. If you do not have a provider selected, your best choices might be to perhaps experiment with the likes of Google Authenticator, or simply design your own.</p></div>
+
 
 ## Supported Providers
 
@@ -178,6 +177,10 @@ and override others with a lower value.
 CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions both for admins and end-users.
 
 [See this guide for more info](Multifactor-TrustedDevice-Authentication.html).
+
+## 2FA vs. MFA
+
+Multifactor authentication in CAS most presents itself in form of tw-factor authentication when deployed. The framework however should be designed in such a way to allow additional chaining of other providers into an existing authentication experience. If you have a need to string along multiple factors together one after another, it is likely that you may need to adjust and extend the existing authentication workflows to delver the use case.
 
 ## Settings
 
