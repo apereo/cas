@@ -3,6 +3,7 @@
 </p>
 
 # Central Authentication Service (CAS)
+
 [![ghit.me](https://ghit.me/badge.svg?repo=apereo/cas)](https://ghit.me/repo/apereo/cas)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg)](https://twitter.com/apereo)
@@ -12,19 +13,18 @@
 
 ## Introduction
 
-Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/cas), more commonly referred to as CAS. 
-CAS provides enterprise single sign-on for the web and attempts to be a comprehensive platform for your authentication and authorization needs. 
+Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/cas), more commonly referred to as CAS.
+CAS is an enterprise multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication and authorization needs.
 
-CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
-an open-source Java server component by the same name, hosted here. 
+CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server component by the same name hosted here, with support for a plethora of additional authentication protocols and features.
 
-## Contributions 
+## Contributions
 
 [![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)][contribute]
 
 - [How to contribute][contribute]
 
-## Documentation 
+## Documentation
 
 [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
 
@@ -55,26 +55,22 @@ The following features are supported by the CAS project:
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and 
 [Spring Cloud](http://projects.spring.io/spring-cloud/)
 
-## Development 
+## Development
 
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC) [![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas) [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas) 
 
 To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html).
 
-
 ## Deployment 
 
 [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
-It is recommended to build and deploy CAS locally using the [WAR Overlay method][overlay]. 
-This approach does not require the adopter to *explicitly* download any version of CAS, but 
-rather utilizes the overlay mechanism to combine CAS original artifacts and local 
-customizations to further ease future upgrades and maintenance.
+It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase is *ONLY* required if you wish to contribute to the development of the project.
 
-**Note: Do NOT clone or download the CAS codebase directly. That is ONLY required if you wish to contribute to the development of 
-the project. Utilize the [WAR Overlay method][overlay] instead to build and deploy your CAS instance.**
+## Support
 
-## Sponsors
+CAS is 100% free open source software managed by [Apereo](https://www.apereo.org/), licensed under [Apache v2](LICENSE). Our community has access to all releases of the CAS software with absolutely no costs. We welcome contributions from our community of all types and sizes. The time and effort to develop and maintain this project is dedicated by a group of [volunteers and contributors](https://github.com/apereo/cas/graphs/contributors). Support options may be [found here][cassupport]. If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
+
 <a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/RJa9L5XHCwE3xKoYkAzK3Qcw/apereo/cas'>  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/RJa9L5XHCwE3xKoYkAzK3Qcw/apereo/cas.svg' /></a>
 
 [wiki]: https://apereo.github.io/cas
