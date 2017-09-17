@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProp
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
+import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -37,6 +38,11 @@ public class ServiceRegistryProperties implements Serializable {
          */
         DEFAULT
     }
+    /**
+     * Properties pertaining to REST service registry.
+     */
+    @NestedConfigurationProperty
+    private BaseRestEndpointProperties rest = new BaseRestEndpointProperties();
     
     /**
      * Properties pertaining to redis service registry.
@@ -127,6 +133,14 @@ public class ServiceRegistryProperties implements Serializable {
 
     public void setManagementType(final ServiceManagementTypes managementType) {
         this.managementType = managementType;
+    }
+
+    public BaseRestEndpointProperties getRest() {
+        return rest;
+    }
+
+    public void setRest(final BaseRestEndpointProperties rest) {
+        this.rest = rest;
     }
 
     public boolean isInitFromJson() {
