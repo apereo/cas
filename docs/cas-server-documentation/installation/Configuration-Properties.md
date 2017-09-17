@@ -5229,7 +5229,6 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.validator.dn=
 ```
 
-
 ## REST API
 
 To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
@@ -5240,13 +5239,97 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 # cas.rest.throttler=neverThrottle
 ```
 
-## Metrics & Performance Stats
+## Metrics
 
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
 # cas.metrics.loggerName=perfStatsLogger
 # cas.metrics.refreshInterval=30
+```
+
+### Metrics Storage
+
+#### Redis
+
+```properties
+# cas.metrics.redis.key=
+# cas.metrics.redis.prefix=
+
+# cas.metrics.redis.host=localhost
+# cas.metrics.redis.database=0
+# cas.metrics.redis.port=6380
+# cas.metrics.redis.password=
+# cas.metrics.redis.timeout=2000
+# cas.metrics.redis.useSsl=false
+# cas.metrics.redis.usePool=true
+
+# cas.metrics.redis.pool.max-active=20
+# cas.metrics.redis.pool.maxIdle=8
+# cas.metrics.redis.pool.minIdle=0
+# cas.metrics.redis.pool.maxActive=8
+# cas.metrics.redis.pool.maxWait=-1
+# cas.metrics.redis.pool.numTestsPerEvictionRun=0
+# cas.metrics.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.metrics.redis.pool.minEvictableIdleTimeMillis=0
+# cas.metrics.redis.pool.lifo=true
+# cas.metrics.redis.pool.fairness=false
+
+# cas.metrics.redis.pool.testOnCreate=false
+# cas.metrics.redis.pool.testOnBorrow=false
+# cas.metrics.redis.pool.testOnReturn=false
+# cas.metrics.redis.pool.testWhileIdle=false
+```
+
+#### Statsd
+
+```properties
+# cas.metrics.statsd.host=
+# cas.metrics.statsd.port=8125
+# cas.metrics.statsd.prefix=cas
+```
+
+#### MongoDb
+
+```properties
+# cas.metrics.mongo.host=localhost
+# cas.metrics.mongo.clientUri=localhost
+# cas.metrics.mongo.idleTimeout=30000
+# cas.metrics.mongo.port=27017
+# cas.metrics.mongo.dropCollection=false
+# cas.metrics.mongo.socketKeepAlive=false
+# cas.metrics.mongo.password=
+# cas.metrics.mongo.collection=cas-metrics-repository
+# cas.metrics.mongo.databaseName=cas-mongo-database
+# cas.metrics.mongo.timeout=5000
+# cas.metrics.mongo.userId=
+# cas.metrics.mongo.writeConcern=NORMAL
+# cas.metrics.mongo.authenticationDatabaseName=
+# cas.metrics.mongo.replicaSet=
+# cas.metrics.mongo.ssEnabled=false
+# cas.metrics.mongo.conns.lifetime=60000
+# cas.metrics.mongo.conns.perHost=10
+```
+
+#### Open TSDB
+
+```properties
+# cas.metrics.openTsdb.connectTimeout=10000
+# cas.metrics.openTsdb.readTimeout=30000
+# cas.metrics.openTsdb.prefix=url
+```
+
+#### InfluxDb
+
+```properties
+# cas.metrics.influxDb.url=http://localhost:8086
+# cas.metrics.influxDb.username=root
+# cas.metrics.influxDb.password=root
+# cas.metrics.influxDb.retentionPolicy=autogen
+# cas.metrics.influxDb.dropDatabase=false
+# cas.metrics.influxDb.pointsToFlush=100
+# cas.metrics.influxDb.batchInterval=PT5S
+# cas.metrics.influxDb.consistencyLevel=ALL
 ```
 
 ## Groovy Shell
