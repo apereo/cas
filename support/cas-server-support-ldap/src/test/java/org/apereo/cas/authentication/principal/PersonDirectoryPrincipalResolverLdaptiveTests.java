@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,6 +37,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasPersonDirectoryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldap.properties"})
+@DirtiesContext
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonDirectoryPrincipalResolverLdaptiveTests.class);
 
@@ -53,7 +55,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
 
     @Test
     public void verifyResolver() {
-        this.getEntries().forEach(entry -> {
+        getEntries().forEach(entry -> {
             final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
@@ -67,7 +69,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
 
     @Test
     public void verifyChainedResolver() {
-        this.getEntries().forEach(entry -> {
+        getEntries().forEach(entry -> {
             final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);

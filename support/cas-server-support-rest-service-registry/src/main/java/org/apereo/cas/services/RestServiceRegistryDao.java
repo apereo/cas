@@ -43,10 +43,7 @@ public class RestServiceRegistryDao extends AbstractServiceRegistryDao {
     public boolean delete(final RegisteredService registeredService) {
         final ResponseEntity<Integer> responseEntity = restTemplate.exchange(this.url, HttpMethod.DELETE,
                 new HttpEntity<>(registeredService, this.headers), Integer.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            return responseEntity.getBody() == HttpStatus.OK.value();
-        }
-        return false;
+        return responseEntity.getStatusCode() == HttpStatus.OK;
     }
 
     @Override
