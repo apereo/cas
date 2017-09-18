@@ -409,10 +409,22 @@ public class MonitorProperties implements Serializable {
          */
         private RegisteredServicesReport registeredServicesReport = new RegisteredServicesReport();
 
-
+        /**
+         * Configuration metadata, documentation and fields, etc.
+         */
+        private ConfigurationMetadata configurationMetadata = new ConfigurationMetadata();
+        
         public Endpoints() {
             setSensitive(Boolean.TRUE);
             setEnabled(Boolean.FALSE);
+        }
+
+        public ConfigurationMetadata getConfigurationMetadata() {
+            return configurationMetadata;
+        }
+
+        public void setConfigurationMetadata(final ConfigurationMetadata configurationMetadata) {
+            this.configurationMetadata = configurationMetadata;
         }
 
         public RegisteredServicesReport getRegisteredServicesReport() {
@@ -578,6 +590,9 @@ public class MonitorProperties implements Serializable {
         }
 
         public static class RegisteredServicesReport extends BaseEndpoint {
+        }
+
+        public static class ConfigurationMetadata extends BaseEndpoint {
         }
     }
 }

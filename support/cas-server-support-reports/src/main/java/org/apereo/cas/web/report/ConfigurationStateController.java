@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

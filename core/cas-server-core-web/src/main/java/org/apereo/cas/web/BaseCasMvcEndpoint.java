@@ -1,4 +1,4 @@
-package org.apereo.cas.web.report;
+package org.apereo.cas.web;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
