@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

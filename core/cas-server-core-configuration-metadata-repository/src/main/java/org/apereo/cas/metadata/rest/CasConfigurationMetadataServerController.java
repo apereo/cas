@@ -1,16 +1,26 @@
 package org.apereo.cas.metadata.rest;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
+import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link CasConfigurationMetadataServerController}.
@@ -19,12 +29,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RestController("casConfigurationMetadataServerController")
-@RequestMapping(path = "/config/metadata", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CasConfigurationMetadataServerController {
+public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint {
     private final CasConfigurationMetadataRepository repository;
 
-    public CasConfigurationMetadataServerController(final CasConfigurationMetadataRepository repository) {
+    public CasConfigurationMetadataServerController(final CasConfigurationMetadataRepository repository,
+                                                    final CasConfigurationProperties casProperties) {
+        super("configmetadata", "/configmetadata", casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties);
         this.repository = repository;
     }
 
@@ -73,6 +83,83 @@ public class CasConfigurationMetadataServerController {
      */
     @GetMapping(path = "/properties")
     public ResponseEntity<Map<String, ConfigurationMetadataProperty>> findAllProperties() throws Exception {
-        return ResponseEntity.ok(repository.getRepository().getAllProperties());
+        final Map<String, ConfigurationMetadataProperty> allProps = repository.getRepository().getAllProperties();
+        return ResponseEntity.ok(allProps);
+    }
+
+    /**
+     * Search for property.
+     *
+     * @param name the name
+     * @return the response entity
+     */
+    @GetMapping(path = "/search")
+    public ResponseEntity<Set<ConfigurationSearchResults>> search(@RequestParam(value = "name", required = false) final String name) {
+        Set<ConfigurationSearchResults> results = new LinkedHashSet<>();
+        final Map<String, ConfigurationMetadataProperty> allProps = repository.getRepository().getAllProperties();
+
+        if (StringUtils.isNotBlank(name) && RegexUtils.isValidRegex(name)) {
+            final String names = StreamSupport.stream(RelaxedNames.forCamelCase(name).spliterator(), false)
+                    .map(Object::toString)
+                    .collect(Collectors.joining("|"));
+            final Pattern pattern = RegexUtils.createPattern(names);
+            results = allProps.entrySet()
+                    .stream()
+                    .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))
+                    .map(propEntry -> ConfigurationSearchResults.from(propEntry.getValue()))
+                    .collect(Collectors.toSet());
+        }
+        return ResponseEntity.ok(results);
+    }
+
+    /**
+     * Handle model and view.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    @GetMapping
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+        return new ModelAndView("monitoring/viewConfigMetadata");
+    }
+
+    /**
+     * The configuration search results.
+     */
+    public static class ConfigurationSearchResults extends ConfigurationMetadataProperty {
+        private static final long serialVersionUID = 7767348341760984539L;
+        private String group;
+
+        public String getGroup() {
+            return group;
+        }
+
+        public void setGroup(final String group) {
+            this.group = group;
+        }
+
+        /**
+         * Of configuration search results.
+         *
+         * @param prop the prop
+         * @return the configuration search results
+         */
+        public static ConfigurationSearchResults from(final ConfigurationMetadataProperty prop) {
+            final ConfigurationSearchResults res = new ConfigurationSearchResults();
+            res.setDefaultValue(prop.getDefaultValue());
+            res.setDeprecation(prop.getDeprecation());
+            res.setDescription(prop.getDescription());
+            res.setId(prop.getId());
+            res.setName(prop.getName());
+            res.setShortDescription(prop.getShortDescription());
+            res.setType(prop.getType());
+
+            final String groupId = StringUtils.substringBeforeLast(prop.getName(), ".");
+            res.setGroup(groupId);
+            return res;
+        }
     }
 }
