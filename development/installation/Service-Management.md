@@ -18,7 +18,7 @@ service registry that stores one or more registered services containing metadata
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
 
 
-## Service Management Webapp
+## Service Management Web Application
 
 The service management webapp is a standalone web application that may be deployed along side CAS that provides a GUI
 to manage service registry data. The management web application *MUST* share the same registry configuration as the CAS server itself so the entire system can load the same services data. To learn more about the management webapp, [please see this guide](Installing-ServicesMgmt-Webapp.html).
@@ -51,7 +51,6 @@ Registered services present the following metadata:
 
 <div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
 
-
 ### Service Access Strategy
 
 [See this guide](Configuring-Service-Access-Strategy.html) for more info please.
@@ -60,46 +59,22 @@ Registered services present the following metadata:
 
 [See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
 
-### Service Custom Properties
+### Tags & Properties
 
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
-## Persisting Services
+## Storage
 
 The following options may be used to store services in CAS.
 
-### Memory
-
-[See this guide](InMemory-Service-Management.html) for more info please.
-
-### JSON
-
-[See this guide](JSON-Service-Management.html) for more info please.
-
-### YAML
-
-[See this guide](YAML-Service-Management.html) for more info please.
-
-### Mongo
-
-[See this guide](Mongo-Service-Management.html) for more info please.
-
-### LDAP
-
-[See this guide](LDAP-Service-Management.html) for more info please.
-
-### JPA
-
-[See this guide](JPA-Service-Management.html) for more info please.
-
-### Couchbase
-
-[See this guide](Couchbase-Service-Management.html) for more info please.
-
-### DynamoDb
-
-[See this guide](DynamoDb-Service-Management.html) for more info please.
-
-### REST
-
-[See this guide](REST-Service-Management.html) for more info please.
+| Storage          | Description
+|-------------------------------------------------------------------------------------------------------------------
+| Memory           | [See this guide](InMemory-Service-Management.html).
+| JSON             | [See this guide](JSON-Service-Management.html).
+| YAML             | [See this guide](YAML-Service-Management.html).
+| MongoDb          | [See this guide](Mongo-Service-Management.html).
+| LDAP             | [See this guide](LDAP-Service-Management.html).
+| JPA              | [See this guide](JPA-Service-Management.html).
+| Couchbase        | [See this guide](Couchbase-Service-Management.html).
+| DynamoDb         | [See this guide](DynamoDb-Service-Management.html).
+| REST             | [See this guide](REST-Service-Management.html).
