@@ -24,6 +24,7 @@ echo -e "Starting with project documentation...\n"
 if [ "$invokeDoc" == true ]; then
 
   echo -e "Copying project documentation over to $HOME/docs-latest...\n"
+  rm -Rf docs/cas-server-documentation/build
   cp -R docs/cas-server-documentation $HOME/docs-latest
 
 fi
