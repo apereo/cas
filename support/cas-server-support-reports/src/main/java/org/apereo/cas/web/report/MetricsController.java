@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlets.MetricsServlet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;

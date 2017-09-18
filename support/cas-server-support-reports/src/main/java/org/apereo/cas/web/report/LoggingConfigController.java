@@ -16,6 +16,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.slf4j.ILoggerFactory;

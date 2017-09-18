@@ -510,6 +510,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 # cas.monitor.endpoints.registeredServicesReport.enabled=false
 # cas.monitor.endpoints.registeredServicesReport.sensitive=true
+
+# cas.monitor.endpoints.configurationMetadata.enabled=false
+# cas.monitor.endpoints.configurationMetadata.sensitive=true
 ```
 
 ### Securing Endpoints With Spring Security

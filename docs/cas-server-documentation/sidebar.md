@@ -123,7 +123,7 @@ layout: null
 
 * [Services](#service_management)
     *   [Overview](/$version/installation/Service-Management.html)
-    *   [Management Webapp](/$version/installation/Installing-ServicesMgmt-Webapp.html)
+    *   [Management Web Application](/$version/installation/Installing-ServicesMgmt-Webapp.html)
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)

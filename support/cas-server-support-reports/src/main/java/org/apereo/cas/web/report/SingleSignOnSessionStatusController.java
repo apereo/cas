@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

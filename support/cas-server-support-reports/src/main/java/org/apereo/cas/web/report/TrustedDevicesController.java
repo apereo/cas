@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorP
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

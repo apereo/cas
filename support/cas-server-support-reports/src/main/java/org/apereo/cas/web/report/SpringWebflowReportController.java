@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.binding.expression.Expression;
 import org.springframework.http.MediaType;
 import org.springframework.util.ReflectionUtils;

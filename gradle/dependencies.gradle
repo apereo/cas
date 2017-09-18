@@ -2770,6 +2770,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.webjars:editable-table:$editableTableVersion") {
                     force = true
+                },
+                dependencies.create("org.webjars:Semantic-UI:$semanticUIVersion") {
+                    force = true
                 }
         ]
 ]

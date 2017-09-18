@@ -9,6 +9,7 @@ import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.JsonUtils;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;

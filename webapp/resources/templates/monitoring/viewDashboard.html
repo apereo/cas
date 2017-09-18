@@ -87,6 +87,12 @@
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.configpanel}"></span>
                     </a>
                 </li>
+                <li th:if="${configurationMetadataEndpointEnabled}">
+                    <a th:href="@{/status/configmetadata}" class="casTooltip">Configuration Metadata
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.configmetadata}"></span>
+                    </a>
+                </li>
+                
                 <li th:if="${singleSignOnReportEnabled}">
                     <a th:href="@{/status/ssosessions}" class="casTooltip">SSO Sessions
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.ssosessions}"></span>
