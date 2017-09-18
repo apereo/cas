@@ -49,7 +49,6 @@ Registered services present the following metadata:
 | `properties`                      | Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 | `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](Configuring-Multifactor-Authentication.html).
 
-
 <div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
 
 
@@ -100,3 +99,7 @@ The following options may be used to store services in CAS.
 ### DynamoDb
 
 [See this guide](DynamoDb-Service-Management.html) for more info please.
+
+### REST
+
+[See this guide](REST-Service-Management.html) for more info please.

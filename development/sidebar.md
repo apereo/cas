@@ -138,6 +138,7 @@ layout: null
         *   [Redis](/$version/installation/Redis-Service-Management.html)
         *   [DynamoDb](/$version/installation/DynamoDb-Service-Management.html)
         *   [Couchbase](/$version/installation/Couchbase-Service-Management.html)
+        *   [REST](/$version/installation/REST-Service-Management.html)
 
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
