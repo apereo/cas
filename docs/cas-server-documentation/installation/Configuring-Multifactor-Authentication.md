@@ -144,7 +144,7 @@ class SampleGroovyProviderSelection {
 The parameters passed are as follows:
 
 | Parameter             | Description
-|-----------------------|------------------------------------------------------------------------------------------------------
+|-------------------------------------------------------------------------------------------------------------------
 | `service`             | The object representing the incoming service provided in the request, if any.
 | `principal`           | The object representing the authenticated principal along with its attributes.
 | `providersCollection` | The object representing the collection of candidate multifactor providers qualified for the transaction.
