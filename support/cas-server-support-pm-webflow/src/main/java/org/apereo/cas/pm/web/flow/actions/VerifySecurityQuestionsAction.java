@@ -46,9 +46,9 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
         
         final Map<String, String> questions = passwordManagementService.getSecurityQuestions(username);
         final AtomicInteger i = new AtomicInteger(0);
-        final long c = questions.values().stream().filter(v -> {
+        final long c = questions.entrySet().stream().filter(e -> {
             final String answer = request.getParameter("q" + i.getAndIncrement());
-            return answer.equals(v);
+            return passwordManagementService.checkSecurityQuestionAnswer(username, e.getKey(), e.getValue(), answer);
         }).count();
         if (c == questions.size()) {
             return success();
