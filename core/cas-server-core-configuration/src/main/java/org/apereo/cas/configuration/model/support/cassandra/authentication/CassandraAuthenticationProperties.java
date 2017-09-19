@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -23,14 +24,17 @@ public class CassandraAuthenticationProperties extends BaseCassandraProperties {
     /**
      * Username attribute to fetch and compare.
      */
+    @RequiredProperty
     private String usernameAttribute;
     /**
      * Password attribute to fetch and compare.
      */
+    @RequiredProperty
     private String passwordAttribute;
     /**
      * Table name to fetch credentials.
      */
+    @RequiredProperty
     private String tableName;
 
     /**

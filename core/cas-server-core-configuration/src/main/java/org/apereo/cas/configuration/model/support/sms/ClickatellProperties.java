@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -13,10 +15,12 @@ public class ClickatellProperties implements Serializable {
     /**
      * Secure token used to establish a handshake with the service.
      */
+    @RequiredProperty
     private String token;
     /**
      * URL to contact and send messages.
      */
+    @RequiredProperty
     private String serverUrl = "https://platform.clickatell.com/messages";
 
     public String getServerUrl() {

@@ -14,6 +14,7 @@ public class BaseRestEndpointProperties implements Serializable {
     /**
      * The endpoint URL to contact and retrieve attributes.
      */
+    @RequiredProperty
     private String url;
     
     /**

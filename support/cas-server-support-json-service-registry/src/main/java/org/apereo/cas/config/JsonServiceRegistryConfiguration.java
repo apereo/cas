@@ -24,7 +24,6 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
 public class JsonServiceRegistryConfiguration {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryConfiguration.class);
 
     @Autowired

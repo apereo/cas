@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.influxdb;
 
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
 
@@ -16,21 +17,25 @@ public class InfluxDbProperties implements Serializable {
     /**
      * InfluxDb connection url.
      */
+    @RequiredProperty
     private String url = "http://localhost:8086";
 
     /**
      * InfluxDb connection username.
      */
+    @RequiredProperty
     private String username = "root";
 
     /**
      * InfluxDb connection password.
      */
+    @RequiredProperty
     private String password = "root";
 
     /**
      * Database name.
      */
+    @RequiredProperty
     private String database;
 
     /**

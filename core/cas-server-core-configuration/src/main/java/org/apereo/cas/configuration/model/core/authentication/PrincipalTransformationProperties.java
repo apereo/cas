@@ -34,8 +34,9 @@ public class PrincipalTransformationProperties implements Serializable {
     private String suffix;
 
     /**
-     * Indicate whether the principal identifer should be transformed
+     * Indicate whether the principal identifier should be transformed
      * into upper-case, lower-case, etc.
+     * Accepted values are {@code NONE, UPPERCASE, LOWERCASE},
      */
     private CaseConversion caseConversion = CaseConversion.NONE;
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -13,11 +15,13 @@ public class TwillioProperties implements Serializable {
     /**
      * Twillio account identifier used for authentication.
      */
+    @RequiredProperty
     private String accountId;
 
     /**
      * Twillio secret token used for authentication.
      */
+    @RequiredProperty
     private String token;
 
     public String getAccountId() {

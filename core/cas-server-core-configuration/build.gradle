@@ -7,7 +7,7 @@ dependencies {
     implementation libraries.jasypt
     implementation libraries.groovy
     implementation libraries.bouncycastle
-    optional libraries.springbootconfigmetadata
+    compile libraries.springbootconfigmetadata
 
     api project(":api:cas-server-core-api-authentication")
     compileOnly project(":core:cas-server-core-util")
@@ -17,7 +17,7 @@ dependencies {
 
 task generateConfigurationMetadata(type: JavaExec) {
     doFirst {
-        println "\nRunning CAS Spring configuration metadata processor, in addition to the native " +
+        println "\nRunning CAS Spring configuration metadata processor in addition to the native " +
                 "Spring Boot metadata processor, to create configuration " +
                 "metadata for nested and indexed properties. The process starts with the build directory " +
                 "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"

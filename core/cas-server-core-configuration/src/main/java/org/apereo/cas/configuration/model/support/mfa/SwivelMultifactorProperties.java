@@ -1,25 +1,30 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 /**
  * This is {@link SwivelMultifactorProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SwivelMultifactorProperties extends BaseMultifactorProvider {
+public class SwivelMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = -7409451053833491119L;
 
     /**
      * URL endpoint response to generate a turing image.
      */
+    @RequiredProperty
     private String swivelTuringImageUrl;
     /**
      * Swivel endpoint url for verification of credentials.
      */
+    @RequiredProperty
     private String swivelUrl;
     /**
      * Shared secret to authenticate against the swivel server.
      */
+    @RequiredProperty
     private String sharedSecret;
     /**
      * Control whether SSL errors should be ignored by the swivel server.

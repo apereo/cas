@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.radius;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -13,10 +15,12 @@ public class RadiusClientProperties implements Serializable {
     /**
      * Server address to connect and establish a session.
      */
+    @RequiredProperty
     private String inetAddress = "localhost";
     /**
      * Secret/password to use for the initial bind.
      */
+    @RequiredProperty
     private String sharedSecret = "N0Sh@ar3d$ecReT";
     /**
      * Socket connection timeout in milliseconds.

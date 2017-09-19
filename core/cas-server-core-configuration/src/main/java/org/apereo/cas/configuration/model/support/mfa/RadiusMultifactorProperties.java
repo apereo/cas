@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class RadiusMultifactorProperties extends BaseMultifactorProvider {
+public class RadiusMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 7021301814775348087L;
     /**
      * In the event that radius authentication fails due to a catastraphic event,

@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.aup;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import java.io.Serializable;
@@ -40,6 +41,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      * AUP attribute to choose in order to determine whether policy
      * has been accepted or not.
      */
+    @RequiredProperty
     private String aupAttributeName = "aupAccepted";
 
     public String getAupAttributeName() {

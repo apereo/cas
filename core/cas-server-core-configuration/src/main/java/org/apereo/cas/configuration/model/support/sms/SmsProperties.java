@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -14,10 +16,12 @@ public class SmsProperties implements Serializable {
     /**
      * The body of the SMS message.
      */
+    @RequiredProperty
     private String text;
     /**
      * The from address for the message.
      */
+    @RequiredProperty
     private String from;
 
     /**
@@ -25,6 +29,7 @@ public class SmsProperties implements Serializable {
      * for this SMS message. The attribute must already be resolved and available
      * to the CAS principal.
      */
+    @RequiredProperty
     private String attributeName = "phone";
 
     public String getAttributeName() {

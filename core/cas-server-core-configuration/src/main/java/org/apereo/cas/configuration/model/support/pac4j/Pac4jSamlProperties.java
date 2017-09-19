@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -20,18 +22,22 @@ public class Pac4jSamlProperties implements Serializable {
     /**
      * The password to use when generating the SP/CAS keystore.
      */
+    @RequiredProperty
     private String keystorePassword;
     /**
      * The password to use when generating the private key for the SP/CAS keystore.
      */
+    @RequiredProperty
     private String privateKeyPassword;
     /**
      * Location of the keystore to use and generate the SP/CAS keystore.
      */
+    @RequiredProperty
     private String keystorePath;
     /**
      * The metadata location of the identity provider that is to handle authentications.
      */
+    @RequiredProperty
     private String identityProviderMetadataPath;
     /**
      * Once you have an authenticated session on the identity provider, usually it won't prompt you again to enter your
@@ -44,10 +50,12 @@ public class Pac4jSamlProperties implements Serializable {
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
      */
+    @RequiredProperty
     private String serviceProviderEntityId;
     /**
      * Location of the SP metadata to use and generate.
      */
+    @RequiredProperty
     private String serviceProviderMetadataPath;
 
     /**

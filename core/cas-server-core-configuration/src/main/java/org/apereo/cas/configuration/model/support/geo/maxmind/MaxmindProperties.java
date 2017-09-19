@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.geo.maxmind;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -17,10 +18,12 @@ public class MaxmindProperties implements Serializable {
     /**
      * Path to the location of the database file containing cities.
      */
+    @RequiredProperty
     private Resource cityDatabase;
     /**
      * Path to the location of the database file containing countries.
      */
+    @RequiredProperty
     private Resource countryDatabase;
 
     public Resource getCityDatabase() {

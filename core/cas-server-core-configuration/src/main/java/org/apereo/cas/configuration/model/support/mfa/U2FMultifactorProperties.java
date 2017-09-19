@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class U2FMultifactorProperties extends BaseMultifactorProvider {
+public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 6151350313777066398L;
 
     /**

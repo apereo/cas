@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
 
@@ -120,11 +121,13 @@ public class MetricsProperties implements Serializable {
         /**
          * Statsd host.
          */
+        @RequiredProperty
         private String host;
 
         /**
          * Statd port.
          */
+        @RequiredProperty
         private int port = 8125;
 
         /**
@@ -174,6 +177,7 @@ public class MetricsProperties implements Serializable {
          * Url of the Open TSDB server.
          * Typically, this is {@code http://localhost:4242/api/put}.
          */
+        @RequiredProperty
         private String url;
 
         public int getConnectTimeout() {
@@ -208,6 +212,7 @@ public class MetricsProperties implements Serializable {
          * It is best to use a prefix that is unique to the application instance (e.g. using a random value and maybe the
          * logical name of the application to make it possible to correlate with other instances of the same application)
          */
+        @RequiredProperty
         private String prefix;
 
         /**
@@ -215,6 +220,7 @@ public class MetricsProperties implements Serializable {
          * whatever that means for your system
          * (e.g. two instances of the same system could share a Redis cache if they have distinct keys).
          */
+        @RequiredProperty
         private String key;
 
         public String getPrefix() {

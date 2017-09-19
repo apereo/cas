@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,21 +18,25 @@ public class BaseRedisProperties implements Serializable {
     /**
      * Database index used by the connection factory.
      */
+    @RequiredProperty
     private int database;
 
     /**
      * Redis server host.
      */
+    @RequiredProperty
     private String host = "localhost";
 
     /**
      * Login password of the redis server.
      */
+    @RequiredProperty
     private String password;
 
     /**
      * Redis server port.
      */
+    @RequiredProperty
     private int port = 6379;
 
     /**

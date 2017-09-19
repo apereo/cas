@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.generic;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ public class RemoteAddressAuthenticationProperties implements Serializable {
     /**
      * The authorized network address to allow for authentication.
      */
+    @RequiredProperty
     private String ipAddressRange = StringUtils.EMPTY;
 
     /**

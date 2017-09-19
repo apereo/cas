@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
     /**
      * SQL query to execute. Example: {@code SELECT * FROM table WHERE name=?}.
      */
+    @RequiredProperty
     private String sql;
     /**
      * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
@@ -34,6 +36,7 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
     /**
      * Password field/column name to retrieve.
      */
+    @RequiredProperty
     private String fieldPassword;
     /**
      * Boolean field that should indicate whether the account is expired.

@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.jdbc;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -32,6 +33,7 @@ public class QueryEncodeJdbcAuthenticationProperties extends AbstractJpaProperti
      * SQL query to execute and look up accounts.
      * Example: {@code SELECT * FROM table WHERE username=?}.
      */
+    @RequiredProperty
     private String sql;
 
     /**
@@ -41,6 +43,7 @@ public class QueryEncodeJdbcAuthenticationProperties extends AbstractJpaProperti
     /**
      * Field/column name that indicates the salt used for password hashing.
      */
+    @RequiredProperty
     private String saltFieldName = "salt";
     /**
      * Column name that indicates whether account is expired.

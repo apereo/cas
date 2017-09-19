@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.email;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -16,6 +18,7 @@ public class EmailProperties implements Serializable {
      * for this message. The attribute must already be resolved and available
      * to the CAS principal.
      */
+    @RequiredProperty
     private String attributeName = "mail";
 
     /**
@@ -26,11 +29,13 @@ public class EmailProperties implements Serializable {
     /**
      * Email from address.
      */
+    @RequiredProperty
     private String from;
 
     /**
      * Email subject line.
      */
+    @RequiredProperty
     private String subject;
 
     /**

@@ -56,9 +56,13 @@ import java.io.Serializable;
  */
 @ConfigurationProperties(value = "cas")
 public class CasConfigurationProperties implements Serializable {
+    /**
+     * Prefix used for all CAS-specific settings.
+     */
+    public static final String PREFIX = "cas";
 
     private static final long serialVersionUID = -8620267783496071683L;
-
+    
     @NestedConfigurationProperty
     private InterruptProperties interrupt = new InterruptProperties();
     

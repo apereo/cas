@@ -13,6 +13,7 @@ public class RestEndpointProperties extends BaseRestEndpointProperties {
      * HTTP method to use when contacting the rest endpoint.
      * Examples include {@code GET, POST}, etc.
      */
+    @RequiredProperty
     private String method;
     
     public String getMethod() {

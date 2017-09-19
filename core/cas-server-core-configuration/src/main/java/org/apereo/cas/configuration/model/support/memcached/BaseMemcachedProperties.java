@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.memcached;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -63,6 +65,7 @@ public class BaseMemcachedProperties implements Serializable {
     /**
      * Comma-separated list of memcached servers.
      */
+    @RequiredProperty
     private String servers = "localhost:11211";
 
     /**

@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.fortress;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -16,6 +18,7 @@ public class FortressAuthenticationProperties implements Serializable {
      * The context is used for multi-tenancy to isolate data sets within a particular sub-tree within DIT.
      * Setting contextId into this object will render this class' implementer thread unsafe.
      */
+    @RequiredProperty
     private String rbaccontext = "HOME";
 
     public String getRbaccontext() {

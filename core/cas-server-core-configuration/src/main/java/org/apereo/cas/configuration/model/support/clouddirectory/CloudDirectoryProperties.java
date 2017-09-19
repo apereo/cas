@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.clouddirectory;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
@@ -18,20 +19,24 @@ public class CloudDirectoryProperties implements Serializable {
     /**
      * Authenticate and bind into the instance via a credentials properties file.
      */
+    @RequiredProperty
     private Resource credentialsPropertiesFile;
 
     /**
      * Use access-key provided by AWS to authenticate.
      */
+    @RequiredProperty
     private String credentialAccessKey;
     /**
      * Use secret key provided by AWS to authenticate.
      */
+    @RequiredProperty
     private String credentialSecretKey;
 
     /**
      * AWS region used.
      */
+    @RequiredProperty
     private String region;
 
     /**
@@ -45,10 +50,12 @@ public class CloudDirectoryProperties implements Serializable {
     /**
      * Directory ARN.
      */
+    @RequiredProperty
     private String directoryArn;
     /**
      * Schema ARN.
      */
+    @RequiredProperty
     private String schemaArn;
     /**
      * Facet name.
@@ -58,10 +65,12 @@ public class CloudDirectoryProperties implements Serializable {
     /**
      * Username attribute to choose when locating accounts.
      */
+    @RequiredProperty
     private String usernameAttributeName;
     /**
      * Password attribute to choose on the entry to compare.
      */
+    @RequiredProperty
     private String passwordAttributeName;
     /**
      * Username index path.
@@ -77,13 +86,13 @@ public class CloudDirectoryProperties implements Serializable {
      * Password encoding properties.
      */
     @NestedConfigurationProperty
-    private PasswordEncoderProperties passwordEncoder;
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     /**
      * Principal transformation properties.
      */
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation;
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
      * The order of this authentication handler in the chain.

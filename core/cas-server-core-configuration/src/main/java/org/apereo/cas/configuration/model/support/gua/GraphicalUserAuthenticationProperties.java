@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.gua;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import java.io.Serializable;
@@ -45,15 +46,18 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
         /**
          * Base DN to use for the user search.
          */
+        @RequiredProperty
         private String baseDn;
         /**
          * Search filter to locate the account in LDAP.
          * Syntax is {@code cn={user}} or {@code cn={0}}
          */
+        @RequiredProperty
         private String userFilter;
         /**
          * Entry attribute that holds the user image.
          */
+        @RequiredProperty
         private String imageAttribute;
 
         public String getBaseDn() {

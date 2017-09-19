@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -18,22 +19,27 @@ public class WsFederationDelegationProperties implements Serializable {
     /**
      * The attribute extracted from the assertion and used to construct the CAS principal id.
      */
+    @RequiredProperty
     private String identityAttribute = "upn";
     /**
      * The entity id or the identifier of the Wsfed instance.
      */
+    @RequiredProperty
     private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
     /**
      * Wsfed identity provider url.
      */
+    @RequiredProperty
     private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
     /**
      * Locations of signing certificates used to verify assertions.
      */
+    @RequiredProperty
     private String signingCertificateResources = "classpath:adfs-signing.crt";
     /**
      * The identifier for CAS (RP) registered with wsfed.
      */
+    @RequiredProperty
     private String relyingPartyIdentifier = "urn:cas:localhost";
     /**
      * Tolerance value used to skew assertions to support clock drift.

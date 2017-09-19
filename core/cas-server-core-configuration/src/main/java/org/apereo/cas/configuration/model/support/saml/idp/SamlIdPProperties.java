@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -19,7 +20,6 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class SamlIdPProperties implements Serializable {
 
     private static final long serialVersionUID = -5848075783676789852L;
@@ -34,10 +34,12 @@ public class SamlIdPProperties implements Serializable {
     /**
      * The SAML entity id for the deployment.
      */
+    @RequiredProperty
     private String entityId = "https://cas.example.org/idp";
     /**
      * The scope used in generation of metadata.
      */
+    @RequiredProperty
     private String scope = "example.org";
     /**
      * A mapping of authentication context class refs.
@@ -149,6 +151,7 @@ public class SamlIdPProperties implements Serializable {
          * Directory location of SAML metadata and signing/encryption keys.
          * This directory will be used to hold the configuration files.
          */
+        @RequiredProperty
         private Resource location = new FileSystemResource("/etc/cas/saml");
 
         /**

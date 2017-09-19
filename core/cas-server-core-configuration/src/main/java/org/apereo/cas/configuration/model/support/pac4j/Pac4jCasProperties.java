@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -13,11 +15,13 @@ public class Pac4jCasProperties implements Serializable {
     /**
      * The CAS server login url.
      */
+    @RequiredProperty
     private String loginUrl;
     /**
      * CAS protocol to use.
      * Acceptable values are {@code CAS10, CAS20, CAS20_PROXY, CAS30, CAS30_PROXY, SAML}.
      */
+    @RequiredProperty
     private String protocol;
     /**
      * Name of the client mostly for UI purposes and uniqueness.

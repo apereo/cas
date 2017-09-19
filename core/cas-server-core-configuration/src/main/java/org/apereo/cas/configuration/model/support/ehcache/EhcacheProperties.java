@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.ehcache;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -81,6 +82,7 @@ public class EhcacheProperties implements Serializable {
      * Default is "ehcache.xml" in the root of the class path,
      * or if not found, "ehcache-failsafe.xml" in the EhCache jar (default EhCache initialization).
      */
+    @RequiredProperty
     private Resource configLocation = new ClassPathResource("ehcache-replicated.xml");
 
     /**
@@ -97,6 +99,7 @@ public class EhcacheProperties implements Serializable {
     /**
      * The name of the cache manager instance.
      */
+    @RequiredProperty
     private String cacheManagerName = "ticketRegistryCacheManager";
     /**
      * The interval in seconds between runs of the disk expiry thread.

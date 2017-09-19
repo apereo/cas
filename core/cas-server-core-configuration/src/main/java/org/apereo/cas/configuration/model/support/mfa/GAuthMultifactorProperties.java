@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -14,17 +15,19 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class GAuthMultifactorProperties extends BaseMultifactorProvider {
+public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = -7401748853833491119L;
     /**
      * Issuer used in the barcode when dealing with device registration events.
      * Used in the registration URL to identify CAS.
      */
+    @RequiredProperty
     private String issuer = "CASIssuer";
     /**
      * Label used in the barcode when dealing with device registration events.
      * Used in the registration URL to identify CAS.
      */
+    @RequiredProperty
     private String label = "CASLabel";
     /**
      * Length of the generated code.
