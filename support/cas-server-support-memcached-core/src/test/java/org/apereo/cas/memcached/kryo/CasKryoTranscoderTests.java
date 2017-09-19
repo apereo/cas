@@ -4,27 +4,24 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +40,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SuppressWarnings("rawtypes")
 public class CasKryoTranscoderTests {
 
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
@@ -59,17 +55,16 @@ public class CasKryoTranscoderTests {
     private final Map<String, Object> principalAttributes;
 
     public CasKryoTranscoderTests() {
-        transcoder = new CasKryoTranscoder();
         final Map<Class<?>, Serializer> serializerMap = new HashMap<>();
+        transcoder = new CasKryoTranscoder(serializerMap);
+        
         serializerMap.put(
                 MockServiceTicket.class,
                 new FieldSerializer(transcoder.getKryo(), MockServiceTicket.class));
         serializerMap.put(
                 MockTicketGrantingTicket.class,
                 new FieldSerializer(transcoder.getKryo(), MockTicketGrantingTicket.class));
-        transcoder.setSerializerMap(serializerMap);
         transcoder.initialize();
-
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, NICKNAME_VALUE);
     }
@@ -121,8 +116,7 @@ public class CasKryoTranscoderTests {
         internalProxyTest("https://localhost:8080/path/file.html?p1=v1&p2=v2#fragment");
     }
 
-    private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), RegisteredServiceTestUtils.getRegisteredService("https://.+"));
+    private void internalProxyTest(final String proxyUrl) {
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(USERNAME);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
