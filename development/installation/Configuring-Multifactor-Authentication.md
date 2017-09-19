@@ -180,7 +180,7 @@ CAS is able to natively provide trusted device/browser features as part of any m
 
 ## 2FA vs. MFA
 
-Multifactor authentication in CAS most presents itself in form of tw-factor authentication when deployed. The framework however should be designed in such a way to allow additional chaining of other providers into an existing authentication experience. If you have a need to string along multiple factors together one after another, it is likely that you may need to adjust and extend the existing authentication workflows to delver the use case.
+Multifactor authentication in CAS mostly presents itself in form of two-factor authentication when deployed. The framework however is designed in such a way to allow additional chaining of other providers into an existing authentication experience. If you have a need to string along multiple factors together one after another, it is likely that you may need to adjust and extend the existing authentication workflows to deliver the use case.
 
 ## Settings
 
