@@ -4002,10 +4002,27 @@ Decide how CAS should monitor the internal state of various cache storage servic
 Decide how CAS should monitor the internal state of a memcached connection pool.
 
 ```properties
-# cas.monitor.memcached.servers=memcached.server.net:14938
-# cas.monitor.memcached.failureMode=Redistribute
+# cas.monitor.memcached.servers=localhost:11211
 # cas.monitor.memcached.locatorType=ARRAY_MOD
-# cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH
+# cas.monitor.memcached.failureMode=Redistribute
+# cas.monitor.memcached.hashAlgorithm=FNV1_64_HASH
+# cas.monitor.memcached.shouldOptimize=false
+# cas.monitor.memcached.daemon=true
+# cas.monitor.memcached.maxReconnectDelay=-1
+# cas.monitor.memcached.useNagleAlgorithm=false
+# cas.monitor.memcached.shutdownTimeoutSeconds=-1
+# cas.monitor.memcached.opTimeout=-1
+# cas.monitor.memcached.timeoutExceptionThreshold=2
+# cas.monitor.memcached.maxTotal=20
+# cas.monitor.memcached.maxIdle=8
+# cas.monitor.memcached.minIdle=0
+
+# cas.monitor.memcached.transcoder=KRYO|SERIAL|WHALIN|WHALINV1
+# cas.monitor.memcached.transcoderCompressionThreshold=16384
+# cas.monitor.memcached.kryoAutoReset=false
+# cas.monitor.memcached.kryoObjectsByReference=false
+# cas.monitor.memcached.kryoRegistrationRequired=false
+
 ```
 
 ### MongoDb Monitors
@@ -4753,6 +4770,12 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.maxTotal=20
 # cas.ticket.registry.memcached.maxIdle=8
 # cas.ticket.registry.memcached.minIdle=0
+
+# cas.ticket.registry.memcached.transcoder=KRYO|SERIAL|WHALIN|WHALINV1
+# cas.ticket.registry.memcached.transcoderCompressionThreshold=16384
+# cas.ticket.registry.memcached.kryoAutoReset=false
+# cas.ticket.registry.memcached.kryoObjectsByReference=false
+# cas.ticket.registry.memcached.kryoRegistrationRequired=false
 
 # cas.ticket.registry.memcached.crypto.signing.key=
 # cas.ticket.registry.memcached.crypto.signing.keySize=512
