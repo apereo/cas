@@ -40,7 +40,6 @@ public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswor
                                                                  final String originalPassword) throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
-        final String password = credential.getPassword();
 
         final Map<String, Object> attributes = repository.getUser(username);
 
@@ -54,7 +53,7 @@ public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswor
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
 
         final String userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).toString();
-        if (!password.equals(userPassword)) {
+        if (!matches(originalPassword, userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", username);
             throw new FailedLoginException();
         }
