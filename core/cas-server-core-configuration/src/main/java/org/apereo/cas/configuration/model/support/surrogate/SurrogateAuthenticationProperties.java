@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -169,11 +170,13 @@ public class SurrogateAuthenticationProperties implements Serializable {
         /**
          * LDAP base DN used to locate the surrogate/admin accounts.
          */
+        @RequiredProperty
         private String baseDn;
         /**
          * Search filter used to locate the admin user in the LDAP tree
          * and determine accounts qualified for impersonation.
          */
+        @RequiredProperty
         private String searchFilter;
         /**
          * LDAP search filter used to locate the surrogate account.
@@ -183,6 +186,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
          *  Attribute that must be found on the LDAP entry linked to the admin user
          *  that tags the account as authorized for impersonation.
          */
+        @RequiredProperty
         private String memberAttributeName;
         /**
          * A pattern that is matched against the attribute value of the admin user,
@@ -257,10 +261,12 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * Surrogate query to use to determine whether an admin user can impersonate another user.
          * The query must return an integer count of greater than zero.
          */
+        @RequiredProperty
         private String surrogateSearchQuery = "SELECT COUNT(*) FROM surrogate WHERE username=?";
         /**
          * SQL query to use in order to retrieve the list of qualified accounts for impersonation for a given admin user.
          */
+        @RequiredProperty
         private String surrogateAccountQuery = "SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?";
 
         public String getSurrogateSearchQuery() {

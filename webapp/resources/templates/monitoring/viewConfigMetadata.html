@@ -3,85 +3,21 @@
 
 <head>
     <title th:text="#{cas.configmetadata.pagetitle}"></title>
-    <script type="text/javascript" th:src="@{#{webjars.semanticui.semantic.js}}"></script>
-
+    <link rel="stylesheet" th:href="@{#{webjars.jqueryui.themes.cupertino.jquery-ui.css}}"/>
     <script type="text/javascript" th:inline="javascript">
+
+        /*<![CDATA[*/
+
+        var urls = {
+            search: /*[[@{/status/configmetadata/search?name={query}}]]*/
+        };
+
+        /*]]>*/
+    
         function jqueryReady() {
-            $('#searchField').bind("keyup change", function() {
-                var text = $(this).text()
-                if (text == null || text == "") {
-                    $('.results').empty()
-                }
-            });
-            
-            $('.ui.search').search({
-                type: 'message',
-                searchDelay: 100,
-                silent: true,
-                apiSettings: {
-                    silent: true,
-                    url: /*[[@{/status/configmetadata/search?name={query}}]]*/,
-                    onResponse: function (casResp) {
-                        var response = {
-                            results: {}
-                        }
-
-                        for (var key in casResp) {
-                            if (casResp.hasOwnProperty(key)) {
-                                var prop = casResp[key];
-                                var group = prop.group;
-
-                                if (response.results[group] === undefined) {
-                                    response.results[group] = {
-                                        name: group,
-                                        results: []
-                                    };
-                                }
-                                response.results[group].results.push({
-                                    title: prop.id,
-                                    description: prop.description,
-                                    defaultValue: prop.defaultValue,
-                                    type: prop.type,
-                                    deprecated: prop.deprecated
-                                });
-                            }
-                        }
-
-                        return response;
-                    },
-                },
-                minCharacters: 3,
-                templates: {
-                    message: function (message, type) {
-                        var html = "";
-                        for (var group in message.results) {
-                            html += "<h4><i class='fa fa-users' aria-hidden='true\'></i>&nbsp;<strong>Group: </strong><code>" + group + "</code></h4>"
-                            var props = message.results[group].results;
-
-                            for (var i = 0; i < props.length; i++) {
-                                var prop = props[i]
-                                html += "<i class='fa fa-cogs' aria-hidden='true'></i>&nbsp;"
-                                html += "Property: <code>" + prop.title + "=" + prop.defaultValue + "</code><br/>"
-                                if (prop.deprecated) {
-                                    html += "<p/><div class='alert alert-warning'>"
-                                    html += "<i class='fa fa-exclamation-circle' aria-hidden='true'></i>&nbsp;"
-                                    html += "This property is deprecated and will be removed in future CAS versions."
-                                    html += "</div>"
-                                }
-                                html += "Type: <kbd>" + prop.type + "</kbd><br/>"
-                                if (prop.description != null) {
-                                    html += "<p>" + prop.description + "</p>"
-                                }
-
-                                html += "<br/>"
-                            }
-                            html += "<hr>";
-                        }
-                        return html;
-                    }
-                }
-            })
-            ;
+            head.load(
+                /*[[@{/js/viewConfigMetadata.js}]]*/
+            );
         }
     </script>
 </head>
@@ -91,11 +27,12 @@
     <h1 th:text="#{cas.configmetadata.pagetitle}"></h1>
     <p>
     <p>CAS ships with meta-data files that provide details of all supported configuration properties and settings. You may query the metadata repository
-        here to search for specific CAS settings and properties.<p/>
+        here to search for specific CAS settings and properties.
+    <p/>
 
-        Property names can be specified in very relaxed terms.
-        For instance <code>cas.someProperty</code>, <code>cas.some-property</code>, <code>cas.some_property</code>
-        and <code>CAS_SOME_PROPERTY</code> are all valid names.
+    Property names can be specified in very relaxed terms.
+    For instance <code>cas.someProperty</code>, <code>cas.some-property</code>, <code>cas.some_property</code>
+    and <code>CAS_SOME_PROPERTY</code> are all valid names.
     </p>
     <div>
         <br/>
@@ -106,8 +43,9 @@
         </div>
         <p/>
     </div>
+
+    <div id="accordion">
+    </div>
 </div>
-
-
 </body>
 </html>

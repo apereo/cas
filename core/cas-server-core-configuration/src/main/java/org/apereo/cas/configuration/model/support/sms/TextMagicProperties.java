@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -14,10 +16,12 @@ public class TextMagicProperties implements Serializable {
     /**
      * Secure token used to establish a handshake.
      */
+    @RequiredProperty
     private String token;
     /**
      * Username authorized to use the service as the bind account.
      */
+    @RequiredProperty
     private String username;
 
     public String getUsername() {

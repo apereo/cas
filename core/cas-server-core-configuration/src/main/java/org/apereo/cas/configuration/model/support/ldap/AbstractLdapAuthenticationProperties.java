@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * {@code uid=%s,ou=Users,dc=example,dc=org}.</li>
      * </ul>
      */
+    @RequiredProperty
     private AuthenticationTypes type;
 
     /**
@@ -86,6 +89,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * User filter to use for searching.
      * Syntax is {@code cn={user}} or {@code cn={0}}.
      */
+    @RequiredProperty
     private String userFilter;
 
     /**

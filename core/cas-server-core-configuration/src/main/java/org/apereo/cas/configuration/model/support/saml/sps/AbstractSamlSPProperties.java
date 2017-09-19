@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ public abstract class AbstractSamlSPProperties implements Serializable {
      * The location of the metadata for this service provider.
      * Can be a URL or another form of resource.
      */
+    @RequiredProperty
     private String metadata;
     /**
      * Name of this service provider.

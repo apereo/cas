@@ -5,9 +5,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
+import org.springframework.core.OrderComparator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,9 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -30,6 +33,8 @@ import java.util.stream.StreamSupport;
  * @since 5.2.0
  */
 public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationMetadataServerController.class);
+
     private final CasConfigurationMetadataRepository repository;
 
     public CasConfigurationMetadataServerController(final CasConfigurationMetadataRepository repository,
@@ -94,8 +99,8 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @return the response entity
      */
     @GetMapping(path = "/search")
-    public ResponseEntity<Set<ConfigurationSearchResults>> search(@RequestParam(value = "name", required = false) final String name) {
-        Set<ConfigurationSearchResults> results = new LinkedHashSet<>();
+    public ResponseEntity<List<ConfigurationMetadataSearchResult>> search(@RequestParam(value = "name", required = false) final String name) {
+        List<ConfigurationMetadataSearchResult> results = new ArrayList<>();
         final Map<String, ConfigurationMetadataProperty> allProps = repository.getRepository().getAllProperties();
 
         if (StringUtils.isNotBlank(name) && RegexUtils.isValidRegex(name)) {
@@ -106,8 +111,9 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
             results = allProps.entrySet()
                     .stream()
                     .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))
-                    .map(propEntry -> ConfigurationSearchResults.from(propEntry.getValue()))
-                    .collect(Collectors.toSet());
+                    .map(propEntry -> new ConfigurationMetadataSearchResult(propEntry.getValue(), repository))
+                    .collect(Collectors.toList());
+            OrderComparator.sort(results);
         }
         return ResponseEntity.ok(results);
     }
@@ -126,40 +132,4 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
         return new ModelAndView("monitoring/viewConfigMetadata");
     }
 
-    /**
-     * The configuration search results.
-     */
-    public static class ConfigurationSearchResults extends ConfigurationMetadataProperty {
-        private static final long serialVersionUID = 7767348341760984539L;
-        private String group;
-
-        public String getGroup() {
-            return group;
-        }
-
-        public void setGroup(final String group) {
-            this.group = group;
-        }
-
-        /**
-         * Of configuration search results.
-         *
-         * @param prop the prop
-         * @return the configuration search results
-         */
-        public static ConfigurationSearchResults from(final ConfigurationMetadataProperty prop) {
-            final ConfigurationSearchResults res = new ConfigurationSearchResults();
-            res.setDefaultValue(prop.getDefaultValue());
-            res.setDeprecation(prop.getDeprecation());
-            res.setDescription(prop.getDescription());
-            res.setId(prop.getId());
-            res.setName(prop.getName());
-            res.setShortDescription(prop.getShortDescription());
-            res.setType(prop.getType());
-
-            final String groupId = StringUtils.substringBeforeLast(prop.getName(), ".");
-            res.setGroup(groupId);
-            return res;
-        }
-    }
 }

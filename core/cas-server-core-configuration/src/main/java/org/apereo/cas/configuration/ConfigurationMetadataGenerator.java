@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.JavaParser;
@@ -79,7 +81,8 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        new ConfigurationMetadataGenerator(args[0], args[1]).execute();
+        new ConfigurationMetadataGenerator("/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration/build",
+                "/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration").execute();
     }
 
     /**
@@ -105,18 +108,20 @@ public class ConfigurationMetadataGenerator {
                 .forEach(Unchecked.consumer(p -> {
                     final Matcher matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
                     final boolean indexBrackets = matcher.matches();
-                    final String typePath = buildTypeSourcePath(matcher.group(1));
-                    parseCompilationUnit(collectedProps, collectedGroups, p, typePath, indexBrackets);
+                    final String typeName = matcher.group(1);
+                    final String typePath = buildTypeSourcePath(typeName);
+                    parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
                 }));
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
-        
+
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
 
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        //mapper.writer(new MinimalPrettyPrinter()).writeValue(jsonFile, jsonMap);
-        mapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, jsonMap);
+        final PrettyPrinter pp = new MinimalPrettyPrinter();
+        mapper.writer(pp).writeValue(jsonFile, jsonMap);
+        mapper.writer(pp).writeValue(jsonFile, jsonMap);
     }
 
     private String buildTypeSourcePath(final String type) {
@@ -128,11 +133,12 @@ public class ConfigurationMetadataGenerator {
                                       final Set<ConfigurationMetadataProperty> collectedGroups,
                                       final ConfigurationMetadataProperty p,
                                       final String typePath,
+                                      final String typeName,
                                       final boolean indexNameWithBrackets) {
 
         try (InputStream is = new FileInputStream(typePath)) {
             final CompilationUnit cu = JavaParser.parse(is);
-            new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets).visit(cu, p);
+            new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName).visit(cu, p);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -141,29 +147,31 @@ public class ConfigurationMetadataGenerator {
     private class FieldVisitor extends VoidVisitorAdapter<ConfigurationMetadataProperty> {
         private final Set<ConfigurationMetadataProperty> properties;
         private final Set<ConfigurationMetadataProperty> groups;
-        
+
+        private final String parentClass;
         private final boolean indexNameWithBrackets;
 
-        FieldVisitor(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups, 
-                     final boolean indexNameWithBrackets) {
+        FieldVisitor(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups,
+                     final boolean indexNameWithBrackets, final String clazz) {
             this.properties = properties;
             this.groups = groups;
             this.indexNameWithBrackets = indexNameWithBrackets;
+            this.parentClass = clazz;
         }
 
         @Override
-        public void visit(final FieldDeclaration n, final ConfigurationMetadataProperty arg) {
-            if (n.getVariables().isEmpty()) {
-                throw new IllegalArgumentException("Field " + n + " has no variable definitions");
+        public void visit(final FieldDeclaration field, final ConfigurationMetadataProperty property) {
+            if (field.getVariables().isEmpty()) {
+                throw new IllegalArgumentException("Field " + field + " has no variable definitions");
             }
 
-            if (n.getJavadoc().isPresent()) {
-                final ConfigurationMetadataProperty prop = createConfigurationProperty(n, arg);
-                processNestedClassOrInterfaceTypeIfNeeded(n, prop);
+            if (field.getJavadoc().isPresent()) {
+                final ConfigurationMetadataProperty prop = createConfigurationProperty(field, property);
+                processNestedClassOrInterfaceTypeIfNeeded(field, prop);
             } else {
-                final VariableDeclarator var = n.getVariable(0);
+                final VariableDeclarator var = field.getVariable(0);
                 if (!var.getNameAsString().matches("serialVersionUID")) {
-                    LOGGER.error("Field " + n + " has no Javadoc defined");
+                    LOGGER.error("Field " + field + " has no Javadoc defined");
                 }
             }
         }
@@ -178,14 +186,14 @@ public class ConfigurationMetadataGenerator {
 
             final String indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
             final String indexedName = indexedGroup.concat(".").concat(name);
-            
+
             final ConfigurationMetadataProperty prop = new ConfigurationMetadataProperty();
             final String description = n.getJavadoc().get().getDescription().toText();
             prop.setDescription(description);
             prop.setShortDescription(StringUtils.substringBefore(description, "."));
             prop.setName(indexedName);
             prop.setId(indexedName);
-            
+
             switch (n.getElementType().asString()) {
                 case "String":
                 case "Integer":
@@ -197,7 +205,7 @@ public class ConfigurationMetadataGenerator {
                 default:
                     prop.setType(n.getElementType().asString());
             }
-            
+
             if (variable.getInitializer().isPresent()) {
                 final Expression exp = variable.getInitializer().get();
                 if (exp instanceof LiteralStringValueExpr) {
@@ -207,13 +215,13 @@ public class ConfigurationMetadataGenerator {
                 }
             }
             properties.add(prop);
-            
+
             final ConfigurationMetadataProperty grp = new ConfigurationMetadataProperty();
             grp.setId(indexedGroup);
             grp.setName(indexedGroup);
-            grp.setType(arg.getType());
+            grp.setType(this.parentClass);
             groups.add(grp);
-            
+
             return prop;
         }
 
@@ -223,27 +231,26 @@ public class ConfigurationMetadataGenerator {
                 if (type.getNameAsString().endsWith("Properties")) {
                     final Class clz = locatePropertiesClassForType(type);
                     final String typePath = buildTypeSourcePath(clz.getName());
-                    parseCompilationUnit(properties, groups, prop, typePath, false);
-                } else {
+                    parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
+                } else if (!type.getNameAsString().matches(String.class.getSimpleName() + "|"
+                        + Integer.class.getSimpleName() + "|"
+                        + Double.class.getSimpleName() + "|"
+                        + Long.class.getSimpleName() + "|"
+                        + Float.class.getSimpleName() + "|"
+                        + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + "|"
+                        + QueryType.class.getSimpleName() + "|"
+                        + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
+                        + CaseCanonicalizationMode.class.getSimpleName() + "|"
+                        + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
+                        + "Map|List|Set")) {
+                    LOGGER.error("Field " + n
+                            + " has a type of class/interface " + type.getNameAsString()
+                            + " yet its name does not end with 'Properties': ");
 
-                    if (!type.getNameAsString().matches(String.class.getSimpleName() + "|"
-                            + Integer.class.getSimpleName() + "|"
-                            + Double.class.getSimpleName() + "|"
-                            + Long.class.getSimpleName() + "|"
-                            + Float.class.getSimpleName() + "|"
-                            + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + "|"
-                            + QueryType.class.getSimpleName() + "|"
-                            + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
-                            + CaseCanonicalizationMode.class.getSimpleName() + "|"
-                            + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
-                            + "Map|List|Set")) {
-                        LOGGER.error("Field " + n
-                                + " has a type of class/interface " + type.getNameAsString()
-                                + " yet its name does not end with 'Properties': ");
-                    }
                 }
             }
         }
+
     }
 
     private Class locatePropertiesClassForType(final ClassOrInterfaceType type) {
