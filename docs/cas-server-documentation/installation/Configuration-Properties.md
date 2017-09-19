@@ -521,21 +521,21 @@ Monitoring endpoints may also be secured by Spring Security. You can define the 
 
 ```properties
 # security.ignored[0]=/**
-security.filterOrder=0
-security.requireSsl=true
-security.sessions=if_required
-security.user.name=<predefined-userid>
-security.user.password=<predefined-password>
-security.user.role=ACTUATOR
+# security.filterOrder=0
+# security.requireSsl=true
+# security.sessions=if_required
+# security.user.name=<predefined-userid>
+# security.user.password=<predefined-password>
+# security.user.role=ACTUATOR
 ```
 
 #### Basic Authentication
 
 ```properties
-security.basic.authorizeMode=none|role|authenticated
-security.basic.enabled=true
-security.basic.path=/cas/status/**
-security.basic.realm=CAS
+# security.basic.authorizeMode=none|role|authenticated
+# security.basic.enabled=true
+# security.basic.path=/cas/status/**
+# security.basic.realm=CAS
 ```
 
 #### JAAS Authentication
@@ -1462,29 +1462,29 @@ Used to geo-profile authentication events.
 To learn more about this topic, [please review this guide](Cassandra-Authentication.html).
 
 ```properties
-cas.authn.cassandra.usernameAttribute=
-cas.authn.cassandra.passwordAttribute=
-cas.authn.cassandra.tableName=
-cas.authn.cassandra.username=
-cas.authn.cassandra.password=
+# cas.authn.cassandra.usernameAttribute=
+# cas.authn.cassandra.passwordAttribute=
+# cas.authn.cassandra.tableName=
+# cas.authn.cassandra.username=
+# cas.authn.cassandra.password=
 
-cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
-cas.authn.cassandra.keyspace=
-cas.authn.cassandra.contactPoints=localhost1,localhost2
-cas.authn.cassandra.localDc=
-cas.authn.cassandra.shuffleReplicas=true
-cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
-cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
-cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-cas.authn.cassandra.maxConnections=10
-cas.authn.cassandra.coreConnections=1
-cas.authn.cassandra.maxRequestsPerConnection=1024
-cas.authn.cassandra.connectTimeoutMillis=5000
+# cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
+# cas.authn.cassandra.keyspace=
+# cas.authn.cassandra.contactPoints=localhost1,localhost2
+# cas.authn.cassandra.localDc=
+# cas.authn.cassandra.shuffleReplicas=true
+# cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
+# cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
+# cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# cas.authn.cassandra.maxConnections=10
+# cas.authn.cassandra.coreConnections=1
+# cas.authn.cassandra.maxRequestsPerConnection=1024
+# # cas.authn.cassandra.connectTimeoutMillis=5000
 cas.authn.cassandra.readTimeoutMillis=5000
-cas.authn.cassandra.port=9042
-cas.authn.cassandra.name=
-cas.authn.cassandra.order=
+# cas.authn.cassandra.port=9042
+# cas.authn.cassandra.name=
+# cas.authn.cassandra.order=
 ```
 
 ## Digest Authentication
@@ -2268,21 +2268,6 @@ To learn more about this topic, [please review this guide](AWS-CloudDirectory-Au
 # cas.authn.cloudDirectory.principalTransformation.suffix=
 # cas.authn.cloudDirectory.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.cloudDirectory.principalTransformation.prefix=
-```
-
-## Stormpath Authentication
-
-To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
-
-```properties
-# cas.authn.stormpath.apiKey=
-# cas.authn.stormpath.secretkey=
-# cas.authn.stormpath.applicationId=
-# cas.authn.stormpath.name=
-
-# cas.authn.stormpath.principalTransformation.suffix=
-# cas.authn.stormpath.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.stormpath.principalTransformation.prefix=
 ```
 
 ## Remote Address Authentication
@@ -5408,14 +5393,14 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 To learn more about this topic, [please review this guide](Service-Discovery-Guide.html).
 
 ```properties
-eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
-eureka.client.enabled=true
-eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
-eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
-eureka.instance.homePageUrl=${cas.server.prefix}/
-eureka.client.healthcheck.enabled=true
+# eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
+# eureka.client.enabled=true
+# eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
+# eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
+# eureka.instance.homePageUrl=${cas.server.prefix}/
+# eureka.client.healthcheck.enabled=true
 
-spring.cloud.config.discovery.enabled=false
+# spring.cloud.config.discovery.enabled=false
 ```
 
 ## Provisioning

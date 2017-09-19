@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ public class Pac4jOidcProperties extends Pac4jGenericClientProperties {
     /**
      * The discovery endpoint to locate the provide metadata.
      */
+    @RequiredProperty
     private String discoveryUri;
 
     /**

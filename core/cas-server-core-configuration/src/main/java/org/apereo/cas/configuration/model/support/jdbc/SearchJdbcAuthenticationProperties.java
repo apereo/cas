@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.jdbc;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -16,14 +17,17 @@ public class SearchJdbcAuthenticationProperties extends AbstractJpaProperties {
     /**
      * Username column name.
      */
+    @RequiredProperty
     private String fieldUser;
     /**
      * Password column name.
      */
+    @RequiredProperty
     private String fieldPassword;
     /**
      * Table name where accounts are held.
      */
+    @RequiredProperty
     private String tableUsers;
 
     /**

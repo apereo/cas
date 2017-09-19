@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 /**
  * This is {@link SingleCollectionMongoDbProperties}.
  *
@@ -12,6 +14,7 @@ public class SingleCollectionMongoDbProperties extends BaseMongoDbProperties {
     /**
      * MongoDb database collection name to fetch and/or create.
      */
+    @RequiredProperty
     private String collection;
 
     /**

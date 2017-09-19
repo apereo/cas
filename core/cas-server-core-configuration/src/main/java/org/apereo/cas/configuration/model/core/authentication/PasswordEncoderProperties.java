@@ -8,7 +8,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class PasswordEncoderProperties implements Serializable {
     private static final long serialVersionUID = -2396781005262069816L;
 

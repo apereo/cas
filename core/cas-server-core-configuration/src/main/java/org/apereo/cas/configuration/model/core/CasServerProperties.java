@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -29,12 +30,14 @@ public class CasServerProperties implements Serializable {
      * of the CAS deployment and not the individual node address,
      * in the event that CAS is clustered.
      */
+    @RequiredProperty
     private String name = "https://cas.example.org:8443";
 
     /**
      * A concatenation of the server name plus the CAS context path.
      * Deployments at root likely need to blank out this value.
      */
+    @RequiredProperty
     private String prefix = name.concat("/cas");
 
     /**

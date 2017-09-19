@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.util.Map;
 
 /**
@@ -13,14 +15,17 @@ public class Pac4jOAuth20Properties extends Pac4jGenericClientProperties {
     /**
      * Authorization endpoint of the provider.
      */
+    @RequiredProperty
     private String authUrl;
     /**
      * Token endpoint of the provider.
      */
+    @RequiredProperty
     private String tokenUrl;
     /**
      * Profile endpoint of the provider.
      */
+    @RequiredProperty
     private String profileUrl;
     /**
      * Profile path portion of the profile endpoint of the provider.

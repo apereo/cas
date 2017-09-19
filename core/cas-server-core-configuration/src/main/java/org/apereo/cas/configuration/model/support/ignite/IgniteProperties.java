@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.ignite;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -40,6 +41,7 @@ public class IgniteProperties implements Serializable {
      * <li>Both port1 and port2 should be greater than 0.</li>
      * </ul>
      */
+    @RequiredProperty
     private List<String> igniteAddress = CollectionUtils.wrap("localhost:47500");
 
     /**
@@ -110,6 +112,7 @@ public class IgniteProperties implements Serializable {
     /**
      * Sets local port to listen to.
      */
+    @RequiredProperty
     private int localPort = -1;
 
     /**

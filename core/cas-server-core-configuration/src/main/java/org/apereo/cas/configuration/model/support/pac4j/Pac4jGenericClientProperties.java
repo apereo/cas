@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -13,10 +15,12 @@ public class Pac4jGenericClientProperties implements Serializable {
     /**
      * The client id.
      */
+    @RequiredProperty
     private String id;
     /**
      * The client secret.
      */
+    @RequiredProperty
     private String secret;
     /**
      * Name of the client mostly for UI purposes and uniqueness.

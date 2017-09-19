@@ -1,20 +1,24 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 /**
  * This is {@link DuoSecurityMultifactorProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class DuoSecurityMultifactorProperties extends BaseMultifactorProvider {
+public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = -4655375354167880807L;
     /**
      * Duo integration key.
      */
+    @RequiredProperty
     private String duoIntegrationKey;
     /**
      * Duo secret key.
      */
+    @RequiredProperty
     private String duoSecretKey;
     /**
      * The duoApplicationKey is a string, at least 40 characters long,
@@ -25,10 +29,12 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProvider {
      * print hashlib.sha1(os.urandom(32)).hexdigest()
      * </pre>
      */
+    @RequiredProperty
     private String duoApplicationKey;
     /**
      * Duo API host and url.
      */
+    @RequiredProperty
     private String duoApiHost;
 
     /**

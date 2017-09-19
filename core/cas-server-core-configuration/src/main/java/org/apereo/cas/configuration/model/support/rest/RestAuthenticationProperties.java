@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.rest;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ public class RestAuthenticationProperties implements Serializable {
     /**
      * Endpoint URI to use for verification of credentials.
      */
+    @RequiredProperty
     private String uri;
 
     /**

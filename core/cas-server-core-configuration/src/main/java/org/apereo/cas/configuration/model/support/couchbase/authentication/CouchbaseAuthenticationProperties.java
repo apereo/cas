@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.couchbase.authentication;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -39,10 +40,12 @@ public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties i
     /**
      * Username attribute to fetch and compare against credential.
      */
+    @RequiredProperty
     private String usernameAttribute = "username";
     /**
      * Password attribute to fetch and compare against credential.
      */
+    @RequiredProperty
     private String passwordAttribute = "psw";
 
     public String getUsernameAttribute() {
