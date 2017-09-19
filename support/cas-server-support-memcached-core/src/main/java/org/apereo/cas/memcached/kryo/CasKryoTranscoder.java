@@ -44,7 +44,6 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 
-import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -73,33 +72,31 @@ public class CasKryoTranscoder implements Transcoder<Object> {
     /**
      * Kryo serializer.
      */
-    private final Kryo kryo = new KryoReflectionFactorySupport();
+    private final Kryo kryo;
 
     /**
      * Map of class to serializer that handles it.
      */
-    private Map<Class<?>, Serializer> serializerMap;
+    private final Map<Class<?>, Serializer> serializerMap;
 
     /**
      * Creates a Kryo-based transcoder.
      */
     public CasKryoTranscoder() {
+        this(new LinkedHashMap<>());
     }
 
-    /**
-     * Sets a map of additional types that should be registered with Kryo,
-     * for example GoogleAccountsService and OpenIdService.
-     *
-     * @param map Map of class to the serializer instance that handles it.
-     */
-    public void setSerializerMap(final Map<Class<?>, Serializer> map) {
+    public CasKryoTranscoder(final Map<Class<?>, Serializer> map) {
+        this.kryo = new KryoReflectionFactorySupport();
         this.serializerMap = map;
+        setAutoReset(false);
+        setReplaceObjectsByReferences(false);
+        setRegistrationRequired(false);
     }
 
     /**
      * Initialize and register classes with kryo.
      */
-    @PostConstruct
     public void initialize() {
         registerCasAuthenticationWithKryo();
         registerExpirationPoliciesWithKryo();
@@ -108,17 +105,36 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         registerCasServicesWithKryo();
         registerImmutableOrEmptyCollectionsWithKryo();
 
-        // Register other types
-        if (this.serializerMap != null) {
-            this.serializerMap.forEach(this.kryo::register);
-        }
+        this.serializerMap.forEach(this.kryo::register);
+    }
 
-        // don't reinit the registered classes after every write or read
-        this.kryo.setAutoReset(false);
-        // don't replace objects by references
+    /**
+     * Sets registration required.
+     * Catch all for any classes not explicitly registered
+     *
+     * @param value the value
+     */
+    public void setRegistrationRequired(final boolean value) {
+        this.kryo.setRegistrationRequired(value);
+    }
+
+    /**
+     * Sets replace objects by references.
+     *
+     * @param value the value
+     */
+    public void setReplaceObjectsByReferences(final boolean value) {
         this.kryo.setReferences(false);
-        // Catchall for any classes not explicitly registered
-        this.kryo.setRegistrationRequired(false);
+    }
+
+    /**
+     * Sets auto reset.
+     * Re-init the registered classes after every write or read.
+     *
+     * @param value the value
+     */
+    public void setAutoReset(final boolean value) {
+        this.kryo.setAutoReset(false);
     }
 
     private void registerImmutableOrEmptyCollectionsWithKryo() {

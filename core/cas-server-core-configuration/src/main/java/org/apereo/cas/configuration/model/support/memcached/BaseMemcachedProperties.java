@@ -49,10 +49,16 @@ public class BaseMemcachedProperties implements Serializable {
     private long opTimeout = -1;
 
     /**
-     * Indicate the transcoder type. Accepted values are {@code KRYO,SERIAL}.
+     * Indicate the transcoder type. Accepted values are {@code KRYO, SERIAL, WHALIN, WHALINV1}.
      * The default is {code KRYO}.
      */
     private String transcoder = "KRYO";
+
+    /**
+     * For transcoders other than kryo, determines the compression threshold.
+     * Does not apply to kryo.
+     */
+    private int transcoderCompressionThreshold = 16384;
 
     /**
      * Comma-separated list of memcached servers.
@@ -89,6 +95,64 @@ public class BaseMemcachedProperties implements Serializable {
      * Get the value for the minIdle configuration attribute for pools created with this configuration instance.
      */
     private int minIdle;
+
+    /**
+     * If true, {@code reset} is called automatically after an entire object graph has been read or written. If
+     * false, {@code reset} must be called manually, which allows unregistered class names, references, and other information to
+     * span multiple object graphs.
+     */
+    private boolean kryoAutoReset;
+
+    /**
+     * If true, each appearance of an object in the graph after the first is stored as an integer ordinal. When set to true,
+     * {@code MapReferenceResolver} is used. This enables references to the same object and cyclic graphs to be serialized, but
+     * typically adds overhead of one byte per object.
+     */
+    private boolean kryoObjectsByReference;
+
+    /**
+     * If true, an exception is thrown when an unregistered class is encountered.
+     * <p>
+     * If false, when an unregistered class is encountered, its fully qualified class name will be serialized and the
+     * default serializer for the class used to serialize the object. Subsequent
+     * appearances of the class within the same object graph are serialized as an int id.
+     * Registered classes are serialized as an int id, avoiding the overhead of serializing the class name, but have the drawback
+     * of needing to know the classes to be serialized up front.
+     * </p>
+     */
+    private boolean kryoRegistrationRequired;
+
+    public int getTranscoderCompressionThreshold() {
+        return transcoderCompressionThreshold;
+    }
+
+    public void setTranscoderCompressionThreshold(final int transcoderCompressionThreshold) {
+        this.transcoderCompressionThreshold = transcoderCompressionThreshold;
+    }
+
+    public boolean isKryoAutoReset() {
+        return kryoAutoReset;
+    }
+
+    public void setKryoAutoReset(final boolean kryoAutoReset) {
+        this.kryoAutoReset = kryoAutoReset;
+    }
+
+    public boolean isKryoObjectsByReference() {
+        return kryoObjectsByReference;
+    }
+
+    public void setKryoObjectsByReference(final boolean kryoObjectsByReference) {
+        this.kryoObjectsByReference = kryoObjectsByReference;
+    }
+
+    public boolean isKryoRegistrationRequired() {
+        return kryoRegistrationRequired;
+    }
+
+    public void setKryoRegistrationRequired(final boolean kryoRegistrationRequired) {
+        this.kryoRegistrationRequired = kryoRegistrationRequired;
+    }
 
     public int getMaxTotal() {
         return maxTotal;
