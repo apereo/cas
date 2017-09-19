@@ -51,18 +51,27 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
 
             switch (StringUtils.trimToEmpty(memcachedProperties.getTranscoder()).toLowerCase()) {
                 case "serial":
-                    factoryBean.setTranscoder(new SerializingTranscoder());
+                    final SerializingTranscoder t = new SerializingTranscoder();
+                    t.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
+                    factoryBean.setTranscoder(t);
                     break;
                 case "whalin":
-                    factoryBean.setTranscoder(new WhalinTranscoder());
+                    final WhalinTranscoder t1 = new WhalinTranscoder();
+                    t1.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
+                    factoryBean.setTranscoder(t1);
                     break;
                 case "whalinv1":
-                    factoryBean.setTranscoder(new WhalinV1Transcoder());
+                    final WhalinV1Transcoder t2 = new WhalinV1Transcoder();
+                    t2.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
+                    factoryBean.setTranscoder(t2);
                     break;
                 case "kryo":
                 default:
-                    final CasKryoTranscoder kryo = new CasKryoTranscoder();
-                    kryo.setSerializerMap(this.kryoSerializerMap);
+                    final CasKryoTranscoder kryo = new CasKryoTranscoder(this.kryoSerializerMap);
+                    kryo.setAutoReset(memcachedProperties.isKryoAutoReset());
+                    kryo.setRegistrationRequired(memcachedProperties.isKryoRegistrationRequired());
+                    kryo.setReplaceObjectsByReferences(memcachedProperties.isKryoObjectsByReference());
+                    kryo.initialize();
                     factoryBean.setTranscoder(kryo);
             }
 
