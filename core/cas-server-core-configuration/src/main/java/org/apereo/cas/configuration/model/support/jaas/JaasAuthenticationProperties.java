@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.jaas;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class JaasAuthenticationProperties implements Serializable {
     /**
      * JAAS realm to use.
      */
+    @RequiredProperty
     private String realm;
     /**
      * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.

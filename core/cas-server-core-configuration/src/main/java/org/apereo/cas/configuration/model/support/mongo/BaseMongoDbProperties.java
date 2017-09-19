@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mongo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
 
@@ -25,21 +26,25 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * If not specified, will fallback onto other individual settings.
      * If specified, takes over all other settings where applicable.
      */
+    @RequiredProperty
     private String clientUri = StringUtils.EMPTY;
     
     /**
      * MongoDb database port.
      */
+    @RequiredProperty
     private int port = 27017;
 
     /**
      * MongoDb database user for authentication.
      */
+    @RequiredProperty
     private String userId = StringUtils.EMPTY;
 
     /**
      * MongoDb database password for authentication.
      */
+    @RequiredProperty
     private String password = StringUtils.EMPTY;
 
     /**
@@ -48,6 +53,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * If more than one host is defined, it is assumed that each host contains the port as well, if any.
      * Otherwise the configuration may fallback onto {@link #getPort()}.
      */
+    @RequiredProperty
     private String host = "localhost";
 
     /**
@@ -68,10 +74,10 @@ public abstract class BaseMongoDbProperties implements Serializable {
      */
     private String writeConcern = "NORMAL";
     
-
     /**
      * MongoDb database instance name.
      */
+    @RequiredProperty
     private String databaseName = StringUtils.EMPTY;
 
     /**

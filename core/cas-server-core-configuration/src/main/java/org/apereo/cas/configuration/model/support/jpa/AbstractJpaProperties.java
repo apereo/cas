@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.jpa;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,11 +34,13 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * The JDBC driver used to connect to the database.
      */
+    @RequiredProperty
     private String driverClass = "org.hsqldb.jdbcDriver";
 
     /**
      * The database connection URL.
      */
+    @RequiredProperty
     private String url = "jdbc:hsqldb:mem:cas-hsql-database";
 
     /**
@@ -46,11 +49,13 @@ public abstract class AbstractJpaProperties implements Serializable {
      * The database user must have sufficient permissions to be able to handle
      * schema changes and updates, when needed.
      */
+    @RequiredProperty
     private String user = "sa";
 
     /**
      * The database connection password.
      */
+    @RequiredProperty
     private String password = StringUtils.EMPTY;
 
     /**

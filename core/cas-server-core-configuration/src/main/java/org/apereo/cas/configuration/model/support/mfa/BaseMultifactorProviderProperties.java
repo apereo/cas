@@ -3,12 +3,12 @@ package org.apereo.cas.configuration.model.support.mfa;
 import java.io.Serializable;
 
 /**
- * This is {@link BaseMultifactorProvider}.
+ * This is {@link BaseMultifactorProviderProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public abstract class BaseMultifactorProvider implements Serializable {
+public abstract class BaseMultifactorProviderProperties implements Serializable {
     private static final long serialVersionUID = -2690281104343633871L;
     /**
      * At times, CAS needs to determine the correct provider when step-up authentication is required.

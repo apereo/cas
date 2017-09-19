@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -15,15 +16,17 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
+public class YubiKeyMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 9138057706201201089L;
     /**
      * Yubikey client id.
      */
+    @RequiredProperty
     private Integer clientId;
     /**
      *  Yubikey secret key.
      */
+    @RequiredProperty
     private String secretKey = StringUtils.EMPTY;
 
     /**
