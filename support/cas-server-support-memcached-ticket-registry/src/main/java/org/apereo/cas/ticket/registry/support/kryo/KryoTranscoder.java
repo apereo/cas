@@ -123,9 +123,11 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.kryo.register(HashMap.class);
         this.kryo.register(LinkedHashMap.class);
         this.kryo.register(HashSet.class);
-        Set singletonSet = Collections.singleton("test");
+        // Can't directly access Collections.SingletonSet (private class), so instantiate one and do a getClass().
+        final Set singletonSet = Collections.singleton("test");
         this.kryo.register(singletonSet.getClass());
-        Map singletonMap = Collections.singletonMap("key", "value");
+        // Can't directly access Collections.SingletonMap (private class), so instantiate one and do a getClass().
+        final Map singletonMap = Collections.singletonMap("key", "value");
         this.kryo.register(singletonMap.getClass());
         this.kryo.register(DefaultHandlerResult.class);
         this.kryo.register(DefaultAuthentication.class);
