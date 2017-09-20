@@ -38,19 +38,19 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private static final String PASSWORD_CHANGE_ACTION = "passwordChangeAction";
     private static final String SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION = "sendInstructions";
 
-    @Autowired
-    @Qualifier("initPasswordChangeAction")
-    private Action passwordChangeAction;
+    private final Action initPasswordChangeAction;
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final ApplicationContext applicationContext,
-                                               final CasConfigurationProperties casProperties) {
+                                               final CasConfigurationProperties casProperties,
+                                               final Action initPasswordChangeAction) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        this.initPasswordChangeAction = initPasswordChangeAction;
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createAccountStatusViewStates(flow);
@@ -110,7 +110,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         final ViewState viewState = createViewState(flow, id, id, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
-        viewState.getEntryActionList().add(this.passwordChangeAction);
+        viewState.getEntryActionList().add(this.initPasswordChangeAction);
         final Transition transition = createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, PASSWORD_CHANGE_ACTION);
         transition.getAttributes().put("bind", Boolean.TRUE);
         transition.getAttributes().put("validate", Boolean.TRUE);
