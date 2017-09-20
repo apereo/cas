@@ -13,12 +13,12 @@ function jqueryReady() {
 
         //init settings
         var settings = $.extend({
-            allProgressBarClasses: "progress-bar-danger progress-bar-warning progress-bar-success progress-bar-striped active",
-            progressBarClass0: "progress-bar-danger progress-bar-striped active",
-            progressBarClass1: "progress-bar-danger progress-bar-striped active",
-            progressBarClass2: "progress-bar-warning progress-bar-striped active",
-            progressBarClass3: "progress-bar-success",
-            progressBarClass4: "progress-bar-success"
+            allProgressBarClasses: 'progress-bar-danger progress-bar-warning progress-bar-success progress-bar-striped active',
+            progressBarClass0: 'progress-bar-danger progress-bar-striped active',
+            progressBarClass1: 'progress-bar-danger progress-bar-striped active',
+            progressBarClass2: 'progress-bar-warning progress-bar-striped active',
+            progressBarClass3: 'progress-bar-success',
+            progressBarClass4: 'progress-bar-success'
         }, options);
 
         return this.each(function () {
@@ -33,7 +33,7 @@ function jqueryReady() {
 
         function UpdateProgressBar() {
             var progressBar = settings.progressBar;
-            var password = $("#password").val();
+            var password = $('#password').val();
             if (password) {
                 var result = zxcvbn(password, settings.userInputs);
                 //result.score: 0, 1, 2, 3 or 4 - if crack time is less than 10**2, 10**4, 10**6, 10**8, Infinity.
@@ -90,7 +90,7 @@ function jqueryReady() {
         $('#submit').prop('disabled', disableSubmit);
 
         var result = zxcvbn(val);
-        $("#strengthProgressBar").zxcvbnProgressBar({ passwordInput: "#password" });
+        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: '#password' });
         
         if (disableSubmit) {
             $('#password-strength-text').show();
@@ -107,25 +107,25 @@ function jqueryReady() {
 
             var title = 'Strength: <strong>' + strength[result.score] + '</strong>';
             var text = '<p><span class=\'feedback\'>' + result.feedback.warning + ' ' + result.feedback.suggestions + '</span></p>';
-            var clz = "danger";
+            var clz = 'danger';
             switch (result.score) {
-                case 0:
-                case 1:
-                    clz = "danger";
-                    break;
-                case 2:
-                    clz = "warning";
-                    break;
-                case 3:
-                    clz = "info";
-                    break;
-                case 4:
-                case 5:
-                default:
-                    clz = "success";
-                    break;
+            case 0:
+            case 1:
+                clz = 'danger';
+                break;
+            case 2:
+                clz = 'warning';
+                break;
+            case 3:
+                clz = 'info';
+                break;
+            case 4:
+            case 5:
+            default:
+                clz = 'success';
+                break;
             }
-            responseText = "<div class='alert alert-" + clz + "'>" + title + text + "</div>";
+            responseText = '<div class=\'alert alert-' + clz + '\'>' + title + text + '</div>';
             $('#password-strength-text').html(responseText);
         } else {
             $('#password-strength-text').hide();
