@@ -57,10 +57,29 @@ public interface PasswordManagementService {
     /**
      * Gets security questions.
      *
+     * The return object must have predictable iteration (use LinkedHashMap
+     * instead of HashMap, for example).
+     * 
      * @param username the username
      * @return the security questions
      */
     default Map<String, String> getSecurityQuestions(String username) {
         return new LinkedHashMap<>();
+    }
+
+    /**
+     * Checks a security questions answer.
+     *
+     * @param username the username
+     * @param question the text of the question
+     * @param answer stored answer
+     * @param input user response to question
+     * @return whether the answer is correct
+     */
+    default boolean isValidSecurityQuestionAnswer(String username, String question, String answer, String input) {
+        if (answer != null) {
+            return answer.equals(input);
+        }
+        return false;
     }
 }
