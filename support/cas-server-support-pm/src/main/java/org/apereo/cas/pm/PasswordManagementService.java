@@ -74,7 +74,7 @@ public interface PasswordManagementService {
      * @return whether the answer is correct
      */
     default boolean checkSecurityQuestionAnswer(String username, String question, String answer, String input) {
-        if(answer != null) {
+        if (answer != null) {
             return answer.equals(input);
         }
         return false;
