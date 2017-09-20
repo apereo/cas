@@ -65,7 +65,7 @@ public interface PasswordManagementService {
     }
 
     /**
-     * Checks a security questions answer
+     * Checks a security questions answer.
      *
      * @param username the username
      * @param question the text of the question
