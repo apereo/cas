@@ -283,9 +283,9 @@ public class KryoTranscoderTests {
         // with a value different than the original.  Check for either case.
         try {
             assertNotEquals(expectedST, transcoder.decode(result));
-        } catch (KryoException e) {
+        } catch (final KryoException e) {
             // expected alternative result.
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Unexpected exception due to not resetting Kryo between deserializations with unregistered class.");
         }
     }
