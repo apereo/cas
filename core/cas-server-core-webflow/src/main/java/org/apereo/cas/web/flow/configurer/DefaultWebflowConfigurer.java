@@ -120,8 +120,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createHandleAuthenticationFailureAction(final Flow flow) {
-        final ActionState handler = createActionState(flow,
-                CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
+        final ActionState handler = createActionState(flow, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
                 createEvaluateAction("authenticationExceptionHandler"));
         createTransitionForState(handler, AccountDisabledException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
         createTransitionForState(handler, AccountLockedException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
@@ -172,8 +171,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createGatewayServicesMgmtAction(final Flow flow) {
         final ActionState gatewayServicesManagementCheck = createActionState(flow,
                 CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK, createEvaluateAction("gatewayServicesManagementCheck"));
-        createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS,
-                CasWebflowConstants.STATE_ID_REDIRECT);
+        createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS, CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
     /**

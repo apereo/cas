@@ -7,7 +7,7 @@ dependencies {
     implementation libraries.jasypt
     implementation libraries.groovy
     implementation libraries.bouncycastle
-    compile libraries.springbootconfigmetadata
+    optional libraries.springbootconfigmetadata
 
     api project(":api:cas-server-core-api-authentication")
     compileOnly project(":core:cas-server-core-util")

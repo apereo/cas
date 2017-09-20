@@ -1,4 +1,5 @@
 /* global trackGeoLocation, jqueryReady */
+
 /* exported resourceLoadedSuccessfully */
 
 function requestGeoPosition() {
@@ -13,18 +14,18 @@ function requestGeoPosition() {
 
 function logGeoLocationError(error) {
     switch (error.code) {
-    case error.PERMISSION_DENIED:
-        // console.log('User denied the request for GeoLocation.');
-        break;
-    case error.POSITION_UNAVAILABLE:
-        // console.log('Location information is unavailable.');
-        break;
-    case error.TIMEOUT:
-        // console.log('The request to get user location timed out.');
-        break;
-    default:
-        // console.log('An unknown error occurred.');
-        break;
+        case error.PERMISSION_DENIED:
+            // console.log('User denied the request for GeoLocation.');
+            break;
+        case error.POSITION_UNAVAILABLE:
+            // console.log('Location information is unavailable.');
+            break;
+        case error.TIMEOUT:
+            // console.log('The request to get user location timed out.');
+            break;
+        default:
+            // console.log('An unknown error occurred.');
+            break;
     }
 }
 
@@ -43,7 +44,7 @@ function areCookiesEnabled() {
     var value = $.cookie('cookiesEnabled');
     $.removeCookie('cookiesEnabled');
     return value != undefined;
-    
+
 }
 
 function animateCasMessageBoxes() {
@@ -58,31 +59,36 @@ function animateCasMessageBoxes() {
 }
 
 function disableEmptyInputFormSubmission() {
+    var fields = $('#fm1 input[name="username"],[name="password"]')
 
-    $('#fm1 input[name="username"],[name="password"]').on('input', function (event) {
-        var enableSubmission = $('#fm1 input[name="username"]').val().trim() &&
-                               $('#fm1 input[name="password"]').val().trim();
+    if (fields.length == 2) {
+        fields.on('input', function (event) {
+            var enableSubmission = $('#fm1 input[name="username"]').val().trim() &&
+                $('#fm1 input[name="password"]').val().trim();
 
-        if (enableSubmission) {
-            $('#fm1 input[name=submit]').removeAttr('disabled');
-            event.stopPropagation();
-        } else {
-            $('#fm1 input[name=submit]').attr('disabled', 'true');
-        }
-    });
+            if (enableSubmission) {
+                $('#fm1 input[name=submit]').removeAttr('disabled');
+                event.stopPropagation();
+            } else {
+                $('#fm1 input[name=submit]').attr('disabled', 'true');
+            }
+        });
+    }
 
     /**
      * Handle auto-complete events to the extent possible.
      */
-    setTimeout(function(){
-        var uid = $('#username').val();
-        if (uid != null && uid != '') {
-            $('#username').change();
-            $('#username').focus();
-            $('#fm1 input[name=submit]').removeAttr('disabled');
-        }
+    if ($('#fm1 input[name="username"]').length > 0) {
+        setTimeout(function () {
+            var uid = $('#username').val();
+            if (uid != null && uid != '') {
+                $('#username').change();
+                $('#username').focus();
+                $('#fm1 input[name=submit]').removeAttr('disabled');
+            }
 
-    }, 100);
+        }, 100);
+    }
 
 }
 

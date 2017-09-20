@@ -85,6 +85,7 @@ public class PasswordManagementWebflowConfiguration {
         return handler;
     }
 
+    @ConditionalOnMissingBean(name = "initPasswordChangeAction")
     @RefreshScope
     @Bean
     public Action initPasswordChangeAction() {
@@ -107,18 +108,21 @@ public class PasswordManagementWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")
     @Bean
+    @RefreshScope
     public Action sendPasswordResetInstructionsAction() {
         return new SendPasswordResetInstructionsAction(communicationsManager, passwordManagementService);
     }
 
     @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")
     @Bean
+    @RefreshScope
     public Action verifyPasswordResetRequestAction() {
         return new VerifyPasswordResetRequestAction(passwordManagementService);
     }
 
     @ConditionalOnMissingBean(name = "verifySecurityQuestionsAction")
     @Bean
+    @RefreshScope
     public Action verifySecurityQuestionsAction() {
         return new VerifySecurityQuestionsAction(passwordManagementService);
     }
@@ -128,7 +132,7 @@ public class PasswordManagementWebflowConfiguration {
     @Bean
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
         final CasWebflowConfigurer w = new PasswordManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                applicationContext, casProperties);
+                applicationContext, casProperties, initPasswordChangeAction());
         w.initialize();
         return w;
     }

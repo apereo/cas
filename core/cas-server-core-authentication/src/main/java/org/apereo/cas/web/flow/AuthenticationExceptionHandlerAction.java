@@ -30,12 +30,12 @@ import java.util.Set;
  * @since 4.0.0
  */
 public class AuthenticationExceptionHandlerAction extends AbstractAction {
-    
+
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
     private static final String UNKNOWN = "UNKNOWN";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationExceptionHandlerAction.class);
-    
+
     /**
      * Ordered list of error classes that this class knows how to handle.
      */
@@ -53,14 +53,14 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     public AuthenticationExceptionHandlerAction(final Set<Class<? extends Exception>> errors) {
         this.errors = errors;
     }
-    
+
     public Set<Class<? extends Exception>> getErrors() {
         return new LinkedHashSet<>(this.errors);
     }
-    
+
 
     /**
-     * Maps an authentication exception onto a state name. 
+     * Maps an authentication exception onto a state name.
      * Also sets an ERROR severity message in the message context.
      *
      * @param e              Authentication error to handle.
@@ -76,9 +76,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
             return handleAbstractTicketException((AbstractTicketException) e, messageContext);
         }
 
-        // we don't recognize this exception
-        LOGGER.trace("Unable to translate errors of the authentication exception [{}]"
-                + "Returning [{}]", e, UNKNOWN);
+        LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
@@ -142,8 +140,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         LOGGER.debug("Located current event [{}]", currentEvent);
 
         final Exception error = currentEvent.getAttributes().get("error", Exception.class);
-        LOGGER.debug("Located error attribute [{}] with message [{}] from the current event",
-                error.getClass(), error.getMessage());
+        LOGGER.debug("Located error attribute [{}] with message [{}] from the current event", error.getClass(), error.getMessage());
 
         final String event = handle(error, requestContext.getMessageContext());
         LOGGER.debug("Final event id resolved from the error is [{}]", event);
