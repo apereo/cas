@@ -60,6 +60,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             if (casProperties.getAuthn().getPm().isEnabled()) {
                 configure(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
                 configure(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
+                configure(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
                 configurePasswordReset();
             } else {
                 createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
