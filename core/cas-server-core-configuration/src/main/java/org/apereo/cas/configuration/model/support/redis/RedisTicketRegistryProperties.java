@@ -8,4 +8,5 @@ package org.apereo.cas.configuration.model.support.redis;
  */
 public class RedisTicketRegistryProperties extends BaseRedisProperties {
     private static final long serialVersionUID = -2600996050439638782L;
+    
 }
