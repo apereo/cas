@@ -1,7 +1,5 @@
 package org.apereo.cas.memcached.kryo;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -24,6 +22,7 @@ import org.junit.Test;
 import javax.security.auth.login.AccountNotFoundException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,15 +54,11 @@ public class CasKryoTranscoderTests {
     private final Map<String, Object> principalAttributes;
 
     public CasKryoTranscoderTests() {
-        final Map<Class<?>, Serializer> serializerMap = new HashMap<>();
+        final Collection<Class<?>> serializerMap = new ArrayList<>();
         transcoder = new CasKryoTranscoder(serializerMap);
-        
-        serializerMap.put(
-                MockServiceTicket.class,
-                new FieldSerializer(transcoder.getKryo(), MockServiceTicket.class));
-        serializerMap.put(
-                MockTicketGrantingTicket.class,
-                new FieldSerializer(transcoder.getKryo(), MockTicketGrantingTicket.class));
+
+        serializerMap.add(MockServiceTicket.class);
+        serializerMap.add(MockTicketGrantingTicket.class);
         transcoder.initialize();
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, NICKNAME_VALUE);
@@ -73,7 +68,7 @@ public class CasKryoTranscoderTests {
     public void verifyEncodeDecodeTGTImpl() throws Exception {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final AuthenticationBuilder bldr = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
-                        .createPrincipal("user", new HashMap<>(this.principalAttributes)));
+                .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now());
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
@@ -98,7 +93,6 @@ public class CasKryoTranscoderTests {
         result = transcoder.encode(ticket);
         final ServiceTicket resultStTicket = (ServiceTicket) transcoder.decode(result);
         assertEquals(ticket, resultStTicket);
-
     }
 
     @Test
@@ -107,7 +101,6 @@ public class CasKryoTranscoderTests {
         final ServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));
 
-        final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(USERNAME);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
@@ -155,7 +148,6 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTWithListOrderedMap() throws Exception {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
-        @SuppressWarnings("unchecked")
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, userPassCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);

@@ -8,9 +8,13 @@ import org.apereo.cas.memcached.MemcachedPooledConnectionFactory;
 import org.apereo.cas.monitor.MemcachedMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is {@link MemcachedMonitorConfiguration}.
@@ -25,9 +29,14 @@ public class MemcachedMonitorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired(required = false)
+    @Qualifier("kryoSerializableClasses")
+    private Collection<Class<?>> kryoSerializableClasses = new ArrayList<>();
+
     @Bean
     public Monitor memcachedMonitor() {
-        final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(casProperties.getMonitor().getMemcached());
+        final MemcachedPooledConnectionFactory factory = 
+                new MemcachedPooledConnectionFactory(casProperties.getMonitor().getMemcached(), this.kryoSerializableClasses);
         final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
         return new MemcachedMonitor(pool);
     }

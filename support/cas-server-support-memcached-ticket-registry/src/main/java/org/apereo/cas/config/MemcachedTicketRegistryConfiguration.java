@@ -10,9 +10,13 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is {@link MemcachedTicketRegistryConfiguration}.
@@ -26,13 +30,16 @@ public class MemcachedTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Autowired(required = false)
+    @Qualifier("kryoSerializableClasses")
+    private Collection<Class<?>> kryoSerializableClasses = new ArrayList<>();
+
     @Bean
     public TicketRegistry ticketRegistry() {
-        final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(casProperties.getTicket().getRegistry().getMemcached());
-        final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(factory.getObjectPool());
-
         final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
+        final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(memcached, this.kryoSerializableClasses);
+        final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(factory.getObjectPool());
         final CipherExecutor cipherExecutor = Beans.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
         registry.setCipherExecutor(cipherExecutor);
         return registry;
