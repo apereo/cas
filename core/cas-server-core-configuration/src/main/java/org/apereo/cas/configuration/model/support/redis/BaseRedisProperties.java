@@ -1,8 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
-import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
