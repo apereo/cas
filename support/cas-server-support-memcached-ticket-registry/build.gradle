@@ -1,6 +1,6 @@
 description = "Apereo CAS Memcached Integration"
 dependencies {
-    
+
     implementation libraries.memcached
     implementation libraries.kryo
 
