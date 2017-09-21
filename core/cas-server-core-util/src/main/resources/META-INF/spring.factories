@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreUtilConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreUtilConfiguration,\
+  org.apereo.cas.config.CasCoreUtilSerializationConfiguration
