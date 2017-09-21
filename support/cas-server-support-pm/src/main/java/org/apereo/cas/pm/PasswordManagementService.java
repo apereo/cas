@@ -19,8 +19,9 @@ public interface PasswordManagementService {
      * @param c    the credentials
      * @param bean the bean
      * @return true /false
+     * @throws InvalidPasswordException if new password fails downstream validation
      */
-    default boolean change(Credential c, PasswordChangeBean bean) {
+    default boolean change(Credential c, PasswordChangeBean bean) throws InvalidPasswordException {
         return false;
     }
 
