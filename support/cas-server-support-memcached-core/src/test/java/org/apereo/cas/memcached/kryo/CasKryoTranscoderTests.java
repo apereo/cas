@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
+import com.esotericsoftware.kryo.KryoException;
 import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -16,6 +17,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 
@@ -53,6 +55,23 @@ public class CasKryoTranscoderTests {
 
     private final Map<String, Object> principalAttributes;
 
+    /**
+     * Class for testing Kryo unregistered class handling.
+     */
+    private static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+        private static final long serialVersionUID = -1704993954986738308L;
+
+        /**
+         * Instantiates a new Service ticket expiration policy.
+         *
+         * @param numberOfUses        the number of uses
+         * @param timeToKillInSeconds the time to kill in seconds
+         */
+        UnregisteredServiceTicketExpirationPolicy(final int numberOfUses, final long timeToKillInSeconds) {
+            super(numberOfUses, timeToKillInSeconds);
+        }
+    }
+
     public CasKryoTranscoderTests() {
         final Collection<Class<?>> serializerMap = new ArrayList<>();
         transcoder = new CasKryoTranscoder(serializerMap);
@@ -77,11 +96,10 @@ public class CasKryoTranscoderTests {
                 new AcceptUsersAuthenticationHandler(""),
                 new BasicCredentialMetaData(userPassCredential)));
 
-        final TicketGrantingTicket expectedTGT =
-                new TicketGrantingTicketImpl(TGT_ID,
-                        RegisteredServiceTestUtils.getService(),
-                        null, bldr.build(),
-                        new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket expectedTGT = new TicketGrantingTicketImpl(TGT_ID,
+                RegisteredServiceTestUtils.getService(),
+                null, bldr.build(),
+                new NeverExpiresExpirationPolicy());
 
         final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
                 RegisteredServiceTestUtils.getService(),
@@ -91,7 +109,9 @@ public class CasKryoTranscoderTests {
 
         assertEquals(expectedTGT, resultTicket);
         result = transcoder.encode(ticket);
-        final ServiceTicket resultStTicket = (ServiceTicket) transcoder.decode(result);
+        ServiceTicket resultStTicket = (ServiceTicket) transcoder.decode(result);
+        assertEquals(ticket, resultStTicket);
+        resultStTicket = (ServiceTicket) transcoder.decode(result);
         assertEquals(ticket, resultStTicket);
     }
 
@@ -103,7 +123,9 @@ public class CasKryoTranscoderTests {
 
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(USERNAME);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
 
         internalProxyTest("http://localhost");
         internalProxyTest("https://localhost:8080/path/file.html?p1=v1&p2=v2#fragment");
@@ -112,7 +134,9 @@ public class CasKryoTranscoderTests {
     private void internalProxyTest(final String proxyUrl) {
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(USERNAME);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -121,7 +145,9 @@ public class CasKryoTranscoderTests {
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, userPassCredential, new HashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -133,7 +159,9 @@ public class CasKryoTranscoderTests {
         newAttributes.put(NICKNAME_KEY, new ArrayList<>(values));
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -142,7 +170,9 @@ public class CasKryoTranscoderTests {
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -151,7 +181,9 @@ public class CasKryoTranscoderTests {
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, userPassCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -165,7 +197,9 @@ public class CasKryoTranscoderTests {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -175,7 +209,9 @@ public class CasKryoTranscoderTests {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
@@ -184,12 +220,60 @@ public class CasKryoTranscoderTests {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
-        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+        final CachedData result = transcoder.encode(expectedTGT);
+        assertEquals(expectedTGT, transcoder.decode(result));
+        assertEquals(expectedTGT, transcoder.decode(result));
     }
 
     @Test
     public void verifyEncodeDecodeRegisteredService() throws Exception {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("helloworld");
-        assertEquals(service, transcoder.decode(transcoder.encode(service)));
+        final CachedData result = transcoder.encode(service);
+        assertEquals(service, transcoder.decode(result));
+        assertEquals(service, transcoder.decode(result));
+    }
+
+    @Test
+    public void verifySTWithServiceTicketExpirationPolicy() throws Exception {
+        // ServiceTicketExpirationPolicy is not registered with Kryo...
+        transcoder.getKryo().getClassResolver().reset();
+        final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
+        final MockServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
+        final MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy step
+                = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
+        expectedST.setExpiration(step);
+        final CachedData result = transcoder.encode(expectedST);
+        assertEquals(expectedST, transcoder.decode(result));
+        // Test it a second time - Ensure there's no problem with subsequent deserializations.
+        assertEquals(expectedST, transcoder.decode(result));
+    }
+
+    @Test
+    public void verifyEncodeDecodeNonRegisteredClass() throws Exception {
+        // UnregisteredServiceTicketExpirationPolicy is not registered with Kryo...
+        transcoder.getKryo().getClassResolver().reset();
+        final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
+        final MockServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
+        final UnregisteredServiceTicketExpirationPolicy step = new UnregisteredServiceTicketExpirationPolicy(1, 600);
+        expectedST.setExpiration(step);
+        final CachedData result = transcoder.encode(expectedST);
+        assertEquals(expectedST, transcoder.decode(result));
+        /*
+         Test it a second time - Ensure there's no problem with subsequent deserializations.
+         Because KryoTranscoder sets 'autoRest' to false, that means between calls to
+          deserialize (i.e. transcoder.decode), Kryo has now cached the unregistered class, and the second time
+          through, will not scan past the embedded class name in the serialized data, causing the second (and
+          subsequent) deserialize to fail.  This second time, we expect Kryo to throw an exception
+          Note: depending on how the Serialization handling sequences the fields of the object to be
+          deserialized, the deserialize may throw an exception, or it may return without an exception but
+          with a value different than the original.  Check for either case.
+          */
+        try {
+            assertNotEquals(expectedST, transcoder.decode(result));
+        } catch (final KryoException e) {
+            // expected alternative result.
+        } catch (final Exception e) {
+            fail("Unexpected exception due to not resetting Kryo between deserializations with unregistered class.");
+        }
     }
 }
