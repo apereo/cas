@@ -14,7 +14,7 @@
             </bean>
         </constructor-arg>
     </bean>
-    
+
     <bean id="testCase2" class="org.apereo.cas.ticket.registry.MemCacheTicketRegistry">
         <constructor-arg index="0">
             <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
@@ -33,7 +33,7 @@
     <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
           p:compressionThreshold="2048"/>
 
-    <bean id="kryoTranscover" class="org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder"/>
+    <bean id="kryoTranscoder" class="org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder"/>
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
