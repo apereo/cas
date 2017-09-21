@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.config.CasCoreComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
 import org.junit.Test;
