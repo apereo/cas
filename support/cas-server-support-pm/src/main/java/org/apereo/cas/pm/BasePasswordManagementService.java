@@ -109,7 +109,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
             actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
             resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
-    public boolean change(final Credential c, final PasswordChangeBean bean) {
+    public boolean change(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return changeInternal(c, bean);
     }
 
@@ -119,8 +119,9 @@ public class BasePasswordManagementService implements PasswordManagementService 
      * @param c    the credential
      * @param bean the bean
      * @return the boolean
+     * @throws InvalidPasswordException if new password fails downstream validation
      */
-    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) {
+    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return false;
     }
 }
