@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -41,7 +42,9 @@ public class MongoDbTicketRegistryConfiguration {
     @Autowired
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) throws Exception {
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        return new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
+        final MongoDbTicketRegistry registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
+        registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
+        return registry;
     }
 
     @Autowired
