@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,7 +20,9 @@ import java.util.Collection;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@SpringBootTest(classes = {MemcachedTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {MemcachedTicketRegistryConfiguration.class, 
+        RefreshAutoConfiguration.class,
+        CasCoreUtilSerializationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/memcached.properties"})
 public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
   
