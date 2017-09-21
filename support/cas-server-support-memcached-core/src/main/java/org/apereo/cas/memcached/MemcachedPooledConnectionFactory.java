@@ -1,6 +1,5 @@
 package org.apereo.cas.memcached;
 
-import com.esotericsoftware.kryo.Serializer;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
@@ -20,8 +19,8 @@ import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is {@link MemcachedPooledConnectionFactory}.
@@ -32,15 +31,15 @@ import java.util.Map;
 public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedPooledConnectionFactory.class);
     private final BaseMemcachedProperties memcachedProperties;
-    private final Map<Class<?>, Serializer> kryoSerializerMap;
+    private final Collection<Class<?>> kryoSerializableClasses;
 
     public MemcachedPooledConnectionFactory(final BaseMemcachedProperties memcachedProperties) {
-        this(memcachedProperties, new LinkedHashMap<>());
+        this(memcachedProperties, new ArrayList<>());
     }
 
-    public MemcachedPooledConnectionFactory(final BaseMemcachedProperties memcachedProperties, final Map<Class<?>, Serializer> kryoSerializerMap) {
+    public MemcachedPooledConnectionFactory(final BaseMemcachedProperties memcachedProperties, final Collection<Class<?>> kryoSerializableClasses) {
         this.memcachedProperties = memcachedProperties;
-        this.kryoSerializerMap = kryoSerializerMap;
+        this.kryoSerializableClasses = kryoSerializableClasses;
     }
 
     @Override
@@ -67,7 +66,7 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
                     break;
                 case "kryo":
                 default:
-                    final CasKryoTranscoder kryo = new CasKryoTranscoder(this.kryoSerializerMap);
+                    final CasKryoTranscoder kryo = new CasKryoTranscoder(this.kryoSerializableClasses);
                     kryo.setAutoReset(memcachedProperties.isKryoAutoReset());
                     kryo.setRegistrationRequired(memcachedProperties.isKryoRegistrationRequired());
                     kryo.setReplaceObjectsByReferences(memcachedProperties.isKryoObjectsByReference());

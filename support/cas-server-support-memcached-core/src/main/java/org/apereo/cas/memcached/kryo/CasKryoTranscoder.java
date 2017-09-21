@@ -1,7 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
@@ -50,13 +49,13 @@ import java.net.URI;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -77,23 +76,25 @@ public class CasKryoTranscoder implements Transcoder<Object> {
     /**
      * Map of class to serializer that handles it.
      */
-    private final Map<Class<?>, Serializer> serializerMap;
+    private final Collection<Class<?>> serializerMap;
 
     /**
      * Creates a Kryo-based transcoder.
      */
     public CasKryoTranscoder() {
-        this(new LinkedHashMap<>());
+        this(new ArrayList());
     }
 
-    public CasKryoTranscoder(final Map<Class<?>, Serializer> map) {
+    public CasKryoTranscoder(final Collection map) {
         this.kryo = new KryoReflectionFactorySupport();
         this.serializerMap = map;
+        
+        setWarnUnregisteredClasses(true);
         setAutoReset(false);
         setReplaceObjectsByReferences(false);
         setRegistrationRequired(false);
     }
-
+    
     /**
      * Initialize and register classes with kryo.
      */
@@ -106,6 +107,16 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         registerImmutableOrEmptyCollectionsWithKryo();
 
         this.serializerMap.forEach(this.kryo::register);
+    }
+
+    /**
+     * If true, kryo writes a warn log telling about the classes unregistered. Default is false.
+     * If false, no log are written when unregistered classes are encountered.
+     *
+     * @param value the value
+     */
+    public void setWarnUnregisteredClasses(final boolean value) {
+        this.kryo.setWarnUnregisteredClasses(value);
     }
 
     /**
