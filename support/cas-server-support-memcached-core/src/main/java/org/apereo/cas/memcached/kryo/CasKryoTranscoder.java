@@ -26,11 +26,23 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
 import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeTranscoder;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
+import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.EncodedTicket;
@@ -42,7 +54,9 @@ import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -56,6 +70,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -158,10 +174,22 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
         this.kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
         this.kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
+
+        // Can't directly access Collections classes (private class), so instantiate one and do a getClass().
+        final Set singletonSet = Collections.singleton("key");
+        this.kryo.register(singletonSet.getClass());
+        final Map singletonMap = Collections.singletonMap("key", "value");
+        this.kryo.register(singletonMap.getClass());
     }
 
     private void registerCasServicesWithKryo() {
         this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
+        this.kryo.register(RegisteredService.LogoutType.class);
+        this.kryo.register(RegisteredServicePublicKeyImpl.class);
+        this.kryo.register(RegisteredServiceRegexAttributeFilter.class);
+        this.kryo.register(PrincipalAttributeRegisteredServiceUsernameProvider.class);
+        this.kryo.register(DefaultRegisteredServiceAccessStrategy.class);
+        this.kryo.register(RegexMatchingRegisteredServiceProxyPolicy.class);
     }
 
     private void registerCasAuthenticationWithKryo() {
@@ -171,6 +199,16 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(DefaultAuthentication.class);
         this.kryo.register(UsernamePasswordCredential.class);
         this.kryo.register(SimplePrincipal.class);
+        
+        this.kryo.register(PublicKeyFactoryBean.class);
+        this.kryo.register(ReturnAllowedAttributeReleasePolicy.class);
+        this.kryo.register(ReturnAllAttributeReleasePolicy.class);
+        this.kryo.register(ReturnMappedAttributeReleasePolicy.class);
+        this.kryo.register(CachingPrincipalAttributesRepository.class);
+        this.kryo.register(AbstractPrincipalAttributesRepository.class);
+        this.kryo.register(AbstractPrincipalAttributesRepository.MergingStrategy.class);
+        this.kryo.register(DefaultRegisteredServiceConsentPolicy.class);
+        this.kryo.register(AccountNotFoundException.class);
     }
 
     private void registerCasTicketsWithKryo() {
