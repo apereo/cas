@@ -19,15 +19,15 @@ public interface ComponentSerializationPlan {
     /**
      * Register serializable class.
      *
-     * @param clazz the clazz
+     * @param clazz the clazz to register
      */
     void registerSerializableClass(Class clazz);
 
     /**
      * Register serializable class.
      *
-     * @param clazz the clazz
-     * @param order the order
+     * @param clazz the clazz to register
+     * @param order the order in which the class will be positioned in the registry of classes
      */
     void registerSerializableClass(Class clazz, Integer order);
 

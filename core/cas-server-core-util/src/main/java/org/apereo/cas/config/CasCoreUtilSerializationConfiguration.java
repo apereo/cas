@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * This is {@link CasCoreUtilSerializationConfiguration}.
- * It also by default acts as a vanilla serialization plan configurtor that does nothing
+ * It also by default acts as a vanilla serialization plan configurator that does nothing
  * in order to satisfy the auto-wiring requirements.
  * @author Misagh Moayyed
  * @since 5.2.0

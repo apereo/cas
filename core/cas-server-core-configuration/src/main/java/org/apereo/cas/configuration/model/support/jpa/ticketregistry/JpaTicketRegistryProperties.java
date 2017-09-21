@@ -42,6 +42,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
+        this.crypto.setEnabled(false);
     }
 
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {

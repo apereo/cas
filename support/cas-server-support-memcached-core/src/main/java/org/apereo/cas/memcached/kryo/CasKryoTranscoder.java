@@ -55,6 +55,8 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.io.ByteArrayInputStream;
@@ -83,16 +85,12 @@ import java.util.regex.Pattern;
  * @since 3.0.0
  */
 public class CasKryoTranscoder implements Transcoder<Object> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasKryoTranscoder.class);
+    
     /**
      * Kryo serializer.
      */
     private final Kryo kryo;
-
-    /**
-     * Map of class to serializer that handles it.
-     */
-    private final Collection<Class<?>> serializerMap;
 
     /**
      * Creates a Kryo-based transcoder.
@@ -101,20 +99,9 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this(new ArrayList());
     }
 
-    public CasKryoTranscoder(final Collection map) {
+    public CasKryoTranscoder(final Collection<Class> classesToRegister) {
         this.kryo = new KryoReflectionFactorySupport();
-        this.serializerMap = map;
-        
-        setWarnUnregisteredClasses(true);
-        setAutoReset(false);
-        setReplaceObjectsByReferences(false);
-        setRegistrationRequired(false);
-    }
-    
-    /**
-     * Initialize and register classes with kryo.
-     */
-    public void initialize() {
+
         registerCasAuthenticationWithKryo();
         registerExpirationPoliciesWithKryo();
         registerCasTicketsWithKryo();
@@ -122,9 +109,17 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         registerCasServicesWithKryo();
         registerImmutableOrEmptyCollectionsWithKryo();
 
-        this.serializerMap.forEach(this.kryo::register);
+        classesToRegister.stream().forEach(c -> {
+            LOGGER.debug("Registering serializable class [{}] with Kryo", c.getName());
+            this.kryo.register(c);
+        });
+        
+        setWarnUnregisteredClasses(true);
+        setAutoReset(false);
+        setReplaceObjectsByReferences(false);
+        setRegistrationRequired(false);
     }
-
+   
     /**
      * If true, kryo writes a warn log telling about the classes unregistered. Default is false.
      * If false, no log are written when unregistered classes are encountered.
