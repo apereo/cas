@@ -26,19 +26,19 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedPooledConnectionFactory.class);
     private final BaseMemcachedProperties memcachedProperties;
     private final Transcoder transcoder;
-    
+
     public MemcachedPooledConnectionFactory(final BaseMemcachedProperties memcachedProperties, final Transcoder transcoder) {
         this.memcachedProperties = memcachedProperties;
         this.transcoder = transcoder;
     }
 
     @Override
-    public MemcachedClientIF create() throws Exception {
+    public MemcachedClientIF create() {
         try {
             final MemcachedClientFactoryBean factoryBean = new MemcachedClientFactoryBean();
             factoryBean.setServers(memcachedProperties.getServers());
             factoryBean.setTranscoder(this.transcoder);
-            
+
             if (StringUtils.isNotBlank(memcachedProperties.getLocatorType())) {
                 factoryBean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(memcachedProperties.getLocatorType()));
             }
@@ -78,7 +78,7 @@ public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<Me
     }
 
     @Override
-    public void destroyObject(final PooledObject<MemcachedClientIF> p) throws Exception {
+    public void destroyObject(final PooledObject<MemcachedClientIF> p) {
         try {
             p.getObject().shutdown();
             p.invalidate();
