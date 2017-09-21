@@ -58,21 +58,7 @@ public class BaseRedisProperties implements Serializable {
      * Whether or not to use SSL for connection factory.
      */
     private boolean useSsl;
-
-    /**
-     * Crypto settings for the registry.
-     */
-    @NestedConfigurationProperty
-    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
-
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
+    
     public int getDatabase() {
         return this.database;
     }
