@@ -147,13 +147,17 @@ public class EhcacheProperties implements Serializable {
      * </ul>
      */
     private String persistence = "NONE";
-
+    
     /**
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    public EhcacheProperties() {
+        this.crypto.setEnabled(false);
+    }
+    
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }

@@ -18,6 +18,10 @@ public class DynamoDbTicketRegistryProperties extends AbstractDynamoDbProperties
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    public DynamoDbTicketRegistryProperties() {
+        this.crypto.setEnabled(false);
+    }
+    
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }

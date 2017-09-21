@@ -1,10 +1,14 @@
 package org.apereo.cas.monitor.config;
 
 import net.spy.memcached.MemcachedClientIF;
+import net.spy.memcached.transcoders.Transcoder;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.memcached.MemcachedPooledConnectionFactory;
+import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.monitor.MemcachedMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link MemcachedMonitorConfiguration}.
@@ -29,14 +30,20 @@ public class MemcachedMonitorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired(required = false)
-    @Qualifier("kryoSerializableClasses")
-    private Collection<Class<?>> kryoSerializableClasses = new ArrayList<>();
+    @Autowired
+    @Qualifier("componentSerializationPlan")
+    private ComponentSerializationPlan componentSerializationPlan;
+
+    @Bean
+    public Transcoder memcachedMonitorTranscoder() {
+        final MonitorProperties.Memcached memcached = casProperties.getMonitor().getMemcached();
+        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
+    }
 
     @Bean
     public Monitor memcachedMonitor() {
-        final MemcachedPooledConnectionFactory factory = 
-                new MemcachedPooledConnectionFactory(casProperties.getMonitor().getMemcached(), this.kryoSerializableClasses);
+        final MonitorProperties.Memcached memcached = casProperties.getMonitor().getMemcached();
+        final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(memcached, memcachedMonitorTranscoder());
         final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
         return new MemcachedMonitor(pool);
     }

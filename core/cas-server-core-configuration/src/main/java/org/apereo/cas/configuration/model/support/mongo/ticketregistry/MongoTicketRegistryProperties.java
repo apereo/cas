@@ -19,6 +19,7 @@ public class MongoTicketRegistryProperties extends BaseMongoDbProperties {
      */
     private boolean dropCollection;
 
+    
     public boolean isDropCollection() {
         return dropCollection;
     }

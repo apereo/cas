@@ -19,6 +19,10 @@ public class MemcachedTicketRegistryProperties extends BaseMemcachedProperties {
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    public MemcachedTicketRegistryProperties() {
+        this.crypto.setEnabled(false);
+    }
+    
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }

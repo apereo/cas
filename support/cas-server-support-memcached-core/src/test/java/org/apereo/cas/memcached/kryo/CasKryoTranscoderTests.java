@@ -73,12 +73,11 @@ public class CasKryoTranscoderTests {
     }
 
     public CasKryoTranscoderTests() {
-        final Collection<Class<?>> serializerMap = new ArrayList<>();
+        final Collection<Class> serializerMap = new ArrayList<>();
         transcoder = new CasKryoTranscoder(serializerMap);
 
         serializerMap.add(MockServiceTicket.class);
         serializerMap.add(MockTicketGrantingTicket.class);
-        transcoder.initialize();
         this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, NICKNAME_VALUE);
     }

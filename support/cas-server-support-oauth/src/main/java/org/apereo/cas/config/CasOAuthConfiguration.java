@@ -384,43 +384,49 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new HashSet<>(builders.values());
     }
 
+    @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20RequestValidator oauthClientCredentialsGrantTypeRequestValidator() {
         return new OAuth20ClientCredentialsGrantTypeRequestValidator(servicesManager, oAuthValidator());
     }
 
+    @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20RequestValidator oauthAuthorizationCodeResponseTypeRequestValidator() {
         return new OAuth20AuthorizationCodeResponseTypeRequestValidator(servicesManager, oAuthValidator());
     }
 
+    @ConditionalOnMissingBean(name = "oauthTokenResponseTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20RequestValidator oauthTokenResponseTypeRequestValidator() {
         return new OAuth20TokenResponseTypeRequestValidator(servicesManager, oAuthValidator());
     }
 
+    @ConditionalOnMissingBean(name = "oauthIdTokenResponseTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20RequestValidator oauthIdTokenResponseTypeRequestValidator() {
         return new OAuth20IdTokenResponseTypeRequestValidator(servicesManager, oAuthValidator());
     }
 
+    @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20RequestValidator oauthPasswordGrantTypeRequestValidator() {
         return new OAuth20PasswordGrantTypeRequestValidator(servicesManager, oAuthValidator());
     }
 
-
+    @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeRequestValidator")
     @Bean
     @RefreshScope
     public OAuth20RequestValidator oauthRefreshTokenGrantTypeRequestValidator() {
         return new OAuth20RefreshTokenGrantTypeRequestValidator(servicesManager, oAuthValidator());
     }
 
+    @ConditionalOnMissingBean(name = "oauthResourceOwnerCredentialsResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder() {
@@ -428,6 +434,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 accessTokenExpirationPolicy());
     }
 
+    @ConditionalOnMissingBean(name = "oauthClientCredentialsResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder() {
@@ -435,12 +442,14 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 oauthTokenGenerator(), accessTokenExpirationPolicy());
     }
 
+    @ConditionalOnMissingBean(name = "oauthTokenResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder() {
         return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(), accessTokenExpirationPolicy());
     }
 
+    @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder() {

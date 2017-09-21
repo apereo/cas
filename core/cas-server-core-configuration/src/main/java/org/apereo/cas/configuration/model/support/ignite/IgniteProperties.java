@@ -149,6 +149,10 @@ public class IgniteProperties implements Serializable {
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    public IgniteProperties() {
+        this.crypto.setEnabled(false);
+    }
+    
     public long getAckTimeout() {
         return Duration.parse(ackTimeout).toMillis();
     }

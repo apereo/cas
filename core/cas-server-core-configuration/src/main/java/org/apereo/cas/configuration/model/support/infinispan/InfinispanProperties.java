@@ -34,10 +34,14 @@ public class InfinispanProperties implements Serializable {
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    public InfinispanProperties() {
+        this.crypto.setEnabled(false);
+    }
+    
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
-
+    
     public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
         this.crypto = crypto;
     }
