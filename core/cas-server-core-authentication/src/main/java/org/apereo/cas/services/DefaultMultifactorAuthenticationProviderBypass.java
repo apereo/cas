@@ -167,7 +167,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     protected boolean locateMatchingAttributeBasedOnPrincipalAttributes(
             final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass, final Principal principal) {
         return locateMatchingAttributeValue(bypass.getPrincipalAttributeName(),
-                bypass.getAuthenticationAttributeValue(), principal.getAttributes());
+                bypass.getPrincipalAttributeValue(), principal.getAttributes());
     }
 
     /**
