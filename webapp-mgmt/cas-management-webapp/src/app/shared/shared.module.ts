@@ -7,13 +7,26 @@ import {FormsModule} from "@angular/forms"
 import 'hammerjs';
 import {MyTooltipDirective} from "../my-tooltip.directive";
 import {
-  MdButtonModule, MdCardModule,
-  MdCheckboxModule, MdDatepickerModule, MdDialogModule, MdExpansionModule, MdCard, MdIcon, MdIconModule, MdInputModule,
+  MdButtonModule,
+  MdCardModule,
+  MdCheckboxModule,
+  MdDatepickerModule,
+  MdDialogModule,
+  MdExpansionModule,
+  MdIconModule,
+  MdInputModule,
   MdNativeDateModule,
-  MdRadioModule, MdRippleModule,
-  MdSelectModule, MdTableModule,
+  MdRadioModule,
+  MdRippleModule,
+  MdSelectModule,
+  MdTableModule,
   MdTabsModule,
-  MdTooltipModule, MdListModule, MdCoreModule, MdMenuModule, MdChipsModule, MdAutocompleteModule, MdSnackBarModule,
+  MdTooltipModule,
+  MdListModule,
+  MdMenuModule,
+  MdChipsModule,
+  MdAutocompleteModule,
+  MdSnackBarModule,
   MdPaginatorModule
 } from "@angular/material";
 import {CdkTableModule} from "@angular/cdk/table";
