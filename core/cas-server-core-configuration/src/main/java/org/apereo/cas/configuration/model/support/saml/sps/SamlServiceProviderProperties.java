@@ -128,6 +128,10 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private Bynder bynder = new Bynder();
     /**
+     * Settings related to Famis acting as a SAML service provider.
+     */
+    private Famis famis = new Famis();
+    /**
      * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
      */
     private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();
@@ -156,6 +160,14 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Symplicity acting as a SAML service provider.
      */
     private Symplicity symplicity = new Symplicity();
+
+    public Famis getFamis() {
+        return famis;
+    }
+
+    public void setFamis(final Famis famis) {
+        this.famis = famis;
+    }
 
     public Egnyte getEgnyte() {
         return egnyte;
@@ -470,6 +482,10 @@ public class SamlServiceProviderProperties implements Serializable {
         }
     }
 
+    public static class Famis extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = 4685484530782109454L;
+    }
+    
     public static class Salesforce extends AbstractSamlSPProperties {
         private static final long serialVersionUID = 4685484530782109454L;
 
