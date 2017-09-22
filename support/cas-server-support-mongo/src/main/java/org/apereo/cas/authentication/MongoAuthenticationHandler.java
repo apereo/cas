@@ -30,6 +30,8 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     private String attributes;
     private String usernameAttribute;
     private String passwordAttribute;
+    private MongoClientURI uri;
+    private MongoClient client;
     
     private PasswordEncoder mongoPasswordEncoder = new NoOpPasswordEncoder();
 
