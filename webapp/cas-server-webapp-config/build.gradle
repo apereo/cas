@@ -17,5 +17,4 @@ dependencies {
     testImplementation project(":support:cas-server-support-cookie")
     
     compileOnly libraries.bouncycastle
-    compileOnly libraries.springboottomcat
 }
