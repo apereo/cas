@@ -5,11 +5,7 @@ title: CAS - LDAP Service Registry
 
 # LDAP Service Registry
 
-Service registry implementation which stores the services in a LDAP Directory.
-Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapRegisteredServiceMapper`
-in order to configure settings for retrieval, search and persistence of service definitions.
-By default, entries are assigned the `objectclass` `casRegisteredService`
-attribute and are looked up by the `uid` attribute.
+Service registry implementation which stores the services in a LDAP Directory and attemps to *map* service records to LDAP entrues in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` that is `casRegisteredService` attribute and are looked up by the `uid` attribute.
 
 Support is enabled by adding the following module into the overlay:
 
@@ -35,7 +31,7 @@ Service definitions are by default stored inside the `serviceDefinitionAttribute
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html). That's all, as far as the schema goes.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-service-registry).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-service-registry).
 
 ## Auto Initialization
 
