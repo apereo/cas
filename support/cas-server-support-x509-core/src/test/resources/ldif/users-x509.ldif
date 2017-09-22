@@ -1,0 +1,20 @@
+dn: CN=x509,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: ad
+objectClass: inetOrgPerson
+objectClass: cRLDistributionPoint
+cn: Misagh Moayyed
+sn: Moayyed
+givenName: Misagh
+displayName: Misagh Moayyed
+sAMAccountName: mmoayyed
+mail: mmoayyed@example.org
+userPrincipalName: mmoayyed@example.org
+userAccountControl: 66048
+distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
+password: misagh
+userPassword: misagh
+unicodePwd: ignoredForTests
+

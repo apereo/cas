@@ -11,8 +11,7 @@ client configuration to leverage proxy authentication features.
 <div class="alert alert-info"><strong>Service Configuration</strong><p>
 Note that each registered application in the registry must explicitly be configured
 to allow for proxy authentication. See <a href="Service-Management.html">this guide</a>
-to learn about registering services in the registry.
-</p></div>
+to learn about registering services in the registry.</p></div>
 
 Disabling proxy authentication components is recommended for deployments that wish to strategically avoid proxy
 authentication as a matter of security policy.
@@ -26,10 +25,10 @@ a back-end [REST-based] service that is also protected by CAS. The scenario usua
 - Application A on the backend needs to contact a service S to produce data.
 - Service S itself is protected by CAS itself.
 
-Because A contacts service S via a server-to-service method where no browser is involved, 
+Because A contacts service S via a server-to-service method where no browser is involved,
 service S would not be able to recognize that an SSO session already exists. In these cases,
 application A needs to exercise proxying in order to obtain a proxy ticket for service S. The proxy ticket
-is passed to the relevant endpoint of service S so it can retrieve and validate it via CAS 
+is passed to the relevant endpoint of service S so it can retrieve and validate it via CAS
 and finally produce a response.
 
 The trace route may look like this:
@@ -68,16 +67,9 @@ The local trust store should only be used for CAS-related functionality of cours
 can be carried over across CAS and Java upgrades, and certainly managed by the source control system that should
 host all CAS configuration.
 
-```xml
-# The http client truststore file, in addition to the default's
-# http.client.truststore.file=classpath:truststore.jks
-#
-# The http client truststore's password
-# http.client.truststore.psw=changeit
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#http-client).
 
-
-## Returning PGT in Validation Response
+## PGT in Validation Response
 
 In situations where using `CAS20ProxyHandler` may be undesirable, such that invoking a callback url to receive the proxy granting ticket is not feasible,
 CAS may be configured to return the proxy-granting ticket id directly in the validation response. In order to successfully establish trust between the
@@ -105,9 +97,6 @@ as an attribute for the given attribute release policy of choice.
   "evaluationOrder" : 0,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "principalAttributesRepository" : {
-      "@class" : "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository"
-    },
     "authorizedToReleaseCredentialPassword" : false,
     "authorizedToReleaseProxyGrantingTicket" : true
   },
@@ -120,14 +109,13 @@ as an attribute for the given attribute release policy of choice.
 ```
 
 
-#### Decrypt the PGT Id
+### Decrypt PGT
 
 Once the client application has received the `proxyGrantingTicket` id attribute in the CAS validation response, it can decrypt it
 via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:
 
 ```java
-
 final Map<?, ?> attributes = ...
 final String encodedPgt = (String) attributes.get("proxyGrantingTicket");
 final PrivateKey privateKey = ...
@@ -136,5 +124,4 @@ final byte[] cred64 = decodeBase64(encodedPgt);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
-
 ```

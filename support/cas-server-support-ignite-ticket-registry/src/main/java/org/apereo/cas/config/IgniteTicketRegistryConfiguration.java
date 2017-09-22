@@ -46,7 +46,6 @@ public class IgniteTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public IgniteConfiguration igniteConfiguration() {
-
         final IgniteProperties ignite = casProperties.getTicket().getRegistry().getIgnite();
 
         final IgniteConfiguration config = new IgniteConfiguration();
@@ -74,11 +73,9 @@ public class IgniteTicketRegistryConfiguration {
         final List<CacheConfiguration> configurations = new ArrayList<>();
 
         final CacheConfiguration ticketsCache = new CacheConfiguration();
-        ticketsCache.setName(
-                ignite.getTicketsCache().getCacheName());
+        ticketsCache.setName(ignite.getTicketsCache().getCacheName());
         ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
-        ticketsCache.setAtomicityMode(
-                CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
+        ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
         ticketsCache.setWriteSynchronizationMode(
                 CacheWriteSynchronizationMode.valueOf(
                         ignite.getTicketsCache().getWriteSynchronizationMode()));
@@ -93,14 +90,12 @@ public class IgniteTicketRegistryConfiguration {
         return config;
     }
 
-
     @Bean
     @RefreshScope
     public TicketRegistry ticketRegistry() {
-        final IgniteTicketRegistry r = new IgniteTicketRegistry();
-        r.setIgniteConfiguration(igniteConfiguration());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getIgnite().getCrypto()));
+        final IgniteProperties igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
+        final IgniteTicketRegistry r = new IgniteTicketRegistry(igniteConfiguration(), igniteProperties);
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(igniteProperties.getCrypto()));
         return r;
     }
 }

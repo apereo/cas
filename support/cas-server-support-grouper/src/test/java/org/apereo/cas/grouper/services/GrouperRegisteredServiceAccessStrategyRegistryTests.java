@@ -3,7 +3,7 @@ package org.apereo.cas.grouper.services;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JsonServiceRegistryDao;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,7 +40,7 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
         v1.add("admin");
         attributes.put("memberOf", v1);
 
-        final AbstractRegisteredService service = TestUtils.getRegisteredService("test");
+        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final GrouperRegisteredServiceAccessStrategy grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);

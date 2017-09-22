@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Service;
@@ -7,13 +8,13 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.thymeleaf.util.StringUtils;
 
 /**
  * Generates a persistent id as username for anonymous service access.
  * By default, the generation is handled by
  * {@link ShibbolethCompatiblePersistentIdGenerator}.
  * Generated ids are unique per service.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
@@ -23,12 +24,17 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousRegisteredServiceUsernameAttributeProvider.class);
 
-    /** Encoder to generate PseudoIds. */
-    private PersistentIdGenerator persistentIdGenerator = 
-            new ShibbolethCompatiblePersistentIdGenerator(StringUtils.randomAlphanumeric(16));
+    /**
+     * Encoder to generate PseudoIds.
+     */
+    private PersistentIdGenerator persistentIdGenerator =
+            new ShibbolethCompatiblePersistentIdGenerator(RandomStringUtils.randomAlphanumeric(16));
 
-    /** Init provider. */
-    public AnonymousRegisteredServiceUsernameAttributeProvider() {}
+    /**
+     * Init provider.
+     */
+    public AnonymousRegisteredServiceUsernameAttributeProvider() {
+    }
 
     /**
      * Instantiates a new default registered service username provider.
@@ -44,7 +50,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
     }
 
     @Override
-    public String resolveUsername(final Principal principal, final Service service) {
+    public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No persistent id generator is defined");
         }
@@ -64,8 +70,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final AnonymousRegisteredServiceUsernameAttributeProvider rhs =
-                (AnonymousRegisteredServiceUsernameAttributeProvider) obj;
+        final AnonymousRegisteredServiceUsernameAttributeProvider rhs = (AnonymousRegisteredServiceUsernameAttributeProvider) obj;
         return this.persistentIdGenerator.equals(rhs.persistentIdGenerator);
     }
 

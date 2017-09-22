@@ -4,7 +4,8 @@ title: CAS - RADIUS Authentication
 ---
 
 # RADIUS Authentication
-RADIUS support is enabled by only including the following dependency in the WAR overlay:
+
+RADIUS support is enabled by only including the following dependency in the overlay:
 
 ```xml
 <dependency>
@@ -14,7 +15,13 @@ RADIUS support is enabled by only including the following dependency in the WAR 
 </dependency>
 ```
 
-RSA RADIUS support for MFA is enabled by only including the following dependency in the WAR overlay:
+## Configuration
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#radius-authentication).
+
+# RSA RADIUS MFA
+
+RSA RADIUS OTP support for MFA is enabled by only including the following dependency in the overlay:
 
 ```xml
 <dependency>
@@ -26,7 +33,7 @@ RSA RADIUS support for MFA is enabled by only including the following dependency
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#radius-otp).
 
 ## Repository
 

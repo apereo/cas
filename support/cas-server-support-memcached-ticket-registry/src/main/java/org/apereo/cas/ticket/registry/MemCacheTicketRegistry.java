@@ -1,10 +1,17 @@
 package org.apereo.cas.ticket.registry;
 
 import net.spy.memcached.MemcachedClientIF;
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -15,113 +22,112 @@ import java.util.Collection;
  * @since 3.3
  */
 public class MemCacheTicketRegistry extends AbstractTicketRegistry {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemCacheTicketRegistry.class);
     /**
      * Memcached client.
      */
-    private MemcachedClientIF client;
+    private final ObjectPool<MemcachedClientIF> connectionPool;
 
-    /**
-     * Instantiates a new Mem cache ticket registry.
-     */
-    public MemCacheTicketRegistry() {
+    public MemCacheTicketRegistry(final MemcachedClientIF client) {
+        this.connectionPool = new GenericObjectPool<>(new BasePooledObjectFactory<MemcachedClientIF>() {
+            @Override
+            public MemcachedClientIF create() throws Exception {
+                return client;
+            }
+
+            @Override
+            public PooledObject<MemcachedClientIF> wrap(final MemcachedClientIF memcachedClientIF) {
+                return new DefaultPooledObject<>(memcachedClientIF);
+            }
+        });
     }
-    
+
     /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
      * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
      *
      * @param client Memcached client.
      */
-    public MemCacheTicketRegistry(final MemcachedClientIF client) {
-        this.client = client;
+    public MemCacheTicketRegistry(final ObjectPool<MemcachedClientIF> client) {
+        this.connectionPool = client;
     }
 
     @Override
-    public void updateTicket(final Ticket ticketToUpdate) {
-        if (this.client == null) {
-            logger.debug("No memcached client is available in the configuration.");
-            return;
-        }
-
+    public Ticket updateTicket(final Ticket ticketToUpdate) {
         final Ticket ticket = encodeTicket(ticketToUpdate);
-        logger.debug("Updating ticket {}", ticket);
+        LOGGER.debug("Updating ticket [{}]", ticket);
+        final MemcachedClientIF clientFromPool = getClientFromPool();
         try {
-            if (!this.client.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket).get()) {
-                logger.error("Failed to update {}", ticket);
-            }
-        } catch (final InterruptedException e) {
-            logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
-                    + "Cannot determine whether update was successful.", ticket);
+            clientFromPool.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket);
         } catch (final Exception e) {
-            logger.error("Failed updating {}", ticket, e);
+            LOGGER.error("Failed updating [{}]", ticket, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
+        return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        if (this.client == null) {
-            logger.debug("No memcached client is found in the configuration.");
-            return;
-        }
-
-        final Ticket ticket = encodeTicket(ticketToAdd);
-        logger.debug("Adding ticket {}", ticket);
+        final MemcachedClientIF clientFromPool = getClientFromPool();
         try {
-            if (!this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
-                logger.error("Failed to add {}", ticket);
-            }
-        } catch (final InterruptedException e) {
-            logger.warn("Interrupted while waiting for response to async add operation for ticket {}."
-                    + "Cannot determine whether add was successful.", ticket);
+            final Ticket ticket = encodeTicket(ticketToAdd);
+            LOGGER.debug("Adding ticket [{}]", ticket);
+            clientFromPool.set(ticket.getId(), getTimeout(ticketToAdd), ticket);
         } catch (final Exception e) {
-            logger.error("Failed adding {}", ticket, e);
+            LOGGER.error("Failed adding [{}]", ticketToAdd, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public long deleteAll() {
+        LOGGER.debug("deleteAll() isn't supported. Returning empty list");
+        return 0;
+    }
+
+    @Override
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        final MemcachedClientIF clientFromPool = getClientFromPool();
+        final String ticketId = encodeTicketId(ticketIdToDelete);
         try {
-            Assert.notNull(this.client, "No memcached client is defined.");
-            if (this.client.delete(ticketId).get()) {
-                logger.debug("Removed ticket {} from the cache", ticketId);
-            } else {
-                logger.info("Ticket {} not found or is already removed.", ticketId);
-            }
+            clientFromPool.delete(ticketId);
         } catch (final Exception e) {
-            logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
+            LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
         return true;
     }
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        if (this.client == null) {
-            logger.debug("No memcached client is configured.");
-            return null;
-        }
-
+        final MemcachedClientIF clientFromPool = getClientFromPool();
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
-            final Ticket t = (Ticket) this.client.get(ticketId);
-            if (t != null) {
-                return decodeTicket(t);
+            final Ticket ticketFromCache = (Ticket) clientFromPool.get(ticketId);
+            if (ticketFromCache != null) {
+                final Ticket result = decodeTicket(ticketFromCache);
+                if (result != null && result.isExpired()) {
+                    LOGGER.debug("Ticket [{}] has expired and is now removed from the memcached", result.getId());
+                    deleteSingleTicket(ticketId);
+                    return null;
+                }
+                return result;
             }
         } catch (final Exception e) {
-            logger.error("Failed fetching {} ", ticketId, e);
+            LOGGER.error("Failed fetching [{}] ", ticketId, e);
+        } finally {
+            returnClientToPool(clientFromPool);
         }
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     * This operation is not supported.
-     *
-     * @throws UnsupportedOperationException if you try and call this operation.
-     */
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("getTickets() not supported.");
+        LOGGER.debug("getTickets() isn't supported. Returning empty list");
+        return new ArrayList<>(0);
     }
 
     /**
@@ -129,12 +135,9 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
      */
     @PreDestroy
     public void destroy() {
-        if (this.client == null) {
-            return;
-        }
-        this.client.shutdown();
+        this.connectionPool.close();
     }
-    
+
     /**
      * If not time out value is specified, expire the ticket immediately.
      *
@@ -147,5 +150,23 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
             return 1;
         }
         return ttl;
+    }
+
+    private MemcachedClientIF getClientFromPool() {
+        try {
+            return this.connectionPool.borrowObject();
+        } catch (final Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    private void returnClientToPool(final MemcachedClientIF clientFromPool) {
+        try {
+            if (clientFromPool != null) {
+                this.connectionPool.returnObject(clientFromPool);
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

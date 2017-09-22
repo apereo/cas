@@ -1,12 +1,11 @@
 package org.apereo.cas.ticket.registry.support.kryo.serial;
 
-import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 
 /**
  * Serializer for {@link SimpleWebApplicationServiceImpl} class.

@@ -92,15 +92,6 @@ public class ViewProperties {
     public static class Cas3 {
         private String success = "protocol/3.0/casServiceValidationSuccess";
         private String failure = "protocol/3.0/casServiceValidationFailure";
-        private boolean releaseProtocolAttributes = true;
-
-        public boolean isReleaseProtocolAttributes() {
-            return releaseProtocolAttributes;
-        }
-
-        public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
-            this.releaseProtocolAttributes = releaseProtocolAttributes;
-        }
 
         public String getSuccess() {
             return success;

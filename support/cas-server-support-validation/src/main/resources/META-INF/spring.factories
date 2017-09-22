@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.config.CasProtocolViewsConfiguration,org.apereo.cas.web.config.CasValidationConfiguration

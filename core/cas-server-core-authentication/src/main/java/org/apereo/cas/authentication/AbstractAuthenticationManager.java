@@ -1,17 +1,16 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.Lists;
-import org.apereo.cas.authentication.principal.NullPrincipal;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.support.events.CasAuthenticationPrincipalResolvedEvent;
-import org.apereo.cas.support.events.CasAuthenticationTransactionStartedEvent;
-import org.apereo.cas.support.events.CasAuthenticationTransactionSuccessfulEvent;
-import org.apereo.inspektr.audit.annotation.Audit;
-
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
+import org.apereo.cas.authentication.principal.NullPrincipal;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalResolvedEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionStartedEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +19,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link AbstractAuthenticationManager}, which provides common operations
@@ -34,64 +31,27 @@ import java.util.Map;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
-    private static final String MESSAGE = "At least one authentication handler is required";
-    
-    /**
-     * Log instance for logging events, errors, warnings, etc.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAuthenticationManager.class);
 
     /**
-     * An array of AuthenticationAttributesPopulators.
+     * Plan to execute the authentication transaction.
      */
-    protected List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
-            new ArrayList<>();
-
-    /**
-     * Map of authentication handlers to resolvers to be used when handler does not resolve a principal.
-     */
-    protected Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
+    protected final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     /**
      * The Authentication handler resolver.
      */
-    protected AuthenticationHandlerResolver authenticationHandlerResolver =
-            new RegisteredServiceAuthenticationHandlerResolver();
+    protected final AuthenticationHandlerResolver authenticationHandlerResolver;
+
+    /**
+     * Indicate if principal resolution should totally fail
+     * and no fall back onto principal that is produced by the
+     * authentication handler.
+     */
+    protected boolean principalResolutionFailureFatal;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-
-    /**
-     * Instantiates a new Policy based authentication manager.
-     */
-    protected AbstractAuthenticationManager() {
-    }
-
-    /**
-     * Creates a new authentication manager with a varargs array of authentication handlers that are attempted in the
-     * listed order for supported credentials. This form may only be used by authentication handlers that
-     * resolve principals during the authentication process.
-     *
-     * @param handlers One or more authentication handlers.
-     */
-    protected AbstractAuthenticationManager(final AuthenticationHandler... handlers) {
-        this(Lists.newArrayList(handlers));
-    }
-
-    /**
-     * Creates a new authentication manager with a list of authentication handlers that are attempted in the
-     * listed order for supported credentials. This form may only be used by authentication handlers that
-     * resolve principals during the authentication process.
-     *
-     * @param handlers Non-null list of authentication handlers containing at least one entry.
-     */
-    protected AbstractAuthenticationManager(final List<AuthenticationHandler> handlers) {
-        Assert.notEmpty(handlers, MESSAGE);
-        this.handlerResolverMap = new LinkedHashMap<>(handlers.size());
-        for (final AuthenticationHandler handler : handlers) {
-            this.handlerResolverMap.put(handler, null);
-        }
-    }
 
     /**
      * Creates a new authentication manager with a map of authentication handlers to the principal resolvers that
@@ -99,24 +59,34 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * the order of evaluation of authentication handlers is important, a map that preserves insertion order
      * (e.g. {@link LinkedHashMap}) should be used.
      *
-     * @param map Non-null map of authentication handler to principal resolver containing at least one entry.
+     * @param authenticationEventExecutionPlan Describe the execution plan for this manager
+     * @param authenticationHandlerResolver    the authentication handler resolver
+     * @param principalResolutionFatal         the principal resolution fatal
      */
-    protected AbstractAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        Assert.notEmpty(map, MESSAGE);
-        this.handlerResolverMap = map;
+    protected AbstractAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+                                            final AuthenticationHandlerResolver authenticationHandlerResolver,
+                                            final boolean principalResolutionFatal) {
+        Assert.notNull(authenticationEventExecutionPlan);
+        Assert.notNull(authenticationHandlerResolver);
+        Assert.notNull(principalResolutionFatal);
+
+        this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;
+        this.authenticationHandlerResolver = authenticationHandlerResolver;
+        this.principalResolutionFailureFatal = principalResolutionFatal;
     }
 
     /**
      * Populate authentication metadata attributes.
      *
      * @param builder     the builder
-     * @param credentials the credentials
+     * @param transaction the transaction
      */
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
-                                                            final Collection<Credential> credentials) {
-        for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
-            credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
-        }
+                                                            final AuthenticationTransaction transaction) {
+        LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
+        final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
+        pops.forEach(populator -> transaction.getCredentials().stream().filter(populator::supports)
+                .forEach(credential -> populator.populateAttributes(builder, transaction)));
     }
 
     /**
@@ -127,35 +97,32 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      */
     protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder,
                                                     final Authentication authentication) {
-        for (final HandlerResult result : authentication.getSuccesses().values()) {
-            builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
-        }
+        authentication.getSuccesses().values().forEach(result -> builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName()));
     }
 
     /**
      * Resolve principal.
      *
-     * @param handlerName the handler name
-     * @param resolver    the resolver
-     * @param credential  the credential
+     * @param handler    the handler name
+     * @param resolver   the resolver
+     * @param credential the credential
+     * @param principal  the current authenticated principal from a handler, if any.
      * @return the principal
      */
-    protected Principal resolvePrincipal(
-            final String handlerName, final PrincipalResolver resolver, final Credential credential) {
+    protected Principal resolvePrincipal(final AuthenticationHandler handler, final PrincipalResolver resolver,
+                                         final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final Principal p = resolver.resolve(credential);
-                logger.debug("{} resolved {} from {}", resolver, p, credential);
+                final Principal p = resolver.resolve(credential, principal, handler);
+                LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
-                logger.error("{} failed to resolve principal from {}", resolver, credential, e);
+                LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential, e);
             }
         } else {
-            logger.warn(
-                    "{} is configured to use {} but it does not support {}, which suggests a configuration problem.",
-                    handlerName,
-                    resolver,
-                    credential);
+            LOGGER.warn(
+                    "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
+                    handler.getName(), resolver, credential);
         }
         return null;
     }
@@ -169,22 +136,19 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     @Metered(name = "AUTHENTICATE_METER")
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-        CurrentCredentialsAndAuthentication.bindCurrent(transaction.getCredentials());
+        AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
         if (principal instanceof NullPrincipal) {
             throw new UnresolvedPrincipalException(authentication);
         }
-
         addAuthenticationMethodAttribute(builder, authentication);
-
-        logger.info("Authenticated principal [{}] and attributes {} with credentials {}.", 
+        LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
                 principal.getId(), principal.getAttributes(), transaction.getCredentials());
-        populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
-
+        populateAuthenticationMetadataAttributes(builder, transaction);
         final Authentication a = builder.build();
-        CurrentCredentialsAndAuthentication.bindCurrent(a);
+        AuthenticationCredentialsLocalBinder.bindCurrent(a);
         return a;
     }
 
@@ -198,39 +162,44 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @throws GeneralSecurityException the general security exception
      * @throws PreventedException       the prevented exception
      */
-    protected void authenticateAndResolvePrincipal(final AuthenticationBuilder builder, final Credential credential,
-                                                   final PrincipalResolver resolver, final AuthenticationHandler handler)
-            throws GeneralSecurityException, PreventedException {
+    protected void authenticateAndResolvePrincipal(final AuthenticationBuilder builder,
+                                                   final Credential credential,
+                                                   final PrincipalResolver resolver,
+                                                   final AuthenticationHandler handler) throws GeneralSecurityException, PreventedException {
 
         Principal principal;
-        
+
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
-        
+
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
-        logger.info("{} successfully authenticated {}", handler.getName(), credential);
+        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
-        
+        principal = result.getPrincipal();
+
         if (resolver == null) {
-            principal = result.getPrincipal();
-            logger.debug(
-                    "No resolver configured for {}. Falling back to handler principal {}",
+            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
                     handler.getName(),
                     principal);
         } else {
-            principal = resolvePrincipal(handler.getName(), resolver, credential);
+            principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
-                logger.warn("Principal resolution handled by {} produced a null principal. "
+                if (this.principalResolutionFailureFatal) {
+                    LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
+                                    + "CAS is configured to treat principal resolution failures as fatal.",
+                            resolver.getClass().getSimpleName(), credential);
+                    throw new UnresolvedPrincipalException();
+                }
+                LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
                         + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
                         + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
-                principal = result.getPrincipal();
             }
         }
         if (principal != null) {
             builder.setPrincipal(principal);
         }
-        logger.debug("Final principal resolved for this authentication event is {}", principal);
+        LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 
@@ -242,27 +211,47 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * There SHOULD be a record of each attempted authentication, whether success or failure.
      * @throws AuthenticationException When one or more credentials failed authentication such that security policy was not satisfied.
      */
-    protected abstract AuthenticationBuilder authenticateInternal(AuthenticationTransaction transaction)
-            throws AuthenticationException;
+    protected abstract AuthenticationBuilder authenticateInternal(AuthenticationTransaction transaction) throws AuthenticationException;
 
     /**
-     * Sets the authentication metadata populators that will be applied to every successful authentication event.
+     * Gets authentication handlers for this transaction.
      *
-     * @param populators Non-null list of metadata populators.
+     * @param transaction the transaction
+     * @return the authentication handlers for this transaction
      */
-    public void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
-        this.authenticationMetaDataPopulators = populators;
+    protected Set<AuthenticationHandler> getAuthenticationHandlersForThisTransaction(final AuthenticationTransaction transaction) {
+        final Set<AuthenticationHandler> handlers = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
+        return this.authenticationHandlerResolver.resolve(handlers, transaction);
     }
 
-    public void setAuthenticationHandlerResolver(final AuthenticationHandlerResolver authenticationHandlerResolver) {
-        this.authenticationHandlerResolver = authenticationHandlerResolver;
+    /**
+     * Gets principal resolver linked to the handler if any.
+     *
+     * @param handler     the handler
+     * @param transaction the transaction
+     * @return the principal resolver linked to handler if any, or null.
+     */
+    protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler, final AuthenticationTransaction transaction) {
+        return this.authenticationEventExecutionPlan.getPrincipalResolverForAuthenticationTransaction(handler, transaction);
     }
 
-    public void setHandlerResolverMap(final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap) {
-        this.handlerResolverMap = handlerResolverMap;
+    /**
+     * Gets authentication metadata populators for transaction.
+     *
+     * @param transaction the transaction
+     * @return the authentication metadata populators for transaction
+     */
+    protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(
+            final AuthenticationTransaction transaction) {
+        return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
     }
-    
-    private void publishEvent(final ApplicationEvent event) {
+
+    /**
+     * Publish event.
+     *
+     * @param event the event
+     */
+    protected void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
         }

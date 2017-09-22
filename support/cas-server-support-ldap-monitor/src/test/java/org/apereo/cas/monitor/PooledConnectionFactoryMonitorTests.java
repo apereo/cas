@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {LdapMonitorConfiguration.class, RefreshAutoConfiguration.class})
-@ContextConfiguration(locations = {"/ldap-context.xml"})
+@TestPropertySource(locations={"classpath:/ldapmonitor.properties"})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @Autowired

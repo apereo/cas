@@ -1,0 +1,15 @@
+<!-- Attribute Filter -->
+<div class="form-group">
+    <label class="col-sm-4" for="attFilter">
+        <span th:remove="tag" th:text="#{services.form.label.attrRelease.attrFilter}"/>
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+           data-toggle="tooltip"
+           data-placement="top"
+           th:title="#{services.form.tooltip.attrRelease.attrFilter}"></i>
+    </label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <input type="text" class="form-control" id="attFilter" ng-model="serviceFormCtrl.serviceData.attrRelease.attrFilter"/>
+        </div>
+    </div>
+</div>

@@ -2,7 +2,7 @@ package org.apereo.cas.support.events.jpa;
 
 import org.apereo.cas.config.JpaEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -19,9 +19,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-        classes = {JpaEventsConfiguration.class, AopAutoConfiguration.class, RefreshAutoConfiguration.class})
-@EnableTransactionManagement
+@SpringBootTest(classes = {JpaEventsConfiguration.class,
+        AopAutoConfiguration.class,
+        RefreshAutoConfiguration.class})
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 

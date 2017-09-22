@@ -11,9 +11,9 @@ import static org.junit.Assert.*;
  */
 public class CasDefaultFlowUrlHandlerTests {
 
-    private CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
+    private final CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
 
-    private MockHttpServletRequest request = new MockHttpServletRequest();
+    private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     @Test
     public void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() throws Exception {

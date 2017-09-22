@@ -1,0 +1,16 @@
+description = "Apereo CAS Surrogate Authentication Support"
+dependencies {
+    provided project(":core:cas-server-core-authentication")
+    provided project(":core:cas-server-core-webflow")
+    provided project(":core:cas-server-core-util")
+    provided project(":core:cas-server-core-services")
+    provided project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-ldap-core")
+    provided project(":core:cas-server-core-audit")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+}

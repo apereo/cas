@@ -24,9 +24,17 @@ public class PasswordEncoderProperties {
         /**
          * Uses {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder}.
          */
-        BCRYPT
+        BCRYPT,
+        /**
+         * Uses {@link org.springframework.security.crypto.scrypt.SCryptPasswordEncoder}.
+         */
+        SCRYPT,
+        /**
+         * Uses {@link org.springframework.security.crypto.password.Pbkdf2PasswordEncoder}.
+         */
+        PBKDF2
     }
-    private PasswordEncoderTypes type = PasswordEncoderTypes.NONE;
+    private String type = "NONE";
     
     private String encodingAlgorithm;
     private String characterEncoding;
@@ -49,11 +57,11 @@ public class PasswordEncoderProperties {
         this.secret = secret;
     }
 
-    public PasswordEncoderTypes getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(final PasswordEncoderTypes type) {
+    public void setType(final String type) {
         this.type = type;
     }
 

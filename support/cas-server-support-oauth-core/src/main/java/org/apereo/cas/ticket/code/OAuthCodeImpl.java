@@ -7,14 +7,18 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -31,6 +35,13 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     private static final long serialVersionUID = -8072724186202305800L;
 
+    /**
+     * The {@link TicketGrantingTicket} this is associated with.
+     */
+    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    @JsonProperty("grantingTicket")
+    private TicketGrantingTicket ticketGrantingTicket;
+    
     /** The service this ticket is valid for. */
     @Lob
     @Column(name="SERVICE", nullable=false)
@@ -51,20 +62,22 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     /**
      * Constructs a new OAuth code with unique id for a service and authentication.
      *
-     * @param id the unique identifier for the ticket.
-     * @param service the service this ticket is for.
-     * @param authentication the authentication.
-     * @param expirationPolicy the expiration policy.
+     * @param id                   the unique identifier for the ticket.
+     * @param service              the service this ticket is for.
+     * @param authentication       the authentication.
+     * @param expirationPolicy     the expiration policy.
+     * @param ticketGrantingTicket the ticket granting ticket
      * @throws IllegalArgumentException if the service or authentication are null.
      */
     public OAuthCodeImpl(final String id, final Service service, final Authentication authentication,
-                         final ExpirationPolicy expirationPolicy) {
+                         final ExpirationPolicy expirationPolicy, final TicketGrantingTicket ticketGrantingTicket) {
         super(id, expirationPolicy);
 
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(authentication, "authentication cannot be null");
         this.service = service;
         this.authentication = authentication;
+        this.ticketGrantingTicket = ticketGrantingTicket;
     }
 
     @Override
@@ -116,6 +129,11 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     @Override
     public TicketGrantingTicket getGrantingTicket() {
-        return null;
+        return this.ticketGrantingTicket;
+    }
+
+    @Override
+    public String getPrefix() {
+        return OAuthCode.PREFIX;
     }
 }

@@ -37,20 +37,12 @@ import java.util.Properties;
 @Configuration("coreSamlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreSamlConfiguration {
-
-    /**
-     * The constant POOL_SIZE.
-     */
+    
     private static final int POOL_SIZE = 100;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    /**
-     * Velocity engine velocity engine factory bean.
-     *
-     * @return the velocity engine factory bean
-     */
+    
     @Lazy
     @Bean(name = "shibboleth.VelocityEngine")
     public VelocityEngineFactoryBean velocityEngineFactoryBean() {
@@ -71,24 +63,12 @@ public class CoreSamlConfiguration {
         bean.setVelocityProperties(properties);
         return bean;
     }
-
-    /**
-     * Open saml config bean open saml config bean.
-     *
-     * @return the open saml config bean
-     */
+    
     @Bean(name = "shibboleth.OpenSAMLConfig")
     public OpenSamlConfigBean openSamlConfigBean() {
-        final OpenSamlConfigBean bean = new OpenSamlConfigBean();
-        bean.setParserPool(parserPool());
-        return bean;
+        return new OpenSamlConfigBean(parserPool());
     }
-
-    /**
-     * Parser pool basic parser pool.
-     *
-     * @return the basic parser pool
-     */
+    
     @Bean(name = "shibboleth.ParserPool", initMethod = "initialize")
     public BasicParserPool parserPool() {
         final BasicParserPool pool = new BasicParserPool();
@@ -123,33 +103,20 @@ public class CoreSamlConfiguration {
         return pool;
     }
 
-    /**
-     * Builder factory xml object builder factory.
-     *
-     * @return the xml object builder factory
-     */
+
     @Bean(name = "shibboleth.BuilderFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public XMLObjectBuilderFactory builderFactory() {
         return XMLObjectProviderRegistrySupport.getBuilderFactory();
     }
 
-    /**
-     * Marshaller factory marshaller factory.
-     *
-     * @return the marshaller factory
-     */
+ 
     @Bean(name = "shibboleth.MarshallerFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public MarshallerFactory marshallerFactory() {
         return XMLObjectProviderRegistrySupport.getMarshallerFactory();
     }
-
-    /**
-     * Unmarshaller factory unmarshaller factory.
-     *
-     * @return the unmarshaller factory
-     */
+    
     @Bean(name = "shibboleth.UnmarshallerFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public UnmarshallerFactory unmarshallerFactory() {

@@ -440,27 +440,27 @@ if (array.length == 3) {
         }
 
         function editRow( row, rowForm) {
-            console.log('editRow');
+            // console.log('editRow');
             self.tmpRowData = angular.copy( row );
             row.isEditing = true;
         }
 
         function addRow(row, rowForm) {
-            console.log('addRow');
+            // console.log('addRow');
             self.tmpRowData = angular.copy( row );
 
             self.tableParams.settings().dataset.push( self.tmpRowData );
             var syncData = angular.copy(self.tableParams.settings().dataset).map(function(obj) {
                 delete obj.$$hashKey;
                 delete obj.isAdding;
-                obj.value = obj.propValue;
-                delete obj.propValue;
+                obj.value = obj.value;
+                delete obj.value;
                 return obj;
             });
 
             $scope.$parent.serviceFormCtrl.serviceData.supportAccess.rejectedAttr = syncData;
             row.name = '';
-            row.propValue = '';
+            row.value = '';
             row.isAdding = false;
 
             self.tableParams.reload();
@@ -471,7 +471,7 @@ if (array.length == 3) {
             // Clean up?
             // console.log('cancelAdd');
             row.name = '';
-            row.propValue = '';
+            row.value = '';
             row.isAdding = false;
         }
 
@@ -488,6 +488,8 @@ if (array.length == 3) {
         self.tmpRowData;
 
         var dataList = [];
+
+        // console.debug(dataList);
 
         var originalData = angular.copy(dataList);
 
@@ -566,17 +568,18 @@ if (array.length == 3) {
             self.tmpRowData = angular.copy( row );
 
             self.tableParams.settings().dataset.push( self.tmpRowData );
-            var syncData = angular.copy(self.tableParams.settings().dataset).map(function(obj) {
-                delete obj.$$hashKey;
-                delete obj.isAdding;
-                obj.value = obj.propValue;
-                delete obj.propValue;
-                return obj;
-            });
+            // var syncData = angular.copy($scope.$parent.serviceFormCtrl.serviceData.properties).map(function(obj) {
+            //     delete obj.$$hashKey;
+            //     delete obj.isAdding;
+            //     obj.value = obj.value;
+            //     delete obj.value;
+            //     return obj;
+            // });
 
-            $scope.$parent.serviceFormCtrl.serviceData.properties = syncData;
+            // $scope.$parent.serviceFormCtrl.serviceData.properties = syncData;
+            $scope.$parent.serviceFormCtrl.serviceData.properties.push(angular.copy(row));
             row.name = '';
-            row.propValue = '';
+            row.value = '';
             row.isAdding = false;
 
             self.tableParams.reload();
@@ -587,7 +590,7 @@ if (array.length == 3) {
             // Clean up?
             // console.log('cancelAdd');
             row.name = '';
-            row.propValue = '';
+            row.value = '';
             row.isAdding = false;
         }
 
@@ -633,10 +636,9 @@ if (array.length == 3) {
             this.selectOptions = {
                 serviceTypeList: [
                     {name: 'CAS Client', value: 'cas'},
-                    {name: 'OAuth Client', value: 'oauth'},
-                    {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
-                    {name: 'SAML Client', value: 'saml'},
-                    {name: 'OIDC Client', value: 'oidc'}
+                    {name: 'OAuth2 Client', value: 'oauth'},
+                    {name: 'SAML2 Service Provider', value: 'saml'},
+                    {name: 'OpenID Connect Client', value: 'oidc'}
                 ],
                 logoutTypeList: [
                     {name: 'NONE', value: 'none'},
@@ -960,7 +962,7 @@ if (array.length == 3) {
 
                 serviceForm.serviceData = data;
 
-                // serviceForm.serviceData.properties = [{"name": "foo", "propValue": 10}];
+                // serviceForm.serviceData.properties = [{"name": "foo", "value": 10}];
 
                 // console.log(serviceForm.serviceData.properties);
             };
@@ -1215,7 +1217,7 @@ if (array.length == 3) {
  dataFactory.$inject = [];
 
  function dataFactory() {
- return [{"id":1,"name":"Nissim","propValue":41,},{"id":2,"name":"Mariko","propValue":10}];
+ return [{"id":1,"name":"Nissim","value":41,},{"id":2,"name":"Mariko","value":10}];
  }
  })();
  */

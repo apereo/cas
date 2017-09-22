@@ -3,7 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,18 +46,18 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceEvent() {
-        return Beans.newHickariDataSource(casProperties.getEvents().getJpa());
+        return Beans.newDataSource(casProperties.getEvents().getJpa());
     }
     
     public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.apereo.cas.support.events.dao"};
+        return new String[]{CasEvent.class.getPackage().getName()};
     }
     
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newEntityManagerFactoryBean(
+                Beans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaEventVendorAdapter(),
                                 "jpaEventRegistryContext",
@@ -64,14 +65,12 @@ public class JpaEventsConfiguration {
                                 dataSourceEvent()),
                         casProperties.getEvents().getJpa());
 
-        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
     
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory")
-                                                          final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory") final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;

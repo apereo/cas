@@ -4,10 +4,11 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -28,10 +29,16 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * The collection of users to reject.
      */
-    private Set<String> users = new HashSet<>();
-    
+    private final Set<String> users;
+
+    public RejectUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                            final Set<String> rejectedUsers) {
+        super(name, servicesManager, principalFactory, null);
+        this.users = rejectedUsers;
+    }
+
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
@@ -40,18 +47,5 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         }
 
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
-    }
-
-    /**
-     * Set the Collection of usernames which we will fail to authenticate.
-     *
-     * @param users The Collection of usernames we should not authenticate.
-     */
-    public void setUsers(final Set<String> users) {
-        this.users = users;
-    }
-
-    public Set<String> getUsers() {
-        return users;
     }
 }

@@ -24,7 +24,7 @@ import javax.annotation.PostConstruct;
 public class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
 
-    private ParserPool parserPool;
+    private final ParserPool parserPool;
 
     private XMLObjectBuilderFactory builderFactory;
 
@@ -34,11 +34,9 @@ public class OpenSamlConfigBean {
 
     /**
      * Instantiates the config bean.
+     * @param parserPool the parser pool
      */
-    public OpenSamlConfigBean() {
-    }
-
-    public void setParserPool(final ParserPool parserPool) {
+    public OpenSamlConfigBean(final ParserPool parserPool) {
         this.parserPool = parserPool;
     }
 
@@ -68,7 +66,7 @@ public class OpenSamlConfigBean {
      */
     @PostConstruct
     public void init() {
-        LOGGER.info("Initializing OpenSaml configuration...");
+        LOGGER.debug("Initializing OpenSaml configuration...");
         Assert.notNull(this.parserPool, "parserPool must not be null");
 
         try {

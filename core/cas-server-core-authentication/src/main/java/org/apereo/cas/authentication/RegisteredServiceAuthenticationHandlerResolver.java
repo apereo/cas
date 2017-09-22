@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolver}
@@ -21,12 +22,20 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceAuthenticationHandlerResolver.class);
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
+
+    /**
+     * Instantiates a new Registered service authentication handler resolver.
+     *
+     * @param servicesManager the services manager
+     */
+    public RegisteredServiceAuthenticationHandlerResolver(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
@@ -35,35 +44,31 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         if (service != null && this.servicesManager != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                logger.warn("Service [{}] is not allowed to use SSO.", registeredService);
+                LOGGER.warn("Service [{}] is not allowed to use SSO.", registeredService);
                 throw new UnauthorizedSsoServiceException();
             }
             if (!registeredService.getRequiredHandlers().isEmpty()) {
-                logger.debug("Authentication transaction requires {} for service {}", registeredService.getRequiredHandlers(), service);
+                LOGGER.debug("Authentication transaction requires [{}] for service [{}]", registeredService.getRequiredHandlers(), service);
                 final Set<AuthenticationHandler> handlerSet = new LinkedHashSet<>(candidateHandlers);
-                logger.info("Candidate authentication handlers examined this transaction are {}", handlerSet);
+                LOGGER.info("Candidate authentication handlers examined this transaction are [{}]", handlerSet);
 
                 final Iterator<AuthenticationHandler> it = handlerSet.iterator();
                 while (it.hasNext()) {
                     final AuthenticationHandler handler = it.next();
                     if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
                             && !registeredService.getRequiredHandlers().contains(handler.getName())) {
-                        logger.debug("Authentication handler {} is not required for this transaction and is removed", handler.getName());
+                        LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handler.getName());
                         it.remove();
                     }
                 }
-                logger.debug("Authentication handlers for this transaction are {}", handlerSet);
+                LOGGER.debug("Authentication handlers for this transaction are [{}]", handlerSet);
                 return handlerSet;
-            } else {
-                logger.debug("No specific authentication handlers are required for this transaction");
             }
+            LOGGER.debug("No specific authentication handlers are required for this transaction");
         }
 
-        logger.debug("Authentication handlers used for this transaction are {}", candidateHandlers);
+        final String handlers = candidateHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining());
+        LOGGER.debug("Authentication handlers used for this transaction are [{}]", handlers);
         return candidateHandlers;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 }

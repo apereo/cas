@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +24,15 @@ import java.security.GeneralSecurityException;
  */
 public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalBearingCredentialsAuthenticationHandler.class);
+
+    public PrincipalBearingCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
+        super(name, servicesManager, principalFactory, null);
+    }
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
-        logger.debug("Trusting credential for: {}", credential);
+        LOGGER.debug("Trusting credential for: [{}]", credential);
         return new DefaultHandlerResult(
                 this, (PrincipalBearingCredential) credential, this.principalFactory.createPrincipal(credential.getId()));
     }

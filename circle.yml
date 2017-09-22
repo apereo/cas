@@ -1,0 +1,36 @@
+machine:
+  java:
+    version: oraclejdk8
+  environment:
+    _JAVA_OPTIONS: "-Xms512m -Xmx2048m"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+checkout:
+  post:
+    - sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+    - sudo unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
+    - sudo ls $JAVA_HOME/jre/lib/security
+    - sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
+    - sudo ls $JAVA_HOME/jre/lib/security
+dependencies:
+  override:
+    - sudo apt-get install -y nodejs
+    - which npm
+    - npm --version
+    - npm install --global gulp-cli 
+    - npm install --global gulp-sass --save-dev
+    - ./gradlew gulpSetup --stacktrace -q
+  cache_directories:
+    - "~/.gradle/wrapper"  
+    - "~/.gradle/caches"
+compile:
+  override:
+    - ./gradlew clean checkstyleMain bootRepackage install  -x test --stacktrace
+test:
+  override:
+    - ./gradlew checkstyleTest test --stacktrace
+general:
+  branches:
+    ignore:
+      - gh-pages
+    only:
+      - master

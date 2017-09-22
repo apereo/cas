@@ -1,8 +1,13 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apache.commons.lang3.StringUtils;
+import org.ldaptive.SearchScope;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is {@link AbstractLdapProperties}.
@@ -11,6 +16,28 @@ import org.ldaptive.sasl.SecurityStrength;
  * @since 5.0.0
  */
 public abstract class AbstractLdapProperties {
+    /**
+     * The ldap type used to handle specific ops.
+     */
+    public enum LdapType {
+        /**
+         * Generic ldap type (OpenLDAP, 389ds, etc).
+         */
+        GENERIC,
+        /**
+         * Active directory.
+         */
+        AD,
+        /**
+         * FreeIPA directory.
+         */
+        FreeIPA,
+        /**
+         * EDirectory.
+         */
+        EDirectory
+    }
+
     /**
      * The ldap connection pool passivator.
      */
@@ -28,7 +55,33 @@ public abstract class AbstractLdapProperties {
          */
         BIND
     }
-    
+
+    /**
+     * Describe ldap connection strategies.
+     */
+    public enum LdapConnectionStrategy {
+        /**
+         * Default JNDI.
+         */
+        DEFAULT,
+        /**
+         * First ldap used until it fails.
+         */
+        ACTIVE_PASSIVE,
+        /**
+         * Navigate the ldap url list for new connections and circle back.
+         */
+        ROUND_ROBIN,
+        /**
+         * Randomly pick a url.
+         */
+        RANDOM,
+        /**
+         * ldap urls based on DNS SRV records.
+         */
+        DNS_SRV
+    }
+
     private String trustCertificates;
 
     private String keystore;
@@ -37,21 +90,27 @@ public abstract class AbstractLdapProperties {
 
     private int minPoolSize = 3;
     private int maxPoolSize = 10;
-    private String poolPassivator;
-    
+    private String poolPassivator = "BIND";
+
     private boolean validateOnCheckout = true;
     private boolean validatePeriodically = true;
-    private long validatePeriod = 300;
+    
+    private String validateTimeout = "PT5S";
+    private String validatePeriod = "PT5M";
 
     private boolean failFast = true;
-    private long idleTime = 600;
-    private long prunePeriod = 10000;
-    private long blockWaitTime = 6000;
-    
+
+    private String idleTime = "PT10M";
+    private String prunePeriod = "PT2H";
+    private String blockWaitTime = "PT3S";
+
+    private String connectionStrategy;
+
     private String ldapUrl = "ldap://localhost:389";
     private boolean useSsl = true;
     private boolean useStartTls;
-    private long connectTimeout = 5000;
+    private String connectTimeout = "PT5S";
+    private String responseTimeout = "PT5S";
 
     private String providerClass;
     private boolean allowMultipleDns;
@@ -67,12 +126,48 @@ public abstract class AbstractLdapProperties {
     private Boolean saslMutualAuth;
     private QualityOfProtection saslQualityOfProtection;
 
+    private Validator validator = new Validator();
+
+    private String name;
+
+    public String getValidateTimeout() {
+        return validateTimeout;
+    }
+
+    public void setValidateTimeout(final String validateTimeout) {
+        this.validateTimeout = validateTimeout;
+    }
+
     public String getPoolPassivator() {
         return poolPassivator;
     }
 
     public void setPoolPassivator(final String poolPassivator) {
         this.poolPassivator = poolPassivator;
+    }
+
+    public String getConnectionStrategy() {
+        return connectionStrategy;
+    }
+
+    public void setConnectionStrategy(final String connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(final Validator validator) {
+        this.validator = validator;
     }
 
     public String getBindDn() {
@@ -107,11 +202,11 @@ public abstract class AbstractLdapProperties {
         this.allowMultipleDns = allowMultipleDns;
     }
 
-    public long getPrunePeriod() {
+    public String getPrunePeriod() {
         return prunePeriod;
     }
 
-    public void setPrunePeriod(final long prunePeriod) {
+    public void setPrunePeriod(final String prunePeriod) {
         this.prunePeriod = prunePeriod;
     }
 
@@ -179,11 +274,11 @@ public abstract class AbstractLdapProperties {
         this.validatePeriodically = validatePeriodically;
     }
 
-    public long getValidatePeriod() {
+    public String getValidatePeriod() {
         return validatePeriod;
     }
 
-    public void setValidatePeriod(final long validatePeriod) {
+    public void setValidatePeriod(final String validatePeriod) {
         this.validatePeriod = validatePeriod;
     }
 
@@ -195,19 +290,19 @@ public abstract class AbstractLdapProperties {
         this.failFast = failFast;
     }
 
-    public long getIdleTime() {
+    public String getIdleTime() {
         return idleTime;
     }
 
-    public void setIdleTime(final long idleTime) {
+    public void setIdleTime(final String idleTime) {
         this.idleTime = idleTime;
     }
 
-    public long getBlockWaitTime() {
+    public String getBlockWaitTime() {
         return blockWaitTime;
     }
 
-    public void setBlockWaitTime(final long blockWaitTime) {
+    public void setBlockWaitTime(final String blockWaitTime) {
         this.blockWaitTime = blockWaitTime;
     }
 
@@ -235,11 +330,11 @@ public abstract class AbstractLdapProperties {
         this.useStartTls = useStartTls;
     }
 
-    public long getConnectTimeout() {
+    public String getConnectTimeout() {
         return connectTimeout;
     }
 
-    public void setConnectTimeout(final long connectTimeout) {
+    public void setConnectTimeout(final String connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
@@ -289,5 +384,79 @@ public abstract class AbstractLdapProperties {
 
     public Boolean getSaslMutualAuth() {
         return saslMutualAuth;
+    }
+
+    public String getResponseTimeout() {
+        return responseTimeout;
+    }
+
+    public void setResponseTimeout(final String responseTimeout) {
+        this.responseTimeout = responseTimeout;
+    }
+
+    public static class Validator {
+        private String type = "search";
+        private String baseDn = StringUtils.EMPTY;
+        private String searchFilter = "(objectClass=*)";
+        private SearchScope scope = SearchScope.OBJECT;
+        private String attributeName = "objectClass";
+        private List<String> attributeValues = Arrays.asList("top");
+        private String dn = StringUtils.EMPTY;
+
+        public String getDn() {
+            return dn;
+        }
+
+        public void setDn(final String dn) {
+            this.dn = dn;
+        }
+
+        public String getAttributeName() {
+            return attributeName;
+        }
+
+        public void setAttributeName(final String attributeName) {
+            this.attributeName = attributeName;
+        }
+
+        public List<String> getAttributeValues() {
+            return attributeValues;
+        }
+
+        public void setAttributeValues(final List<String> attributeValues) {
+            this.attributeValues = attributeValues;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(final String type) {
+            this.type = type;
+        }
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getSearchFilter() {
+            return searchFilter;
+        }
+
+        public void setSearchFilter(final String searchFilter) {
+            this.searchFilter = searchFilter;
+        }
+
+        public SearchScope getScope() {
+            return scope;
+        }
+
+        public void setScope(final SearchScope scope) {
+            this.scope = scope;
+        }
     }
 }

@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,9 +20,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * This is {@link ServiceRegistryConfigWatcher} that watches the json config directory
@@ -55,7 +53,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();
             final WatchEvent.Kind[] kinds = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
-            LOGGER.debug("Created service registry watcher for events of type {}", (Object[]) kinds);
+            LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) kinds);
             this.serviceRegistryDao.getWatchableResource().register(this.watcher, kinds);
             
             this.applicationEventPublisher = eventPublisher;
@@ -84,7 +82,6 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
                     final boolean valid = key != null && key.reset();
                     if (!valid) {
                         LOGGER.warn("Directory key is no longer valid. Quitting watcher service");
-                        break;
                     }
                 }
             }

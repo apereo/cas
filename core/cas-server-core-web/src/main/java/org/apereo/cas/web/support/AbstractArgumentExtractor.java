@@ -17,8 +17,8 @@ import java.util.List;
  */
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArgumentExtractor.class);
+    
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */
@@ -56,9 +56,9 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         final WebApplicationService service = extractServiceInternal(request);
 
         if (service == null) {
-            logger.debug("Extractor did not generate service.");
+            LOGGER.debug("Extractor did not generate service.");
         } else {
-            logger.debug("Extractor generated service type {} for: {}", service.getClass().getName(), service.getId());
+            LOGGER.debug("Extractor generated service type [{}] for: [{}]", service.getClass().getName(), service.getId());
         }
 
         return service;

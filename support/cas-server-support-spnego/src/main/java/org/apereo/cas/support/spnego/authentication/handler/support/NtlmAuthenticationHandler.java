@@ -12,14 +12,19 @@ import jcifs.smb.SmbSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 
 /**
  * Implementation of an AuthenticationHandler for NTLM supports.
@@ -30,7 +35,8 @@ import java.security.GeneralSecurityException;
  * @since 3.1
  */
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(NtlmAuthenticationHandler.class);
+    
     private static final int NBT_ADDRESS_TYPE = 0x1C;
     private static final int NTLM_TOKEN_TYPE_FIELD_INDEX = 8;
     private static final int NTLM_TOKEN_TYPE_ONE = 1;
@@ -40,31 +46,38 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     private boolean loadBalance = true;
 
-    private String domainController = DEFAULT_DOMAIN_CONTROLLER;
+    /**
+     * Sets domain controller. Will default if none is defined or passed.
+     */
+    private final String domainController;
 
-    private String includePattern;
+    private final String includePattern;
+
+    public NtlmAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                     final boolean loadBalance, final String domainController, final String includePattern) {
+        super(name, servicesManager, principalFactory, null);
+        this.loadBalance = loadBalance;
+        if (StringUtils.isBlank(domainController)) {
+            this.domainController = DEFAULT_DOMAIN_CONTROLLER;
+        } else {
+            this.domainController = domainController;
+        }
+        this.includePattern = includePattern;
+    }
 
     @Override
-    protected HandlerResult doAuthentication(
-            final Credential credential) throws GeneralSecurityException, PreventedException {
-
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;
         final byte[] src = ntlmCredential.getInitToken();
 
-        UniAddress dc = null;
-
+        final UniAddress dc;
         boolean success = false;
         try {
             if (this.loadBalance) {
                 // find the first dc that matches the includepattern
                 if (StringUtils.isNotBlank(this.includePattern)) {
                     final NbtAddress[] dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
-                    for (final NbtAddress dc2 : dcs) {
-                        if (dc2.getHostAddress().matches(this.includePattern)){
-                            dc = new UniAddress(dc2);
-                            break;
-                        }
-                    }
+                    dc = Arrays.stream(dcs).filter(dc2 -> dc2.getHostAddress().matches(this.includePattern)).findFirst().map(UniAddress::new).orElse(null);
                 } else {
                     dc = new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
                 }
@@ -75,22 +88,22 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
             switch (src[NTLM_TOKEN_TYPE_FIELD_INDEX]) {
                 case NTLM_TOKEN_TYPE_ONE:
-                    logger.debug("Type 1 received");
+                    LOGGER.debug("Type 1 received");
                     final Type1Message type1 = new Type1Message(src);
                     final Type2Message type2 = new Type2Message(type1,
                             challenge, null);
-                    logger.debug("Type 2 returned. Setting next token.");
+                    LOGGER.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
                     break;
                 case NTLM_TOKEN_TYPE_THREE:
-                    logger.debug("Type 3 received");
+                    LOGGER.debug("Type 3 received");
                     final Type3Message type3 = new Type3Message(src);
                     final byte[] lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
                     final byte[] ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
                     final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
                             type3.getDomain(), type3.getUser(), challenge,
                             lmResponse, ntResponse);
-                    logger.debug("Trying to authenticate {} with domain controller", type3.getUser());
+                    LOGGER.debug("Trying to authenticate [{}] with domain controller", type3.getUser());
                     try {
                         SmbSession.logon(dc, ntlm);
                         ntlmCredential.setPrincipal(this.principalFactory.createPrincipal(type3.getUser()));
@@ -100,7 +113,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     }
                     break;
                 default:
-                    logger.debug("Unknown type: {}", src[NTLM_TOKEN_TYPE_FIELD_INDEX]);
+                    LOGGER.debug("Unknown type: [{}]", src[NTLM_TOKEN_TYPE_FIELD_INDEX]);
             }
         } catch (final Exception e) {
             throw new FailedLoginException(e.getMessage());
@@ -116,26 +129,4 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     public boolean supports(final Credential credential) {
         return credential instanceof SpnegoCredential;
     }
-    
-    public void setLoadBalance(final boolean loadBalance) {
-        this.loadBalance = loadBalance;
-    }
-
-    /**
-     * Sets domain controller. Will default if none is defined or passed.
-     *
-     * @param domainController the domain controller
-     */
-    public void setDomainController(final String domainController) {
-        if (StringUtils.isBlank(domainController)) {
-            this.domainController = DEFAULT_DOMAIN_CONTROLLER;
-        } else {
-            this.domainController = domainController;
-        }
-    }
-    
-    public void setIncludePattern(final String includePattern) {
-        this.includePattern = includePattern;
-    }
-
 }

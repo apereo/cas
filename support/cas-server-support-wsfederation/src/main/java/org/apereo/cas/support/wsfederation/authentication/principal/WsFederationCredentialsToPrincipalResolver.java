@@ -1,6 +1,8 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
-import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.authentication.Credential;
 import org.slf4j.Logger;
@@ -18,8 +20,7 @@ import java.util.Map;
  */
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
     private WsFederationConfiguration configuration;
 
     /**
@@ -29,28 +30,28 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
      * @return the principal id
      */
     @Override
-    protected String extractPrincipalId(final Credential credentials) {
+    protected String extractPrincipalId(final Credential credentials, final Principal currentPrincipal) {
         final WsFederationCredential wsFedCredentials = (WsFederationCredential) credentials;
 
         final Map<String, List<Object>> attributes = wsFedCredentials.getAttributes();
-        logger.debug("Credential attributes provided are: {}", attributes);
+        LOGGER.debug("Credential attributes provided are: [{}]", attributes);
 
         final String idAttribute = this.configuration.getIdentityAttribute();
         if (attributes.containsKey(idAttribute)) {
-            logger.debug("Extracting principal id from attribute {}", this.configuration.getIdentityAttribute());
+            LOGGER.debug("Extracting principal id from attribute [{}]", this.configuration.getIdentityAttribute());
 
             final List<Object> idAttributeAsList = attributes.get(this.configuration.getIdentityAttribute());
             if (idAttributeAsList.size() > 1) {
-                logger.warn("Found multiple values for id attribute {}.", idAttribute);
+                LOGGER.warn("Found multiple values for id attribute [{}].", idAttribute);
             }
             final String principalId = idAttributeAsList.get(0).toString();
-            logger.debug("Principal Id extracted from credentials: {}", principalId);
+            LOGGER.debug("Principal Id extracted from credentials: [{}]", principalId);
             return principalId;
         }
 
-        logger.warn("Credential attributes do not include an attribute for {}. "
+        LOGGER.warn("Credential attributes do not include an attribute for [{}]. "
                 + "This will prohibit CAS to construct a meaningful authenticated principal. "
-                + "Examine the released claims and ensure {} is allowed", idAttribute, idAttribute);
+                + "Examine the released claims and ensure [{}] is allowed", idAttribute, idAttribute);
         return null;
     }
 
@@ -83,4 +84,12 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         return credential != null && WsFederationCredential.class.isAssignableFrom(credential.getClass());
     }
 
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("configuration", configuration)
+                .toString();
+    }
 }

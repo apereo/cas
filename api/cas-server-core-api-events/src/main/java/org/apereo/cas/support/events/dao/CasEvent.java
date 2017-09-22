@@ -3,6 +3,8 @@ package org.apereo.cas.support.events.dao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.util.DateTimeUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -14,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,21 +32,30 @@ import java.util.Map;
 @Table(name = "CasEvent")
 public class CasEvent {
 
+    @org.springframework.data.annotation.Id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = Integer.MAX_VALUE;
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private long id = -1;
 
-    @Column(updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String type;
 
-    @Column(updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principalId;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    private String creationTime;
+
     @ElementCollection
-    @MapKeyColumn(name="name")
-    @Column(name="value")
-    @CollectionTable(name="events_properties", joinColumns=@JoinColumn(name="id"))
+    @MapKeyColumn(name = "name")
+    @Column(name = "value")
+    @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "id"))
     private Map<String, String> properties = new HashMap<>();
+
+    public CasEvent() {
+        this.id = System.currentTimeMillis();
+    }
 
     public void setType(final String type) {
         this.type = type;
@@ -56,8 +69,34 @@ public class CasEvent {
         return this.type;
     }
 
+    /**
+     * Gets creation time. Attempts to parse the value
+     * as a {@link ZonedDateTime}. Otherwise, assumes a
+     * {@link LocalDateTime} and converts it based on system's
+     * default zone.
+     *
+     * @return the creation time
+     */
+    public ZonedDateTime getCreationTime() {
+        final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
+        if (dt != null) {
+            return dt;
+        }
+        final LocalDateTime lt = DateTimeUtils.localDateTimeOf(this.creationTime);
+        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
+    }
+
     public Map<String, String> getProperties() {
         return this.properties;
+    }
+
+    /**
+     * Set creation time.
+     *
+     * @param time the time
+     */
+    public void setCreationTime(final Object time) {
+        this.creationTime = time.toString();
     }
 
     /**
@@ -67,15 +106,6 @@ public class CasEvent {
      */
     public void putTimestamp(final Long time) {
         put("timestamp", time.toString());
-    }
-
-    /**
-     * Put creation time.
-     *
-     * @param time the time
-     */
-    public void putCreationTime(final ZonedDateTime time) {
-        put("creationTime", time.toString());
     }
 
     /**
@@ -114,10 +144,6 @@ public class CasEvent {
         put("agent", dev);
     }
 
-    public ZonedDateTime getCreationTime() {
-        return ZonedDateTime.parse(get("creationTime"));
-    }
-
     public Long getTimestamp() {
         return Long.valueOf(get("timestamp"));
     }
@@ -137,6 +163,7 @@ public class CasEvent {
     public String getServerIpAddress() {
         return get("serverip");
     }
+
     /**
      * Put property.
      *
@@ -223,5 +250,19 @@ public class CasEvent {
         putGeoLatitude(location.getLatitude());
         putGeoLongitude(location.getLongitude());
         putGeoTimestamp(location.getTimestamp());
+    }
+
+    /**
+     * Gets geo location.
+     *
+     * @return the geo location
+     */
+    public GeoLocationRequest getGeoLocation() {
+        final GeoLocationRequest request = new GeoLocationRequest();
+        request.setAccuracy(get("geoAccuracy"));
+        request.setTimestamp(get("geoTimestamp"));
+        request.setLongitude(get("geoLongitude"));
+        request.setLatitude(get("geoLatitude"));
+        return request;
     }
 }

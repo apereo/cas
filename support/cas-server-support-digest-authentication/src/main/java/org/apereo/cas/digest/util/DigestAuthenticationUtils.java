@@ -59,13 +59,13 @@ public final class DigestAuthenticationUtils {
      * @return the header string
      */
     public static String createAuthenticateHeader(final String realm, final String authMethod, final String nonce) {
-        String header = "";
-        header += "Digest realm=\"" + realm + "\",";
+        final StringBuilder stringBuilder = new StringBuilder("Digest realm=\"").append(realm).append("\",");
         if (StringUtils.isNotBlank(authMethod)) {
-            header += "qop=" + authMethod + ",";
+            stringBuilder.append("qop=").append(authMethod).append(',');
         }
-        header += "nonce=\"" + nonce + "\",";
-        header += "opaque=\"" + createOpaque(realm, nonce) + "\"";
-        return header;
+        return stringBuilder.append("nonce=\"").append(nonce)
+                .append("\",opaque=\"").append(createOpaque(realm, nonce))
+                .append('"')
+                .toString();
     }
 }

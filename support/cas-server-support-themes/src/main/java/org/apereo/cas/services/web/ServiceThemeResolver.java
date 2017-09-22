@@ -7,8 +7,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContext;
@@ -16,11 +14,11 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * ThemeResolver to determine the theme for CAS based on the service provided.
@@ -36,9 +34,23 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
 
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
-    private Map<Pattern, String> overrides = new HashMap<>();
+    /**
+     * This sets a flag on the request called "isMobile" and also
+     * provides the custom flag called browserType which can be mapped into the theme.
+     * <p>
+     * Themes that understand isMobile should provide an alternative stylesheet.
+     */
+    private final Map<Pattern, String> overrides;
+
+    public ServiceThemeResolver(final String defaultThemeName, final ServicesManager servicesManager, final Map<String, String> mobileOverrides) {
+        super();
+        super.setDefaultThemeName(defaultThemeName);
+        this.servicesManager = servicesManager;
+        this.overrides = mobileOverrides.entrySet().stream()
+                .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
+    }
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
@@ -52,13 +64,13 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
             return getDefaultThemeName();
         }
 
-        for (final Map.Entry<Pattern, String> entry : this.overrides.entrySet()) {
-            if (entry.getKey().matcher(userAgent).matches()) {
-                request.setAttribute("isMobile", "true");
-                request.setAttribute("browserType", entry.getValue());
-                break;
-            }
-        }
+        overrides.entrySet().stream()
+                .filter(entry -> entry.getKey().matcher(userAgent).matches())
+                .findFirst()
+                .ifPresent(entry -> {
+                    request.setAttribute("isMobile", "true");
+                    request.setAttribute("browserType", entry.getValue());
+                });
 
         final RequestContext context = RequestContextHolder.getRequestContext();
         final Service service = WebUtils.getService(context);
@@ -72,10 +84,9 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
                 if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
                     LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
                     return rService.getTheme();
-                } else {
-                    LOGGER.warn("Custom theme {} for service {} cannot be located. Falling back to default theme...",
-                            rService.getTheme(), rService);
                 }
+                LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
+                        rService.getTheme(), rService);
             }
         }
         return getDefaultThemeName();
@@ -84,35 +95,6 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
     @Override
     public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
         // nothing to do here
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    @Override
-    public void setDefaultThemeName(final String defaultThemeName) {
-        super.setDefaultThemeName(defaultThemeName);
-    }
-
-    /**
-     * Sets the map of mobile browsers.  This sets a flag on the request called "isMobile" and also
-     * provides the custom flag called browserType which can be mapped into the theme.
-     * <p>
-     * Themes that understand isMobile should provide an alternative stylesheet.
-     *
-     * @param mobileOverrides the list of mobile browsers.
-     */
-    @Autowired
-    @Qualifier("serviceThemeResolverSupportedBrowsers")
-    public void setMobileBrowsers(final Map mobileOverrides) {
-        // initialize the overrides variable to an empty map
-        this.overrides = new HashMap<>();
-
-        mobileOverrides.entrySet().forEach(e -> {
-            final Map.Entry<String, String> entry = (Map.Entry<String, String>) e;
-            this.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());
-        });
     }
 
     private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {

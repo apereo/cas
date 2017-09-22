@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.web;
 
-import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
@@ -18,6 +17,6 @@ public class CasManagementWebApplicationServletInitializer extends SpringBootSer
 
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder.sources(CasManagementWebApplication.class).banner(new CasBanner());
+        return builder.sources(CasManagementWebApplication.class).banner(new CasManagementBanner());
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -24,33 +25,22 @@ import java.net.URL;
  * @since 3.0.0
  */
 public class Cas20ProxyHandler implements ProxyHandler {
+  
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ProxyHandler.class);
+
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
-    /**
-     * The proxy granting ticket identifier parameter.
-     */
-    private static final String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
+    private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
+    private final HttpClient httpClient;
 
     /**
-     * The Constant proxy granting ticket parameter.
+     * Initializes the ticket id generator to {@link DefaultUniqueTicketIdGenerator}.
+     * @param httpClient http client
+     * @param uniqueTicketIdGenerator ticket id generator
      */
-    private static final String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
-
-    /**
-     * The Commons Logging instance.
-     */
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
-
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator;
-
-    private HttpClient httpClient;
-
-    /**
-     * Initializes the ticket id generator to
-     * {@link DefaultUniqueTicketIdGenerator}.
-     */
-    public Cas20ProxyHandler() {
-        this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    public Cas20ProxyHandler(final HttpClient httpClient, final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
+        this.httpClient = httpClient;
+        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 
     @Override
@@ -62,9 +52,9 @@ public class Cas20ProxyHandler implements ProxyHandler {
         final String serviceCredentialsAsString = callbackUrl.toExternalForm();
         final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
                 + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
-        final StringBuilder stringBuffer = new StringBuilder(bufferLength);
 
-        stringBuffer.append(serviceCredentialsAsString);
+        final StringBuilder stringBuffer = new StringBuilder(bufferLength)
+                .append(serviceCredentialsAsString);
 
         if (callbackUrl.getQuery() != null) {
             stringBuffer.append('&');
@@ -72,31 +62,23 @@ public class Cas20ProxyHandler implements ProxyHandler {
             stringBuffer.append('?');
         }
 
-        stringBuffer.append(PARAMETER_PROXY_GRANTING_TICKET_IOU);
-        stringBuffer.append('=');
-        stringBuffer.append(proxyIou);
-        stringBuffer.append('&');
-        stringBuffer.append(PARAMETER_PROXY_GRANTING_TICKET_ID);
-        stringBuffer.append('=');
-        stringBuffer.append(proxyGrantingTicketId);
+        stringBuffer.append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU)
+                .append('=')
+                .append(proxyIou)
+                .append('&')
+                .append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_ID)
+                .append('=')
+                .append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
-            logger.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
+            LOGGER.debug("Sent ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
             return proxyIou;
         }
 
-        logger.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
+        LOGGER.debug("Failed to send ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
         return null;
     }
     
-    public void setUniqueTicketIdGenerator(final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
-        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
-    }
-
-    public void setHttpClient(final HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
-
     @Override
     public boolean canHandle(final Credential credential) {
         return true;

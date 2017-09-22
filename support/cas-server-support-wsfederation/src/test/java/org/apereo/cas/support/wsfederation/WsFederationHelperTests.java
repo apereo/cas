@@ -21,7 +21,9 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 public class WsFederationHelperTests extends AbstractWsFederationTests {
-    
+
+    private static final String GOOD_TOKEN = "goodToken";
+
     @Autowired
     private WsFederationConfiguration wsFedConfig;
     
@@ -33,14 +35,14 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
 
     @Test
     public void verifyParseTokenString() throws Exception {
-        final String wresult = testTokens.get("goodToken");
+        final String wresult = testTokens.get(GOOD_TOKEN);
         final Assertion result = wsFederationHelper.parseTokenFromString(wresult, wsFedConfig);
         assertNotNull("testParseTokenString() - Not null", result);
     }
 
     @Test
     public void verifyCreateCredentialFromToken() throws Exception {
-        final String wresult = testTokens.get("goodToken");
+        final String wresult = testTokens.get(GOOD_TOKEN);
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult, wsFedConfig);
         
         final WsFederationCredential expResult = new WsFederationCredential();
@@ -72,7 +74,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
 
     @Test
     public void verifyValidateSignatureGoodToken() throws Exception {
-        final String wresult = testTokens.get("goodToken");
+        final String wresult = testTokens.get(GOOD_TOKEN);
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult, wsFedConfig);
         final boolean result = wsFederationHelper.validateSignature(assertion, wsFedConfig);
         assertTrue("testValidateSignatureGoodToken() - True", result);
@@ -94,7 +96,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         cfg.setSigningCertificateResources(ctx.getResource("classpath:bad-signing.crt"));
 
         signingWallet.addAll(cfg.getSigningCertificates());
-        final String wresult = testTokens.get("goodToken");
+        final String wresult = testTokens.get(GOOD_TOKEN);
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult, wsFedConfig);
         wsFedConfig.getSigningCertificates().clear();
         wsFedConfig.getSigningCertificates().addAll(signingWallet);
@@ -117,5 +119,4 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     public void setTestTokens(final HashMap<String, String> testTokens) {
         this.testTokens = testTokens;
     }
-
 }

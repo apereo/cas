@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
@@ -9,6 +11,7 @@ import java.time.ZonedDateTime;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface Ticket extends Serializable, Comparable<Ticket> {
 
     /**
@@ -54,5 +57,11 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      * @return the expiration policy
      */
     ExpirationPolicy getExpirationPolicy();
-    
+
+    /**
+     * Gets prefix.
+     *
+     * @return the prefix
+     */
+    String getPrefix();
 }

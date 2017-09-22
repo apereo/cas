@@ -34,8 +34,6 @@ public class PasswordValidator {
         if (!bean.getPassword().matches(casProperties.getAuthn().getPm().getPolicyPattern())) {
             messages.addMessage(new MessageBuilder().error().source("pm.passwordFailedCriteria").
                     defaultText("Password policy rejected the provided insecure password.").build());
-            return;
         }
-
     }
 }

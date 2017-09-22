@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.pm;
 
-import com.google.common.collect.Maps;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,6 +22,9 @@ public class PasswordManagementProperties {
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
     
     private Ldap ldap = new Ldap();
+    private Jdbc jdbc = new Jdbc();
+    private Rest rest = new Rest();
+
     private Reset reset = new Reset();
 
     public Reset getReset() {
@@ -46,6 +51,22 @@ public class PasswordManagementProperties {
         this.policyPattern = policyPattern;
     }
 
+    public Rest getRest() {
+        return rest;
+    }
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
+    }
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
+
     public Ldap getLdap() {
         return ldap;
     }
@@ -54,24 +75,90 @@ public class PasswordManagementProperties {
         this.ldap = ldap;
     }
 
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Jdbc extends AbstractJpaProperties {
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
-        /**
-         * The ldap type used to handle specific ops.
-         */
-        public enum LdapType {
-            /**
-             * Generic ldap type (openldap, 389ds, etc).
-             */
-            GENERIC,
-            /**
-             * Active directory.
-             */
-            AD
+        private String sqlChangePassword;
+        private String sqlFindEmail;
+        private String sqlSecurityQuestions;
+
+        public String getSqlChangePassword() {
+            return sqlChangePassword;
         }
+
+        public void setSqlChangePassword(final String sqlChangePassword) {
+            this.sqlChangePassword = sqlChangePassword;
+        }
+
+        public String getSqlFindEmail() {
+            return sqlFindEmail;
+        }
+
+        public void setSqlFindEmail(final String sqlFindEmail) {
+            this.sqlFindEmail = sqlFindEmail;
+        }
+
+        public String getSqlSecurityQuestions() {
+            return sqlSecurityQuestions;
+        }
+
+        public void setSqlSecurityQuestions(final String sqlSecurityQuestions) {
+            this.sqlSecurityQuestions = sqlSecurityQuestions;
+        }
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
+    }
+
+    public static class Rest {
+        private String endpointUrlEmail;
+        private String endpointUrlSecurityQuestions;
+        private String endpointUrlChange;
+
+        public String getEndpointUrlEmail() {
+            return endpointUrlEmail;
+        }
+
+        public void setEndpointUrlEmail(final String endpointUrlEmail) {
+            this.endpointUrlEmail = endpointUrlEmail;
+        }
+
+        public String getEndpointUrlSecurityQuestions() {
+            return endpointUrlSecurityQuestions;
+        }
+
+        public void setEndpointUrlSecurityQuestions(final String endpointUrlSecurityQuestions) {
+            this.endpointUrlSecurityQuestions = endpointUrlSecurityQuestions;
+        }
+
+        public String getEndpointUrlChange() {
+            return endpointUrlChange;
+        }
+
+        public void setEndpointUrlChange(final String endpointUrlChange) {
+            this.endpointUrlChange = endpointUrlChange;
+        }
+    }
+
+    public static class Ldap extends AbstractLdapProperties {
+        private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
         private String baseDn;
         private String userFilter;
         private LdapType type = LdapType.AD;
+        
+        public Map<String, String> getSecurityQuestionsAttributes() {
+            return securityQuestionsAttributes;
+        }
+
+        public void setSecurityQuestionsAttributes(final Map<String, String> s) {
+            this.securityQuestionsAttributes = s;
+        }
         
         public String getBaseDn() {
             return baseDn;
@@ -106,7 +193,7 @@ public class PasswordManagementProperties {
         private String subject = "Password Reset";
         private String from;
         private String emailAttribute = "mail";
-        private Map<String, String> securityQuestionsAttributes = Maps.newLinkedHashMap();
+        private boolean securityQuestionsEnabled = true;
         
         private float expirationMinutes = 1;
 
@@ -128,14 +215,6 @@ public class PasswordManagementProperties {
 
         public void setSecurity(final SigningEncryptionProperties security) {
             this.security = security;
-        }
-
-        public Map<String, String> getSecurityQuestionsAttributes() {
-            return securityQuestionsAttributes;
-        }
-
-        public void setSecurityQuestionsAttributes(final Map<String, String> s) {
-            this.securityQuestionsAttributes = s;
         }
 
         public String getText() {
@@ -168,6 +247,14 @@ public class PasswordManagementProperties {
 
         public void setExpirationMinutes(final float expirationMinutes) {
             this.expirationMinutes = expirationMinutes;
+        }
+
+        public boolean isSecurityQuestionsEnabled() {
+            return securityQuestionsEnabled;
+        }
+
+        public void setSecurityQuestionsEnabled(final boolean securityQuestionsEnabled) {
+            this.securityQuestionsEnabled = securityQuestionsEnabled;
         }
     }
 }

@@ -42,19 +42,19 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         }
         
         final String clientIp = clientInfo.getClientIpAddress();
-        LOGGER.debug("Located client IP address as {}", clientIp);
+        LOGGER.debug("Located client IP address as [{}]", clientIp);
 
         if (isClientIpAddressRejected(clientIp)) {
-            LOGGER.warn("Client IP {} is rejected for authentication", clientIp);
+            LOGGER.warn("Client IP [{}] is rejected for authentication", clientIp);
             return false;
         }
         
         if (isUserAgentRejected(userAgent)) {
-            LOGGER.warn("User agent {} is rejected for authentication", userAgent);
+            LOGGER.warn("User agent [{}] is rejected for authentication", userAgent);
             return false;
         }
 
-        LOGGER.debug("User agent {} is authorized to proceed", userAgent);
+        LOGGER.debug("User agent [{}] is authorized to proceed", userAgent);
         
         if (this.geoLocationService != null
             && location != null
@@ -63,22 +63,20 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
             
             final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
-                LOGGER.debug("Determined geolocation to be {}", loc);
+                LOGGER.debug("Determined geolocation to be [{}]", loc);
                 if (isGeoLocationCountryRejected(loc)) {
-                    LOGGER.warn("Client {} is rejected for authentication", clientIp);
+                    LOGGER.warn("Client [{}] is rejected for authentication", clientIp);
                     return false;
                 }
             } else {
-                LOGGER.info("Could not determine geolocation for {}", clientIp);
+                LOGGER.info("Could not determine geolocation for [{}]", clientIp);
             }
         }
 
-        LOGGER.debug("Adaptive authentication policy has authorized client {} to proceed.", clientIp);
+        LOGGER.debug("Adaptive authentication policy has authorized client [{}] to proceed.", clientIp);
         return true;
     }
     
-
-
     private boolean isClientIpAddressRejected(final String clientIp) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
                 && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectIpAddresses()).matcher(clientIp).find();
@@ -86,7 +84,7 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())
-                && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.buildAddress()).find();
+                && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.build()).find();
     }
     
     private boolean isUserAgentRejected(final String userAgent) {

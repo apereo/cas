@@ -1,13 +1,15 @@
 #!/bin/bash
 invokeJavadoc=false
 invokeDoc=false
-branchVersion="5.0.x"
+
+casBranch="5.1.x"
+branchVersion="5.1.x"
 
 # Only invoke the javadoc deployment process
 # for the first job in the build matrix, so as
 # to avoid multiple deployments.
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchVersion" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$casBranch" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1)
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
@@ -22,6 +24,7 @@ echo -e "Starting with project documentation...\n"
 if [ "$invokeDoc" == true ]; then
 
   echo -e "Copying project documentation over to $HOME/docs-latest...\n"
+  rm -Rf docs/cas-server-documentation/build
   cp -R docs/cas-server-documentation $HOME/docs-latest
 
 fi
@@ -35,7 +38,7 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Started to publish latest Javadoc to gh-pages...\n"
 
   echo -e "Invoking build to generate the project site...\n"
-  ./gradlew javadoc -q -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8 --parallel
+  ./gradlew javadoc -q --parallel
 
   echo -e "Copying the generated docs over...\n"
   cp -R build/javadoc $HOME/javadoc-latest
@@ -52,12 +55,13 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git config --global pack.threads "24"
   
   echo -e "Cloning the repository to push documentation...\n"
-  git clone --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
+  git clone --single-branch --depth 3 --branch gh-pages --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
   
   cd gh-pages
+  # git gc --aggressive --prune=now
   
   echo -e "Configuring tracking branches for repository:\n"
-  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
+  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v $casBranch`; do
      git branch --track ${branch##*/} $branch
   done
 
@@ -103,26 +107,26 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   echo -e "Committing changes...\n"
   git commit -m "Published documentation from $TRAVIS_BRANCH to [gh-pages]. Build $TRAVIS_BUILD_NUMBER " > /dev/null
   
-  echo -e "Before: Calculating git repository disk usage:\n"
-  du -sh .git/
+  # echo -e "Before: Calculating git repository disk usage:\n"
+  # du -sh .git/
 
-  echo -e "Before: Counting git objects in the repository:\n"
-  git count-objects -vH
+  # echo -e "Before: Counting git objects in the repository:\n"
+  # git count-objects -vH
   
-  echo -e "\nCleaning up repository...\n"
+  # echo -e "\nCleaning up repository...\n"
   # rm -rf .git/refs/original/
   # rm -Rf .git/logs/
   # git reflog expire --expire=now --all
   
-  echo -e "\nRunning garbage collection on the git repository...\n"
-  git gc --prune=now
-  git repack -a -d --depth=500000 --window=500
+  # echo -e "\nRunning garbage collection on the git repository...\n"
+  # git gc --prune=now
+  # git repack -a -d --depth=500000 --window=500
   
-  echo -e "After: Calculating git repository disk usage:\n"
-  du -sh .git/
+  # echo -e "After: Calculating git repository disk usage:\n"
+  # du -sh .git/
   
-  echo -e "After: Counting git objects in the repository:\n"
-  git count-objects -vH
+  # echo -e "After: Counting git objects in the repository:\n"
+  # git count-objects -vH
   
   echo -e "Pushing upstream to origin/gh-pages...\n"
   git push -fq origin --all > /dev/null

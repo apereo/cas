@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 /**
@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public final class RegexUtils {
+
+    /** A pattern match that does not match anything. */
+    public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
 
     private RegexUtils() {}
@@ -27,13 +31,12 @@ public final class RegexUtils {
      */
     public static boolean isValidRegex(final String pattern) {
         try {
-            if (pattern == null) {
-                throw new IllegalArgumentException("Pattern cannot be null");
+            if (pattern != null) {
+                Pattern.compile(pattern);
+                return true;
             }
-            LOGGER.debug("Pattern {} is a valid regex.", Pattern.compile(pattern).pattern());
-            return true;
-        } catch (final Exception exception) {
-            LOGGER.debug("Pattern {} is not a valid regex.", pattern);
+        } catch (final PatternSyntaxException exception) {
+            LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
         }
         return false;
     }
@@ -43,14 +46,11 @@ public final class RegexUtils {
      * case insensitive.
      *
      * @param pattern the pattern, may not be null.
-     * @return the pattern or empty. 
+     * @return the pattern or or {@link RegexUtils#MATCH_NOTHING_PATTERN}
+     * if pattern is null or invalid.
      */
-    public static Optional<Pattern> createPattern(final String pattern) {
-        if (RegexUtils.isValidRegex(pattern)) {
-            return Optional.of(Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
-        }
-
-        return Optional.empty();
+    public static Pattern createPattern(final String pattern) {
+        return createPattern(pattern, Pattern.CASE_INSENSITIVE);
     }
     
     /**
@@ -62,9 +62,26 @@ public final class RegexUtils {
      */
     public static Pattern concatenate(final Collection<String> requiredValues, final boolean caseInsensitive) {
         final String pattern = requiredValues.stream().collect(Collectors.joining("|", "(", ")"));
-        if (isValidRegex(pattern)) {
-            return Pattern.compile(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+        return createPattern(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+    }
+
+    /**
+     * Creates the pattern with the given flags.
+     *
+     * @param pattern the pattern, may be null.
+     * @return the compiled pattern or {@link RegexUtils#MATCH_NOTHING_PATTERN}
+     * if pattern is null or invalid.
+     */
+    private static Pattern createPattern(final String pattern, final int flags) {
+        if (pattern == null) {
+            LOGGER.debug("Pattern [{}] can't be null", pattern);
+            return MATCH_NOTHING_PATTERN;
         }
-        return null;
+        try {
+            return Pattern.compile(pattern, flags);
+        } catch (final PatternSyntaxException exception) {
+            LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
+            return MATCH_NOTHING_PATTERN;
+        }
     }
 }

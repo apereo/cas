@@ -25,7 +25,8 @@ of the proxy server and not the client. Given that this form of CAS authenticati
 be deployed within an internal network this is generally not a problem.
 
 
-## Configuration 
+## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -36,4 +37,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#remote-address-authentication).

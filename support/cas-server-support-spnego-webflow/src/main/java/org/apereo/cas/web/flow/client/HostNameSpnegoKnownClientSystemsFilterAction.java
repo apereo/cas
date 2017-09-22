@@ -1,5 +1,8 @@
 package org.apereo.cas.web.flow.client;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Pattern;
 
 /**
@@ -13,24 +16,20 @@ import java.util.regex.Pattern;
  */
 
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-
-    private Pattern hostNamePatternString;
-
-    /**
-     * Instantiates a new Host name spnego known client systems filter action.
-     */
-    public HostNameSpnegoKnownClientSystemsFilterAction() {
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(HostNameSpnegoKnownClientSystemsFilterAction.class);
+    
+    private final Pattern hostNamePatternString;
 
     /**
      * Instantiates a new hostname spnego known client systems filter action.
-     *
+     * @param ipsToCheckPattern the ips to check pattern
+     * @param alternativeHost the alternative remote host attribute
+     * @param dnsTimeout # of milliseconds to wait for a DNS request to return
      * @param hostNamePatternString the host name pattern string.
-     *                              The pattern to match the retrieved hostname against.
      */
-    public HostNameSpnegoKnownClientSystemsFilterAction(
-            final String hostNamePatternString) {
-        super();
+    public HostNameSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeHost, final long dnsTimeout,
+                                                        final String hostNamePatternString) {
+        super(ipsToCheckPattern, alternativeHost, dnsTimeout);
         this.hostNamePatternString = Pattern.compile(hostNamePatternString);
     }
 
@@ -50,7 +49,7 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
             return false;
         }
         final String hostName = getRemoteHostName(remoteIp);
-        logger.debug("Retrieved host name for the remote ip is {}", hostName);
+        LOGGER.debug("Retrieved host name for the remote ip is [{}]", hostName);
         return this.hostNamePatternString.matcher(hostName).find();
     }
 }

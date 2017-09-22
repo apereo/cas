@@ -13,6 +13,8 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Peek into an LDAP server and check for the existence of an attribute
@@ -23,26 +25,28 @@ import org.ldaptive.Operation;
  * @since 4.1
  */
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapSpnegoKnownClientSystemsFilterAction.class);
+    
     /**
      * The must-have attribute name.
      */
-    private String spnegoAttributeName;
-
-    private ConnectionFactory connectionFactory;
-    private SearchRequest searchRequest;
-
-    public LdapSpnegoKnownClientSystemsFilterAction() {
-    }
+    private final String spnegoAttributeName;
+    private final ConnectionFactory connectionFactory;
+    private final SearchRequest searchRequest;
 
     /**
      * Instantiates a new action.
-     *
+     * @param ipsToCheckPattern the ips to check pattern
+     * @param alternativeRemoteHostAttribute the alternative remote host attribute
+     * @param dnsTimeout # of milliseconds to wait for a DNS request to return
      * @param connectionFactory   the connection factory
      * @param searchRequest       the search request
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
-    public LdapSpnegoKnownClientSystemsFilterAction(final ConnectionFactory connectionFactory, final SearchRequest searchRequest,
+    public LdapSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute,
+                                                    final long dnsTimeout, final ConnectionFactory connectionFactory, final SearchRequest searchRequest,
                                                     final String spnegoAttributeName) {
+        super(ipsToCheckPattern, alternativeRemoteHostAttribute, dnsTimeout);
         this.connectionFactory = connectionFactory;
         this.spnegoAttributeName = spnegoAttributeName;
         this.searchRequest = searchRequest;
@@ -56,7 +60,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @throws LdapException the ldap exception
      */
     protected Connection createConnection() throws LdapException {
-        logger.debug("Establishing a connection...");
+        LOGGER.debug("Establishing a connection...");
         final Connection connection = this.connectionFactory.getConnection();
         connection.open();
         return connection;
@@ -66,17 +70,17 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     protected boolean shouldDoSpnego(final String remoteIp) {
 
         if (StringUtils.isBlank(this.spnegoAttributeName)) {
-            logger.warn("Ignoring Spnego. Attribute name is not configured");
+            LOGGER.warn("Ignoring Spnego. Attribute name is not configured");
             return false;
         }
 
         if (this.connectionFactory == null) {
-            logger.warn("Ignoring Spnego. LDAP connection factory is not configured");
+            LOGGER.warn("Ignoring Spnego. LDAP connection factory is not configured");
             return false;
         }
 
         if (this.searchRequest == null) {
-            logger.warn("Ignoring Spnego. LDAP search request is not configured");
+            LOGGER.warn("Ignoring Spnego. LDAP search request is not configured");
             return false;
         }
 
@@ -84,8 +88,16 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
-        logger.debug("Attempting to locate attribute {} for {}", this.spnegoAttributeName, remoteIp);
+        LOGGER.debug("Attempting to locate attribute [{}] for [{}]", this.spnegoAttributeName, remoteIp);
         return executeSearchForSpnegoAttribute(remoteIp);
+    }
+
+    @Override
+    protected String getRemoteHostName(final String remoteIp) {
+        if ("localhost".equalsIgnoreCase(remoteIp) || remoteIp.startsWith("127.")) {
+            return remoteIp;
+        }
+        return super.getRemoteHostName(remoteIp);
     }
 
     /**
@@ -97,15 +109,14 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
         final String remoteHostName = getRemoteHostName(remoteIp);
-        logger.debug("Resolved remote hostname {} based on ip {}",
-                remoteHostName, remoteIp);
+        LOGGER.debug("Resolved remote hostname [{}] based on ip [{}]", remoteHostName, remoteIp);
 
         try {
             connection = createConnection();
             final Operation searchOperation = new SearchOperation(connection);
             this.searchRequest.getSearchFilter().setParameter(0, remoteHostName);
 
-            logger.debug("Using search filter {} on baseDn {}",
+            LOGGER.debug("Using search filter [{}] on baseDn [{}]",
                     this.searchRequest.getSearchFilter().format(),
                     this.searchRequest.getBaseDn());
 
@@ -115,7 +126,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
             }
             throw new RuntimeException("Failed to establish a connection ldap. " + searchResult.getMessage());
         } catch (final LdapException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         } finally {
             if (connection != null) {
@@ -134,12 +145,12 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         final SearchResult result = searchResult.getResult();
 
         if (result == null || result.getEntries().isEmpty()) {
-            logger.debug("Spnego attribute is not found in the search results");
+            LOGGER.debug("Spnego attribute is not found in the search results");
             return false;
         }
         final LdapEntry entry = result.getEntry();
         final LdapAttribute attribute = entry.getAttribute(this.spnegoAttributeName);
-        logger.debug("Spnego attribute {} found as {} for {}", attribute.getName(), attribute.getStringValue(), entry.getDn());
+        LOGGER.debug("Spnego attribute [{}] found as [{}] for [{}]", attribute.getName(), attribute.getStringValue(), entry.getDn());
         return verifySpnegoAttributeValue(attribute);
     }
 

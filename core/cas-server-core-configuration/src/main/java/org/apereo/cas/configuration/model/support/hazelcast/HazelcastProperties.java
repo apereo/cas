@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,10 +25,9 @@ public class HazelcastProperties {
      */
     public static final String MAX_HEARTBEAT_SECONDS_PROP = "hazelcast.max.no.heartbeat.seconds";
 
-    private String mapName = "tickets";
     private int pageSize = 500;
     private Resource configLocation;
-    
+
     private Cluster cluster = new Cluster();
 
     @NestedConfigurationProperty
@@ -74,24 +73,23 @@ public class HazelcastProperties {
         private int port = 5701;
         private boolean multicastEnabled;
         private boolean tcpipEnabled = true;
-        private List<String> members = Lists.newArrayList("localhost");
+        private List<String> members = Arrays.asList("localhost");
         private int maxHeapSizePercentage = 85;
         private String maxSizePolicy = "USED_HEAP_PERCENTAGE";
         private String evictionPolicy = "LRU";
-        private int evictionPercentage = 10;
         private int backupCount = 1;
         private int asyncBackupCount;
-    
+
         private int timeout = 5;
-        
+
         private boolean ipv4Enabled = true;
-        
+
         private String multicastTrustedInterfaces;
         private String multicastGroup;
         private int multicastPort;
         private int multicastTimeout = 2;
         private int multicastTimeToLive = 32;
-        
+
         public int getBackupCount() {
             return backupCount;
         }
@@ -196,14 +194,6 @@ public class HazelcastProperties {
             this.evictionPolicy = evictionPolicy;
         }
 
-        public int getEvictionPercentage() {
-            return evictionPercentage;
-        }
-
-        public void setEvictionPercentage(final int evictionPercentage) {
-            this.evictionPercentage = evictionPercentage;
-        }
-
         public String getMulticastTrustedInterfaces() {
             return multicastTrustedInterfaces;
         }
@@ -259,13 +249,5 @@ public class HazelcastProperties {
         public void setIpv4Enabled(final boolean ipv4Enabled) {
             this.ipv4Enabled = ipv4Enabled;
         }
-    }
-
-    public String getMapName() {
-        return mapName;
-    }
-
-    public void setMapName(final String mapName) {
-        this.mapName = mapName;
     }
 }

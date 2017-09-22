@@ -1,9 +1,5 @@
-description = "Apereo CAS Basic Google Authenticator Support"
+description = "Apereo CAS Google Authenticator Support"
 dependencies {
-    compile libraries.googleauth
-    compile libraries.spring
-    compile libraries.springcloud
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-webflow")
+    compile project(":support:cas-server-support-gauth-core")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.grouper.services;
 
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,8 @@ import java.util.Set;
  * @since 4.2
  */
 public class GrouperRegisteredServiceAccessStrategyTests {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategyTests.class);
+    
     @Test
     public void checkGrouperAttributes() {
         final ClassPathResource resource = new ClassPathResource("grouper.client.properties");
@@ -29,9 +29,9 @@ public class GrouperRegisteredServiceAccessStrategyTests {
             final Map<String, Set<String>> requiredAttributes = new HashMap<>();
             requiredAttributes.put("memberOf", Collections.singleton("admin"));
             strategy.setRequiredAttributes(requiredAttributes);
-            strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) TestUtils.getTestAttributes());
+            strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) RegisteredServiceTestUtils.getTestAttributes());
         } else {
-            logger.info("{} is not configured. Skipping tests", resource.getFilename());
+            LOGGER.info("[{}] is not configured. Skipping tests", resource.getFilename());
         }
     }
 }

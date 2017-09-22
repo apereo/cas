@@ -4,7 +4,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.client.validation.Assertion;
-import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * @param <T> the type parameter
  * @since 5.0.0
  */
-public interface SamlProfileObjectBuilder<T extends SAMLObject> {
+public interface SamlProfileObjectBuilder<T extends XMLObject> {
 
     /**
      * Build response.
@@ -29,10 +29,15 @@ public interface SamlProfileObjectBuilder<T extends SAMLObject> {
      * @param assertion    the assertion
      * @param service      the service
      * @param adaptor      the adaptor
+     * @param binding      the binding
      * @return the response
      * @throws SamlException the exception
      */
-    T build(AuthnRequest authnRequest, HttpServletRequest request,
-            HttpServletResponse response, Assertion assertion,
-            SamlRegisteredService service, SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException;
+    T build(AuthnRequest authnRequest,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Assertion assertion,
+            SamlRegisteredService service,
+            SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+            String binding) throws SamlException;
 }

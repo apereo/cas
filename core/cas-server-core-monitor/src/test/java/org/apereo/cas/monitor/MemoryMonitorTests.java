@@ -14,13 +14,12 @@ public class MemoryMonitorTests {
 
     @Test
     public void verifyObserveOk() throws Exception {
-        assertEquals(StatusCode.OK, new MemoryMonitor().observe().getCode());
+        assertEquals(StatusCode.OK, new MemoryMonitor(0).observe().getCode());
     }
 
     @Test
     public void verifyObserveWarn() throws Exception {
-        final MemoryMonitor monitor = new MemoryMonitor();
-        monitor.setFreeMemoryWarnThreshold(100);
+        final MemoryMonitor monitor = new MemoryMonitor(100);
         assertEquals(StatusCode.WARN, monitor.observe().getCode());
     }
 }

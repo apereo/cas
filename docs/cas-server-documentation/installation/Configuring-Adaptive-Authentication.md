@@ -10,32 +10,14 @@ of the client browser and/or device. When configured, you are provided with opti
 from certain locations submitted by certain browser agents. For instance, you may consider authentication requests submitted
 from `London, UK` to be considered suspicious, or you may want to block requests that are submitted from Internet Explorer, etc.
 
-## Google Maps
+## Configuration
 
-Uses the [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/start) to translate
-authentication requests into a geo-location.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#adaptive-authentication).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-geolocation-googlemaps</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+To enable adaptive authentication, you will need to allow CAS to geo-locate authentication requests.
+To learn more, please [see this guide](GeoTracking-Authentication-Requests.html)
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+# Risk-based Authentication
 
-## Maxmind
-
-Uses [Maxmind](https://www.maxmind.com/en/home) to translate
-authentication requests into a geo-location.
-
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-geolocation-maxmind</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+CAS is able to track and examine authentication requests for suspicious behavior.
+To learn more, please [see this guide](Configuring-RiskBased-Authentication.html).

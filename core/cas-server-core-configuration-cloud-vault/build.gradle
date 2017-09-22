@@ -1,8 +1,5 @@
 description = "Apereo CAS Core Configuration - HashiCorp Vault"
 dependencies {
-    compile libraries.springboot
-    compile libraries.spring
-    compile libraries.springcloudvault
-    compile libraries.httpclient
+    implementation libraries.springcloudvault
     compileOnly project(":core:cas-server-core-configuration")
 }

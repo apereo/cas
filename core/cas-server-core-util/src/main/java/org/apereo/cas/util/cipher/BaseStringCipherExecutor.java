@@ -3,13 +3,15 @@ package org.apereo.cas.util.cipher;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.EncodingUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
-import org.jose4j.jwk.OctJwkGenerator;
-import org.jose4j.jwk.OctetSequenceJsonWebKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.HashMap;
@@ -23,9 +25,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<String, String> {
-    private static final String JSON_WEB_KEY = "k";
-    
+public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseStringCipherExecutor.class);
+
     private static final int ENCRYPTION_KEY_SIZE = 256;
 
     private static final int SIGNING_KEY_SIZE = 512;
@@ -34,8 +36,9 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
 
     private Key secretKeyEncryptionKey;
 
-    private BaseStringCipherExecutor() {}
-    
+    private BaseStringCipherExecutor() {
+    }
+
     /**
      * Instantiates a new cipher.
      * <p>Note that in order to customize the encryption algorithms,
@@ -65,50 +68,56 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
         super();
 
         if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
-            logger.debug("contentEncryptionAlgorithmIdentifier is not defined");
+            LOGGER.debug("contentEncryptionAlgorithmIdentifier is not defined");
             return;
         }
 
         String secretKeyToUse = secretKeyEncryption;
         if (StringUtils.isBlank(secretKeyToUse)) {
-            logger.warn("Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key");
-            secretKeyToUse = generateOctetJsonWebKeyOfSize(ENCRYPTION_KEY_SIZE);
-            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
-                    secretKeyToUse, ENCRYPTION_KEY_SIZE);
+            LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
+            secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
+            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
+                    secretKeyToUse, ENCRYPTION_KEY_SIZE, getName());
+        } else {
+            LOGGER.debug("Located encryption key to use for [{}]", getName());
         }
 
         String signingKeyToUse = secretKeySigning;
         if (StringUtils.isBlank(signingKeyToUse)) {
-            logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
-            signingKeyToUse = generateOctetJsonWebKeyOfSize(SIGNING_KEY_SIZE);
-            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
-                    signingKeyToUse, SIGNING_KEY_SIZE);
+            LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
+            signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
+            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
+                    signingKeyToUse, SIGNING_KEY_SIZE, getName());
+        } else {
+            LOGGER.debug("Located signing key to use for [{}]", getName());
         }
 
 
         setSigningKey(signingKeyToUse);
         this.secretKeyEncryptionKey = prepareJsonWebTokenKey(secretKeyToUse);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
-
-        logger.debug("Initialized cipher encryption sequence via [{}]",
-                contentEncryptionAlgorithmIdentifier);
+        LOGGER.debug("Initialized cipher encryption sequence via [{}]", contentEncryptionAlgorithmIdentifier);
 
     }
 
     @Override
-    public String encode(final String value) {
+    public String encode(final Serializable value) {
         final String encoded = encryptValue(value);
         final String signed = new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         return signed;
     }
 
     @Override
-    public String decode(final String value) {
-        final byte[] encoded = verifySignature(value.getBytes(StandardCharsets.UTF_8));
-        if (encoded != null && encoded.length > 0) {
-            return decryptValue(new String(encoded, StandardCharsets.UTF_8));
+    public String decode(final Serializable value) {
+        try {
+            final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
+            if (encoded != null && encoded.length > 0) {
+                return decryptValue(new String(encoded, StandardCharsets.UTF_8));
+            }
+            return null;
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
-        return null;
     }
 
     /**
@@ -118,11 +127,10 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
      * @return the key
      */
     private static Key prepareJsonWebTokenKey(final String secret) {
-
         try {
             final Map<String, Object> keys = new HashMap<>(2);
             keys.put("kty", "oct");
-            keys.put(JSON_WEB_KEY, secret);
+            keys.put(EncodingUtils.JSON_WEB_KEY, secret);
             final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
             return jwk.getKey();
         } catch (final Exception e) {
@@ -137,19 +145,30 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
      * @param value the value
      * @return the encoded value
      */
-    private String encryptValue(final String value) {
+    private String encryptValue(final Serializable value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setPayload(value);
+            jwe.setPayload(serializeValue(value));
+            jwe.enableDefaultCompression();
             jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
             jwe.setEncryptionMethodHeaderParameter(this.contentEncryptionAlgorithmIdentifier);
             jwe.setKey(this.secretKeyEncryptionKey);
-            logger.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
+            LOGGER.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
             throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
                     + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Serialize value as string.
+     *
+     * @param value the value
+     * @return the string
+     */
+    protected String serializeValue(final Serializable value) {
+        return value.toString();
     }
 
     /**
@@ -163,16 +182,10 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setKey(this.secretKeyEncryptionKey);
             jwe.setCompactSerialization(value);
-            logger.debug("Decrypting value...");
+            LOGGER.debug("Decrypting value...");
             return jwe.getPayload();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    private static String generateOctetJsonWebKeyOfSize(final int size) {
-        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
-        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
-        return params.get(JSON_WEB_KEY).toString();
     }
 }

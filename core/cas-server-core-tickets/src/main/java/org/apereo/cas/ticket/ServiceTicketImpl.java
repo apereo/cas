@@ -1,5 +1,8 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -27,8 +30,9 @@ import javax.persistence.Table;
 @Table(name = "SERVICETICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(ServiceTicket.PREFIX)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
-    
+
     private static final long serialVersionUID = -4223319704861765405L;
 
     /**
@@ -45,7 +49,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     private Service service;
 
     /**
-     * Is this service ticket the result of a new login.
+     * Is this service ticket the result of a new login?
      */
     @Column(name = "FROM_NEW_LOGIN", nullable = false)
     private boolean fromNewLogin;
@@ -65,17 +69,24 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * a Service, Expiration Policy and a flag to determine if the ticket
      * creation was from a new Login or not.
      *
-     * @param id           the unique identifier for the ticket.
-     * @param ticket       the TicketGrantingTicket parent.
-     * @param service      the service this ticket is for.
+     * @param id                 the unique identifier for the ticket.
+     * @param ticket             the TicketGrantingTicket parent.
+     * @param service            the service this ticket is for.
      * @param credentialProvided current credential that prompted this service ticket. May be null.
-     * @param policy       the expiration policy for the Ticket.
-     * @throws IllegalArgumentException if the TicketGrantingTicket or the
-     *                                  Service are null.
+     * @param policy             the expiration policy for the Ticket.
+     * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
      */
-    public ServiceTicketImpl(final String id,
-                             final TicketGrantingTicketImpl ticket, final Service service,
-                             final boolean credentialProvided, final ExpirationPolicy policy) {
+    @JsonCreator
+    public ServiceTicketImpl(@JsonProperty("id")
+                             final String id,
+                             @JsonProperty("grantingTicket")
+                             final TicketGrantingTicket ticket,
+                             @JsonProperty("service")
+                             final Service service,
+                             @JsonProperty("credentialProvided")
+                             final boolean credentialProvided,
+                             @JsonProperty("expirationPolicy")
+                             final ExpirationPolicy policy) {
         super(id, policy);
 
         Assert.notNull(service, "service cannot be null");
@@ -109,9 +120,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         return serviceToValidate.matches(this.service);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object object) {
         if (object == null) {
@@ -157,4 +165,16 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         return getGrantingTicket().getAuthentication();
     }
 
+    public void setTicketGrantingTicket(final TicketGrantingTicket ticketGrantingTicket) {
+        this.ticketGrantingTicket = ticketGrantingTicket;
+    }
+
+    public void setService(final Service service) {
+        this.service = service;
+    }
+
+    @Override
+    public String getPrefix() {
+        return ServiceTicket.PREFIX;
+    }
 }

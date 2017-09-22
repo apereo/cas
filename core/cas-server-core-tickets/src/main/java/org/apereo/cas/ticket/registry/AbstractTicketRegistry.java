@@ -1,10 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
@@ -18,7 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import com.google.common.io.ByteSource;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * @author Scott Battaglia
@@ -31,9 +31,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
-    private CipherExecutor cipherExecutor;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTicketRegistry.class);
+    
+    /**
+     * The cipher executor for ticket objects.
+     */
+    protected CipherExecutor cipherExecutor;
 
     /**
      * Default constructor.
@@ -43,7 +46,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @return specified ticket from the registry
      * @throws IllegalArgumentException if class is null.
@@ -72,10 +75,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public long sessionCount() {
         try {
-            return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
+            return getTickets().stream().filter(TicketGrantingTicket.class::isInstance).count();
         } catch (final Throwable t) {
-            logger.trace("sessionCount() operation is not implemented by the ticket registry instance {}. "
-                            + "Message is: {} Returning unknown as {}",
+            LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
+                            + "Message is: [{}] Returning unknown as [{}]",
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
@@ -84,10 +87,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public long serviceTicketCount() {
         try {
-            return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
+            return getTickets().stream().filter(ServiceTicket.class::isInstance).count();
         } catch (final Throwable t) {
-            logger.trace("serviceTicketCount() operation is not implemented by the ticket registry instance {}. "
-                            + "Message is: {} Returning unknown as {}",
+            LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
+                            + "Message is: [{}] Returning unknown as [{}]",
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
@@ -97,7 +100,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     public int deleteTicket(final String ticketId) {
         final AtomicInteger count = new AtomicInteger(0);
 
-        if (ticketId == null) {
+        if (StringUtils.isBlank(ticketId)) {
             return count.intValue();
         }
 
@@ -108,19 +111,17 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
         if (ticket instanceof TicketGrantingTicket) {
             if (ticket instanceof ProxyGrantingTicket) {
-                logger.debug("Removing proxy-granting ticket [{}]", ticketId);
+                LOGGER.debug("Removing proxy-granting ticket [{}]", ticketId);
             }
 
-            logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
+            LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
             count.addAndGet(deleteChildren(tgt));
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            proxyGrantingTickets.stream().map(Ticket::getId).forEach((t) -> {
-                count.addAndGet(this.deleteTicket(t));
-            });
+            proxyGrantingTickets.stream().map(Ticket::getId).forEach(t -> count.addAndGet(this.deleteTicket(t)));
         }
-        logger.debug("Removing ticket [{}] from the registry.", ticket);
+        LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
 
         if (deleteSingleTicket(ticketId)) {
             count.incrementAndGet();
@@ -144,10 +145,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         if (services != null && !services.isEmpty()) {
             services.keySet().stream().forEach(ticketId -> {
                 if (deleteSingleTicket(ticketId)) {
-                    logger.debug("Removed ticket [{}]", ticketId);
+                    LOGGER.debug("Removed ticket [{}]", ticketId);
                     count.incrementAndGet();
                 } else {
-                    logger.debug("Unable to remove ticket [{}]", ticketId);
+                    LOGGER.debug("Unable to remove ticket [{}]", ticketId);
                 }
             });
         }
@@ -185,14 +186,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected String encodeTicketId(final String ticketId) {
         if (!isCipherExecutorEnabled()) {
-            logger.trace(MESSAGE);
+            LOGGER.trace(MESSAGE);
             return ticketId;
         }
         if (StringUtils.isBlank(ticketId)) {
             return ticketId;
         }
-
-        return DigestUtils.sha512(ticketId);
+        final String encodedId = DigestUtils.sha512(ticketId);
+        LOGGER.debug("Encoded original ticket id [{}] to [{}]", ticketId, encodedId);
+        return encodedId;
     }
 
     /**
@@ -203,23 +205,20 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected Ticket encodeTicket(final Ticket ticket) {
         if (!isCipherExecutorEnabled()) {
-            logger.trace(MESSAGE);
+            LOGGER.trace(MESSAGE);
             return ticket;
         }
 
         if (ticket == null) {
-            logger.debug("Ticket passed is null and cannot be encoded");
+            LOGGER.debug("Ticket passed is null and cannot be encoded");
             return null;
         }
 
-        logger.info("Encoding [{}]", ticket);
-        final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
-                this.cipherExecutor, ticket);
+        LOGGER.debug("Encoding ticket [{}]", ticket);
+        final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
-        final Ticket encodedTicket = new EncodedTicket(
-                ByteSource.wrap(encodedTicketObject),
-                encodedTicketId);
-        logger.info("Created [{}]", encodedTicket);
+        final Ticket encodedTicket = new EncodedTicket(ByteSource.wrap(encodedTicketObject), encodedTicketId);
+        LOGGER.debug("Created encoded ticket [{}]", encodedTicket);
         return encodedTicket;
     }
 
@@ -230,23 +229,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return the ticket
      */
     protected Ticket decodeTicket(final Ticket result) {
-        if (!isCipherExecutorEnabled()) {
-            logger.trace(MESSAGE);
-            return result;
+        try {
+            if (!isCipherExecutorEnabled()) {
+                LOGGER.trace(MESSAGE);
+                return result;
+            }
+
+            if (result == null) {
+                LOGGER.debug("Ticket passed is null and cannot be decoded");
+                return null;
+            }
+
+            LOGGER.debug("Attempting to decode [{}]", result);
+            final EncodedTicket encodedTicket = (EncodedTicket) result;
+
+            final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(
+                    encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
+            LOGGER.debug("Decoded ticket to [{}]", ticket);
+            return ticket;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-
-        if (result == null) {
-            logger.debug("Ticket passed is null and cannot be decoded");
-            return null;
-        }
-
-        logger.debug("Attempting to decode {}", result);
-        final EncodedTicket encodedTicket = (EncodedTicket) result;
-
-        final Ticket ticket = SerializationUtils.decodeAndSerializeObject(
-                encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-        logger.info("Decoded {}", ticket);
-        return ticket;
     }
 
     /**
@@ -257,7 +260,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
         if (!isCipherExecutorEnabled()) {
-            logger.trace(MESSAGE);
+            LOGGER.trace(MESSAGE);
             return items;
         }
 

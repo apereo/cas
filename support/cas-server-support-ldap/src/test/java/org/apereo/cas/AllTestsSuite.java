@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.LdapAuthenticationHandlerTests;
+import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolverLdaptiveTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -10,6 +11,7 @@ import org.junit.runners.Suite;
  * @since 4.1.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses(LdapAuthenticationHandlerTests.class)
+@Suite.SuiteClasses({LdapAuthenticationHandlerTests.class, 
+        PersonDirectoryPrincipalResolverLdaptiveTests.class})
 public class AllTestsSuite {
 }

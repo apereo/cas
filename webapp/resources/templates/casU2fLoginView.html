@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.mfa.u2f.pagetitle}"></title>
+    <script th:src="@{/js/u2f/u2f-api.js}"></script>
+
+    <script th:inline="javascript">
+
+        /*<![CDATA[*/
+
+        var appId =  /*[[${u2fAuth.appId}]]*/ ;
+
+        var version =  /*[[${u2fAuth.version}]]*/ ;
+
+        var challenge =  /*[[${u2fAuth.challenge}]]*/ ;
+
+        var keyHandle =  /*[[${u2fAuth.keyHandle}]]*/ ;
+        
+        setTimeout(function() {
+            var registeredKeys = [{version: version, keyHandle: keyHandle}];
+
+            u2f.sign(appId, challenge, registeredKeys, function(data) {
+                var form = document.getElementById('form');
+                var reg = document.getElementById('tokenResponse');
+                reg.value = JSON.stringify(data);
+                form.submit();
+            });
+        }, 1000);
+        
+        /*]]>*/
+        
+    </script>
+
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-info" id="login">
+        <h3>Authenticate Device</h3>
+        <p>
+            <strong>Please touch the flashing U2F device now.</strong>
+        <p>
+            You may be prompted to allow the site permission to access your security keys. After granting permission, the device will start to blink.
+        </p>
+        </p>
+
+        <form method="POST" id="form" th:object="${credential}">
+            <input type="hidden" name="tokenResponse" id="tokenResponse" th:field="*{token}" />
+            <input type="hidden" name="_eventId" value="submit"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="geolocation"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>

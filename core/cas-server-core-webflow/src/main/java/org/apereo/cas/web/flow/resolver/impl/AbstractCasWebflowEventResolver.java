@@ -1,14 +1,13 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
@@ -30,8 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.TransitionDefinition;
@@ -39,10 +40,13 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -53,13 +57,17 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
-    /**
-     * Authentication succeeded with warnings from authn subsystem that should be displayed to user.
-     */
-    private static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
-    private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
+    private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasWebflowEventResolver.class);
+
+    /**
+     * CAS event publisher.
+     */
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
 
     /**
      * The Application context.
@@ -70,33 +78,51 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Authentication system support.
      */
-    protected AuthenticationSystemSupport authenticationSystemSupport;
-
+    protected final AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
      * Ticket registry support.
      */
-    protected TicketRegistrySupport ticketRegistrySupport;
+    protected final TicketRegistrySupport ticketRegistrySupport;
 
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     /**
      * The Central authentication service.
      */
-    protected CentralAuthenticationService centralAuthenticationService;
+    protected final CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Warn cookie generator.
      */
-    protected CookieGenerator warnCookieGenerator;
+    protected final CookieGenerator warnCookieGenerator;
 
     /**
      * The mfa selector.
      */
-    protected MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+    protected final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
+    /**
+     * Extract the service specially in the event that it's proxied by a callback.
+     */
+    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    public AbstractCasWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                           final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
+                                           final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
+                                           final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+                                           final MultifactorAuthenticationProviderSelector selector) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.servicesManager = servicesManager;
+        this.ticketRegistrySupport = ticketRegistrySupport;
+        this.warnCookieGenerator = warnCookieGenerator;
+        authenticationRequestServiceSelectionStrategies = authenticationSelectionStrategies;
+        multifactorAuthenticationProviderSelector = selector;
+    }
 
     /**
      * Adds a warning message to the message context.
@@ -131,8 +157,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1.0
      */
-    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
-                                                                 final MessageContext messageContext) {
+    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
             for (final MessageDescriptor message : entry.getValue().getWarnings()) {
@@ -154,7 +179,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Event newEvent(final String id, final Exception error) {
         return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
-
 
     /**
      * Gets credential from context.
@@ -179,47 +203,53 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
                                                                     final Service service) throws Exception {
 
-        logger.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
+        LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =
                 this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-
-        boolean issueTicketGrantingTicket = true;
         final Authentication authentication = authenticationResult.getAuthentication();
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
-        if (StringUtils.isNotBlank(ticketGrantingTicket)) {
-            logger.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
-            final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
-            if (authenticationFromTgt == null) {
-                logger.debug("Authentication session associated with {} is no longer valid", ticketGrantingTicket);
-                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            } else if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {
-                logger.debug("Resulting authentication matches the authentication from context");
-                issueTicketGrantingTicket = false;
-            } else {
-                logger.debug("Resulting authentication is different from the context");
-            }
-        }
-
-        final TicketGrantingTicket tgt;
-        if (issueTicketGrantingTicket) {
-            tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-
-        } else {
-            tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-            tgt.getAuthentication().update(authentication);
-            this.centralAuthenticationService.updateTicket(tgt);
-        }
-
+        final TicketGrantingTicket tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
 
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
         if (addWarningMessagesToMessageContextIfNeeded(tgt, context.getMessageContext())) {
-            return newEvent(SUCCESS_WITH_WARNINGS);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
         }
 
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+    }
+
+    private TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult,
+                                                                    final Authentication authentication, final String ticketGrantingTicket) {
+        final TicketGrantingTicket tgt;
+        if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
+            tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+        } else {
+            tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+            tgt.getAuthentication().update(authentication);
+            this.centralAuthenticationService.updateTicket(tgt);
+        }
+        return tgt;
+    }
+
+    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
+        boolean issueTicketGrantingTicket = true;
+        if (StringUtils.isNotBlank(ticketGrantingTicket)) {
+            LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
+            final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            if (authenticationFromTgt == null) {
+                LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
+                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            } else if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {
+                LOGGER.debug("Resulting authentication matches the authentication from context");
+                issueTicketGrantingTicket = false;
+            } else {
+                LOGGER.debug("Resulting authentication is different from the context");
+            }
+        }
+        return issueTicketGrantingTicket;
     }
 
     /**
@@ -228,7 +258,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param service the service
      * @return the authentication provider for service
      */
-    protected Set<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
+    protected Collection<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy != null) {
             return policy.getMultifactorAuthenticationProviders().stream()
@@ -239,7 +269,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return null;
     }
 
-
     /**
      * Validate event for transition.
      *
@@ -248,21 +277,19 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param attributes the attributes
      * @return the event
      */
-    protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context,
-                                                                  final Map<String, Object> attributes) {
+    protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context, final Map<String, Object> attributes) {
         try {
             final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
             final Event event = new Event(this, eventId, attributesMap);
 
-            logger.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...",
-                    event.getId());
+            LOGGER.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...", event.getId());
 
             final TransitionDefinition def = context.getMatchingTransition(event.getId());
             if (def == null) {
-                logger.warn("Transition definition cannot be found for event [{}]", event.getId());
+                LOGGER.warn("Transition definition cannot be found for event [{}]", event.getId());
                 throw new AuthenticationException();
             }
-            logger.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes {}.",
+            LOGGER.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes [{}].",
                     def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
             return event;
         } catch (final Exception e) {
@@ -287,79 +314,137 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return map;
     }
 
-    private Set<Event> resolveEventViaMultivaluedPrincipalAttribute(final Principal principal,
-                                                                    final Object attributeValue,
-                                                                    final RegisteredService service,
-                                                                    final RequestContext context,
-                                                                    final MultifactorAuthenticationProvider provider,
-                                                                    final Predicate<Object> predicate) {
-        final ImmutableSet.Builder<Event> builder = ImmutableSet.builder();
+    private Set<Event> resolveEventViaMultivaluedAttribute(final Principal principal,
+                                                           final Object attributeValue,
+                                                           final RegisteredService service,
+                                                           final RequestContext context,
+                                                           final MultifactorAuthenticationProvider provider,
+                                                           final Predicate<String> predicate) {
+        final Set<Event> events = new HashSet<>();
         if (attributeValue instanceof Collection) {
-            logger.debug("Attribute value {} is a multi-valued attribute", attributeValue);
+            LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             final Collection<String> values = (Collection<String>) attributeValue;
-            for (final String value : values) {
+            values.forEach(value -> {
                 try {
-                    if (predicate.apply(value)) {
-                        logger.debug("Attribute value predicate {} has successfully matched the [{}]", predicate, value);
+                    if (predicate.test(value)) {
+                        LOGGER.debug("Attribute value predicate [{}] has successfully matched the [{}]", predicate, value);
 
-                        logger.debug("Attempting to verify multifactor authentication provider {} for {}",
+                        LOGGER.debug("Attempting to verify multifactor authentication provider [{}] for [{}]",
                                 provider, service);
                         if (provider.isAvailable(service)) {
-                            logger.debug("Provider {} is successfully verified", provider);
+                            LOGGER.debug("Provider [{}] is successfully verified", provider);
 
                             final String id = provider.getId();
                             final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                     buildEventAttributeMap(principal, service, provider));
-                            builder.add(event);
+                            events.add(event);
                         }
                     } else {
-                        logger.debug("Attribute value predicate {} could not match the [{}]", predicate, value);
+                        LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, value);
                     }
                 } catch (final Exception e) {
-                    logger.debug("Ignoring {} since no matching transition could be found", value);
+                    LOGGER.debug("Ignoring [{}] since no matching transition could be found", value);
                 }
-            }
-            return builder.build();
+            });
+            return events;
         }
-        logger.debug("Attribute value {} of type {} is not a multi-valued attribute", 
+        LOGGER.debug("Attribute value [{}] of type [{}] is not a multi-valued attribute",
                 attributeValue, attributeValue.getClass());
         return null;
     }
 
-    private Set<Event> resolveEventViaSinglePrincipalAttribute(final Principal principal,
-                                                               final Object attributeValue,
-                                                               final RegisteredService service,
-                                                               final RequestContext context,
-                                                               final MultifactorAuthenticationProvider provider,
-                                                               final Predicate predicate) {
-
+    private Set<Event> resolveEventViaSingleAttribute(final Principal principal,
+                                                      final Object attributeValue,
+                                                      final RegisteredService service,
+                                                      final RequestContext context,
+                                                      final MultifactorAuthenticationProvider provider,
+                                                      final Predicate<String> predicate) {
         try {
             if (attributeValue instanceof String) {
-                logger.debug("Attribute value {} is a single-valued attribute", attributeValue);
-                if (predicate.apply(attributeValue)) {
-                    logger.debug("Attribute value predicate {} has matched the [{}]", predicate, attributeValue);
+                LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
+                if (predicate.test((String) attributeValue)) {
+                    LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
 
-                    logger.debug("Attempting to isAvailable multifactor authentication provider {} for {}",
+                    LOGGER.debug("Attempting to isAvailable multifactor authentication provider [{}] for [{}]",
                             provider, service);
 
                     if (provider.isAvailable(service)) {
-                        logger.debug("Provider {} is successfully verified", provider);
+                        LOGGER.debug("Provider [{}] is successfully verified", provider);
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
-                        return ImmutableSet.of(event);
-                    } else {
-                        logger.debug("Provider {} could not be verified", provider);
+                        return Collections.singleton(event);
                     }
+                    LOGGER.debug("Provider [{}] could not be verified", provider);
                 } else {
-                    logger.debug("Attribute value predicate {} could not match the [{}]", predicate, attributeValue);
+                    LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
                 }
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-        logger.debug("Attribute value {} is not a single-valued attribute", attributeValue);
+        LOGGER.debug("Attribute value [{}] is not a single-valued attribute", attributeValue);
         return null;
+    }
+
+    private Set<Event> resolveEventViaAttribute(final Principal principal,
+                                                final Map<String, Object> attributesToExamine,
+                                                final Collection<String> attributeNames,
+                                                final RegisteredService service,
+                                                final RequestContext context,
+                                                final Collection<MultifactorAuthenticationProvider> providers,
+                                                final Predicate<String> predicate) {
+        if (providers == null || providers.isEmpty()) {
+            LOGGER.debug("No authentication provider is associated with this service");
+            return null;
+        }
+
+        LOGGER.debug("Locating attribute value for attribute(s): [{}]", attributeNames);
+        for (final String attributeName : attributeNames) {
+            final Object attributeValue = attributesToExamine.get(attributeName);
+            if (attributeValue == null) {
+                LOGGER.debug("Attribute value for [{}] to determine event is not configured for [{}]", attributeName, principal.getId());
+                continue;
+            }
+
+            LOGGER.debug("Selecting a multifactor authentication provider out of [{}] for [{}] and service [{}]", providers, principal.getId(), service);
+            final MultifactorAuthenticationProvider provider =
+                    this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+
+            LOGGER.debug("Located attribute value [{}] for [{}]", attributeValue, attributeNames);
+
+            Set<Event> results = resolveEventViaSingleAttribute(principal, attributeValue, service, context, provider, predicate);
+            if (results == null || results.isEmpty()) {
+                results = resolveEventViaMultivaluedAttribute(principal, attributeValue, service, context, provider, predicate);
+            }
+            if (results != null && !results.isEmpty()) {
+                LOGGER.debug("Resolved set of events based on the attribute [{}] are [{}]", attributeName, results);
+                return results;
+            }
+        }
+        LOGGER.debug("No set of events based on the attribute(s) [{}] could be matched", attributeNames);
+        return null;
+    }
+
+    /**
+     * Resolve event via authentication attribute set.
+     *
+     * @param authentication the authentication
+     * @param attributeNames the attribute name
+     * @param service        the service
+     * @param context        the context
+     * @param providers      the providers
+     * @param predicate      the predicate
+     * @return the set of resolved events
+     */
+    protected Set<Event> resolveEventViaAuthenticationAttribute(final Authentication authentication,
+                                                                final Collection<String> attributeNames,
+                                                                final RegisteredService service,
+                                                                final RequestContext context,
+                                                                final Collection<MultifactorAuthenticationProvider> providers,
+                                                                final Predicate<String> predicate) {
+        return resolveEventViaAttribute(authentication.getPrincipal(), authentication.getAttributes(),
+                attributeNames, service, context, providers, predicate);
     }
 
     /**
@@ -378,44 +463,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final RegisteredService service,
                                                            final RequestContext context,
                                                            final Collection<MultifactorAuthenticationProvider> providers,
-                                                           final Predicate predicate) {
+                                                           final Predicate<String> predicate) {
 
-        if (providers == null || providers.isEmpty()) {
-            logger.debug("No authentication provider is associated with this service");
-            return null;
-        }
-
-        logger.debug("Locating principal attribute value for attribute(s): {}", attributeNames);
-        for (final String attributeName : attributeNames) {
-            final Object attributeValue = principal.getAttributes().get(attributeName);
-            if (attributeValue == null) {
-                logger.debug("Attribute value for {} to determine event is not configured for {}",
-                        attributeName, principal.getId());
-                continue;
-            }
-
-            logger.debug("Selecting a multifactor authentication provider out of {} for {} and service {}",
-                    providers, principal.getId(), service);
-            final MultifactorAuthenticationProvider provider =
-                    this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
-
-            logger.debug("Located principal attribute value {} for {}", attributeValue, attributeNames);
-
-            Set<Event> results = resolveEventViaSinglePrincipalAttribute(principal, attributeValue,
-                    service, context, provider, predicate);
-            if (results == null || results.isEmpty()) {
-                results = resolveEventViaMultivaluedPrincipalAttribute(principal, attributeValue,
-                        service, context, provider, predicate);
-            }
-            if (results != null && !results.isEmpty()) {
-                logger.debug("Resolved set of events based the principal attribute {} are {}",
-                        attributeName, results);
-                return results;
-            }
-        }
-        logger.debug("No set of events based the principal attribute(s) {} could be matched",
-                attributeNames);
-        return null;
+        return resolveEventViaAttribute(principal, principal.getAttributes(), attributeNames, service, context, providers, predicate);
     }
 
     @Override
@@ -425,14 +475,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return resolveInternal(context);
     }
 
-    /**
-     * Resolve internal event.
-     *
-     * @param context the context
-     * @return the event
-     */
-    protected abstract Set<Event> resolveInternal(RequestContext context);
-
     @Override
     public Event resolveSingle(final RequestContext context) {
         final Set<Event> events = resolve(context);
@@ -440,55 +482,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
         }
         final Event event = events.iterator().next();
-        logger.debug("Resolved single event [{}] via [{}] for this context", event.getId(),
-                event.getSource().getClass().getName());
+        LOGGER.debug("Resolved single event [{}] via [{}] for this context", event.getId(), event.getSource().getClass().getName());
         return event;
-    }
-
-    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-
-    /**
-     * Resolve event per authentication provider event.
-     *
-     * @param principal the principal
-     * @param context   the context
-     * @param service   the service
-     * @return the event
-     */
-    protected Set<Event> resolveEventPerAuthenticationProvider(final Principal principal,
-                                                               final RequestContext context,
-                                                               final RegisteredService service) {
-
-        try {
-            final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
-            if (providers != null && !providers.isEmpty()) {
-                final MultifactorAuthenticationProvider provider =
-                        this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
-
-                logger.debug("Selected multifactor authentication provider for this transaction is {}", provider);
-
-                if (!provider.isAvailable(service)) {
-                    logger.warn("Multifactor authentication provider {} could not be verified/reached.", provider);
-                    return null;
-                }
-                final String identifier = provider.getId();
-                logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                        provider, service.getName());
-
-                final Event event = validateEventIdForMatchingTransitionInContext(identifier, context,
-                        buildEventAttributeMap(principal, service, provider));
-                return ImmutableSet.of(event);
-            }
-
-            logger.debug("No multifactor authentication providers could be located for {}", service);
-            return null;
-
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
     }
 
     /**
@@ -497,19 +492,18 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param providerId the provider id
      * @return the registered service multifactor authentication provider
      */
-    protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(
-            final String providerId) {
+    protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
         try {
-            logger.debug("Locating bean definition for {}", providerId);
+            LOGGER.debug("Locating bean definition for [{}]", providerId);
             return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true).values().stream()
-                    .filter(p -> p.getId().equals(providerId))
+                    .filter(p -> p.matches(providerId))
                     .findFirst();
         } catch (final Exception e) {
-            logger.debug("Could not locate [{}] bean id in the application context as an authentication provider.", providerId);
+            LOGGER.debug("Could not locate [{}] bean id in the application context as an authentication provider.", providerId);
         }
         return Optional.empty();
     }
-    
+
     /**
      * Put resolved events as attribute.
      *
@@ -518,6 +512,27 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected void putResolvedEventsAsAttribute(final RequestContext context, final Set<Event> resolvedEvents) {
         context.getAttributes().put(RESOLVED_AUTHENTICATION_EVENTS, resolvedEvents);
+    }
+
+    /**
+     * Resolve service from authentication request.
+     *
+     * @param service the service
+     * @return the service
+     */
+    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
+        return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
+    }
+
+    /**
+     * Resolve service from authentication request service.
+     *
+     * @param context the context
+     * @return the service
+     */
+    protected Service resolveServiceFromAuthenticationRequest(final RequestContext context) {
+        final Service ctxService = WebUtils.getService(context);
+        return resolveServiceFromAuthenticationRequest(ctxService);
     }
 
     /**
@@ -531,7 +546,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     /**
-     * Handle authentication transaction and grant ticket granting ticket set.
+     * Handle authentication transaction and grant ticket granting ticket.
      *
      * @param context the context
      * @return the set
@@ -541,35 +556,18 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final Credential credential = getCredentialFromContext(context);
             AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
 
-            logger.debug("Handling authentication transaction for credential {}", credential);
-            builder = this.authenticationSystemSupport.handleAuthenticationTransaction(builder, credential);
+            LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
             final Service service = WebUtils.getService(context);
+            builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builder, credential);
 
-            logger.debug("Issuing ticket-granting tickets for service {}", service);
-            return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
+            return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-            return ImmutableSet.of(new Event(this, "error"));
+            LOGGER.error(e.getMessage(), e);
+            final MessageContext messageContext = context.getMessageContext();
+            messageContext.addMessage(new MessageBuilder().error()
+                    .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName())).build());
+            return Collections.singleton(new EventFactorySupport().error(this));
         }
-    }
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setMultifactorAuthenticationProviderSelector(final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
-        this.multifactorAuthenticationProviderSelector = multifactorAuthenticationProviderSelector;
     }
 }

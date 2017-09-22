@@ -1,0 +1,11 @@
+description = "Apereo CAS Shibboleth IdP/SP Extensions"
+
+dependencies {
+    implementation libraries.persondirectory
+    compile project(":support:cas-server-support-saml-core")
+    compile project(":support:cas-server-support-trusted")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-services")
+}

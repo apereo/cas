@@ -28,13 +28,15 @@
           c:dropCollection="true"
           c:mongoTemplate-ref="mongoEventsTemplate"/>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <bean id="mongoDbFactory" class="org.springframework.data.mongodb.core.SimpleMongoDbFactory"
           c:uri-ref="clientUri" />
-       
+
     <bean id="clientUri" class="com.mongodb.MongoClientURI"
           c:uri="mongodb://casuser:Mellon@ds135522.mlab.com:35522/jasigcas" />
+
+    
 
 </beans>

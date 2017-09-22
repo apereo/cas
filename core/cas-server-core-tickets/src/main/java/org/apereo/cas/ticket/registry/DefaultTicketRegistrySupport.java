@@ -14,16 +14,14 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
+@Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
+    private final TicketRegistry ticketRegistry;
 
-    private TicketRegistry ticketRegistry;
-
-    /**
-     * Instantiates a new Default ticket registry support.
-     */
-    public DefaultTicketRegistrySupport() {}
+    public DefaultTicketRegistrySupport(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
 
     @Override
     public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
@@ -43,7 +41,10 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
         return principal == null ? null : principal.getAttributes();
     }
 
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+    @Override
+    public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) {
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        tgt.getAuthentication().update(authentication);
+        this.ticketRegistry.updateTicket(tgt);
     }
 }

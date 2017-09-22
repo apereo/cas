@@ -3,10 +3,13 @@ package org.apereo.cas.support.saml.authentication.principal;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
+import java.util.stream.Collectors;
 
 /**
  * The {@link SamlServiceFactory} creates {@link SamlService} objects.
@@ -15,7 +18,8 @@ import java.io.BufferedReader;
  * @since 4.2
  */
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlServiceFactory.class);
+    
     private static final int CONST_REQUEST_ID_LENGTH = 11;
 
     private static final String CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE = "<AssertionArtifact>";
@@ -34,8 +38,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         final String requestId;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
-            logger.debug("Request does not specify a {} or request body is empty",
-                    SamlProtocolConstants.CONST_PARAM_TARGET);
+            LOGGER.debug("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
         }
 
@@ -63,10 +66,10 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             requestId = null;
         }
 
-        logger.debug("Request Body: {}", requestBody);
-        logger.debug("Extracted ArtifactId: {}. extracted Request Id: {}", artifactId, requestId);
+        LOGGER.debug("Request Body: [{}]", requestBody);
+        LOGGER.debug("Extracted ArtifactId: [{}]. extracted Request Id: [{}]", artifactId, requestId);
 
-        return new SamlService(id, service, artifactId, requestId, new SamlServiceResponseBuilder());
+        return new SamlService(id, service, artifactId, requestId);
     }
 
     @Override
@@ -80,9 +83,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      * @param requestBody the request body
      * @return the string
      */
-    private String extractRequestId(final String requestBody) {
+    private static String extractRequestId(final String requestBody) {
         if (!requestBody.contains("RequestID")) {
-            logger.debug("Request body does not contain a request id");
+            LOGGER.debug("Request body does not contain a request id");
             return null;
         }
 
@@ -92,7 +95,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
             return requestBody.substring(position, nextPosition);
         } catch (final Exception e) {
-            logger.debug("Exception parsing RequestID from request.", e);
+            LOGGER.debug("Exception parsing RequestID from request.", e);
             return null;
         }
     }
@@ -103,21 +106,15 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      * @param request the request
      * @return the request body
      */
-    private String getRequestBody(final HttpServletRequest request) {
-        final StringBuilder builder = new StringBuilder();
+    private static String getRequestBody(final HttpServletRequest request) {
         try(BufferedReader reader = request.getReader()) {
-
             if (reader == null) {
-                logger.debug("Request body could not be read because it's empty.");
+                LOGGER.debug("Request body could not be read because it's empty.");
                 return null;
             }
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-            return builder.toString();
+            return reader.lines().collect(Collectors.joining());
         } catch (final Exception e) {
-            logger.trace("Could not obtain the saml request body from the http request", e);
+            LOGGER.trace("Could not obtain the saml request body from the http request", e);
             return null;
         }
     }

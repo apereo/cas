@@ -19,17 +19,14 @@ import org.springframework.core.io.Resource;
  * @since 3.1
  */
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PublicKeyFactoryBean.class);
     
     private Resource resource;
-
-    
     private String algorithm;
 
     @Override
     protected PublicKey createInstance() throws Exception {
-        logger.debug("Creating public key instance from [{}] using [{}]",
+        LOGGER.debug("Creating public key instance from [{}] using [{}]",
                 this.resource.getFilename(), this.algorithm);
 
         try(InputStream pubKey = this.resource.getInputStream()) {

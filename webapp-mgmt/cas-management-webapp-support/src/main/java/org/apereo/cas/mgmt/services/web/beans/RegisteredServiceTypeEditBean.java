@@ -22,11 +22,6 @@ public enum RegisteredServiceTypeEditBean {
      * SAML type.
      */
     SAML("saml"),
-    
-    /**
-     * CAS type.
-     */
-    OAUTH_CALLBACK_AUTHZ("oauth_callback_authz"),
 
     /**
      * oauth type.

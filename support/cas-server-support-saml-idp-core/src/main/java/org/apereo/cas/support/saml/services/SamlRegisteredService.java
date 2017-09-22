@@ -8,9 +8,14 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.MapKeyColumn;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The {@link SamlRegisteredService} is responsible for managing the SAML metadata for a given SP.
@@ -24,7 +29,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 
     private String metadataLocation;
-    
+
     /**
      * Defines a filter that requires the presence of a validUntil
      * attribute on the root element of the metadata document.
@@ -34,20 +39,26 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(updatable = true, insertable = true)
     private long metadataMaxValidity;
 
-    @Column(updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String requiredAuthenticationContextClass;
 
-    @Column(updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaDirection;
 
-    @Column(updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaPattern;
-    
-    @Column(updatable = true, insertable = true)
+
+    @Column(length = 255, updatable = true, insertable = true)
     private String requiredNameIdFormat;
 
-    @Column(updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataSignatureLocation;
+
+    @Column(length = 255, updatable = true, insertable = true)
+    private String serviceProviderNameIdQualifier;
+
+    @Column(length = 255, updatable = true, insertable = true)
+    private String nameIdQualifier;
 
     @Column(updatable = true, insertable = true)
     private boolean signAssertions;
@@ -58,7 +69,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(updatable = true, insertable = true)
     private boolean encryptAssertions;
 
-    @Column(updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaRoles = "SPSSODescriptor";
 
     @Column(updatable = true, insertable = true)
@@ -66,7 +77,13 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
-        
+
+    @ElementCollection
+    @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
+    @MapKeyColumn(name = "key")
+    @Column(name = "value")
+    private Map<String, String> attributeNameFormats = new TreeMap<>();
+
     /**
      * Instantiates a new Saml registered service.
      */
@@ -145,7 +162,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     public void setMetadataCriteriaPattern(final String metadataCriteriaPattern) {
         this.metadataCriteriaPattern = metadataCriteriaPattern;
     }
-    
+
     public String getRequiredNameIdFormat() {
         return requiredNameIdFormat;
     }
@@ -178,6 +195,30 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.metadataCriteriaRemoveRolelessEntityDescriptors = metadataCriteriaRemoveRolelessEntityDescriptors;
     }
 
+    public Map<String, String> getAttributeNameFormats() {
+        return attributeNameFormats;
+    }
+
+    public void setAttributeNameFormats(final Map<String, String> attributeNameFormats) {
+        this.attributeNameFormats = attributeNameFormats;
+    }
+
+    public String getServiceProviderNameIdQualifier() {
+        return serviceProviderNameIdQualifier;
+    }
+
+    public void setServiceProviderNameIdQualifier(final String serviceProviderNameIdQualifier) {
+        this.serviceProviderNameIdQualifier = serviceProviderNameIdQualifier;
+    }
+
+    public String getNameIdQualifier() {
+        return nameIdQualifier;
+    }
+
+    public void setNameIdQualifier(final String nameIdQualifier) {
+        this.nameIdQualifier = nameIdQualifier;
+    }
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
@@ -203,12 +244,16 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataCriteriaRemoveEmptyEntitiesDescriptors(samlRegisteredService.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             setMetadataCriteriaRemoveRolelessEntityDescriptors(samlRegisteredService.isMetadataCriteriaRemoveRolelessEntityDescriptors());
             setMetadataCriteriaRoles(samlRegisteredService.getMetadataCriteriaRoles());
-            
+            setAttributeNameFormats(samlRegisteredService.getAttributeNameFormats());
+
+            setNameIdQualifier(samlRegisteredService.getNameIdQualifier());
+            setServiceProviderNameIdQualifier(samlRegisteredService.serviceProviderNameIdQualifier);
+
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -236,6 +281,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors, rhs.metadataCriteriaRemoveEmptyEntitiesDescriptors)
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors, rhs.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles, rhs.metadataCriteriaRoles)
+                .append(this.attributeNameFormats, rhs.attributeNameFormats)
+                .append(this.serviceProviderNameIdQualifier, rhs.serviceProviderNameIdQualifier)
+                .append(this.nameIdQualifier, rhs.nameIdQualifier)
                 .isEquals();
     }
 
@@ -256,6 +304,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles)
+                .append(this.attributeNameFormats)
+                .append(this.serviceProviderNameIdQualifier)
+                .append(this.nameIdQualifier)
                 .toHashCode();
     }
 
@@ -276,6 +327,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("metadataCriteriaRemoveEmptyEntitiesDescriptors", this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
                 .append("metadataCriteriaRemoveRolelessEntityDescriptors", this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append("metadataCriteriaRoles", this.metadataCriteriaRoles)
+                .append("attributeNameFormats", this.attributeNameFormats)
+                .append("serviceProviderNameIdQualifier", this.serviceProviderNameIdQualifier)
+                .append("nameIdQualifier", this.nameIdQualifier)
                 .toString();
     }
 }

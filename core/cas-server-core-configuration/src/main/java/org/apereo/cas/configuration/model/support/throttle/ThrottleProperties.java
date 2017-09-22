@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.Beans;
 
 /**
  * Configuration properties class for cas.throttle.
@@ -21,8 +22,8 @@ public class ThrottleProperties {
     private String usernameParameter;
     private String appcode = DEFAULT_APPLICATION_CODE;
     
-    private int repeatInterval = 20000;
-    private int startDelay = 10000;
+    private String repeatInterval = "PT20S";
+    private String startDelay = "PT10S";
 
     public Jdbc getJdbc() {
         return jdbc;
@@ -52,19 +53,19 @@ public class ThrottleProperties {
         this.appcode = appcode;
     }
     
-    public int getRepeatInterval() {
-        return repeatInterval;
+    public long getRepeatInterval() {
+        return Beans.newDuration(repeatInterval).toMillis();
     }
 
-    public void setRepeatInterval(final int repeatInterval) {
+    public void setRepeatInterval(final String repeatInterval) {
         this.repeatInterval = repeatInterval;
     }
 
-    public int getStartDelay() {
-        return startDelay;
+    public long getStartDelay() {
+        return Beans.newDuration(startDelay).toMillis();
     }
 
-    public void setStartDelay(final int startDelay) {
+    public void setStartDelay(final String startDelay) {
         this.startDelay = startDelay;
     }
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apache.http.HttpStatus;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -31,20 +32,21 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        AopAutoConfiguration.class, CasThrottlingConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
+        CasCoreUtilConfiguration.class,
+        AopAutoConfiguration.class, 
+        CasThrottlingConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @EnableScheduling
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
     protected static final String IP_ADDRESS = "1.2.3.4";
-
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapterTests.class);
+    
     @Autowired
     @Qualifier("authenticationThrottle")
     protected ThrottledSubmissionHandlerInterceptor throttle;
-
+    
     @Before
     public void setUp() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -64,7 +66,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 
         // Ensure that repeated logins ABOVE threshold rate are throttled
-        failLoop(3, 200, HttpStatus.SC_FORBIDDEN);
+        failLoop(3, 200, HttpStatus.SC_LOCKED);
 
         // Ensure that slowing down relieves throttle
         throttle.decrement();
@@ -78,9 +80,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         loginUnsuccessfully("mog", "1.2.3.4");
 
         for (int i = 0; i < trials; i++) {
-            logger.debug("Waiting for {} ms", period);
+            LOGGER.debug("Waiting for [{}] ms", period);
             Thread.sleep(period);
-
+            
             final MockHttpServletResponse status = loginUnsuccessfully("mog", "1.2.3.4");
             assertEquals(expected, status.getStatus());
         }
@@ -88,5 +90,5 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
 
     protected abstract MockHttpServletResponse loginUnsuccessfully(String username, String fromAddress) throws Exception;
-
+    
 }

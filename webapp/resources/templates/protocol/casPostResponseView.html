@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<body onload="document.acsForm.submit();" style="display:none">
+    <form name="acsForm" th:action="${originalUrl}" method="post">
+        <span th:each="entry : ${parameters}" th:remove="tag">
+            <input type="hidden" th:name="${entry.key}" th:value="${entry.value}"/>
+        </span>
+    
+        <noscript>
+            <p th:text="#{screen.post.response.message(${originalUrl})}"/>
+            <p><input type="submit" th:value="#{screen.button.continue}"/></p>
+        </noscript>
+    </form>
+</body>
+</html>
+

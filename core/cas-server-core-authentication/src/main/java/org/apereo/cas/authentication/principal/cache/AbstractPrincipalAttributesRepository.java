@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
-import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
@@ -21,30 +21,40 @@ import java.io.Closeable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
  * Parent class for retrieval principals attributes, provides operations
  * around caching, merging of attributes.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
-    /** Default cache expiration time unit. */
+    /**
+     * Default cache expiration time unit.
+     */
     private static final String DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS.name();
 
-    /** Default expiration lifetime based on the default time unit. */
+    /**
+     * Default expiration lifetime based on the default time unit.
+     */
     private static final long DEFAULT_CACHE_EXPIRATION_DURATION = 2;
 
     private static final long serialVersionUID = 6350245643948535906L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPrincipalAttributesRepository.class);
-    
-    /** The expiration time. */
+
+    /**
+     * The expiration time.
+     */
     protected long expiration;
 
-    /** Expiration time unit. */
+    /**
+     * Expiration time unit.
+     */
     protected String timeUnit;
 
     /**
@@ -59,17 +69,26 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     public enum MergingStrategy {
 
-        /** Replace attributes. */
+        /**
+         * Replace attributes.
+         */
         REPLACE,
-        /** Add attributes. */
+        /**
+         * Add attributes.
+         */
         ADD,
-        /** No merging. */
+        /**
+         * No merging.
+         */
         NONE,
-        /** Multivalued attributes. */
+        /**
+         * Multivalued attributes.
+         */
         MULTIVALUED;
 
         /**
          * Get attribute merger.
+         *
          * @return the attribute merger
          */
         public IAttributeMerger getAttributeMerger() {
@@ -102,8 +121,9 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     /**
      * Instantiates a new principal attributes repository.
+     *
      * @param expiration the expiration
-     * @param timeUnit the time unit
+     * @param timeUnit   the time unit
      */
     public AbstractPrincipalAttributesRepository(final long expiration, final String timeUnit) {
         this.expiration = expiration;
@@ -114,6 +134,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * The merging strategy that deals with existing principal attributes
      * and those that are retrieved from the source. By default, existing attributes
      * are ignored and the source is always consulted.
+     *
      * @param mergingStrategy the strategy to use for conflicts
      */
     public void setMergingStrategy(final MergingStrategy mergingStrategy) {
@@ -126,6 +147,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     /**
      * Convert person attributes to principal attributes.
+     *
      * @param attributes person attributes
      * @return principal attributes
      */
@@ -142,7 +164,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return person attributes
      */
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
-        final Map<String, List<Object>> convertedAttributes = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         final Map<String, Object> principalAttributes = p.getAttributes();
 
         principalAttributes.entrySet().stream().forEach(entry -> {
@@ -185,13 +207,13 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
-            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are {}", cachedAttributes.size(), p.getId(),
+            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), p.getId(),
                     cachedAttributes);
             return cachedAttributes;
         }
 
         if (getAttributeRepository() == null) {
-            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}",
+            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for [{}]",
                     getClass().getName(), p.getId());
             return cachedAttributes;
         }
@@ -209,21 +231,38 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
         LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]",
                 this.mergingStrategy.getClass().getSimpleName());
-        final Map<String, List<Object>> mergedAttributes =
-                this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
 
-        return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
+        try {
+            final Map<String, List<Object>> mergedAttributes =
+                    this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
+        } catch (final Exception e) {
+            final StringBuilder builder = new StringBuilder();
+            builder.append(e.getClass().getName().concat("-"));
+            if (StringUtils.isNotBlank(e.getMessage())) {
+                builder.append(e.getMessage());
+            }
+
+            LOGGER.error("The merging strategy [{}] for [{}] has failed to produce principal attributes because: [{}]. "
+                            + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
+                            + "and will return the original collection of principal attributes [{}]",
+                    this.mergingStrategy,
+                    p.getId(),
+                    builder.toString(),
+                    principalAttributes);
+            return convertAttributesToPrincipalAttributesAndCache(p, principalAttributes);
+        }
     }
 
     /**
      * Convert attributes to principal attributes and cache.
      *
-     * @param p the p
+     * @param p                the p
      * @param sourceAttributes the source attributes
      * @return the map
      */
     private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p,
-                                                        final Map<String, List<Object>> sourceAttributes) {
+                                                                               final Map<String, List<Object>> sourceAttributes) {
         final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;
@@ -231,7 +270,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     /**
      * Add principal attributes into the underlying cache instance.
-     * @param id identifier used by the cache as key.
+     *
+     * @param id         identifier used by the cache as key.
      * @param attributes attributes to cache
      * @since 4.2
      */
@@ -254,9 +294,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
             if (context != null) {
                 return context.getBean("attributeRepository", IPersonAttributeDao.class);
-            } else {
-                LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
             }
+            LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
         }
         return this.attributeRepository;
     }
@@ -281,7 +320,11 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public void setTimeUnit(final String unit) {
         this.timeUnit = unit;
     }
-    
+
+    public void setExpiration(final long expiration) {
+        this.expiration = expiration;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

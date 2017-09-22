@@ -1,15 +1,21 @@
 description = "Apereo CAS SAML Server MDUI Support"
 dependencies {
-    compile libraries.quartz
+    
+    
+    
+    implementation libraries.quartz
     compile project(":support:cas-server-support-saml")
     compile project(":core:cas-server-core-configuration")
-    compile libraries.opensaml
-    runtime libraries.hibernate
-    testCompile libraries.log4j
-    testCompile libraries.metrics
-    testCompile project(path: ":support:cas-server-support-saml", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(":core:cas-server-core")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(":support:cas-server-support-cookie")
+    compile project(":support:cas-server-support-saml-mdui-core")
+
+    implementation libraries.opensaml
+
+    testCompileOnly libraries.log4j
+    testCompileOnly libraries.metrics
+    testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-cookie")
 }

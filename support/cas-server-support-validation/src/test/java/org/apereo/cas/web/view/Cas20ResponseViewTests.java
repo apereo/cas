@@ -42,9 +42,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("cas2ServiceFailureView")
     private View cas2ServiceFailureView;
 
-
     @Before
-    public void setup() {
+    public void setUp() {
         this.serviceValidateController.setFailureView(cas2ServiceFailureView);
         this.serviceValidateController.setSuccessView(cas2SuccessView);
         this.serviceValidateController.setJsonView(cas3ServiceJsonView);
@@ -54,24 +53,24 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     public void verifyView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
-        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-                new GenericWebApplicationContext(req.getServletContext()));
+        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        final Cas20ResponseView view = new Cas20ResponseView();
+
         final MockHttpServletResponse resp = new MockHttpServletResponse();
 
-        view.setView(new View() {
+        final View delegatedView = new View() {
             @Override
             public String getContentType() {
                 return "text/html";
             }
 
             @Override
-            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
+            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
                 map.forEach(request::setAttribute);
             }
-        });
+        };
+        final Cas20ResponseView view = new Cas20ResponseView(true, null,
+                null, "attribute", delegatedView);
         view.render(modelAndView.getModel(), req, resp);
 
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
@@ -79,5 +78,4 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
         assertNotNull(req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU));
     }
-
 }

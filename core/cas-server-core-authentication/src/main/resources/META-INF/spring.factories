@@ -1,0 +1,9 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreHttpConfiguration,\
+org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration,\
+org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration,\
+org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration,\
+org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration,\
+org.apereo.cas.config.CasCoreAuthenticationConfiguration,\
+org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration,\
+org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration,\
+org.apereo.cas.config.CasPersonDirectoryConfiguration

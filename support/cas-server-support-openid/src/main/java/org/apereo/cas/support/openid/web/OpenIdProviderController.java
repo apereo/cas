@@ -2,11 +2,14 @@ package org.apereo.cas.support.openid.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Maps requests for usernames to a page that displays the Login URL for an
@@ -15,14 +18,25 @@ import javax.servlet.http.HttpServletResponse;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class OpenIdProviderController extends AbstractController {
-    
+@Controller("openIdProviderController")
+public class OpenIdProviderController {
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    @Override
+
+    /**
+     * Handle request internal model and view.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    @GetMapping("/openid/*")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
-        return new ModelAndView("openIdProviderView", "openid_server", casProperties.getServer().getPrefix());
+        final Map model = new HashMap<>();
+        model.put("openid_server", casProperties.getServer().getPrefix());
+        return new ModelAndView("openIdProviderView", model);
     }
 }

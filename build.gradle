@@ -7,6 +7,15 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
+
+    /*
+    Open the Git repository in the current directory.
+    Get commit id of HEAD.
+     */
+    git = org.ajoberstar.grgit.Grgit.open(file('.'))
+    def gitHead = git.head()
+    currentRevision = gitHead.id
+    currentAbbreviatedRevision = gitHead.abbreviatedId
 }
 
 def isArtifactSigningRequired = {
@@ -23,6 +32,7 @@ apply plugin: "com.gradle.build-scan"
 buildScan {
     licenseAgreementUrl = "https://gradle.com/terms-of-service"
     licenseAgree = "yes"
+    licenseAgree = "yes"
 }
 
 buildscript {
@@ -32,19 +42,24 @@ buildscript {
         jcenter()
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/plugins-release" }
         maven { url "https://repo.spring.io/milestone" }
         maven { url "https://repo.spring.io/snapshot" }
     }
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:5.0.0"
+        classpath "com.netflix.nebula:gradle-lint-plugin:7.3.5"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
+        classpath "org.ajoberstar:grgit:1.7.2"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
     }
 }
+
 
 allprojects {
     apply plugin: "idea"
@@ -54,12 +69,13 @@ allprojects {
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
 
+
     if (project.name == "cas-server-support-bom") {
-        println "Skipping pom generation for [$project.name], letting it create <dependency-management> entries."
+        logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
-    
+
     gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
 
     signing {
@@ -71,16 +87,20 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
+            excludeDirs = [file(".gradle")]
+            ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
+                excludeDirs << file("$buildDir/$it")
+            }
         }
     }
 
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
-    Do NOT publish test dependencies into the final POM.
+        Do NOT publish test dependencies into the final POM.
     */
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testCompile"))
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntime"))
+    conf2ScopeMappings.mappings.remove(configurations.findByName("testCompileOnly"))
+    conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntimeOnly"))
 }
 
 subprojects {
@@ -90,8 +110,10 @@ subprojects {
     task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {
         doLast {}
     }
-
-    apply plugin: "java"
+    if (Boolean.getBoolean("enableKotlin")) {
+        apply plugin: "kotlin"
+    }
+    apply plugin: "java-library"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
     apply plugin: "project-report"
@@ -100,28 +122,25 @@ subprojects {
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
 
-
     apply from: rootProject.file("gradle/tasks.gradle")
 
-    ext.libraries = rootProject.ext.libraries;
+    ext.libraries = rootProject.ext.libraries
 
     repositories {
         mavenLocal()
-        mavenCentral()
-        jcenter()
-
+        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
         maven { url "https://repo.spring.io/milestone" }
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/libs-snapshot" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
+        jcenter()
     }
 
     test {
@@ -132,8 +151,7 @@ subprojects {
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
         exclude "**/*Abstract*.*"
-        classpath = it.classpath + files("${projectDir}/src/main/resources") +
-                files("${projectDir}/src/test/resources")
+        classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
             exceptionFormat = "full"
@@ -152,9 +170,11 @@ subprojects {
             if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
             }
-            cacheDynamicVersionsFor 24, 'hours'
-            cacheChangingModulesFor 24, 'hours'
+            preferProjectModules()
+            cacheDynamicVersionsFor 5, 'days'
+            cacheChangingModulesFor 5, 'days'
         }
+
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
@@ -170,15 +190,18 @@ subprojects {
         archives testJar
     }
 
-
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
     }
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-    
-    compileJava.options.fork = true 
+
+    compileJava.options.fork = true
+
+    if (Boolean.getBoolean("enableIncremental")) {
+        compileJava.options.incremental = true
+    }
 
     def currentTime = java.time.ZonedDateTime.now()
     compileJava.doLast {
@@ -195,15 +218,16 @@ subprojects {
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                       "Implementation-Vendor": project.group,
-                       "Created-By": project.group,
-                       "Implementation-Version": project.version)
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Specification-Version": rootProject.currentRevision,
+                    "Implementation-Version": project.version)
         }
     }
 
     checkstyle {
-        configFile new File(rootDir, "checkstyle-rules.xml")
-        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "checkstyle-suppressions.xml")]
+        configFile new File(rootDir, "style/checkstyle-rules.xml")
+        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
         ignoreFailures false
         showViolations true
         toolVersion "${checkstyleVersion}"
@@ -220,8 +244,9 @@ subprojects {
     versioneye {
         includePlugins = false
         includeSubProjects = true
+        exclude project.configurations.findAll { !it.canBeResolved }*.name as String[]
     }
-    
+
     findbugs {
         toolVersion = "${findbugsVersion}"
         sourceSets = [sourceSets.main]
@@ -229,7 +254,7 @@ subprojects {
         reportsDir = file("$project.buildDir/findbugsReports")
         effort = "max"
         reportLevel = "low"
-        includeFilter = file("$rootProject.projectDir/findbugs-rules.xml")
+        includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
     }
 
     findbugsMain {
@@ -245,13 +270,18 @@ subprojects {
     }
 
     dependencies {
-        compile libraries.aspectj
-        compile libraries.validationapi
-        compile libraries.log4j
-        compile libraries.guava
-        compile libraries.commons
-        compile libraries.jodatime
-        compile libraries.inspektr
+        implementation libraries.aspectj
+        implementation libraries.validationapi
+        api libraries.log4j
+        api libraries.guava
+        api libraries.commons
+        api libraries.jodatime
+        api libraries.inspektr
+        api libraries.spring
+        api libraries.jackson
+        api libraries.hibernate
+        api libraries.springcloud
+        api libraries.springboot
 
         provided libraries.javax
 
@@ -266,10 +296,10 @@ subprojects {
             findbugsPlugins libraries.findbugssec
         }
 
-        testCompile libraries.tests
-        runtime libraries.javaximpl
+        testImplementation libraries.tests
+        runtimeOnly libraries.javaximpl
     }
-    
+
     if (Boolean.getBoolean("genConfigMetadata")) {
         compileJava.dependsOn(processResources)
     }
@@ -285,8 +315,7 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc,
-        description: "Aggregate all Javadocs into a single directory") {
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
     classifier = "javadoc"
     from javadoc
 }

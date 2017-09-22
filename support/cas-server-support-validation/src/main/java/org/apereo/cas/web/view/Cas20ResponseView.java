@@ -1,7 +1,12 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,12 +21,14 @@ import java.util.Map;
  * @since 4.1.0
  */
 public class Cas20ResponseView extends AbstractDelegatingCasView {
-
-    /**
-     * Instantiates a new Abstract cas jstl view.
-     */
-    public Cas20ResponseView() {
-        super();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ResponseView.class);
+    
+    public Cas20ResponseView(final boolean successResponse, 
+                             final ProtocolAttributeEncoder protocolAttributeEncoder, 
+                             final ServicesManager servicesManager, 
+                             final String authenticationContextAttribute, 
+                             final View view) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
     }
 
     @Override
@@ -30,6 +37,7 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
+        LOGGER.debug("Prepared CAS response output model with attribute names [{}]", model.keySet());
     }
     
 }

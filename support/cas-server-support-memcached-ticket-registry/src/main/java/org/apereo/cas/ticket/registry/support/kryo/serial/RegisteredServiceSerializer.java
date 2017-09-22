@@ -5,8 +5,7 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -19,6 +18,7 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 
 import java.net.URL;
+import java.util.HashSet;
 
 /**
  * Serializer for {@link RegisteredService} instances.
@@ -43,15 +43,15 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
     @Override
     public void write(final Kryo kryo, final Output output, final RegisteredService service) {
         kryo.writeObject(output, service.getServiceId());
-        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getName(), ""));
-        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getDescription(), ""));
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getName(), StringUtils.EMPTY));
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getDescription(), StringUtils.EMPTY));
         kryo.writeObject(output, service.getId());
         kryo.writeObject(output, service.getEvaluationOrder());
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), getEmptyUrl()));
         kryo.writeObject(output, service.getLogoutType());
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), getEmptyUrl()));
-        kryo.writeObject(output, ImmutableSet.copyOf(service.getRequiredHandlers()));
-        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), ""));
+        kryo.writeObject(output, new HashSet<>(service.getRequiredHandlers()));
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), StringUtils.EMPTY));
 
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getPublicKey(),
                 new RegisteredServicePublicKeyImpl()));
@@ -76,7 +76,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setLogo(kryo.readObject(input, URL.class));
         svc.setLogoutType(kryo.readObject(input, LogoutType.class));
         svc.setLogoutUrl(kryo.readObject(input, URL.class));
-        svc.setRequiredHandlers(kryo.readObject(input, ImmutableSet.class));
+        svc.setRequiredHandlers(kryo.readObject(input, HashSet.class));
         svc.setTheme(kryo.readObject(input, String.class));
 
         svc.setPublicKey(readObjectByReflection(kryo, input));
@@ -87,7 +87,6 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
 
         return svc;
     }
-
 
     /**
      * Write object by reflection.
@@ -108,7 +107,6 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      * @param <T>   the type parameter
      * @param kryo  the kryo
      * @param input the input
-     * @param type  the type
      * @return the t
      */
     private static <T> T readObjectByReflection(final Kryo kryo, final Input input) {

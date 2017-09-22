@@ -1,19 +1,19 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 
 /**
@@ -32,55 +32,43 @@ import java.security.GeneralSecurityException;
 public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
-    private static final String DEFAULT_SEPARATOR = "::";
+    public static final String DEFAULT_SEPARATOR = "::";
 
     /** The separator to use. */
-    
-    private String separator = DEFAULT_SEPARATOR;
+    private final String separator;
 
     /** The filename to read the list of usernames from. */
-    private Resource fileName;
+    private final Resource fileName;
 
+    public FileAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                     final Resource fileName, final String separator) {
+        super(name, servicesManager, principalFactory, null);
+        this.fileName = fileName;
+        this.separator = separator;
+    }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential, 
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
-
         try {
             if (this.fileName == null) {
                 throw new FileNotFoundException("Filename does not exist");
             }
-
-            final String username = credential.getUsername();
+            final String username = transformedCredential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
-            final String password = credential.getPassword();
-            if (StringUtils.equals(password, passwordOnRecord)) {
-                return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+            if (matches(originalPassword, passwordOnRecord)) {
+                return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);
         }
         throw new FailedLoginException();
     }
-
-    /**
-     * @param fileName The fileName to set.
-     */
-
-    public void setFileName(final Resource fileName) {
-        this.fileName = fileName;
-    }
-
-    /**
-     * @param separator The separator to set.
-     */
-    public void setSeparator(final String separator) {
-        this.separator = separator;
-    }
-
+    
     /**
      * Gets the password on record.
      *
@@ -89,20 +77,14 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-
-        try (BufferedReader bufferedReader =
-                     new BufferedReader(new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                final String[] lineFields = line.split(this.separator);
-                final String userOnRecord = lineFields[0];
-                final String passOnRecord = lineFields[1];
-                if (username.equals(userOnRecord)) {
-                    return passOnRecord;
-                }
-                line = bufferedReader.readLine();
-            }
-        }
-        return null;
+        return Files.lines(fileName.getFile().toPath())
+                .map(line -> line.split(this.separator))
+                .filter(lineFields -> {
+                    final String userOnRecord = lineFields[0];
+                    return username.equals(userOnRecord);
+                })
+                .map(lineFields -> lineFields[1])
+                .findFirst()
+                .orElse(null);
     }
 }

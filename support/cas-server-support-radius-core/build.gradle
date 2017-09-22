@@ -1,8 +1,6 @@
 description = "Apereo CAS RADIUS Support"
 dependencies {
-    compile libraries.jradius
-    compileOnly libraries.springcloud
-    compileOnly libraries.spring
+    api libraries.jradius
     compile project(":core:cas-server-core-util")
 }
 

@@ -7,7 +7,7 @@ package org.apereo.cas.util.cipher;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultTicketCipherExecutor extends BinaryCipherExecutor {
+public class DefaultTicketCipherExecutor extends BaseBinaryCipherExecutor {
     public DefaultTicketCipherExecutor(
             final String encryptionSecretKey,
             final String signingSecretKey,
@@ -16,5 +16,11 @@ public class DefaultTicketCipherExecutor extends BinaryCipherExecutor {
             final int encryptionKeySize) {
         super(encryptionSecretKey, signingSecretKey, signingKeySize, encryptionKeySize);
         setSecretKeyAlgorithm(secretKeyAlg);
+    }
+
+
+    @Override
+    public String getName() {
+        return "Ticketing";
     }
 }

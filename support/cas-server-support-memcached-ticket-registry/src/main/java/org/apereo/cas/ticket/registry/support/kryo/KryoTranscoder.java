@@ -22,17 +22,29 @@ import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.LogoutType;
+import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
+import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.ticket.registry.support.kryo.serial.URLSerializer;
 import org.apereo.cas.ticket.registry.support.kryo.serial.ZonedDateTimeTranscoder;
+import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -40,7 +52,7 @@ import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
-import org.apereo.cas.authentication.DefaultAuthentication;
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
@@ -56,6 +68,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -72,7 +85,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Kryo serializer.
      */
-    private Kryo kryo = new KryoReflectionFactorySupport();
+    private final Kryo kryo = new KryoReflectionFactorySupport();
 
     /**
      * Map of class to serializer that handles it.
@@ -86,7 +99,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     /**
-     * Sets a map of additional types that should be regisetered with Kryo,
+     * Sets a map of additional types that should be registered with Kryo,
      * for example GoogleAccountsService and OpenIdService.
      *
      * @param map Map of class to the serializer instance that handles it.
@@ -101,6 +114,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     @PostConstruct
     public void initialize() {
         // Register types we know about and do not require external configuration
+        this.kryo.register(EncodedTicket.class);
         this.kryo.register(ArrayList.class);
         this.kryo.register(BasicCredentialMetaData.class);
         this.kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
@@ -109,10 +123,19 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.kryo.register(HashMap.class);
         this.kryo.register(LinkedHashMap.class);
         this.kryo.register(HashSet.class);
+        // Can't directly access Collections.SingletonSet (private class), so instantiate one and do a getClass().
+        final Set singletonSet = Collections.singleton("test");
+        this.kryo.register(singletonSet.getClass());
+        // Can't directly access Collections.SingletonMap (private class), so instantiate one and do a getClass().
+        final Map singletonMap = Collections.singletonMap("key", "value");
+        this.kryo.register(singletonMap.getClass());
         this.kryo.register(DefaultHandlerResult.class);
         this.kryo.register(DefaultAuthentication.class);
         this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class);
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class);
         this.kryo.register(NeverExpiresExpirationPolicy.class);
+        this.kryo.register(AlwaysExpiresExpirationPolicy.class);
         this.kryo.register(RememberMeDelegatingExpirationPolicy.class);
         this.kryo.register(ServiceTicketImpl.class);
         this.kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
@@ -128,10 +151,19 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.kryo.register(UUID.class, new UUIDSerializer());
         this.kryo.register(EnumMap.class, new EnumMapSerializer());
         this.kryo.register(EnumSet.class, new EnumSetSerializer());
+        this.kryo.register(LogoutType.class);
+        this.kryo.register(RegisteredServicePublicKeyImpl.class);
+        this.kryo.register(PublicKeyFactoryBean.class);
+        this.kryo.register(RegexMatchingRegisteredServiceProxyPolicy.class);
+        this.kryo.register(ReturnAllowedAttributeReleasePolicy.class);
+        this.kryo.register(CachingPrincipalAttributesRepository.class);
+        this.kryo.register(AbstractPrincipalAttributesRepository.class);
+        this.kryo.register(RegisteredServiceRegexAttributeFilter.class);
+        this.kryo.register(PrincipalAttributeRegisteredServiceUsernameProvider.class);
+        this.kryo.register(DefaultRegisteredServiceAccessStrategy.class);
 
         // we add these ones for tests only
         this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
-
 
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(this.kryo);
@@ -149,12 +181,25 @@ public class KryoTranscoder implements Transcoder<Object> {
             this.serializerMap.forEach(this.kryo::register);
         }
 
+        // Note: There are classes from other modules (e.g. cas-server-support-oauth) which
+        // *should* be registered (e.g. OAuthCodeExpirationPolicy), but cannot because it would
+        // introduce some bad cross dependencies (i.e. right now OAuth is optional, we want it
+        // to stay that way).
+        // So - a more general mechanism for registering the Serializable classes from various
+        // modules is required in order to resolve that.  Until that happens, then Kryo Deserialization
+        // may break if any of these unregistered classes are referenced in any Tickets being pushed
+        // to memcached.  To catch this early, we have Kryo log a warning at Serialization time
+        // if an unregistered class is encountered.
+
         // don't reinit the registered classes after every write or read
         this.kryo.setAutoReset(false);
         // don't replace objects by references
         this.kryo.setReferences(false);
-        // Catchall for any classes not explicitly registered
+        // Catchall for any classes not explicitly registered.  Don't throw an exception
+        // if an unregistered class is encountered.
         this.kryo.setRegistrationRequired(false);
+        //  However, we would like at least a warning in the logs.
+        this.kryo.setWarnUnregisteredClasses(true);
     }
 
     /**

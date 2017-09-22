@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
@@ -20,46 +19,49 @@ import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Principal;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * The SSL socket factory that loads the SSL context from a custom
- * truststore file strictly used ssl handshakes for proxy authentication. 
+ * truststore file strictly used ssl handshakes for proxy authentication.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
 public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileTrustStoreSslSocketFactory.class);
-    
+
     private static final String ALG_NAME_PKIX = "PKIX";
-    
+
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
      * Defaults to {@code TLSv1} and {@link SSLConnectionSocketFactory#BROWSER_COMPATIBLE_HOSTNAME_VERIFIER}
      * for the supported protocols and hostname verification.
-     * @param trustStoreFile the trust store file
+     *
+     * @param trustStoreFile     the trust store file
      * @param trustStorePassword the trust store password
      */
-    public FileTrustStoreSslSocketFactory(
-            final Resource trustStoreFile,
-            final String trustStorePassword) {
+    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, final String trustStorePassword) {
         this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
     }
-    
+
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
-     * @param trustStoreFile the trust store file
+     *
+     * @param trustStoreFile     the trust store file
      * @param trustStorePassword the trust store password
-     * @param trustStoreType the trust store type
+     * @param trustStoreType     the trust store type
      */
-    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, 
+    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile,
                                           final String trustStorePassword,
                                           final String trustStoreType) {
         super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType));
@@ -68,13 +70,13 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
     /**
      * Gets the trusted ssl context.
      *
-     * @param trustStoreFile the trust store file
+     * @param trustStoreFile     the trust store file
      * @param trustStorePassword the trust store password
-     * @param trustStoreType the trust store type
+     * @param trustStoreType     the trust store type
      * @return the trusted ssl context
      */
     private static SSLContext getTrustedSslContext(final Resource trustStoreFile, final String trustStorePassword,
-                                            final String trustStoreType) {
+                                                   final String trustStoreType) {
         try {
 
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
@@ -91,12 +93,12 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
             final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
 
             final KeyManager[] keyManagers = {
-                    new CompositeX509KeyManager(Lists.newArrayList(jvmKeyManager, customKeyManager))
+                    new CompositeX509KeyManager(Arrays.asList(jvmKeyManager, customKeyManager))
             };
             final TrustManager[] trustManagers = {
-                    new CompositeX509TrustManager(Lists.newArrayList(jvmTrustManager, customTrustManager))
+                    new CompositeX509TrustManager(Arrays.asList(jvmTrustManager, customTrustManager))
             };
-            
+
             final SSLContext context = SSLContexts.custom().useProtocol("SSL").build();
             context.init(keyManagers, trustManagers, null);
             return context;
@@ -111,8 +113,8 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * Gets key manager.
      *
      * @param algorithm the algorithm
-     * @param keystore the keystore
-     * @param password the password
+     * @param keystore  the keystore
+     * @param password  the password
      * @return the key manager
      * @throws Exception the exception
      */
@@ -127,12 +129,12 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * Gets trust manager.
      *
      * @param algorithm the algorithm
-     * @param keystore the keystore
+     * @param keystore  the keystore
      * @return the trust manager
      * @throws Exception the exception
      */
     private static X509TrustManager getTrustManager(final String algorithm,
-                                                    final KeyStore keystore) throws Exception{
+                                                    final KeyStore keystore) throws Exception {
         final TrustManagerFactory factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return (X509TrustManager) factory.getTrustManagers()[0];
@@ -140,10 +142,11 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
     private static class CompositeX509KeyManager implements X509KeyManager {
 
-        private List<X509KeyManager> keyManagers;
+        private final List<X509KeyManager> keyManagers;
 
         /**
          * Represents an ordered list of {@link X509KeyManager}s with most-preferred managers first.
+         *
          * @param keyManagers list of key managers
          */
         CompositeX509KeyManager(final List<X509KeyManager> keyManagers) {
@@ -153,21 +156,21 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public String chooseClientAlias(final String[] keyType, final Principal[] issuers, final Socket socket) {
             return this.keyManagers.stream().map(keyManager -> keyManager.chooseClientAlias(keyType, issuers, socket))
-                    .filter(alias -> alias != null).findFirst().orElse(null);
+                    .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
         @Override
         public String chooseServerAlias(final String keyType, final Principal[] issuers, final Socket socket) {
             return this.keyManagers.stream().map(keyManager -> keyManager.chooseServerAlias(keyType, issuers, socket))
-                    .filter(alias -> alias != null).findFirst().orElse(null);
+                    .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
         @Override
         public PrivateKey getPrivateKey(final String alias) {
             return this.keyManagers.stream().map(keyManager -> keyManager.getPrivateKey(alias))
-                    .filter(privateKey -> privateKey != null).findFirst().orElse(null);
+                    .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
@@ -181,17 +184,16 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getClientAliases(keyType, issuers))));
-            return aliases.toArray(new String[] {});
+            this.keyManagers.forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getClientAliases(keyType, issuers))));
+            return aliases.toArray(new String[]{});
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getServerAliases(keyType, issuers))));
-            return aliases.toArray(new String[] {});
+            this.keyManagers.forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getServerAliases(keyType, issuers))));
+            return aliases.toArray(new String[]{});
         }
-
     }
 
     /**
@@ -221,7 +223,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     return true;
                 } catch (final CertificateException e) {
                     final String msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(c -> c.toString()).collect(Collectors.toSet()),
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
                             authType, e.getMessage()), e);
                     return false;
                 }
@@ -241,7 +243,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     return true;
                 } catch (final CertificateException e) {
                     final String msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(c -> c.toString()).collect(Collectors.toSet()),
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
                             authType, e.getMessage()), e);
                     return false;
                 }
@@ -254,7 +256,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
-            this.trustManagers.stream().forEach(trustManager -> certificates.addAll(Lists.newArrayList(trustManager.getAcceptedIssuers())));
+            this.trustManagers.forEach(trustManager -> certificates.addAll(Arrays.asList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[certificates.size()]);
         }
     }

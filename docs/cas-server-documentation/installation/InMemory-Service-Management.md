@@ -28,9 +28,9 @@ service registry data and the UI will not be used.
 
 ## Auto Initialization
 
-Upon startup and if the services registry is left blank, 
+Upon startup and configuration permitting, 
 the registry is able to auto initialize itself from default 
-JSON service definitions available to CAS. 
+JSON service definitions available to CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
 

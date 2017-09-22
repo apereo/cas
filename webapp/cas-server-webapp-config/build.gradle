@@ -1,21 +1,21 @@
 description = "Apereo CAS Web Application Configuration"
 dependencies {
-    compile libraries.spring
-    compile libraries.springboot
-    compile libraries.springcloud
-    compile libraries.groovy
-    compile libraries.cassecurityfilter
-    compile libraries.hibernate
+    implementation libraries.groovy
+    implementation libraries.pac4j
+    implementation libraries.cassecurityfilter
+
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-actions")
-    testCompile project(":support:cas-server-support-themes")
-    testCompile project(":core:cas-server-core")
-    testCompile project(":core:cas-server-core-audit")
-    testCompile project(":core:cas-server-core-logging")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(":core:cas-server-core-validation")
-    testCompile project(":core:cas-server-core")
-    testCompile project(":support:cas-server-support-cookie")
+    
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-logging")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":support:cas-server-support-cookie")
+    
     compileOnly libraries.bouncycastle
     compileOnly libraries.springboottomcat
 }

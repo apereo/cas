@@ -1,0 +1,8 @@
+description = "Apereo CAS Consent Webflow"
+dependencies {
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-consent-core")
+    compile project(":support:cas-server-support-consent-api")
+    compile project(":core:cas-server-core-configuration")
+}

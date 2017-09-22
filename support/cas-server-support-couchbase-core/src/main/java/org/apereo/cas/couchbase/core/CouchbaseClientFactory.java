@@ -6,6 +6,7 @@ import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,20 +27,19 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2
  */
 public class CouchbaseClientFactory {
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseClientFactory.class);
+    
     private Cluster cluster;
     private Bucket bucket;
     private List<View> views;
-
-    
-    private Set<String> nodes;
+    private final Set<String> nodes;
 
     /* The name of the bucket, will use the default bucket unless otherwise specified. */
     private String bucketName = "default";
 
     /* Password for the bucket if any. */
-    private String password = "";
+    private String password = StringUtils.EMPTY;
 
     /* Design document and views to create in the bucket, if any. */
     private String designDocument;
@@ -48,8 +48,17 @@ public class CouchbaseClientFactory {
 
     /**
      * Instantiates a new Couchbase client factory.
+     * @param nodes cluster nodes
+     * @param bucketName bucket name
+     * @param password cluster password
+     * @param timeout connection timeout
      */
-    public CouchbaseClientFactory() {}
+    public CouchbaseClientFactory(final Set<String> nodes, final String bucketName, final String password, final long timeout) {
+        this.nodes = nodes;
+        this.bucketName = bucketName;
+        this.password = password;
+        this.timeout = timeout;
+    }
 
     /**
      * Start initializing the client. This will schedule a task that retries
@@ -57,13 +66,13 @@ public class CouchbaseClientFactory {
      */
     public void initialize() {
         try {
-            logger.debug("Trying to connect to couchbase bucket {}", this.bucketName);
+            LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
 
             this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
 
             this.bucket = this.cluster.openBucket(this.bucketName, this.password, this.timeout, TimeUnit.SECONDS);
 
-            logger.info("Connected to Couchbase bucket {}.", this.bucketName);
+            LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
 
             if (this.views != null) {
                 doEnsureIndexes(this.designDocument, this.views);
@@ -99,7 +108,6 @@ public class CouchbaseClientFactory {
         throw new RuntimeException("Connection to bucket " + this.bucketName + " not initialized yet.");
     }
 
-
     /**
      * Register indexes to ensure in the bucket when the client is initialized.
      *
@@ -111,7 +119,6 @@ public class CouchbaseClientFactory {
         this.views = views;
     }
 
-
     /**
      * Ensures that all views exists in the database.
      *
@@ -119,28 +126,12 @@ public class CouchbaseClientFactory {
      * @param views the views to ensure exists in the database.
      */
     private void doEnsureIndexes(final String documentName, final List<View> views) {
-        logger.debug("Ensure that indexes exist in bucket {}.", this.bucket.name());
+        LOGGER.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
         final DesignDocument newDocument = DesignDocument.create(documentName, views);
         if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(documentName))) {
-            logger.warn("Missing indexes in bucket {} for document {}, creating new.", this.bucket.name(), documentName);
+            LOGGER.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), documentName);
             this.bucket.bucketManager().upsertDesignDocument(newDocument);
         }
-    }
-
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
-    }
-
-    public void setNodes(final Set<String> nodes) {
-        this.nodes = nodes;
-    }
-
-    public void setBucketName(final String bucket) {
-        this.bucketName = bucket;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
     }
 }
 

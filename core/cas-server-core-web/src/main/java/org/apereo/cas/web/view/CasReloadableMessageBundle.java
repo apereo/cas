@@ -27,15 +27,15 @@ import java.util.stream.IntStream;
  */
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasReloadableMessageBundle.class);
+
     private String[] basenames;
-    
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Override
     protected String getDefaultMessage(final String code) {
         final String messageToReturn = super.getDefaultMessage(code);
         if (!StringUtils.isBlank(messageToReturn) && messageToReturn.equals(code)) {
-            logger.warn("The code [{}] cannot be found in the default language bundle and will "
+            LOGGER.warn("The code [{}] cannot be found in the default language bundle and will "
                     + "be used as the message itself.", code);
         }
         return messageToReturn;
@@ -43,20 +43,20 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     @Override
     protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
-        boolean foundCode = false;
+        final boolean foundCode;
         
         if (!locale.equals(Locale.ENGLISH)) {
             foundCode = IntStream.range(0, this.basenames.length).filter(i -> {
                 final String filename = this.basenames[i] + '_' + locale;
 
-                logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
+                LOGGER.trace("Examining language bundle [{}] for the code [{}]", filename, code);
                 final PropertiesHolder holder = this.getProperties(filename);
                 return holder != null && holder.getProperties() != null
                         && holder.getProperty(code) != null;
             }).findFirst().isPresent();
 
             if (!foundCode) {
-                logger.debug("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
+                LOGGER.trace("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
             }
         }
         return super.getMessageInternal(code, args, locale);
@@ -66,25 +66,5 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     public void setBasenames(final String... basenames) {
         this.basenames = basenames;
         super.setBasenames(basenames);
-    }
-
-    @Override
-    public void setDefaultEncoding(final String defaultEncoding) {
-        super.setDefaultEncoding(defaultEncoding);
-    }
-
-    @Override
-    public void setCacheSeconds(final int cacheSeconds) {
-        super.setCacheSeconds(cacheSeconds);
-    }
-
-    @Override
-    public void setFallbackToSystemLocale(final boolean fallbackToSystemLocale) {
-        super.setFallbackToSystemLocale(fallbackToSystemLocale);
-    }
-
-    @Override
-    public void setUseCodeAsDefaultMessage(final boolean useCodeAsDefaultMessage) {
-        super.setUseCodeAsDefaultMessage(useCodeAsDefaultMessage);
     }
 }

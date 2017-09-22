@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.springframework.core.Ordered;
 
 import java.security.GeneralSecurityException;
 
@@ -11,7 +12,7 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public interface AuthenticationHandler {
+public interface AuthenticationHandler extends Ordered {
 
     /** Attribute name containing collection of handler names that successfully authenticated credential. */
     String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";

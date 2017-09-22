@@ -2,12 +2,16 @@ package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -19,12 +23,17 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
-    private InfinispanProperties infinispan = new InfinispanProperties();
+    private DynamoDbTicketRegistryProperties dynamoDb = new DynamoDbTicketRegistryProperties();
     
     @NestedConfigurationProperty
-    private CouchbaseTicketRegistryProperties couchbase =
-            new CouchbaseTicketRegistryProperties();
-    
+    private InfinispanProperties infinispan = new InfinispanProperties();
+
+    @NestedConfigurationProperty
+    private CouchbaseTicketRegistryProperties couchbase = new CouchbaseTicketRegistryProperties();
+
+    @NestedConfigurationProperty
+    private MongoTicketRegistryProperties mongo = new MongoTicketRegistryProperties();
+
     @NestedConfigurationProperty
     private EhcacheProperties ehcache = new EhcacheProperties();
 
@@ -39,9 +48,20 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
-    
+
+    @NestedConfigurationProperty
+    private RedisTicketRegistryProperties redis = new RedisTicketRegistryProperties();
+
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
+
+    public MongoTicketRegistryProperties getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoTicketRegistryProperties mongo) {
+        this.mongo = mongo;
+    }
 
     public InMemory getInMemory() {
         return inMemory;
@@ -115,6 +135,22 @@ public class TicketRegistryProperties {
         this.infinispan = infinispan;
     }
 
+    public RedisTicketRegistryProperties getRedis() {
+        return redis;
+    }
+
+    public void setRedis(final RedisTicketRegistryProperties redis) {
+        this.redis = redis;
+    }
+
+    public DynamoDbTicketRegistryProperties getDynamoDb() {
+        return dynamoDb;
+    }
+
+    public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
+        this.dynamoDb = dynamoDb;
+    }
+
     public static class InMemory {
         private int initialCapacity = 1000;
         private int loadFactor = 1;
@@ -130,7 +166,7 @@ public class TicketRegistryProperties {
         public void setCrypto(final CryptographyProperties crypto) {
             this.crypto = crypto;
         }
-        
+
         public int getInitialCapacity() {
             return initialCapacity;
         }
@@ -155,11 +191,11 @@ public class TicketRegistryProperties {
             this.concurrency = concurrency;
         }
     }
-    
+
     public static class Cleaner {
         private boolean enabled = true;
-        private long startDelay = 10000;
-        private long repeatInterval = 60000;
+        private String startDelay = "PT10S";
+        private String repeatInterval = "PT1M";
 
         private String appId = "cas-ticket-registry-cleaner";
 
@@ -180,18 +216,18 @@ public class TicketRegistryProperties {
         }
 
         public long getStartDelay() {
-            return startDelay;
+            return Beans.newDuration(startDelay).toMillis();
         }
 
-        public void setStartDelay(final long startDelay) {
+        public void setStartDelay(final String startDelay) {
             this.startDelay = startDelay;
         }
 
         public long getRepeatInterval() {
-            return repeatInterval;
+            return Beans.newDuration(repeatInterval).toMillis();
         }
 
-        public void setRepeatInterval(final long repeatInterval) {
+        public void setRepeatInterval(final String repeatInterval) {
             this.repeatInterval = repeatInterval;
         }
     }

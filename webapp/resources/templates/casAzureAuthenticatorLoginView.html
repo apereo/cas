@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.mfa.azure.pagetitle}"></title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Lato:700,400,300,100|Signika:400,700|Courgette);
+        textarea {
+            border: 2pt;
+            font-family: "Courier New";
+            font-weight: bold;
+            font-size: 45px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body id="cas">
+<div layout:fragment="content">
+    <div class="box fl-panel" id="login">
+        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
+            <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+            </div>
+
+            <div class="row fl-controls-left">
+                <p>Press 'LOGIN' below and provide the displayed code via your mobile device.</p>
+
+                <textarea readonly class="required" id="token" size="25" rows="1" cols="8" th:field="*{token}"/>
+                <div>
+                    <p/>
+                </div>
+                <input class="btn-submit"
+                       name="_eventId_submit"
+                       accesskey="l"
+                       tabindex="1"
+                       th:value="#{screen.welcome.button.login}"
+                       id="submitBtn"
+                       type="submit"/>
+            </div>
+            <div class="row btn-row">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="geolocation"/>
+            </div>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

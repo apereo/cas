@@ -1,8 +1,11 @@
 package org.apereo.cas.audit.config;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.entity.AuditTrailEntity;
 import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
@@ -39,17 +42,31 @@ public class CasSupportJdbcAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public DelegatingAuditTrailManager auditTrailManager() {
+    public JdbcAuditTrailManager jdbcAuditTrailManager() {
+        final AuditProperties.Jdbc jdbc = casProperties.getAudit().getJdbc();
         final JdbcAuditTrailManager t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
         t.setDataSource(inspektrAuditTrailDataSource());
-        return new DefaultDelegatingAuditTrailManager(t);
+        String tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
+        if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
+            tableName = jdbc.getDefaultSchema() + '.' + tableName;
+        }
+        if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
+            tableName = jdbc.getDefaultCatalog() + '.' + tableName;
+        }
+        t.setTableName(tableName);
+        return t;
+    }
+
+    @Bean
+    public DelegatingAuditTrailManager auditTrailManager() {
+        return new DefaultDelegatingAuditTrailManager(jdbcAuditTrailManager());
     }
 
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
-        return Beans.newEntityManagerFactoryBean(
+        return Beans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                         Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaInspektrAuditContext",
@@ -72,7 +89,7 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     @RefreshScope
     public DataSource inspektrAuditTrailDataSource() {
-        return Beans.newHickariDataSource(casProperties.getAudit().getJdbc());
+        return Beans.newDataSource(casProperties.getAudit().getJdbc());
     }
 
     @Bean

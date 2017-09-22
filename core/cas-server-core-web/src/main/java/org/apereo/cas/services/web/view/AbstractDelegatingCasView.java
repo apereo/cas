@@ -1,5 +1,10 @@
 package org.apereo.cas.services.web.view;
 
+import com.google.common.base.Throwables;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,52 +15,61 @@ import java.util.Map;
  * Renders and prepares CAS2 views. This view is responsible
  * to simply just prep the base model, and delegates to
  * a the real view to render the final output.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
 public abstract class AbstractDelegatingCasView extends AbstractCasView {
-    /** View to delegate. */
-    private View view;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDelegatingCasView.class);
+    
     /**
-     * Instantiates a new Abstract cas view.
+     * View to delegate.
      */
-    protected AbstractDelegatingCasView() {
-        
+    protected View view;
+
+    public AbstractDelegatingCasView(final boolean successResponse,
+                                     final ProtocolAttributeEncoder protocolAttributeEncoder,
+                                     final ServicesManager servicesManager,
+                                     final String authenticationContextAttribute,
+                                     final View view) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
+        this.view = view;
     }
 
     @Override
     protected void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                            final HttpServletResponse response) throws Exception {
-        logger.debug("Preparing the output model to render view...");
-        prepareMergedOutputModel(model, request, response);
+        try {
+            LOGGER.debug("Preparing the output model [{}] to render view [{}]", model.keySet(), getClass().getSimpleName());
+            prepareMergedOutputModel(model, request, response);
+            LOGGER.debug("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
 
-        logger.trace("Prepared output model with objects [{}]. Now rendering view...",
-                model.keySet().toArray());
-    
-        if (this.view != null) {
-            this.view.render(model, request, response);
-        } else {
-            logger.warn("No view is available to render the output for {}", this.getClass().getName());
+            if (this.view != null) {
+                this.view.render(model, request, response);
+            } else {
+                LOGGER.warn("No view is available to render the output for [{}]", this.getClass().getName());
+            }
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
     }
 
     /**
      * Prepare merged output model before final rendering.
      *
-     * @param model the model
-     * @param request the request
+     * @param model    the model
+     * @param request  the request
      * @param response the response
      * @throws Exception the exception
      */
     protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
                                                      HttpServletResponse response) throws Exception;
 
-    public void setView(final View view) {
-        this.view = view;
-    }
-
     public View getView() {
         return this.view;
+    }
+
+    public void setView(final View view) {
+        this.view = view;
     }
 }

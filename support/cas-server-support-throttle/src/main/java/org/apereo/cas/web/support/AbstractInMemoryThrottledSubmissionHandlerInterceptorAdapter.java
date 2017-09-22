@@ -1,5 +1,8 @@
 package org.apereo.cas.web.support;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -16,13 +19,19 @@ import java.util.concurrent.ConcurrentMap;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
-        extends AbstractThrottledSubmissionHandlerInterceptorAdapter
+public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
         implements InMemoryThrottledSubmissionHandlerInterceptor {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter.class);
+    
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
     private ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
+
+    public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
+                                                                        final String usernameParameter) {
+        super(failureThreshold, failureRangeInSeconds, usernameParameter);
+    }
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
@@ -41,20 +50,20 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      */
     @Override
     public void decrement() {
-        logger.info("Beginning audit cleanup...");
+        LOGGER.info("Beginning audit cleanup...");
 
         final Set<Entry<String, ZonedDateTime>> keys = this.ipMap.entrySet();
-        logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
+        LOGGER.debug("Decrementing counts for throttler.  Starting key count: [{}]", keys.size());
 
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext();) {
             final Entry<String, ZonedDateTime> entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
-                logger.trace("Removing entry for key {}", entry.getKey());
+                LOGGER.trace("Removing entry for key [{}]", entry.getKey());
                 iter.remove();
             }
         }
-        logger.debug("Done decrementing count for throttler.");
+        LOGGER.debug("Done decrementing count for throttler.");
     }
 
     /**

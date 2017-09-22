@@ -12,9 +12,8 @@ import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 public class AuditProperties {
 
     private String appCode = "CAS";
-
     private String singlelineSeparator = "|";
-
+    
     private String alternateServerAddrHeaderName;
     private String alternateClientAddrHeaderName;
     private boolean useServerHostAddress;
@@ -130,5 +129,4 @@ public class AuditProperties {
             this.isolationLevelName = isolationLevelName;
         }
     }
-    
 }

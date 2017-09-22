@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link HttpWebRequestProperties}.
@@ -15,11 +17,12 @@ public class HttpWebRequestProperties {
     private String onlyPostParams = "username,password";
     private String paramsToCheck =
             "ticket,service,renew,gateway,warn,method,target,SAMLart,"
-            + "pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token";
+                    + "pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token";
 
     private Web web = new Web();
     private Header header = new Header();
-    
+    private Cors cors = new Cors();
+
     public boolean isAllowMultiValueParameters() {
         return allowMultiValueParameters;
     }
@@ -42,6 +45,14 @@ public class HttpWebRequestProperties {
 
     public void setParamsToCheck(final String paramsToCheck) {
         this.paramsToCheck = paramsToCheck;
+    }
+
+    public Cors getCors() {
+        return cors;
+    }
+
+    public void setCors(final Cors cors) {
+        this.cors = cors;
     }
 
     public Web getWeb() {
@@ -81,12 +92,83 @@ public class HttpWebRequestProperties {
         }
     }
 
+    public static class Cors {
+        private boolean enabled;
+        private boolean allowCredentials = true;
+        private List<String> allowOrigins = new ArrayList<>();
+        private List<String> allowMethods = new ArrayList<>();
+        private List<String> allowHeaders = new ArrayList<>();
+        private long maxAge = 3_600;
+        private List<String> exposedHeaders = new ArrayList<>();
+
+        public Cors() {
+            this.allowMethods.add("*");
+            this.allowHeaders.add("*");
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isAllowCredentials() {
+            return allowCredentials;
+        }
+
+        public void setAllowCredentials(final boolean allowCredentials) {
+            this.allowCredentials = allowCredentials;
+        }
+
+        public List<String> getAllowOrigins() {
+            return allowOrigins;
+        }
+
+        public void setAllowOrigins(final List<String> allowOrigins) {
+            this.allowOrigins = allowOrigins;
+        }
+
+        public List<String> getAllowMethods() {
+            return allowMethods;
+        }
+
+        public void setAllowMethods(final List<String> allowMethods) {
+            this.allowMethods = allowMethods;
+        }
+
+        public List<String> getAllowHeaders() {
+            return allowHeaders;
+        }
+
+        public void setAllowHeaders(final List<String> allowHeaders) {
+            this.allowHeaders = allowHeaders;
+        }
+
+        public long getMaxAge() {
+            return maxAge;
+        }
+
+        public void setMaxAge(final long maxAge) {
+            this.maxAge = maxAge;
+        }
+
+        public List<String> getExposedHeaders() {
+            return exposedHeaders;
+        }
+
+        public void setExposedHeaders(final List<String> exposedHeaders) {
+            this.exposedHeaders = exposedHeaders;
+        }
+    }
+
     public static class Header {
-        private boolean cache;
-        private boolean hsts;
-        private boolean xframe;
-        private boolean xcontent;
-        private boolean xss;
+        private boolean cache = true;
+        private boolean hsts = true;
+        private boolean xframe = true;
+        private boolean xcontent = true;
+        private boolean xss = true;
 
         public boolean isCache() {
             return cache;

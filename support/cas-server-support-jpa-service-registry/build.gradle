@@ -4,15 +4,16 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-jpa-util")
     compile project(":core:cas-server-core-configuration")
-    compile libraries.spring
-    compile libraries.quartz
-    compile libraries.hibernate
-    runtime libraries.javaximpl
-    runtime project(":support:cas-server-support-jdbc-drivers")
-    compileOnly libraries.springcloud
-    testCompile libraries.tests
-    testCompile project(":core:cas-server-core-authentication")
-    testCompile project(":core:cas-server-core-tickets")
-    testCompile project(":support:cas-server-support-oauth-core")
-    testCompile project(":core:cas-server-core-logout")
+    
+    implementation libraries.quartz
+
+    
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
+    
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":support:cas-server-support-oauth-core")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":core:cas-server-core-logout")
 }

@@ -1,0 +1,8 @@
+description = "Apereo CAS WS-Security IdP API"
+dependencies {
+    implementation libraries.opensaml
+    implementation libraries.bouncycastle
+    implementation libraries.apachecxf
+    implementation libraries.apachefediz
+    compile project(":core:cas-server-core-services")
+}

@@ -1,14 +1,18 @@
 package org.apereo.cas.ticket.support;
 
-import org.apereo.cas.authentication.TestUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.IOException;
 
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -16,6 +20,8 @@ import static org.junit.Assert.*;
  */
 public class TimeoutExpirationPolicyTests {
 
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeoutExpirationPolicy.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final long TIMEOUT = 1;
 
     private ExpirationPolicy expirationPolicy;
@@ -26,9 +32,8 @@ public class TimeoutExpirationPolicyTests {
     public void setUp() throws Exception {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
-        this.ticket = new TicketGrantingTicketImpl("test", TestUtils
+        this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
             .getAuthentication(), this.expirationPolicy);
-
     }
 
     @Test
@@ -43,7 +48,14 @@ public class TimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketIsExpired() throws InterruptedException {
-        ticket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
+        ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
+    }
+
+    @Test
+    public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+        MAPPER.writeValue(JSON_FILE, expirationPolicy);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
+        assertEquals(expirationPolicy, policyRead);
     }
 }

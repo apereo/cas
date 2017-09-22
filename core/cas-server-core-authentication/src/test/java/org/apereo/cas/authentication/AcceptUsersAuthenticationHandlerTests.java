@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -20,21 +21,22 @@ import static org.junit.Assert.*;
  */
 public class AcceptUsersAuthenticationHandlerTests {
 
-    private Map<String, String> users;
+    private static final String SCOTT = "scott";
+    private static final String RUTGERS = "rutgers";
 
-    private AcceptUsersAuthenticationHandler authenticationHandler;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new HashMap<>();
+        final Map<String, String> users = new HashMap<>();
+        users.put(SCOTT, RUTGERS);
+        users.put("dima", "javarules");
+        users.put("bill", "thisisAwesoME");
+        users.put("brian", "t�st");
 
-        this.users.put("scott", "rutgers");
-        this.users.put("dima", "javarules");
-        this.users.put("bill", "thisisAwesoME");
-        this.users.put("brian", "t�st");
-
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler();
-        this.authenticationHandler.setPrincipalFactory(new DefaultPrincipalFactory());
-        this.authenticationHandler.setUsers(this.users);
+        this.authenticationHandler = new AcceptUsersAuthenticationHandler("", null, new DefaultPrincipalFactory(), null, users);
     }
 
     @Test
@@ -42,17 +44,16 @@ public class AcceptUsersAuthenticationHandlerTests {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
-        Assert.assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
-
+        assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
     }
 
     @Test
     public void verifySupportsProperUserCredentials() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
-        c.setUsername("scott");
-        c.setPassword("rutgers");
-       assertTrue(this.authenticationHandler.supports(c));
+        c.setUsername(SCOTT);
+        c.setPassword(RUTGERS);
+        assertTrue(this.authenticationHandler.supports(c));
     }
 
     @Test
@@ -60,7 +61,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         try {
             assertFalse(this.authenticationHandler
                     .supports(new HttpBasedServiceCredential(new URL(
-                            "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu"))));
+                            "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }
@@ -70,52 +71,64 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyAuthenticatesUserInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
-        c.setUsername("scott");
-        c.setPassword("rutgers");
+        c.setUsername(SCOTT);
+        c.setPassword(RUTGERS);
 
         try {
-            Assert.assertEquals("scott", this.authenticationHandler.authenticate(c).getPrincipal().getId());
+            assertEquals(SCOTT, this.authenticationHandler.authenticate(c).getPrincipal().getId());
         } catch (final GeneralSecurityException e) {
             fail("Authentication exception caught but it should not have been thrown.");
         }
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyFailsUserNotInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
-        c.setPassword("rutgers");
+        c.setPassword(RUTGERS);
+
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("fds not found in backing map.");
 
         this.authenticationHandler.authenticate(c);
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyFailsNullUserName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
 
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("Username is null.");
+
         this.authenticationHandler.authenticate(c);
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyFailsNullUserNameAndPassword() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
 
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("Username is null.");
+
         this.authenticationHandler.authenticate(c);
     }
 
-    @Test(expected = FailedLoginException.class)
-    public void verifyFailsNullPassword() throws Exception{
+    @Test
+    public void verifyFailsNullPassword() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
-        c.setUsername("scott");
+        c.setUsername(SCOTT);
         c.setPassword(null);
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Password is null.");
 
         this.authenticationHandler.authenticate(c);
     }

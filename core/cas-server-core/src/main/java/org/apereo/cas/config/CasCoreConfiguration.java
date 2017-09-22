@@ -1,29 +1,32 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CentralAuthenticationServiceImpl;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
+import org.apereo.cas.DefaultCentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,12 +37,13 @@ import java.util.List;
  */
 @Configuration("casCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class CasCoreConfiguration {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreConfiguration.class);
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -58,46 +62,37 @@ public class CasCoreConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
-    public ContextualAuthenticationPolicyFactory authenticationPolicyFactory() {
+    public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
             return new RequiredHandlerAuthenticationPolicyFactory();
         }
         return new AcceptAnyAuthenticationPolicyFactory();
     }
-    
+
+    @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+    @Autowired
     @Bean
-    @ConditionalOnMissingBean(name = "validationServiceSelectionStrategies")
-    public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
-        final List list = new ArrayList<>();
-        list.add(defaultValidationServiceSelectionStrategy());
-        return list;
+    public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
+        final DefaultAuthenticationServiceSelectionPlan plan = new DefaultAuthenticationServiceSelectionPlan();
+        configurers.forEach(c -> {
+            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.debug("Configuring authentication request service selection strategy plan [{}]", name);
+            c.configureAuthenticationServiceSelectionStrategy(plan);
+        });
+        return plan;
     }
 
-    @Bean
-    @Scope(value = "prototype")
-    @ConditionalOnMissingBean(name = "defaultValidationServiceSelectionStrategy")
-    public ValidationServiceSelectionStrategy defaultValidationServiceSelectionStrategy() {
-        return new DefaultValidationServiceSelectionStrategy();
-    }
-    
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
-    public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
-                                                                     final List validationServiceSelectionStrategies,
-                                                                     @Qualifier("principalFactory")
-                                                                     final PrincipalFactory principalFactory,
-                                                                     @Qualifier("protocolTicketCipherExecutor")
-                                                                     final CipherExecutor cipherExecutor) {
-        final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
-        impl.setTicketRegistry(this.ticketRegistry);
-        impl.setServicesManager(this.servicesManager);
-        impl.setLogoutManager(this.logoutManager);
-        impl.setTicketFactory(this.ticketFactory);
-        impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
-        impl.setServiceContextAuthenticationPolicyFactory(authenticationPolicyFactory());
-        impl.setPrincipalFactory(principalFactory);
-        impl.setCipherExecutor(cipherExecutor);
-        return impl;
+    public CentralAuthenticationService centralAuthenticationService(
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan selectionStrategies,
+            @Qualifier("principalFactory")
+            final PrincipalFactory principalFactory,
+            @Qualifier("protocolTicketCipherExecutor")
+            final CipherExecutor cipherExecutor) {
+        return new DefaultCentralAuthenticationService(ticketRegistry, ticketFactory, servicesManager, logoutManager,
+                selectionStrategies, authenticationPolicyFactory(), principalFactory, cipherExecutor);
     }
 }

@@ -1,38 +1,21 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
-import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
-import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.util.ApplicationContextProvider;
-import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
-import org.apereo.cas.web.config.CasValidationConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
+import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
@@ -40,27 +23,11 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link GoogleAccountsServiceFactory}.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SamlGoogleAppsConfiguration.class, CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CoreSamlConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        RefreshAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasValidationConfiguration.class,
-        CasProtocolViewsConfiguration.class,
-        CasCoreValidationConfiguration.class,
-        CasCoreConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
-        CasCoreUtilConfiguration.class})
+@Import(SamlGoogleAppsConfiguration.class)
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
@@ -68,13 +35,17 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     private ServiceFactory factory;
 
     @Autowired
+    @Qualifier("googleAccountsServiceResponseBuilder")
+    private ResponseBuilder<GoogleAccountsService> googleAccountsServiceResponseBuilder;
+
+    @Autowired
     private ApplicationContextProvider applicationContextProvider;
-    
+
     @Before
     public void init() {
         this.applicationContextProvider.setApplicationContext(this.applicationContext);
     }
-    
+
     @Test
     public void verifyNoService() {
         assertNull(factory.createService(new MockHttpServletRequest()));
@@ -91,9 +62,9 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
         final GoogleAccountsService service = (GoogleAccountsService) this.factory.createService(request);
-        service.setPrincipal(TestUtils.getPrincipal());
+        service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
         assertNotNull(service);
-        final Response response = service.getResponse("SAMPLE_TICKET");
+        final Response response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET");
         assertNotNull(response);
     }
 

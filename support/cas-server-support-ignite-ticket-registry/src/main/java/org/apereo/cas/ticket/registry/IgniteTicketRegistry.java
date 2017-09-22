@@ -10,9 +10,10 @@ import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.ssl.SslContextFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -32,39 +33,40 @@ import static java.util.stream.Collectors.toList;
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
  * </p>
  * <ul>
- * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
- * <li>Monitoring : follow separately the number of TGT and ST.</li>
+ * <li>Tuning: use cache level time to live with different values for TGT an ST.</li>
+ * <li>Monitoring: follow separately the number of TGT and ST.</li>
  * </ul>
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0`
  */
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    private IgniteConfiguration igniteConfiguration;
+    private static final Logger LOGGER = LoggerFactory.getLogger(IgniteTicketRegistry.class);
+    
+    private final IgniteConfiguration igniteConfiguration;
+    private final IgniteProperties properties;
 
     private IgniteCache<String, Ticket> ticketIgniteCache;
 
     private Ignite ignite;
-
-    /**
-     * @see #setSupportRegistryState(boolean)
-     **/
+    
     private boolean supportRegistryState = true;
 
     /**
      * Instantiates a new Ignite ticket registry.
+     *
+     * @param igniteConfiguration the ignite configuration
+     * @param properties          the properties
      */
-    public IgniteTicketRegistry() {
+    public IgniteTicketRegistry(final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
+        this.igniteConfiguration = igniteConfiguration;
+        this.properties = properties;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
-        logger.debug("Adding ticket {} to the cache {}", ticket.getId(), this.ticketIgniteCache.getName());
+        LOGGER.debug("Adding ticket [{}] to the cache [{}]", ticket.getId(), this.ticketIgniteCache.getName());
         this.ticketIgniteCache.withExpiryPolicy(new ExpiryPolicy() {
             @Override
             public Duration getExpiryForCreation() {
@@ -86,7 +88,13 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         }).put(ticket.getId(), ticket);
     }
 
-
+    @Override
+    public long deleteAll() {
+        final int size = this.ticketIgniteCache.size();
+        this.ticketIgniteCache.removeAll();
+        return size;
+    }
+    
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
@@ -105,7 +113,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
         final Ticket ticket = this.ticketIgniteCache.get(ticketId);
         if (ticket == null) {
-            logger.debug("No ticket by id [{}] is found in the registry", ticketId);
+            LOGGER.debug("No ticket by id [{}] is found in the registry", ticketId);
             return null;
         }
         return decodeTicket(ticket);
@@ -121,18 +129,10 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         this.ticketIgniteCache = ticketIgniteCache;
     }
 
-    public void setIgniteConfiguration(final IgniteConfiguration igniteConfiguration) {
-        this.igniteConfiguration = igniteConfiguration;
-    }
-
-    public IgniteConfiguration getIgniteConfiguration() {
-        return this.igniteConfiguration;
-    }
-
-
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
+        return ticket;
     }
 
     /**
@@ -153,36 +153,33 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     private void configureSecureTransport() {
         final String nullKey = "NULL";
 
-        if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
+        if (StringUtils.isNotBlank(properties.getKeyStoreFilePath())
+                && StringUtils.isNotBlank(properties.getKeyStorePassword())
+                && StringUtils.isNotBlank(properties.getTrustStoreFilePath())
+                && StringUtils.isNotBlank(properties.getTrustStorePassword())) {
 
             final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStoreFilePath(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath());
-            sslContextFactory.setKeyStorePassword(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
+            sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
+            sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
 
-            if (nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath())
-                    && nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
+            if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
-                sslContextFactory.setTrustStoreFilePath(
-                        casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(
-                        casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
+                sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
+                sslContextFactory.setTrustStorePassword(properties.getKeyStorePassword().toCharArray());
             }
 
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyAlgorithm())) {
-                sslContextFactory.setKeyAlgorithm(casProperties.getTicket().getRegistry().getIgnite().getKeyAlgorithm());
+            if (StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
+                sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());
             }
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getProtocol())) {
-                sslContextFactory.setProtocol(casProperties.getTicket().getRegistry().getIgnite().getProtocol());
+            if (StringUtils.isNotBlank(properties.getProtocol())) {
+                sslContextFactory.setProtocol(properties.getProtocol());
             }
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreType())) {
-                sslContextFactory.setTrustStoreType(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreType());
+            if (StringUtils.isNotBlank(properties.getTrustStoreType())) {
+                sslContextFactory.setTrustStoreType(properties.getTrustStoreType());
             }
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreType())) {
-                sslContextFactory.setKeyStoreType(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreType());
+            if (StringUtils.isNotBlank(properties.getKeyStoreType())) {
+                sslContextFactory.setKeyStoreType(properties.getKeyStoreType());
             }
             this.igniteConfiguration.setSslContextFactory(sslContextFactory);
         }
@@ -193,14 +190,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void init() {
-        logger.info("Setting up Ignite Ticket Registry...");
+        LOGGER.info("Setting up Ignite Ticket Registry...");
 
         configureSecureTransport();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("igniteConfiguration.cacheConfiguration={}", this.igniteConfiguration.getCacheConfiguration());
-            logger.debug("igniteConfiguration.getDiscoverySpi={}", this.igniteConfiguration.getDiscoverySpi());
-            logger.debug("igniteConfiguration.getSslContextFactory={}", this.igniteConfiguration.getSslContextFactory());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) this.igniteConfiguration.getCacheConfiguration());
+            LOGGER.debug("igniteConfiguration.getDiscoverySpi=[{}]", this.igniteConfiguration.getDiscoverySpi());
+            LOGGER.debug("igniteConfiguration.getSslContextFactory=[{}]", this.igniteConfiguration.getSslContextFactory());
         }
 
         if (Ignition.state() == IgniteState.STOPPED) {
@@ -209,8 +206,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
             this.ignite = Ignition.ignite();
         }
 
-        this.ticketIgniteCache = this.ignite.getOrCreateCache(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
-
+        this.ticketIgniteCache = this.ignite.getOrCreateCache(properties.getTicketsCache().getCacheName());
     }
 
     /**
@@ -225,12 +221,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("igniteConfiguration", casProperties.getTicket().getRegistry().getIgnite())
+                .append("igniteConfiguration", properties)
                 .append("supportRegistryState", this.supportRegistryState)
                 .toString();
-    }
-
-    public void setCasProperties(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
     }
 }

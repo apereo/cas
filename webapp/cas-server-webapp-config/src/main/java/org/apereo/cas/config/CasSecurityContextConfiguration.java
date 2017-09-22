@@ -1,11 +1,9 @@
 package org.apereo.cas.config;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.AsciiArtUtils;
+import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.pac4j.cas.authorization.DefaultCasAuthorizationGenerator;
 import org.pac4j.cas.client.direct.DirectCasClient;
@@ -23,7 +21,6 @@ import org.pac4j.springframework.web.SecurityInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,11 +34,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -61,18 +56,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
-    @Autowired
-    @Qualifier("acceptUsersAuthenticationHandler")
-    private AuthenticationHandler acceptUsersAuthenticationHandler;
 
     @Bean
     public WebContentInterceptor webContentInterceptor() {
@@ -94,28 +77,28 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public Config config() {
         try {
-            if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLoginUrl())
-                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getService())) {
+            final AdminPagesSecurityProperties adminProps = casProperties.getAdminPagesSecurity();
+            if (StringUtils.isNotBlank(adminProps.getLoginUrl())
+                    && StringUtils.isNotBlank(adminProps.getService())) {
 
-                final CasConfiguration casConfig = new CasConfiguration(casProperties.getAdminPagesSecurity().getLoginUrl());
+                final CasConfiguration casConfig = new CasConfiguration(adminProps.getLoginUrl());
                 final DirectCasClient client = new DirectCasClient(casConfig);
                 client.setName(CAS_CLIENT_NAME);
 
-                final Config cfg = new Config(casProperties.getAdminPagesSecurity().getService(), client);
-                if (this.casProperties.getAdminPagesSecurity().getUsers() == null) {
+                final Config cfg = new Config(adminProps.getService(), client);
+                if (adminProps.getUsers() == null) {
                     LOGGER.warn("List of authorized users for admin pages security is not defined. "
                             + "Allowing access for all authenticated users");
                     client.setAuthorizationGenerator(new DefaultCasAuthorizationGenerator<>());
                     cfg.setAuthorizer(new IsAuthenticatedAuthorizer());
                 } else {
-                    final Resource file = ResourceUtils.prepareClasspathResourceIfNeeded(this.casProperties.getAdminPagesSecurity().getUsers());
+                    final Resource file = ResourceUtils.prepareClasspathResourceIfNeeded(adminProps.getUsers());
                     if (file != null && file.exists()) {
+                        LOGGER.debug("Loading list of authorized users from [{}]", file);
                         final Properties properties = new Properties();
                         properties.load(file.getInputStream());
                         client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
-                        cfg.setAuthorizer(new RequireAnyRoleAuthorizer(
-                                org.springframework.util.StringUtils.commaDelimitedListToSet(
-                                        casProperties.getAdminPagesSecurity().getAdminRoles())));
+                        cfg.setAuthorizer(new RequireAnyRoleAuthorizer(adminProps.getAdminRoles()));
                     }
                 }
                 return cfg;
@@ -182,7 +165,8 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler, final ModelAndView modelAndView) throws Exception {
             if (StringUtils.isNotBlank(request.getQueryString())
-                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
+                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)
+                    && modelAndView != null) {
                 final RedirectView v = new RedirectView(request.getRequestURL().toString());
                 v.setExposeModelAttributes(false);
                 v.setExposePathVariables(false);
@@ -212,19 +196,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
             };
             secLogic.setSaveProfileInSession(true);
             setSecurityLogic(secLogic);
-        }
-    }
-
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
-            final String header =
-                    "\nCAS is configured to accept a static list of credentials for authentication.\n"
-                            + "While this is generally useful for demo purposes, it is STRONGLY recommended\n"
-                            + "that you DISABLE this authentication method (by SETTING 'cas.authn.accept.users'\n"
-                            + "to a blank value) and switch to a mode that is more suitable for production. \n";
-            AsciiArtUtils.printAsciiArt(LOGGER, "STOP!", header);
-            this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
         }
     }
 }

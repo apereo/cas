@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.stormpath.credentials.authenticator.StormpathAuthenticator;
@@ -13,12 +15,15 @@ import org.pac4j.stormpath.credentials.authenticator.StormpathAuthenticator;
  * @since 4.2.0
  */
 public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
-    private String apiKey;
-    private String applicationId;
-    private String secretkey;
 
-    public StormpathAuthenticationHandler(final String apiKey, final String applicationId,
+    private final String apiKey;
+    private final String applicationId;
+    private final String secretkey;
+
+    public StormpathAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                          final Integer order, final String apiKey, final String applicationId,
                                           final String secretkey) {
+        super(name, servicesManager, principalFactory, order);
         this.apiKey = apiKey;
         this.applicationId = applicationId;
         this.secretkey = secretkey;
@@ -26,8 +31,6 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
 
     @Override
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
-        final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.apiKey,
-                this.secretkey, this.applicationId);
-        return authenticator;
+        return new StormpathAuthenticator(this.apiKey, this.secretkey, this.applicationId);
     }
 }

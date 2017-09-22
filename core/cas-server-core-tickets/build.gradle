@@ -1,16 +1,15 @@
 description = "Apereo CAS Core Tickets"
 dependencies {
     compile project(":api:cas-server-core-api-ticket")
-    compile libraries.hibernate
-    compile libraries.quartz
-
+    implementation libraries.quartz
     compile project(":core:cas-server-core-authentication")
+    compileOnly project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-web")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
-    testCompile project(":core:cas-server-core-services")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
 

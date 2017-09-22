@@ -1,0 +1,6 @@
+description = "Apereo CAS Core Events - Spring Cloud Configuration Bus Events"
+dependencies {
+    provided project(":core:cas-server-core-events")
+    provided project(":core:cas-server-core-configuration")
+    implementation libraries.springcloudbus
+}

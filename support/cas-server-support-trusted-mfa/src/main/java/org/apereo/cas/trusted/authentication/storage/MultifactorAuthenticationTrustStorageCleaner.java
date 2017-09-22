@@ -1,7 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
@@ -20,24 +19,30 @@ import java.time.LocalDate;
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")
+@Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 public class MultifactorAuthenticationTrustStorageCleaner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
-    private MultifactorAuthenticationProperties.Trusted trustedProperties;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationTrustStorageCleaner.class);
 
-    private MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
+    private final MultifactorAuthenticationTrustStorage storage;
+
+    public MultifactorAuthenticationTrustStorageCleaner(final MultifactorAuthenticationProperties.Trusted trustedProperties,
+                                                        final MultifactorAuthenticationTrustStorage storage) {
+        this.trustedProperties = trustedProperties;
+        this.storage = storage;
+    }
 
     /**
      * Clean up expired records.
      */
-    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.startDelay:10000}",
-               fixedDelayString = "${cas.authn.mfa.trusted.cleaner.repeatInterval:60000}")
+    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.startDelay:PT10S}",
+               fixedDelayString = "${cas.authn.mfa.trusted.cleaner.repeatInterval:PT60S}")
     public void clean() {
 
         if (!trustedProperties.getCleaner().isEnabled()) {
-            LOGGER.debug("{} is disabled. Expired records will not automatically be cleaned up by CAS",
-                    getClass().getSimpleName());
+            LOGGER.debug("[{}] is disabled. Expired trusted authentication records will not automatically be cleaned up by CAS",
+                    getClass().getName());
             return;
         }
 
@@ -47,19 +52,10 @@ public class MultifactorAuthenticationTrustStorageCleaner {
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             final LocalDate validDate = LocalDate.now().minus(trustedProperties.getExpiration(),
                     DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
-            LOGGER.info("Expiring records that are on/before {}", validDate);
+            LOGGER.info("Expiring records that are on/before [{}]", validDate);
             this.storage.expire(validDate);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
-    
-    public void setTrustedProperties(final MultifactorAuthenticationProperties.Trusted trustedProperties) {
-        this.trustedProperties = trustedProperties;
-    }
-
-    public void setStorage(final MultifactorAuthenticationTrustStorage storage) {
-        this.storage = storage;
-    }
-
 }

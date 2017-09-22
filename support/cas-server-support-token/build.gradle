@@ -6,11 +6,14 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-pac4j-authentication")
-    compile libraries.jackson
-    compile libraries.pac4j
-    compile libraries.spring
-    runtime libraries.hibernate
-    testCompile project(":core:cas-server-core-authentication")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
+
+    implementation libraries.pac4j
+    
+
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
 }

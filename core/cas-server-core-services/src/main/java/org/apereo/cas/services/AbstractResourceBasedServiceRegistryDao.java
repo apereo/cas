@@ -2,8 +2,9 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.LockedOutputStream;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,11 @@ import java.nio.file.Paths;
 import java.nio.file.Watchable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AbstractResourceBasedServiceRegistryDao}.
@@ -32,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractResourceBasedServiceRegistryDao implements ResourceBasedServiceRegistryDao {
+public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
 
@@ -40,12 +43,12 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      * The Service registry directory.
      */
     protected Path serviceRegistryDirectory;
-    
+
     /**
      * Map of service ID to registered service.
      */
     private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<>();
-    
+
     /**
      * The Registered service json serializer.
      */
@@ -99,8 +102,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
         if (enableWatcher) {
 
-            LOGGER.info("Watching service registry directory at {}", configDirectory);
-            
+            LOGGER.info("Watching service registry directory at [{}]", configDirectory);
+
             this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
@@ -108,7 +111,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             LOGGER.debug("Started service registry watcher thread");
         }
     }
-    
+
     /**
      * Destroy the watch service thread.
      */
@@ -130,6 +133,15 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.serviceMap.get(id);
+    }
+
+    @Override
+    public RegisteredService findServiceById(final String id) {
+        return this.serviceMap.values()
+                .stream()
+                .filter(r -> r.matches(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -157,30 +169,31 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     @Override
     public synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
-        final int[] errorCount = {0};
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        c.stream().filter(file -> file.length() > 0).forEach(file -> {
-            final RegisteredService service = load(file);
-            if (service == null) {
-                LOGGER.warn("Could not load service definition from file {}", file);
-                errorCount[0]++;
-            } else {
-                if (temp.containsKey(service.getId())) {
-                    LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                    + "This will overwrite previous service definitions and is likely a "
-                                    + "configuration problem. Make sure all services have a unique id and try again.",
-                            service.getServiceId(), service.getId());
-                }
-                temp.put(service.getId(), service);
-            }
-        });
 
-        if (errorCount[0] == 0) {
-            this.serviceMap = temp;
-        } else {
-            LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are "
-                    + "corrected", errorCount[0]);
-        }
+        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
+        c.stream()
+                .filter(file -> file.length() > 0)
+                .forEach(file -> {
+                    final RegisteredService service = load(file);
+                    if (service == null) {
+                        LOGGER.error("Could not load service definition from file [{}]", file);
+                    } else {
+                        if (temp.containsKey(service.getId())) {
+                            LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                                            + "This will overwrite previous service definitions and is likely a "
+                                            + "configuration problem. Make sure all services have a unique id and try again.",
+                                    service.getServiceId(), service.getId());
+                        }
+                        temp.put(service.getId(), service);
+                        publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
+                    }
+                });
+
+        this.serviceMap = temp.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
         return new ArrayList(this.serviceMap.values());
     }
 
@@ -210,11 +223,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceSerializer.from(in);
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file {}", file.getName(), e);
+            LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
         }
         return null;
     }
-
 
     @Override
     public RegisteredService save(final RegisteredService service) {
@@ -253,7 +265,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
             return svcFile;
         } catch (final IOException e) {
-            LOGGER.warn("Service file name {} is invalid; Examine for illegal characters in the name.", fileName);
+            LOGGER.warn("Service file name [{}] is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
     }

@@ -14,14 +14,18 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
-import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.ResourceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountLockedException;
@@ -29,7 +33,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -39,22 +42,21 @@ import java.util.Set;
  * @since 4.2
  */
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShiroAuthenticationHandler.class);
+    
+    private final Set<String> requiredRoles;
+    private final Set<String> requiredPermissions;
 
-    private Set<String> requiredRoles = new HashSet<>();
-
-    private Set<String> requiredPermissions = new HashSet<>();
-
-
-    public void setRequiredRoles(final Set<String> requiredRoles) {
+    public ShiroAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                      final Set<String> requiredRoles, final Set<String> requiredPermissions) {
+        super(name, servicesManager, principalFactory, null);
         this.requiredRoles = requiredRoles;
-    }
-
-    public void setRequiredPermissions(final Set<String> requiredPermissions) {
         this.requiredPermissions = requiredPermissions;
     }
-    
+
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
         try {
             final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
@@ -74,10 +76,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             throw new AccountNotFoundException(uae.getMessage());
         } catch (final IncorrectCredentialsException ice) {
             throw new FailedLoginException(ice.getMessage());
-        } catch (final LockedAccountException lae) {
+        } catch (final LockedAccountException|ExcessiveAttemptsException lae) {
             throw new AccountLockedException(lae.getMessage());
-        } catch (final ExcessiveAttemptsException eae) {
-            throw new AccountLockedException(eae.getMessage());
         } catch (final ExpiredCredentialsException eae) {
             throw new CredentialExpiredException(eae.getMessage());
         } catch (final DisabledAccountException eae) {
@@ -118,8 +118,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      * @param currentUser the current user
      * @return the handler result
      */
-    protected HandlerResult createAuthenticatedSubjectResult(final Credential credential,
-                                                             final Subject currentUser) {
+    protected HandlerResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
         final String username = currentUser.getPrincipal().toString();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
@@ -144,13 +143,13 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
             if (shiroResource != null && shiroResource.exists()) {
                 final String location = shiroResource.getURI().toString();
-                logger.debug("Loading Shiro configuration from {}", location);
+                LOGGER.debug("Loading Shiro configuration from [{}]", location);
 
                 final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
                 final SecurityManager securityManager = factory.getInstance();
                 SecurityUtils.setSecurityManager(securityManager);
             } else {
-                logger.debug("Shiro configuration is not defined");
+                LOGGER.debug("Shiro configuration is not defined");
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);

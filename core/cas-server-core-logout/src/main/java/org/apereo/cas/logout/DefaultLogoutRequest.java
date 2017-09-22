@@ -3,6 +3,7 @@ package org.apereo.cas.logout;
 import java.net.URL;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 /**
  * Define a logout request for a service accessed by a user.
@@ -19,7 +20,7 @@ public class DefaultLogoutRequest implements LogoutRequest {
     private String ticketId;
 
     /** The service. */
-    private SingleLogoutService service;
+    private WebApplicationService service;
 
     /** The status of the logout request. */
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
@@ -34,7 +35,7 @@ public class DefaultLogoutRequest implements LogoutRequest {
      * @param service the service.
      * @param logoutUrl the logout url
      */
-    public DefaultLogoutRequest(final String ticketId, final SingleLogoutService service, final URL logoutUrl) {
+    public DefaultLogoutRequest(final String ticketId, final WebApplicationService service, final URL logoutUrl) {
         this.ticketId = ticketId;
         this.service = service;
         this.logoutUrl = logoutUrl;
@@ -56,7 +57,7 @@ public class DefaultLogoutRequest implements LogoutRequest {
     }
 
     @Override
-    public SingleLogoutService getService() {
+    public WebApplicationService getService() {
         return this.service;
     }
 

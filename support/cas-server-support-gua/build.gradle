@@ -1,0 +1,17 @@
+description = "Apereo CAS Graphical User Authentication Support"
+dependencies {
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":support:cas-server-support-ldap-core")
+    compile project(":core:cas-server-core-configuration")
+    compile project(":support:cas-server-support-jpa-util")
+    provided project(":support:cas-server-support-actions")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+
+    implementation libraries.ldaptive
+
+    
+    testImplementation project(":core:cas-server-core-services")
+}

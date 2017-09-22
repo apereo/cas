@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,8 +17,19 @@ public class AdaptiveAuthenticationProperties {
     private String rejectBrowsers;
     private String rejectIpAddresses;
 
+    @NestedConfigurationProperty
+    private RiskBasedAuthenticationProperties risk = new RiskBasedAuthenticationProperties();
+
     private Map requireMultifactor = new HashMap<>();
-    
+
+    public RiskBasedAuthenticationProperties getRisk() {
+        return risk;
+    }
+
+    public void setRisk(final RiskBasedAuthenticationProperties risk) {
+        this.risk = risk;
+    }
+
     public String getRejectIpAddresses() {
         return rejectIpAddresses;
     }

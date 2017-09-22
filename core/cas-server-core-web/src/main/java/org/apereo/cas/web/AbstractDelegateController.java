@@ -1,7 +1,5 @@
 package org.apereo.cas.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -17,13 +15,12 @@ import javax.servlet.http.HttpServletResponse;
  * @author Frederic Esnault
  * @since 4.2.0
  */
+@Controller
 public abstract class AbstractDelegateController implements ApplicationContextAware {
 
     /** Application context. */
     protected ApplicationContext applicationContext;
-    
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     /**
      * Determine if a AbstractDelegateController subclass can handle the current request.
      * @param request the current request
@@ -47,6 +44,4 @@ public abstract class AbstractDelegateController implements ApplicationContextAw
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
-    
 }

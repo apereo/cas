@@ -1,20 +1,23 @@
 package org.apereo.cas.authentication.handler.support;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.function.Predicate;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -25,14 +28,20 @@ import java.security.GeneralSecurityException;
  * @since 3.0.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractUsernamePasswordAuthenticationHandler.class);
+    
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    private Predicate<Credential> credentialSelectionPredicate = Predicates.alwaysTrue();
+    private Predicate<Credential> credentialSelectionPredicate = credential -> true;
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
+
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                         final Integer order) {
+        super(name, servicesManager, principalFactory, order);
+    }
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
@@ -44,6 +53,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             throw new AccountNotFoundException("Username is null.");
         }
 
+        LOGGER.debug("Transforming credential username via [{}]", this.principalNameTransformer.getClass().getName());
         final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
@@ -53,6 +63,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             throw new FailedLoginException("Password is null.");
         }
 
+        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(), transformedUsername);
         final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
@@ -60,9 +71,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
         userPass.setUsername(transformedUsername);
         userPass.setPassword(transformedPsw);
-
+        
+        LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
         return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
     }
+
 
     /**
      * Authenticates a username/password credential by an arbitrary strategy with extra parameter original credential password before
@@ -75,24 +88,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                 final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
-        return authenticateUsernamePasswordInternal(transformedCredential);
-    }
-
-    /**
-     * Authenticates a username/password credential by an arbitrary strategy.
-     *
-     * @param transformedCredential the credential object bearing the transformed username and password.
-     * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
-     * from the credential.
-     * @throws GeneralSecurityException On authentication failure.
-     * @throws PreventedException       On the indeterminate case when authentication is prevented.
-     */
-    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential)
+    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword) 
             throws GeneralSecurityException, PreventedException;
-
 
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
@@ -118,7 +115,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     public boolean supports(final Credential credential) {
         if (credential instanceof UsernamePasswordCredential) {
             if (this.credentialSelectionPredicate != null) {
-                return this.credentialSelectionPredicate.apply(credential);
+                return this.credentialSelectionPredicate.test(credential);
             }
             return true;
         }
@@ -136,4 +133,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     protected boolean matches(final CharSequence charSequence, final String password) {
         return this.passwordEncoder.matches(charSequence, password);
     }
+
+
 }

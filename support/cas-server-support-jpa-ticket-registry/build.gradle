@@ -1,23 +1,20 @@
 description = "Apereo CAS JPA Ticket Registry Support"
 dependencies {
-    compileOnly libraries.springcloud
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-monitor")
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-jpa-util")
-    compile project(":support:cas-server-support-oauth-core")
     compile project(":core:cas-server-core-configuration")
-    compile libraries.spring
-    compile libraries.quartz
-    compile libraries.hibernate
-    runtime libraries.javaximpl
-    runtime project(":support:cas-server-support-jdbc-drivers")
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
-    testCompile libraries.tests
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(":core:cas-server-core-services")
-    testCompile project(":support:cas-server-support-cookie")
-    testCompile project(":core:cas-server-core")
 
+    implementation libraries.quartz
+    
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }

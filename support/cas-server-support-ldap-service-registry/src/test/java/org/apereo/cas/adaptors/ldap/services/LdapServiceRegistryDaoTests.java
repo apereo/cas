@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -16,9 +15,8 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,8 +34,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.apereo.cas.adaptors.ldap.AbstractLdapTests.initDirectoryServer;
 import static org.junit.Assert.*;
 
 /**
@@ -49,8 +48,8 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
-@ContextConfiguration(locations = {"/ldap-context.xml", "/ldap-regservice-test.xml"})
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
+@EnableScheduling
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
@@ -64,9 +63,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Before
     public void setUp() throws Exception {
-        for (final RegisteredService service : this.dao.load()) {
-            this.dao.delete(service);
-        }
+        this.dao.load().forEach(service -> this.dao.delete(service));
     }
 
     @Test
@@ -114,9 +111,27 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
+    public void verifySamlService() {
+        final SamlRegisteredService r = new SamlRegisteredService();
+        r.setName("verifySamlService");
+        r.setServiceId("Testing");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final Map fmt = new HashMap();
+        fmt.put("key", "value");
+        r.setAttributeNameFormats(fmt);
+        r.setMetadataCriteriaDirection("INCLUDE");
+        r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
+        r.setMetadataSignatureLocation("location");
+        r.setRequiredAuthenticationContextClass("Testing");
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();
-        r.setName("test456");
+        r.setName("test1456");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -124,30 +139,6 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifyOAuthServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("test345");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifyOAuthRegisteredServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("testoauth");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r, r2);
     }
@@ -185,9 +176,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
-        for (final RegisteredService registeredService : services) {
-            this.dao.delete(registeredService);
-        }
+        services.forEach(registeredService -> this.dao.delete(registeredService));
         assertEquals(0, this.dao.load().size());
     }
 
@@ -203,9 +192,9 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
-        rs.setRequiredHandlers(new HashSet<>(Lists.newArrayList("handler1", "handler2")));
+        rs.setRequiredHandlers(Stream.of("handler1", "handler2").collect(Collectors.toSet()));
 
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap();
+        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
 
         final Set<String> values = new HashSet<>();
@@ -217,6 +206,4 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
         return rs;
     }
-
-
 }

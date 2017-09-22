@@ -1,14 +1,16 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.jasig.cas.client.util.URIBuilder;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSingleLogoutServiceLogoutUrlBuilder}.
@@ -17,6 +19,7 @@ import java.net.URL;
  * @since 5.0.0
  */
 public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutServiceLogoutUrlBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPSingleLogoutServiceLogoutUrlBuilder.class);
 
     /**
      * The Services manager.
@@ -28,39 +31,45 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
      */
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
+    public SamlIdPSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
+                                                      final SamlRegisteredServiceCachingMetadataResolver resolver) {
+        this.servicesManager = servicesManager;
+        this.samlRegisteredServiceCachingMetadataResolver = resolver;
+    }
+
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService,
-                                  final org.apereo.cas.logout.SingleLogoutService singleLogoutService) {
+                                  final WebApplicationService singleLogoutService) {
 
         try {
             if (registeredService instanceof SamlRegisteredService) {
-                final URIBuilder builder = new URIBuilder(singleLogoutService.getOriginalUrl());
-                for (final URIBuilder.BasicNameValuePair basicNameValuePair : builder.getQueryParams()) {
-                    if (basicNameValuePair.getName().equalsIgnoreCase(SamlProtocolConstants.PARAMETER_ENTITY_ID)) {
-                        final String entityID = basicNameValuePair.getValue();
-
-                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                                        SamlRegisteredService.class.cast(registeredService), entityID);
-
-                        final String location = adaptor.getSingleLogoutService().getLocation();
-                        return new URL(location);
-                    }
+                final URL location = buildLogoutUrl(registeredService, singleLogoutService);
+                if (location != null) {
+                    LOGGER.info("Final logout URL built for [{}] is [{}]", registeredService, location);
+                    return location;
                 }
             }
-
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
+        LOGGER.debug("Service [{}] is not a SAML service, or its logout url could not be determined", registeredService);
         return super.determineLogoutUrl(registeredService, singleLogoutService);
     }
 
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
+    private URL buildLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) throws Exception {
+        LOGGER.debug("Building logout url for SAML service [{}]", registeredService);
+        final String entityID = singleLogoutService.getId();
+        LOGGER.debug("Located entity id [{}]", entityID);
 
-    public void setSamlRegisteredServiceCachingMetadataResolver(
-            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
-        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
+        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
+                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                        SamlRegisteredService.class.cast(registeredService), entityID);
+
+        if (!adaptor.isPresent()) {
+            LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
+            return null;
+        }
+        final String location = adaptor.get().getSingleLogoutService().getLocation();
+        return new URL(location);
     }
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.sso;
 
 /**
- * Configuration properties class for <code>create.sso</code>.
+ * Configuration properties class for {@code create.sso}.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

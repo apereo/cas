@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation;
 
-import com.google.common.collect.Lists;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationConfiguration.class);
 
     /**
      * Describes how the WS-FED principal resolution machinery
@@ -63,7 +63,7 @@ public class WsFederationConfiguration implements Serializable {
     
     private String relyingPartyIdentifier;
     
-    private int tolerance;
+    private long tolerance;
     
     private WsFedPrincipalResolutionAttributesType attributesType;
     
@@ -172,12 +172,12 @@ public class WsFederationConfiguration implements Serializable {
      * @param signingCertificateResources a list of certificate files to read in.
      */
     public void setSigningCertificateResources(final Resource... signingCertificateResources) {
-        this.signingCertificateResources = Lists.newArrayList(signingCertificateResources);
+        this.signingCertificateResources = Arrays.asList(signingCertificateResources);
         createSigningWallet(this.signingCertificateResources);
     }
 
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
-        this.signingWallet = signingCertificateFiles.stream().map(this::getSigningCredential).collect(Collectors.toList());
+        this.signingWallet = signingCertificateFiles.stream().map(WsFederationConfiguration::getSigningCredential).collect(Collectors.toList());
     }
 
     /**
@@ -185,7 +185,7 @@ public class WsFederationConfiguration implements Serializable {
      *
      * @return the tolerance in milliseconds
      */
-    public int getTolerance() {
+    public long getTolerance() {
         return this.tolerance;
     }
 
@@ -194,7 +194,7 @@ public class WsFederationConfiguration implements Serializable {
      *
      * @param tolerance the tolerance in milliseconds
      */
-    public void setTolerance(final int tolerance) {
+    public void setTolerance(final long tolerance) {
         this.tolerance = tolerance;
     }
 
@@ -258,16 +258,16 @@ public class WsFederationConfiguration implements Serializable {
      * @param resource the signing certificate file
      * @return an X509 credential
      */
-    private Credential getSigningCredential(final Resource resource) {
+    private static Credential getSigningCredential(final Resource resource) {
         try(InputStream inputStream = resource.getInputStream()) {
             final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
             final Credential publicCredential = new BasicX509Credential(certificate);
-            logger.debug("getSigningCredential: key retrieved.");
+            LOGGER.debug("getSigningCredential: key retrieved.");
             return publicCredential;
         } catch (final Exception ex) {
-            logger.error(ex.getMessage(), ex);
-            return null;
+            LOGGER.error(ex.getMessage(), ex);
         }
+        return null;
     }
 }

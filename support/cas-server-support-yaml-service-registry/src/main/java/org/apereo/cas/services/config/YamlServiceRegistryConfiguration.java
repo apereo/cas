@@ -44,7 +44,7 @@ public class YamlServiceRegistryConfiguration {
 
         try {
             if (registry.getConfig().getLocation() instanceof ClassPathResource) {
-                LOGGER.warn("The location of service definitions {} is on the classpath. It is recommended that the location of service definitions "
+                LOGGER.warn("The location of service definitions [{}] is on the classpath. It is recommended that the location of service definitions "
                                 + "be externalized to allow for easier modifications and better sharing of the configuration.",
                         registry.getConfig().getLocation());
             }

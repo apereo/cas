@@ -1,10 +1,11 @@
 package org.apereo.cas.audit.spi.config;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
-import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
 import org.apereo.cas.audit.spi.PrincipalIdProvider;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
@@ -21,6 +22,7 @@ import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
+import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,8 +32,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
+import org.springframework.webflow.execution.Event;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,13 +56,11 @@ public class CasCoreAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect(
-            @Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
-
+    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
                 auditablePrincipalResolver(principalIdProvider()),
-                ImmutableList.of(auditTrailManager), auditActionResolverMap(),
+                Collections.singletonList(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
@@ -74,17 +76,17 @@ public class CasCoreAuditConfiguration {
         return new DefaultDelegatingAuditTrailManager(mgmr);
     }
 
-    @ConditionalOnMissingBean(name = "casClientInfoLoggingFilter")
     @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final AuditProperties audit = casProperties.getAudit();
-        
+
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("CAS Client Info Logging Filter");
+        bean.setAsyncSupported(true);
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        
+
         final Map<String, String> initParams = new HashMap<>();
         if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {
             initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateClientAddrHeaderName());
@@ -96,7 +98,6 @@ public class CasCoreAuditConfiguration {
 
         initParams.put(ClientInfoThreadLocalFilter.CONST_USE_SERVER_HOST_ADDRESS, String.valueOf(audit.isUseServerHostAddress()));
         bean.setInitParameters(initParams);
-
         return bean;
     }
 
@@ -124,14 +125,46 @@ public class CasCoreAuditConfiguration {
         return new ReturnValueAsStringResourceResolver();
     }
 
+    @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
+    @Bean
+    public AuditResourceResolver nullableReturnValueResourceResolver() {
+        return new AuditResourceResolver() {
+            @Override
+            public String[] resolveFrom(final JoinPoint joinPoint, final Object o) {
+                if (o == null) {
+                    return new String[0];
+                }
+                if (o instanceof Event) {
+                    final Event event = Event.class.cast(o);
+
+                    final String sourceName = event.getSource().getClass().getSimpleName();
+                    final String result =
+                            new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
+                                    .append("event", event.getId())
+                                    .append("timestamp", new Date(event.getTimestamp()))
+                                    .append("source", sourceName)
+                                    .toString();
+                    return new String[]{result};
+                }
+                return returnValueResourceResolver().resolveFrom(joinPoint, o);
+            }
+
+            @Override
+            public String[] resolveFrom(final JoinPoint joinPoint, final Exception e) {
+                return returnValueResourceResolver().resolveFrom(joinPoint, e);
+            }
+        };
+    }
+
     @ConditionalOnMissingBean(name = "auditActionResolverMap")
     @Bean
-    public Map auditActionResolverMap() {
+    public Map<String, AuditActionResolver> auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
 
         final AuditActionResolver resolver = authenticationActionResolver();
         map.put("AUTHENTICATION_RESOLVER", resolver);
         map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
+        map.put("CHANGE_PASSWORD_ACTION_RESOLVER", resolver);
 
         final AuditActionResolver defResolver = new DefaultAuditActionResolver();
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
@@ -144,6 +177,10 @@ public class CasCoreAuditConfiguration {
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", cResolver);
 
+        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER", new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY));
+        final AuditActionResolver adResolver = new DefaultAuditActionResolver();
+        map.put("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", adResolver);
+
         map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
 
         return map;
@@ -151,7 +188,7 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditResourceResolverMap")
     @Bean
-    public Map auditResourceResolverMap() {
+    public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver());
@@ -162,7 +199,10 @@ public class CasCoreAuditConfiguration {
         map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
         return map;
     }
 

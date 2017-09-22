@@ -1,8 +1,9 @@
 package org.apereo.cas.support.openid.web.flow;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -12,6 +13,8 @@ import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -27,14 +30,14 @@ import org.springframework.webflow.execution.RequestContext;
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
+    private final TicketRegistrySupport ticketRegistrySupport;
 
-    private TicketRegistrySupport ticketRegistrySupport;
-
-    public void setExtractor(final OpenIdUserNameExtractor extractor) {
+    public OpenIdSingleSignOnAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+                                    final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                    final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, final OpenIdUserNameExtractor extractor,
+                                    final TicketRegistrySupport ticketRegistrySupport) {
+        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.extractor = extractor;
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
 

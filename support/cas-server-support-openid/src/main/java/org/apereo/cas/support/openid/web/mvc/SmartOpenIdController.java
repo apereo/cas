@@ -26,12 +26,15 @@ import java.util.Map;
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
 
     private static final long serialVersionUID = -594058549445950430L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SmartOpenIdController.class);
 
-    private transient Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private final ServerManager serverManager;
+    private final View successView;
 
-    private ServerManager serverManager;
-
-    private View successView;
+    public SmartOpenIdController(final ServerManager serverManager, final View successView) {
+        this.serverManager = serverManager;
+        this.successView = successView;
+    }
 
     /**
      * Gets the association response. Determines the mode first.
@@ -63,8 +66,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Map<String, String> parameters = new HashMap<>();
         parameters.putAll(getAssociationResponse(request));
         return new ModelAndView(this.successView, parameters);
@@ -74,18 +76,10 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         final String openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.ASSOCIATE)) {
-            logger.info("Handling request. openid.mode : {}", openIdMode);
+            LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;
         }
-        logger.info("Cannot handle request. openid.mode : {}", openIdMode);
+        LOGGER.info("Cannot handle request. openid.mode : [{}]", openIdMode);
         return false;
-    }
-
-    public void setSuccessView(final View successView) {
-        this.successView = successView;
-    }
-    
-    public void setServerManager(final ServerManager serverManager) {
-        this.serverManager = serverManager;
     }
 }

@@ -1,10 +1,6 @@
 package org.apereo.cas.mgmt.web;
 
-import org.apereo.cas.util.AsciiArtUtils;
-import org.springframework.boot.Banner;
-import org.springframework.core.env.Environment;
-
-import java.io.PrintStream;
+import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 
 /**
  * This is {@link CasManagementBanner}.
@@ -12,12 +8,9 @@ import java.io.PrintStream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CasManagementBanner implements Banner {
-
+public class CasManagementBanner extends AbstractCasBanner {
     @Override
-    public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
-        AsciiArtUtils.printAsciiArt(out, "CAS Management");
+    protected String getTitle() {
+        return "CAS Management";
     }
 }
-
-

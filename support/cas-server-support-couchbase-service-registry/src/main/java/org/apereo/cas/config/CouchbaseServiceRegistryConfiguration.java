@@ -1,15 +1,19 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import java.util.Set;
 
 /**
  * This is {@link CouchbaseServiceRegistryConfiguration}.
@@ -32,21 +36,15 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
-
-        final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(
-                casProperties.getServiceRegistry().getCouchbase().getNodeSet()));
-        factory.setTimeout(casProperties.getServiceRegistry().getCouchbase().getTimeout());
-        factory.setBucketName(casProperties.getServiceRegistry().getCouchbase().getBucket());
-        factory.setPassword(casProperties.getServiceRegistry().getCouchbase().getPassword());
-        return factory;
+        final CouchbaseServiceRegistryProperties couchbase = casProperties.getServiceRegistry().getCouchbase();
+        final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
+        return new CouchbaseClientFactory(nodes, couchbase.getBucket(), couchbase.getPassword(), couchbase.getTimeout());
     }
 
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
-        final CouchbaseServiceRegistryDao c = new CouchbaseServiceRegistryDao();
-        c.setCouchbaseClientFactory(serviceRegistryCouchbaseClientFactory());
-        return c;
+        return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new RegisteredServiceJsonSerializer(),
+                casProperties.getServiceRegistry().getCouchbase().isQueryEnabled());
     }
 }

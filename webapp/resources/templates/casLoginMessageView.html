@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{screen.authentication.warning}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content" class="loginMessageView">
+    <div class="alert alert-warning">
+        <h2 th:text="#{screen.authentication.warning}"/>
+        <div th:each="message : ${messages}">
+            <p class="message" th:utext="${message.text}"/>
+        </div>
+        <section class="row btn-row">
+            <form method="post" id="form" class="fm-v clearfix" th:action="@{/login}" >
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="proceed"/>
+                <input class="btn btn-submit" name="continue" accesskey="l"
+                       th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+            </form>
+        </section>
+        
+    </div>
+</div>
+</body>
+</html>

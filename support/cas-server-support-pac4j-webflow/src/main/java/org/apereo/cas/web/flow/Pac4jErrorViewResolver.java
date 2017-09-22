@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.support.pac4j.web.flow.ClientAction;
+import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
@@ -27,10 +27,7 @@ public class Pac4jErrorViewResolver implements ErrorViewResolver {
     public ModelAndView resolveErrorView(final HttpServletRequest request,
                                          final HttpStatus status, final Map<String, Object> map) {
 
-        final Optional<ModelAndView> mv = ClientAction.hasDelegationRequestFailed(request, status.value());
-        if (mv.isPresent()) {
-            return mv.get();
-        }
-        return conventionErrorViewResolver.resolveErrorView(request, status, map);
+        final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, status.value());
+        return mv.orElseGet(() -> conventionErrorViewResolver.resolveErrorView(request, status, map));
     }
 }

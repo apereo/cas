@@ -8,23 +8,17 @@ import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
-import com.codahale.metrics.servlets.MetricsServlet;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.ServletWrappingController;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,10 +34,6 @@ import java.util.concurrent.TimeUnit;
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
 
     @Autowired
-    @Qualifier("handlerMapping")
-    private SimpleUrlHandlerMapping handlerMapping;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     /**
@@ -51,6 +41,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the metric registry
      */
+    @RefreshScope
     @Bean
     public MetricRegistry metrics() {
         final MetricRegistry metrics = new MetricRegistry();
@@ -60,12 +51,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
         metrics.register("jvm.fd.usage", new FileDescriptorRatioGauge());
         return metrics;
     }
-
-    /**
-     * Health check metrics health check registry.
-     *
-     * @return the health check registry
-     */
+    
     @Bean
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();
@@ -96,17 +82,5 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
                 .forRegistry(metricRegistry)
                 .build());
 
-    }
-
-    @PostConstruct
-    public void init() {
-        final ServletWrappingController w = new ServletWrappingController();
-        w.setServletName("metricsServlet");
-        w.setServletClass(MetricsServlet.class);
-        w.setSupportedMethods("GET");
-
-        final Map map = new HashMap<>(handlerMapping.getUrlMap());
-        map.put("/status/metrics", w);
-        handlerMapping.setUrlMap(map);
     }
 }

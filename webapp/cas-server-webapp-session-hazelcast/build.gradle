@@ -1,8 +1,6 @@
 description = "Apereo CAS Web Application Hazelcast Session Management"
 dependencies {
     compile project(":core:cas-server-core-configuration")
-    compile libraries.spring
-    compile libraries.springcloud
-    compile libraries.springsession
-    compile libraries.hazelcast
+    implementation libraries.springsession
+    implementation libraries.hazelcast
 }

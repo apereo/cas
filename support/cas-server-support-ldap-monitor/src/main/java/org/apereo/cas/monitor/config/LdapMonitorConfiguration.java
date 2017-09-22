@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryMonitor;
@@ -25,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -37,19 +38,9 @@ public class LdapMonitorConfiguration {
 
     @Autowired
     @Bean
-    public Monitor pooledLdapConnectionFactoryMonitor(
-            @Qualifier("pooledConnectionFactoryMonitorExecutorService")
-            final ExecutorService executor) {
-
-        final PooledConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
-                casProperties.getMonitor().getLdap()
-        );
-        
-        final PooledLdapConnectionFactoryMonitor m =
-                new PooledLdapConnectionFactoryMonitor(connectionFactory,
-                        new SearchValidator());
-        m.setMaxWait(casProperties.getMonitor().getLdap().getMaxWait());
-        m.setExecutor(executor);
-        return m;
+    public Monitor pooledLdapConnectionFactoryMonitor(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ExecutorService executor) {
+        final MonitorProperties.Ldap ldap = casProperties.getMonitor().getLdap();
+        final PooledConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
+        return new PooledLdapConnectionFactoryMonitor(executor, Long.valueOf(ldap.getMaxWait()).intValue(), connectionFactory, new SearchValidator());
     }
 }

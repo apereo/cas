@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 
 /**
@@ -11,6 +13,7 @@ import java.io.Serializable;
  * @see Ticket
  * @since 3.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public interface ExpirationPolicy extends Serializable {
 
     /**

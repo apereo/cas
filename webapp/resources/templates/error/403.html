@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title>WAH WAH WAH</title>
+    <style>
+        @import 'https://fonts.googleapis.com/css?family=Gloria+Hallelujah';
+
+        .prompt {
+            font-family: 'Gloria Hallelujah', cursive;
+        }
+    </style>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 class="prompt">YOU ARE NOT AUTHORIZED TO BE AUTHORIZED!</h2>
+        <div class="prompt">
+            <p/>
+            <p>We are sorry. You do not have permission to view this page.</p>
+            <br/>
+            <p>You thought you could just get what you wanted, right?</p>
+            <br/>
+            <p>Wrong.</p>
+
+            <br/>
+            <p>In closing, <a th:href="@{/login}">go away</a>. </p>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

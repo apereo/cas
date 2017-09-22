@@ -3,11 +3,12 @@ package org.apereo.cas.authentication.support;
 import com.google.common.base.Throwables;
 import org.apache.shiro.util.ClassUtils;
 import org.apereo.cas.DefaultMessageDescriptor;
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.AccountPasswordMustChangeException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-import org.apereo.cas.authentication.InvalidLoginTimeException;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
+import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
@@ -44,16 +45,11 @@ import java.util.Map;
  * @since 4.0.0
  */
 public class DefaultAccountStateHandler implements AccountStateHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAccountStateHandler.class);
     /**
      * Map of account state error to CAS authentication exception.
      */
     protected Map<AccountState.Error, LoginException> errorMap;
-
-    /**
-     * Logger instance.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
     private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>();
 
     /**
@@ -94,13 +90,13 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             throws LoginException {
 
         if (!this.attributesToErrorMap.isEmpty() && response.getResult()) {
-            logger.debug("Handling policy based on pre-defined attributes");
+            LOGGER.debug("Handling policy based on pre-defined attributes");
             handlePolicyAttributes(response);
         }
 
         final AccountState state = response.getAccountState();
         if (state == null) {
-            logger.debug("Account state not defined. Returning empty list of messages.");
+            LOGGER.debug("Account state not defined. Returning empty list of messages.");
             return Collections.emptyList();
         }
         final List<MessageDescriptor> messages = new ArrayList<>();
@@ -128,12 +124,12 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages)
             throws LoginException {
 
-        logger.debug("Handling error {}", error);
+        LOGGER.debug("Handling error [{}]", error);
         final LoginException ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
         }
-        logger.debug("No LDAP error mapping defined for {}", error);
+        LOGGER.debug("No LDAP error mapping defined for [{}]", error);
     }
 
 
@@ -154,23 +150,26 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages) {
 
 
-        logger.debug("Handling warning {}", warning);
+        LOGGER.debug("Handling warning [{}]", warning);
         if (warning == null) {
-            logger.debug("Account state warning not defined");
+            LOGGER.debug("Account state warning not defined");
             return;
         }
 
-        final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
-        final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
-        logger.debug(
-                "Password expires in {} days. Expiration warning threshold is {} days.",
-                ttl,
-                configuration.getPasswordWarningNumberOfDays());
-        if (configuration.isAlwaysDisplayPasswordExpirationWarning()
-                || ttl < configuration.getPasswordWarningNumberOfDays()) {
-            messages.add(new PasswordExpiringWarningMessageDescriptor(
-                    "Password expires in {0} days.", ttl));
+        if (warning.getExpiration() != null) {
+            final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
+            final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
+            LOGGER.debug(
+                    "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
+                    ttl,
+                    configuration.getPasswordWarningNumberOfDays());
+            if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
+                messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
+            }
+        } else {
+            LOGGER.debug("No account expiration warning is provided for the account state");
         }
+        
         if (warning.getLoginsRemaining() > 0) {
             messages.add(new DefaultMessageDescriptor(
                     "password.expiration.loginsRemaining",

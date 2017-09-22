@@ -1,0 +1,95 @@
+<!-- Principle Attribute Repository Options -->
+<div class="panel panel-default">
+    <div class="panel-heading"><span th:remove="tag" th:text="#{services.form.header.principleAttRepo}"/></div>
+    <div class="panel-body">
+        <div class="radio-group">
+            <!-- Principle Repository Radio Button - Default -->
+            <label class="radio-inline">
+                <input type="radio" name="prinFilterDefault" id="prinFilterDefault" value="DEFAULT"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrOption"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrOption == 'DEFAULT'"/>
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.default}"/>
+            </label>
+            <!-- Principle Filter Radio Button - Cached -->
+            <label class="radio-inline">
+                <input type="radio" name="prinFilterCached" id="prinFilterCached" value="CACHED"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrOption"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrOption == 'CACHED'"/>
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.cached}"/>
+            </label>
+        </div>
+
+        <!-- Principle Attribute Repo Default Options -->
+        <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.attrRelease.attrOption == 'DEFAULT'">
+            <span th:remove="tag" th:text="#{management.services.service.noAction}"/>
+        </div>
+
+        <!-- Principle Attribute Repo Cached Options -->
+        <div class="principle-attribute-cached-container"
+             ng-show="serviceFormCtrl.serviceData.attrRelease.attrOption == 'CACHED'">
+            <!-- Principle Attribute Repo Cached Time -->
+            <div class="form-group">
+                <label class="col-sm-4" for="cachedTime">
+                    <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.cached.timeUnit}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.serviceData.attrRelease.cachedTimeUnit">
+                            <option ng-repeat="opt in serviceFormCtrl.selectOptions.timeUnitsList" ng-attr-value="{{ opt.value }}"
+                                    ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.attrRelease.cachedTimeUnit)">{{
+                                opt.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Principle Attribute Repo Cached Expiration -->
+            <div class="form-group">
+                <label class="col-sm-4" for="cachedExp">
+                    <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.cached.expiration}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.expiration}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="number" min="0" class="form-control" id="cachedExp"
+                           ng-model="serviceFormCtrl.serviceData.attrRelease.cachedExpiration"/>
+                </div>
+
+                <!-- Principle Attribute Repo Merging Strategy -->
+
+                <label class="col-sm-4" for="mergingStrategy">
+                    <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <select class="form-control" id="mergingStrategy" ng-model="serviceFormCtrl.serviceData.attrRelease.mergingStrategy">
+                            <option ng-repeat="opt in serviceFormCtrl.selectOptions.mergeStrategyList" ng-attr-value="{{ opt.value }}"
+                                    ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.attrRelease.mergeStrategy)">{{
+                                opt.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

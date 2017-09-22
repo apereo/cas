@@ -20,7 +20,16 @@ communicate with the CAS server using or or more supported protocols. CAS client
 ## Other Clients
 
 Other unofficial or incubating CAS clients may be [found here](https://wiki.jasig.org/display/CASC).
+Given the above projects are unofficial and not under direct maintenance of CAS,
+their availability and accuracy may vary.
 
+## Samples
+
+- [CASified Python web application using Flask](https://github.com/cas-projects/cas-sample-python-webapp)
+- [CASified Java web application using Java CAS Client](https://github.com/cas-projects/cas-sample-java-webapp)
+- [Go CLI for CAS admin endpoints](https://github.com/cas-projects/casctl)
+- [Smoke Testing CAS HA Deployments](https://github.com/cas-projects/duct)
+- [CASified Bootiful Java web application](https://github.com/cas-projects/bootiful-cas-client)
 
 ## Framework Support
 

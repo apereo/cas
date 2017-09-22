@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 
 /**

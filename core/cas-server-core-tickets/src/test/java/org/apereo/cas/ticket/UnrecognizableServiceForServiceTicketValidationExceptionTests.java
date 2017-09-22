@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  */
 public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
-    private Service service = TestUtils.getService();
+    private final Service service = RegisteredServiceTestUtils.getService();
 
     @Test
     public void verifyThrowableConstructor() {

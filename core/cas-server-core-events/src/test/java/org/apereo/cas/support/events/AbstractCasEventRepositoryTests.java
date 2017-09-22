@@ -2,7 +2,7 @@ package org.apereo.cas.support.events;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public abstract class AbstractCasEventRepositoryTests {
         final CasEvent dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime());
         dto.putId(event.getTicketGrantingTicket().getId());
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
 

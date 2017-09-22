@@ -1,5 +1,10 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.slf4j.Logger;
@@ -15,6 +20,7 @@ import java.time.temporal.ChronoUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -8383186650682727360L;
 
@@ -23,7 +29,7 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     /** Maximum time this token is valid.  */
     private long maxTimeToLiveInSeconds;
 
-    /** Time to kill in milliseconds. */
+    /** Time to kill in seconds. */
     private long timeToKillInSeconds;
 
     public OAuthAccessTokenExpirationPolicy() {}
@@ -34,7 +40,9 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      * @param maxTimeToLive the max time to live
      * @param timeToKill the time to kill
      */
-    public OAuthAccessTokenExpirationPolicy(final long maxTimeToLive, final long timeToKill) {
+    @JsonCreator
+    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
+                                            @JsonProperty("timeToIdle") final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
     }
@@ -52,9 +60,9 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         }
 
         // token is within hard window, check timeToKill (sliding window)
-        expirationTime = creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        if (ticketState.getLastTimeUsed().isAfter(expirationTime)) {
-            LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInMilliseconds");
+        expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        if (currentSystemTime.isAfter(expirationTime)) {
+            LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInSeconds");
             return true;
         }
 
@@ -69,5 +77,32 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     @Override
     public Long getTimeToIdle() {
         return this.timeToKillInSeconds;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final OAuthAccessTokenExpirationPolicy rhs = (OAuthAccessTokenExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.maxTimeToLiveInSeconds, rhs.maxTimeToLiveInSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(maxTimeToLiveInSeconds)
+                .append(timeToKillInSeconds)
+                .toHashCode();
     }
 }

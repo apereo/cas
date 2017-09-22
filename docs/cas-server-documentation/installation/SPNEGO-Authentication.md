@@ -37,6 +37,7 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
   <version>${cas.version}</version>
 </dependency>
 ```
+
 You may also need to declare the following Maven repository in
 your CAS overlay to be able to resolve dependencies:
 
@@ -50,7 +51,10 @@ your CAS overlay to be able to resolve dependencies:
     ...
 </repositories>
 ```
+
 ## Configuration
+
+The following steps are required to turn on the SPNEGO functionality.
 
 ### Create SPN Account
 
@@ -109,8 +113,8 @@ as a reference.
  your.realm.here = YOUR.REALM.HERE
 ```
 
-It is important to note that `myspnaccount.keytab` is declared as default keytab, otherwise CAS may not be able to 
-find it and will raise an exception similar to 
+It is important to note that `myspnaccount.keytab` is declared as default keytab, otherwise CAS may not be able to
+find it and will raise an exception similar to
 
 ```bash
 KrbException: Invalid argument (400) - Cannot find key of appropriate type to decrypt AP REP -RC4 with HMAC`
@@ -146,23 +150,13 @@ zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
 URL, e.g. `https://cas.example.com`.
 
-### Webflow Configuration
-
-First create `login-webflow.xml` into `src/main/resources/webflow/login/login-webflow.xml`.
-
-Then replace the success transition of `initializeLoginForm` from `viewLoginForm` to `startSpnegoAuthenticate`:
-
-```xml
-<action-state id="initializeLoginForm">
-    <evaluate expression="initializeLoginAction" />
-    <transition on="success" to="startSpnegoAuthenticate"/>
-</action-state>
-```
-
 ### Authentication Configuration
 
-Make sure you have at least specified the JCIFS Service Principal in the CAS configuration. 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+Make sure you have at least specified the JCIFS Service Principal in the CAS configuration.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
+To see the relevant list of CAS properties that deal with NTLM authentication,
+please [review this guide](Configuration-Properties.html#ntlm-authentication).
+
 
 You may provide a JAAS `login.conf` file:
 
@@ -186,16 +180,16 @@ or resume normally, depending on the client action strategy chosen below.
 ### By Remote IP
 
 Checks to see if the request's remote ip address matches a predefine pattern.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
 
 ### By Hostname
 
 Checks to see if the request's remote hostname matches a predefine pattern.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).
 
 ### By LDAP Attribute
 
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spnego-authentication).

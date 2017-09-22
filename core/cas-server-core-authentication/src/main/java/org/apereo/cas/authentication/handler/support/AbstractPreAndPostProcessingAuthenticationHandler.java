@@ -6,8 +6,11 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -22,40 +25,18 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.1
  */
-public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
+public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler implements PrePostAuthenticationHandler {
 
-    /**
-     * Template method to perform arbitrary pre-authentication actions.
-     *
-     * @param credential the Credential supplied
-     * @return true if authentication should continue, false otherwise.
-     */
-    protected boolean preAuthenticate(final Credential credential) {
-        return true;
+    public AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                             final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
-    /**
-     * Template method to perform arbitrary post-authentication actions.
-     *
-     * @param credential the supplied credential
-     * @param result     the result of the authentication attempt.
-     * @return An authentication handler result that MAY be different or modified from that provided.
-     */
-    protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
     @Override
-    public HandlerResult authenticate(final Credential credential)
-            throws GeneralSecurityException, PreventedException {
-
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
         }
-
         return postAuthenticate(credential, doAuthentication(credential));
     }
 
@@ -68,8 +49,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      *                                  {@link #authenticate(Credential)}.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult doAuthentication(Credential credential)
-            throws GeneralSecurityException, PreventedException;
+    protected abstract HandlerResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
 
     /**
      * Helper method to construct a handler result
@@ -82,8 +62,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings   the warnings
      * @return the constructed handler result
      */
-    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal,
-                                                final List<MessageDescriptor> warnings) {
+    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal, final List<MessageDescriptor> warnings) {
         return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
 }

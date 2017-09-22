@@ -1,9 +1,14 @@
 package org.apereo.cas.configuration.model.webapp.mgmt;
 
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is {@link ManagementWebappProperties}.
@@ -12,21 +17,26 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 public class ManagementWebappProperties {
-    private String adminRoles = "ROLE_ADMIN";
+    private List<String> adminRoles = Arrays.asList("ROLE_ADMIN");
     private String serverName = "https://localhost:8443";
     private String defaultLocale = "en";
-    private String authzAttributes;
-    
-    @NestedConfigurationProperty
-    private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
-
+    private List<String> authzAttributes = new ArrayList<>();
+    private Ldap ldap = new Ldap();
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
-    
-    public String getAdminRoles() {
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
+    }
+
+    public List<String> getAdminRoles() {
         return adminRoles;
     }
 
-    public void setAdminRoles(final String adminRoles) {
+    public void setAdminRoles(final List<String> adminRoles) {
         this.adminRoles = adminRoles;
     }
 
@@ -46,19 +56,11 @@ public class ManagementWebappProperties {
         this.serverName = serverName;
     }
 
-    public LdapAuthorizationProperties getLdapAuthz() {
-        return ldapAuthz;
-    }
-
-    public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
-        this.ldapAuthz = ldapAuthz;
-    }
-
-    public String getAuthzAttributes() {
+    public List<String> getAuthzAttributes() {
         return authzAttributes;
     }
 
-    public void setAuthzAttributes(final String authzAttributes) {
+    public void setAuthzAttributes(final List<String> authzAttributes) {
         this.authzAttributes = authzAttributes;
     }
 
@@ -68,6 +70,19 @@ public class ManagementWebappProperties {
 
     public void setDefaultLocale(final String defaultLocale) {
         this.defaultLocale = defaultLocale;
+    }
+
+    public class Ldap extends AbstractLdapProperties {
+        @NestedConfigurationProperty
+        private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
+
+        public LdapAuthorizationProperties getLdapAuthz() {
+            return ldapAuthz;
+        }
+
+        public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
+            this.ldapAuthz = ldapAuthz;
+        }
     }
 }
 

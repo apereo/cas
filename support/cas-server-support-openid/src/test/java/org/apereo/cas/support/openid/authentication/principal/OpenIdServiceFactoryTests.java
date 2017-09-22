@@ -16,33 +16,29 @@ public class OpenIdServiceFactoryTests {
 
     @Test
     public void verifyServiceCreationSuccessfullyById() {
-
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "test");
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "identity");
-        final OpenIdServiceFactory factory = new OpenIdServiceFactory();
+        final OpenIdServiceFactory factory = new OpenIdServiceFactory("");
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
     }
 
     @Test
     public void verifyServiceCreationMissingReturn() {
-
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "identity");
-        final OpenIdServiceFactory factory = new OpenIdServiceFactory();
+        final OpenIdServiceFactory factory = new OpenIdServiceFactory("");
         final WebApplicationService service = factory.createService(request);
         assertNull(service);
     }
 
     @Test
     public void verifyServiceCreationMissingId() {
-
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "test");
-        final OpenIdServiceFactory factory = new OpenIdServiceFactory();
+        final OpenIdServiceFactory factory = new OpenIdServiceFactory("");
         final WebApplicationService service = factory.createService(request);
         assertNull(service);
     }
-
 }

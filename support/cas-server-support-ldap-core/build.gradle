@@ -2,13 +2,10 @@ description = "Apereo CAS LDAP Core Support"
 dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-authentication")
-    compile libraries.ldaptive
-    compile libraries.spring
-    compile libraries.shiro
-    compile libraries.pac4j
-    compile libraries.springcloud
-
-    testCompile libraries.tests
-    testCompile project(":core:cas-server-core-services")
-    testCompile project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    api libraries.ldaptive
+    implementation libraries.shiro
+    implementation libraries.pac4j
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
 }

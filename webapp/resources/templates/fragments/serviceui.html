@@ -1,0 +1,42 @@
+<div th:if="${registeredService}" id="serviceui" class="alert alert-info">
+    <div th:if="${serviceUIMetadata}">
+        <table>
+            <tr>
+                <td>
+                    <img th:if="${serviceUIMetadata.logoUrl}"
+                         th:title="${serviceUIMetadata.displayName}"
+                         th:alt="${serviceUIMetadata.displayName}"
+                         th:src="${serviceUIMetadata.logoUrl}"
+                         th:width="${serviceUIMetadata.logoWidth}"
+                         th:height="${serviceUIMetadata.logoHeight}"/>
+
+                    <img th:unless="${serviceUIMetadata.logoUrl}"
+                         th:title="${serviceUIMetadata.displayName}"
+                         th:alt="${serviceUIMetadata.displayName}"
+                         th:src="@{images/webapp.png}"
+                         th:width="${serviceUIMetadata.logoWidth}"
+                         th:height="${serviceUIMetadata.logoHeight}"/>
+                </td>
+                <td id="servicedesc">
+                    <h2 th:text="${serviceUIMetadata.displayName}"></h2>
+                    <p th:text="${serviceUIMetadata.description}"></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div th:unless="${serviceUIMetadata}">
+        <table>
+            <tr>
+                <td>
+                    <img th:src="${registeredService.logo}" th:if="${registeredService.logo}"/>
+                    <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
+                </td>
+                <td id="servicedesc">
+                    <h2 th:text="${registeredService.name}"></h2>
+                    <p th:text="${registeredService.description}"></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

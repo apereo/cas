@@ -4,8 +4,8 @@ dependencies {
     compile project(":api:cas-server-core-api")
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-web")
-    compile libraries.pac4j
-    compile libraries.spring
-    compile libraries.springboot
-    compile libraries.springcloud
+    implementation libraries.pac4j
+
+    implementation libraries.httpclient
+    
 }

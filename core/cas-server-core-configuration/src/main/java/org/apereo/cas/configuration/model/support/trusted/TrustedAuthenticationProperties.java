@@ -9,4 +9,13 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipal
  * @since 5.0.0
  */
 public class TrustedAuthenticationProperties extends PersonDirPrincipalResolverProperties {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 }

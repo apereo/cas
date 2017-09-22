@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title>Surrogate Account Selection</title>
+</head>
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-info">
+        <form method="post" id="loginForm" class="fm-v clearfix">
+            <fieldset>
+                <h2>Choose Account</h2>
+                <div>
+                    <p>You are provided with a list of accounts on behalf of which you are allowed to authenticate. </p>
+                    <p>Select one and continue.</p>
+                </div>
+                <label for="surrogateTarget" class="fl-label">Account:</label>
+                <select name="surrogateTarget" id="surrogateTarget">
+                    <option th:each="surrogate: ${surrogates}" th:value="${surrogate}" th:text="${surrogate}"/>
+                </select>
+                <p/>
+                <div>
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="submit"/>
+                    <input class="btn btn-primary btn-lg" name="submit" accesskey="l"
+                           th:value="#{screen.welcome.button.login}" type="submit"/>
+                    &nbsp;<a class="btn btn-success btn-lg" id="cancel" name="cancel"
+                       th:href="@{/login}">Cancel</a>
+                </div>
+            </fieldset>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

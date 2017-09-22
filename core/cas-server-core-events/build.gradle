@@ -6,9 +6,7 @@ dependencies {
     compile project(":api:cas-server-core-api-events")
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
-    compile libraries.spring
-    compile libraries.hibernate
-    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }
 
 

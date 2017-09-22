@@ -1,0 +1,49 @@
+@import "variables.scss";
+@import "mixins";
+
+// This sets a default background color for all btn-social implementations.  The actual provider style will
+// override this with their own colors.  This is use as a fallback for unknown social types.
+.btn-social {
+  background-color: slategray;
+}
+
+@import "../vendor/bootstrap-social/bootstrap-social";
+
+/**
+ * Add in our own custom social colors.
+ */
+.btn-submit {
+  @include btn-social(#70ba61);
+}
+
+.btn-submit {
+  border: 0;
+  padding: 10px 25px;
+  font-weight: normal;
+  font-size: 1.75rem;
+}
+
+.btn-cas {
+  @include btn-social(#153e50);
+}
+
+.btn-saml2 {
+  @include btn-social(#cb2027);
+}
+
+.btn-oidc {
+  @include btn-social(#f7931e);
+}
+
+// Success appears as green
+.btn-restart {
+  @include button-variant($btn-success-color, $btn-success-bg, $btn-success-border);
+}
+// Warning appears as orange
+.btn-refresh {
+  @include button-variant($btn-warning-color, $btn-warning-bg, $btn-warning-border);
+}
+// Danger and error appear as red
+.btn-shutdown {
+  @include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-border);
+}

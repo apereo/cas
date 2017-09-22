@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Credential that are a holder for SPNEGO init token.
@@ -28,16 +29,15 @@ public class SpnegoCredential implements Credential, Serializable {
 
     private static final int NTLM_TOKEN_MAX_LENGTH = 8;
 
-    private static final Byte CHAR_S_BYTE = Byte.valueOf((byte) 'S');
+    private static final Byte CHAR_S_BYTE = (byte) 'S';
 
     /** The ntlmssp signature. */
-    private static final Byte[] NTLMSSP_SIGNATURE = {Byte.valueOf((byte) 'N'),
-            Byte.valueOf((byte) 'T'), Byte.valueOf((byte) 'L'),
-            Byte.valueOf((byte) 'M'), CHAR_S_BYTE, CHAR_S_BYTE,
-            Byte.valueOf((byte) 'P'), Byte.valueOf((byte) 0)};
+    private static final Byte[] NTLMSSP_SIGNATURE = {(byte) 'N',
+            (byte) 'T', (byte) 'L',
+            (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE,
+            (byte) 'P', (byte) 0};
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoCredential.class);
     /**
      * The SPNEGO Init Token.
      */
@@ -118,12 +118,7 @@ public class SpnegoCredential implements Credential, Serializable {
         if (token == null || token.length < NTLM_TOKEN_MAX_LENGTH) {
             return false;
         }
-        for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
-            if (NTLMSSP_SIGNATURE[i].byteValue() != token[i]) {
-                return false;
-            }
-        }
-        return true;
+        return IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
     @Override
@@ -155,14 +150,14 @@ public class SpnegoCredential implements Credential, Serializable {
      * @param source  the byte array source
      * @return the byte[] read from the source or null
      */
-    private byte[] consumeByteSourceOrNull(final ByteSource source) {
+    private static byte[] consumeByteSourceOrNull(final ByteSource source) {
         try {
             if (source == null || source.isEmpty()) {
                 return null;
             }
             return source.read();
         } catch (final IOException e) {
-            logger.warn("Could not consume the byte array source", e);
+            LOGGER.warn("Could not consume the byte array source", e);
             return null;
         }
     }

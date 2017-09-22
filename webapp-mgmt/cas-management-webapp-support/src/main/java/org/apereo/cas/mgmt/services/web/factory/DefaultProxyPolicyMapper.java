@@ -8,8 +8,6 @@ import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default mapper for converting {@link RegisteredServiceProxyPolicy} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -18,8 +16,6 @@ import org.slf4j.LoggerFactory;
  * @since 4.2
  */
 public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProxyPolicyMapper.class);
-
     @Override
     public void mapProxyPolicy(final RegisteredServiceProxyPolicy policy, final RegisteredServiceEditBean.ServiceData bean) {
         final RegisteredServiceProxyPolicyBean cBean = bean.getProxyPolicy();
@@ -54,10 +50,10 @@ public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
             final String value = proxyPolicy.getValue();
             if (StringUtils.isNotBlank(value) && RegexUtils.isValidRegex(value)) {
                 return new RegexMatchingRegisteredServiceProxyPolicy(value);
-            } else {
-                throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
             }
-        } else if (type == RegisteredServiceProxyPolicyBean.Types.REFUSE) {
+            throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
+        }
+        if (type == RegisteredServiceProxyPolicyBean.Types.REFUSE) {
             return new RefuseRegisteredServiceProxyPolicy();
         }
 

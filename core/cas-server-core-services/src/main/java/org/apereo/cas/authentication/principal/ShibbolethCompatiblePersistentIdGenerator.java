@@ -1,14 +1,15 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.DigestUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,8 @@ import java.nio.charset.Charset;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
+ * The generated ids are based on a principal attribute is specified, or
+ * the authenticated principal id.
  *
  * @author Scott Battaglia
  * @since 3.1
@@ -25,7 +28,9 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     private static final long serialVersionUID = 6182838799563190289L;
 
-    /** Log instance. */
+    /**
+     * Log instance.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
 
     private static final String CONST_SEPARATOR = "!";
@@ -34,6 +39,9 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     @JsonProperty
     private String salt;
+
+    @JsonProperty
+    private String attribute;
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
@@ -49,8 +57,12 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         this.salt = salt;
     }
 
-    private byte[] convertSaltToByteArray() {
-        return this.salt.getBytes(Charset.defaultCharset());
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(final String attribute) {
+        this.attribute = attribute;
     }
 
     /**
@@ -61,7 +73,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @JsonIgnore
     public byte[] getSalt() {
         try {
-            return ByteSource.wrap(convertSaltToByteArray()).read();
+            return ByteSource.wrap(this.salt.getBytes(Charset.defaultCharset())).read();
         } catch (final IOException e) {
             LOGGER.warn("Salt cannot be read because the byte array from source could not be consumed");
         }
@@ -70,12 +82,15 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     @Override
     public String generate(final Principal principal, final Service service) {
-        final String data = String.join(CONST_SEPARATOR, service.getId(), principal.getId());
+        final String principalId = StringUtils.isNotBlank(this.attribute) && principal.getAttributes().containsKey(this.attribute)
+                ? principal.getAttributes().get(this.attribute).toString() : principal.getId();
+        final String data = String.join(CONST_SEPARATOR, service.getId(), principalId, this.salt);
         final Charset charset = Charset.defaultCharset();
-        final String result = EncodingUtils.encodeBase64(DigestUtils.sha(data.getBytes(charset)));
-        return result.replaceAll(System.getProperty("line.separator"), "");
+        String result = EncodingUtils.encodeBase64(DigestUtils.sha(data.getBytes(charset)));
+        result = result.replaceAll(System.getProperty("line.separator"), StringUtils.EMPTY);
+        LOGGER.debug("Generated persistent id is [{}]", result);
+        return result;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -91,6 +106,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         final ShibbolethCompatiblePersistentIdGenerator rhs = (ShibbolethCompatiblePersistentIdGenerator) obj;
         return new EqualsBuilder()
                 .append(this.salt, rhs.salt)
+                .append(this.attribute, rhs.attribute)
                 .isEquals();
     }
 
@@ -98,6 +114,14 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(this.salt)
+                .append(this.attribute)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("attribute", attribute)
+                .toString();
     }
 }

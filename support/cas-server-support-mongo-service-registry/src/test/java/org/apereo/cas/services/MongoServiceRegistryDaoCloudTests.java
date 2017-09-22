@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 
-import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -42,34 +41,21 @@ public class MongoServiceRegistryDaoCloudTests {
     @Before
     public void clean() {
         final List<RegisteredService> services = this.serviceRegistryDao.load();
-        for (final RegisteredService service : services) {
-            this.serviceRegistryDao.delete(service);
-        }
+        services.forEach(service -> this.serviceRegistryDao.delete(service));
     }
 
     @Test
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        IntStream.range(0, 5).forEach(i -> {
             list.add(buildService(i));
             this.serviceRegistryDao.save(list.get(i));
-        }
+        });
         final List<RegisteredService> results = this.serviceRegistryDao.load();
         assertEquals(results.size(), list.size());
-        for (int i = 0; i < 5; i++) {
-            assertEquals(list.get(i), results.get(i));
-        }
-        for (int i = 0; i < 5; i++) {
-            this.serviceRegistryDao.delete(results.get(i));
-        }
+        IntStream.range(0, 5).forEach(i -> assertEquals(list.get(i), results.get(i)));
+        IntStream.range(0, 5).forEach(i -> this.serviceRegistryDao.delete(results.get(i)));
         assertTrue(this.serviceRegistryDao.load().isEmpty());
-    }
-
-    @Test
-    public void verifyOauthService() {
-        final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-        service.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        this.serviceRegistryDao.save(service);
     }
 
     @After
@@ -78,7 +64,7 @@ public class MongoServiceRegistryDaoCloudTests {
     }
 
     private static RegisteredService buildService(final int i) {
-        final AbstractRegisteredService rs = TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
+        final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();

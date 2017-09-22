@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +17,8 @@ import java.util.List;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
-public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
+public class JpaServiceRegistryDaoImpl extends AbstractServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaServiceRegistryDaoImpl.class);
-    
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 
@@ -37,7 +34,10 @@ public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     @Override
     public List<RegisteredService> load() {
-        return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        final List<RegisteredService> list = this.entityManager
+                .createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        list.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        return list;
     }
 
     @Override
@@ -54,6 +54,12 @@ public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     public RegisteredService findServiceById(final long id) {
         return this.entityManager.find(AbstractRegisteredService.class, id);
     }
+
+    @Override
+    public RegisteredService findServiceById(final String id) {
+        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+    }
+
 
     @Override
     public long size() {

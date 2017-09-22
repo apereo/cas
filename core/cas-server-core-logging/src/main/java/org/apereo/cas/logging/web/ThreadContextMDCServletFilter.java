@@ -29,8 +29,8 @@ public class ThreadContextMDCServletFilter implements Filter {
 
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
-    
-    public ThreadContextMDCServletFilter(final TicketRegistrySupport ticketRegistrySupport, 
+
+    public ThreadContextMDCServletFilter(final TicketRegistrySupport ticketRegistrySupport,
                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.ticketRegistrySupport = ticketRegistrySupport;
@@ -38,6 +38,7 @@ public class ThreadContextMDCServletFilter implements Filter {
 
     /**
      * Does nothing.
+     *
      * @param filterConfig filter initial configuration. Ignored.
      * @throws ServletException never thrown in this case.
      */
@@ -51,45 +52,50 @@ public class ThreadContextMDCServletFilter implements Filter {
         try {
             final HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-            MDC.put("remoteAddress", request.getRemoteAddr());
-            MDC.put("remoteUser", request.getRemoteUser());
-            MDC.put("serverName", request.getServerName());
-            MDC.put("serverPort", String.valueOf(request.getServerPort()));
-            MDC.put("locale", request.getLocale().getDisplayName());
-            MDC.put("contentType", request.getContentType());
-            MDC.put("contextPath", request.getContextPath());
-            MDC.put("localAddress", request.getLocalAddr());
-            MDC.put("localPort", String.valueOf(request.getLocalPort()));
-            MDC.put("remotePort", String.valueOf(request.getRemotePort()));
-            MDC.put("pathInfo", request.getPathInfo());
-            MDC.put("protocol", request.getProtocol());
-            MDC.put("authType", request.getAuthType());
-            MDC.put("method", request.getMethod());
-            MDC.put("queryString", request.getQueryString());
-            MDC.put("requestUri", request.getRequestURI());
-            MDC.put("scheme", request.getScheme());
-            MDC.put("timezone", TimeZone.getDefault().getDisplayName());
+            addContextAttribute("remoteAddress", request.getRemoteAddr());
+            addContextAttribute("remoteUser", request.getRemoteUser());
+            addContextAttribute("serverName", request.getServerName());
+            addContextAttribute("serverPort", String.valueOf(request.getServerPort()));
+            addContextAttribute("locale", request.getLocale().getDisplayName());
+            addContextAttribute("contentType", request.getContentType());
+            addContextAttribute("contextPath", request.getContextPath());
+            addContextAttribute("localAddress", request.getLocalAddr());
+            addContextAttribute("localPort", String.valueOf(request.getLocalPort()));
+            addContextAttribute("remotePort", String.valueOf(request.getRemotePort()));
+            addContextAttribute("pathInfo", request.getPathInfo());
+            addContextAttribute("protocol", request.getProtocol());
+            addContextAttribute("authType", request.getAuthType());
+            addContextAttribute("method", request.getMethod());
+            addContextAttribute("queryString", request.getQueryString());
+            addContextAttribute("requestUri", request.getRequestURI());
+            addContextAttribute("scheme", request.getScheme());
+            addContextAttribute("timezone", TimeZone.getDefault().getDisplayName());
 
             final Map<String, String[]> params = request.getParameterMap();
             params.keySet().forEach(k -> {
                 final String[] values = params.get(k);
-                MDC.put(k, Arrays.toString(values));
+                addContextAttribute(k, Arrays.toString(values));
             });
-            
+
             Collections.list(request.getAttributeNames())
-                    .forEach(a -> MDC.put(a, request.getAttribute(a).toString()));
-            
-            final String cookieValue = 
-                this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-            if (StringUtils.isNotEmpty(cookieValue)) {
+                    .forEach(a -> addContextAttribute(a, request.getAttribute(a)));
+
+            final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+            if (StringUtils.isNotBlank(cookieValue)) {
                 final Principal p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(cookieValue);
                 if (p != null) {
-                    MDC.put("principal", p.getId());
+                    addContextAttribute("principal", p.getId());
                 }
             }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.clear();
+        }
+    }
+
+    private static void addContextAttribute(final String attributeName, final Object value) {
+        if (value != null && StringUtils.isNotBlank(value.toString())) {
+            MDC.put(attributeName, value.toString());
         }
     }
 

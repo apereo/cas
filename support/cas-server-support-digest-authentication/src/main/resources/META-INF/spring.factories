@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.digest.config.support.authentication.DigestAuthenticationEventExecutionPlanConfiguration,\
+  org.apereo.cas.digest.config.DigestAuthenticationConfiguration

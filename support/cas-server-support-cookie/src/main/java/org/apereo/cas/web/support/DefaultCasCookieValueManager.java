@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * The {@link DefaultCasCookieValueManager} is responsible creating
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.1
  */
 public class DefaultCasCookieValueManager implements CookieValueManager {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;
@@ -26,7 +28,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private CipherExecutor<String, String> cipherExecutor = new NoOpCipherExecutor();
+    private CipherExecutor<Serializable, String> cipherExecutor = NoOpCipherExecutor.getInstance();
 
     /**
      * Instantiates a new Cas cookie value manager.
@@ -39,18 +41,16 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
 
     @Override
     public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
-        final StringBuilder builder = new StringBuilder(givenCookieValue);
-
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        builder.append(COOKIE_FIELD_SEPARATOR);
-        builder.append(clientInfo.getClientIpAddress());
+        final StringBuilder builder = new StringBuilder(givenCookieValue)
+                .append(COOKIE_FIELD_SEPARATOR)
+                .append(clientInfo.getClientIpAddress());
 
         final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
         if (StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Request does not specify a user-agent");
         }
-        builder.append(COOKIE_FIELD_SEPARATOR);
-        builder.append(userAgent);
+        builder.append(COOKIE_FIELD_SEPARATOR).append(userAgent);
 
         final String res = builder.toString();
         LOGGER.debug("Encoding cookie value [{}]", res);
@@ -80,12 +80,13 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
 
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         if (!remoteAddr.equals(clientInfo.getClientIpAddress())) {
-            throw new IllegalStateException("Invalid cookie. Required remote address does not match " + clientInfo.getClientIpAddress());
+            throw new IllegalStateException("Invalid cookie. Required remote address "
+                    + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
         }
 
         final String agent = WebUtils.getHttpServletRequestUserAgent(request);
         if (!userAgent.equals(agent)) {
-            throw new IllegalStateException("Invalid cookie. Required user-agent does not match " + agent);
+            throw new IllegalStateException("Invalid cookie. Required user-agent " + userAgent + " does not match " + agent);
         }
         return value;
     }

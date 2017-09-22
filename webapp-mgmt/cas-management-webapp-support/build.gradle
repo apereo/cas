@@ -1,18 +1,18 @@
 description = "Apereo CAS Management Web Application Support"
 
 dependencies {
-    compile libraries.pac4j
-    compile libraries.spring
-    compile libraries.springboot
-    compile libraries.springcloud
-    compile libraries.casclient
-    compile libraries.javaximpl
-    compile libraries.hibernate
-    compile libraries.groovy
+    implementation libraries.pac4j
+    implementation libraries.casclient
+    implementation libraries.groovy
+    implementation libraries.persondirectory
+    compile libraries.springcloudconfigclient
     compile project(":core:cas-server-core-configuration")
     compile project(":core:cas-server-core-services")
-    compile project(":support:cas-server-support-oauth-core")
+    compile project(":support:cas-server-support-oauth-services")
     compile project(":support:cas-server-support-saml-idp-core")
+    compile project(":support:cas-server-support-oidc-services")
     compile project(":support:cas-server-support-oidc-core")
     compile project(":support:cas-server-support-grouper")
+    compile project(":core:cas-server-core-logging-config")
+    compile project(":api:cas-server-core-api-authentication")
 }

@@ -1,16 +1,16 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import com.google.common.collect.Sets;
 import com.mongodb.WriteResult;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,43 +21,31 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-
-    private String collectionName;
-
-    private boolean dropCollection;
-
-    private MongoOperations mongoTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbMultifactorAuthenticationTrustStorage.class);
+    
+    private final String collectionName;
+    private final MongoOperations mongoTemplate;
 
     /**
      * Instantiates a new Mongo db multifactor authentication trust storage.
      *
      * @param collectionName the collection name
-     * @param dropCollection the drop collection
+     * @param dropCollection id the configured collection should be dropped or recreated
      * @param mongoTemplate  the mongo template
      */
-    public MongoDbMultifactorAuthenticationTrustStorage(final String collectionName, final boolean dropCollection,
-                                                        final MongoOperations mongoTemplate) {
+    public MongoDbMultifactorAuthenticationTrustStorage(final String collectionName, final boolean dropCollection, final MongoOperations mongoTemplate) {
         this.collectionName = collectionName;
-        this.dropCollection = dropCollection;
         this.mongoTemplate = mongoTemplate;
-    }
 
-    /**
-     * Initialize registry post construction.
-     * Will decide if the configured collection should
-     * be dropped and recreated.
-     */
-    @PostConstruct
-    public void init() {
         Assert.notNull(this.mongoTemplate);
 
-        if (this.dropCollection) {
-            logger.debug("Dropping database collection: {}", this.collectionName);
+        if (dropCollection) {
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            logger.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }
@@ -68,9 +56,9 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             final Query query = new Query();
             query.addCriteria(Criteria.where("key").is(key));
             final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
-            logger.info("Found and removed {} records", res.getN());
-        } catch (final NoResultException e) {
-            logger.info("No trusted authentication records could be found");
+            LOGGER.info("Found and removed [{}]", res.getN());
+        } catch (final Exception e) {
+            LOGGER.info("No trusted authentication records could be found");
         }
     }
 
@@ -80,9 +68,9 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             final Query query = new Query();
             query.addCriteria(Criteria.where("date").lte(onOrBefore));
             final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
-            logger.info("Found and removed {} records", res.getN());
-        } catch (final NoResultException e) {
-            logger.info("No trusted authentication records could be found");
+            LOGGER.info("Found and removed [{}]", res.getN());
+        } catch (final Exception e) {
+            LOGGER.info("No trusted authentication records could be found");
         }
     }
 
@@ -92,7 +80,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
         query.addCriteria(Criteria.where("date").gte(onOrAfterDate));
         final List<MultifactorAuthenticationTrustRecord> results =
                 this.mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
-        return Sets.newHashSet(results);
+        return new HashSet<>(results);
     }
 
     @Override
@@ -101,7 +89,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
         query.addCriteria(Criteria.where("principal").is(principal));
         final List<MultifactorAuthenticationTrustRecord> results =
                 this.mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
-        return Sets.newHashSet(results);
+        return new HashSet<>(results);
     }
 
     @Override

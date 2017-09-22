@@ -9,28 +9,36 @@ package org.apereo.cas.monitor;
 public class MemoryStatus extends Status {
 
     private static final double BYTES_PER_MB = 1048510.0;
+    private static final double PERCENTAGE = 100.0;
 
-    /** JVM free memory. */
+    /**
+     * JVM free memory.
+     */
     private long freeMemory;
 
-    /** JVM total memory. */
+    /**
+     * JVM total memory.
+     */
     private long totalMemory;
-
 
     /**
      * Creates a new status object with the given code.
      *
-     * @param code Status code.
-     * @param free JVM free memory in bytes.
+     * @param code  Status code.
+     * @param free  JVM free memory in bytes.
      * @param total JVM total memory in bytes.
-     *
-     * @see #getCode()
+     * @param used  the used
+     * @see #getCode() #getCode()
      */
-    public MemoryStatus(final StatusCode code, final long free, final long total) {
-        super(code, String.format("%.2fMB free, %.2fMB total.", free / BYTES_PER_MB, total / BYTES_PER_MB));
+    public MemoryStatus(final StatusCode code, final long free, final long total, final long used) {
+        super(code, String.format("%.2fMB free (%.2f%%), %.2fMB used, %.2fMB total.", free / BYTES_PER_MB,
+                free * PERCENTAGE / (double) total,
+                used / BYTES_PER_MB,
+                total / BYTES_PER_MB));
         this.freeMemory = free;
         this.totalMemory = total;
     }
+
 
     /**
      * Gets JVM free memory.
@@ -40,7 +48,6 @@ public class MemoryStatus extends Status {
     public long getFreeMemory() {
         return this.freeMemory;
     }
-
 
     /**
      * Gets JVM total memory.

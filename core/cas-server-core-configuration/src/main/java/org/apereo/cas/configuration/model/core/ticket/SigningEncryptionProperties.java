@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This is {@link SigningEncryptionProperties}.
  *
@@ -7,9 +9,9 @@ package org.apereo.cas.configuration.model.core.ticket;
  * @since 5.0.0
  */
 public class SigningEncryptionProperties {
-    private String encryptionKey = "";
+    private String encryptionKey = StringUtils.EMPTY;
 
-    private String signingKey = "";
+    private String signingKey = StringUtils.EMPTY;
 
     private boolean cipherEnabled;
 

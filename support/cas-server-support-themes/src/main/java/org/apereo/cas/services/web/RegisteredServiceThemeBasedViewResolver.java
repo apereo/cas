@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,17 +33,22 @@ import java.util.Locale;
  * @since 4.1.0
  */
 public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
 
-    private ServicesManager servicesManager;
-    private List argumentExtractors;
-    private String prefix;
-    private String suffix;
+    private final ServicesManager servicesManager;
+    private final ArgumentExtractor argumentExtractor;
+    private final String prefix;
+    private final String suffix;
 
-    /**
-     * Instantiates a new Registered service theme based view resolver.
-     */
-    public RegisteredServiceThemeBasedViewResolver() {
+    public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager,
+                                                   final ArgumentExtractor argumentExtractor,
+                                                   final String prefix,
+                                                   final String suffix) {
+        this.servicesManager = servicesManager;
+        this.argumentExtractor = argumentExtractor;
+        this.prefix = prefix;
+        this.suffix = suffix;
     }
 
     @Override
@@ -50,16 +57,16 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
         final WebApplicationService service;
-        final HttpServletRequest request;
-        final HttpServletResponse response;
 
+        final HttpServletResponse response;
+        final List<ArgumentExtractor> argumentExtractorList = Collections.singletonList(this.argumentExtractor);
+        
         if (requestContext != null) {
-            request = WebUtils.getHttpServletRequest(requestContext);
             response = WebUtils.getHttpServletResponse(requestContext);
-            service = WebUtils.getService(this.argumentExtractors, requestContext);
+            service = WebUtils.getService(argumentExtractorList, requestContext);
         } else {
-            request = WebUtils.getHttpServletRequestFromRequestAttributes();
-            service = WebUtils.getService(this.argumentExtractors, request);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+            service = WebUtils.getService(argumentExtractorList, request);
             response = WebUtils.getHttpServletResponseFromRequestAttributes();
         }
 
@@ -83,41 +90,16 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
             final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
             final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
 
-            final String viewLocationUrl = getPrefix().concat(viewUrl).concat(getSuffix());
-            LOGGER.debug("Attempting to locate view at {}", viewLocationUrl);
+            final String viewLocationUrl = prefix.concat(viewUrl).concat(suffix);
+            LOGGER.debug("Attempting to locate view at [{}]", viewLocationUrl);
             final TemplateLocation location = new TemplateLocation(viewLocationUrl);
             if (location.exists(getApplicationContext())) {
-                LOGGER.debug("Found view {}", viewUrl);
+                LOGGER.debug("Found view [{}]", viewUrl);
                 thymeleafView.setTemplateName(viewUrl);
             } else {
-                LOGGER.debug("View {} does not exist. Fallling back to default view at {}",
-                        viewLocationUrl, thymeleafView.getTemplateName());
+                LOGGER.debug("View [{}] does not exist. Falling back to default view at [{}]", viewLocationUrl, thymeleafView.getTemplateName());
             }
         }
         return view;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setArgumentExtractors(final List argumentExtractors) {
-        this.argumentExtractors = argumentExtractors;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(final String suffix) {
-        this.suffix = suffix;
     }
 }

@@ -1,0 +1,17 @@
+description = "Apereo CAS Risk-based Authentication Support"
+dependencies {
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-events")
+    compile project(":support:cas-server-support-geolocation")
+    compile project(":support:cas-server-support-geolocation-googlemaps")
+    
+
+    testImplementation project(path: ":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":support:cas-server-support-events-memory")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

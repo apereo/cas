@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -22,36 +24,46 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements
-        SamlProfileObjectBuilder<AttributeStatement> {
+public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder
+        implements SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    private SamlAttributeEncoder samlAttributeEncoder;
-    
+
+    private final ProtocolAttributeEncoder samlAttributeEncoder;
+
+    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
+                                                    final ProtocolAttributeEncoder samlAttributeEncoder) {
+        super(configBean);
+        this.samlAttributeEncoder = samlAttributeEncoder;
+    }
+
     @Override
     public AttributeStatement build(final AuthnRequest authnRequest,
-                                    final HttpServletRequest request, final HttpServletResponse response,
-                                    final Assertion assertion, final SamlRegisteredService service,
-                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
+                                    final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final Assertion assertion,
+                                    final SamlRegisteredService service,
+                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                    final String binding) throws SamlException {
         return buildAttributeStatement(assertion, authnRequest, service, adaptor);
     }
 
-    private AttributeStatement buildAttributeStatement(final Assertion assertion, 
+    private AttributeStatement buildAttributeStatement(final Assertion assertion,
                                                        final AuthnRequest authnRequest,
                                                        final SamlRegisteredService service,
-                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
+                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
-        final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encode(authnRequest, attributes, service, adaptor);
-        return newAttributeStatement(encodedAttrs, casProperties.getAuthn().getSamlIdp().getResponse().isUseAttributeFriendlyName());
-    }
+        final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
-    public void setSamlAttributeEncoder(final SamlAttributeEncoder samlAttributeEncoder) {
-        this.samlAttributeEncoder = samlAttributeEncoder;
+        final SamlIdPProperties.Response resp = casProperties.getAuthn().getSamlIdp().getResponse();
+        final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
+        nameFormats.putAll(service.getAttributeNameFormats());
+        
+        return newAttributeStatement(encodedAttrs,
+                resp.isUseAttributeFriendlyName(),
+                nameFormats);
     }
 }

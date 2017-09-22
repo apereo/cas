@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,8 +30,10 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
 
     @Test
     public void verifyReturnedPrincipal() {
-        Assert.assertEquals("test", this.resolver.resolve(
-                new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"))).getId());
+        assertEquals("test", this.resolver.resolve(
+                new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test")),
+                CoreAuthenticationTestUtils.getPrincipal(),
+                new SimpleTestUsernamePasswordAuthenticationHandler()).getId());
     }
 
 }

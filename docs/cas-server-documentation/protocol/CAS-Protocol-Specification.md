@@ -28,7 +28,7 @@ Release Date: 2015-01-13
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2016, Apereo, Inc.
+Copyright &copy; 2017, Apereo, Inc.
 
 <a name="head1"/>
 
@@ -69,7 +69,7 @@ interpreted as described in RFC 2119[1](<#1>).
 
 -   "SLO" refers to Single Logout.
 
--   "\<LF\>" is a bare line feed (ASCII value 0x0a).
+-   "<LF>" is a bare line feed (ASCII value 0x0a).
 
 <a name="head1.2"/>
 
@@ -488,11 +488,11 @@ case sensitive and MUST all be handled by `/validate`.
 
 On ticket validation success:
 
-yes\<LF\>
+yes<LF>
 
 On ticket validation failure:
 
-no\<LF\>
+no<LF>
 
 
 
@@ -636,7 +636,7 @@ servers MUST implement. Implementations MAY include others.
 
 -   `INVALID_TICKET` - the ticket provided was not valid, or the ticket did not
     come from an initial login and `renew` was set on validation. The body of
-    the `\<cas:authenticationFailure\>` block of the XML response SHOULD describe
+    the `<cas:authenticationFailure>` block of the XML response SHOULD describe
     the exact details.
 
 -   `INVALID_SERVICE` - the ticket provided was valid, but the service specified
@@ -646,7 +646,7 @@ servers MUST implement. Implementations MAY include others.
 -   `INTERNAL_ERROR` - an internal error occurred during ticket validation
 
 For all error codes, it is RECOMMENDED that CAS provide a more detailed message
-as the body of the `\<cas:authenticationFailure\>` block of the XML response.
+as the body of the `<cas:authenticationFailure>` block of the XML response.
 
 <a name="head2.5.4"/>
 
@@ -673,7 +673,7 @@ The proxy callback mechanism works as follows:
     security requirements such as failure to establishing trust between peers or unresponsiveness
     of the endpoint, etc. In case of failure, no proxy-granting ticket will be issued and the CAS
     service response as described in Section [2.5.2](#head2.5.2) MUST NOT contain a
-    `\<proxyGrantingTicket\>` block. At this point, the issuance of a
+    `<proxyGrantingTicket>` block. At this point, the issuance of a
     proxy-granting ticket is halted and service ticket validation will
     fail. Otherwise, the process will proceed normally to step 2.
 
@@ -689,12 +689,12 @@ The proxy callback mechanism works as follows:
 3.  If the HTTP GET returns an HTTP status code of 200 (OK), CAS MUST respond to
     the `/serviceValidate` (or `/proxyValidate`) request with a service response
     (Section [2.5.2](#head2.5.2)) containing the proxy-granting ticket IOU (Section [3.4](#head3.4))
-    within the `\<cas:proxyGrantingTicket\>` block. If the HTTP GET returns any
+    within the `<cas:proxyGrantingTicket>` block. If the HTTP GET returns any
     other status code, except HTTP 3xx redirects, CAS MUST respond to the
     `/serviceValidate` (or `/proxyValidate`) request with a service response that
-    MUST NOT contain a `\<cas:proxyGrantingTicket\>` block. CAS MAY follow any HTTP
+    MUST NOT contain a `<cas:proxyGrantingTicket>` block. CAS MAY follow any HTTP
     redirects issued by the `pgtUrl`. However, the identifying callback URL
-    provided upon validation in the `\<proxy\>` block MUST be the same URL that was
+    provided upon validation in the `<proxy>` block MUST be the same URL that was
     initially passed to `/serviceValidate` (or `/proxyValidate`) as the `pgtUrl`
     parameter.
 
@@ -711,7 +711,7 @@ The proxy callback mechanism works as follows:
 
 ### **2.5.5. attributes [CAS 3.0]**
 
-[CAS 3.0] The response document MAY include an optional \<cas:attributes\>
+[CAS 3.0] The response document MAY include an optional <cas:attributes>
 element for additional authentication and/or user attributes. See [Appendix
 A](<#head_appdx_a>) for details.
 
@@ -830,12 +830,12 @@ Response on ticket validation success:
 
 
 >   Note: when authentication has proceeded through multiple proxies, the order
->   in which the proxies were traversed MUST be reflected in the \<cas:proxies\>
+>   in which the proxies were traversed MUST be reflected in the <cas:proxies>
 >   block. The most recently-visited proxy MUST be the first proxy listed, and
 >   all the other proxies MUST be shifted down as new proxies are added. In the
->   above example, the service identified by \<https://proxy1/pgtUrl\> was
+>   above example, the service identified by <https://proxy1/pgtUrl> was
 >   visited first, and that service proxied authentication to the service
->   identified by \<https://proxy2/pgtUrl\>.
+>   identified by <https://proxy2/pgtUrl>.
 
 Response on ticket validation failure:
 
@@ -954,7 +954,7 @@ servers MUST implement. Implementations MAY include others.
 -   `INTERNAL_ERROR` - an internal error occurred during ticket validation
 
 For all error codes, it is RECOMMENDED that CAS provide a more detailed message
-as the body of the \<cas:authenticationFailure\> block of the XML response.
+as the body of the <cas:authenticationFailure> block of the XML response.
 
 
 
@@ -1597,7 +1597,7 @@ to the CAS client.
 ```
 
 >   Note: As user attributes can be extended by the CAS Server implementer (see
->   \<xs:any\> schema definition), it is RECOMMENDED to form custom attributes
+>   <xs:any> schema definition), it is RECOMMENDED to form custom attributes
 >   as using the following format:
 
 ```xml

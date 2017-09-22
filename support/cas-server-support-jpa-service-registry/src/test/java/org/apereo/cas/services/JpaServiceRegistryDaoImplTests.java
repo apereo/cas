@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
-import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,9 +38,7 @@ public class JpaServiceRegistryDaoImplTests {
     @Before
     public void setUp() {
         final List<RegisteredService> services = this.dao.load();
-        for (final RegisteredService service : services) {
-            this.dao.delete(service);
-        }
+        services.forEach(service -> this.dao.delete(service));
     }
 
     @Test
@@ -151,27 +148,20 @@ public class JpaServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void verifyOAuthServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
+    public void verifySamlService() {
+        final SamlRegisteredService r = new SamlRegisteredService();
         r.setName("test345");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
+        r.setServiceId("Testing");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final RegisteredService r2 = this.dao.save(r);
+        final Map fmt = new HashMap();
+        fmt.put("key", "value");
+        r.setAttributeNameFormats(fmt);
+        r.setMetadataCriteriaDirection("INCLUDE");
+        r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
+        r.setMetadataSignatureLocation("location");
+        r.setRequiredAuthenticationContextClass("Testing");
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
         assertEquals(r, r2);
     }
-
-    @Test
-    public void verifyOAuthRegisteredServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("testoauth");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r, r2);
-    }
-
 }

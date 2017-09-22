@@ -4,25 +4,31 @@ import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalB
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
@@ -47,15 +53,11 @@ public class TrustedAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -64,24 +66,26 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
-        final PrincipalBearingCredentialsAuthenticationHandler h =
-                new PrincipalBearingCredentialsAuthenticationHandler();
-        h.setPrincipalFactory(trustedPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        return h;
+        final TrustedAuthenticationProperties trusted = casProperties.getAuthn().getTrusted();
+        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager, trustedPrincipalFactory());
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver trustedPrincipalResolver() {
-        final PrincipalBearingPrincipalResolver r = new PrincipalBearingPrincipalResolver();
-        r.setAttributeRepository(this.attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getTrusted().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getTrusted().isReturnNull());
-        r.setPrincipalFactory(trustedPrincipalFactory());
-        return r;
+        final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+
+        final PrincipalBearingPrincipalResolver bearingPrincipalResolver = new PrincipalBearingPrincipalResolver();
+        bearingPrincipalResolver.setAttributeRepository(this.attributeRepository);
+        bearingPrincipalResolver.setPrincipalAttributeName(casProperties.getAuthn().getTrusted().getPrincipalAttribute());
+        bearingPrincipalResolver.setReturnNullIfNoAttributes(casProperties.getAuthn().getTrusted().isReturnNull());
+        bearingPrincipalResolver.setPrincipalFactory(trustedPrincipalFactory());
+        
+        resolver.setChain(Arrays.asList(bearingPrincipalResolver, new EchoingPrincipalResolver()));
+        return resolver;
     }
 
+    @ConditionalOnMissingBean(name = "trustedPrincipalFactory")
     @Bean
     public PrincipalFactory trustedPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -90,30 +94,30 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action principalFromRemoteUserAction() {
-        final PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction a =
-                new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
-        a.setPrincipalFactory(trustedPrincipalFactory());
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-
-        return a;
+        return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory());
     }
 
     @Bean
     @RefreshScope
     public Action principalFromRemoteUserPrincipalAction() {
-        final PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction a =
-                new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction();
-        a.setPrincipalFactory(trustedPrincipalFactory());
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
+        return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory());
     }
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
+    /**
+     * The type Trusted authentication event execution plan configuration.
+     */
+    @Configuration("trustedAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public class TrustedAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
+        }
     }
 }

@@ -1,10 +1,13 @@
 package org.apereo.cas.monitor;
 
 import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Monitors a data source that describes a single connection or connection pool to a database.
@@ -13,35 +16,30 @@ import java.sql.ResultSet;
  * @since 3.5.1
  */
 public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcDataSourceMonitor.class);
+    
     private JdbcTemplate jdbcTemplate;
-
-    private String validationQuery;
-
+    private final String validationQuery;
+            
     /**
      * Creates a new instance that monitors the given data source.
      *
-     * @param dataSource Data source to monitor.
+     * @param executorService the executor service
+     * @param maxWait         the max wait
+     * @param dataSource      Data source to monitor.
+     * @param validationQuery validation query used to monitor the data source. The validation query
+     *                        should return at least one result; otherwise results are ignored.
      */
-    public JdbcDataSourceMonitor(final DataSource dataSource) {
+    public JdbcDataSourceMonitor(final ExecutorService executorService, final int maxWait,
+                                 final DataSource dataSource, final String validationQuery) {
+        super(JdbcDataSourceMonitor.class.getSimpleName(), executorService, maxWait);
         if (dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);
         } else {
-            logger.debug("No data source is defined to monitor");
+            LOGGER.debug("No data source is defined to monitor");
         }
+        this.validationQuery = validationQuery;
     }
-
-
-    /**
-     * Sets the validation query used to monitor the data source. The validation query should return
-     * at least one result; otherwise results are ignored.
-     *
-     * @param query Validation query that should be as efficient as possible.
-     */
-    public void setValidationQuery(final String query) {
-        this.validationQuery = query;
-    }
-
 
     @Override
     protected StatusCode checkPool() throws Exception {
@@ -57,12 +55,10 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
         }
     }
 
-
     @Override
     protected int getIdleCount() {
         return PoolStatus.UNKNOWN_COUNT;
     }
-
 
     @Override
     protected int getActiveCount() {

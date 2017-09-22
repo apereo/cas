@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.support.authentication.OpenIdAuthenticationEventExecutionPlanConfiguration,\
+  org.apereo.cas.config.support.authentication.OpenIdServiceFactoryConfiguration,\
+  org.apereo.cas.config.support.authentication.OpenIdUniqueTicketIdGeneratorConfiguration,\
+  org.apereo.cas.config.OpenIdConfiguration

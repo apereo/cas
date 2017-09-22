@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
+
+<head>
+    <title th:text="#{cas.statistics.pagetitle}"></title>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <script type="text/javascript" th:inline="javascript">
+        var messages = {
+            memoryGaugeTitle: /*[[#{cas.statistics.section.serverstatistics.freememorygauge.label}]]*/
+        };
+        var urls = {
+            availability: /*[[@{/status/stats/getAvailability}]]*/ ,
+            memory: /*[[@{/status/stats/getMemStats}]]*/ , 
+            tickets: /*[[@{/status/stats/getTicketStats}]]*/ 
+        };
+        function jqueryReady() {
+            head.load(
+                    /*[[@{/js/statisticsview.js}]]*/
+                    ,
+                    function () {
+                        var server_uptime = upTime([[${upTime}]], 'uptime');
+
+                        casStatistics(urls, messages);
+                    }
+            );
+        }
+        ;
+
+    </script>
+
+    <div id="loading" th:text="#{cas.statistics.loading}"></div>
+
+    <div class="statisticsView">
+        <h1 th:text="#{cas.statistics.pagetitle}"></h1>
+
+        <div class="section">
+            <h3 th:text="#{cas.statistics.section.ticket.title}"></h3>
+            <div class="row adminPanels clearfix">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-12 text-right">
+                                    <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.unexpiredtgts.title}"></div>
+                                    <div class="huge" id="unexpiredTgts">
+                                        --
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-12 text-right">
+                                    <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.unexpiredsts.title}"/>
+                                    <div class="huge" id="unexpiredSts">
+                                        --
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-12 text-right">
+                                    <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.expiredtgts.title}"/>
+                                    <div class="huge" id="expiredTgts">
+                                        --
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-12 text-right">
+                                    <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.expiredsts.title}"/>
+                                    <div class="huge" id="expiredSts">
+                                        --
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 th:text="#{cas.statistics.section.serverstatistics.title}"></h3>
+        <div class="row runtimePanels">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="section" id="memoryUsageWrapper">
+                        <div id="memoryGauge"></div>
+                    </div>
+                    <div id="maxMemoryWrapper">
+                        <div id="maxMemoryGauge"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div id="uptime-panel" class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-clock-o fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" th:text="#{cas.statistics.section.serverstatistics.panel.uptime.title}"></div>
+                                <div id="uptime"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-server fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.title}"></div>
+                                <div id="serverinfo"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-md-4"
+                                    th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.label}"/>
+                                <th class="col-md-8"
+                                    th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.value.label}"/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.server.label}"/>
+                                <td th:text="${#httpServletRequest.getServerName() + '-' + #httpServletRequest.getLocalAddr()}"/>
+                            </tr>
+                            <tr th:if="${casTicketSuffix}">
+                                <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.casticketsuffix.label}"/>
+                                <td th:text="${casTicketSuffix}"/>
+                            </tr>
+                            <tr>
+                                <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.starttime.label}"/>
+                                <td th:text="${startTime}"/>
+                            </tr>
+                            <tr>
+                                <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.memory.label}"/>
+                                <td><span id="freeMemory" th:text="${freeMemory}"/> MB
+                                    <span th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.free}"/>
+                                    <br/>
+                                    <span id="totalMemory" th:text="${totalMemory}"/> MB
+                                    <span th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.total}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.maxmemory.label}"/>
+                                <td>
+                                    <span id="maxMemory" th:text="${maxMemory}"/> MB
+                                </td>
+                            </tr>
+                            <tr>
+                                <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.availprocessors.label}"/>
+                                <td id="availableProcessors" th:text="${availableProcessors}"/>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footerButtons"/>
+    </div>
+</div>
+</body>
+</html>

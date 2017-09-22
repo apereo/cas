@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public class UnauthorizedAuthenticationException extends AuthenticationException {
 
+    private static final long serialVersionUID = 4386330975702952112L;
+
     public UnauthorizedAuthenticationException(final String message, final Map<String, Class<? extends Exception>> handlerErrors) {
         super(message, handlerErrors, Collections.emptyMap());
     }

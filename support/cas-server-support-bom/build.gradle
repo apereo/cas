@@ -80,13 +80,17 @@ def generateBom() {
 
 install {
     doFirst {
-        repositories.mavenInstaller.pom = generateBom()
+        if (publishReleases || publishSnapshots) {
+            repositories.mavenInstaller.pom = generateBom()
+        }
     }
 }
 
 uploadArchives {
     doFirst {
-        repositories.mavenDeployer.pom = generateBom()
+        if (publishReleases || publishSnapshots) {
+            repositories.mavenDeployer.pom = generateBom()
+        }
     }
 
     repositories.mavenDeployer {

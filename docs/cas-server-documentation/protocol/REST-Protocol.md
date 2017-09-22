@@ -24,12 +24,8 @@ Support is enabled by including the following to the overlay:
     <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest</artifactId>
     <version>${cas.version}</version>
-    <scope>runtime</scope>
 </dependency>
 ```
-
-REST support is currently provided internally by 
-the [Spring framework](http://spring.io/guides/gs/rest-service/).
 
 ## Request a Ticket Granting Ticket
 
@@ -68,6 +64,16 @@ service={form encoded parameter for the service url}
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
 
+## Validate Service Ticket
+
+Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
+via any of the validation endpoints such as `/p3/serviceValidate`. 
+
+```bash
+GET /cas/p3/serviceValidate?service={service url}&ticket={service ticket}
+``` 
+
+
 ### Unsuccessful Response
 
 CAS will send a 400 Bad Request. If an incorrect media type is
@@ -75,7 +81,7 @@ sent, it will send the 415 Unsupported Media Type.
 
 ## Logout
 
-Destroy the SSO session by removing the issued ticket: 
+Destroy the SSO session by removing the issued ticket:
 
 ```bash
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
@@ -111,7 +117,6 @@ Support is enabled by including the following in your maven overlay:
     <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest-services</artifactId>
     <version>${cas.version}</version>
-    <scope>runtime</scope>
 </dependency>
 ```
 
@@ -121,7 +126,7 @@ the authenticated principal that submits the request must be authorized with a
 pre-configured role name and value that is designated in the CAS configuration
 via the CAS properties.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-api).
 
 ```bash
 POST /cas/v1/services/add/{TGT id} HTTP/1.0
@@ -136,6 +141,45 @@ the generated identifier of the new service.
 ```bash
 200 OK
 5463544213
+```
+
+## X.509 Authentication
+
+The feature extends the CAS REST API communication model to non-interactive X.509 authentication
+where REST credentials may be retrieved from a certificate embedded in the request rather than
+the usual and default username/password.
+
+This pattern may be of interest in cases where the internal network architecture hides
+the CAS server from external users behind firewall or a messaging bus and
+allows only trusted applications to connect to the CAS server.
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
+provides a tremendously convenient target for claiming user identities. To securely use this feature, network
+configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn
+have strict security limitations and logging.</p></div>
+
+Support is enabled by including the following in your maven overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-rest-x509</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+## Request a Ticket Granting Ticket
+
+```bash
+POST /cas/v1/tickets HTTP/1.0
+cert=<ascii certificate>
+```
+
+### Successful Response
+
+```bash
+201 Created
+Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
 ## CAS REST Clients
@@ -159,7 +203,7 @@ client.destroyTicketGrantingTicket(context, profile);
 
 ## Throttling
 
-To understand how to throttling works in CAS, 
+To understand how to throttling works in CAS,
 please review [the available options](../installation/Configuring-Authentication-Throttling.html).
 
 By default, throttling REST requests is turned off.

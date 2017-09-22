@@ -3,13 +3,13 @@ package org.apereo.cas.mgmt.services.web.factory;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceUsernameAttributeProviderEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceUsernameAttributeProviderEditBean;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 
 import java.nio.charset.Charset;
 
@@ -28,13 +28,11 @@ public class DefaultUsernameAttributeProviderMapper implements UsernameAttribute
         if (provider instanceof DefaultRegisteredServiceUsernameProvider) {
             uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString());
         } else if (provider instanceof AnonymousRegisteredServiceUsernameAttributeProvider) {
-            final AnonymousRegisteredServiceUsernameAttributeProvider anonymous =
-                    (AnonymousRegisteredServiceUsernameAttributeProvider) provider;
+            final AnonymousRegisteredServiceUsernameAttributeProvider anonymous = (AnonymousRegisteredServiceUsernameAttributeProvider) provider;
             uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString());
             final PersistentIdGenerator generator = anonymous.getPersistentIdGenerator();
             if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
-                final ShibbolethCompatiblePersistentIdGenerator sh = (ShibbolethCompatiblePersistentIdGenerator)
-                        generator;
+                final ShibbolethCompatiblePersistentIdGenerator sh = (ShibbolethCompatiblePersistentIdGenerator) generator;
 
                 if (sh.getSalt() != null) {
                     final String salt = new String(sh.getSalt(), Charset.defaultCharset());
@@ -44,8 +42,7 @@ public class DefaultUsernameAttributeProviderMapper implements UsernameAttribute
                 }
             }
         } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
-            final PrincipalAttributeRegisteredServiceUsernameProvider p =
-                    (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
+            final PrincipalAttributeRegisteredServiceUsernameProvider p = (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
             uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString());
             uBean.setValue(p.getUsernameAttribute());
         }
@@ -55,7 +52,7 @@ public class DefaultUsernameAttributeProviderMapper implements UsernameAttribute
     public void mapUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider provider,
                                              final RegisteredServiceViewBean bean) {
     }
-
+    
     @Override
     public RegisteredServiceUsernameAttributeProvider toUsernameAttributeProvider(final ServiceData data) {
         final RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider = data.getUserAttrProvider();
@@ -64,25 +61,25 @@ public class DefaultUsernameAttributeProviderMapper implements UsernameAttribute
         if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT
                 .toString())) {
             return new DefaultRegisteredServiceUsernameProvider();
-        } else if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
+        }
+        if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
                 .ANONYMOUS.toString())) {
             final String salt = userAttrProvider.getValue();
             if (StringUtils.isNotBlank(salt)) {
                 final ShibbolethCompatiblePersistentIdGenerator generator = new
                         ShibbolethCompatiblePersistentIdGenerator(salt);
                 return new AnonymousRegisteredServiceUsernameAttributeProvider(generator);
-            } else {
-                throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
             }
-        } else if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
+            throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
+        }
+        if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
                 .ATTRIBUTE.toString())) {
             final String attr = userAttrProvider.getValue();
 
             if (StringUtils.isNotBlank(attr)) {
                 return new PrincipalAttributeRegisteredServiceUsernameProvider(attr);
-            } else {
-                throw new IllegalArgumentException("Invalid attribute specified for username");
             }
+            throw new IllegalArgumentException("Invalid attribute specified for username");
         }
 
         return null;

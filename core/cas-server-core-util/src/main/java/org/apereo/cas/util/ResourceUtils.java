@@ -4,12 +4,14 @@ import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 
 import java.io.File;
@@ -23,6 +25,8 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
+
 /**
  * Utility class to assist with resource operations.
  *
@@ -30,7 +34,10 @@ import java.util.zip.ZipEntry;
  * @since 5.0.0
  */
 public final class ResourceUtils {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
+
+    private static final String HTTP_URL_PREFIX = "http";
 
     private ResourceUtils() {
     }
@@ -44,15 +51,54 @@ public final class ResourceUtils {
      */
     public static AbstractResource getRawResourceFrom(final String location) throws IOException {
         final AbstractResource metadataLocationResource;
-        if (location.toLowerCase().startsWith("http")) {
+        if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
             metadataLocationResource = new UrlResource(location);
-        } else if (location.toLowerCase().startsWith("classpath")) {
-            metadataLocationResource = new ClassPathResource(location);
+        } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
+            metadataLocationResource = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         } else {
             metadataLocationResource = new FileSystemResource(location);
         }
         return metadataLocationResource;
     }
+
+    /**
+     * Does resource exist?
+     *
+     * @param resource       the resource
+     * @param resourceLoader the resource loader
+     * @return the boolean
+     */
+    public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
+        try {
+            if (StringUtils.isNotBlank(resource)) {
+                final Resource res = resourceLoader.getResource(resource);
+                return doesResourceExist(res);
+            }
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    /**
+     * Does resource exist?
+     *
+     * @param res the res
+     * @return the boolean
+     */
+    public static boolean doesResourceExist(final Resource res) {
+        if (res != null) {
+            try {
+                IOUtils.read(res.getInputStream(), new byte[1]);
+                return true;
+            } catch (final Exception e) {
+                LOGGER.trace(e.getMessage(), e);
+                return false;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Gets resource from a String location.
@@ -102,7 +148,7 @@ public final class ResourceUtils {
                 LOGGER.debug("No resource defined to prepare. Returning null");
                 return null;
             }
-            
+
             if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
                 return resource;
             }

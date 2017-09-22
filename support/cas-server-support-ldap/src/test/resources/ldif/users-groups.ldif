@@ -4,7 +4,7 @@ objectClass: person
 objectClass: organizationalPerson
 objectClass: ad
 objectClass: inetOrgPerson
-cn: Misagh Moayyed
+cn: mmoayyed
 sn: Moayyed
 givenName: Misagh
 displayName: Misagh Moayyed
@@ -13,9 +13,8 @@ mail: mmoayyed@example.org
 userPrincipalName: mmoayyed@example.org
 userAccountControl: 66048
 distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
-userPassword: misagh
 unicodePwd: ignoredForTests
-
+userPassword: misagh
 
 dn: cn=casTest,ou=people,dc=example,dc=org
 objectClass: top
@@ -32,11 +31,12 @@ displayName: CAS Test
 sAMAccountName: casTest
 distinguishedName: CN=casTest,ou=people,dc=example,dc=org
 mail: casTest@example.org
-userPassword: thePassw0rd
+password: thePassw0rd
 unicodePwd: ignoredForTests
 userPrincipalName: castest@example.org
 userAccountControl: 66048
 host: localhost
+userPassword: misagh
 
 dn: cn=Administrators,ou=people,dc=example,dc=org
 cn: Administrators
@@ -59,6 +59,7 @@ member: cn=Administrators,ou=people,dc=example,dc=org
 mail: Administrators@example.org
 userAccountControl: 66048
 distinguishedName: cn=Administrators,ou=people,dc=example,dc=org
-userPassword: thePassw0rd
+password: thePassw0rd
 displayName: Administrators
 host: 127.0.0.1
+userPassword: misagh

@@ -6,8 +6,6 @@ import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
@@ -21,14 +19,7 @@ import org.slf4j.LoggerFactory;
  * @since 3.0.0
  */
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
-
-  
-    /**
-     * The logger instance.
-     */
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
+    
     /**
      * The numeric generator to generate the static part of the id.
      */
@@ -44,6 +35,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * values.
      */
     private String suffix;
+    private int initialCapacity;
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
@@ -64,7 +56,6 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     public DefaultUniqueTicketIdGenerator(final int maxLength) {
         this(maxLength, null);
     }
-
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
@@ -101,25 +92,25 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     @Override
     public String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
-        final StringBuilder buffer = new StringBuilder(prefix.length() + 2
-                + (StringUtils.isNotBlank(this.suffix) ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()
-                + number.length());
-
-        buffer.append(prefix);
-        buffer.append('-');
-        buffer.append(number);
-        buffer.append('-');
-        buffer.append(this.randomStringGenerator.getNewString());
-
-        if (this.suffix != null) {
-            buffer.append(this.suffix);
-        }
-
-        return buffer.toString();
+        final int capacity = prefix.length() + initialCapacity + number.length();
+        return new StringBuilder(capacity)
+                .append(prefix)
+                .append('-')
+                .append(number)
+                .append('-')
+                .append(this.randomStringGenerator.getNewString())
+                .append(this.suffix)
+                .toString();
     }
 
+    /**
+     * Sets suffix.
+     *
+     * @param suffix the suffix
+     */
     public void setSuffix(final String suffix) {
-        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : null;
+        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : StringUtils.EMPTY;
+        initialCapacity = 2 + this.suffix.length() + this.randomStringGenerator.getMaxLength();
     }
 
     /**
@@ -131,5 +122,4 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
         this.numericGenerator = new DefaultLongNumericGenerator(1);
     }
-    
 }

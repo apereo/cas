@@ -28,7 +28,7 @@ be be combined with an LDAP-based principal resolver to accommodate this case.
 CAS uses the Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#principal-resolution).
 
 ## PrincipalResolver vs. AuthenticationHandler
 

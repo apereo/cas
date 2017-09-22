@@ -17,6 +17,10 @@ import java.time.ZonedDateTime;
 @Entity(name = "COM_AUDIT_TRAIL")
 public class AuditTrailEntity {
 
+    /** Audit table name. */
+    public static final String AUDIT_TRAIL_TABLE_NAME = "COM_AUDIT_TRAIL";
+
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,8 +43,12 @@ public class AuditTrailEntity {
     @Column(name = "APPLIC_CD")
     private String applicationCode;
     
-    @Column(name = "AUD_DATE", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "AUD_DATE", nullable = false, columnDefinition = "TIMESTAMP")
     private ZonedDateTime date;
+
+    public AuditTrailEntity() {
+        setId(System.currentTimeMillis());
+    }
 
     public Long getId() {
         return this.id;

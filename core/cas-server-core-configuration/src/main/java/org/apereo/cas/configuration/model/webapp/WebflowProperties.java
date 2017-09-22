@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.webapp;
 
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -15,7 +16,7 @@ public class WebflowProperties extends CryptographyProperties {
 
     private boolean autoconfigure = true;
     
-    private boolean refresh = true;
+    private boolean refresh;
 
     private boolean alwaysPauseRedirect;
 
@@ -64,17 +65,17 @@ public class WebflowProperties extends CryptographyProperties {
     }
 
     public static class Session {
-        private int lockTimeout = 30;
+        private String lockTimeout = "PT30S";
         private int maxConversations = 5;
         private boolean compress;
         private boolean storage;
         private Resource hzLocation = new ClassPathResource("hazelcast.xml");
 
-        public int getLockTimeout() {
-            return lockTimeout;
+        public long getLockTimeout() {
+            return Beans.newDuration(lockTimeout).getSeconds();
         }
 
-        public void setLockTimeout(final int lockTimeout) {
+        public void setLockTimeout(final String lockTimeout) {
             this.lockTimeout = lockTimeout;
         }
 

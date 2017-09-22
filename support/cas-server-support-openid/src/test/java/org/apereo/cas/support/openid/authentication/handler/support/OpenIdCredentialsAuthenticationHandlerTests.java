@@ -1,14 +1,16 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
+import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.security.auth.login.FailedLoginException;
@@ -21,49 +23,60 @@ import static org.junit.Assert.*;
  */
 public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdTests {
 
+    private static final String TGT_ID = "test";
+    private static final String USERNAME = "test";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Autowired
     private OpenIdCredentialsAuthenticationHandler openIdCredentialsAuthenticationHandler;
 
     @Autowired
     private TicketRegistry ticketRegistry;
 
-
     @Test
     public void verifySupports() {
-        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential("test", "test")));
+        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential(TGT_ID, USERNAME)));
         assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
     public void verifyTGTWithSameId() throws Exception {
-        final OpenIdCredential c = new OpenIdCredential("test", "test");
+        final OpenIdCredential c = new OpenIdCredential(TGT_ID, USERNAME);
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        assertEquals("test", this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
+        assertEquals(TGT_ID, this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyTGTThatIsExpired() throws Exception {
-        final OpenIdCredential c = new OpenIdCredential("test", "test");
+        final OpenIdCredential c = new OpenIdCredential(TGT_ID, USERNAME);
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
         t.markTicketExpired();
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("TGT is null or expired.");
+
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyTGTWithDifferentId() throws Exception {
-        final OpenIdCredential c = new OpenIdCredential("test", "test1");
+        final OpenIdCredential c = new OpenIdCredential(TGT_ID, "test1");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Principal ID mismatch");
+
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
-    protected TicketGrantingTicket getTicketGrantingTicket() {
-        return new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+    private TicketGrantingTicket getTicketGrantingTicket() {
+        return new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     }
 }

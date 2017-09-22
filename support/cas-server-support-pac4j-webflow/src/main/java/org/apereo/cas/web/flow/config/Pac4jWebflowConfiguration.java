@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link Pac4jWebflowConfiguration}.
@@ -30,14 +31,20 @@ public class Pac4jWebflowConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
+    
+    @Autowired
+    @Qualifier("saml2ClientLogoutAction")
+    private Action saml2ClientLogoutAction;
 
+    @Autowired
+    @Qualifier("logoutFlowRegistry")
+    private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+    
     @ConditionalOnMissingBean(name = "pac4jWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer pac4jWebflowConfigurer() {
-        final Pac4jWebflowConfigurer r = new Pac4jWebflowConfigurer();
-        r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        r.setFlowBuilderServices(flowBuilderServices);
-        return r;
+        return new Pac4jWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                logoutFlowDefinitionRegistry, saml2ClientLogoutAction);
     }
 
     @Bean

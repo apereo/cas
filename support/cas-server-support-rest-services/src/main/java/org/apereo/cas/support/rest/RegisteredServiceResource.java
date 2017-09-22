@@ -17,8 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
@@ -36,36 +35,19 @@ import java.util.Map;
 @RestController("registeredServiceResourceRestController")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RegisteredServiceResource {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceResource.class);
 
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final String attributeName;
+    private final String attributeValue;
 
-    private CentralAuthenticationService centralAuthenticationService;
-
-    private String attributeName;
-    private String attributeValue;
-
-    public ServicesManager getServicesManager() {
-        return servicesManager;
-    }
-
-    public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
-    }
-
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    public void setAttributeName(final String attributeName) {
+    public RegisteredServiceResource(final ServicesManager servicesManager, final CentralAuthenticationService centralAuthenticationService,
+                                     final String attributeName, final String attributeValue) {
+        this.servicesManager = servicesManager;
+        this.centralAuthenticationService = centralAuthenticationService;
         this.attributeName = attributeName;
-    }
-
-    public String getAttributeValue() {
-        return attributeValue;
-    }
-
-    public void setAttributeValue(final String attributeValue) {
         this.attributeValue = attributeValue;
     }
 
@@ -76,18 +58,14 @@ public class RegisteredServiceResource {
      * @param serviceDataHolder the service to register and save in rest form
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/v1/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType
-            .APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder,
-                                                @PathVariable("tgtId") final String tgtId) {
+    @PostMapping(value = "/v1/services/add/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder, @PathVariable("tgtId") final String tgtId) {
         try {
-
             if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
                 throw new IllegalArgumentException("Attribute name and/or value must be configured");
             }
 
-            final TicketGrantingTicket ticket =
-                    this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+            final TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
             if (ticket == null || ticket.isExpired()) {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
@@ -115,10 +93,6 @@ public class RegisteredServiceResource {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     private static class ServiceDataHolder implements Serializable {
@@ -173,9 +147,4 @@ public class RegisteredServiceResource {
         }
 
     }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
 }

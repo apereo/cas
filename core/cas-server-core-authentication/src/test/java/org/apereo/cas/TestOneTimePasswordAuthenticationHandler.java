@@ -1,14 +1,13 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.springframework.util.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -20,14 +19,9 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class TestOneTimePasswordAuthenticationHandler implements AuthenticationHandler {
+public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    
     private Map<String, String> credentialMap;
-
-    /** Handler name. */
-    private String name;
-
 
     /**
      * Creates a new instance with a map that defines the one-time passwords that can be authenticated.
@@ -35,6 +29,7 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
      * @param credentialMap Non-null map of one-time password identifiers to password values.
      */
     public TestOneTimePasswordAuthenticationHandler(final Map<String, String> credentialMap) {
+        super("", null, null, null);
         this.credentialMap = credentialMap;
     }
 
@@ -53,18 +48,5 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof OneTimePasswordCredential;
-    }
-
-    @Override
-    public String getName() {
-        if (StringUtils.hasText(this.name)) {
-            return this.name;
-        } else {
-            return getClass().getSimpleName();
-        }
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 }

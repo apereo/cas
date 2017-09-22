@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -23,7 +24,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
         final MockRequestContext context = new MockRequestContext();
-        context.setCurrentEvent(new Event("", "error"));
+        context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         throttle.preHandle(request, response, null);

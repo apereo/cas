@@ -11,7 +11,6 @@ import de.flapdoodle.embed.memcached.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.memcached.distribution.Version;
 import de.flapdoodle.embed.process.config.store.IDownloadConfig;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
-import org.slf4j.Logger;
 
 import java.net.Socket;
 
@@ -29,8 +28,6 @@ public abstract class AbstractMemcachedTests {
 
     private static MemcachedExecutable MEMCACHED_EXECUTABLE;
     private static MemcachedProcess MEMCACHED;
-
-    protected transient Logger logger = getLogger(this.getClass());
 
     public static void bootstrap() {
         try {
@@ -59,6 +56,7 @@ public abstract class AbstractMemcachedTests {
             return false;
         }
     }
+
     private static class CasRuntimeConfigBuilder extends RuntimeConfigBuilder {
         @Override
         public RuntimeConfigBuilder defaults(final Command command) {

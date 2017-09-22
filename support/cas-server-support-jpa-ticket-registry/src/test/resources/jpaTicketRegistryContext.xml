@@ -124,7 +124,7 @@
 
         <!--
         <aop:pointcut id="casOperations"
-                      expression="execution(* CentralAuthenticationServiceImpl.*(..))"/>
+                      expression="execution(* DefaultCentralAuthenticationService.*(..))"/>
         -->
 
         <aop:advisor advice-ref="txRegistryAdvice"

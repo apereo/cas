@@ -7,11 +7,11 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
@@ -31,13 +31,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ServiceWarningAction extends AbstractAction {
 
-    private CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final TicketRegistrySupport ticketRegistrySupport;
+    private final CookieGenerator warnCookieGenerator;
 
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
-    private TicketRegistrySupport ticketRegistrySupport;
-
-    private CookieGenerator warnCookieGenerator;
+    public ServiceWarningAction(final CentralAuthenticationService authenticationService, final AuthenticationSystemSupport authenticationSystemSupport,
+                                final TicketRegistrySupport ticketRegistrySupport, final CookieRetrievingCookieGenerator warnCookieGenerator) {
+        centralAuthenticationService = authenticationService;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.ticketRegistrySupport = ticketRegistrySupport;
+        this.warnCookieGenerator = warnCookieGenerator;
+    }
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -55,11 +60,10 @@ public class ServiceWarningAction extends AbstractAction {
 
         final Credential credential = WebUtils.getCredential(context);
         final AuthenticationResultBuilder authenticationResultBuilder =
-                this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+                authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
         final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
 
-        final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
 
         if (request.getParameterMap().containsKey("ignorewarn")) {
@@ -68,21 +72,5 @@ public class ServiceWarningAction extends AbstractAction {
             }
         }
         return new Event(this, CasWebflowConstants.STATE_ID_REDIRECT);
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
-
-    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
     }
 }

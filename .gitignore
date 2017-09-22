@@ -9,6 +9,7 @@ bin/
 *.ipr
 *.iml
 *.iws
+**/.history
 *.orig
 .idea/
 .DS_Store
@@ -35,3 +36,8 @@ ajcore.*
 reports
 
 *.asc
+*.css
+/.nb-gradle/
+etc/loadtests/loadtests/**
+etc/loadtests/locustfiles/**
+etc/loadtests/__pycache__/**

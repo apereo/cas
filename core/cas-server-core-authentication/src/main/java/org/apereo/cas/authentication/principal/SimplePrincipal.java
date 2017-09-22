@@ -1,13 +1,15 @@
 package org.apereo.cas.authentication.principal;
 
-import com.google.common.collect.Maps;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Simple implementation of a {@link Principal} that exposes an unmodifiable
@@ -19,6 +21,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SimplePrincipal implements Principal {
     /**
      * Serialization support.
@@ -28,6 +31,7 @@ public class SimplePrincipal implements Principal {
     /**
      * The unique identifier for the principal.
      */
+    @JsonProperty
     private String id;
 
     /**
@@ -49,7 +53,7 @@ public class SimplePrincipal implements Principal {
      * @param id the id
      */
     private SimplePrincipal(final String id) {
-        this(id, Collections.EMPTY_MAP);
+        this(id, new HashMap<>());
     }
 
     /**
@@ -58,11 +62,18 @@ public class SimplePrincipal implements Principal {
      * @param id         the id
      * @param attributes the attributes
      */
-    protected SimplePrincipal(final String id, final Map<String, Object> attributes) {
-        Assert.notNull(id, "principal id cannot be null");
-        Assert.notNull(attributes, "principal attributes cannot be null");
+    @JsonCreator
+    protected SimplePrincipal(@JsonProperty("id") final String id,
+                              @JsonProperty("attributes") final Map<String, Object> attributes) {
+
+        Assert.notNull(id, "Principal id cannot be null");
+
         this.id = id;
-        this.attributes = attributes;
+        if (attributes == null) {
+            this.attributes = new HashMap<>();
+        } else {
+            this.attributes = attributes;
+        }
     }
 
     /**
@@ -70,7 +81,7 @@ public class SimplePrincipal implements Principal {
      */
     @Override
     public Map<String, Object> getAttributes() {
-        final Map<String, Object> attrs = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, Object> attrs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         attrs.putAll(this.attributes);
         return attrs;
     }

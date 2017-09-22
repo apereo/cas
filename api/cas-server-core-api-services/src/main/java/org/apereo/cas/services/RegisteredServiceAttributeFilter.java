@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -11,7 +14,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public interface RegisteredServiceAttributeFilter extends Serializable {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+public interface RegisteredServiceAttributeFilter extends Serializable, Ordered {
     /**
      * Filters the received principal attributes for the given registered service.
      *
@@ -19,4 +23,9 @@ public interface RegisteredServiceAttributeFilter extends Serializable {
      * @return a map that contains the filtered attributes.
      */
     Map<String, Object> filter(Map<String, Object> givenAttributes);
+
+    @Override
+    default int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
 }

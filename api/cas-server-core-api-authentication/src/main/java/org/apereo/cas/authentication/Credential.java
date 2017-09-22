@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import java.io.Serializable;
+
 /**
  * Describes an authentication credential. Implementations SHOULD also implement {@link CredentialMetaData} if
  * no sensitive data is contained in the credential; conversely, implementations MUST NOT implement
@@ -10,7 +12,7 @@ package org.apereo.cas.authentication;
  * @see CredentialMetaData
  * @since 3.0.0
  */
-public interface Credential {
+public interface Credential extends Serializable {
 
     /** An ID that may be used to indicate the credential identifier is unknown. */
     String UNKNOWN_ID = "unknown";

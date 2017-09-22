@@ -24,10 +24,17 @@ public class AuthyClientInstance {
 
     private String mailAttribute = "mail";
     private String phoneAttribute = "phone";
+    private String countryCode = "1";
     
-    public AuthyClientInstance(final String apiKey, final String apiUrl) {
+    public AuthyClientInstance(final String apiKey, final String apiUrl, 
+                               final String mailAttribute, final String phoneAttribute,
+                               final String countryCode) {
         try {
-            final String authyUrl = StringUtils.isBlank(apiUrl) ? AuthyApiClient.DEFAULT_API_URI : apiUrl;
+            this.mailAttribute = mailAttribute;
+            this.phoneAttribute = phoneAttribute;
+            this.countryCode = countryCode;
+            
+            final String authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
             final URL url = new URL(authyUrl);
             final boolean testFlag = url.getProtocol().equals("http");
             this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
@@ -38,18 +45,6 @@ public class AuthyClientInstance {
         }
     }
 
-    public void setMailAttribute(final String mailAttribute) {
-        this.mailAttribute = mailAttribute;
-    }
-
-    public void setPhoneAttribute(final String phoneAttribute) {
-        this.phoneAttribute = phoneAttribute;
-    }
-
-    public AuthyApiClient getAuthyClient() {
-        return authyClient;
-    }
-
     public Users getAuthyUsers() {
         return authyUsers;
     }
@@ -57,15 +52,7 @@ public class AuthyClientInstance {
     public Tokens getAuthyTokens() {
         return authyTokens;
     }
-
-    public String getMailAttribute() {
-        return mailAttribute;
-    }
-
-    public String getPhoneAttribute() {
-        return phoneAttribute;
-    }
-
+    
     /**
      * Gets authy error message.
      *
@@ -103,6 +90,6 @@ public class AuthyClientInstance {
         if (StringUtils.isBlank(phone)) {
             throw new IllegalArgumentException("No phone number found for " + principal.getId());
         }
-        return this.authyUsers.createUser(email, phone);
+        return this.authyUsers.createUser(email, phone, this.countryCode);
     }
 }

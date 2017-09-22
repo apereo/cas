@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.oauth.confirm.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-success">
+        <h1 th:text="#{screen.oauth.confirm.header}"/>
+
+        <div align="middle">
+            <img th:src="${service.logo}" th:if="${service.logo}"/>
+            <p th:text="${service.description}" />
+        </div>
+        
+        <div th:if="${dynamic}">
+            <div class="alert alert-warning fade in" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <strong th:utext="#{screen.oidc.confirm.dynamic(${dynamicTime})}"/>
+            </div>
+        </div>
+
+        <div th:unless="${#sets.isEmpty(scopes)}">
+            <p th:text="#{screen.oidc.confirm.asksinfo}"/>
+
+            <span th:each="scope : ${scopes}">
+                <div>
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    <strong><code th:text="${scope}"/></strong>
+                    <p th:text="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                </div>
+            </span>
+
+            <div th:if="${service.informationUrl}">
+                <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                <a th:href="${service.informationUrl}" th:text="#{screen.oidc.confirm.infourl(${serviceName})}"/>
+            </div>
+            <div th:if="${service.privacyUrl}">
+                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                <a th:href="${service.privacyUrl}" th:utext="#{screen.oidc.confirm.privacyurl(${serviceName})}"/>
+            </div>
+            <br/>
+        </div>
+
+
+        <strong>
+            <h4 th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
+        </strong>
+        <p>
+            <a class="btn btn-success btn-lg" id="allow" name="allow"
+               th:href="@{${callbackUrl}}"
+               th:utext="#{screen.oauth.confirm.allow}"/>
+
+            <a th:if="${deniedApprovalUrl}"
+               class="btn btn-danger btn-lg" id="deny" name="deny"
+               th:href="@{${deniedApprovalUrl}}"
+               th:utext="#{screen.oauth.confirm.deny}"/>
+        </p>
+    </div>
+</div>
+</body>
+</html>

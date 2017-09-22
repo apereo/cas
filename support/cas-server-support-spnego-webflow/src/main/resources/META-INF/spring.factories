@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration,\
+  org.apereo.cas.web.flow.config.SpnegoWebflowConfiguration

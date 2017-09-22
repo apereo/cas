@@ -1,17 +1,19 @@
 package org.apereo.cas.util;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -47,9 +50,8 @@ public final class SamlSPUtils {
      */
     public static SamlRegisteredService newSamlServiceProviderService(final AbstractSamlSPProperties sp,
                                                                       final SamlRegisteredServiceCachingMetadataResolver resolver) {
-
         if (StringUtils.isBlank(sp.getMetadata())) {
-            LOGGER.debug("Skipped registration of {} since no metadata location is found", sp.getName());
+            LOGGER.debug("Skipped registration of [{}] since no metadata location is found", sp.getName());
             return null;
         }
 
@@ -65,40 +67,61 @@ public final class SamlSPUtils {
                 attributesToRelease.add(sp.getNameIdAttribute());
                 service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
             }
-            service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributesToRelease));
+            if (StringUtils.isNotBlank(sp.getNameIdFormat())) {
+                service.setRequiredNameIdFormat(sp.getNameIdFormat());
+            }
+
+            final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(attributesToRelease);
+            final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
+            policy.addPolicy(new ReturnMappedAttributeReleasePolicy(attributes));
+            service.setAttributeReleasePolicy(policy);
+            
             service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());
             service.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
             service.setMetadataCriteriaRemoveRolelessEntityDescriptors(true);
-            
-            final ChainingMetadataResolver chainingResolver = resolver.resolve(service);
-            if (chainingResolver.getResolvers().isEmpty()) {
-                LOGGER.warn("Skipped registration of {} since no metadata resolver could be constructed", sp.getName());
-                return null;
+
+            if (StringUtils.isNotBlank(sp.getSignatureLocation())) {
+                service.setMetadataSignatureLocation(sp.getSignatureLocation());
             }
-            
-            final List<String> builder = Lists.newArrayList();
-            chainingResolver.getResolvers().forEach(r -> {
-                if (r instanceof AbstractBatchMetadataResolver) {
-                    final Iterator<EntityDescriptor> it = ((AbstractBatchMetadataResolver) r).iterator();
-                    final Optional<EntityDescriptor> descriptor =
-                            StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                                    .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
-                                    .findFirst();
-                    if (descriptor.isPresent()) {
-                        builder.add(descriptor.get().getEntityID());
-                    } else {
-                        LOGGER.warn("Skipped registration of {} since no entity id could be found", sp.getName());
-                    }
+
+            final List<String> entityIDList = sp.getEntityIds();
+            if (entityIDList.isEmpty()) {
+                final ChainingMetadataResolver chainingResolver = resolver.resolve(service);
+                if (chainingResolver.getResolvers().isEmpty()) {
+                    LOGGER.warn("Skipped registration of [{}] since no metadata resolver could be constructed", sp.getName());
+                    return null;
                 }
-            });
-            
-            if (builder.isEmpty()) {
-                LOGGER.warn("Skipped registration of {} since no metadata entity ids could be found", sp.getName());
+
+                chainingResolver.getResolvers().forEach(r -> {
+                    if (r instanceof AbstractBatchMetadataResolver) {
+                        final Iterator<EntityDescriptor> it = ((AbstractBatchMetadataResolver) r).iterator();
+                        final Optional<EntityDescriptor> descriptor =
+                                StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+                                        .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
+                                        .findFirst();
+                        if (descriptor.isPresent()) {
+                            entityIDList.add(descriptor.get().getEntityID());
+                        } else {
+                            LOGGER.warn("Skipped registration of [{}] since no entity id could be found", sp.getName());
+                        }
+                    }
+                });
+            }
+
+            if (entityIDList.isEmpty()) {
+                LOGGER.warn("Skipped registration of [{}] since no metadata entity ids could be found", sp.getName());
                 return null;
             }
-            final String entityIds = org.springframework.util.StringUtils.collectionToDelimitedString(builder, "|");
-            LOGGER.debug("Registering saml service {} by entity id {}", sp.getName(), entityIds);
+            final String entityIds = org.springframework.util.StringUtils.collectionToDelimitedString(entityIDList, "|");
+            service.setMetadataCriteriaDirection(PredicateFilter.Direction.INCLUDE.name());
+            service.setMetadataCriteriaPattern(entityIds);
+
+            LOGGER.debug("Registering saml service [{}] by entity id [{}]", sp.getName(), entityIds);
             service.setServiceId(entityIds);
+
+            service.setSignAssertions(sp.isSignAssertions());
+            service.setSignResponses(sp.isSignResponses());
+            
             return service;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -113,12 +136,14 @@ public final class SamlSPUtils {
      */
     public static void saveService(final RegisteredService service, final ServicesManager servicesManager) {
         servicesManager.load();
-        if (!servicesManager.matchesExistingService(service.getServiceId())) {
-            LOGGER.debug("Service {} does not exist in the registry and will be added.", service.getServiceId());
+
+        if (servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService
+                && registeredService.getServiceId().equals(service.getServiceId())) != null) {
+            LOGGER.info("Service [{}] does not exist in the registry and will be added.", service.getServiceId());
             servicesManager.save(service);
             servicesManager.load();
         } else {
-            LOGGER.debug("Service {} exists in the registry and will not be added again.", service.getServiceId());
+            LOGGER.info("Service [{}] exists in the registry and will not be added again.", service.getServiceId());
         }
     }
 }

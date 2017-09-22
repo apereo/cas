@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.security.PublicKey;
 
@@ -8,6 +10,7 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServicePublicKey extends Serializable {
 
     /**

@@ -29,7 +29,6 @@ public class Status {
     /** Human-readable status description. */
     private String description;
 
-
     /**
      * Creates a new status object with the given code.
      *
@@ -40,7 +39,6 @@ public class Status {
     public Status(final StatusCode code) {
         this(code, null);
     }
-
 
     /**
      * Creates a new status object with the given code.
@@ -63,7 +61,6 @@ public class Status {
     public StatusCode getCode() {
         return this.code;
     }
-
 
     /**
      * @return Human-readable description of status.

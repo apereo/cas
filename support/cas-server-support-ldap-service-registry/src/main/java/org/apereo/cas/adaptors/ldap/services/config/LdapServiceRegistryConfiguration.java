@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistryDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.ldaptive.ConnectionFactory;
@@ -32,24 +33,16 @@ public class LdapServiceRegistryConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "ldapServiceRegistryMapper")
     public LdapRegisteredServiceMapper ldapServiceRegistryMapper() {
-        return new DefaultLdapRegisteredServiceMapper();
+        return new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap());
     }
 
     @Bean
     @RefreshScope
     @Autowired
     public ServiceRegistryDao serviceRegistryDao(@Qualifier("ldapServiceRegistryMapper") final LdapRegisteredServiceMapper mapper) {
-        final LdapServiceRegistryDao r = new LdapServiceRegistryDao();
+        final LdapServiceRegistryProperties ldap = casProperties.getServiceRegistry().getLdap();
+        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
 
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
-                casProperties.getServiceRegistry().getLdap()
-        );
-
-        r.setConnectionFactory(connectionFactory);
-        r.setLdapServiceMapper(mapper);
-        r.setBaseDn(casProperties.getServiceRegistry().getLdap().getBaseDn());
-
-        return r;
+        return new LdapServiceRegistryDao(connectionFactory, ldap.getBaseDn(), mapper, ldap);
     }
-
 }

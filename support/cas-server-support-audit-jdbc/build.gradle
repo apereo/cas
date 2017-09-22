@@ -1,13 +1,13 @@
-
 description = "Apereo CAS JDBC Audit Support"
 dependencies {
 	compile project(":api:cas-server-core-api")
-    compile libraries.pac4j
-    compile libraries.persondirectory
-    compile libraries.spring
-    compile libraries.hibernate
+    implementation libraries.pac4j
+    implementation libraries.persondirectory
+    
+
     compile project(":core:cas-server-core-util")
     provided project(":core:cas-server-core-audit")
-
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

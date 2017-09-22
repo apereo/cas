@@ -7,13 +7,11 @@ import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 
 /**
@@ -25,29 +23,21 @@ import java.net.InetAddress;
  * @since 5.0.0
  */
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MaxmindDatabaseGeoLocationService.class);
-    
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     private DatabaseReader cityDatabaseReader;
     private DatabaseReader countryDatabaseReader;
 
-    /**
-     * Init database readers.
-     */
-    @PostConstruct
-    public void init() {
+    public MaxmindDatabaseGeoLocationService(final MaxmindProperties properties) {
         try {
-            if (casProperties.getMaxmind().getCityDatabase().exists()) {
-                this.cityDatabaseReader =
-                        new DatabaseReader.Builder(casProperties.getMaxmind().getCityDatabase().getFile())
+            if (properties.getCityDatabase().exists()) {
+                this.cityDatabaseReader = new DatabaseReader.Builder(properties.getCityDatabase().getFile())
                                 .withCache(new CHMCache()).build();
             }
 
-            if (casProperties.getMaxmind().getCountryDatabase().exists()) {
-                this.countryDatabaseReader =
-                        new DatabaseReader.Builder(casProperties.getMaxmind().getCountryDatabase().getFile())
+            if (properties.getCountryDatabase().exists()) {
+                this.countryDatabaseReader = new DatabaseReader.Builder(properties.getCountryDatabase().getFile())
                                 .withCache(new CHMCache()).build();
             }
         } catch (final Exception e) {
@@ -62,12 +52,14 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
             if (this.cityDatabaseReader != null) {
                 final CityResponse response = this.cityDatabaseReader.city(address);
                 location.addAddress(response.getCity().getName());
+                location.setLatitude(response.getLocation().getLatitude());
+                location.setLongitude(response.getLocation().getLongitude());
             }
             if (this.countryDatabaseReader != null) {
                 final CountryResponse response = this.countryDatabaseReader.country(address);
                 location.addAddress(response.getCountry().getName());
             }
-            LOGGER.debug("Geo location for {} is calculated as {}", address, location);
+            LOGGER.debug("Geo location for [{}] is calculated as [{}]", address, location);
             return location;
         } catch (final AddressNotFoundException e) {
             LOGGER.info(e.getMessage(), e);
@@ -89,7 +81,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
 
     @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
-        LOGGER.warn("Geolocating an address by latitude/longitude {}/{} is not supported", latitude, longitude);
+        LOGGER.warn("Geolocating an address by latitude/longitude [{}]/[{}] is not supported", latitude, longitude);
         return null;
     }
 }

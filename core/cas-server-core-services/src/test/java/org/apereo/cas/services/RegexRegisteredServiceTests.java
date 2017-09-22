@@ -1,12 +1,16 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Lists;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -20,11 +24,14 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
 
-    private RegexRegisteredService service;
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private String serviceToMatch;
+    private final RegexRegisteredService service;
 
-    private boolean expected;
+    private final String serviceToMatch;
+
+    private final boolean expected;
 
     public RegexRegisteredServiceTests(
             final RegexRegisteredService service,
@@ -40,7 +47,7 @@ public class RegexRegisteredServiceTests {
         final String domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         final String domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         final String globalCatchallHttpImap = "(https*|imaps*)://.*";
-        return Lists.newArrayList(new Object[][]{
+        return Arrays.asList(new Object[][]{
                 // CAS-1071 domain-specific HTTP catch-all #1
                 {
                         newService(domainCatchallHttp),
@@ -103,10 +110,20 @@ public class RegexRegisteredServiceTests {
         assertEquals(expected, service.matches(testService));
     }
 
-
     private static RegexRegisteredService newService(final String id) {
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setServiceId(id);
         return service;
+    }
+
+    @Test
+    public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
+        final RegexRegisteredService serviceWritten = newService("serviceId");
+
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
+
+        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
+
+        assertEquals(serviceWritten, serviceRead);
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
-import net.jradius.packet.attribute.RadiusAttribute;
-import org.apereo.cas.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +18,11 @@ import java.util.Optional;
  */
 public final class RadiusUtils {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RadiusUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RadiusUtils.class);
 
-    private RadiusUtils() {}
-    
+    private RadiusUtils() {
+    }
+
     /**
      * Authenticate pair.
      *
@@ -37,18 +37,15 @@ public final class RadiusUtils {
     public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username, final String password,
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
-                                                                            final boolean failoverOnException) 
-                            throws Exception {
+                                                                            final boolean failoverOnException) throws Exception {
         for (final RadiusServer radiusServer : servers) {
-            LOGGER.debug("Attempting to authenticate {} at {}", username, radiusServer);
+            LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {
                 final RadiusResponse response = radiusServer.authenticate(username, password);
                 if (response != null) {
                     final Map<String, Object> attributes = new HashMap<>();
-                    for (final RadiusAttribute attribute : response.getAttributes()) {
-                        attributes.put(attribute.getAttributeName(), attribute.getValue().toString());
-                    }
-                    return new Pair<>(Boolean.TRUE, Optional.of(attributes));
+                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));
+                    return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
 
                 if (!failoverOnAuthenticationFailure) {
@@ -62,6 +59,6 @@ public final class RadiusUtils {
                 LOGGER.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-        return new Pair<>(Boolean.TRUE, Optional.empty());
+        return Pair.of(Boolean.TRUE, Optional.empty());
     }
 }

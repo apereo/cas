@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
+
+<head>
+    <title th:text="#{cas.attrresolutionview.pagetitle}"></title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var urls = {
+            resolveAttributes: /*[[@{/status/attrresolution/resolveattrs}]]*/
+        };
+
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:inline="javascript">
+
+        function jqueryReady() {
+            head.load(
+                    /*[[@{/js/attrresolution.js}]]*/
+            );
+        }
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <h1 th:text="#{cas.attrresolutionview.pagetitle}"/>
+    <div class="box fl-panel" id="login">
+        
+        <form method="post" id="fm1" class="fm-v clearfix">
+            <div class="row fl-controls-left">
+                <label for="uid" class="fl-label" th:utext="#{cas.attrresolutionview.label.uid}"/>
+                <input type="text" class="required"
+                       size="35"
+                       tabindex="0"
+                       id="uid"
+                       name="uid"
+                       autocomplete="off"/>
+                <div>
+                    <p/>
+                </div>
+                <input class="btn btn-success"
+                       name="_eventId_submit"
+                       accesskey="l"
+                       th:value="#{cas.attrresolutionview.button.submit}"
+                       tabindex="1"
+                       type="submit"/>
+            </div>
+        </form>
+        <div class="alert alert-info" id="status"></div>
+        <table id="attributesTable" class="display table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Attribute</th>
+                <th>Value(s)</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div th:replace="fragments/footerButtons"/>
+</div>
+</body>
+</html>

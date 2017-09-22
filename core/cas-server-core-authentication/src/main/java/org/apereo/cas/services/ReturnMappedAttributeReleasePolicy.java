@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReturnMappedAttributeReleasePolicy.class);
 
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}").get();
-    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)").get();
+    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
+    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
 
     private Map<String, String> allowedAttributes;
 
@@ -73,12 +74,19 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs) {
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attrs,
+                                                        final RegisteredService service) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
 
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
+        /*
+         * Map each entry in the allowed list into an array first
+         * by the original key, value and the original entry itself.
+         * Then process the array to populate the map for allowed attributes
+         */
         this.allowedAttributes.entrySet().stream()
                 .map(entry -> {
                     final String key = entry.getKey();
@@ -91,29 +99,11 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                     final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(mappedAttributeName);
 
                     if (matcherInline.find()) {
-                        LOGGER.debug("Found inline groovy script to execute for attribute mapping {}", entry[0]);
-                        final Object result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
-                        if (result != null) {
-                            LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
-                            attributesToRelease.put(entry[0].toString(), result);
-                        } else {
-                            LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
-                        }
+                        processInlineGroovyAttribute(resolvedAttributes, attributesToRelease, matcherInline, entry);
                     } else if (matcherFile.find()) {
-                        try {
-                            LOGGER.debug("Found groovy script to execute for attribute mapping {}", entry[0]);
-                            final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
-                            final Object result = getGroovyAttributeValue(script, resolvedAttributes);
-                            if (result != null) {
-                                LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
-                                attributesToRelease.put(entry[0].toString(), result);
-                            } else {
-                                LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
-                            }
-                        } catch (final IOException e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
+                        processFileBasedGroovyAttributes(resolvedAttributes, attributesToRelease, matcherFile, entry);
                     } else {
+
                         if (entry[1] != null) {
                             LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
                                     entry[0], mappedAttributeName);
@@ -127,6 +117,37 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         return attributesToRelease;
     }
 
+    private static void processFileBasedGroovyAttributes(final Map<String, Object> resolvedAttributes,
+                                                         final Map<String, Object> attributesToRelease,
+                                                         final Matcher matcherFile, final Object[] entry) {
+        try {
+            LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", entry[0]);
+            final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
+            final Object result = getGroovyAttributeValue(script, resolvedAttributes);
+            if (result != null) {
+                LOGGER.debug("Mapped attribute [{}] to [{}] from script", entry[0], result);
+                attributesToRelease.put(entry[0].toString(), result);
+            } else {
+                LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", entry[0]);
+            }
+        } catch (final IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    private static void processInlineGroovyAttribute(final Map<String, Object> resolvedAttributes,
+                                                     final Map<String, Object> attributesToRelease,
+                                                     final Matcher matcherInline, final Object[] entry) {
+        LOGGER.debug("Found inline groovy script to execute for attribute mapping [{}]", entry[0]);
+        final Object result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
+        if (result != null) {
+            LOGGER.debug("Mapped attribute [{}] to [{}] from script", entry[0], result);
+            attributesToRelease.put(entry[0].toString(), result);
+        } else {
+            LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", entry[0]);
+        }
+    }
+
     private static Object getGroovyAttributeValue(final String groovyScript,
                                                   final Map<String, Object> resolvedAttributes) {
         try {
@@ -134,6 +155,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             final GroovyShell shell = new GroovyShell(binding);
             binding.setVariable("attributes", resolvedAttributes);
             binding.setVariable("logger", LOGGER);
+
             LOGGER.debug("Executing groovy script [{}] with attributes binding of [{}]",
                     StringUtils.abbreviate(groovyScript, groovyScript.length() / 2), resolvedAttributes);
             final Object res = shell.evaluate(groovyScript);

@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -16,6 +15,7 @@ import org.apereo.cas.validation.Assertion;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * CAS viewed as a set of services to generate and validate Tickets.
@@ -78,7 +78,7 @@ public interface CentralAuthenticationService {
      * @since 5.0.0
      */
     <T extends Ticket> T getTicket(String ticketId) throws InvalidTicketException;
-    
+
     /**
      * Obtains the given ticket by its id and type
      * and returns the CAS-representative object. Implementations
@@ -95,6 +95,18 @@ public interface CentralAuthenticationService {
      */
     <T extends Ticket> T getTicket(String ticketId, Class<T> clazz)
             throws InvalidTicketException;
+
+    /**
+     * Attempts to delete a ticket from the underlying store
+     * and is allowed to run any number of processing on the ticket
+     * and removal op before invoking it. The ticket id can be associated
+     * with any ticket type that is valid and understood by CAS and the underlying
+     * ticket store; however some special cases require that you invoke the appropriate
+     * operation when destroying tickets, such {@link #destroyTicketGrantingTicket(String)}.
+     *
+     * @param ticketId the ticket id
+     */
+    default void deleteTicket(String ticketId) {}
 
     /**
      * Retrieve a collection of tickets from the underlying ticket registry.
@@ -176,11 +188,9 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
      * to other Services.
      *
-     * @param serviceTicketId The service ticket identifier that will delegate to a
-     * {@link TicketGrantingTicket}.
+     * @param serviceTicketId      The service ticket identifier that will delegate to a {@link TicketGrantingTicket}.
      * @param authenticationResult The current authentication context before this ticket can be granted.
-     * @return Non -null ticket-granting ticket identifier that can grant {@link ServiceTicket}
-     * that proxy authentication.
+     * @return Non -null ticket-granting ticket identifier that can grant {@link ServiceTicket} that proxy authentication.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if there was an error creating the ticket
      */

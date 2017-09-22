@@ -1,0 +1,9 @@
+description = "Apereo CAS Core Logging Configuration"
+dependencies {
+    compile project(":api:cas-server-core-api-ticket")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-util")
+    compileOnly project(":support:cas-server-support-cookie")
+}
+
+

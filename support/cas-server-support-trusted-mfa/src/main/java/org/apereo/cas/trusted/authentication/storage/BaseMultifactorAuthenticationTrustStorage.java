@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -21,17 +22,17 @@ import java.util.Set;
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")
+@Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseMultifactorAuthenticationTrustStorage.class);
     
-    private CipherExecutor<String, String> cipherExecutor;
+    private CipherExecutor<Serializable, String> cipherExecutor;
 
     @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
             resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
-        logger.debug("Stored authentication trust record for {}", record);
+        LOGGER.debug("Stored authentication trust record for [{}]", record);
         record.setKey(generateKey(record));
         return setInternal(record);
     }
@@ -48,10 +49,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             if (StringUtils.isBlank(decodedKey)) {
                 return true;
             }
-            if (!decodedKey.equals(currentKey)) {
-                return true;
-            }
-            return false;
+            return !decodedKey.equals(currentKey);
         });
         return res;
     }
@@ -66,7 +64,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
         return cipherExecutor.encode(MultifactorAuthenticationTrustUtils.generateKey(r));
     }
 
-    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
+    public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 

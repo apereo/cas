@@ -1,14 +1,15 @@
-description = "Apereo CAS Client Protocols Support using pac4j"
+description = "Apereo CAS Delegated Authentication Support Using Pac4J"
 dependencies {
-
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-pac4j-core")
-    compile libraries.pac4j
-    compileOnly libraries.springcloud
+    compile project(":support:cas-server-support-pac4j-core-clients")
+    implementation libraries.pac4j
+    implementation libraries.opensaml
     
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(":core:cas-server-core-services")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
-    compile libraries.opensaml
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
 }

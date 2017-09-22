@@ -1,0 +1,8 @@
+description = "Apereo CAS Configuration Support"
+dependencies {
+    
+    
+    compile project(":core:cas-server-core-events")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-configuration")
+}

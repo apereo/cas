@@ -1,22 +1,24 @@
 package org.apereo.cas.authentication.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
 
 /**
  * This is {@link CasMongoAuthenticationConfiguration}.
@@ -28,25 +30,14 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMongoAuthenticationConfiguration {
 
-    @Autowired(required = false)
-    @Qualifier("mongoPac4jPasswordEncoder")
-    private org.pac4j.core.credentials.password.PasswordEncoder mongoPasswordEncoder;
-
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
-
+    
+    @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -55,33 +46,29 @@ public class CasMongoAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
-        final MongoAuthenticationHandler mongo = new MongoAuthenticationHandler();
+        final MongoAuthenticationProperties mongo = casProperties.getAuthn().getMongo();
+        final SpringSecurityPasswordEncoder mongoPasswordEncoder = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder()));
+        final MongoAuthenticationHandler handler = new MongoAuthenticationHandler(mongo.getName(), servicesManager, mongoPrincipalFactory(),
+                mongo.getCollectionName(), mongo.getMongoHostUri(), mongo.getAttributes(), mongo.getUsernameAttribute(), mongo.getPasswordAttribute(),
+                mongoPasswordEncoder);
+        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
 
-        mongo.setAttributes(casProperties.getAuthn().getMongo().getAttributes());
-        mongo.setCollectionName(casProperties.getAuthn().getMongo().getCollectionName());
-        mongo.setMongoHostUri(casProperties.getAuthn().getMongo().getMongoHostUri());
-        mongo.setPasswordAttribute(casProperties.getAuthn().getMongo().getPasswordAttribute());
-        mongo.setUsernameAttribute(casProperties.getAuthn().getMongo().getUsernameAttribute());
-
-        mongo.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(
-                casProperties.getAuthn().getMongo().getPrincipalTransformation()));
-
-        mongo.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getMongo().getPasswordEncoder()));
-        if (mongoPasswordEncoder != null) {
-            mongo.setMongoPasswordEncoder(mongoPasswordEncoder);
-        }
-
-
-        mongo.setPrincipalFactory(mongoPrincipalFactory());
-        mongo.setServicesManager(servicesManager);
-
-        return mongo;
+        return handler;
     }
 
+    /**
+     * The type Mongo authentication event execution plan configuration.
+     */
+    @Configuration("mongoAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public class MongoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(mongoAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
+        }
     }
 }

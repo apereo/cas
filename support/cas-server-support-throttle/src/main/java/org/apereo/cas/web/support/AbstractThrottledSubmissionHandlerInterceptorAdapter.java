@@ -22,16 +22,19 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
-    private int failureThreshold;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapter.class);
     
-    private int failureRangeInSeconds;
-    
-    private String usernameParameter;
+    private final int failureThreshold;
+    private final int failureRangeInSeconds;
+    private final String usernameParameter;
 
     private double thresholdRate;
 
+    public AbstractThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds, final String usernameParameter) {
+        this.failureThreshold = failureThreshold;
+        this.failureRangeInSeconds = failureRangeInSeconds;
+        this.usernameParameter = usernameParameter;
+    }
 
     /**
      * Configure the threshold rate.
@@ -39,9 +42,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     @PostConstruct
     public void afterPropertiesSet() {
         this.thresholdRate = (double) this.failureThreshold / (double) this.failureRangeInSeconds;
-        logger.debug("Calculated threshold rate as {}", this.thresholdRate);
+        LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
     }
-
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
@@ -53,7 +55,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         if (exceedsThreshold(request)) {
             recordThrottle(request);
             request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
-            response.sendError(HttpStatus.SC_FORBIDDEN,
+            response.sendError(HttpStatus.SC_LOCKED,
                     "Access Denied for user [" + StringEscapeUtils.escapeHtml4(request.getParameter(this.usernameParameter))
                     + "] from IP Address [" + request.getRemoteAddr() + ']');
             return false;
@@ -74,21 +76,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
                                  && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
 
         if (recordEvent) {
-            logger.debug("Recording submission failure for {}", request.getRequestURI());
+            LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         }
-    }
-
-    public void setFailureThreshold(final int failureThreshold) {
-        this.failureThreshold = failureThreshold;
-    }
-
-    public void setFailureRangeInSeconds(final int failureRangeInSeconds) {
-        this.failureRangeInSeconds = failureRangeInSeconds;
-    }
-
-    public void setUsernameParameter(final String usernameParameter) {
-        this.usernameParameter = usernameParameter;
     }
 
     protected double getThresholdRate() {
@@ -113,8 +103,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}. More than {} failed login attempts within {} seconds. "
-                + "Authentication attempt exceeds the failure threshold {}",
+        LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
+                + "Authentication attempt exceeds the failure threshold [{}]",
                 request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
                 this.failureThreshold);
     }
@@ -127,8 +117,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
                 .append("usernameParameter", this.usernameParameter)
                 .append("thresholdRate", this.thresholdRate)
                 .toString();
-        
-        
     }
 
+    @Override
+    public void decrement() {
+        LOGGER.debug("Throttling is not activated for this interceptor adapter");
+    }
 }

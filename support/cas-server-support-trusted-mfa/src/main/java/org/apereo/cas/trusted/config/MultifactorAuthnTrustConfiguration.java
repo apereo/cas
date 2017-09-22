@@ -4,6 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -18,14 +20,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.transaction.PseudoTransactionManager;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
+
+import java.io.Serializable;
 
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
@@ -35,7 +40,9 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(CasCoreUtilConfiguration.class)
 public class MultifactorAuthnTrustConfiguration {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
@@ -47,27 +54,18 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationSetTrustAction a = new MultifactorAuthenticationSetTrustAction();
-        a.setStorage(storage);
-        a.setMfaTrustedAuthnAttributeName(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute());
-        return a;
+        return new MultifactorAuthenticationSetTrustAction(storage, casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
-    public MultifactorAuthenticationTrustController mfaTrustController(
-            @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationTrustController a = new MultifactorAuthenticationTrustController(storage);
-        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
-        return a;
+    public MultifactorAuthenticationTrustController mfaTrustController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
+        return new MultifactorAuthenticationTrustController(storage, casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
     public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationVerifyTrustAction a = new MultifactorAuthenticationVerifyTrustAction();
-        a.setStorage(storage);
-        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
-        return a;
+        return new MultifactorAuthenticationVerifyTrustAction(storage, casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
@@ -88,6 +86,7 @@ public class MultifactorAuthnTrustConfiguration {
                     }
                 });
 
+        LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
         final InMemoryMultifactorAuthenticationTrustStorage m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
         m.setCipherExecutor(mfaTrustCipherExecutor());
         return m;
@@ -96,12 +95,12 @@ public class MultifactorAuthnTrustConfiguration {
     @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
     @Bean
     public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
-        return new PseudoTransactionManager();
+        return new PseudoPlatformTransactionManager();
     }
 
     @Bean
     @RefreshScope
-    public CipherExecutor<String, String> mfaTrustCipherExecutor() {
+    public CipherExecutor<Serializable, String> mfaTrustCipherExecutor() {
         if (casProperties.getAuthn().getMfa().getTrusted().isCipherEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
                     casProperties.getAuthn().getMfa().getTrusted().getEncryptionKey(),
@@ -111,16 +110,14 @@ public class MultifactorAuthnTrustConfiguration {
                 + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "trusted authentication records for MFA");
-        return new NoOpCipherExecutor();
+        return NoOpCipherExecutor.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
+    @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationTrustStorageCleaner c = new MultifactorAuthenticationTrustStorageCleaner();
-        c.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
-        c.setStorage(storage);
-        return c;
+        return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), storage);
     }
 }

@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.MessageDescriptor;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -15,7 +17,8 @@ import java.util.List;
  * @since 4.0.0
  */
 public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OptionalWarningAccountStateHandler.class);
+    
     private String warnAttributeName;
     private String warningAttributeValue;
     private boolean displayWarningOnMatch;
@@ -52,12 +55,12 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             final List<MessageDescriptor> messages) {
 
         if (StringUtils.isBlank(this.warnAttributeName)) {
-            logger.debug("No warning attribute name is defined");
+            LOGGER.debug("No warning attribute name is defined");
             return;
         }
 
         if (StringUtils.isBlank(this.warningAttributeValue)) {
-            logger.debug("No warning attribute value to match is defined");
+            LOGGER.debug("No warning attribute value to match is defined");
             return;
         }
         
@@ -65,11 +68,11 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
                 this.warnAttributeName);
         boolean matches = false;
         if (attribute != null) {
-            logger.debug("Found warning attribute {} with value {}",
+            LOGGER.debug("Found warning attribute [{}] with value [{}]",
                     attribute.getName(), attribute.getStringValue());
             matches = this.warningAttributeValue.equals(attribute.getStringValue());
         }
-        logger.debug("matches={}, displayWarningOnMatch={}", matches,
+        LOGGER.debug("matches=[{}], displayWarningOnMatch=[{}]", matches,
                 this.displayWarningOnMatch);
         if (this.displayWarningOnMatch == matches) {
             super.handleWarning(warning, response, configuration, messages);

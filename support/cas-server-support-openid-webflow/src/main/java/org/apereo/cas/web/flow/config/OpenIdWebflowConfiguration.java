@@ -32,9 +32,6 @@ public class OpenIdWebflowConfiguration {
     @ConditionalOnMissingBean(name = "openidWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer openidWebflowConfigurer() {
-        final OpenIdWebflowConfigurer w = new OpenIdWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new OpenIdWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 }

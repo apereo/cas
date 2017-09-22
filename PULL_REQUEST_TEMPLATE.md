@@ -1,3 +1,11 @@
+<!--
+
+# Contributing
+
+First off, thank you for considering to contribute to CAS. 
+
+# Details
+
 Closes #IssueNumber
 
 Ensure that you include the following:
@@ -7,6 +15,4 @@ Ensure that you include the following:
 - [] Any possible limitations, side effects, etc
 - [] Reference any other pull requests that might be related.
 
-<!--
-Thanks for your contribution. 
 -->

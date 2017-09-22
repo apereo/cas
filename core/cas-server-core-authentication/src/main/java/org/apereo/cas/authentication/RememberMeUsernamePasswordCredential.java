@@ -41,10 +41,7 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
             return false;
         }
         final RememberMeUsernamePasswordCredential other = (RememberMeUsernamePasswordCredential) obj;
-        if (this.rememberMe != other.rememberMe) {
-            return false;
-        }
-        return true;
+        return this.rememberMe == other.rememberMe;
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,24 +17,19 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultSamlRegisteredServiceCachingMetadataResolver
-        implements SamlRegisteredServiceCachingMetadataResolver {
+public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
-    
+
     private long metadataCacheExpirationMinutes;
-    
+
     private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
 
     private LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
 
-    /**
-     * Instantiates a new Saml registered service caching metadata resolver.
-     */
-    public DefaultSamlRegisteredServiceCachingMetadataResolver() {}
-    
-
-    @PostConstruct
-    private void init() {
+    public DefaultSamlRegisteredServiceCachingMetadataResolver(final long metadataCacheExpirationMinutes,
+                                                               final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
+        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
+        this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
         this.cache = CacheBuilder.newBuilder().maximumSize(1)
                 .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES).build(this.chainingMetadataResolverCacheLoader);
     }
@@ -48,7 +42,7 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver
             resolver = this.cache.get(service);
             return resolver;
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Metadata resolver could not be located from metadata " 
+            throw new IllegalArgumentException("Metadata resolver could not be located from metadata "
                     + service.getMetadataLocation(), e);
         } finally {
             if (resolver != null) {

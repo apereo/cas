@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link MessageBundleAwareResourceResolver}.
@@ -31,13 +30,12 @@ public class MessageBundleAwareResourceResolver extends ReturnValueAsStringResou
 
     private String[] resolveMessagesFromBundleOrDefault(final String[] resolved, final Exception e) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final Set<String> resolvedMessages = new HashSet<>(resolved.length);
-        Arrays.stream(resolved).forEach(key -> {
-            String defaultKey = e.getClass().getSimpleName();
-            defaultKey = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(defaultKey), "_").toUpperCase();
-            final String msg = this.context.getMessage(key, null, defaultKey, locale);
-            resolvedMessages.add(msg);
-        });
-        return resolvedMessages.toArray(new String[] {});
+        final String defaultKey = Stream.of(StringUtils.splitByCharacterTypeCamelCase(e.getClass().getSimpleName()))
+                .collect(Collectors.joining("_"))
+                .toUpperCase();
+
+        return Stream.of(resolved)
+                .map(key -> this.context.getMessage(key, null, defaultKey, locale))
+                .toArray(String[]::new);
     }
 }

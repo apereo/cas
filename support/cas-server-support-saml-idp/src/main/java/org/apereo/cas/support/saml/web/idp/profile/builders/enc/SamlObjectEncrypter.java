@@ -2,15 +2,14 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
+import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.encryption.Encrypter;
@@ -35,12 +34,9 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +47,7 @@ import java.util.List;
  * @since 5.0.0
  */
 public class SamlObjectEncrypter {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlObjectEncrypter.class);
     /**
      * The Override data encryption algorithms.
      */
@@ -76,6 +71,14 @@ public class SamlObjectEncrypter {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    public SamlObjectEncrypter(final List overrideDataEncryptionAlgorithms, final List overrideKeyEncryptionAlgorithms,
+                               final List overrideBlackListedEncryptionAlgorithms, final List overrideWhiteListedAlgorithms) {
+        this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
+        this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
+        this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
+        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+    }
+
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
@@ -93,18 +96,18 @@ public class SamlObjectEncrypter {
                                      final HttpServletResponse response,
                                      final HttpServletRequest request) throws SamlException {
         try {
-            logger.debug("Attempting to encrypt [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
+            LOGGER.debug("Attempting to encrypt [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final Credential credential = getKeyEncryptionCredential(adaptor.getEntityId(), adaptor, service);
-            logger.info("Found encryption public key: [{}]", EncodingUtils.encodeBase64(credential.getPublicKey().getEncoded()));
+            LOGGER.info("Found encryption public key: [{}]", EncodingUtils.encodeBase64(credential.getPublicKey().getEncoded()));
 
             final KeyEncryptionParameters keyEncParams = getKeyEncryptionParameters(samlObject, service, adaptor, credential);
-            logger.debug("Key encryption algorithm for [{}] is [{}]", keyEncParams.getRecipient(), keyEncParams.getAlgorithm());
+            LOGGER.debug("Key encryption algorithm for [{}] is [{}]", keyEncParams.getRecipient(), keyEncParams.getAlgorithm());
 
             final DataEncryptionParameters dataEncParams = getDataEncryptionParameters(samlObject, service, adaptor);
-            logger.debug("Data encryption algorithm for [{}] is [{}]", adaptor.getEntityId(), dataEncParams.getAlgorithm());
+            LOGGER.debug("Data encryption algorithm for [{}] is [{}]", adaptor.getEntityId(), dataEncParams.getAlgorithm());
 
             final Encrypter encrypter = getEncrypter(samlObject, service, adaptor, keyEncParams, dataEncParams);
-            logger.debug("Attempting to encrypt [{}] for [{}] with key placement of [{}]",
+            LOGGER.debug("Attempting to encrypt [{}] for [{}] with key placement of [{}]",
                     samlObject.getClass().getName(), adaptor.getEntityId(), encrypter.getKeyPlacement());
 
             return encrypter.encrypt(samlObject);
@@ -178,6 +181,7 @@ public class SamlObjectEncrypter {
     protected Credential getKeyEncryptionCredential(final String peerEntityId,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                     final SamlRegisteredService service) throws Exception {
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final BasicEncryptionConfiguration config =
                 DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();
 
@@ -197,10 +201,10 @@ public class SamlObjectEncrypter {
             config.setKeyTransportEncryptionAlgorithms(this.overrideKeyEncryptionAlgorithms);
         }
 
-        logger.debug("Encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        logger.debug("Encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
-        logger.debug("Signature data algorithms: [{}]", config.getDataEncryptionAlgorithms());
-        logger.debug("Encryption whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
+        LOGGER.debug("Encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.debug("Encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
+        LOGGER.debug("Signature data algorithms: [{}]", config.getDataEncryptionAlgorithms());
+        LOGGER.debug("Encryption whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
 
@@ -214,9 +218,12 @@ public class SamlObjectEncrypter {
         final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
         kekCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
-        final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(adaptor.getMetadataResolver());
+        final PredicateRoleDescriptorResolver roleDescriptorResolver = new PredicateRoleDescriptorResolver(adaptor.getMetadataResolver());
+        roleDescriptorResolver.setSatisfyAnyPredicates(true);
+        roleDescriptorResolver.setUseDefaultPredicateRegistry(true);
+        roleDescriptorResolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         roleDescriptorResolver.initialize();
-        
+
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.initialize();
 
@@ -226,35 +233,8 @@ public class SamlObjectEncrypter {
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         criteriaSet.add(new UsageCriterion(UsageType.ENCRYPTION));
 
-        logger.debug("Attempting to resolve the encryption key for entity id [{}]", peerEntityId);
+        LOGGER.debug("Attempting to resolve the encryption key for entity id [{}]", peerEntityId);
         return kekCredentialResolver.resolveSingle(criteriaSet);
-    }
-
-    /**
-     * Gets encryption certificate.
-     *
-     * @return the encryption certificate
-     */
-    protected X509Certificate getEncryptionCertificate() {
-        logger.debug("Locating encryption certificate file from [{}]",
-                casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(
-                casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile()));
-    }
-
-    /**
-     * Gets encryption private key.
-     *
-     * @return the encryption private key
-     * @throws Exception the exception
-     */
-    protected PrivateKey getEncryptionPrivateKey() throws Exception {
-        final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionKeyFile()));
-        privateKeyFactoryBean.setAlgorithm(casProperties.getAuthn().getSamlIdp().getMetadata().getPrivateKeyAlgName());
-        privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating encryption key file from [{}]", casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionKeyFile());
-        return privateKeyFactoryBean.getObject();
     }
 
     public void setOverrideDataEncryptionAlgorithms(final List overrideDataEncryptionAlgorithms) {

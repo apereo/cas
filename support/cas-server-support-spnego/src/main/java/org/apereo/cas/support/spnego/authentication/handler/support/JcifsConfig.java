@@ -62,7 +62,7 @@ public class JcifsConfig {
      */
     private static final String JCIFS_PROP_SERVICE_PASSWORD = "jcifs.spnego.servicePassword";
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JcifsConfig.class);
 
     private String loginConf;
     
@@ -92,47 +92,44 @@ public class JcifsConfig {
         try {
             final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
             if (StringUtils.isNotBlank(propValue)) {
-                logger.info("Found login config {} in system property {}", propValue, SYS_PROP_LOGIN_CONF);
+                LOGGER.info("Found login config [{}] in system property [{}]", propValue, SYS_PROP_LOGIN_CONF);
                 if (StringUtils.isNotBlank(this.loginConf)) {
-                    logger.warn("Configured login config for CAS under {} will be ignored", this.loginConf);
+                    LOGGER.warn("Configured login config for CAS under [{}] will be ignored", this.loginConf);
                 }
             } else {
                 final String loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
-                logger.debug("Attempting to load login config from {}", loginConf);
+                LOGGER.debug("Attempting to load login config from [{}]", loginConf);
 
                 final Resource res = this.resourceLoader.getResource(loginConf);
                 if (res != null && res.exists()) {
                     final String urlPath = res.getURL().toExternalForm();
-                    logger.debug("Located login config {} and configured it under {}", urlPath, SYS_PROP_LOGIN_CONF);
+                    LOGGER.debug("Located login config [{}] and configured it under [{}]", urlPath, SYS_PROP_LOGIN_CONF);
                     System.setProperty(SYS_PROP_LOGIN_CONF, urlPath);
                 } else {
                     final URL url = getClass().getResource("/jcifs/http/login.conf");
                     if (url != null) {
-                        logger.debug("Falling back unto default login config {} under {}", url.toExternalForm(), SYS_PROP_LOGIN_CONF);
+                        LOGGER.debug("Falling back unto default login config [{}] under [{}]", url.toExternalForm(), SYS_PROP_LOGIN_CONF);
                         System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
                     }
                 }
-                logger.debug("configured login configuration path : {}", propValue);
+                LOGGER.debug("configured login configuration path : [{}]", propValue);
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-
     /**
      * Sets the jcifs service password.
      *
      * @param jcifsServicePassword the new jcifs service password
      */
-    public void setJcifsServicePassword(
-                                        final String jcifsServicePassword) {
+    public void setJcifsServicePassword(final String jcifsServicePassword) {
         if (StringUtils.isNotBlank(jcifsServicePassword)) {
-            logger.debug("jcifsServicePassword is set to *****");
+            LOGGER.debug("jcifsServicePassword is set to *****");
             Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
         }
     }
-
 
     /**
      * Sets the jcifs service principal.
@@ -141,7 +138,7 @@ public class JcifsConfig {
      */
     public void setJcifsServicePrincipal(final String jcifsServicePrincipal) {
         if (StringUtils.isNotBlank(jcifsServicePrincipal)) {
-            logger.debug("jcifsServicePrincipal is set to {}", jcifsServicePrincipal);
+            LOGGER.debug("jcifsServicePrincipal is set to [{}]", jcifsServicePrincipal);
             Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
         }
     }
@@ -154,7 +151,7 @@ public class JcifsConfig {
     public void setKerberosConf(final String kerberosConf) {
         if (StringUtils.isNotBlank(kerberosConf)) {
 
-            logger.debug("kerberosConf is set to :{}", kerberosConf);
+            LOGGER.debug("kerberosConf is set to :[{}]", kerberosConf);
             System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
         }
     }
@@ -166,7 +163,7 @@ public class JcifsConfig {
      */
     public void setKerberosKdc(final String kerberosKdc) {
         if (StringUtils.isNotBlank(kerberosKdc)) {
-            logger.debug("kerberosKdc is set to : {}", kerberosKdc);
+            LOGGER.debug("kerberosKdc is set to : [{}]", kerberosKdc);
             System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
         }
     }
@@ -178,7 +175,7 @@ public class JcifsConfig {
      */
     public void setKerberosRealm(final String kerberosRealm) {
         if (StringUtils.isNotBlank(kerberosRealm)) {
-            logger.debug("kerberosRealm is set to :{}", kerberosRealm);
+            LOGGER.debug("kerberosRealm is set to :[{}]", kerberosRealm);
             System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
         }
     }
@@ -193,7 +190,7 @@ public class JcifsConfig {
      * @param useSubjectCredsOnly the new use subject creds only
      */
     public void setUseSubjectCredsOnly(final boolean useSubjectCredsOnly) {
-        logger.debug("useSubjectCredsOnly is set to {}", useSubjectCredsOnly);
+        LOGGER.debug("useSubjectCredsOnly is set to [{}]", useSubjectCredsOnly);
         System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, Boolean.toString(useSubjectCredsOnly));
     }
 
@@ -204,7 +201,7 @@ public class JcifsConfig {
      */
     public void setKerberosDebug(final String kerberosDebug) {
         if (StringUtils.isNotBlank(kerberosDebug)) {
-            logger.debug("kerberosDebug is set to : {}", kerberosDebug);
+            LOGGER.debug("kerberosDebug is set to : [{}]", kerberosDebug);
             System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
         }
     }
@@ -214,7 +211,7 @@ public class JcifsConfig {
      */
     public void setJcifsDomain(final String jcifsDomain) {
         if (StringUtils.isNotBlank(jcifsDomain)) {
-            logger.debug("jcifsDomain is set to {}", jcifsDomain);
+            LOGGER.debug("jcifsDomain is set to [{}]", jcifsDomain);
             Config.setProperty(JCIFS_PROP_CLIENT_DOMAIN, jcifsDomain);
         }
     }
@@ -224,7 +221,7 @@ public class JcifsConfig {
      */
     public void setJcifsDomainController(final String jcifsDomainController) {
         if (StringUtils.isNotBlank(jcifsDomainController)) {
-            logger.debug("jcifsDomainController is set to {}", jcifsDomainController);
+            LOGGER.debug("jcifsDomainController is set to [{}]", jcifsDomainController);
             Config.setProperty(JCIFS_PROP_DOMAIN_CONTROLLER, jcifsDomainController);
         }
     }
@@ -235,7 +232,7 @@ public class JcifsConfig {
     public void setJcifsPassword(final String jcifsPassword) {
         if (StringUtils.isNotBlank(jcifsPassword)) {
             Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
-            logger.debug("jcifsPassword is set to *****");
+            LOGGER.debug("jcifsPassword is set to *****");
         }
     }
 
@@ -244,7 +241,7 @@ public class JcifsConfig {
      */
     public void setJcifsUsername(final String jcifsUsername) {
         if (StringUtils.isNotBlank(jcifsUsername)) {
-            logger.debug("jcifsUsername is set to {}", jcifsUsername);
+            LOGGER.debug("jcifsUsername is set to [{}]", jcifsUsername);
             Config.setProperty(JCIFS_PROP_CLIENT_USERNAME, jcifsUsername);
         }
     }
@@ -254,7 +251,7 @@ public class JcifsConfig {
      */
     public void setJcifsNetbiosWins(final String jcifsNetbiosWins) {
         if (StringUtils.isNotBlank(jcifsNetbiosWins)) {
-            logger.debug("jcifsNetbiosWins is set to {}", jcifsNetbiosWins);
+            LOGGER.debug("jcifsNetbiosWins is set to [{}]", jcifsNetbiosWins);
             Config.setProperty(JCIFS_PROP_NETBIOS_WINS, jcifsNetbiosWins);
         }
     }
@@ -266,7 +263,7 @@ public class JcifsConfig {
      */
     public void setJcifsNetbiosCachePolicy(final long policy) {
         if (policy > 0) {
-            logger.debug("jcifsNetbiosCachePolicy is set to {}", policy);
+            LOGGER.debug("jcifsNetbiosCachePolicy is set to [{}]", policy);
             Config.setProperty(JCIFS_PROP_NETBIOS_CACHE_POLICY, String.valueOf(policy));
         }
     }
@@ -278,7 +275,7 @@ public class JcifsConfig {
      */
     public void setJcifsSocketTimeout(final long timeout) {
         if (timeout > 0) {
-            logger.debug("jcifsSocketTimeout is set to {}", timeout);
+            LOGGER.debug("jcifsSocketTimeout is set to [{}]", timeout);
             Config.setProperty(JCIFS_PROP_CLIENT_SOTIMEOUT, String.valueOf(timeout));
         }
     }

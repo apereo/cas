@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.mfa.duologin.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <script th:src="@{/js/duo/Duo-Web-v2.min.js}"></script>
+    <form method="post" id="duo_form" class="fm-v clearfix" th:object="${credential}">
+        <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+            <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+        </div>
+
+        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        <input type="hidden" name="_eventId" value="submit"/>
+        <input type="hidden" name="geolocation"/>
+
+        <div class="box fl-panel" id="login">
+            <iframe id="duo_iframe"
+                    width="100%"
+                    height="330"
+                    frameborder="0"
+                    th:attr="data-host=${apiHost},data-sig-request=${sigRequest}"
+                    data-post-argument="signedDuoResponse">
+            </iframe>
+        </div>
+    </form>
+</div>
+</body>
+</html>

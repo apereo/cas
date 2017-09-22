@@ -1,3 +1,0 @@
-scott::rutgers
-bart::hello
-bill::YES

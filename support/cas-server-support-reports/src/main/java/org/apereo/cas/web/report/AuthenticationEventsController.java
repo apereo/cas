@@ -1,13 +1,10 @@
 package org.apereo.cas.web.report;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,19 +18,13 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("authenticationEventsController")
-@RequestMapping("/status/authnEvents")
-public class AuthenticationEventsController {
+@ConditionalOnClass(value = CasEventRepository.class)
+public class AuthenticationEventsController extends BaseCasMvcEndpoint {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final CasEventRepository eventRepository;
 
-    private CasEventRepository eventRepository;
-
-    public AuthenticationEventsController() {
-    }
-
-    public AuthenticationEventsController(final CasEventRepository eventRepository) {
+    public AuthenticationEventsController(final CasEventRepository eventRepository, final CasConfigurationProperties casProperties) {
+        super("casauthnevents", "/authnEvents", casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties);
         this.eventRepository = eventRepository;
     }
 
@@ -45,9 +36,10 @@ public class AuthenticationEventsController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    @GetMapping
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 
@@ -59,15 +51,10 @@ public class AuthenticationEventsController {
      * @return the records
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
+    @GetMapping(value = "/getEvents")
     @ResponseBody
-    public Collection<CasEvent> getRecords(final HttpServletRequest request,
-                                           final HttpServletResponse response)
-            throws Exception {
-        if (this.eventRepository != null) {
-            return this.eventRepository.load();
-        }
-        return Sets.newHashSet();
+    public Collection<CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+        return this.eventRepository.load();
     }
-
 }

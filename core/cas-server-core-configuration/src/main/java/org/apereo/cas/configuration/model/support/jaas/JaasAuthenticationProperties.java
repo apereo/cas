@@ -14,13 +14,31 @@ public class JaasAuthenticationProperties {
     private String realm;
     private String kerberosRealmSystemProperty;
     private String kerberosKdcSystemProperty;
+    private String credentialCriteria;
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    private String name;
+
+    public String getCredentialCriteria() {
+        return credentialCriteria;
+    }
+
+    public void setCredentialCriteria(final String credentialCriteria) {
+        this.credentialCriteria = credentialCriteria;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;

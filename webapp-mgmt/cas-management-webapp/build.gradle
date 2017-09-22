@@ -31,20 +31,17 @@ war {
                 "Implementation-Vendor": project.group,
                 "Created-By": project.group,
                 "Implementation-Date": currentTime,
+                "Specification-Version": rootProject.currentRevision,
                 "Implementation-Version": project.version)
     }
     enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
 }
 
 dependencies {
-    compile libraries.springboot
-    runtime project(":webapp-mgmt:cas-management-webapp-support")
-
+    runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
     providedRuntime libraries.springboottomcat
-    runtime libraries.hibernate
-    runtime libraries.groovy
-    compile libraries.spring
-    compile libraries.thmyeleaf
-    compile libraries.thymeleafdialect
-    compile libraries.thmyeleafboot
+    runtimeOnly libraries.groovy
+    implementation libraries.thymeleaf
+    implementation libraries.thymeleafdialect
+    implementation libraries.thymeleafboot
 }

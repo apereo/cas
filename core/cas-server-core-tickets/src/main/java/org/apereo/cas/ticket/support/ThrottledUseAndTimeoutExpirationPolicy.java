@@ -1,7 +1,11 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +21,7 @@ import java.time.temporal.ChronoUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -38,8 +43,15 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
      */
     public ThrottledUseAndTimeoutExpirationPolicy(){}
 
-    public void setTimeInBetweenUsesInSeconds(
-        final long timeInBetweenUsesInSeconds) {
+    
+    @JsonCreator
+    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds, 
+                                                  @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
+        this.timeToKillInSeconds = timeToKillInSeconds;
+        this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
+    }
+    
+    public void setTimeInBetweenUsesInSeconds(final long timeInBetweenUsesInSeconds) {
         this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
     }
 
@@ -81,5 +93,32 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     @Override
     public Long getTimeToIdle() {
         return this.timeInBetweenUsesInSeconds;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final ThrottledUseAndTimeoutExpirationPolicy rhs = (ThrottledUseAndTimeoutExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .append(this.timeInBetweenUsesInSeconds, rhs.timeInBetweenUsesInSeconds)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(timeToKillInSeconds)
+                .append(timeInBetweenUsesInSeconds)
+                .toHashCode();
     }
 }

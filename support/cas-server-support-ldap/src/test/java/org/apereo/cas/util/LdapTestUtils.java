@@ -60,19 +60,18 @@ public final class LdapTestUtils {
      * @throws IOException On IO errors reading LDIF.
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
-        final StringBuilder builder = new StringBuilder();
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains(BASE_DN_PLACEHOLDER)) {
-                    builder.append(line.replace(BASE_DN_PLACEHOLDER, baseDn));
-                } else {
-                    builder.append(line);
-                }
-                builder.append(NEWLINE);
-            }
+        final String ldapString;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
+            ldapString = reader.lines()
+                    .map(line -> {
+                        if (line.contains(BASE_DN_PLACEHOLDER)) {
+                            return line.replace(BASE_DN_PLACEHOLDER, baseDn);
+                        }
+                        return line;
+                    })
+                    .collect(Collectors.joining(NEWLINE));
         }
-        return new LdifReader(new StringReader(builder.toString())).read().getEntries();
+        return new LdifReader(new StringReader(ldapString)).read().getEntries();
     }
 
     /**
@@ -88,10 +87,12 @@ public final class LdapTestUtils {
                 final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
                 attrs.addAll(entry.getAttributes().stream()
                         .map(a -> new Attribute(a.getName(), a.getStringValues())).collect(Collectors.toList()));
-                connection.add(new AddRequest(entry.getDn(), attrs));
+
+                final AddRequest ad = new AddRequest(entry.getDn(), attrs);
+                connection.add(ad);
             }
         } catch (final Exception e) {
-            LOGGER.debug(e.getLocalizedMessage());
+            LOGGER.warn(e.getLocalizedMessage());
         }
     }
 
@@ -101,15 +102,17 @@ public final class LdapTestUtils {
      * @param serverCon the server con
      * @param dn        the dn
      * @param attr      the attr
+     * @param add       the add
      */
-    public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr) {
+    public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr,
+                                       final AttributeModificationType add) {
         try {
             final String address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            try(Connection conn = DefaultConnectionFactory.getConnection(address)) {
+            try (Connection conn = DefaultConnectionFactory.getConnection(address)) {
                 try {
                     conn.open();
                     final ModifyOperation modify = new ModifyOperation(conn);
-                    modify.execute(new ModifyRequest(dn, new AttributeModification(AttributeModificationType.ADD, attr)));
+                    modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
                 } catch (final Exception e) {
                     LOGGER.debug(e.getMessage(), e);
                 }
@@ -127,6 +130,6 @@ public final class LdapTestUtils {
      * @param attr      the attr
      */
     public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn, final LdapAttribute attr) {
-        modifyLdapEntry(serverCon, dn.getDn(), attr);
+        modifyLdapEntry(serverCon, dn.getDn(), attr, AttributeModificationType.ADD);
     }
 }

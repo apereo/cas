@@ -14,8 +14,7 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 public class Cas10ProxyHandler implements ProxyHandler {
 
     @Override
-    public String handle(final Credential credential,
-        final TicketGrantingTicket proxyGrantingTicketId) {
+    public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
         return null;
     }
 

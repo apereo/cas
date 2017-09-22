@@ -13,22 +13,19 @@ import static org.junit.Assert.*;
  */
 public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
-    private PrincipalBearingCredentialsAuthenticationHandler handler
-                = new PrincipalBearingCredentialsAuthenticationHandler();
+    private final PrincipalBearingCredentialsAuthenticationHandler handler = new PrincipalBearingCredentialsAuthenticationHandler("", null, null);
     /**
      * When the credentials bear a Principal, succeed the authentication.
      */
     @Test
     public void verifyNonNullPrincipal() throws Exception {
-        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(
-                new DefaultPrincipalFactory().createPrincipal("scott"));
+        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test
     public void verifySupports() {
-        final PrincipalBearingCredential credentials =
-                new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
+        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }

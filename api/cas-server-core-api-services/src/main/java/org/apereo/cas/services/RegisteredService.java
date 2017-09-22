@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
@@ -14,7 +15,8 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.1
  */
-public interface RegisteredService extends Cloneable, Serializable {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+public interface RegisteredService extends Cloneable, Serializable, Comparable<RegisteredService> {
 
     /**
      * Initial ID value of newly created (but not persisted) registered service.
@@ -122,6 +124,14 @@ public interface RegisteredService extends Cloneable, Serializable {
     boolean matches(Service service);
 
     /**
+     * Returns whether the service id matches the registered service.
+     *
+     * @param serviceId the service id to match.
+     * @return true if they match, false otherwise.
+     */
+    boolean matches(String serviceId);
+
+    /**
      * Clone this service.
      *
      * @return the registered service
@@ -154,6 +164,20 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @since 4.1
      */
     URL getLogo();
+
+    /**
+     * Describes the canonical information url
+     * where this service is advertised and may provide
+     * help/guidance.
+     * @return the info url.
+     */
+    String getInformationUrl();
+
+    /**
+     * Links to the privacy policy of this service, if any.
+     * @return the link to privacy policy
+     */
+    String getPrivacyUrl();
 
     /**
      * Identifies the logout url that that will be invoked

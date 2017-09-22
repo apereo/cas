@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.mfa.googleauth.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="box fl-panel" id="login">
+        <h3 th:text="#{screen.authentication.gauth.register}"/>
+
+        <form method="post" id="fm1" class="fm-v clearfix">
+            <div class="row fl-controls-left">
+                <img th:src="@{/otp/qrgen(key=${keyUri})}"/>
+                <br/>
+                <div>
+                    <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}"></p>
+                </div>
+                
+                <p>Scratch Codes:
+                <ul>
+                    <li th:each="code : ${key.getScratchCodes()}" th:text="${code}"/>
+                </ul>
+                </p>
+                <input type="hidden" name="_eventId" value="submit"/>
+                <input class="btn btn-submit btn-lg" name="submit" accesskey="l"
+                       th:value="#{screen.welcome.button.register}" tabindex="4" type="submit"/>
+                <input class="btn btn-info btn-lg" name="print" accesskey="p"
+                       th:value="#{screen.welcome.button.print}"
+                       tabindex="5" type="button"
+                       onclick="window.print();"/>
+            </div>
+            <div class="row btn-row">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

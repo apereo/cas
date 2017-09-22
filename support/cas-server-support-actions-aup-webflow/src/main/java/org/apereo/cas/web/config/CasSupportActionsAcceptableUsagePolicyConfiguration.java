@@ -1,6 +1,7 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyFormAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyRepository;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
@@ -27,9 +28,6 @@ import org.springframework.webflow.execution.Action;
 public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
@@ -37,26 +35,25 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
     @Bean
     public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository")
                                                   final AcceptableUsagePolicyRepository repository) {
-        final AcceptableUsagePolicyFormAction a = new AcceptableUsagePolicyFormAction();
-        a.setRepository(repository);
-        return a;
+        return new AcceptableUsagePolicyFormAction(repository);
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
-        final AcceptableUsagePolicyWebflowConfigurer r = new AcceptableUsagePolicyWebflowConfigurer();
-        r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        r.setFlowBuilderServices(flowBuilderServices);
-        return r;
+        return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        return new DefaultAcceptableUsagePolicyRepository();
+        return new DefaultAcceptableUsagePolicyRepository(ticketRegistrySupport);
     }
 }

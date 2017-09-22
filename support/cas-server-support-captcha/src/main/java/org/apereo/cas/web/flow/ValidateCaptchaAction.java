@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.web.support.WebUtils;
@@ -21,6 +22,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ValidateCaptchaAction}.
@@ -29,10 +31,12 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 public class ValidateCaptchaAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateCaptchaAction.class);
+    private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
     private static final String CODE = "captchaError";
 
-    private GoogleRecaptchaProperties recaptchaProperties;
+    private final GoogleRecaptchaProperties recaptchaProperties;
 
     public ValidateCaptchaAction(final GoogleRecaptchaProperties recaptchaProperties) {
         this.recaptchaProperties = recaptchaProperties;
@@ -57,25 +61,20 @@ public class ValidateCaptchaAction extends AbstractAction {
 
             final String postParams = "secret=" + recaptchaProperties.getSecret() + "&response=" + gRecaptchaResponse;
 
-            LOGGER.debug("Sending 'POST' request to URL: {}", obj);
+            LOGGER.debug("Sending 'POST' request to URL: [{}]", obj);
             con.setDoOutput(true);
             try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
                 wr.writeBytes(postParams);
                 wr.flush();
             }
             final int responseCode = con.getResponseCode();
-            LOGGER.debug("Response Code: {}", responseCode);
+            LOGGER.debug("Response Code: [{}]", responseCode);
 
             if (responseCode == HttpStatus.OK.value()) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-                    String inputLine;
-                    final StringBuilder response = new StringBuilder();
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    LOGGER.debug("Google captcha response received: {}", response);
-                    final ObjectMapper mapper = new ObjectMapper();
-                    final JsonNode node = mapper.reader().readTree(response.toString());
+                    final String response = in.lines().collect(Collectors.joining());
+                    LOGGER.debug("Google captcha response received: [{}]", response);
+                    final JsonNode node = READER.readTree(response);
                     if (node.has("success") && node.get("success").booleanValue()) {
                         return null;
                     }

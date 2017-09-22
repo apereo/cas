@@ -37,7 +37,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
-    private CipherExecutor<String, String> mfaTrustCipherExecutor;
+    private CipherExecutor mfaTrustCipherExecutor;
     
     @RefreshScope
     @Bean
@@ -48,7 +48,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceMfaTrustedAuthn() {
-        return Beans.newHickariDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
+        return Beans.newDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }
 
     @Bean
@@ -60,7 +60,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newEntityManagerFactoryBean(
+                Beans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaMfaTrustedAuthnVendorAdapter(),
                                 "jpaMfaTrustedAuthnContext",
@@ -68,7 +68,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
                                 dataSourceMfaTrustedAuthn()),
                         casProperties.getAuthn().getMfa().getTrusted().getJpa());
 
-        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
 

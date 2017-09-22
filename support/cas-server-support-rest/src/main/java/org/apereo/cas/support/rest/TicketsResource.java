@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -10,7 +11,6 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -24,17 +24,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.Formatter;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,19 +57,31 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
+    private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
+    private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
+    private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString() + ' ' + HttpStatus.CREATED.getReasonPhrase();
+    private static final String DOCTYPE_AND_OPENING_FORM = DOCTYPE_AND_TITLE + TGT_CREATED_TITLE_CONTENT + CLOSE_TITLE_AND_OPEN_FORM;
+    private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input "
+            + "type=\"submit\" value=\"Submit\"></form></body></html>";
+    private static final int SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH = DOCTYPE_AND_OPENING_FORM.length() + REST_OF_THE_FORM_AND_CLOSING_TAGS.length();
 
-    private CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final CredentialFactory credentialFactory;
+    private final ServiceFactory webApplicationServiceFactory;
+    private final TicketRegistrySupport ticketRegistrySupport;
 
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
-    private CredentialFactory credentialFactory = new DefaultCredentialFactory();
-
-    private ServiceFactory webApplicationServiceFactory;
-
-    private TicketRegistrySupport ticketRegistrySupport;
-
-    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
-
+    public TicketsResource(final AuthenticationSystemSupport authenticationSystemSupport, final CredentialFactory credentialFactory,
+                           final TicketRegistrySupport ticketRegistrySupport, final ServiceFactory webApplicationServiceFactory,
+                           final CentralAuthenticationService centralAuthenticationService) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.credentialFactory = credentialFactory;
+        this.ticketRegistrySupport = ticketRegistrySupport;
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
 
     /**
      * Create new ticket granting ticket.
@@ -80,10 +91,11 @@ public class TicketsResource {
      * @return ResponseEntity representing RESTful response
      * @throws JsonProcessingException in case of JSON parsing failure
      */
-    @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) throws JsonProcessingException {
-        try (Formatter fmt = new Formatter()) {
+
+        try {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
             final AuthenticationResult authenticationResult =
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
@@ -92,26 +104,34 @@ public class TicketsResource {
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
-            headers.setContentType(MediaType.TEXT_HTML);
-            fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-            fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
-                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
-                    .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
-                    .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
-            return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
+            final String response;
+            final String accept = request.getHeader(HttpHeaders.ACCEPT) == null ? null : request.getHeader(HttpHeaders.ACCEPT).trim();
+            if (accept == null || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE)) {
+                headers.setContentType(MediaType.TEXT_HTML);
+                final String tgtUrl = ticketReference.toString();
+                response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
+                        .append(DOCTYPE_AND_OPENING_FORM)
+                        .append(tgtUrl)
+                        .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
+                        .toString();
+            } else {
+                response = tgtId.getId();
+            }
+            return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
 
         } catch (final AuthenticationException e) {
-            final List<String> authnExceptions = e.getHandlerErrors().entrySet().stream()
-                    .map(handlerErrorEntry -> handlerErrorEntry.getValue().getSimpleName())
-                    .collect(Collectors.toCollection(LinkedList::new));
+            final List<String> authnExceptions = e.getHandlerErrors().values().stream()
+                    .map(Class::getSimpleName)
+                    .collect(Collectors.toList());
             final Map<String, List<String>> errorsMap = new HashMap<>();
             errorsMap.put("authentication_exceptions", authnExceptions);
-            LOGGER.error(e.getMessage(), e);
-            LOGGER.error(String.format("Caused by: %s", authnExceptions));
-            return new ResponseEntity<>(this.jacksonObjectMapper
-                    .writer()
-                    .withDefaultPrettyPrinter()
-                    .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+            LOGGER.error("[{}] Caused by: [{}]", e.getMessage(), authnExceptions, e);
+            try {
+                return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+            } catch (final JsonProcessingException exception) {
+                LOGGER.error(e.getMessage(), e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -120,14 +140,14 @@ public class TicketsResource {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.
      *
      * @param id ticket id
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/v1/tickets/{id:.+}", method = RequestMethod.GET)
+    @GetMapping(value = "/v1/tickets/{id:.+}")
     public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
         try {
             this.centralAuthenticationService.getTicket(id);
@@ -147,17 +167,18 @@ public class TicketsResource {
      * @param tgtId       ticket granting ticket id URI path param
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/v1/tickets/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.getTicket(tgtId);
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
             final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
 
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
             final AuthenticationResult authenticationResult =
-                    builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
+                    builder.collect(tgt.getAuthentication()).build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(tgtId,
                     service, authenticationResult);
@@ -178,51 +199,9 @@ public class TicketsResource {
      * @return {@link ResponseEntity} representing RESTful response. Signals
      * {@link HttpStatus#OK} when successful.
      */
-    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/v1/tickets/{tgtId:.+}")
     public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-
-    public void setWebApplicationServiceFactory(final ServiceFactory webApplicationServiceFactory) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public CentralAuthenticationService getCentralAuthenticationService() {
-        return this.centralAuthenticationService;
-    }
-
-    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return this.authenticationSystemSupport;
-    }
-
-    public CredentialFactory getCredentialFactory() {
-        return this.credentialFactory;
-    }
-
-    public ServiceFactory getWebApplicationServiceFactory() {
-        return this.webApplicationServiceFactory;
-    }
-
-    public TicketRegistrySupport getTicketRegistrySupport() {
-        return this.ticketRegistrySupport;
-    }
-
-    public void setCredentialFactory(final CredentialFactory credentialFactory) {
-        this.credentialFactory = credentialFactory;
-    }
-
-
 }

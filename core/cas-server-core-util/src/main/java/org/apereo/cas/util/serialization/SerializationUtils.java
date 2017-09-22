@@ -2,6 +2,8 @@ package org.apereo.cas.util.serialization;
 
 import com.google.common.base.Throwables;
 import org.apereo.cas.CipherExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,7 +23,8 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 public final class SerializationUtils {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SerializationUtils.class);
+    
     private SerializationUtils() {
     }
 
@@ -46,7 +49,7 @@ public final class SerializationUtils {
      * @since 5.0.0
      */
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        try(ObjectOutputStream out = new ObjectOutputStream(outputStream);) {
+        try (ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(object);
         } catch (final IOException e) {
             throw Throwables.propagate(e);
@@ -87,7 +90,7 @@ public final class SerializationUtils {
                 try {
                     in.close();
                 } catch (final IOException e) {
-                    throw Throwables.propagate(e);
+                   LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -101,10 +104,10 @@ public final class SerializationUtils {
      * @return the byte []
      * @since 4.2
      */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
+    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
                                                   final Serializable object) {
         final byte[] outBytes = serialize(object);
-        return cipher.encode(outBytes);
+        return (byte[]) cipher.encode(outBytes);
     }
 
     /**
@@ -117,11 +120,15 @@ public final class SerializationUtils {
      * @return the t
      * @since 4.2
      */
-    public static <T> T decodeAndSerializeObject(final byte[] object,
-                                                 final CipherExecutor cipher,
-                                                 final Class<? extends Serializable> type) {
-        final byte[] decoded = (byte[]) cipher.decode(object);
-        return deserializeAndCheckObject(decoded, type);
+    public static <T> T decodeAndDeserializeObject(final byte[] object,
+                                                   final CipherExecutor cipher,
+                                                   final Class<? extends Serializable> type) {
+        try {
+            final byte[] decoded = (byte[]) cipher.decode(object);
+            return deserializeAndCheckObject(decoded, type);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     /**

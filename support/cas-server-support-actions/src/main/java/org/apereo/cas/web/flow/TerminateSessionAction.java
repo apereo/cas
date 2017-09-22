@@ -2,10 +2,11 @@ package org.apereo.cas.web.flow;
 
 import com.google.common.base.Throwables;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.springframework.web.ApplicationLogoutController;
+import org.pac4j.core.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
@@ -25,34 +26,41 @@ import java.util.List;
  * @since 4.0.0
  */
 public class TerminateSessionAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminateSessionAction.class);
-    
-    /** Webflow event helper component. */
+
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-    
-    private CentralAuthenticationService centralAuthenticationService;
-    
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CookieRetrievingCookieGenerator warnCookieGenerator;
+    private final LogoutProperties logoutProperties;
 
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
+    public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService,
+                                  final CookieRetrievingCookieGenerator tgtCookieGenerator,
+                                  final CookieRetrievingCookieGenerator warnCookieGenerator,
+                                  final LogoutProperties logoutProperties) {
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
+        this.warnCookieGenerator = warnCookieGenerator;
+        this.logoutProperties = logoutProperties;
+    }
 
-    private ApplicationLogoutController applicationLogoutController;
-    
-    /**
-     * Creates a new instance with the given parameters.
-     */
-    public TerminateSessionAction() {}
-    
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
-        return terminate(requestContext);
+        boolean terminateSession = true;
+        if (logoutProperties.isConfirmLogout()) {
+            terminateSession = isLogoutRequestConfirmed(requestContext);
+        }
+        if (terminateSession) {
+            return terminate(requestContext);
+        }
+        return this.eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_WARN);
     }
 
     /**
      * Terminates the CAS SSO session by destroying the TGT (if any) and removing cookies related to the SSO session.
      *
      * @param context Request context.
-     *
      * @return "success"
      */
     public Event terminate(final RequestContext context) {
@@ -60,14 +68,14 @@ public class TerminateSessionAction extends AbstractAction {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-            
+
             String tgtId = WebUtils.getTicketGrantingTicketId(context);
             // for logout, we need to get the cookie's value
             if (tgtId == null) {
                 tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             }
             if (tgtId != null) {
-                LOGGER.debug("Destroying SSO session linked to ticket-granting ticket {}", tgtId);
+                LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
                 final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
                 WebUtils.putLogoutRequests(context, logoutRequests);
             }
@@ -83,28 +91,26 @@ public class TerminateSessionAction extends AbstractAction {
         }
     }
 
-    private void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
+    /**
+     * Destroy application session.
+     * Also kills all delegated authn profiles via pac4j.
+     *
+     * @param request  the request
+     * @param response the response
+     */
+    protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Destroying application session");
-        this.applicationLogoutController.applicationLogout(request, response);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        manager.logout();
+
         final HttpSession session = request.getSession();
         if (session != null) {
             session.invalidate();
         }
     }
 
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
-
-    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-    public void setApplicationLogoutController(final ApplicationLogoutController applicationLogoutController) {
-        this.applicationLogoutController = applicationLogoutController;
+    private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }
 }

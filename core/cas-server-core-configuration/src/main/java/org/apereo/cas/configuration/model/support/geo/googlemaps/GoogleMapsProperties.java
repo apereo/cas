@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.geo.googlemaps;
 
+import org.apereo.cas.configuration.support.Beans;
+
 /**
  * This is {@link GoogleMapsProperties}.
  *
@@ -10,7 +12,7 @@ public class GoogleMapsProperties {
     private String apiKey;
     private String clientId;
     private String clientSecret;
-    private long connectTimeout = 3000;
+    private String connectTimeout = "PT3S";
     private boolean googleAppsEngine;
 
     public boolean isGoogleAppsEngine() {
@@ -46,10 +48,10 @@ public class GoogleMapsProperties {
     }
 
     public long getConnectTimeout() {
-        return connectTimeout;
+        return Beans.newDuration(connectTimeout).toMillis();
     }
 
-    public void setConnectTimeout(final long connectTimeout) {
+    public void setConnectTimeout(final String connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 }

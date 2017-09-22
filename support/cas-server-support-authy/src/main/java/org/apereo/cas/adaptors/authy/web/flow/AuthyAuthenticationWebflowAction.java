@@ -12,14 +12,15 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class AuthyAuthenticationWebflowAction extends AbstractAction {
-    private CasWebflowEventResolver casWebflowEventResolver;
+
+    private final CasWebflowEventResolver casWebflowEventResolver;
+
+    public AuthyAuthenticationWebflowAction(final CasWebflowEventResolver casWebflowEventResolver) {
+        this.casWebflowEventResolver = casWebflowEventResolver;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         return this.casWebflowEventResolver.resolveSingle(requestContext);
-    }
-
-    public void setCasWebflowEventResolver(final CasWebflowEventResolver casWebflowEventResolver) {
-        this.casWebflowEventResolver = casWebflowEventResolver;
     }
 }

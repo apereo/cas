@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 public class X509Properties {
 
+    private static final String DENY = "DENY";
+
     /**
      * The  Principal types.
      */
@@ -80,11 +82,13 @@ public class X509Properties {
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
     private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
 
-    private String crlResourceUnavailablePolicy = "DENY";
-    private String crlResourceExpiredPolicy = "DENY";
+    private String crlResourceUnavailablePolicy = DENY;
+    private String crlResourceExpiredPolicy = DENY;
+    private String crlUnavailablePolicy = DENY;
+    private String crlExpiredPolicy = DENY;
 
-    private String crlUnavailablePolicy = "DENY";
-    private String crlExpiredPolicy = "DENY";
+    private int principalSNRadix;
+    private boolean principalHexSNZeroPadding;
     
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
@@ -122,6 +126,26 @@ public class X509Properties {
     private String regExSubjectDnPattern = ".+";
 
     private String trustedIssuerDnPattern = ".+";
+
+    private String name;
+
+    private String certificateAttribute = "certificateRevocationList";
+
+    public String getCertificateAttribute() {
+        return certificateAttribute;
+    }
+
+    public void setCertificateAttribute(final String certificateAttribute) {
+        this.certificateAttribute = certificateAttribute;
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public int getCacheMaxElementsInMemory() {
         return cacheMaxElementsInMemory;
@@ -355,10 +379,26 @@ public class X509Properties {
         this.crlExpiredPolicy = crlExpiredPolicy;
     }
 
+    public int getPrincipalSNRadix() {
+        return principalSNRadix;
+    }
+
+    public void setPrincipalSNRadix(final int principalSNRadix) {
+        this.principalSNRadix = principalSNRadix;
+    }
+
+    public boolean isPrincipalHexSNZeroPadding() {
+        return principalHexSNZeroPadding;
+    }
+
+    public void setPrincipalHexSNZeroPadding(final boolean principalHexSNZeroPadding) {
+        this.principalHexSNZeroPadding = principalHexSNZeroPadding;
+    }
+
     public static class Ldap extends AbstractLdapProperties {
         private String baseDn;
         private String searchFilter;
-
+        
         public String getBaseDn() {
             return baseDn;
         }

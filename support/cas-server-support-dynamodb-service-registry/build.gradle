@@ -1,0 +1,12 @@
+description = "Apereo CAS DynamoDb Service Registry"
+
+dependencies {
+    implementation libraries.awsjavadynamodb
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    compile project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+}

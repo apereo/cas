@@ -15,6 +15,16 @@ public class RestAuthenticationProperties {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     public PasswordEncoderProperties getPasswordEncoder() {
         return passwordEncoder;
     }

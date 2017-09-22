@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.MemoryMonitor;
 import org.apereo.cas.monitor.Monitor;
@@ -10,13 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,31 +43,21 @@ public class CasCoreMonitorConfiguration {
     @Bean
     public Monitor healthCheckMonitor() {
         final Map<String, Monitor> beans = applicationContext.getBeansOfType(Monitor.class, false, true);
-        final Collection monitors = beans.entrySet()
-                .stream()
+        final Set<Monitor> monitors = beans.entrySet().stream()
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
 
-        final HealthCheckMonitor bean = new HealthCheckMonitor();
-        bean.setMonitors(monitors);
-        return bean;
-    }
+        final int freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
+        if (freeMemThreshold > 0) {
+            monitors.add(new MemoryMonitor(freeMemThreshold));
+        }
 
-    @RefreshScope
-    @Bean
-    public Monitor memoryMonitor() {
-        final MemoryMonitor bean = new MemoryMonitor();
-        bean.setFreeMemoryWarnThreshold(casProperties.getMonitor().getFreeMemThreshold());
-        return bean;
-    }
+        final MonitorProperties.Warn warn = casProperties.getMonitor().getSt().getWarn();
+        if (warn.getThreshold() > 0) {
+            final SessionMonitor bean = new SessionMonitor(ticketRegistry, warn.getThreshold(), warn.getThreshold());
+            monitors.add(bean);
+        }
 
-    @RefreshScope
-    @Bean
-    public Monitor sessionMonitor() {
-        final SessionMonitor bean = new SessionMonitor();
-        bean.setTicketRegistry(ticketRegistry);
-        bean.setServiceTicketCountWarnThreshold(casProperties.getMonitor().getSt().getWarn().getThreshold());
-        bean.setSessionCountWarnThreshold(casProperties.getMonitor().getTgt().getWarn().getThreshold());
-        return bean;
+        return new HealthCheckMonitor(monitors);
     }
 }

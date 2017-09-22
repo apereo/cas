@@ -1,6 +1,8 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -12,12 +14,17 @@ import java.util.Arrays;
  * @since 3.5.1
  */
 public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheStatus> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCacheMonitor.class);
+    
     /**
      * CAS properties.
      */
     @Autowired
     protected CasConfigurationProperties casProperties;
+
+    public AbstractCacheMonitor(final String name) {
+        super(name);
+    }
 
     @Override
     public CacheStatus observe() {
@@ -28,16 +35,17 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
                 return new CacheStatus(StatusCode.ERROR, "Cache statistics not available.");
             }
             final StatusCode[] overall = {StatusCode.OK};
-            Arrays.stream(statistics).map(this::status)
+            Arrays.stream(statistics)
+                    .map(this::status)
                     .filter(code -> code.value() > overall[0].value())
                     .forEach(code -> overall[0] = code);
             status = new CacheStatus(overall[0], null, statistics);
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             status = new CacheStatus(e);
         }
         return status;
     }
-
 
     /**
      * Gets the statistics from this monitor.
@@ -45,7 +53,6 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
      * @return the statistics
      */
     protected abstract CacheStatistics[] getStatistics();
-
 
     /**
      * Computes the status code for a given set of cache statistics.
@@ -65,6 +72,4 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
         }
         return code;
     }
-
-
 }

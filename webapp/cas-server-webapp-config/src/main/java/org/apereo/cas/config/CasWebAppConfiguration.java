@@ -9,8 +9,6 @@ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -36,16 +34,10 @@ import java.util.Map;
 @Configuration("casWebAppConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Lazy
-    @Bean
-    public LocalValidatorFactoryBean credentialsValidator() {
-        return new LocalValidatorFactoryBean();
-    }
-
+    
     @RefreshScope
     @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {
@@ -70,8 +62,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
-
-
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
@@ -92,7 +82,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
                     throws Exception {
                 final String queryString = request.getQueryString();
                 final String url = request.getContextPath() + "/login"
-                        + (queryString != null ? '?' + queryString : "");
+                        + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 
@@ -111,14 +101,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public SimpleUrlHandlerMapping handlerMapping() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-        
+
         final Controller root = rootController();
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(root);
         final Map urls = new HashMap();
         urls.put("/", root);
-        
+
         mapping.setUrlMap(urls);
         return mapping;
     }

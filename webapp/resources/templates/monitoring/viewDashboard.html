@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
+
+<head>
+    <title th:text="#{cas.dashboard.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+
+    <div class="viewDashboard">
+
+        <div class="app-launcher">
+            <h1 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h1>
+
+            <div class="alert alert-warning" th:if="${!dashboardEndpointsEnabled}">
+                <p>No dashboard functionality/endpoint is configured and accessible.
+                    Unless you teach CAS otherwise, <strong>all endpoints are disabled by default.</strong>
+                    Revisit the CAS configuration/documentation and explicitly enable access for desired endpoints and knobs.
+                </p>
+            </div>
+
+            <ul>
+                <li th:if="${healthcheckEndpointEnabled}">
+                    <a th:href="@{/status}" class="casTooltip">Status
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.status}"></span>
+                    </a>
+                </li>
+
+                <li th:if="${actuatorEndpointsEnabled and autoConfigurationEndpointEnabled}">
+                    <a th:href="@{/status/autoconfig}" class="casTooltip">
+                        Auto Configuration
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.autoconfiguration}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and beansEndpointEnabled}">
+                    <a th:href="@{/status/beans}" class="casTooltip">Beans
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.beans}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and mappingsEndpointEnabled}" class="casTooltip">
+                    <a th:href="@{/status/mappings}">Endpoint Mappings
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.mappings}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and configPropsEndpointEnabled}" class="casTooltip">
+                    <a th:href="@{/status/configprops}">Configuration Properties
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.configprops}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and dumpEndpointEnabled}">
+                    <a th:href="@{/status/dump}" class="casTooltip">Thread Dump
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.dump}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and environmentEndpointEnabled}">
+                    <a th:href="@{/status/env}" class="casTooltip">Environment
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.env}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and healthEndpointEnabled}">
+                    <a th:href="@{/status/health}" class="casTooltip">Health
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.health}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and infoEndpointEnabled}">
+                    <a th:href="@{/status/info}" class="casTooltip">Info
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.info}"></span>
+                    </a>
+                </li>
+                <li th:if="${metricsEndpointEnabled}">
+                    <a th:href="@{/status/metrics}" class="casTooltip">Metrics
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.metrics}"></span>
+                    </a>
+                </li>
+                <li th:if="${actuatorEndpointsEnabled and traceEndpointEnabled}">
+                    <a th:href="@{/status/trace}" class="casTooltip">Trace Requests
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.trace}"></span>
+                    </a>
+                </li>
+                <li th:if="${statisticsEndpointEnabled}">
+                    <a th:href="@{/status/stats}" class="casTooltip">Statistics Panel
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.stats}"></span>
+                    </a>
+                </li>
+                <li th:if="${environmentEndpointEnabled and configurationStateEnabled}">
+                    <a th:href="@{/status/config}" class="casTooltip">Configuration Panel
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.configpanel}"></span>
+                    </a>
+                </li>
+                <li th:if="${singleSignOnReportEnabled}">
+                    <a th:href="@{/status/ssosessions}" class="casTooltip">SSO Sessions
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.ssosessions}"></span>
+                    </a>
+                </li>
+                <li th:if="${singleSignOnStatusEndpointEnabled}">
+                    <a th:href="@{/status/sso}" class="casTooltip">SSO Status
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.ssostatus}"></span>
+                    </a>
+                </li>
+                <li th:if="${springWebflowEndpointEnabled}">
+                    <a th:href="@{/status/swf}" class="casTooltip">Webflow Report
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.swf}"></span>
+                    </a>
+                </li>
+                <li th:if="${auditLogEndpointEnabled}">
+                    <a th:href="@{/status/logging}" class="casTooltip">Logging
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.logging}"></span>
+                    </a>
+                </li>
+                <li th:if="${attributeResolutionEndpointEnabled}">
+                    <a th:href="@{/status/attrresolution}" class="casTooltip">Attribute Resolution
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.attrresolution}"></span>
+                    </a>
+                </li>
+                <li th:if="${trustedDevicesEnabled}">
+                    <a th:href="@{/status/trustedDevs}" class="casTooltip">Trusted Devices
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.trusteddevs}"></span>
+                    </a>
+                </li>
+                <li th:if="${authenticationEventsRepositoryEnabled}">
+                    <a th:href="@{/status/authnEvents}" class="casTooltip">AuthN Events
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.authnevents}"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="server-functions" th:if="${restartEndpointEnabled or shutdownEndpointEnabled}">
+            <h2 th:inline="text"><i class="fa fa-server"></i>[[#{cas.dashboard.section.server.functions.title}]]</h2>
+            <ul>
+                <li th:if="${restartEndpointEnabled}">
+                    <form method="post" th:action="@{/status/restart}">
+                        <button class="btn btn-restart"
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#myModal"
+                                th:inline="text"
+                                th:attr="data-title=#{cas.dashboard.action.button.reboot.modal.title},data-message=#{cas.dashboard.action.button.reboot.modal.message}"
+                        >
+                            <i class="fa fa-undo"></i>[[#{cas.dashboard.action.button.reboot}]]
+                        </button>
+                    </form>
+                </li>
+                <li th:if="${shutdownEndpointEnabled}">
+                    <form method="post" th:action="@{/status/shutdown}">
+                        <button type="button" class="btn btn-shutdown"
+                                data-toggle="modal"
+                                data-target="#myModal"
+                                th:inline="text"
+                                th:attr="data-title=#{cas.dashboard.action.button.shutdown.modal.title},data-message=#{cas.dashboard.action.button.shutdown.modal.message}"
+                        >
+                            <i class="fa fa-power-off"></i>
+                            [[#{cas.dashboard.action.button.shutdown}]]
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <div layout:include="fragments/modal :: modal(modalId='myModal', modalHeader='Message', modalButtons='true')" th:remove="tag">
+            <p layout:fragment="modal-content" />
+        </div>
+
+        <script type="text/javascript">
+            $('#myModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var modal = $(this);
+                modal.find('.modal-title').text(button.data('title'));
+                modal.find('.modal-body').text(button.data('message'));
+                var form = $(event.relatedTarget).closest('form');
+                modal.find('.modal-footer button.btn-primary').data('form', form);
+            })
+
+            $('#myModal').find('.modal-footer button.btn-primary').on('click', function () {
+                $(this).data('form').submit();
+            });
+        </script>
+    </div>
+
+</div>
+</body>
+</html>

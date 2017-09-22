@@ -7,19 +7,16 @@ import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,46 +32,41 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
+public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
+
     private static final View ALL_SERVICES_VIEW = DefaultView.create(
             "all_services",
             "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
 
-    private static final List<View> ALL_VIEWS = Lists.newArrayList(new View[]{
-            ALL_SERVICES_VIEW
-    });
+    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_SERVICES_VIEW});
 
     private static final String UTIL_DOCUMENT = "utils";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
-    private CouchbaseClientFactory couchbase;
-
-
-    private StringSerializer<RegisteredService> registeredServiceJsonSerializer;
+    private final CouchbaseClientFactory couchbase;
+    private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
     /**
      * Default constructor.
      *
+     * @param couchbase             couchbase instance
      * @param serviceJsonSerializer the JSON serializer to use.
+     * @param isQueryEnabled        the is query enabled
      */
-    public CouchbaseServiceRegistryDao(final StringSerializer<RegisteredService> serviceJsonSerializer) {
+    public CouchbaseServiceRegistryDao(final CouchbaseClientFactory couchbase, final StringSerializer<RegisteredService> serviceJsonSerializer,
+                                       final boolean isQueryEnabled) {
+        this.couchbase = couchbase;
         this.registeredServiceJsonSerializer = serviceJsonSerializer;
-    }
 
-    /**
-     * Default constructor.
-     */
-    public CouchbaseServiceRegistryDao() {
-        this(new RegisteredServiceJsonSerializer());
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(isQueryEnabled));
+        this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
+        this.couchbase.initialize();
     }
 
     @Override
     public RegisteredService save(final RegisteredService service) {
-        LOGGER.debug("Saving service {}", service);
+        LOGGER.debug("Saving service [{}]", service);
 
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) service).setId(service.hashCode());
@@ -92,11 +84,10 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public boolean delete(final RegisteredService service) {
-        LOGGER.debug("Deleting service {}", service);
+        LOGGER.debug("Deleting service [{}]", service);
         this.couchbase.bucket().remove(String.valueOf(service.getId()));
         return true;
     }
-
 
     @Override
     public List<RegisteredService> load() {
@@ -109,10 +100,12 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
                 final RawJsonDocument document = row.document(RawJsonDocument.class);
                 if (document != null) {
                     final String json = document.content();
-                    LOGGER.debug("Found service: {}", json);
+                    LOGGER.debug("Found service: [{}]", json);
 
                     final StringReader stringReader = new StringReader(json);
-                    services.add(this.registeredServiceJsonSerializer.from(stringReader));
+                    final RegisteredService service = this.registeredServiceJsonSerializer.from(stringReader);
+                    services.add(service);
+                    publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
                 }
             }
             return services;
@@ -129,7 +122,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
-            LOGGER.debug("Lookup for service {}", id);
+            LOGGER.debug("Lookup for service [{}]", id);
             final RawJsonDocument document = this.couchbase.bucket().get(String.valueOf(id), RawJsonDocument.class);
             if (document != null) {
                 final String json = document.content();
@@ -142,15 +135,9 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
         return null;
     }
 
-    /**
-     * Starts the couchbase client and initialization task.
-     */
-    @PostConstruct
-    public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", 
-                Boolean.toString(casProperties.getServiceRegistry().getCouchbase().isQueryEnabled()));
-        this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
-        this.couchbase.initialize();
+    @Override
+    public RegisteredService findServiceById(final String id) {
+        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
     }
 
     /**
@@ -168,9 +155,5 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public long size() {
         return executeViewQueryForAllServices().totalRows();
-    }
-
-    public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
-        this.couchbase = couchbase;
     }
 }

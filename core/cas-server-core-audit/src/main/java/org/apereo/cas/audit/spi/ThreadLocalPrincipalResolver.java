@@ -1,6 +1,6 @@
 package org.apereo.cas.audit.spi;
 
-import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.slf4j.Logger;
@@ -25,13 +25,13 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
 
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
-        LOGGER.debug("Resolving principal at audit point [{}]", auditTarget);
+        LOGGER.trace("Resolving principal at audit point [{}]", auditTarget);
         return getCurrentPrincipal();
     }
 
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Exception exception) {
-        LOGGER.debug("Resolving principal at audit point [{}] with thrown exception [{}]", auditTarget, exception);
+        LOGGER.trace("Resolving principal at audit point [{}] with thrown exception [{}]", auditTarget, exception);
         return getCurrentPrincipal();
     }
 
@@ -41,10 +41,10 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
     }
 
     private String getCurrentPrincipal() {
-        String principal = this.principalIdProvider.getPrincipalIdFrom(CurrentCredentialsAndAuthentication.getCurrentAuthentication());
+        String principal = this.principalIdProvider.getPrincipalIdFrom(AuthenticationCredentialsLocalBinder.getCurrentAuthentication());
         if (principal == null) {
-            principal = CurrentCredentialsAndAuthentication.getCurrentCredentialIdsAsString();
+            principal = AuthenticationCredentialsLocalBinder.getCurrentCredentialIdsAsString();
         }
-        return (principal != null) ? principal : UNKNOWN_USER;
+        return principal != null ? principal : UNKNOWN_USER;
     }
 }

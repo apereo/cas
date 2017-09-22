@@ -13,9 +13,9 @@ be considered to achieve suitable security.
 
 <div class="alert alert-info"><strong>Reporting Issues</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
 
+## Announcements
 
-## Accouncements
-
+- [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/01/moncfgsecvulndisc/)
 - [Oct 24 2016 Vulnerability Disclosure](https://apereo.github.io/2016/10/24/servlvulndisc/)
 - [Apr 8 2016 Vulnerability Disclosure](https://apereo.github.io/2016/04/08/commonsvulndisc/)
 
@@ -39,6 +39,8 @@ from the CAS server to the application must be done using HTTPS:
 
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
+
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-client).
 
 
 ### Connections to Dependent Systems
@@ -134,7 +136,7 @@ a Web user interface, or both. See the [Service Management](../installation/Serv
 information.
 
 <div class="alert alert-warning"><strong>Authorized Services</strong><p>
-As a security best practice, it is <strong>STRONGLY</strong> recommended to limit the service management facility
+As a security best practice, it is <strong>strongly</strong> recommended to limit the service management facility
 to only include the list of known applications that are authorized to use CAS. Leaving the management interface
 open for all applications may create an opportunity for security attacks.
 </p></div>
@@ -160,13 +162,12 @@ Protocol tickets that are issued by CAS may optionally go through a signing/encr
 CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check
 to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#protocol-ticket-security).
 
 
 ### Ticket Registry Encryption
 
-Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS are not tampered with in transit. CAS covers 
-this issue by allowing tickets to be natively encrypted and signed. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment. 
+Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS are not tampered with in transit. CAS covers this issue by allowing tickets to be natively encrypted and signed. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info.
 
 ### Administrative Pages Security
@@ -229,12 +230,21 @@ the CAS protocol in the event that for instance, a parameter is repeated multipl
 It is **STRONGLY** recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent
 protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.
 
+#### CORS
+
+CAS provides first-class support for enabling HTTP access control (CORS).
+One application of CORS is when a resource makes a cross-origin HTTP request when it requests a resource from a
+different domain than the one which the first resource itself serves. This should help more with CAS-enabled
+applications are accessed via XHR/Ajax requests.
+
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-web-requests).
+
 #### Security Response Headers
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently off by default.
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-web-requests).
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 

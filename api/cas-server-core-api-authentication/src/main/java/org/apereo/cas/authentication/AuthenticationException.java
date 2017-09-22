@@ -84,7 +84,7 @@ public class AuthenticationException extends RuntimeException {
     }
 
     /**
-     * Gets an unmodifable map of handler names to errors.
+     * Gets an unmodifiable map of handler names to errors.
      *
      * @return Immutable map of handler names to errors.
      */
@@ -93,7 +93,7 @@ public class AuthenticationException extends RuntimeException {
     }
 
     /**
-     * Gets an unmodifable map of handler names to authentication successes.
+     * Gets an unmodifiable map of handler names to authentication successes.
      *
      * @return Immutable map of handler names to authentication successes.
      */

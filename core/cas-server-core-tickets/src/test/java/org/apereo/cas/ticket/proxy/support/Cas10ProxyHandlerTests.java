@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
  */
 public class Cas10ProxyHandlerTests {
 
-    private ProxyHandler proxyHandler = new Cas10ProxyHandler();
+    private final ProxyHandler proxyHandler = new Cas10ProxyHandler();
 
     @Test
     public void verifyNoCredentialsOrProxy() {
@@ -25,6 +25,6 @@ public class Cas10ProxyHandlerTests {
         final TicketGrantingTicket proxyGrantingTicket = mock(TicketGrantingTicket.class);
         when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
         assertNull(this.proxyHandler.handle(
-                TestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));
     }
 }

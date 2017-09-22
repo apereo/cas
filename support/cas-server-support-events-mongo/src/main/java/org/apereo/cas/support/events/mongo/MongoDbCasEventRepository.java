@@ -1,13 +1,15 @@
 package org.apereo.cas.support.events.mongo;
 
-import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 
 /**
@@ -18,57 +20,26 @@ import java.util.Collection;
  */
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
-    private String collectionName;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbCasEventRepository.class);
 
-    private boolean dropCollection;
+    private final String collectionName;
+    private final MongoOperations mongoTemplate;
 
-    private MongoOperations mongoTemplate;
-
-    public MongoDbCasEventRepository() {
-    }
-
-    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, 
-                                     final String collectionName, 
-                                     final boolean dropCollection) {
+    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-        this.dropCollection = dropCollection;
-    }
 
-    /**
-     * Initialized registry post construction.
-     * Will decide if the configured collection should
-     * be dropped and recreated.
-     */
-    @PostConstruct
-    public void init() {
         Assert.notNull(this.mongoTemplate);
 
-        if (this.dropCollection) {
-            logger.debug("Dropping database collection: {}", this.collectionName);
+        if (dropCollection) {
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            logger.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
-    }
-
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public void setCollectionName(final String collectionName) {
-        this.collectionName = collectionName;
-    }
-
-    public boolean isDropCollection() {
-        return dropCollection;
-    }
-
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
     }
 
     @Override
@@ -89,7 +60,49 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
         final Query query = new Query();
-        query.addCriteria(Criteria.where("principalId").is(id));
+        query.addCriteria(Criteria.where(PRINCIPAL_ID_PARAM).is(id));
+        return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsOfType(final String type) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(TYPE_PARAM).is(type));
+        return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(PRINCIPAL_ID_PARAM).is(principal));
+        return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
+    }
+
+    @Override
+    public Collection<CasEvent> load(final ZonedDateTime dateTime) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(CREATION_TIME_PARAM).gte(dateTime.toString()));
+        return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(PRINCIPAL_ID_PARAM).is(principal).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
+        return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
+        return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsForPrincipal(final String principal, final ZonedDateTime dateTime) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(PRINCIPAL_ID_PARAM).is(principal).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 }

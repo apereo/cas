@@ -7,6 +7,8 @@ title: CAS - Stormpath Authentication
 
 Verify and authenticate credentials against the [Stormpath](https://stormpath.com/) Cloud Identity.
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Functionality provided by Stormpath is not longer available.</p></div>
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -17,5 +19,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#stormpath-authentication).

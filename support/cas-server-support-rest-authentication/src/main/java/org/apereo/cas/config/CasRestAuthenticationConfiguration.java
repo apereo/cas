@@ -11,12 +11,16 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apereo.cas.adaptors.rest.RestAuthenticationApi;
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -26,10 +30,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.util.Map;
-
 
 /**
  * This is {@link CasRestAuthenticationConfiguration}.
@@ -39,18 +40,14 @@ import java.util.Map;
  */
 @Configuration("casRestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasRestAuthenticationConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
+public class CasRestAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
     @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
@@ -65,28 +62,26 @@ public class CasRestAuthenticationConfiguration {
         }
     }
 
+    @ConditionalOnMissingBean(name = "restAuthenticationApi")
     @Bean
     @RefreshScope
     public RestAuthenticationApi restAuthenticationApi() {
-        final RestAuthenticationApi api = new RestAuthenticationApi();
-        api.setAuthenticationUri(casProperties.getAuthn().getRest().getUri());
-        api.setRestTemplate(restAuthenticationTemplate());
-        return api;
+        return new RestAuthenticationApi(restAuthenticationTemplate(), casProperties.getAuthn().getRest().getUri());
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler restAuthenticationHandler() {
-        final RestAuthenticationHandler r = new RestAuthenticationHandler();
-        r.setApi(restAuthenticationApi());
-        r.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getRest().getPasswordEncoder()));
+        final RestAuthenticationProperties rest = casProperties.getAuthn().getRest();
+        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi());
+        r.setPasswordEncoder(Beans.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;
     }
 
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
+    @Override
+    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
-            authenticationHandlersResolvers.put(restAuthenticationHandler(), personDirectoryPrincipalResolver);
+            plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
     }
 

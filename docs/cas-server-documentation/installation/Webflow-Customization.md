@@ -16,9 +16,7 @@ of steps that guide a user through the execution of some business task. It spans
 - Decisions: Components that conditionally route to other areas of flow and can make logical decisions
 
 Spring Web Flow presents CAS with a pluggable architecture where custom actions, views and decisions may be injected into the
-flow to account for additional use cases and processes. Note that <strong>to customize the webflow, one must possess a reasonable level
-of understanding of the webflow's internals and injection policies</strong>. The intention of this document is NOT to describe Spring Web Flow,
-but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
+flow to account for additional use cases and processes. Note that <strong>to customize the webflow, one must possess a reasonable level of understanding of the webflow's internals and injection policies</strong>. The intention of this document is NOT to describe Spring Web Flow, but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
 
 ## Webflow Session
 
@@ -32,7 +30,7 @@ and the module automatically takes care of all required changes. While this is t
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS autoconfiguration
 of the webflow.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
 
 <div class="alert alert-warning"><strong>Achtung, liebe Leser!</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
@@ -42,10 +40,11 @@ suggesting the change to the project and have it be maintained directly.</p></di
 
 CAS by default is configured to hot reload changes to the Spring webflow configuration.
 The following setting switches on flow development mode. Development mode switches 
-on hot-reloading of flow definition changes, 
-including changes to dependent flow resources such as message bundles.
+on hot-reloading of flow definition changes, including changes to dependent flow resources such as message bundles.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+### Extending Webflow
+
+If you want to learn how to modify and extend the CAS authentication flows, [please see this guide](Webflow-Customization-Extensions.html).
 
 ## Required Service for Authentication
 
@@ -58,8 +57,7 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#global-sso-behavior).
 
 ## Acceptable Usage Policy
 

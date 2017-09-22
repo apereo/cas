@@ -12,17 +12,17 @@
                            http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd">
     
 
-    <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManagerImpl"
-          c:serviceRegistryDao-ref="serviceRegistryDao"/>
+    <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManager"
+          c:serviceRegistryDao-ref="serviceRegistryDao" />
 
-    <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
+    <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistry">
         <property name="registeredServices">
             <bean class="org.apereo.cas.services.RegexRegisteredService"
                   p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description"/>
         </property>
     </bean>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
     
     <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>

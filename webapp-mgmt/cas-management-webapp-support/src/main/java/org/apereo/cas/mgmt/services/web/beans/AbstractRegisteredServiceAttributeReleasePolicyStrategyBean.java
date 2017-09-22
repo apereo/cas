@@ -24,6 +24,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyStrategyBea
         MAPPED("mapped"),
 
         /** None type. */
+        SCRIPT("script"),
+
+        /** None type. */
+        GROOVY("groovy"),
+
+        /** None type. */
         NONE("none"),
 
         /** Allow type. */

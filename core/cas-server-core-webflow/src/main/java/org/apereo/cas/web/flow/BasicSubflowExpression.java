@@ -11,8 +11,8 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  * @since 4.2
  */
 public class BasicSubflowExpression extends AbstractGetValueExpression {
-    private String subflowId;
-    private FlowDefinitionRegistry flowDefinitionRegistry;
+    private final String subflowId;
+    private final FlowDefinitionRegistry flowDefinitionRegistry;
 
     /**
      * Instantiates a new Basic subflow expression.

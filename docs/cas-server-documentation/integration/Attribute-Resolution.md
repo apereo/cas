@@ -7,7 +7,7 @@ title: CAS - Attribute Resolution
 
 Attribute resolution strategies are controlled by
 the [Person Directory project](https://github.com/apereo/person-directory).
-The Person Directory dependency is automatically bundled with the CAS server. Therefor,
+The Person Directory dependency is automatically bundled with the CAS server. Therefore,
 declaring an additional dependency will not be required.
 This Person Directory project supports both LDAP and JDBC attribute resolution,
 caching, attribute aggregation from multiple attribute sources, etc.
@@ -25,6 +25,8 @@ A framework for resolving persons and attributes from a variety of underlying so
 It consists of a collection of components that retrieve, cache, resolve, aggregate,
 merge person attributes from JDBC, LDAP and more.
 
+To see the relevant list of CAS properties that deal with resolving principals, please [review this guide](../installation/Configuration-Properties.html#principal-resolution).
+
 Attribute sources are defined and configured to describe the global set of attributes to be fetched
 for each authenticated principal. That global set of attributes is then filtered by the
 service manager according to service-specific attribute release rules.
@@ -37,14 +39,12 @@ resolution use cases such as cascading, merging, etc. <a href="../installation/C
 
 The goal of the resolver is to construct a final identifiable authenticated principal for CAS which carries a number of attributes inside it.
 The behavior of the person-directory resolver is such that it attempts to locate the principal id, which in most cases is the same thing as the credential
-id provided during authentication or it could be a noted by a custom attribute. Then the resolver starts to construct attributes from attribute repositories defined.
-If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes,
-it will then remove that attribute from the final collection.
+id provided during authentication or it could be noted by a custom attribute. Then the resolver starts to construct attributes from attribute repositories defined. If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes, it will then remove that attribute from the final collection.
 
 Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP, JDBC, etc.
 If you need something more, you will need to resort to more elaborate measures of defining the bean configuration.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#authentication-attributes).
 More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
 ### JDBC
@@ -130,7 +130,10 @@ CAS overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#shibboleth-attribute-resolver).
+
+<div class="alert alert-warning"><strong>Connector Compatibility</strong><p>Note that at this time given LDAP library compatibilities between CAS and Shibboleth,
+the LDAP data connector is not quite supported by CAS.</p></div>
 
 An example `attribue-resolver.xml` file could be:
 
@@ -164,5 +167,4 @@ An example `attribue-resolver.xml` file could be:
         </dc:Attribute>
     </resolver:DataConnector>
 </resolver:AttributeResolver>
-
 ```

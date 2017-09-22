@@ -4,8 +4,7 @@ dependencies {
     compile project(":support:cas-server-support-gauth")
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-jpa-util")
-    compileOnly libraries.springcloud
-    compile libraries.spring
-    runtime libraries.hibernate
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

@@ -14,91 +14,49 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class LdapAuthenticationProperties extends AbstractLdapProperties {
-
-    /**
-     * The enum Authentication types.
-     */
-    public enum AuthenticationTypes {
-        /**
-         * Active Directory.
-         */
-        AD,
-        /**
-         * Authenticated Search.
-         */
-        AUTHENTICATED,
-        /**
-         * Direct Bind.
-         */
-        DIRECT,
-        /**
-         * Anonymous Search.
-         */
-        ANONYMOUS,
-        /**
-         * SASL bind search.
-         */
-        SASL
-    }
+public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     private String credentialCriteria;
-    private String dnFormat;
+
     private String principalAttributeId;
-    private String principalAttributePassword;
+
+    private String principalDnAttributeName;
+
     private List principalAttributeList = new ArrayList();
     private boolean allowMultiplePrincipalAttributeValues;
     private List additionalAttributes = new ArrayList();
-    private AuthenticationTypes type;
 
-    private boolean subtreeSearch = true;
-    private String baseDn;
-    private String userFilter;
+    private boolean allowMissingPrincipalAttributeValue = true;
 
-    private boolean enhanceWithEntryResolver = true;
+    private boolean collectDnAttribute;
 
-    public boolean isEnhanceWithEntryResolver() {
-        return enhanceWithEntryResolver;
+    private Integer order;
+
+    public boolean isCollectDnAttribute() {
+        return collectDnAttribute;
     }
 
-    public void setEnhanceWithEntryResolver(final boolean enhanceWithEntryResolver) {
-        this.enhanceWithEntryResolver = enhanceWithEntryResolver;
-    }
-    
-    public String getBaseDn() {
-        return baseDn;
+    public void setCollectDnAttribute(final boolean collectDnAttribute) {
+        this.collectDnAttribute = collectDnAttribute;
     }
 
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
+    public Integer getOrder() {
+        return order;
     }
 
-    public String getUserFilter() {
-        return userFilter;
+    public void setOrder(final Integer order) {
+        this.order = order;
     }
 
-    public void setUserFilter(final String userFilter) {
-        this.userFilter = userFilter;
-    }
-
-    public boolean isSubtreeSearch() {
-        return subtreeSearch;
-    }
-
-    public void setSubtreeSearch(final boolean subtreeSearch) {
-        this.subtreeSearch = subtreeSearch;
-    }
-    
     public PasswordPolicyProperties getPasswordPolicy() {
         return passwordPolicy;
     }
@@ -122,22 +80,6 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-    
-    public String getDnFormat() {
-        return dnFormat;
-    }
-
-    public void setDnFormat(final String dnFormat) {
-        this.dnFormat = dnFormat;
-    }
-
-    public AuthenticationTypes getType() {
-        return type;
-    }
-
-    public void setType(final AuthenticationTypes type) {
-        this.type = type;
-    }
 
     public String getPrincipalAttributeId() {
         return principalAttributeId;
@@ -147,12 +89,12 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
         this.principalAttributeId = principalAttributeId;
     }
 
-    public String getPrincipalAttributePassword() {
-        return principalAttributePassword;
+    public String getPrincipalDnAttributeName() {
+        return principalDnAttributeName;
     }
 
-    public void setPrincipalAttributePassword(final String principalAttributePassword) {
-        this.principalAttributePassword = principalAttributePassword;
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
     }
 
     public List getPrincipalAttributeList() {
@@ -185,5 +127,13 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
 
     public void setCredentialCriteria(final String credentialCriteria) {
         this.credentialCriteria = credentialCriteria;
+    }
+
+    public boolean isAllowMissingPrincipalAttributeValue() {
+        return allowMissingPrincipalAttributeValue;
+    }
+
+    public void setAllowMissingPrincipalAttributeValue(final boolean allowMissingPrincipalAttributeValue) {
+        this.allowMissingPrincipalAttributeValue = allowMissingPrincipalAttributeValue;
     }
 }

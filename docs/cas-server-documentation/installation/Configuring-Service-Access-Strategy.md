@@ -13,7 +13,7 @@ validated when an authentication request from the application arrives.
 
 ## Default Strategy
 
-The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
+The default strategy allows one to configure a service with the following properties:
 
 | Field                             | Description
 |-----------------------------------|---------------------------------------------------------------------------------
@@ -31,62 +31,13 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-## Time-Based
-The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension of the default which additionally,
-allows one to configure a service with the following properties:
+### Examples
 
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
-| `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
+The following examples demonstrate access policy enforcement features of CAS.
 
-## Remote Endpoint
-The `RemoteEndpointServiceAccessStrategy` is an extension of the default which additionally,
-allows one to configure a service with the following properties:
+#### Disable Service Access
 
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `endpointUrl`                | Endpoint that receives the authorization request from CAS for the authenticated principal. 
-| `acceptableResponseCodes`    | Comma-separated response codes that are considered accepted for service access.
-
-The objective of this policy is to ensure a remote endpoint can make service access decisions by
-receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
-the endpoint returns is then compared against the policy setting and if a match is found, access is granted.
-
-## Grouper
-The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the WAR overlay:
-
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-grouper</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
-
-This access strategy attempts to locate [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) groups for the CAS principal. The groups returned by Grouper
-are collected as CAS attributes and examined against the list of required attributes for service access.
-
-The following properties are available:
-
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute. Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`.
-
-You will also need to ensure `grouper.client.properties` is available on the classpath
-with the following configured properties:
-
-```properties
-grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
-grouperClient.webService.login = banderson
-grouperClient.webService.password = password
-```
-
-
-## Configuration of Access Control
-Some examples of RBAC configuration follow:
-
-* Service is not allowed to use CAS:
+Service is not allowed to use CAS:
 
 ```json
 {
@@ -102,8 +53,9 @@ Some examples of RBAC configuration follow:
 }
 ```
 
+#### Disable Service SSO Access
 
-* Service will be challenged to present credentials every time, thereby not using SSO:
+Service will be challenged to present credentials every time, thereby not using SSO:
 
 ```json
 {
@@ -119,8 +71,9 @@ Some examples of RBAC configuration follow:
 }
 ```
 
+#### Enforce Attributes
 
-* To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
+To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
 ```json
@@ -142,7 +95,7 @@ Some examples of RBAC configuration follow:
 }
 ```
 
-* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
+To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
 
 ```json
 {
@@ -162,8 +115,9 @@ Some examples of RBAC configuration follow:
 }
 ```
 
+#### Enforce Combined Attribute Conditions
 
-* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
+To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
 OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
 
 
@@ -187,7 +141,9 @@ OR the principal must have a `member` attribute whose value is either of `admins
 }
 ```
 
-* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
+#### Enforce Must-Not-Have Attributes
+
+To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
 OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`. The principal
 also must not have an attribute "role" whose value matches the pattern `deny.+`.
 
@@ -216,7 +172,17 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
 }
 ```
 
-* Service access is only allowed within `startingDateTime` and `endingDateTime`:
+## Time-Based
+
+The time-based access strategy is an extension of the default which additionally,
+allows one to configure a service with the following properties:
+
+| Field                             | Description
+|-----------------------------------|---------------------------------------------------------------------------------
+| `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
+| `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
+
+Service access is only allowed within `startingDateTime` and `endingDateTime`:
 
 ```json
 {
@@ -235,7 +201,67 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
 }
 ```
 
-* Grouper access strategy based on group's display extension:
+## Remote Endpoint
+
+This strategy is an extension of the default which additionally,
+allows one to configure a service with the following properties:
+
+| Field                             | Description
+|-----------------------------------|---------------------------------------------------------------------------------
+| `endpointUrl`                | Endpoint that receives the authorization request from CAS for the authenticated principal. 
+| `acceptableResponseCodes`    | Comma-separated response codes that are considered accepted for service access.
+
+The objective of this policy is to ensure a remote endpoint can make service access decisions by
+receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
+the endpoint returns is then compared against the policy setting and if a match is found, access is granted.
+
+Remote endpoint access strategy authorizing service access based on response code:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy",
+    "endpointUrl" : "https://somewhere.example.org",
+    "acceptableResponseCodes" : "200,202"
+  }
+}
+```
+
+## Grouper
+
+The grouper access strategy is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-grouper</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+This access strategy attempts to locate [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) 
+groups for the CAS principal. The groups returned by Grouper
+are collected as CAS attributes and examined against the list of required attributes for service access.
+
+The following properties are available:
+
+| Field        | Description                                                                       | Values
+|--------------|-----------------------------------------------------------------------------------|-----------------------------------------------------------
+| `groupField` | Attribute of the Grouper group used when converting the group to a CAS attribute. | `NAME`, `EXTENSION`, `DISPLAY_NAME` or `DISPLAY_EXTENSION`.
+
+You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
+with the following configured properties:
+
+```properties
+grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+grouperClient.webService.login = banderson
+grouperClient.webService.password = password
+```
+
+Grouper access strategy based on group's display extension:
 
 ```json
 {
@@ -253,21 +279,6 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
       "grouperAttributes" : [ "java.util.HashSet", [ "faculty" ] ]
     },
     "groupField" : "DISPLAY_EXTENSION"
-  }
-}
-```
-
-* Remote endpoint access strategy authorizing service access based on response code:
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.+",
-  "id" : 1,
-  "accessStrategy" : {
-    "@class" : "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy",
-    "endpointUrl" : "https://somewhere.example.org",
-    "acceptableResponseCodes" : "200,202"
   }
 }
 ```

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +43,7 @@ public class CasApplicationContextConfiguration {
             protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) 
                     throws Exception {
                 final String queryString = request.getQueryString();
-                final String url = request.getContextPath() + "/login" + (queryString != null ? '?' + queryString : "");
+                final String url = request.getContextPath() + "/login" + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
         };
