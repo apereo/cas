@@ -29,4 +29,5 @@ org.apereo.cas.config.CasSamlSPOpenAthensConfiguration,\
 org.apereo.cas.config.CasSamlSPEverBridgeConfiguration,\
 org.apereo.cas.config.CasSamlSPCherWellConfiguration,\
 org.apereo.cas.config.CasSamlSPBynderConfiguration,\
+org.apereo.cas.config.CasSamlSPFamisConfiguration,\
 org.apereo.cas.config.CasSamlSPInCommonConfiguration
