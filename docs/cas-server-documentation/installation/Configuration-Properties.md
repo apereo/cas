@@ -3177,6 +3177,14 @@ The only required setting that would activate the automatic configuration for a 
 # cas.samlSp.cherWell.description=CherWell Integration
 ```
 
+### FAMIS
+
+```properties
+# cas.samlSp.famis.metadata=/path/to/famis-metadata.xml
+# cas.samlSp.famis.name=Famis
+# cas.samlSp.famis.description=Famis Integration
+```
+
 ### Bynder
 
 ```properties
