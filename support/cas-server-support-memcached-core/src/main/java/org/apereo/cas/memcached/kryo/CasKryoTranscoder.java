@@ -80,25 +80,35 @@ import java.util.regex.Pattern;
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
  * suited for efficient serialization of tickets.
+ * <p>
+ * We can’t use an auto-register type approach, because the sequence of class registration has to be deterministic.
+ * So – for example – if we register in the sequence in which we encounter classes, then if you have two (or more)
+ * instances of CAS running (e.g. for HA or horizontal scaling), then they would likely register classes in a different sequence.
+ * The sequence is a factor in assigning an internal Kryo integer id to each class.
+ * And, Kryo serializes be embedding that class id into the object, rather than the class name
+ * (makes for a much smaller serialized entity).  So – if the same class gets registered in both instances,
+ * but get different id’s, then the same cached object would deserialize differently (if we’re lucky it would throw an exception,
+ * if we’re unlucky it would contain bad data).  Or – a class gets registered in one instance, but not the other.
+ * So – it needs to be pre-registered, and in a deterministic sequence.
+ * </p>
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 3.0.0
  */
 public class CasKryoTranscoder implements Transcoder<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasKryoTranscoder.class);
-    
+
     /**
      * Kryo serializer.
      */
     private final Kryo kryo;
 
     /**
-     * Creates a Kryo-based transcoder.
+     * Instantiates a new Cas kryo transcoder.
+     *
+     * @param classesToRegister the classes to register
      */
-    public CasKryoTranscoder() {
-        this(new ArrayList());
-    }
-
     public CasKryoTranscoder(final Collection<Class> classesToRegister) {
         this.kryo = new KryoReflectionFactorySupport();
 
@@ -113,13 +123,13 @@ public class CasKryoTranscoder implements Transcoder<Object> {
             LOGGER.debug("Registering serializable class [{}] with Kryo", c.getName());
             this.kryo.register(c);
         });
-        
+
         setWarnUnregisteredClasses(true);
         setAutoReset(false);
         setReplaceObjectsByReferences(false);
         setRegistrationRequired(false);
     }
-   
+
     /**
      * If true, kryo writes a warn log telling about the classes unregistered. Default is false.
      * If false, no log are written when unregistered classes are encountered.
@@ -146,7 +156,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
      * @param value the value
      */
     public void setReplaceObjectsByReferences(final boolean value) {
-        this.kryo.setReferences(false);
+        this.kryo.setReferences(value);
     }
 
     /**
@@ -194,7 +204,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(DefaultAuthentication.class);
         this.kryo.register(UsernamePasswordCredential.class);
         this.kryo.register(SimplePrincipal.class);
-        
+
         this.kryo.register(PublicKeyFactoryBean.class);
         this.kryo.register(ReturnAllowedAttributeReleasePolicy.class);
         this.kryo.register(ReturnAllAttributeReleasePolicy.class);
@@ -244,7 +254,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
      * Asynchronous decoding is not supported.
      *
      * @param d Data to decode.
-     * @return False.
+     * @return false.
      */
     @Override
     public boolean asyncDecode(final CachedData d) {
@@ -283,10 +293,10 @@ public class CasKryoTranscoder implements Transcoder<Object> {
 
     /**
      * Gets the kryo object that provides encoding and decoding services for this instance.
-     *
+     * Keep this package-private to only allow access to various tests that might need it.
      * @return Underlying Kryo instance.
      */
-    public Kryo getKryo() {
+    Kryo getKryo() {
         return this.kryo;
     }
 }
