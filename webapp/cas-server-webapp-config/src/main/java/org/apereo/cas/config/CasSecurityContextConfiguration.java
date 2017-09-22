@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -12,9 +13,6 @@ import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.engine.DefaultSecurityLogic;
-import org.pac4j.core.exception.HttpAction;
 import org.pac4j.http.client.direct.IpClient;
 import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -36,7 +34,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -116,7 +113,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         if (cfg.getClients() == null) {
             return requiresAuthenticationStatusInterceptor();
         }
-        final CasAdminPagesSecurityInterceptor interceptor = new CasAdminPagesSecurityInterceptor(cfg,
+        final CasSecurityInterceptor interceptor = new CasSecurityInterceptor(cfg,
                 CAS_CLIENT_NAME, "securityHeaders,csrfToken,".concat(getAuthorizerName()));
         return interceptor;
     }
@@ -172,30 +169,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
                 v.setExposePathVariables(false);
                 modelAndView.setView(v);
             }
-        }
-    }
-
-    /**
-     * The Cas admin pages security interceptor.
-     */
-    public static class CasAdminPagesSecurityInterceptor extends SecurityInterceptor {
-
-        public CasAdminPagesSecurityInterceptor(final Config config, final String clients, final String authorizers) {
-            super(config, clients, authorizers);
-
-            final DefaultSecurityLogic secLogic = new DefaultSecurityLogic() {
-                @Override
-                protected HttpAction unauthorized(final WebContext context, final List currentClients) {
-                    return HttpAction.forbidden("Access Denied", context);
-                }
-
-                @Override
-                protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
-                    return true;
-                }
-            };
-            secLogic.setSaveProfileInSession(true);
-            setSecurityLogic(secLogic);
         }
     }
 }
