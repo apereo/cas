@@ -51,6 +51,14 @@ public interface ServiceRegistryDao {
     RegisteredService findServiceById(String id);
 
     /**
+     * Find a service by an exact match of the service id.
+     *
+     * @param id the id
+     * @return the registered service
+     */
+    RegisteredService findServiceByExactServiceId(String id);
+
+    /**
      * Return number of records held in this service registry. Provides Java 8 supported default implementation so that implementations
      * needed this new functionality could override it and other implementations not caring for it could be left alone.
      *
