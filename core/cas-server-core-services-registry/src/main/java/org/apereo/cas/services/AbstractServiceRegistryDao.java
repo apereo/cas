@@ -27,7 +27,7 @@ public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
-        return load().stream().filter((r) -> r.getServiceId().equals(id)).findFirst().orElse(null);
+        return load().stream().filter(r -> r.getServiceId().equals(id)).findFirst().orElse(null);
     }
 
     /**
