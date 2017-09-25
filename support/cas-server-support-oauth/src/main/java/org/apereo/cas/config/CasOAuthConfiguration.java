@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -238,24 +237,22 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             }
         };
         final String throttler = casProperties.getAuthn().getOauth().getThrottler();
-        if (throttler.equals("neverThrottle")) {
+        if ("neverThrottle".equals(throttler)) {
             return oauthHandlerInterceptorAdapter;
         } else {
             final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
             final String throttledUrl = BASE_OAUTH20_URL.concat("/").concat(ACCESS_TOKEN_URL);
             HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
                 @Override
-                public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-                    if (request.getServletPath().startsWith(throttledUrl)) {
-                        if (!throttledInterceptor.preHandle(request, response, handler)) {
-                            return false;
-                        }
+                public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+                    if (request.getServletPath().startsWith(throttledUrl) && !throttledInterceptor.preHandle(request, response, handler)) {
+                        return false;
                     }
                     return oauthHandlerInterceptorAdapter.preHandle(request, response, handler);
                 }
 
                 @Override
-                public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final ModelAndView modelAndView) throws Exception {
                     if (request.getServletPath().startsWith(throttledUrl)) {
                         throttledInterceptor.postHandle(request, response, handler, modelAndView);
                     }
