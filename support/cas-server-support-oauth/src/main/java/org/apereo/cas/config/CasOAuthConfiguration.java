@@ -246,7 +246,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
                 @Override
                 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-                    if (request.getContextPath().startsWith(throttledUrl)) {
+                    if (request.getServletPath().startsWith(throttledUrl)) {
                         if (!throttledInterceptor.preHandle(request, response, handler)) {
                             return false;
                         }
@@ -256,7 +256,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
                 @Override
                 public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-                    if (request.getContextPath().startsWith(throttledUrl)) {
+                    if (request.getServletPath().startsWith(throttledUrl)) {
                         throttledInterceptor.postHandle(request, response, handler, modelAndView);
                     }
                 }
