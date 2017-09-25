@@ -75,6 +75,11 @@ public class ServiceRegistryInitializer {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
             return true;
         }
+        match = this.serviceRegistryDao.findServiceByExactServiceId(r.getServiceId());
+        if (match != null) {
+            LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
+            return true;
+        }
         match = this.serviceRegistryDao.findServiceById(r.getId());
         if (match != null) {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match.getId());
