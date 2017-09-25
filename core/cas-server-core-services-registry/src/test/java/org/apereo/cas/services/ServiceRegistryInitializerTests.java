@@ -41,7 +41,7 @@ public class ServiceRegistryInitializerTests {
     }
 
 
-    RegexRegisteredService newService() {
+    private RegexRegisteredService newService() {
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setServiceId("^https?://.*");
         service.setName("Test");
