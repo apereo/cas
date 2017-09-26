@@ -5,6 +5,7 @@ import org.apereo.cas.audit.entity.AuditTrailEntity;
 import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -44,7 +45,7 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Bean
     public JdbcAuditTrailManager jdbcAuditTrailManager() {
-        final AuditProperties.Jdbc jdbc = casProperties.getAudit().getJdbc();
+        final AuditJdbcProperties jdbc = casProperties.getAudit().getJdbc();
         final JdbcAuditTrailManager t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
         t.setDataSource(inspektrAuditTrailDataSource());

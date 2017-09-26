@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
@@ -13,6 +14,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@RequiredModule(name = "core-authentication", automatic = true)
 public class PasswordPolicyProperties implements Serializable {
 
     private static final long serialVersionUID = -3878237508646993100L;

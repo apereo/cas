@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "support-person-directory", automatic = true)
 public class LdapPrincipalAttributesProperties extends AbstractLdapProperties {
     private static final long serialVersionUID = 5760065368731012063L;
 

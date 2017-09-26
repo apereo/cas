@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
@@ -82,7 +82,7 @@ public class CasConfigurationProperties implements Serializable {
     private HttpClientProperties httpClient = new HttpClientProperties();
 
     @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties personDirectory = new PersonDirPrincipalResolverProperties();
+    private PersonDirectoryPrincipalResolverProperties personDirectory = new PersonDirectoryPrincipalResolverProperties();
 
     @NestedConfigurationProperty
     private EventsProperties events = new EventsProperties();
@@ -216,11 +216,11 @@ public class CasConfigurationProperties implements Serializable {
         this.httpClient = httpClient;
     }
 
-    public PersonDirPrincipalResolverProperties getPersonDirectory() {
+    public PersonDirectoryPrincipalResolverProperties getPersonDirectory() {
         return personDirectory;
     }
 
-    public void setPersonDirectory(final PersonDirPrincipalResolverProperties personDirectory) {
+    public void setPersonDirectory(final PersonDirectoryPrincipalResolverProperties personDirectory) {
         this.personDirectory = personDirectory;
     }
 

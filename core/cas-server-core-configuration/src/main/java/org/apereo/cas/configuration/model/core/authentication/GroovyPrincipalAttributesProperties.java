@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 /**
@@ -8,6 +9,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "support-person-directory", automatic = true)
 public class GroovyPrincipalAttributesProperties extends SpringResourceProperties {
     private static final long serialVersionUID = 7901595963842506684L;
     /**
