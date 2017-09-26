@@ -68,6 +68,8 @@ import java.util.stream.StreamSupport;
  * private List<SomeClassProperties> list = new ArrayList<>()
  * }
  *
+ * The generator additionally adds hints to the metadata generated to indicate
+ * required properties and modules.
  * @author Misagh Moayyed
  * @since 5.2.0
  */

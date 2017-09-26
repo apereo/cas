@@ -86,7 +86,7 @@ $('.ui.search').search({
                     if (prop.requiredModule != null) {
                         modules.add(prop.requiredModule);
                     }
-                    html += '</p><br/>';
+                    html += '<hr>';
                 }
 
                 if (modules.size > 0) {
