@@ -25,7 +25,7 @@ public class ThreadLocalPrincipalResolverTests {
     }
 
     @Test
-    public void noAuthenticationOrCrendentialsAvailableInThreadLocal() {
+    public void noAuthenticationOrCredentialsAvailableInThreadLocal() {
         assertResolvedPrincipal(PrincipalResolver.UNKNOWN_USER);
     }
 
