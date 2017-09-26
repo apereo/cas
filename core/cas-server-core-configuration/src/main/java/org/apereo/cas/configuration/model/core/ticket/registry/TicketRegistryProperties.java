@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegis
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-core-tickets", automated = true)
 public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
@@ -192,7 +194,8 @@ public class TicketRegistryProperties implements Serializable {
     public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
         this.dynamoDb = dynamoDb;
     }
-    
+
+    @RequiredModule(name = "cas-server-core-tickets", automated = true)
     public static class InMemory implements Serializable {
 
         private static final long serialVersionUID = -2600525447128979994L;

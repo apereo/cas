@@ -12,7 +12,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automated = true)
+@RequiredModule(name = "cas-server-core-authentication", automated = true)
 public class AuthenticationPolicyProperties implements Serializable {
 
     private static final long serialVersionUID = 2039700004862120066L;

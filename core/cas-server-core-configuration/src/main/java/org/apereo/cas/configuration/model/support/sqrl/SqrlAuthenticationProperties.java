@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.sqrl;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-support-sqrl")
 public class SqrlAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7788819241628970358L;
     /**

@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-person-directory", automated = true)
+@RequiredModule(name = "cas-server-support-person-directory", automated = true)
 public class StubPrincipalAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = 7017508256487553063L;

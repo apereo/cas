@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.webapp;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
+@RequiredModule(name = "cas-server-core-web")
 public class LocaleProperties implements Serializable {
 
     private static final long serialVersionUID = -1644471820900213781L;

@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-azure")
+@RequiredModule(name = "cas-server-support-azure")
 public class AzureMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 6726032660671158922L;
 

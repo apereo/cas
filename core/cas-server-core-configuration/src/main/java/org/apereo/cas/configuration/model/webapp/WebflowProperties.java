@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.webapp;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -14,7 +15,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
+@RequiredModule(name = "cas-server-core-webflow")
 public class WebflowProperties implements Serializable {
 
     private static final long serialVersionUID = 4949978905279568311L;

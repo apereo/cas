@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiredModule(name = "cas-server-support-surrogate-webflow")
 public class SurrogateAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2088813217398883623L;
     /**
@@ -138,6 +140,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
         this.separator = separator;
     }
 
+    @RequiredModule(name = "cas-server-support-surrogate-webflow")
     public static class Simple implements Serializable {
         private static final long serialVersionUID = 16938920863432222L;
         /**
@@ -157,14 +160,17 @@ public class SurrogateAuthenticationProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-surrogate-webflow")
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 3599367681439517829L;
     }
 
+    @RequiredModule(name = "cas-server-support-surrogate-authentication-rest")
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 8152273816132989085L;
     }
-    
+
+    @RequiredModule(name = "cas-server-support-surrogate-authentication-ldap")
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -3848837302921751926L;
         /**
@@ -237,6 +243,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-surrogate-authentication")
     public static class Tgt implements Serializable {
         private static final long serialVersionUID = 2077366413438267330L;
 
@@ -253,7 +260,8 @@ public class SurrogateAuthenticationProperties implements Serializable {
             this.timeToKillInSeconds = timeToKillInSeconds;
         }
     }
-    
+
+    @RequiredModule(name = "cas-server-support-surrogate-authentication-jdbc")
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 8970195444880123796L;
 

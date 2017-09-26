@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author serv
  * @since 5.1.0
  */
+@RequiredModule(name = "cas-server-support-redis-ticket-registry")
 public class RedisTicketRegistryProperties extends BaseRedisProperties {
     private static final long serialVersionUID = -2600996050439638782L;
 

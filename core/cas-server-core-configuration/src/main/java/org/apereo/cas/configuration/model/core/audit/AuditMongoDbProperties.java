@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RequiredModule;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-audit-mongo")
+@RequiredModule(name = "cas-server-support-audit-mongo")
 public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
     private static final long serialVersionUID = 4940497540189318943L;
 

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.webapp.mgmt;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-management-webapp")
 public class ManagementWebappProperties implements Serializable {
     private static final long serialVersionUID = -7686426966125636166L;
     /**
@@ -114,6 +116,7 @@ public class ManagementWebappProperties implements Serializable {
         this.authzIpRegex = authzIpRegex;
     }
 
+    @RequiredModule(name = "cas-management-webapp-support-ldap")
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -8129280052479631538L;
         /**

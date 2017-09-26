@@ -1,6 +1,8 @@
 package org.apereo.cas.metadata.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
@@ -130,5 +132,33 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
     public void setOrder(final int order) {
         this.order = order;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final ConfigurationMetadataSearchResult rhs = (ConfigurationMetadataSearchResult) obj;
+        return new EqualsBuilder()
+                .append(this.order, rhs.order)
+                .append(getName(), rhs.getName())
+                .append(this.group, rhs.group)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(order)
+                .append(getName())
+                .append(group)
+                .toHashCode();
     }
 }

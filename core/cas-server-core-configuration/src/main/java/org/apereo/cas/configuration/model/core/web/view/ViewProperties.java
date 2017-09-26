@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.web.view;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
+@RequiredModule(name = "cas-server-core-web", automated = true)
 public class ViewProperties implements Serializable {
     private static final long serialVersionUID = 2719748442042197738L;
     /**

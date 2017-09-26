@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.rest;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,11 +10,12 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-support-rest", automated = true)
 public class RestProperties implements Serializable {
     private static final long serialVersionUID = -1833107478273171342L;
     /**
      * Authorization attribute name required by the REST endpoint in order to allow for the requested operation.
-     * Attribute must be resolveable by the authenticated principal, or must have been already.
+     * Attribute must be resolvable by the authenticated principal, or must have been already.
      */
     private String attributeName;
     /**

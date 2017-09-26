@@ -84,7 +84,7 @@ $('.ui.search').search({
                     }
 
                     if (prop.requiredModule != null) {
-                        modules.add("cas-server-" + prop.requiredModule);
+                        modules.add(prop.requiredModule);
                     }
                     html += '</p><br/>';
                 }

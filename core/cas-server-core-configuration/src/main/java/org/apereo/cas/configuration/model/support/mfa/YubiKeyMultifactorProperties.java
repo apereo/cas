@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-yubikey")
+@RequiredModule(name = "cas-server-support-yubikey")
 public class YubiKeyMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 9138057706201201089L;
     /**

@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-radius-mfa")
+@RequiredModule(name = "cas-server-support-radius-mfa")
 public class RadiusMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 7021301814775348087L;
     /**

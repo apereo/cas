@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -16,6 +17,7 @@ import java.time.temporal.ChronoUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-consent-webflow")
 public class ConsentProperties implements Serializable {
     private static final long serialVersionUID = 5201308051524438384L;
     /**
@@ -124,14 +126,17 @@ public class ConsentProperties implements Serializable {
         this.mongo = mongo;
     }
 
+    @RequiredModule(name = "cas-server-consent-webflow")
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
 
+    @RequiredModule(name = "cas-server-consent-jdbc")
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 1646689616653363554L;
     }
-    
+
+    @RequiredModule(name = "cas-server-consent-ldap")
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = 1L;
         
@@ -198,7 +203,8 @@ public class ConsentProperties implements Serializable {
             this.userFilter = userFilter;
         }
     }
-    
+
+    @RequiredModule(name = "cas-server-consent-mongo")
     public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
 
@@ -206,7 +212,8 @@ public class ConsentProperties implements Serializable {
             setCollection("MongoDbCasConsentRepository");
         }
     }
-    
+
+    @RequiredModule(name = "cas-server-consent-rest")
     public static class Rest implements Serializable {
         private static final long serialVersionUID = -6909617495470495341L;
 
