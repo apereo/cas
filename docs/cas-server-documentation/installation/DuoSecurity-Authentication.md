@@ -26,8 +26,13 @@ You may need to add the following repositories to the WAR overlay:
 
 ```xml
 <repository>
-    <id>duo</id>
+    <id>duo-unicon</id>
     <url>https://dl.bintray.com/uniconiam/maven</url>
+</repository>
+
+<repository>
+    <id>duo-jitpack</id>
+    <url>https://jitpack.io</url>
 </repository>
 ```
 
