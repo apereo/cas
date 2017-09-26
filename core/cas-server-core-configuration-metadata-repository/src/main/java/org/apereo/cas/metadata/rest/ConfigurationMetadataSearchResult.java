@@ -1,6 +1,7 @@
 package org.apereo.cas.metadata.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.configuration.support.RequiredModule;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered {
+public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered, Comparable<ConfigurationMetadataSearchResult> {
     private static final long serialVersionUID = 7767348341760984539L;
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataSearchResult.class);
 
@@ -52,7 +53,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             setOrder(CasConfigurationMetadataRepository.isCasProperty(prop) ? Ordered.HIGHEST_PRECEDENCE : Ordered.LOWEST_PRECEDENCE);
 
             final List<ValueHint> valueHints = prop.getHints().getValueHints();
-            
+
             valueHints.forEach(hint -> {
                 final Set values = CollectionUtils.toCollection(hint.getValue());
                 if (values.contains(RequiredModule.class.getName())) {
@@ -63,7 +64,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
                     setRequiredProperty(true);
                 }
             });
-            
+
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -133,7 +134,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
     public void setOrder(final int order) {
         this.order = order;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -160,5 +161,14 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
                 .append(getName())
                 .append(group)
                 .toHashCode();
+    }
+
+    @Override
+    public int compareTo(final ConfigurationMetadataSearchResult o) {
+        return new CompareToBuilder()
+                .append(this.order, o.getOrder())
+                .append(getName(), o.getName())
+                .append(this.group, o.getGroup())
+                .build();
     }
 }
