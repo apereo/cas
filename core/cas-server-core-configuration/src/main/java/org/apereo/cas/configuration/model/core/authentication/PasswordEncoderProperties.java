@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automatic = true)
+@RequiredModule(name = "core-authentication", automated = true)
 public class PasswordEncoderProperties implements Serializable {
     private static final long serialVersionUID = -2396781005262069816L;
 

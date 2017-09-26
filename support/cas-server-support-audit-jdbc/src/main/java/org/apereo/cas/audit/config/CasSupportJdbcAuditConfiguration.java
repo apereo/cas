@@ -6,7 +6,6 @@ import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
-import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;

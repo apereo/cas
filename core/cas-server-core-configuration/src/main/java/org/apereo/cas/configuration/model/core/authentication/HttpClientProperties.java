@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automatic = true)
+@RequiredModule(name = "core-authentication", automated = true)
 public class HttpClientProperties implements Serializable {
     private static final long serialVersionUID = -7494946569869245770L;
     /**

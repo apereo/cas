@@ -27,7 +27,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automatic = true)
+@RequiredModule(name = "core-authentication", automated = true)
 public class PrincipalAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = -4515569588579072890L;

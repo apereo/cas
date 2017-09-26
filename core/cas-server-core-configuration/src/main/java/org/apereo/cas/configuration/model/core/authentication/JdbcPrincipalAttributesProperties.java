@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-person-directory", automatic = true)
+@RequiredModule(name = "support-person-directory", automated = true)
 public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 6915428382578138387L;
 

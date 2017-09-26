@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "support-pac4j-webflow")
 public class Pac4jSamlProperties implements Serializable {
     private static final long serialVersionUID = -862819796533384951L;
 
@@ -18,7 +20,7 @@ public class Pac4jSamlProperties implements Serializable {
      * when creating authentication requests.
      */
     private String destinationBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
-    
+
     /**
      * The password to use when generating the SP/CAS keystore.
      */

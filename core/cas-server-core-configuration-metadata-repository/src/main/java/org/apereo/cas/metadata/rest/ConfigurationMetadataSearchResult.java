@@ -1,15 +1,19 @@
 package org.apereo.cas.metadata.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
+import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.core.Ordered;
 
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +34,8 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
     private int order;
     private String group;
     private boolean requiredProperty;
+    private String requiredModule;
+    private boolean requiredModuleAutomated;
 
     public ConfigurationMetadataSearchResult(final ConfigurationMetadataProperty prop, final CasConfigurationMetadataRepository repository) {
         try {
@@ -43,14 +49,30 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             setGroup(CasConfigurationMetadataRepository.getPropertyGroupId(prop));
             setOrder(CasConfigurationMetadataRepository.isCasProperty(prop) ? Ordered.HIGHEST_PRECEDENCE : Ordered.LOWEST_PRECEDENCE);
 
-            final boolean required = prop.getHints()
-                    .getValueHints()
-                    .stream()
-                    .anyMatch(h -> h.getValue().equals(RequiredProperty.class.getName()));
-            setRequiredProperty(required);
+            final List<ValueHint> valueHints = prop.getHints().getValueHints();
+            
+            valueHints.forEach(hint -> {
+                final Set values = CollectionUtils.toCollection(hint.getValue());
+                if (values.contains(RequiredModule.class.getName())) {
+                    setRequiredModule(hint.getDescription());
+                    setRequiredModuleAutomated(values.contains(Boolean.TRUE));
+                }
+                if (values.contains(RequiredProperty.class.getName())) {
+                    setRequiredProperty(true);
+                }
+            });
+            
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    public String getRequiredModule() {
+        return requiredModule;
+    }
+
+    public void setRequiredModule(final String requiredModule) {
+        this.requiredModule = requiredModule;
     }
 
     public boolean isRequiredProperty() {
@@ -67,6 +89,14 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
     public void setGroup(final String group) {
         this.group = group;
+    }
+
+    public boolean isRequiredModuleAutomated() {
+        return requiredModuleAutomated;
+    }
+
+    public void setRequiredModuleAutomated(final boolean requiredModuleAutomated) {
+        this.requiredModuleAutomated = requiredModuleAutomated;
     }
 
     private String cleanUpDescription(final String propDescription) {

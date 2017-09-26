@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-person-directory", automatic = true)
+@RequiredModule(name = "support-person-directory", automated = true)
 public class GroovyPrincipalAttributesProperties extends SpringResourceProperties {
     private static final long serialVersionUID = 7901595963842506684L;
     /**

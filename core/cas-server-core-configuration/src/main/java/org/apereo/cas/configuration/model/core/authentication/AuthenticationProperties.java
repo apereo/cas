@@ -48,7 +48,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automatic = true)
+@RequiredModule(name = "core-authentication", automated = true)
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;

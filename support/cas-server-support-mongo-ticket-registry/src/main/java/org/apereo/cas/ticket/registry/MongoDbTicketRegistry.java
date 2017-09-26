@@ -196,7 +196,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     /**
-     * Calculate the time at which the ticket is eligible for automatic deletion by MongoDb.
+     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {

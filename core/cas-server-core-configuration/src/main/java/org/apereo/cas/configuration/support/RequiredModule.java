@@ -35,5 +35,5 @@ public @interface RequiredModule {
      *
      * @return the boolean
      */
-    boolean automatic() default false;
+    boolean automated() default false;
 }

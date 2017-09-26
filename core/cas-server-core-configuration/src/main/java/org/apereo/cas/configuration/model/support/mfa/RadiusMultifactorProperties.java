@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "support-radius-mfa")
 public class RadiusMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 7021301814775348087L;
     /**

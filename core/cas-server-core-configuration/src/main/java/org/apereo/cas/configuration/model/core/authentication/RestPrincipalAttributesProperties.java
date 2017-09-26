@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RestEndpointProperties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-person-directory", automatic = true)
+@RequiredModule(name = "support-person-directory", automated = true)
 public class RestPrincipalAttributesProperties extends RestEndpointProperties {
     private static final long serialVersionUID = -30055974448426360L;
     /**

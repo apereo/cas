@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automatic = true)
+@RequiredModule(name = "core-authentication", automated = true)
 public class PasswordPolicyProperties implements Serializable {
 
     private static final long serialVersionUID = -3878237508646993100L;

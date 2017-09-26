@@ -5,7 +5,6 @@ import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditMongoDbProperties;
-import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;

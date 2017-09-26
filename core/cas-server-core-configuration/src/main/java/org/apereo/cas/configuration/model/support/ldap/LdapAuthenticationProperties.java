@@ -30,7 +30,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * Password encoder settings for REST authentication.
+     * Password encoder settings for LDAP authentication.
      */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
