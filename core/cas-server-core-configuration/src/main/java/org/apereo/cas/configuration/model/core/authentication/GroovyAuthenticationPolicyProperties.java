@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "core-authentication", automatic = true)
+@RequiredModule(name = "core-authentication", automated = true)
 public class GroovyAuthenticationPolicyProperties implements Serializable {
     private static final long serialVersionUID = 8713917167124116270L;
     /**
