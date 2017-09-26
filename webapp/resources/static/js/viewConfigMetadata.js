@@ -30,7 +30,7 @@ $('.ui.search').search({
                         deprecated: prop.deprecated,
                         requiredProperty: prop.requiredProperty,
                         requiredModule: prop.requiredModule,
-                        requiredModuleAutomated : prop.requiredModuleAutomated
+                        requiredModuleAutomated: prop.requiredModuleAutomated
                     });
                 }
             }
@@ -90,30 +90,30 @@ $('.ui.search').search({
                 }
 
                 if (modules.size > 0) {
-                    html += "<div>";
-                    html += "<p><i class='fa fa-gear' />&nbsp;Required Modules</p>"
-                    html += "<ul class='nav nav-pills'>"
-                    html += "<li class='active'><a  href='#1' data-toggle='tab'>Maven</a></li>";
-                    html += "<li><a href='#2' data-toggle='tab'>Gradle</a></li>"
-                    html += "</ul>";
+                    html += '<div>';
+                    html += '<p><i class=\'fa fa-gear\' />&nbsp;Required Modules</p>';
+                    html += '<ul class=\'nav nav-pills\'>';
+                    html += '<li class=\'active\'><a  href=\'#1\' data-toggle=\'tab\'>Maven</a></li>';
+                    html += '<li><a href=\'#2\' data-toggle=\'tab\'>Gradle</a></li>';
+                    html += '</ul>';
 
                     for (let moduleString of modules) {
-                        html += "<div class='tab-content'>";
+                        html += '<div class=\'tab-content\'>';
 
-                        var moduleArr = moduleString.split("|");
+                        var moduleArr = moduleString.split('|');
                         var module = moduleArr[0];
-                        
-                        var maven = "&lt;dependency&gt;\n";
-                        maven += "\t&lt;groupId&gt;org.apereo.cas&lt;/groupId&gt;\n"
-                        maven += "\t&lt;artifactId&gt;" + module + "&lt;/artifactId&gt;\n"
-                        maven += "\t&lt;cas.version&gt;${cas.version}&lt;/cas.version&gt;\n"
-                        maven += "&lt;/dependency&gt;\n"
-                        html += "<div class='tab-pane active' id='1'><pre>" + maven + "</pre></div>"
-                        
-                        var gradle = "compile \"org.apereo.cas:" + module + ":${project.'cas.version'}\"\n"
-                        html += "<div class='tab-pane' id='2'><pre>" + gradle + "</pre></div>"
-                        
-                        html += "</div>"
+
+                        var maven = '&lt;dependency&gt;\n';
+                        maven += '\t&lt;groupId&gt;org.apereo.cas&lt;/groupId&gt;\n';
+                        maven += '\t&lt;artifactId&gt;' + module + '&lt;/artifactId&gt;\n';
+                        maven += '\t&lt;cas.version&gt;${cas.version}&lt;/cas.version&gt;\n';
+                        maven += '&lt;/dependency&gt;\n';
+                        html += '<div class=\'tab-pane active\' id=\'1\'><pre>' + maven + '</pre></div>';
+
+                        var gradle = 'compile \'org.apereo.cas:' + module + ':${project.\'cas.version\'}\'\n';
+                        html += '<div class=\'tab-pane\' id=\'2\'><pre>' + gradle + '</pre></div>';
+
+                        html += '</div>';
                     }
 
                     html += '</div>';
@@ -122,7 +122,7 @@ $('.ui.search').search({
                 html += '</div>';
             }
 
-            html += "</div>";
+            html += '</div>';
 
 
             $('#accordion').html(html);

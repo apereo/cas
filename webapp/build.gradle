@@ -9,7 +9,7 @@ uploadArchives {
 }
 
 node {
-    version = '7.10.0'
+    version = "${nodeVersion}"
     nodeModulesDir = file("./")
     download = true
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
+@RequiredModule(name = "cas-server-support-generic")
 public class FileAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 4031366217090049241L;
