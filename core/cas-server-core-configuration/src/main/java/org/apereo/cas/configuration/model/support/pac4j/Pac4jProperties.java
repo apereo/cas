@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "support-pac4j-webflow")
 public class Pac4jProperties implements Serializable {
 
     private static final long serialVersionUID = 4388567744591488495L;

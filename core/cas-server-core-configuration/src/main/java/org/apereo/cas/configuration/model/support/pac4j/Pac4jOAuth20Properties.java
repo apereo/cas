@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "support-pac4j-webflow")
 public class Pac4jOAuth20Properties extends Pac4jGenericClientProperties {
     private static final long serialVersionUID = -1240711580664148382L;
     /**

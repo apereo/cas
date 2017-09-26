@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiredModule(name = "core-authentication", automatic = true)
+@RequiredModule(name = "core-authentication", automated = true)
 public class RiskBasedAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 3826749727400569308L;

@@ -38,7 +38,7 @@ public final class CollectionUtils {
      */
     @SuppressWarnings("unchecked")
     public static Set<Object> toCollection(final Object obj) {
-        final Set<Object> c = new HashSet<>();
+        final Set<Object> c = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {

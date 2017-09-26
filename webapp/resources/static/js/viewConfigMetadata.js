@@ -28,7 +28,9 @@ $('.ui.search').search({
                         defaultValue: prop.defaultValue,
                         type: prop.type,
                         deprecated: prop.deprecated,
-                        requiredProperty: prop.requiredProperty
+                        requiredProperty: prop.requiredProperty,
+                        requiredModule: prop.requiredModule,
+                        requiredModuleAutomated : prop.requiredModuleAutomated
                     });
                 }
             }
@@ -40,7 +42,7 @@ $('.ui.search').search({
     templates: {
         message: function (response, type) {
             var html = '';
-            $( '#accordion' ).empty();
+            $('#accordion').empty();
 
             if (type === 'empty') {
                 html += '<h3><i class=\'fa fa-search\' />&nbsp;<strong>No Results</strong></h3>';
@@ -49,12 +51,15 @@ $('.ui.search').search({
                 html += 'No search results could be found based on the provided query.';
                 html += '</div>';
             }
+
             for (var group in response.results) {
+                var modules = new Set();
 
                 html += '<h2><i class=\'fa fa-users\' />&nbsp;<strong>Group: </strong>' + group + '</h2>';
                 var props = response.results[group].results;
 
                 html += '<div>';
+
                 for (var i = 0; i < props.length; i++) {
                     html += '<p>';
                     var prop = props[i];
@@ -77,16 +82,54 @@ $('.ui.search').search({
                     if (prop.description != null) {
                         html += '<p>' + prop.description + '</p>';
                     }
+
+                    if (prop.requiredModule != null) {
+                        modules.add("cas-server-" + prop.requiredModule);
+                    }
                     html += '</p><br/>';
                 }
+
+                if (modules.size > 0) {
+                    html += "<div>";
+                    html += "<p><i class='fa fa-gear' />&nbsp;Required Modules</p>"
+                    html += "<ul class='nav nav-pills'>"
+                    html += "<li class='active'><a  href='#1' data-toggle='tab'>Maven</a></li>";
+                    html += "<li><a href='#2' data-toggle='tab'>Gradle</a></li>"
+                    html += "</ul>";
+
+                    for (let moduleString of modules) {
+                        html += "<div class='tab-content'>";
+
+                        var moduleArr = moduleString.split("|");
+                        var module = moduleArr[0];
+                        
+                        var maven = "&lt;dependency&gt;\n";
+                        maven += "\t&lt;groupId&gt;org.apereo.cas&lt;/groupId&gt;\n"
+                        maven += "\t&lt;artifactId&gt;" + module + "&lt;/artifactId&gt;\n"
+                        maven += "\t&lt;cas.version&gt;${cas.version}&lt;/cas.version&gt;\n"
+                        maven += "&lt;/dependency&gt;\n"
+                        html += "<div class='tab-pane active' id='1'><pre>" + maven + "</pre></div>"
+                        
+                        var gradle = "compile \"org.apereo.cas:" + module + ":${project.'cas.version'}\"\n"
+                        html += "<div class='tab-pane' id='2'><pre>" + gradle + "</pre></div>"
+                        
+                        html += "</div>"
+                    }
+
+                    html += '</div>';
+                }
+
                 html += '</div>';
             }
 
-            $( '#accordion' ).html(html);
-            $( '#accordion' ).accordion({
+            html += "</div>";
+
+
+            $('#accordion').html(html);
+            $('#accordion').accordion({
                 heightStyle: 'content'
             });
-            $( '#accordion' ).accordion('refresh');
+            $('#accordion').accordion('refresh');
             return '';
         }
     }

@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.core.audit;
 
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 
 import java.io.Serializable;

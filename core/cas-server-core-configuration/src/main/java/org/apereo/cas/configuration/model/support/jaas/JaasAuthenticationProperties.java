@@ -71,7 +71,7 @@ public class JaasAuthenticationProperties implements Serializable {
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * Password encoder settings for REST authentication.
+     * Password encoder settings for JAAS authentication.
      */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
