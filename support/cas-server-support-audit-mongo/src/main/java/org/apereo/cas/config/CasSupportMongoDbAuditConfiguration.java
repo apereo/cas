@@ -4,6 +4,7 @@ import org.apereo.cas.audit.MongoDbAuditTrailManager;
 import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.audit.AuditMongoDbProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -28,7 +29,7 @@ public class CasSupportMongoDbAuditConfiguration {
 
     @Bean
     public AuditTrailManager mongoDbAuditTrailManager() {
-        final AuditProperties.MongoDb mongo = casProperties.getAudit().getMongo();
+        final AuditMongoDbProperties mongo = casProperties.getAudit().getMongo();
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());

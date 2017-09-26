@@ -2,6 +2,7 @@ package org.apereo.cas.metadata.rest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
@@ -42,10 +43,11 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             setGroup(CasConfigurationMetadataRepository.getPropertyGroupId(prop));
             setOrder(CasConfigurationMetadataRepository.isCasProperty(prop) ? Ordered.HIGHEST_PRECEDENCE : Ordered.LOWEST_PRECEDENCE);
 
-            final Pair<Boolean, String> required = repository.getRequiredProperty(prop);
-            if (required != null) {
-                setRequiredProperty(required.getKey());
-            }
+            final boolean required = prop.getHints()
+                    .getValueHints()
+                    .stream()
+                    .anyMatch(h -> h.getValue().equals(RequiredProperty.class.getName()));
+            setRequiredProperty(required);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
