@@ -80,6 +80,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
+    private static final Pattern PAC4J_CLIENT_CSS_CLASS_PATTERN = Pattern.compile("\\W");
 
     private final Clients clients;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -209,7 +210,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 final String type = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName()).replaceAll(StringUtils.EMPTY).toLowerCase();
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase(), getCssClass(name)));
+                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
 
             } catch (final HttpAction e) {
                 if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
@@ -231,9 +232,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private String getCssClass(final String name) {
         String computedCssClass = "fa fa-lock";
         if (name != null) {
-            computedCssClass = computedCssClass.concat(" " + name.replaceAll("\\W", "-"));
+            computedCssClass = computedCssClass.concat(" " + this.PAC4J_CLIENT_CSS_CLASS_PATTERN.matcher(name).replaceAll("-"));
         }
-        LOGGER.debug("cssClass for " + " name " + " is " + computedCssClass);
+        LOGGER.debug("cssClass for {} is {} ", name, computedCssClass);
         return computedCssClass;
     }
 
