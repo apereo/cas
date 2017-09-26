@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
+@RequiredModule(name = "cas-server-support-generic")
 public class RejectAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -3228601837221178711L;

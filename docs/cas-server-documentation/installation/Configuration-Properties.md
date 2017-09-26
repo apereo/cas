@@ -3827,6 +3827,7 @@ To learn more about this topic, [please review this guide](Logout-Single-Signout
 # cas.logout.followServiceRedirects=false
 # cas.logout.redirectParameter=service
 # cas.logout.confirmLogout=false
+# cas.logout.removeDescendantTickets=false
 ```
 
 ## Single Logout

@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-authentication")
+@RequiredModule(name = "cas-server-support-throttle", automated = true)
 public class ThrottleProperties implements Serializable {
     private static final String DEFAULT_APPLICATION_CODE = "CAS";
     private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
@@ -93,7 +93,7 @@ public class ThrottleProperties implements Serializable {
     /**
      * Failure.
      */
-    @RequiredModule(name = "cas-server-core-authentication")
+    @RequiredModule(name = "cas-server-support-throttle", automated = true)
     public static class Failure implements Serializable {
         private static final long serialVersionUID = 1246256695801461610L;
 

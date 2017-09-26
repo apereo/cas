@@ -103,8 +103,7 @@ public class ConsentDecisionBuilder {
                 final Pair<String, String> pair = buildConsentAttributes(attributes);
                 final String decNames = this.consentCipherExecutor.decode(decision.getAttributeNames());
                 final String decValues = this.consentCipherExecutor.decode(decision.getAttributeValues());
-                return !StringUtils.equals(decNames, pair.getKey())
-                        || !StringUtils.equals(decValues, pair.getValue());
+                return !StringUtils.equals(decNames, pair.getKey()) || !StringUtils.equals(decValues, pair.getValue());
             default:
                 return false;
         }

@@ -25,6 +25,17 @@ public class LogoutProperties implements Serializable {
     private boolean followServiceRedirects;
 
     /**
+     * Indicates whether tickets issued and linked to a ticket-granting ticket
+     * should also be removed as part of logout. There are a number of tickets
+     * issued by CAS whose expiration policy is usually by default bound
+     * to the SSO expiration policy and the active TGT, yet such tickets may be
+     * allowed to live beyond the normal lifetime of a CAS SSO session
+     * with options to be renewed. Examples include OAuth's access tokens, etc.
+     * Set this option to true if you want all linked tickets to be removed.
+     */
+    private boolean removeDescendantTickets;
+    
+    /**
      * Before logout, allow the option to confirm on the web interface.
      */
     private boolean confirmLogout;
@@ -51,5 +62,13 @@ public class LogoutProperties implements Serializable {
 
     public void setFollowServiceRedirects(final boolean followServiceRedirects) {
         this.followServiceRedirects = followServiceRedirects;
+    }
+
+    public boolean isRemoveDescendantTickets() {
+        return removeDescendantTickets;
+    }
+
+    public void setRemoveDescendantTickets(final boolean removeDescendantTickets) {
+        this.removeDescendantTickets = removeDescendantTickets;
     }
 }
