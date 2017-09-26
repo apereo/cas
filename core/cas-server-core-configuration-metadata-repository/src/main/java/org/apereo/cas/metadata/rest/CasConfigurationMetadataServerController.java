@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-import org.springframework.core.OrderComparator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -100,7 +100,7 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      */
     @GetMapping(path = "/search")
     public ResponseEntity<List<ConfigurationMetadataSearchResult>> search(@RequestParam(value = "name", required = false) final String name) {
-        List<ConfigurationMetadataSearchResult> results = new ArrayList<>();
+        List results = new ArrayList<>();
         final Map<String, ConfigurationMetadataProperty> allProps = repository.getRepository().getAllProperties();
 
         if (StringUtils.isNotBlank(name) && RegexUtils.isValidRegex(name)) {
@@ -113,7 +113,7 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
                     .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))
                     .map(propEntry -> new ConfigurationMetadataSearchResult(propEntry.getValue(), repository))
                     .collect(Collectors.toList());
-            OrderComparator.sort(results);
+            Collections.sort(results);
         }
         return ResponseEntity.ok(results);
     }

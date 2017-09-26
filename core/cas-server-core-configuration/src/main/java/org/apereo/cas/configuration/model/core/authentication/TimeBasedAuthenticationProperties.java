@@ -12,7 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "core-authentication", automated = true)
+@RequiredModule(name = "cas-server-core-authentication", automated = true)
 public class TimeBasedAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 3826749727400569308L;
 

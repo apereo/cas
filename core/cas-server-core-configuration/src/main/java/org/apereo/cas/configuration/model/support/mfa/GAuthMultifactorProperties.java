@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-gauth")
+@RequiredModule(name = "cas-server-support-gauth")
 public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = -7401748853833491119L;
     /**

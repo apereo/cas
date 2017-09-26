@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-pac4j-webflow")
+@RequiredModule(name = "cas-server-support-pac4j-webflow")
 public class Pac4jOAuth20Properties extends Pac4jGenericClientProperties {
     private static final long serialVersionUID = -1240711580664148382L;
     /**

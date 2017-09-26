@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.radius;
 
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-support-radius")
 public class RadiusClientProperties implements Serializable {
     private static final long serialVersionUID = -7961769318651312854L;
     /**
