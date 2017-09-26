@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
 public class LdapConsentRepositoryTests extends AbstractLdapTests {
     
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final ConsentDecisionBuilder BUILDER = new ConsentDecisionBuilder(NoOpCipherExecutor.getInstance());
+    private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(NoOpCipherExecutor.getInstance());
     
     private static final String ATTR_NAME = "description";
     private static final String USER_CN = "consentTest";
