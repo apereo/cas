@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -153,7 +153,7 @@ public class SpnegoProperties implements Serializable {
      * Password encoding settings for this authentication.
      */
     @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
 
     /**
      * Name of the authentication handler.
@@ -176,11 +176,11 @@ public class SpnegoProperties implements Serializable {
         this.principalTransformation = principalTransformation;
     }
 
-    public PersonDirPrincipalResolverProperties getPrincipal() {
+    public PersonDirectoryPrincipalResolverProperties getPrincipal() {
         return principal;
     }
 
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+    public void setPrincipal(final PersonDirectoryPrincipalResolverProperties principal) {
         this.principal = principal;
     }
 

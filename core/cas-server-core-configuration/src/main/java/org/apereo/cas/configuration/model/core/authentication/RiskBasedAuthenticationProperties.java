@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiredModule(name = "core-authentication", automatic = true)
 public class RiskBasedAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 3826749727400569308L;

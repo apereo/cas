@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "core-authentication", automatic = true)
 public class TimeBasedAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 3826749727400569308L;
 
