@@ -189,6 +189,9 @@ public class CasCoreAuditConfiguration {
         return map;
     }
 
+    /**
+     * Extension point for deployers to define custom AuditActionResolvers to extend the stock resolvers.
+     */
     @ConditionalOnMissingBean(name = "customAuditActionResolverMap")
     @Bean
     public Map<String, AuditActionResolver> customAuditActionResolverMap() {
@@ -220,6 +223,9 @@ public class CasCoreAuditConfiguration {
         return map;
     }
 
+    /**
+     * Extension point for deployers to define custom AuditResourceResolvers to extend the stock resolvers.
+     */
     @ConditionalOnMissingBean(name = "customAuditResourceResolverMap")
     @Bean
     public Map<String, AuditResourceResolver> customAuditResourceResolverMap() {
