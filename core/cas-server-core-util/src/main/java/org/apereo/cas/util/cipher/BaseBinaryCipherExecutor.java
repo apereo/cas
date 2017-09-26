@@ -134,7 +134,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                 key = EncodingUtils.decodeBase64(encryptionSecretKey);
             }
             if (base64 && key.length == encryptionKeySize) {
-                LOGGER.info("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
+                LOGGER.debug("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
                 encryptionKey = key;
             } else if (encryptionSecretKey.length() != encryptionKeySize) {
                 LOGGER.warn("Secret key for encryption defined under [{}] is Base64 encoded but the size does not match the key size [{}].",

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.x509;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -216,7 +216,7 @@ public class X509Properties implements Serializable {
      * Principal resolution properties.
      */
     @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
 
     /**
      * LDAP settings when fetching CRLs from LDAP.
@@ -326,11 +326,11 @@ public class X509Properties implements Serializable {
         this.crlFetcher = crlFetcher;
     }
 
-    public PersonDirPrincipalResolverProperties getPrincipal() {
+    public PersonDirectoryPrincipalResolverProperties getPrincipal() {
         return principal;
     }
 
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+    public void setPrincipal(final PersonDirectoryPrincipalResolverProperties principal) {
         this.principal = principal;
     }
 

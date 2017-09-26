@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "core-authentication", automatic = true)
 public class RestAuthenticationPolicyProperties implements Serializable {
     private static final long serialVersionUID = -8979188862774758908L;
     /**

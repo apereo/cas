@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.openid;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -19,7 +19,7 @@ public class OpenIdProperties implements Serializable {
      * Principal construction settings.
      */
     @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
 
     /**
      * Whether relying party identifies should be enforced.
@@ -48,11 +48,11 @@ public class OpenIdProperties implements Serializable {
         this.enforceRpId = enforceRpId;
     }
 
-    public PersonDirPrincipalResolverProperties getPrincipal() {
+    public PersonDirectoryPrincipalResolverProperties getPrincipal() {
         return principal;
     }
 
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+    public void setPrincipal(final PersonDirectoryPrincipalResolverProperties principal) {
         this.principal = principal;
     }
 }

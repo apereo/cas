@@ -1,8 +1,9 @@
-package org.apereo.cas.configuration;
+package org.apereo.cas.configuration.metadata;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,10 +17,12 @@ import com.github.javaparser.ast.expr.LiteralStringValueExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.base.Predicate;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
@@ -32,13 +35,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
+import org.springframework.boot.configurationmetadata.ValueHint;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -63,6 +70,7 @@ import java.util.stream.StreamSupport;
  */
 public class ConfigurationMetadataGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataGenerator.class);
+    private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
     private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
 
     private final String buildDir;
@@ -81,7 +89,8 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        new ConfigurationMetadataGenerator(args[0], args[1]).execute();
+        new ConfigurationMetadataGenerator("/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration/build",
+                "/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration").execute();
     }
 
     /**
@@ -93,9 +102,10 @@ public class ConfigurationMetadataGenerator {
         final File jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
         final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
-        final Map<String, Set<ConfigurationMetadataProperty>> jsonMap = mapper.readValue(jsonFile, values);
+        final Map<String, Set> jsonMap = mapper.readValue(jsonFile, values);
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
         final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 
@@ -110,16 +120,20 @@ public class ConfigurationMetadataGenerator {
                     final String typeName = matcher.group(1);
                     final String typePath = buildTypeSourcePath(typeName);
                     parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
+
                 }));
+
+        final Set<ConfigurationMetadataHint> hints = processHints(collectedProps, collectedGroups);
+
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
 
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
-
+        jsonMap.put("hints", hints);
+        
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        final PrettyPrinter pp = new MinimalPrettyPrinter();
-        mapper.writer(pp).writeValue(jsonFile, jsonMap);
+        final PrettyPrinter pp = new DefaultPrettyPrinter();
         mapper.writer(pp).writeValue(jsonFile, jsonMap);
     }
 
@@ -193,16 +207,16 @@ public class ConfigurationMetadataGenerator {
             prop.setName(indexedName);
             prop.setId(indexedName);
 
-            switch (n.getElementType().asString()) {
-                case "String":
-                case "Integer":
-                case "Double":
-                case "Long":
-                case "Float":
-                    prop.setType("java.lang." + n.getElementType().asString());
-                    break;
-                default:
-                    prop.setType(n.getElementType().asString());
+
+            final String elementType = n.getElementType().asString();
+            if (elementType.equals(String.class.getSimpleName())
+                    || elementType.equals(Integer.class.getSimpleName())
+                    || elementType.equals(Long.class.getSimpleName())
+                    || elementType.equals(Double.class.getSimpleName())
+                    || elementType.equals(Float.class.getSimpleName())) {
+                prop.setType("java.lang." + elementType);
+            } else {
+                prop.setType(elementType);
             }
 
             if (variable.getInitializer().isPresent()) {
@@ -276,5 +290,43 @@ public class ConfigurationMetadataGenerator {
                 .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
         cachedPropertiesClasses.put(type.getNameAsString(), clz);
         return clz;
+    }
+
+    private Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+                                                        final Collection<ConfigurationMetadataProperty> groups) {
+
+        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
+
+        for (final ConfigurationMetadataProperty entry : props) {
+            try {
+                final String propName = StringUtils.substringAfterLast(entry.getName(), ".");
+                final String groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+                final ConfigurationMetadataProperty grp = groups
+                        .stream()
+                        .filter(g -> g.getId().equalsIgnoreCase(groupName))
+                        .findFirst()
+                        .orElse(null);
+
+                final Matcher matcher = PATTERN_GENERICS.matcher(grp.getType());
+                final String className = matcher.find() ? matcher.group(1) : grp.getType();
+                final Class clazz = ClassUtils.getClass(className);
+
+                final boolean found = StreamSupport.stream(RelaxedNames.forCamelCase(propName).spliterator(), false)
+                        .map(n -> ReflectionUtils.findField(clazz, n))
+                        .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
+
+                if (found) {
+                    final ConfigurationMetadataHint hint = new ConfigurationMetadataHint();
+                    hint.setName(entry.getName());
+                    final ValueHint valueHint = new ValueHint();
+                    valueHint.setValue(RequiredProperty.class.getName());
+                    hint.getValues().add(valueHint);
+                    hints.add(hint);
+                }
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        return hints;
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "support-person-directory", automatic = true)
 public class StubPrincipalAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = 7017508256487553063L;

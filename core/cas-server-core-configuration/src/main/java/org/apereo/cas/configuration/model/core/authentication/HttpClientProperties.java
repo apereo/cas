@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -11,7 +12,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
+@RequiredModule(name = "core-authentication", automatic = true)
 public class HttpClientProperties implements Serializable {
     private static final long serialVersionUID = -7494946569869245770L;
     /**

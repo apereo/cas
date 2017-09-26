@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
@@ -16,6 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "support-person-directory", automatic = true)
 public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 6915428382578138387L;
 

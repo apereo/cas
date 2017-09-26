@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,8 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class PersonDirPrincipalResolverProperties implements Serializable {
+@RequiredModule(name = "core-authentication", automatic = true)
+public class PersonDirectoryPrincipalResolverProperties implements Serializable {
 
     private static final long serialVersionUID = 8929912041234879300L;
     /**
