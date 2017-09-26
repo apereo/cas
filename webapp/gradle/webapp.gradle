@@ -21,7 +21,6 @@ javadoc {
     enabled false
 }
 
-
 if (rootProject.enableJRebelAgent) {
     war.dependsOn(generateRebel)
 }
