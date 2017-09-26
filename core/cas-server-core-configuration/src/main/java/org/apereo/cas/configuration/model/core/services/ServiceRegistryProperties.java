@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegis
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
 import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-core-services", automated = true)
 public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;

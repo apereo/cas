@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automated = true)
+@RequiredModule(name = "cas-server-core-authentication", automated = true)
 public class PersonDirectoryPrincipalResolverProperties implements Serializable {
 
     private static final long serialVersionUID = 8929912041234879300L;

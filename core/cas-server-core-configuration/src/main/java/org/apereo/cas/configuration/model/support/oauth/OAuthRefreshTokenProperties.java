@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredModule;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-support-oauth")
 public class OAuthRefreshTokenProperties implements Serializable {
     private static final long serialVersionUID = -8328568272835831702L;
     /**

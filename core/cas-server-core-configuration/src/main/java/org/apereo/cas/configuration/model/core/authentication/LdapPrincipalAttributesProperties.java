@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-person-directory", automated = true)
+@RequiredModule(name = "cas-server-support-person-directory", automated = true)
 public class LdapPrincipalAttributesProperties extends AbstractLdapProperties {
     private static final long serialVersionUID = 5760065368731012063L;
 

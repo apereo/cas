@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-u2f")
+@RequiredModule(name = "cas-server-support-u2f")
 public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 6151350313777066398L;
 
