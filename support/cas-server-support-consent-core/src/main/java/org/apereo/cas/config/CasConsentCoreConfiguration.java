@@ -4,7 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
-import org.apereo.cas.consent.*;
+import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
