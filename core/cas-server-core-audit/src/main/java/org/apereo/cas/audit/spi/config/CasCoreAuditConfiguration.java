@@ -184,7 +184,18 @@ public class CasCoreAuditConfiguration {
 
         map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
 
+        map.putAll(customAuditActionResolverMap());
+
         return map;
+    }
+
+    /**
+     * Extension point for deployers to define custom AuditActionResolvers to extend the stock resolvers.
+     */
+    @ConditionalOnMissingBean(name = "customAuditActionResolverMap")
+    @Bean
+    public Map<String, AuditActionResolver> customAuditActionResolverMap() {
+        return new HashMap<>();
     }
 
     @ConditionalOnMissingBean(name = "auditResourceResolverMap")
@@ -208,7 +219,17 @@ public class CasCoreAuditConfiguration {
         map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
+        map.putAll(customAuditResourceResolverMap());
         return map;
+    }
+
+    /**
+     * Extension point for deployers to define custom AuditResourceResolvers to extend the stock resolvers.
+     */
+    @ConditionalOnMissingBean(name = "customAuditResourceResolverMap")
+    @Bean
+    public Map<String, AuditResourceResolver> customAuditResourceResolverMap() {
+        return new HashMap<>();
     }
 
     @ConditionalOnMissingBean(name = "auditablePrincipalResolver")
