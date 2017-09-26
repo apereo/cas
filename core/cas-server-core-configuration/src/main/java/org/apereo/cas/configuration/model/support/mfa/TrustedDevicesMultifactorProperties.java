@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-trusted-mfa")
+@RequiredModule(name = "cas-server-support-trusted-mfa")
 public class TrustedDevicesMultifactorProperties implements Serializable {
     private static final long serialVersionUID = 1505013239016790473L;
     /**

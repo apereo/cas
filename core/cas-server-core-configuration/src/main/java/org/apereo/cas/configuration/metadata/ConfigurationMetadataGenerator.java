@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.JavaParser;
@@ -22,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +51,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -89,8 +92,7 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        new ConfigurationMetadataGenerator("/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration/build",
-                "/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration").execute();
+        new ConfigurationMetadataGenerator(args[0], args[1]).execute();
     }
 
     /**
@@ -102,7 +104,7 @@ public class ConfigurationMetadataGenerator {
         final File jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
         final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+       
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
         final Map<String, Set> jsonMap = mapper.readValue(jsonFile, values);
@@ -122,16 +124,16 @@ public class ConfigurationMetadataGenerator {
                     parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
 
                 }));
-
-        final Set<ConfigurationMetadataHint> hints = processHints(collectedProps, collectedGroups);
-
+        
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
 
+        final Set<ConfigurationMetadataHint> hints = processHints(properties, groups);
+        
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
         jsonMap.put("hints", hints);
-        
+
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         final PrettyPrinter pp = new DefaultPrettyPrinter();
         mapper.writer(pp).writeValue(jsonFile, jsonMap);
@@ -303,24 +305,41 @@ public class ConfigurationMetadataGenerator {
                 final String groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
                 final ConfigurationMetadataProperty grp = groups
                         .stream()
-                        .filter(g -> g.getId().equalsIgnoreCase(groupName))
+                        .filter(g -> g.getName().equalsIgnoreCase(groupName))
                         .findFirst()
-                        .orElse(null);
-
+                        .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
+                
                 final Matcher matcher = PATTERN_GENERICS.matcher(grp.getType());
                 final String className = matcher.find() ? matcher.group(1) : grp.getType();
                 final Class clazz = ClassUtils.getClass(className);
 
-                final boolean found = StreamSupport.stream(RelaxedNames.forCamelCase(propName).spliterator(), false)
+            
+                final ConfigurationMetadataHint hint = new ConfigurationMetadataHint();
+                hint.setName(entry.getName());
+
+                if (clazz.isAnnotationPresent(RequiredModule.class)) {
+                    final RequiredModule annotation = Arrays.stream(clazz.getAnnotations())
+                            .filter(a -> a.annotationType().equals(RequiredModule.class))
+                            .findFirst()
+                            .map(RequiredModule.class::cast)
+                            .get();
+                    final ValueHint valueHint = new ValueHint();
+                    valueHint.setValue(Stream.of(RequiredModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
+                    valueHint.setDescription(annotation.name());
+                    hint.getValues().add(valueHint);
+                }
+
+                final boolean foundRequiredProperty = StreamSupport.stream(RelaxedNames.forCamelCase(propName).spliterator(), false)
                         .map(n -> ReflectionUtils.findField(clazz, n))
                         .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
 
-                if (found) {
-                    final ConfigurationMetadataHint hint = new ConfigurationMetadataHint();
-                    hint.setName(entry.getName());
+                if (foundRequiredProperty) {
                     final ValueHint valueHint = new ValueHint();
                     valueHint.setValue(RequiredProperty.class.getName());
                     hint.getValues().add(valueHint);
+                }
+
+                if (!hint.getValues().isEmpty()) {
                     hints.add(hint);
                 }
             } catch (final Exception e) {

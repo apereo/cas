@@ -12,7 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "support-pac4j-webflow")
+@RequiredModule(name = "cas-server-support-pac4j-webflow")
 public class Pac4jProperties implements Serializable {
 
     private static final long serialVersionUID = 4388567744591488495L;
@@ -262,6 +262,7 @@ public class Pac4jProperties implements Serializable {
         this.orcid = orcid;
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class LinkedIn extends Pac4jGenericClientProperties {
 
         private static final long serialVersionUID = 4633395854143281872L;
@@ -295,6 +296,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Facebook extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -2737594266552466076L;
         /**
@@ -327,6 +329,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Bitbucket extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -6189494666598669078L;
 
@@ -335,6 +338,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Wordpress extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 4636855941699435914L;
         public Wordpress() {
@@ -342,6 +346,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Paypal extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -5663033494303169583L;
         public Paypal() {
@@ -349,13 +354,15 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Twitter extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 6906343970517008092L;
         public Twitter() {
             setClientName("Twitter");
         }
     }
-    
+
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Github extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 9217581995885784515L;
         public Github() {
@@ -363,6 +370,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Yahoo extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 8011580257047982361L;
         public Yahoo() {
@@ -370,6 +378,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Foursquare extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -1784820695301605307L;
         public Foursquare() {
@@ -377,6 +386,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Dropbox extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -1508055128010569953L;
         public Dropbox() {
@@ -384,6 +394,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Orcid extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = 1337923364401817796L;
         public Orcid() {
@@ -391,6 +402,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class WindowsLive extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -1816309711278174847L;
         public WindowsLive() {
@@ -398,6 +410,7 @@ public class Pac4jProperties implements Serializable {
         }
     }
 
+    @RequiredModule(name = "cas-server-support-pac4j-webflow")
     public static class Google extends Pac4jGenericClientProperties {
         private static final long serialVersionUID = -3023053058552426312L;
         /**

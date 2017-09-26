@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-pac4j-webflow")
+@RequiredModule(name = "cas-server-support-pac4j-webflow")
 public class Pac4jOidcProperties extends Pac4jGenericClientProperties {
     private static final long serialVersionUID = 3359382317533639638L;
     /**

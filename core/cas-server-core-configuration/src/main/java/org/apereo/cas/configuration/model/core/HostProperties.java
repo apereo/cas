@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
+@RequiredModule(name = "cas-server-core", automated = true)
 public class HostProperties implements Serializable {
     private static final long serialVersionUID = 8624916460241033347L;
     /**

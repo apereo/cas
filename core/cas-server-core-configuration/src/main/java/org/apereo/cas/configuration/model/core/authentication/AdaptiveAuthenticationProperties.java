@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "core-authentication", automated = true)
+@RequiredModule(name = "cas-server-core-authentication", automated = true)
 public class AdaptiveAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1840174229142982880L;

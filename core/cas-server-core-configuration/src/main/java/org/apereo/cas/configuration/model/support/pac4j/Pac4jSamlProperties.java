@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "support-pac4j-webflow")
+@RequiredModule(name = "cas-server-support-pac4j-webflow")
 public class Pac4jSamlProperties implements Serializable {
     private static final long serialVersionUID = -862819796533384951L;
 
