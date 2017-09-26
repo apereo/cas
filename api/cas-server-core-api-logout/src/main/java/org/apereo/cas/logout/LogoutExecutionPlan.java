@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -18,12 +19,15 @@ public interface LogoutExecutionPlan {
      *
      * @param handler the handler
      */
-    void registerLogoutHandler(LogoutHandler handler);
+    default void registerLogoutHandler(final LogoutHandler handler) {
+    }
 
     /**
      * Gets logout handlers.
      *
      * @return the logout handlers
      */
-    Collection<LogoutHandler> getLogoutHandlers();
+    default Collection<LogoutHandler> getLogoutHandlers() {
+        return new ArrayList<>();
+    }
 }
