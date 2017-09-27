@@ -112,7 +112,7 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @Bean
-    public AuditPrincipalIdProvider principalIdProvider() {
+    public AuditPrincipalIdProvider auditPrincipalIdProvider() {
         return new SurrogateAuditPrincipalIdProvider();
     }
 

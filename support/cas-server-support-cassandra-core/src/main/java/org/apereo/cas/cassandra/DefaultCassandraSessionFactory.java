@@ -80,11 +80,10 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
         cluster = builder.build();
 
         if (LOGGER.isDebugEnabled()) {
-            cluster.getMetadata().getAllHosts().forEach(clusterHost -> {
-                LOGGER.debug("Host [{}]:\n\n\tDC: [{}]\n\tRack: [{}]\n\tVersion: [{}]\n\tDistance: [{}]\n\tUp?: [{}]\n",
-                        clusterHost.getAddress(), clusterHost.getDatacenter(), clusterHost.getRack(),
-                        clusterHost.getCassandraVersion(), loadBalancingPolicy.distance(clusterHost), clusterHost.isUp());
-            });
+            cluster.getMetadata().getAllHosts().forEach(clusterHost -> 
+                    LOGGER.debug("Host [{}]:\n\n\tDC: [{}]\n\tRack: [{}]\n\tVersion: [{}]\n\tDistance: [{}]\n\tUp?: [{}]\n",
+                    clusterHost.getAddress(), clusterHost.getDatacenter(), clusterHost.getRack(),
+                    clusterHost.getCassandraVersion(), loadBalancingPolicy.distance(clusterHost), clusterHost.isUp()));
         }
         return cluster;
     }
