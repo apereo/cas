@@ -41,8 +41,17 @@ public interface ConsentDecisionBuilder {
      *
      * @param decision   the decision
      * @param attributes the attributes
-     * @return true/false
+     * @return true /false
      */
     boolean doesAttributeReleaseRequireConsent(ConsentDecision decision,
                                                Map<String, Object> attributes);
+
+    /**
+     * Gets consentable attributes from the consent decision.
+     * The operation is allowed to change attributes and/or unpack
+     * attributes from encoded strings, etc.
+     * @param decision the decision
+     * @return the consentable attributes
+     */
+    Map<String, Object> getConsentableAttributesFrom(ConsentDecision decision);
 }

@@ -140,20 +140,30 @@ public final class EncodingUtils {
      * Base64-decode the given string as byte[].
      *
      * @param data the base64 string
-     * @return the encoded array
+     * @return the decoded array
      */
     public static byte[] decodeBase64(final String data) {
         return Base64.decodeBase64(data);
     }
-
+    
     /**
      * Base64-decode the given string as byte[].
      *
      * @param data the base64 string
-     * @return the encoded array
+     * @return the decoded array
      */
     public static byte[] decodeBase64(final byte[] data) {
         return Base64.decodeBase64(data);
+    }
+
+    /**
+     * Base64-decode the given string as String.
+     *
+     * @param data the base64 string
+     * @return the string
+     */
+    public static String decodeBase64ToString(final String data) {
+        return new String(decodeBase64(data), StandardCharsets.UTF_8);
     }
 
     /**
