@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.rest;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-support-rest-authentication")
 public class RestAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -6122859176355467060L;
     /**

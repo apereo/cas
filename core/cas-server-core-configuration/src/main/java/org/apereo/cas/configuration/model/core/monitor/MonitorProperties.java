@@ -341,7 +341,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-core-web", automated = true)
+    @RequiredModule(name = "cas-server-support-reports", automated = true)
     public static class Endpoints extends BaseEndpoint {
 
         /**
@@ -556,15 +556,15 @@ public class MonitorProperties implements Serializable {
             this.trustedDevices = trustedDevices;
         }
 
-        @RequiredModule(name = "cas-server-core-web", automated = true)
+        @RequiredModule(name = "cas-server-support-reports", automated = true)
         public static class Dashboard extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-audit", automated = true)
+        @RequiredModule(name = "cas-server-support-reports", automated = true)
         public static class AuditEvents extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-authentication", automated = true)
+        @RequiredModule(name = "cas-server-support-reports", automated = true)
         public static class AuthenticationEvents extends BaseEndpoint {
         }
 

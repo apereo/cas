@@ -46,6 +46,11 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
+    public Collection<ConsentDecision> findConsentDecisions() {
+        return new ArrayList<>(this.consentDecisions);
+    }
+
+    @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         final ConsentDecision consent = getConsentDecisions()
                 .stream()
@@ -61,11 +66,6 @@ public abstract class BaseConsentRepository implements ConsentRepository {
         return true;
     }
     
-    @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
-        return new ArrayList<>(this.consentDecisions);
-    }
-
     protected Set<ConsentDecision> getConsentDecisions() {
         return this.consentDecisions;
     }

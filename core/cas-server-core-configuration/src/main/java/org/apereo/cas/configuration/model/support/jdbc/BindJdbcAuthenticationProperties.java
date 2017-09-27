@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.jdbc;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-support-jdbc-authentication")
 public class BindJdbcAuthenticationProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 4268982716707687796L;
     /**

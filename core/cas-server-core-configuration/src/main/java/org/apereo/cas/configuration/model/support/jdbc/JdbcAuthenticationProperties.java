@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-support-jdbc-authentication")
 public class JdbcAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7199786191466526110L;
     /**
