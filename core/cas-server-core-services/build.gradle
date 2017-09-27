@@ -18,5 +18,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":support:cas-server-support-person-directory")
 }
 
