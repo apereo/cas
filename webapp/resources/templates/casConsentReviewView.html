@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{screen.consent.review.header}"></title>
+
+    <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
+    <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var urls = {
+            delete: /*[[@{/consent/deleteConsentDecision}]]*/,
+            getConsentDecisions: /*[[@{/consent/getConsentDecisions}]]*/
+        };
+
+        function jqueryReady() {
+            head.load(
+                /*[[@{/js/consentReview.js}]]*/
+            );
+        }
+    </script>
+</head>
+
+<body id="cas">
+    <div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/consentReview.css}"/>
+
+        <div id="content">
+
+            <div class="consentOverview">
+                <h1 th:utext="#{screen.consent.review.header}"/>
+
+                <div id="loadingMessage">
+                    <h3 th:text="#{screen.consent.review.loading}"/>
+                </div>
+
+                <div id="no-consent-decisions">
+                    <h3 th:text="#{screen.consent.review.noconsentdecisions}"/><p/>
+                </div>
+
+                <div id="consent-decisons">
+                    <div id="alertWrapper"></div>
+                    <table id="consentDecisions" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Service</th>
+                                <th>Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -8,7 +8,7 @@ import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.consent.CasConsentOverviewController;
+import org.apereo.cas.web.consent.CasConsentReviewController;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
@@ -33,15 +33,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link CasConsentOverviewConfiguration}.
+ * This is {@link CasConsentReviewConfiguration}.
  *
  * @author Arnold Bergner
  * @since 5.2.0
  */
-@Configuration("casConsentOverviewConfiguration")
+@Configuration("casConsentReviewConfiguration")
 @ConditionalOnBean(name = "casSecurityContextConfiguration")
-public class CasConsentOverviewConfiguration extends WebMvcConfigurerAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentOverviewConfiguration.class);
+public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewConfiguration.class);
 
     private static final String CAS_CLIENT_NAME = "CasClient";
 
@@ -69,18 +69,18 @@ public class CasConsentOverviewConfiguration extends WebMvcConfigurerAdapter {
     private ConsentEngine consentEngine;
 
     @Bean
-    public CasConsentOverviewController casConsentOverviewController() {
-        return new CasConsentOverviewController(consentRepository, consentEngine);
+    public CasConsentReviewController casConsentReviewController() {
+        return new CasConsentReviewController(consentRepository, consentEngine);
     }
 
     @Bean
     @RefreshScope
-    public CasConsentOverviewSecurityInterceptor casConsentOverviewSecurityInterceptor() {
+    public CasConsentReviewSecurityInterceptor casConsentReviewSecurityInterceptor() {
         final String authorizer = IsAuthenticatedAuthorizer.class.getSimpleName();
         if (!config.getAuthorizers().containsKey(authorizer)) {
             config.addAuthorizer(authorizer, new IsAuthenticatedAuthorizer());
         }
-        return new CasConsentOverviewSecurityInterceptor(config, CAS_CLIENT_NAME,
+        return new CasConsentReviewSecurityInterceptor(config, CAS_CLIENT_NAME,
                 "securityHeaders,csrfToken,".concat(IsAuthenticatedAuthorizer.class.getSimpleName()));
     }
 
@@ -108,16 +108,16 @@ public class CasConsentOverviewConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(casConsentOverviewSecurityInterceptor()).addPathPatterns("/consent")
+        registry.addInterceptor(casConsentReviewSecurityInterceptor()).addPathPatterns("/consent")
                 .addPathPatterns("/consent/*");
     }
 
     /**
     * The security interceptor for consent overview.
     */
-    public static class CasConsentOverviewSecurityInterceptor extends CasSecurityInterceptor implements HandlerInterceptor {
+    public static class CasConsentReviewSecurityInterceptor extends CasSecurityInterceptor implements HandlerInterceptor {
 
-        public CasConsentOverviewSecurityInterceptor(final Config config, final String clients,
+        public CasConsentReviewSecurityInterceptor(final Config config, final String clients,
                 final String authorizers) {
             super(config, clients, authorizers);
         }

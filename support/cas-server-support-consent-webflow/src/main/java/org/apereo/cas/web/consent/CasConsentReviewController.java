@@ -23,20 +23,20 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This is {@link CasConsentOverviewController}.
+ * This is {@link CasConsentReviewController}.
  *
  * @author Arnold Bergner
  * @since 5.2.0
  */
-@Controller("casConsentOverviewController")
+@Controller("casConsentReviewController")
 @RequestMapping("/consent")
-public class CasConsentOverviewController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentOverviewController.class);
+public class CasConsentReviewController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewController.class);
 
     private final ConsentRepository consentRepository;
     private final ConsentEngine consentEngine;
 
-    public CasConsentOverviewController(final ConsentRepository consentRepository, final ConsentEngine consentEngine) {
+    public CasConsentReviewController(final ConsentRepository consentRepository, final ConsentEngine consentEngine) {
         this.consentRepository = consentRepository;
         this.consentEngine = consentEngine;
     }
@@ -51,7 +51,7 @@ public class CasConsentOverviewController {
     @GetMapping
     public String showConsent(final HttpServletRequest request,
                                         final HttpServletResponse response) {
-        return "casConsentOverviewView";
+        return "casConsentReviewView";
     }
 
     /**
@@ -82,7 +82,7 @@ public class CasConsentOverviewController {
 
     /**
      * Returns decoded consent decision.
-     * @param decision
+     * @param decision the decision
      * @return the decoded decision
      */
     private Map<String, Object> decodeDecision(final ConsentDecision decision) {
