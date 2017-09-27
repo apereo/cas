@@ -1,0 +1,17 @@
+/* --------------- CUSTOM STYLES */
+@import "components/variables";
+@import "partials/fonts";
+@import "partials/reset";
+@import "partials/base";
+
+/**
+ * Consent Review Styles
+ */
+
+#consent-decisions, #no-consent-decisions {
+  display: none;
+}
+
+#no-consent-decisions div {
+  margin-top: 2em;
+}
