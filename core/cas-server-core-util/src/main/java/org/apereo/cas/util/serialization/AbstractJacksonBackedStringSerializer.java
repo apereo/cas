@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJacksonBackedStringSerializer.class);
-    private static final int ABBREVIATE_MAX_WIDTH = 100;
+    
 
     private final PrettyPrinter prettyPrinter;
 
@@ -238,7 +238,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                             + "in the absence of a configuration/support module that knows how to interpret the JSON fragment, "
                             + "specially if the fragment describes a CAS registered service definition. "
                             + "Internal parsing error is [{}]",
-                    StringUtils.abbreviate(jsonString, ABBREVIATE_MAX_WIDTH), getTypeToSerialize(), e.getMessage());
+                    DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
             LOGGER.trace(e.getMessage(), e);
         }
         return null;

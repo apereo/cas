@@ -4,7 +4,8 @@ dependencies {
     api project(":api:cas-server-core-api-logout")
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-util")
-    
+
+    implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-validation")

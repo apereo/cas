@@ -290,9 +290,7 @@ public class BaseSamlObjectSigner {
 
         final Set<Credential> credentials = Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
         final List<Credential> creds = new ArrayList<>();
-        credentials.forEach(c -> {
-            creds.add(new BasicCredential(c.getPublicKey(), privateKey));
-        });
+        credentials.forEach(c -> creds.add(new BasicCredential(c.getPublicKey(), privateKey)));
        
         config.setSigningCredentials(creds);
         LOGGER.debug("Signature signing credentials configured");

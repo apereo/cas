@@ -3,7 +3,6 @@ package org.apereo.cas.monitor;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -35,7 +34,7 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
     @Override
     protected StatusCode checkPool() throws Exception {
         try {
-            return this.jdbcTemplate.query(this.validationQuery, (ResultSet rs) -> {
+            return this.jdbcTemplate.query(this.validationQuery, rs -> {
                 if (rs.next()) {
                     return StatusCode.OK;
                 }
