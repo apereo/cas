@@ -8,24 +8,26 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 
+/**
+ * This is {@link EditableAttributeProperties}.
+ *
+ * @author Marcus Watkins
+ * @since 5.2.0
+ */
+
 public class EditableAttributeProperties implements Serializable {
 
-	private static final long serialVersionUID = -4654740038123600286L;
+    private static final long serialVersionUID = -4654740038123600286L;
 
-	private List<EditableAttribute> attributes = new ArrayList<>();
-	
+    private List<EditableAttribute> attributes = new ArrayList<>();
+
     public List<EditableAttribute> getAttributes() {
-		return attributes;
-	}
+        return attributes;
+    }
 
-	public void setAttributes(List<EditableAttribute> attributes) {
-		this.attributes = attributes;
-	}
-
-	/**
-     * Control EditableAttributes via LDAP.
-     */
-    private Ldap ldap = new Ldap();
+    public void setAttributes(final List<EditableAttribute> attributes) {
+        this.attributes = attributes;
+    }
 
     /**
      * Control EditableAttributes via JDBC.
@@ -33,10 +35,15 @@ public class EditableAttributeProperties implements Serializable {
     private Jdbc jdbc = new Jdbc();
 
     /**
+     * Control EditableAttributes via LDAP.
+     */
+    private Ldap ldap = new Ldap();
+
+    /**
      * Control EditableAttributes via Rest.
      */
     private Rest rest = new Rest();
-	
+
     public Rest getRest() {
         return rest;
     }
@@ -61,7 +68,7 @@ public class EditableAttributeProperties implements Serializable {
         this.ldap = ldap;
     }
 
-	public static class Jdbc extends AbstractJpaProperties {
+    public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = -1325011278378393385L;
 
         /**
@@ -113,57 +120,66 @@ public class EditableAttributeProperties implements Serializable {
     
     public static class EditableAttribute {
 
-    	public static enum EditableAttributeType {
-    		TEXT,
-    		SELECT,
-    		PASSWORD,
-    	}
-    	
-    	private EditableAttributeType type;
-    	private String id;
-    	private String prompt;
-    	private ArrayList<String> options;
-    	private String validationRegex = "^";
+        public enum EditableAttributeType {
+            /**
+             * Attribute should be represented with a text box.
+             */
+            TEXT,
+            /**
+             * Attribute should use a select box.
+             */
+            SELECT,
+            /**
+             * Attribute should use a password box.
+             */
+            PASSWORD,
+        }
+        
+        private EditableAttributeType type;
+        private String id;
+        private String prompt;
+        private ArrayList<String> options;
+        private String validationRegex = "^";
 
-    	public EditableAttributeType getType() {
-    		return type;
-    	}
+        public EditableAttributeType getType() {
+            return type;
+        }
 
-    	public void setType(EditableAttributeType type) {
-    		this.type = type;
-    	}
+        public void setType(final EditableAttributeType type) {
+            this.type = type;
+        }
 
-    	public String getId() {
-    		return id;
-    	}
+        public String getId() {
+            return id;
+        }
 
-    	public void setId(String id) {
-    		this.id = id;
-    	}
+        public void setId(final String id) {
+            this.id = id;
+        }
 
-    	public String getPrompt() {
-    		return prompt;
-    	}
+        public String getPrompt() {
+            return prompt;
+        }
 
-    	public void setPrompt(String prompt) {
-    		this.prompt = prompt;
-    	}
+        public void setPrompt(final String prompt) {
+            this.prompt = prompt;
+        }
 
-    	public ArrayList<String> getOptions() {
-    		return options;
-    	}
+        public ArrayList<String> getOptions() {
+            return options;
+        }
 
-    	public void setOptions(ArrayList<String> options) {
-    		this.options = options;
-    	}
+        public void setOptions(final ArrayList<String> options) {
+            this.options = options;
+        }
 
-		public String getValidationRegex() {
-			return validationRegex;
-		}
+        public String getValidationRegex() {
+            return validationRegex;
+        }
 
-		public void setValidationRegex(String validationRegex) {
-			this.validationRegex = validationRegex;
-		}
+        public void setValidationRegex(final String validationRegex) {
+            this.validationRegex = validationRegex;
+        }
     }
 
 }

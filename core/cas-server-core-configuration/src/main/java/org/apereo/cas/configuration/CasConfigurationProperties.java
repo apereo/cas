@@ -356,14 +356,18 @@ public class CasConfigurationProperties implements Serializable {
         this.googleAnalytics = googleAnalytics;
     }
 
+    public EditableAttributeProperties getEditableAttribute() {
+        return editableAttribute;
+    }
+
+    public void setEditableAttribute(final EditableAttributeProperties editableAttribute) {
+        this.editableAttribute = editableAttribute;
+    }
+
     public AcceptableUsagePolicyProperties getAcceptableUsagePolicy() {
         return acceptableUsagePolicy;
     }
     
-    public EditableAttributeProperties getEditableAttribute() {
-    	return editableAttribute;
-    }
-
     public void setAcceptableUsagePolicy(final AcceptableUsagePolicyProperties acceptableUsagePolicy) {
         this.acceptableUsagePolicy = acceptableUsagePolicy;
     }

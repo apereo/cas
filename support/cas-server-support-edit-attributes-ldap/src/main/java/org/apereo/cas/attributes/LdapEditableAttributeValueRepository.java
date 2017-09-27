@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link LdapEditableAttributeValueRepository}.
- * Stores editable attributes inside an LDAP directory.
+ * This is {@link LdapEditableAttributeValueRepository}. Stores editable
+ * attributes inside an LDAP directory.
  *
  * @author Misagh Moayyed
  * @since 5.2
@@ -35,8 +35,7 @@ public class LdapEditableAttributeValueRepository extends AbstractPrincipalEdita
     private final String baseDn;
 
     public LdapEditableAttributeValueRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final ConnectionFactory connectionFactory, 
-                                               final String searchFilter, final String baseDn) {
+            final ConnectionFactory connectionFactory, final String searchFilter, final String baseDn) {
         super(ticketRegistrySupport);
         this.connectionFactory = connectionFactory;
         this.searchFilter = searchFilter;
@@ -44,20 +43,20 @@ public class LdapEditableAttributeValueRepository extends AbstractPrincipalEdita
     }
 
     @Override
-	public boolean storeAttributeValues(RequestContext requestContext, Credential credential,
-			Map<String, String> attributeValues) {
-        
-    	HashMap<String,Set<String>> ldapAttrs = new HashMap<>();
-        attributeValues.forEach((k,v)-> {
-        	ldapAttrs.put(k, Collections.singleton(v));
+    public boolean storeAttributeValues(final RequestContext requestContext, final Credential credential,
+            final Map<String, String> attributeValues) {
+
+        final HashMap<String, Set<String>> ldapAttrs = new HashMap<>();
+        attributeValues.forEach((k, v) -> {
+            ldapAttrs.put(k, Collections.singleton(v));
         });
-    	
-    	try {
+
+        try {
             final Response<SearchResult> response = searchForId(credential.getId());
             if (LdapUtils.containsResultEntry(response)) {
                 final String currentDn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
-                return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,ldapAttrs);
+                return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, ldapAttrs);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -68,14 +67,15 @@ public class LdapEditableAttributeValueRepository extends AbstractPrincipalEdita
     /**
      * Search for service by id.
      *
-     * @param id the id
+     * @param id
+     *            the id
      * @return the response
-     * @throws LdapException the ldap exception
+     * @throws LdapException
+     *             the ldap exception
      */
     private Response<SearchResult> searchForId(final String id) throws LdapException {
         final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(id));
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 }

@@ -16,7 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link CasEditableAttributeJdbcConfiguration} that stores editable attributes in a jdbc database.
+ * This is {@link CasEditableAttributeJdbcConfiguration} that stores editable
+ * attributes in a jdbc database.
  *
  * @author Marcus Watkins
  * @since 5.2.0
@@ -31,18 +32,17 @@ public class CasEditableAttributeJdbcConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @RefreshScope
     @Bean
     public EditableAttributeValueRepository editableAttributeValueRepository() {
         final EditableAttributeProperties.Jdbc jdbc = casProperties.getEditableAttribute().getJdbc();
-        
+
         if (StringUtils.isBlank(jdbc.getTableName())) {
             throw new BeanCreationException("Database table for editable attributes must be specified.");
         }
-        
-        return new JdbcEditableAttributeValueRepository(ticketRegistrySupport, 
-                JpaBeans.newDataSource(jdbc),
+
+        return new JdbcEditableAttributeValueRepository(ticketRegistrySupport, JpaBeans.newDataSource(jdbc),
                 jdbc.getTableName());
     }
 }

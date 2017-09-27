@@ -7,6 +7,13 @@ import org.apereo.cas.configuration.model.support.attributes.EditableAttributePr
 
 public interface EditableAttributeValueValidator {
 
-	public boolean areAttributeValuesValid(List<EditableAttribute> attributes, Map<String,String> attributeValues);
-	
+    /**
+     * Checks whether all attribute values are valid.
+     * 
+     * @param attributes
+     * @param attributeValues
+     * @return
+     */
+    public boolean areAttributeValuesValid(List<EditableAttribute> attributes, Map<String, String> attributeValues);
+
 }

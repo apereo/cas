@@ -21,8 +21,8 @@ import org.springframework.webflow.execution.Action;
 /**
  * This is {@link CasEditableAttributeWebflowConfiguration}.
  *
- * @author Misagh Moayyed
- * @since 5.0.0
+ * @author Marcus Watkins
+ * @since 5.2.0
  */
 @Configuration("casEditableAttributesWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -40,20 +40,19 @@ public class CasEditableAttributeWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Bean
-    public Action editableAttributeFormAction(@Qualifier("editableAttributeRepository")
-                                                  final EditableAttributeValueRepository repository) {
+    public Action editableAttributeFormAction(
+            @Qualifier("editableAttributeRepository") final EditableAttributeValueRepository repository) {
         return new EditableAttributeFormAction(repository);
     }
 
     @ConditionalOnMissingBean(name = "editableAttributeWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer editableAttributeWebflowConfigurer() {
-        final CasWebflowConfigurer w = new EditableAttributeWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry,
-                applicationContext, casProperties);
+        final CasWebflowConfigurer w = new EditableAttributeWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties);
         w.initialize();
         return w;
     }

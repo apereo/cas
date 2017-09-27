@@ -21,12 +21,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasEditableAttributeCoreConfiguration {
 
-	
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
-	
     @ConditionalOnMissingBean(name = "editableAttributeRepository")
     @Bean
     public EditableAttributeValueRepository editableAttributeRepository() {

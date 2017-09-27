@@ -14,8 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link RestEditableAttributeValueRepository}.
- * Stores editable attribute values in configurable REST interface.
+ * This is {@link RestEditableAttributeValueRepository}. Stores editable
+ * attribute values in configurable REST interface.
  *
  * @author Marcus Watkins
  * @since 5.2.0
@@ -28,22 +28,21 @@ public class RestEditableAttributeValueRepository extends AbstractPrincipalEdita
     private final EditableAttributeProperties.Rest properties;
 
     public RestEditableAttributeValueRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final EditableAttributeProperties.Rest restProperties) {
+            final EditableAttributeProperties.Rest restProperties) {
         super(ticketRegistrySupport);
         this.properties = restProperties;
     }
 
     @Override
-	public boolean storeAttributeValues(RequestContext requestContext, Credential credential,
-			Map<String, String> attributeValues) {
+    public boolean storeAttributeValues(final RequestContext requestContext, final Credential credential,
+            final Map<String, String> attributeValues) {
 
-    	Map<String,String> attributeMap = new HashMap<>( attributeValues );
-    	attributeMap.put("username", credential.getId());
+        final Map<String, String> attributeMap = new HashMap<>(attributeValues);
+        attributeMap.put("username", credential.getId());
 
-    	try {
+        try {
             final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
-                    properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                    attributeMap);
+                    properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), attributeMap);
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

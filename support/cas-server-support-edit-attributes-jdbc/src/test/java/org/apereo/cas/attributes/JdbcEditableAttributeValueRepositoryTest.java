@@ -10,8 +10,8 @@ import org.junit.Test;
 
 public class JdbcEditableAttributeValueRepositoryTest {
 
-	@Test
-	public void testGenerateUpdateSql() {
+    @Test
+    public void testGenerateUpdateSql() {
         
         HashMap<String,String> t1 = new LinkedHashMap<>();
         t1.put( "name", "joe" );
@@ -30,7 +30,7 @@ public class JdbcEditableAttributeValueRepositoryTest {
         a1.add( "dbUser" );
         
         Pair<String,List<String>> result = 
-        		JdbcEditableAttributeValueRepository.generateUpdateSql("someTable", "dbUser", t1 );
+                JdbcEditableAttributeValueRepository.generateUpdateSql("someTable", "dbUser", t1 );
         
         assert( a1.equals( result.getRight() ) );
         assert( s1.equals(  result.getLeft()  ) );
@@ -49,5 +49,5 @@ public class JdbcEditableAttributeValueRepositoryTest {
         assert( a2.equals( result.getRight() ) );
         assert( s2.equals( result.getLeft() ) );
         
-	}
+    }
 }
