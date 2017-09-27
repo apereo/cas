@@ -126,8 +126,7 @@ The consent decision object in transit will and must match the following structu
    "options": "ATTRIBUTE_NAME",
    "reminder": 14,
    "reminderTimeUnit": "DAYS",
-   "attributeNames": "...",
-   "attributeValues": "..."
+   "attributes": "..."
 }
 ```
 
@@ -140,8 +139,7 @@ The consent decision object in transit will and must match the following structu
 | `options`                 | Indicates how changes in attributes are determined for this application. (i.e. `ATTRIBUTE_NAME`, `ATTRIBUTE_VALUE`, `ALWAYS`)
 | `reminder`                | Indicates the period after which user will be reminded to consent again, in case no changes are found.
 | `reminderTimeUnit`        | The reminder time unit (i.e. `MONTHS`, `DAYS`, `HOURS`, etc).
-| `attributeNames`          | SHA-512 of attribute names for this application, signed and encrypted.
-| `attributeValues`         | SHA-512 of attribute values for this application, signed and encrypted.
+| `attributes`              | Base64 of attribute names for this application, signed and encrypted.
 
 
 ### LDAP
