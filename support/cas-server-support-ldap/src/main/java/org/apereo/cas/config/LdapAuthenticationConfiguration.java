@@ -227,11 +227,9 @@ public class LdapAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> {
-            ldapAuthenticationHandlers().forEach(handler -> {
-                LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(handler, personDirectoryPrincipalResolver);
-            });
-        };
+        return plan -> ldapAuthenticationHandlers().forEach(handler -> {
+            LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, personDirectoryPrincipalResolver);
+        });
     }
 }

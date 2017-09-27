@@ -47,43 +47,40 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
     public Collection<? extends CasEvent> load() {
         final List<CasEvent> events = new ArrayList<>();
         final QueryResult results = influxDbConnectionFactory.query(MEASUREMENT);
-        results.getResults().stream().forEach(r -> {
-            r.getSeries().forEach(s -> {
-                try {
-
-                    final Iterator<List<Object>> it = s.getValues().iterator();
-                    while (it.hasNext()) {
-                        final CasEvent event = new CasEvent();
-                        final List<Object> row = it.next();
-                        for (int i = 0; i < s.getColumns().size(); i++) {
-                            final String colName = s.getColumns().get(i);
-                            switch (colName) {
-                                case "time":
-                                    break;
-                                case "id":
-                                    event.putId(row.get(i).toString());
-                                    break;
-                                case "type":
-                                    event.setType(row.get(i).toString());
-                                    break;
-                                case "principalId":
-                                    event.setPrincipalId(row.get(i).toString());
-                                    break;
-                                case "creationTime":
-                                    event.setCreationTime(row.get(i).toString());
-                                    break;
-                                default:
-                                    event.put(colName, row.get(i).toString());
-                            }
+        results.getResults().stream().forEach(r -> r.getSeries().forEach(s -> {
+            try {
+                final Iterator<List<Object>> it = s.getValues().iterator();
+                while (it.hasNext()) {
+                    final CasEvent event = new CasEvent();
+                    final List<Object> row = it.next();
+                    for (int i = 0; i < s.getColumns().size(); i++) {
+                        final String colName = s.getColumns().get(i);
+                        switch (colName) {
+                            case "time":
+                                break;
+                            case "id":
+                                event.putId(row.get(i).toString());
+                                break;
+                            case "type":
+                                event.setType(row.get(i).toString());
+                                break;
+                            case "principalId":
+                                event.setPrincipalId(row.get(i).toString());
+                                break;
+                            case "creationTime":
+                                event.setCreationTime(row.get(i).toString());
+                                break;
+                            default:
+                                event.put(colName, row.get(i).toString());
                         }
-                        events.add(event);
                     }
-
-                } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    events.add(event);
                 }
-            });
-        });
+
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }));
         return events;
     }
 

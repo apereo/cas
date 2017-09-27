@@ -1,14 +1,14 @@
 package org.apereo.cas.audit.spi.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
+import org.apereo.cas.audit.spi.NullableReturnValueAuditResourceResolver;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
+import org.apereo.cas.audit.spi.ShortenedReturnValueAsStringResourceResolver;
 import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,11 +19,9 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,9 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
-import org.springframework.webflow.execution.Event;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +55,7 @@ public class CasCoreAuditConfiguration {
     public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
-                auditablePrincipalResolver(principalIdProvider()),
+                auditablePrincipalResolver(auditPrincipalIdProvider()),
                 CollectionUtils.wrap(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
@@ -122,38 +118,13 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "returnValueResourceResolver")
     @Bean
     public AuditResourceResolver returnValueResourceResolver() {
-        return new ReturnValueAsStringResourceResolver();
+        return new ShortenedReturnValueAsStringResourceResolver();
     }
 
     @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
     @Bean
     public AuditResourceResolver nullableReturnValueResourceResolver() {
-        return new AuditResourceResolver() {
-            @Override
-            public String[] resolveFrom(final JoinPoint joinPoint, final Object o) {
-                if (o == null) {
-                    return new String[0];
-                }
-                if (o instanceof Event) {
-                    final Event event = Event.class.cast(o);
-
-                    final String sourceName = event.getSource().getClass().getSimpleName();
-                    final String result =
-                            new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
-                                    .append("event", event.getId())
-                                    .append("timestamp", new Date(event.getTimestamp()))
-                                    .append("source", sourceName)
-                                    .toString();
-                    return new String[]{result};
-                }
-                return returnValueResourceResolver().resolveFrom(joinPoint, o);
-            }
-
-            @Override
-            public String[] resolveFrom(final JoinPoint joinPoint, final Exception e) {
-                return returnValueResourceResolver().resolveFrom(joinPoint, e);
-            }
-        };
+        return new NullableReturnValueAuditResourceResolver(returnValueResourceResolver());
     }
 
     @ConditionalOnMissingBean(name = "auditActionResolverMap")
@@ -234,7 +205,8 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditablePrincipalResolver")
     @Bean
-    public PrincipalResolver auditablePrincipalResolver(@Qualifier("principalIdProvider") final AuditPrincipalIdProvider auditPrincipalIdProvider) {
+    public PrincipalResolver auditablePrincipalResolver(@Qualifier("auditPrincipalIdProvider") 
+                                                        final AuditPrincipalIdProvider auditPrincipalIdProvider) {
         return new ThreadLocalPrincipalResolver(auditPrincipalIdProvider);
     }
 
@@ -250,9 +222,9 @@ public class CasCoreAuditConfiguration {
         return new MessageBundleAwareResourceResolver();
     }
 
-    @ConditionalOnMissingBean(name = "principalIdProvider")
+    @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
     @Bean
-    public AuditPrincipalIdProvider principalIdProvider() {
+    public AuditPrincipalIdProvider auditPrincipalIdProvider() {
         return new AuditPrincipalIdProvider() {
         };
     }

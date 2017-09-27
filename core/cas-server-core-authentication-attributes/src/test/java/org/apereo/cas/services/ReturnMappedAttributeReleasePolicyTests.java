@@ -8,6 +8,10 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +28,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
@@ -66,7 +72,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyInlinedGroovyAttributes() throws IOException {
+    public void verifyInlinedGroovyAttributes() {
         final Multimap<String, String> allowedAttributes = ArrayListMultimap.create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid'] }");
         final ReturnMappedAttributeReleasePolicy policyWritten =
@@ -80,5 +86,29 @@ public class ReturnMappedAttributeReleasePolicyTests {
                 CoreAuthenticationTestUtils.getService(), registeredService);
         assertTrue(result.containsKey("attr1"));
         assertTrue(result.containsValue("DOMAIN\\" + CoreAuthenticationTestUtils.CONST_USERNAME));
+    }
+    
+    @Test
+    public void verifyMappingWithoutAttributeValue() {
+        final Multimap<String, String> allowedAttributes = ArrayListMultimap.create();
+        final String mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
+        allowedAttributes.put("email", mappedAttribute);
+        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
+        final RegisteredService registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+        final Map<String, Object> principalAttributes = new HashMap<>();
+        principalAttributes.put("uid", CoreAuthenticationTestUtils.CONST_USERNAME);
+        Map<String, Object> result = policy.getAttributes(
+                CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, principalAttributes),
+                CoreAuthenticationTestUtils.getService(), registeredService);
+        assertTrue(result.isEmpty());
+
+        principalAttributes.put("uid", CoreAuthenticationTestUtils.CONST_USERNAME);
+        principalAttributes.put("email", "user@example.org");
+        result = policy.getAttributes(
+                CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, principalAttributes),
+                CoreAuthenticationTestUtils.getService(), registeredService);
+        assertTrue(result.containsKey(mappedAttribute));
+        assertEquals(result.get(mappedAttribute), "user@example.org");
     }
 }

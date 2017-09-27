@@ -121,9 +121,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     public void verifyAuthenticateNotFound() throws Throwable {
         try {
             this.thrown.expect(AccountNotFoundException.class);
-            this.handler.forEach(Unchecked.consumer(h -> {
-                h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"));
-            }));
+            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"))));
         } catch (final Exception e) {
             throw e.getCause();
         }

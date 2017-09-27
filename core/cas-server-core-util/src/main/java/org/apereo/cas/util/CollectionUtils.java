@@ -200,7 +200,7 @@ public final class CollectionUtils {
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
-     * @param source Nullable list to wrap.
+     * @param source list to wrap.
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
@@ -211,6 +211,9 @@ public final class CollectionUtils {
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }
+            } else if (source.getClass().isArray()) {
+                final List elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                list.addAll(elements);
             } else {
                 list.add(source);
             }
@@ -275,7 +278,7 @@ public final class CollectionUtils {
         addToCollection(list, source);
         return list;
     }
-    
+
     /**
      * Wrap set set.
      *

@@ -35,8 +35,6 @@ public class ListUndocumentedPropertiesCommand implements CommandMarker {
                         && (StringUtils.isBlank(p.getValue().getShortDescription()) || StringUtils.isBlank(p.getValue().getDescription())))
                 .map(Map.Entry::getValue)
                 .sorted(Comparator.comparing(ConfigurationMetadataProperty::getId))
-                .forEach(p -> {
-                    LOGGER.info("Property: {} @ {}", p.getId(), p.getType());
-                });
+                .forEach(p -> LOGGER.info("Property: {} @ {}", p.getId(), p.getType()));
     }
 }

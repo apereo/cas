@@ -44,6 +44,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -147,7 +148,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
-        // This throws if no suitable policy is found
         getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(service, registeredService));
 
         final Authentication latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
@@ -160,10 +160,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.addTicket(serviceTicket);
 
         LOGGER.info("Granted ticket [{}] for service [{}] and principal [{}]",
-                serviceTicket.getId(), service.getId(), principal.getId());
-
+                serviceTicket.getId(), DigestUtils.abbreviate(service.getId()), principal.getId());
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
-
         return serviceTicket;
     }
 
@@ -324,10 +322,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
             
             final Authentication finalAuthentication = builder.build();
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, finalAuthentication);
+            
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, 
+                    finalAuthentication, false);
             
             AuthenticationCredentialsLocalBinder.bindCurrent(finalAuthentication);
-            
             final Assertion assertion = new ImmutableAssertion(
                     finalAuthentication,
                     serviceTicket.getGrantingTicket().getChainedAuthentications(),
