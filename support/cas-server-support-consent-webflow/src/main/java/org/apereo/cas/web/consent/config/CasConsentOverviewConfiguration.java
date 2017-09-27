@@ -1,5 +1,6 @@
 package org.apereo.cas.web.consent.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -7,29 +8,29 @@ import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.consent.CasConsentOverviewController;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.consent.ConsentEngine;
+import org.apereo.cas.consent.ConsentRepository;
 import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
 import org.pac4j.core.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link CasConsentOverviewConfiguration}.
@@ -59,9 +60,17 @@ public class CasConsentOverviewConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    @Autowired
+    @Qualifier("consentRepository")
+    private ConsentRepository consentRepository;
+
+    @Autowired
+    @Qualifier("consentEngine")
+    private ConsentEngine consentEngine;
+
     @Bean
     public CasConsentOverviewController casConsentOverviewController() {
-        return new CasConsentOverviewController();
+        return new CasConsentOverviewController(consentRepository, consentEngine);
     }
 
     @Bean
@@ -86,7 +95,6 @@ public class CasConsentOverviewConfiguration extends WebMvcConfigurerAdapter {
             LOGGER.debug("Initializing consent service [{}]", callbackService);
 
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getInstanceNative().nextLong()));
             service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("CAS Consent Overview");
@@ -100,7 +108,8 @@ public class CasConsentOverviewConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(casConsentOverviewSecurityInterceptor()).addPathPatterns("/consent**");
+        registry.addInterceptor(casConsentOverviewSecurityInterceptor()).addPathPatterns("/consent")
+                .addPathPatterns("/consent/*");
     }
 
     /**
