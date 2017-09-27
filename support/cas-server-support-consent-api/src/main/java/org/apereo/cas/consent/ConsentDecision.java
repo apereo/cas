@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -46,12 +47,10 @@ public class ConsentDecision {
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
 
-    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
-    private String attributeNames;
-
-    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
-    private String attributeValues;
-
+    @Lob
+    @Column(name = "attributes", length = Integer.MAX_VALUE)
+    private String attributes;
+    
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -92,22 +91,6 @@ public class ConsentDecision {
         this.service = service;
     }
 
-    public String getAttributeNames() {
-        return attributeNames;
-    }
-
-    public void setAttributeNames(final String attributeNames) {
-        this.attributeNames = attributeNames;
-    }
-
-    public String getAttributeValues() {
-        return attributeValues;
-    }
-
-    public void setAttributeValues(final String attributeValues) {
-        this.attributeValues = attributeValues;
-    }
-
     public ConsentOptions getOptions() {
         return options;
     }
@@ -123,7 +106,15 @@ public class ConsentDecision {
     public Long getReminder() {
         return reminder;
     }
-    
+
+    public String getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(final String attributes) {
+        this.attributes = attributes;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)

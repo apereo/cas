@@ -55,9 +55,18 @@ public interface ConsentEngine extends Serializable {
      * @param registeredService the registered service
      * @return the consentable attributes
      */
-    Map<String, Object> getConsentableAttributes(Authentication authentication,
-                                                 Service service,
-                                                 RegisteredService registeredService);
+    Map<String, Object> resolveConsentableAttributesFrom(Authentication authentication,
+                                                         Service service,
+                                                         RegisteredService registeredService);
+
+    /**
+     * Gets consentable attributes from an existing consent decision.
+     * Typically decisions are signed and encoded, so this op will need to ensure
+     * the correct attribute names and values in the existing decision record are produced.
+     * @param decision the decision
+     * @return the consentable attributes
+     */
+    Map<String, Object> resolveConsentableAttributesFrom(ConsentDecision decision);
 
     /**
      * Is consent required?

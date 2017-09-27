@@ -1,12 +1,14 @@
 package org.apereo.cas.consent;
 
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.EncodingUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private final CipherExecutor<Serializable, String> consentCipherExecutor;
 
     public DefaultConsentDecisionBuilder(final CipherExecutor consentCipherExecutor) {
@@ -28,10 +32,8 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
 
     @Override
     public ConsentDecision update(final ConsentDecision consent, final Map<String, Object> attributes) {
-        final String encodedNames = buildAndEncodeConsentAttributeNames(attributes);
-        consent.setAttributeNames(encodedNames);
-        final String encodedValues = buildAndEncodeConsentAttributeValues(attributes);
-        consent.setAttributeValues(encodedValues);
+        final String encodedNames = buildAndEncodeConsentAttributes(attributes);
+        consent.setAttributes(encodedNames);
         consent.setCreatedDate(LocalDateTime.now());
         return consent;
     }
@@ -50,63 +52,51 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     @Override
     public boolean doesAttributeReleaseRequireConsent(final ConsentDecision decision,
                                                       final Map<String, Object> attributes) {
+        final Map<String, Object> consentAttributes = getConsentableAttributesFrom(decision);
+
         if (decision.getOptions() == ConsentOptions.ATTRIBUTE_NAME) {
-            final String consentAttributesHash = buildConsentAttributeNames(attributes);
-            final String decodedNames = this.consentCipherExecutor.decode(decision.getAttributeNames());
-            return !StringUtils.equals(consentAttributesHash, decodedNames);
+            final String consentAttributesHash = sha512ConsentAttributeNames(consentAttributes);
+            final String currentAttributesHash = sha512ConsentAttributeNames(attributes);
+            return !StringUtils.equals(consentAttributesHash, currentAttributesHash);
         }
+        
         if (decision.getOptions() == ConsentOptions.ATTRIBUTE_VALUE) {
-            final Pair<String, String> pair = buildConsentAttributes(attributes);
-            final String decNames = this.consentCipherExecutor.decode(decision.getAttributeNames());
-            final String decValues = this.consentCipherExecutor.decode(decision.getAttributeValues());
-            return !StringUtils.equals(decNames, pair.getKey()) || !StringUtils.equals(decValues, pair.getValue());
+            final String consentAttributesHash = sha512ConsentAttributeNames(consentAttributes);
+            final String currentAttributesHash = sha512ConsentAttributeNames(attributes);
+
+            final String consentAttributeValuesHash = sha512ConsentAttributeValues(consentAttributes);
+            final String currentAttributeValuesHash = sha512ConsentAttributeValues(attributes);
+            
+            return !StringUtils.equals(consentAttributesHash, currentAttributesHash) 
+                    || !StringUtils.equals(consentAttributeValuesHash, currentAttributeValuesHash);
         }
         return true;
     }
 
-    /**
-     * Build consent attributes pair and encoded it.
-     *
-     * @param attributes the attributes
-     * @return the pair
-     */
-    private Pair<String, String> buildAndEncodeConsentAttributes(final Map<String, Object> attributes) {
-        return Pair.of(buildAndEncodeConsentAttributeNames(attributes), buildAndEncodeConsentAttributeValues(attributes));
+    @Override
+    public Map<String, Object> getConsentableAttributesFrom(final ConsentDecision decision) {
+        try {
+            final String result = this.consentCipherExecutor.decode(decision.getAttributes());
+            final String names = EncodingUtils.decodeBase64ToString(result);
+            final Map<String, Object> attributes = MAPPER.readValue(names, Map.class);
+            return attributes;
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Could not serialize attributes for consent decision");
+        }
     }
 
-    /**
-     * Build consent attributes pair.
-     *
-     * @param attributes the attributes
-     * @return the pair
-     */
-    private Pair<String, String> buildConsentAttributes(final Map<String, Object> attributes) {
-        return Pair.of(buildConsentAttributeNames(attributes), buildConsentAttributeValues(attributes));
+    private String sha512ConsentAttributeNames(final Map<String, Object> attributes) {
+        final String allNames = attributes.keySet().stream().collect(Collectors.joining("|"));
+        return DigestUtils.sha512(allNames);
     }
 
-    /**
-     * Build consent attribute values string.
-     *
-     * @param attributes the attributes
-     * @return the string
-     */
-    private String buildAndEncodeConsentAttributeValues(final Map<String, Object> attributes) {
-        final String values = buildConsentAttributeValues(attributes);
-        return this.consentCipherExecutor.encode(values);
-    }
-
-    /**
-     * Build consent attribute values.
-     *
-     * @param attributes the attributes
-     * @return the string
-     */
-    protected String buildConsentAttributeValues(final Map<String, Object> attributes) {
+    private String sha512ConsentAttributeValues(final Map<String, Object> attributes) {
         final String allValues = attributes.values().stream()
                 .map(CollectionUtils::toCollection)
                 .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
                 .collect(Collectors.joining("|"));
-        return DigestUtils.sha512(allValues);
+        final String attributeValues = DigestUtils.sha512(allValues);
+        return attributeValues;
     }
 
     /**
@@ -115,21 +105,13 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
      * @param attributes the attributes
      * @return the string
      */
-    protected String buildAndEncodeConsentAttributeNames(final Map<String, Object> attributes) {
-        final String names = buildConsentAttributeNames(attributes);
-        return this.consentCipherExecutor.encode(names);
-    }
-
-    /**
-     * Build consent attribute names.
-     *
-     * @param attributes the attributes
-     * @return the string
-     */
-    protected String buildConsentAttributeNames(final Map<String, Object> attributes) {
-        final String allNames = attributes.keySet()
-                .stream()
-                .collect(Collectors.joining("|"));
-        return DigestUtils.sha512(allNames);
+    protected String buildAndEncodeConsentAttributes(final Map<String, Object> attributes) {
+        try {
+            final String json = MAPPER.writer(new MinimalPrettyPrinter()).writeValueAsString(attributes);
+            final String base64 = EncodingUtils.encodeBase64(json);
+            return this.consentCipherExecutor.encode(base64);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Could not serialize attributes for consent decision");
+        }
     }
 }

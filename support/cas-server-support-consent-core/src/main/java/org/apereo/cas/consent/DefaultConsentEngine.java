@@ -33,20 +33,12 @@ public class DefaultConsentEngine implements ConsentEngine {
         this.consentDecisionBuilder = consentDecisionBuilder;
     }
 
-    @Override
-    public Map<String, Object> getConsentableAttributes(final Authentication authentication,
-                                                        final Service service,
-                                                        final RegisteredService registeredService) {
-        LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
-        return registeredService.getAttributeReleasePolicy()
-                .getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
-    }
 
     @Override
     public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication) {
-        final Map<String, Object> attributes = getConsentableAttributes(authentication, service, registeredService);
+        final Map<String, Object> attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
 
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
@@ -92,7 +84,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final long reminder,
                                                 final TimeUnit reminderTimeUnit,
                                                 final ConsentOptions options) {
-        final Map<String, Object> attributes = getConsentableAttributes(authentication, service, registeredService);
+        final Map<String, Object> attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         final String principalId = authentication.getPrincipal().getId();
 
         ConsentDecision decision = findConsentDecision(service, registeredService, authentication);
@@ -116,5 +108,20 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
         return consentRepository.findConsentDecision(service, registeredService, authentication);
+    }
+
+    @Override
+    public Map<String, Object> resolveConsentableAttributesFrom(final ConsentDecision decision) {
+        LOGGER.debug("Retrieving consentable attributes from existing decision made by [{}] for [{}]",
+                decision.getPrincipal(), decision.getService());
+        return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
+    }
+
+    @Override
+    public Map<String, Object> resolveConsentableAttributesFrom(final Authentication authentication,
+                                                                final Service service,
+                                                                final RegisteredService registeredService) {
+        LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
+        return registeredService.getAttributeReleasePolicy().getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
     }
 }
