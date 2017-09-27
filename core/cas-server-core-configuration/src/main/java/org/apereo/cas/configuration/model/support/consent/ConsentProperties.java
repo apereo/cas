@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-consent-webflow")
+@RequiredModule(name = "cas-server-support-consent-webflow")
 public class ConsentProperties implements Serializable {
     private static final long serialVersionUID = 5201308051524438384L;
     /**
