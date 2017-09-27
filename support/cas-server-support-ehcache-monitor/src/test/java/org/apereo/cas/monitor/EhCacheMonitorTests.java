@@ -61,10 +61,8 @@ public class EhCacheMonitorTests {
         assertEquals(StatusCode.OK, status.getCode());
 
         // Fill cache 95% full, which is above 10% free WARN threshold
-        IntStream.range(0, 95).forEach(i -> {
-            this.ticketRegistry.addTicket(new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
-                    new MockTicketGrantingTicket("test")));
-        });
+        IntStream.range(0, 95).forEach(i -> this.ticketRegistry.addTicket(new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
+                new MockTicketGrantingTicket("test"))));
 
 
         status = CacheStatus.class.cast(monitor.observe());

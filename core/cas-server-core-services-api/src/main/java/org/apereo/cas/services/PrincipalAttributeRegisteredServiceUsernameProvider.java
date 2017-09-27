@@ -6,10 +6,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -61,16 +59,22 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         final Map<String, Object> originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         originalPrincipalAttributes.putAll(principal.getAttributes());
 
-        final Map<String, Object> attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        attributes.putAll(getPrincipalAttributes(principal, service));
+        LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].",
+                this.usernameAttribute, originalPrincipalAttributes);
 
-        LOGGER.debug("Principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, attributes);
+        final Map<String, Object> releasePolicyAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
 
-        if (attributes.containsKey(this.usernameAttribute)) {
-            principalId = attributes.get(this.usernameAttribute).toString();
+        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
+                this.usernameAttribute, releasePolicyAttributes);
+
+        if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
+            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
+                    registeredService.getServiceId(), this.usernameAttribute);
+            principalId = releasePolicyAttributes.get(this.usernameAttribute).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
-            LOGGER.warn("The selected username attribute [{}] was retrieved as a direct "
-                            + "principal attributes and not through the attribute release policy for service [{}]. "
+            LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
+                            + "principal attribute and not through the attribute release policy for service [{}]. "
                             + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
                             + "is explicitly authorized for release via the service attribute release policy.",
                     this.usernameAttribute, service, this.usernameAttribute);
@@ -82,7 +86,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                             + "is allowed to be released by the service attribute release policy.",
                     principalId,
                     this.usernameAttribute,
-                    attributes,
+                    releasePolicyAttributes,
                     principalId);
         }
 
@@ -129,35 +133,23 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
      * that instance to locate attributes. If none is available,
      * will use the default principal attributes.
      *
-     * @param p       the principal
-     * @param service the service
+     * @param p                 the principal
+     * @param service           the service
+     * @param registeredService the registered service
      * @return the principal attributes
      */
-    protected Map<String, Object> getPrincipalAttributes(final Principal p, final Service service) {
-        final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
-        if (context != null) {
-            LOGGER.debug("Located application context to locate the service registry entry");
-            final ServicesManager servicesManager = context.getBean(ServicesManager.class);
-            if (servicesManager != null) {
-                final RegisteredService registeredService = servicesManager.findServiceBy(service);
-
-                if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                    LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]",
-                            registeredService, p.getId());
-
-                    if (registeredService.getAttributeReleasePolicy() == null) {
-                        LOGGER.debug("No attribute release policy is defined for [{}]. Returning default principal attributes", service.getId());
-                        return p.getAttributes();
-                    }
-                    return registeredService.getAttributeReleasePolicy().getAttributes(p, service, registeredService);
-                }
+    protected Map<String, Object> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service,
+                                                                          final RegisteredService registeredService) {
+        if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]", registeredService, p.getId());
+            if (registeredService.getAttributeReleasePolicy() == null) {
+                LOGGER.debug("No attribute release policy is defined for [{}]. Returning default principal attributes", service.getId());
+                return p.getAttributes();
             }
-
-            LOGGER.debug("Could not locate service [{}] in the registry.", service.getId());
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            return registeredService.getAttributeReleasePolicy().getAttributes(p, service, registeredService);
         }
-        LOGGER.warn("No application context could be detected. Returning default principal attributes");
-        return p.getAttributes();
+        LOGGER.debug("Could not locate service [{}] in the registry.", service.getId());
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
     }
 
     public void setUsernameAttribute(final String usernameAttribute) {
