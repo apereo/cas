@@ -94,7 +94,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     private ProxyController proxyController;
 
     @Test
-    public void verifyNoParams() throws Exception {
+    public void verifyNoParams() {
         assertEquals(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, this.proxyController
                 .handleRequestInternal(new MockHttpServletRequest(),
                         new MockHttpServletResponse()).getModel()
@@ -102,7 +102,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void verifyNonExistentPGT() throws Exception {
+    public void verifyNonExistentPGT() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, "TestService");
         request.addParameter("targetService", "testDefault");
@@ -112,7 +112,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void verifyExistingPGT() throws Exception {
+    public void verifyExistingPGT() {
         final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(
                 "ticketGrantingTicketId", CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
@@ -127,7 +127,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void verifyNotAuthorizedPGT() throws Exception {
+    public void verifyNotAuthorizedPGT() {
         final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl("ticketGrantingTicketId",
                 CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
@@ -136,8 +136,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
         request.addParameter("targetService", "service");
 
-        final Map<String, Object> map = this.proxyController.handleRequestInternal(request,
-                new MockHttpServletResponse()).getModel();
+        final Map<String, Object> map = this.proxyController.handleRequestInternal(request, new MockHttpServletResponse()).getModel();
         assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
     

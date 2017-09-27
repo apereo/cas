@@ -122,10 +122,15 @@ public final class RegisteredServiceAccessStrategyUtils {
                                                                 final Authentication authentication,
                                                                 final boolean retrievePrincipalAttributesFromReleasePolicy)
             throws UnauthorizedServiceException, PrincipalException {
+        ensureServiceAccessIsAllowed(service, registeredService);
+        
         final Principal principal = authentication.getPrincipal();
-        final Map<String, Object> principalAttrs = retrievePrincipalAttributesFromReleasePolicy
-                ? registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService)
-                : authentication.getPrincipal().getAttributes();
+        final Map<String, Object> principalAttrs;
+        if (retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null) {
+            principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+        } else {
+            principalAttrs = authentication.getPrincipal().getAttributes();
+        }
         final Map<String, Object> attributes = new LinkedHashMap<>(principalAttrs);
         attributes.putAll(authentication.getAttributes());
         ensurePrincipalAccessIsAllowedForService(service, registeredService, principal.getId(), attributes);
