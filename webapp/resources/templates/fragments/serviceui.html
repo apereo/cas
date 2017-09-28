@@ -20,6 +20,9 @@
                 <td id="servicedesc">
                     <h2 th:text="${serviceUIMetadata.displayName}"></h2>
                     <p th:text="${serviceUIMetadata.description}"></p>
+
+                    <p th:if="${serviceUIMetadata.informationURL}" th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}"/>
+                    <p th:if="${serviceUIMetadata.privacyStatementURL}" th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}"/>
                 </td>
             </tr>
         </table>

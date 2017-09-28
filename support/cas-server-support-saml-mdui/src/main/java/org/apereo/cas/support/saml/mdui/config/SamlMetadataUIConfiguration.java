@@ -98,10 +98,8 @@ public class SamlMetadataUIConfiguration {
     @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
     @Bean
     public Action samlMetadataUIParserAction() {
-        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
-                SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter(),
-                serviceFactory, servicesManager);
+        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter(), serviceFactory, servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
