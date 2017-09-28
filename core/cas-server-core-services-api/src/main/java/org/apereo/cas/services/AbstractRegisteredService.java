@@ -7,6 +7,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,7 +47,8 @@ import java.util.Set;
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class AbstractRegisteredService implements RegisteredService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredService.class);
+    
     private static final long serialVersionUID = 7645279151115635245L;
 
     /**
@@ -101,8 +104,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
 
-    @Column(name = "logo")
-    private URL logo;
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    private String logo;
 
     @Column(name = "logout_url")
     private URL logoutUrl;
@@ -118,7 +121,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredServiceImpl_Props")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
-    
+
     @Override
     public long getId() {
         return this.id;
@@ -168,7 +171,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     public URL getLogoutUrl() {
         return this.logoutUrl;
     }
-    
+
 
     /**
      * Initializes the registered service with default values
@@ -327,7 +330,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.privacyUrl = privacyUrl;
     }
 
-   
+
     /**
      * Sets the user attribute provider instance
      * when providing usernames to this registered service.
@@ -471,11 +474,11 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     }
 
     @Override
-    public URL getLogo() {
+    public String getLogo() {
         return this.logo;
     }
 
-    public void setLogo(final URL logo) {
+    public void setLogo(final String logo) {
         this.logo = logo;
     }
 
