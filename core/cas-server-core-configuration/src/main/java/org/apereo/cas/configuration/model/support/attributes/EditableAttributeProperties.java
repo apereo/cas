@@ -21,14 +21,6 @@ public class EditableAttributeProperties implements Serializable {
 
     private List<EditableAttribute> attributes = new ArrayList<>();
 
-    public List<EditableAttribute> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(final List<EditableAttribute> attributes) {
-        this.attributes = attributes;
-    }
-
     /**
      * Control EditableAttributes via JDBC.
      */
@@ -43,6 +35,14 @@ public class EditableAttributeProperties implements Serializable {
      * Control EditableAttributes via Rest.
      */
     private Rest rest = new Rest();
+
+    public List<EditableAttribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(final List<EditableAttribute> attributes) {
+        this.attributes = attributes;
+    }
 
     public Rest getRest() {
         return rest;
@@ -138,7 +138,7 @@ public class EditableAttributeProperties implements Serializable {
         private EditableAttributeType type;
         private String id;
         private String prompt;
-        private ArrayList<String> options;
+        private List<String> options = new ArrayList<String>();
         private String validationRegex = "^";
 
         public EditableAttributeType getType() {
@@ -165,11 +165,11 @@ public class EditableAttributeProperties implements Serializable {
             this.prompt = prompt;
         }
 
-        public ArrayList<String> getOptions() {
+        public List<String> getOptions() {
             return options;
         }
 
-        public void setOptions(final ArrayList<String> options) {
+        public void setOptions(final List<String> options) {
             this.options = options;
         }
 

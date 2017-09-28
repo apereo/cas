@@ -50,7 +50,7 @@ public class JdbcEditableAttributeValueRepository extends AbstractPrincipalEdita
         return false;
     }
 
-    static Pair<String, List<String>> generateUpdateSql(final String tableName, final String username,
+    public static Pair<String, List<String>> generateUpdateSql(final String tableName, final String username,
             final Map<String, String> attributeValues) {
         final ArrayList<String> params = new ArrayList<>();
         final ArrayList<String> cols = new ArrayList<>();

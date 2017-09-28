@@ -63,7 +63,6 @@ public class EditableAttributeFormAction extends AbstractAction {
     protected static final String EVENT_ID_ATTRIBUTE_VALUES_NEEDED = "attributesNeeded";
     private static final String KEEP_SECRET_VALUE = "x4W3$AQQlo3GXmJZUPd!";
 
-
     private final EditableAttributeValueRepository valueRepository;
     private final EditableAttributeRepository attributeRepository;
     private final EditableAttributeValueValidator validator;
@@ -91,11 +90,9 @@ public class EditableAttributeFormAction extends AbstractAction {
             final MessageContext messageContext) {
         populateFlowScope(requestContext, credential);
 
-        @SuppressWarnings("unchecked")
         final Map<String, String> existingValues = (Map<String, String>) requestContext.getFlowScope()
                 .get(FLOW_STORAGE_EXISTING_VALUES);
 
-        @SuppressWarnings("unchecked")
         final List<EditableAttribute> attributes = (List<EditableAttribute>) requestContext.getFlowScope()
                 .get(FLOW_STORAGE_ATTRIBUTES);
 
@@ -121,22 +118,19 @@ public class EditableAttributeFormAction extends AbstractAction {
 
         populateFlowScope(requestContext, credential);
 
-        @SuppressWarnings("unchecked")
         final Map<String, String> inputValues = (Map<String, String>) requestContext.getFlowScope()
                 .get(FLOW_STORAGE_INPUT_VALUES);
 
-        @SuppressWarnings("unchecked")
         final List<EditableAttribute> attributes = (List<EditableAttribute>) requestContext.getFlowScope()
                 .get(FLOW_STORAGE_ATTRIBUTES);
 
-        if (validator.areAttributeValuesValid(attributes, inputValues)) {
-            if (valueRepository.storeAttributeValues(requestContext, credential, inputValues)) {
-                return success();
-            }
+        if (validator.areAttributeValuesValid(attributes, inputValues)
+                && valueRepository.storeAttributeValues(requestContext, credential, inputValues)) {
+            return success();
         }
-        // TODO: Report reasons here
+        // TODO Report reasons here
 
-        return error(); // TODO: return gather?
+        return error(); // TODO return gather?
     }
 
     @Override
@@ -162,17 +156,15 @@ public class EditableAttributeFormAction extends AbstractAction {
      * @param credential
      *            optional credential (will be fetched if null)
      */
-    private void populateFlowScope(final RequestContext requestContext, Credential credential) {
-        if (credential == null) {
-            credential = WebUtils.getCredential(requestContext);
-        }
+    private void populateFlowScope(final RequestContext requestContext, final Credential inCredential) {
+        final Credential credential = inCredential == null ? WebUtils.getCredential(requestContext) : inCredential;
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
 
         final List<EditableAttribute> attributes = attributeRepository.getAttributes(requestContext, credential);
         requestContext.getFlowScope().put(FLOW_STORAGE_ATTRIBUTES, attributes);
 
-        final Pair<Principal, Map<String, String>> principalAndValues = valueRepository.getAttributeValues(requestContext,
-                credential,
+        final Pair<Principal, Map<String, String>> principalAndValues = valueRepository.getAttributeValues(
+                requestContext, credential,
                 attributes.stream().map(attribute -> attribute.getId()).collect(Collectors.<String>toSet()));
         requestContext.getFlowScope().put(FLOW_STORAGE_PRINCIPAL, principalAndValues.getLeft());
 

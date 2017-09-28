@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.attributes.EditableAttributeRepository;
 import org.apereo.cas.attributes.EditableAttributeValueRepository;
-import org.apereo.cas.attributes.DefaultEditableAttributeValueRepository;
+import org.apereo.cas.attributes.EditableAttributeValueValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.EditableAttributeFormAction;
 import org.apereo.cas.web.flow.EditableAttributeWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,8 +44,10 @@ public class CasEditableAttributeWebflowConfiguration {
     @Autowired
     @Bean
     public Action editableAttributeFormAction(
-            @Qualifier("editableAttributeRepository") final EditableAttributeValueRepository repository) {
-        return new EditableAttributeFormAction(repository);
+            @Qualifier("editableAttributeRepository") final EditableAttributeValueRepository valueRepository,
+            @Qualifier("editableAttributeRepository") final EditableAttributeRepository attributeRepository,
+            @Qualifier("editableAttributeRepository") final EditableAttributeValueValidator validator) {
+        return new EditableAttributeFormAction(valueRepository, attributeRepository, validator);
     }
 
     @ConditionalOnMissingBean(name = "editableAttributeWebflowConfigurer")
