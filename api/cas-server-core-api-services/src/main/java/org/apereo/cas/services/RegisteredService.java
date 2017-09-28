@@ -183,7 +183,7 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * @return URL of the image
      * @since 4.1
      */
-    URL getLogo();
+    String getLogo();
 
     /**
      * Describes the canonical information url
