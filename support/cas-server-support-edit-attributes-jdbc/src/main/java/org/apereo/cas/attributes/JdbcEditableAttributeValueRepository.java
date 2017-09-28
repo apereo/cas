@@ -50,6 +50,14 @@ public class JdbcEditableAttributeValueRepository extends AbstractPrincipalEdita
         return false;
     }
 
+    /**
+     * Generates sql update query for attribute values.
+     * 
+     * @param tableName Attribute table name
+     * @param username Username to update
+     * @param attributeValues Key value pairs to update (mapped to columns)
+     * @return sql and param list for update statement
+     */
     public static Pair<String, List<String>> generateUpdateSql(final String tableName, final String username,
             final Map<String, String> attributeValues) {
         final ArrayList<String> params = new ArrayList<>();
