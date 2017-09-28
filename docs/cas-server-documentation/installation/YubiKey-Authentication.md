@@ -30,6 +30,15 @@ By default, all YubiKey accounts for users are allowed to authenticate. Devices 
 
 Registration records may be tracked inside a JSON file, provided the file path is specified in CAS settings. See [review this guide](Configuration-Properties.html#yubikey) for more info.
 
+The JSON structure is a simple map of user id to yubikey public id representing any particular device:
+
+```json
+{
+  "uid1": "yubikeyPublicId1",
+  "uid2": "yubikeyPublicId2"
+}
+```
+
 ### Whitelist
 
 Registration records may be specificied statically via CAS settings in form of a map that links registered usernames with the public id of the YubiKey device. See [review this guide](Configuration-Properties.html#yubikey) for more info.
