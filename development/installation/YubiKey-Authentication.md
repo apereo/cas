@@ -24,7 +24,7 @@ following dependencies in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#yubikey).
 
-By default, all YubiKey accounts for users are allowed to authenticate.
+By default, all YubiKey accounts for users are allowed to authenticate. Devices that need to be authorized for authentication need to have followed an out-of-band registration process where the record for them is found in one of the following storage backends. Upon authentication, CAS will begin to search the configured registration database for matching record for the authenticated user and device in order to allow for a successful authentication event.
 
 ### JSON
 
@@ -46,6 +46,15 @@ Support is enabled by including the following dependencies in the WAR overlay:
 </dependency>
 ```
 
+The expected database schema that is automatically created and configured by CAS contains a single table as `YubiKeyAccount` with the following fields:
+
+| Field              | Description
+|--------------------------------------------------------------------------------------
+| `id`               | Unique record identifier, acting as the primary key.
+| `publicId`         | The public identifier/key of the device used for authentication.
+| `username`         | The username whose device is registered.
+
+
 ### MongoDb
 
 Support is enabled by including the following dependencies in the WAR overlay:
@@ -57,6 +66,15 @@ Support is enabled by including the following dependencies in the WAR overlay:
      <version>${cas.version}</version>
 </dependency>
 ```
+
+The registration records are kept inside a single MongoDb collection of your choosing that will be auto-created by CAS.
+The structure of this collection is as follows:
+
+| Field              | Description
+|--------------------------------------------------------------------------------------
+| `id`               | Unique record identifier, acting as the primary key.
+| `publicId`         | The public identifier/key of the device used for authentication.
+| `username`         | The username whose device is registered.
 
 ### Custom
 
