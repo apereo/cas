@@ -120,7 +120,7 @@ public class BaseMemcachedProperties implements Serializable {
      * default serializer for the class used to serialize the object. Subsequent
      * appearances of the class within the same object graph are serialized as an int id.
      * Registered classes are serialized as an int id, avoiding the overhead of serializing the class name, but have the drawback
-     * of needing to know the classes to be serialized up front.
+     * of needing to know the classes to be serialized up front.  See {@code ComponentSerializationPlan} for help here.
      * </p>
      */
     private boolean kryoRegistrationRequired;
