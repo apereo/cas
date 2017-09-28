@@ -42,7 +42,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
         bean.setName(svc.getName());
         bean.setDescription(svc.getDescription());
         if (svc.getLogo() != null) {
-            bean.setLogoUrl(svc.getLogo().toExternalForm());
+            bean.setLogoUrl(svc.getLogo());
         }
         bean.setRequiredHandlers(svc.getRequiredHandlers());
 
@@ -158,7 +158,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
         bean.setEvalOrder(svc.getEvaluationOrder());
 
         if (svc.getLogo() != null) {
-            bean.setLogoUrl(svc.getLogo().toExternalForm());
+            bean.setLogoUrl(svc.getLogo());
         }
     }
 
@@ -247,7 +247,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             regSvc.setDescription(data.getDescription());
 
             if (StringUtils.isNotBlank(data.getLogoUrl())) {
-                regSvc.setLogo(new URL(data.getLogoUrl()));
+                regSvc.setLogo(data.getLogoUrl());
             }
             regSvc.setTheme(data.getTheme());
             regSvc.setEvaluationOrder(data.getEvalOrder());

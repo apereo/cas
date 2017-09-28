@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -18,7 +19,9 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Serializer for {@link RegisteredService} instances.
@@ -63,6 +66,14 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
                 new DefaultRegisteredServiceUsernameProvider()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getAccessStrategy(),
                 new DefaultRegisteredServiceAccessStrategy()));
+
+        writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getMultifactorPolicy(),
+                new DefaultRegisteredServiceMultifactorPolicy()));
+
+        kryo.writeObject(output, service.getInformationUrl());
+        kryo.writeObject(output, service.getPrivacyUrl());
+        kryo.writeObject(output, new HashMap<>(service.getProperties()));
+
     }
 
     @Override
@@ -73,7 +84,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setDescription(kryo.readObject(input, String.class));
         svc.setId(kryo.readObject(input, Long.class));
         svc.setEvaluationOrder(kryo.readObject(input, Integer.class));
-        svc.setLogo(kryo.readObject(input, URL.class));
+        svc.setLogo(kryo.readObject(input, String.class));
         svc.setLogoutType(kryo.readObject(input, LogoutType.class));
         svc.setLogoutUrl(kryo.readObject(input, URL.class));
         svc.setRequiredHandlers(kryo.readObject(input, HashSet.class));
@@ -84,6 +95,11 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setAttributeReleasePolicy(readObjectByReflection(kryo, input));
         svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input));
         svc.setAccessStrategy(readObjectByReflection(kryo, input));
+
+        svc.setMultifactorPolicy(readObjectByReflection(kryo, input));
+        svc.setInformationUrl(kryo.readObject(input, String.class));
+        svc.setPrivacyUrl(kryo.readObject(input, String.class));
+        svc.setProperties(kryo.readObject(input, Map.class));
 
         return svc;
     }

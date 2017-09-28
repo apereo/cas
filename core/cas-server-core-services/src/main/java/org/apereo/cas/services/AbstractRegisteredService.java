@@ -24,6 +24,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -46,7 +48,8 @@ import java.util.Set;
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class AbstractRegisteredService implements RegisteredService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredService.class);
+    
     private static final long serialVersionUID = 7645279151115635245L;
 
     /**
@@ -101,8 +104,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
 
-    @Column(name = "logo")
-    private URL logo;
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    private String logo;
 
     @Column(name = "logout_url")
     private URL logoutUrl;
@@ -470,11 +473,11 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     }
 
     @Override
-    public URL getLogo() {
+    public String getLogo() {
         return this.logo;
     }
 
-    public void setLogo(final URL logo) {
+    public void setLogo(final String logo) {
         this.logo = logo;
     }
 

@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.saml.mdui;
 
 import org.apereo.cas.configuration.support.Beans;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +11,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class SamlMetadataUIProperties {
     private String startDelay = "PT30S";
     private String repeatInterval = "PT2M";
@@ -19,8 +18,7 @@ public class SamlMetadataUIProperties {
     private long maxValidity;
     private boolean requireSignedRoot;
     private boolean requireValidMetadata = true;
-    private List<String> resources = Arrays.asList("classpath:/sp-metadata::classpath:/pub.key,"
-        + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");
+    private List<String> resources = new ArrayList<>();
 
     public List<String> getResources() {
         return resources;
