@@ -94,12 +94,10 @@ function prepareSubmit(form) {
 }
 ```
 
-
 ### Changes to Login Form
 
 ```html
-<form method="post" id="fm1" th:object="${credential}">
-        onsubmit="return prepareSubmit(this);">
+<form method="post" id="fm1" th:object="${credential}" onsubmit="return prepareSubmit(this);">
 ```
 
 ### WebJARs for Javascript/CSS Libraries

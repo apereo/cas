@@ -8,7 +8,7 @@
         </span>
     </div>
 
-    <form method="post" id="fm1" th:object="${credential}">
+    <form method="post" id="fm1" th:object="${credential}" action="login">
 
         <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
             <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
