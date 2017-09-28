@@ -38,8 +38,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     private final String entityIdParameterName;
     private final MetadataResolverAdapter metadataAdapter;
 
-    private ServicesManager servicesManager;
-    private ServiceFactory<WebApplicationService> serviceFactory;
+    private final ServicesManager servicesManager;
+    private final ServiceFactory<WebApplicationService> serviceFactory;
 
     /**
      * Instantiates a new SAML MDUI parser action.
@@ -64,6 +64,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
             return success();
         }
+
+        LOGGER.debug("Located entity id [{}] from request", entityId);
 
         if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
             LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
