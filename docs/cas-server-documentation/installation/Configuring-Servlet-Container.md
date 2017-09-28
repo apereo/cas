@@ -102,7 +102,7 @@ may be used, in the [WAR Overlay](Maven-Overlay-Installation.html) :
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
-* [Apache Tomcat](http://tomcat.apache.org/)
+* [Apache Tomcat](http://tomcat.apache.org/) (At a minimum, Apache Tomcat 8+ is required)
 * [JBoss](http://www.jboss.org/)
 * [Wildfly](http://wildfly.org/)
 * [Undertow](http://undertow.io/)
