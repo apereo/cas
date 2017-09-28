@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -76,6 +75,9 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public String getInformationURL() {
         final Collection<String> items = getInformationURLs();
+        if (items.isEmpty()) {
+            return this.registeredService.getInformationUrl();
+        }
         return StringUtils.collectionToDelimitedString(items, ".");
     }
 
@@ -96,6 +98,9 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public String getPrivacyStatementURL() {
         final Collection<String> items = getPrivacyStatementURLs();
+        if (items.isEmpty()) {
+            return this.registeredService.getPrivacyUrl();
+        }
         return StringUtils.collectionToDelimitedString(items, ".");
     }
 
@@ -147,11 +152,11 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      *
      * @return the logo url
      */
-    public URL getLogoUrl() {
+    public String getLogoUrl() {
         try {
             final Collection<Logo> items = getLogoUrls();
             if (!items.isEmpty()) {
-                return new URL(items.iterator().next().getUrl());
+                return items.iterator().next().getUrl();
             }
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);

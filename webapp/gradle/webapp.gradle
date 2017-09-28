@@ -9,6 +9,9 @@ def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 description = "Apereo CAS Web Application"
 mainClassName = MAIN_CLASS
 
+distZip.enabled = false
+distTar.enabled = false
+
 sourceSets {
     main {
         resources {
@@ -100,7 +103,7 @@ dependencies {
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
-    
+
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 

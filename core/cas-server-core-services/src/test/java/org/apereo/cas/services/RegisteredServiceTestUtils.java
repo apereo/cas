@@ -114,7 +114,7 @@ public final class RegisteredServiceTestUtils {
             accessStrategy.setRequireAllAttributes(true);
             accessStrategy.setRequiredAttributes(getTestAttributes());
             s.setAccessStrategy(accessStrategy);
-            s.setLogo(new URL("https://logo.example.org/logo.png"));
+            s.setLogo("https://logo.example.org/logo.png");
             s.setLogoutType(LogoutType.BACK_CHANNEL);
             s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
             s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));

@@ -65,6 +65,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
+        LOGGER.debug("Located entity id [{}] from request", entityId);
+        
         if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
             LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
             final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
