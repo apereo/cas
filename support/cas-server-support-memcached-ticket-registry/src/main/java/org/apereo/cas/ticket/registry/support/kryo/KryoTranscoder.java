@@ -30,10 +30,12 @@ import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -67,6 +69,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -122,6 +125,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.kryo.register(HardTimeoutExpirationPolicy.class);
         this.kryo.register(HashMap.class);
         this.kryo.register(LinkedHashMap.class);
+        this.kryo.register(LinkedHashSet.class);
         this.kryo.register(HashSet.class);
         // Can't directly access Collections.SingletonSet (private class), so instantiate one and do a getClass().
         final Set singletonSet = Collections.singleton("test");
@@ -160,7 +164,9 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.kryo.register(AbstractPrincipalAttributesRepository.class);
         this.kryo.register(RegisteredServiceRegexAttributeFilter.class);
         this.kryo.register(PrincipalAttributeRegisteredServiceUsernameProvider.class);
+        this.kryo.register(DefaultRegisteredServiceMultifactorPolicy.class);
         this.kryo.register(DefaultRegisteredServiceAccessStrategy.class);
+        this.kryo.register(RegisteredServiceMultifactorPolicy.FailureModes.class);
 
         // we add these ones for tests only
         this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
