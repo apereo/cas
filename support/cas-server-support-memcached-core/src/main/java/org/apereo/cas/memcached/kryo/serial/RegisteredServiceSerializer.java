@@ -4,23 +4,22 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
-import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 /**
  * Serializer for {@link RegisteredService} instances.
@@ -70,8 +69,8 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getMultifactorPolicy(),
                 new DefaultRegisteredServiceMultifactorPolicy()));
 
-        kryo.writeObject(output, service.getInformationUrl());
-        kryo.writeObject(output, service.getPrivacyUrl());
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getInformationUrl(), StringUtils.EMPTY));
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getPrivacyUrl(), StringUtils.EMPTY));
         kryo.writeObject(output, new HashMap<>(service.getProperties()));
     }
 
@@ -93,11 +92,10 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setAttributeReleasePolicy(readObjectByReflection(kryo, input));
         svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input));
         svc.setAccessStrategy(readObjectByReflection(kryo, input));
-        
         svc.setMultifactorPolicy(readObjectByReflection(kryo, input));
-        svc.setInformationUrl(kryo.readObject(input, String.class));
-        svc.setPrivacyUrl(kryo.readObject(input, String.class));
-        svc.setProperties(kryo.readObject(input, Map.class));
+        svc.setInformationUrl(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));
+        svc.setPrivacyUrl(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));
+        svc.setProperties(kryo.readObject(input, HashMap.class));
         return svc;
     }
 
