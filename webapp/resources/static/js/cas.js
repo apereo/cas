@@ -1,3 +1,7 @@
+/* global trackGeoLocation, jqueryReady */
+
+/* exported resourceLoadedSuccessfully */
+
 function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');
     if (navigator.geolocation) {
@@ -10,18 +14,18 @@ function requestGeoPosition() {
 
 function logGeoLocationError(error) {
     switch (error.code) {
-        case error.PERMISSION_DENIED:
-            // console.log('User denied the request for GeoLocation.');
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // console.log('Location information is unavailable.');
-            break;
-        case error.TIMEOUT:
-            // console.log('The request to get user location timed out.');
-            break;
-        default:
-            // console.log('An unknown error occurred.');
-            break;
+    case error.PERMISSION_DENIED:
+        // console.log('User denied the request for GeoLocation.');
+        break;
+    case error.POSITION_UNAVAILABLE:
+        // console.log('Location information is unavailable.');
+        break;
+    case error.TIMEOUT:
+        // console.log('The request to get user location timed out.');
+        break;
+    default:
+        // console.log('An unknown error occurred.');
+        break;
     }
 }
 
@@ -31,13 +35,13 @@ function showGeoPosition(position) {
 }
 
 function preserveAnchorTagOnForm() {
-    $("#fm1").submit(function (event) {
+    $('#fm1').submit(function () {
         var hash = decodeURIComponent(self.document.location.hash);
-        if (hash && hash.indexOf("#") === -1) {
-            hash = "#" + hash;
+        if (hash && hash.indexOf('#') === -1) {
+            hash = '#' + hash;
         }
-        var action = $("#fm1").attr("action") + hash;
-        $("#fm1").attr("action", action);
+        var action = $('#fm1').attr('action') + hash;
+        $('#fm1').attr('action', action);
     });
 }
 
