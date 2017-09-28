@@ -78,3 +78,4 @@ The following options may be used to store services in CAS.
 | Couchbase        | [See this guide](Couchbase-Service-Management.html).
 | DynamoDb         | [See this guide](DynamoDb-Service-Management.html).
 | REST             | [See this guide](REST-Service-Management.html).
+| Custom           | [See this guide](Custom-Service-Management.html).
