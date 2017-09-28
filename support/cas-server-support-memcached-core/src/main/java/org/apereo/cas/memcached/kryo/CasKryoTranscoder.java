@@ -49,6 +49,7 @@ import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
+import org.apereo.cas.ticket.support.BaseDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -254,6 +255,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(AlwaysExpiresExpirationPolicy.class);
         this.kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
         this.kryo.register(TicketGrantingTicketExpirationPolicy.class);
+        this.kryo.register(BaseDelegatingExpirationPolicy.class);
     }
 
     /**
