@@ -33,10 +33,12 @@ import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerialize
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
 import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeTranscoder;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -72,6 +74,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -195,6 +198,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(PrincipalAttributeRegisteredServiceUsernameProvider.class);
         this.kryo.register(DefaultRegisteredServiceAccessStrategy.class);
         this.kryo.register(RegexMatchingRegisteredServiceProxyPolicy.class);
+        this.kryo.register(RegisteredServiceMultifactorPolicy.FailureModes.class);
     }
 
     private void registerCasAuthenticationWithKryo() {
@@ -214,6 +218,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(AbstractPrincipalAttributesRepository.MergingStrategy.class);
         this.kryo.register(DefaultRegisteredServiceConsentPolicy.class);
         this.kryo.register(AccountNotFoundException.class);
+        this.kryo.register(DefaultRegisteredServiceMultifactorPolicy.class);
     }
 
     private void registerCasTicketsWithKryo() {
@@ -228,6 +233,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(ArrayList.class);
         this.kryo.register(HashMap.class);
         this.kryo.register(LinkedHashMap.class);
+        this.kryo.register(LinkedHashSet.class);
         this.kryo.register(HashSet.class);
         this.kryo.register(URL.class, new URLSerializer());
         this.kryo.register(URI.class, new URISerializer());
