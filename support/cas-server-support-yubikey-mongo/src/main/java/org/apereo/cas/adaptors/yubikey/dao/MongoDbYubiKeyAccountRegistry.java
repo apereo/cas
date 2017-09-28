@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Query;
  */
 public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbYubiKeyAccountRegistry.class);
+    
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
