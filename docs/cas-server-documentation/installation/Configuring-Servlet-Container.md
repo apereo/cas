@@ -34,14 +34,13 @@ Note that by default, the embedded container attempts to enable the HTTP2 protoc
 
 #### IPv4 Configuration
 
-In order to force Apache Tomcat to use IPv4, add the following to as a system property:
+In order to force Apache Tomcat to use IPv4, configure the following as a system property for your *run* command:
 
 ```bash
 -Djava.net.preferIPv4Stack=true 
 ```
 
-The same sort of configuration needs to be applied to your `$CATALINA_OPTS` environment variable
-in case of an external container.
+The same sort of configuration needs to be applied to your `$CATALINA_OPTS` environment variable in case of an external container.
 
 #### Logging
 
@@ -102,7 +101,7 @@ may be used, in the [WAR Overlay](Maven-Overlay-Installation.html) :
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
-* [Apache Tomcat](http://tomcat.apache.org/)
+* [Apache Tomcat](http://tomcat.apache.org/) (At a minimum, Apache Tomcat 8+ is required)
 * [JBoss](http://www.jboss.org/)
 * [Wildfly](http://wildfly.org/)
 * [Undertow](http://undertow.io/)
