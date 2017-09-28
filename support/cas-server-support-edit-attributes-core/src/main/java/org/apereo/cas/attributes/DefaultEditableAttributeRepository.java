@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  *
  */
-public class DefaultEditableAttributeRepository extends AbstractEditableAttributeRepository {
+public class DefaultEditableAttributeRepository implements EditableAttributeRepository {
 
     private static final long serialVersionUID = 476159832176564L;
 

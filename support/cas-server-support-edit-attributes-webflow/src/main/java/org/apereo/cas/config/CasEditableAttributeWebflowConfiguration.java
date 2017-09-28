@@ -1,9 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.attributes.DefaultEditableAttributeRepository;
+import org.apereo.cas.attributes.DefaultEditableAttributeValueRepository;
+import org.apereo.cas.attributes.DefaultEditableAttributeValueValidator;
 import org.apereo.cas.attributes.EditableAttributeRepository;
 import org.apereo.cas.attributes.EditableAttributeValueRepository;
 import org.apereo.cas.attributes.EditableAttributeValueValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.EditableAttributeFormAction;
 import org.apereo.cas.web.flow.EditableAttributeWebflowConfigurer;
@@ -42,11 +46,15 @@ public class CasEditableAttributeWebflowConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
     @Bean
     public Action editableAttributeFormAction(
-            @Qualifier("editableAttributeRepository") final EditableAttributeValueRepository valueRepository,
+            @Qualifier("editableAttributeValueRepository") final EditableAttributeValueRepository valueRepository,
             @Qualifier("editableAttributeRepository") final EditableAttributeRepository attributeRepository,
-            @Qualifier("editableAttributeRepository") final EditableAttributeValueValidator validator) {
+            @Qualifier("editableAttributeValueValidator") final EditableAttributeValueValidator validator) {
         return new EditableAttributeFormAction(valueRepository, attributeRepository, validator);
     }
 
@@ -59,4 +67,22 @@ public class CasEditableAttributeWebflowConfiguration {
         return w;
     }
 
+    @ConditionalOnMissingBean(name = "editableAttributeRepository")
+    @Bean
+    public DefaultEditableAttributeRepository editableAttributeRepository() {
+        return new DefaultEditableAttributeRepository(casProperties.getEditableAttribute());
+    }
+
+    @ConditionalOnMissingBean(name = "editableAttributeValueRepository")
+    @Bean
+    public EditableAttributeValueRepository editableAttributeValueRepository() {
+        return new DefaultEditableAttributeValueRepository(ticketRegistrySupport);
+    }
+    
+    @ConditionalOnMissingBean(name = "editableAttributeValueValidator")
+    @Bean
+    public DefaultEditableAttributeValueValidator editableAttributeValueValidator() {
+        return new DefaultEditableAttributeValueValidator();
+    }
+    
 }

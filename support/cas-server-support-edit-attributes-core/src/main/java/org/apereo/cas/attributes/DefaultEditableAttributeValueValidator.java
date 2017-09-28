@@ -1,5 +1,8 @@
 package org.apereo.cas.attributes;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apereo.cas.configuration.model.support.attributes.EditableAttributeProperties.EditableAttribute;
 
 /**
@@ -9,7 +12,17 @@ import org.apereo.cas.configuration.model.support.attributes.EditableAttributePr
  * @since 5.2
  *
  */
-public class DefaultEditableAttributeValueValidator extends AbstractEditableAttributeValueValidator {
+public class DefaultEditableAttributeValueValidator implements EditableAttributeValueValidator {
+
+    @Override
+    public boolean areAttributeValuesValid(final List<EditableAttribute> attributes, final Map<String, String> attributeValues) {
+        for (final EditableAttribute attr : attributes) {
+            if (!isAttributeValueValid(attr, attributeValues.get(attr.getId()))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Checks whether attribute matches regex from properties file.
