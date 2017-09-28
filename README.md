@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://user-images.githubusercontent.com/1205228/30968979-ed7b2a44-a46d-11e7-87d1-34902ae63eae.png">
+<img src="https://user-images.githubusercontent.com/1205228/30969994-e2fe6bf0-a470-11e7-80f9-d54d1e4d348e.png">
 </p>
 
 # Central Authentication Service (CAS)
