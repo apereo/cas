@@ -15,3 +15,20 @@
 #no-consent-decisions div {
   margin-top: 2em;
 }
+
+#consentDecisions td.details-control {
+  cursor: pointer;
+  font-family: FontAwesome;
+  font-size: 10pt;
+  color: #337ab7;
+}
+
+#consentDecisions td.details-control::after {
+  content: "\f067";
+  /*content: "\002B"; - thinner plus sign */
+}
+
+#consentDecisions tr.shown td.details-control::after {
+  content: "\f068";
+  /*content: "\002D"; - thinner minus sign */
+}

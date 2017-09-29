@@ -1,63 +1,111 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
-<head>
-    <title th:text="#{screen.consent.review.header}"></title>
+    <head>
+        <title th:text="#{screen.consent.review.header}"></title>
 
-    <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
-    <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
-    <script type="text/javascript" th:inline="javascript">
-        var urls = {
+        <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
+        <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
+        <script type="text/javascript" th:inline="javascript">
+            var urls = {
             delete: /*[[@{/consent/deleteConsentDecision}]]*/,
-            getConsentDecisions: /*[[@{/consent/getConsentDecisions}]]*/
-        };
-
-        function jqueryReady() {
+                    getConsentDecisions: /*[[@{/consent/getConsentDecisions}]]*/
+            };
+            function jqueryReady() {
             head.load(
-                /*[[@{/js/consentReview.js}]]*/
-            );
-        }
-    </script>
-</head>
+                    /*[[@{/js/consentReview.js}]]*/
+                    );
+            }
+        </script>
+    </head>
 
-<body id="cas">
-    <div layout:fragment="content">
-    <link rel="stylesheet" th:href="@{/css/consentReview.css}"/>
+    <body id="cas">
+        <div layout:fragment="content">
+            <link rel="stylesheet" th:href="@{/css/consentReview.css}"/>
 
-        <div id="content">
+            <div id="content">
 
-            <div class="consentOverview">
-                <h1 th:utext="#{screen.consent.review.header}"/>
+                <div class=" panel panel-default consentOverview">
+                    <div class="panel-heading">
+                        <h4 th:utext="#{screen.consent.review.header}"/>                        
+                    </div>
+                    <div class="panel-body">
+                         <div id="loadingMessage">
+                            <h3 th:text="#{screen.consent.review.loading}"/>
+                        </div>
 
-                <div id="loadingMessage">
-                    <h3 th:text="#{screen.consent.review.loading}"/>
-                </div>
+                        <div id="no-consent-decisions">
+                            <h3 th:text="#{screen.consent.review.noconsentdecisions}"/><p/>
+                        </div>
 
-                <div id="no-consent-decisions">
-                    <h3 th:text="#{screen.consent.review.noconsentdecisions}"/><p/>
-                </div>
-
-                <div id="consent-decisons">
-                    <div id="alertWrapper"></div>
-                    <table id="consentDecisions" class="display table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>&nbsp;</th>
-                                <th>Service</th>
-                                <th>Options</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <form id="consent-decisons">
+                            <div id="alertWrapper"></div>
+                            <table id="consentDecisions" class="display table table-striped table-hover">
+                                <tbody>
+                                    <tr role="row" class="hidden">
+                                        <td class="details-control"></td>
+                                        <td class="col sorting_1">Service Id</td>
+                                        <td class="col-1">
+                                            <button class="btn btn-xs btn-block btn-danger" type="button">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="info hidden">
+                                        <td class="info" colspan="3">
+                                            <div>
+                                                <table class="table table-bordered row-detail">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="field-label active consent-created-date-label col-3">Created Date:</td>
+                                                            <td class="created-date"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="field-label active consent-reminder-label col-3">Reminder:</td>
+                                                            <td class="consent-reminder">
+                                                                <span class="seconds">Seconds</span>
+                                                                <span class="minutes">Minutes</span>
+                                                                <span class="hours">Hours</span>
+                                                                <span class="days">Days</span>
+                                                                <span class="weeks">Weeks</span>
+                                                                <span class="months">Months</span>
+                                                                <span class="years">Years</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="field-label active consent-option-label col-3">Option:</td>
+                                                            <td class="consent-options">
+                                                                <span class="attribute-name label label-primary">Attribute Name</span>
+                                                                <span class="attribute-value label label-primary">Attribute Value</span>
+                                                                <span class="always label label-primary">Always</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="field-label active consent-attributes-label col-3">Attributes:</td>
+                                                            <td>
+                                                                <table class="table table-striped table-bordered consent-attributes">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Attribute</th>
+                                                                            <th>Value(s)</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
