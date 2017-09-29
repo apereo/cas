@@ -25,6 +25,12 @@
 <body id="cas">
 <div layout:fragment="content">
     <h1 th:text="#{cas.attrresolutionview.pagetitle}"/>
+    <p>
+    <p>Allow CAS to execute a query against configured attribute repositories to determine the set of attributes that may be retrieved and resolved for a 
+    given user. Note that this functionality is only productive if CAS is configured to <strong>NOT</strong> directly retrieve attributes as part of the 
+    authentication attempt.
+    <p/>
+    
     <div class="box fl-panel" id="login">
         
         <form method="post" id="fm1" class="fm-v clearfix">
