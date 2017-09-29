@@ -49,4 +49,17 @@ public interface ConsentRepository extends Serializable {
      * @return true /false
      */
     boolean storeConsentDecision(ConsentDecision decision);
+
+    /**
+     * Delete consent decision.
+     *
+     * @param id the decicion's id
+     * @param principal the principal
+     */
+    default void deleteConsentDecision(long id, String principal) {
+        /**
+         * default to not break anything yet.
+         * principal is handed for repos that make use of it (e.g. ldap)
+         */
+    }
 }

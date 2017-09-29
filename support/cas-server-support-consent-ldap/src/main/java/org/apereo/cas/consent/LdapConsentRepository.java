@@ -39,7 +39,7 @@ public class LdapConsentRepository implements ConsentRepository {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapConsentRepository.class);
 
-    private final ConnectionFactory connectionFactory;
+    private final transient ConnectionFactory connectionFactory;
     private final Ldap ldap;
     private final String searchFilter;
 
@@ -119,6 +119,11 @@ public class LdapConsentRepository implements ConsentRepository {
             return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, CollectionUtils.wrap(attrMap));
         }
         return false;
+    }
+
+    @Override
+    public void deleteConsentDecision(final long id, final String principal) {
+        LOGGER.debug("Deleting consent decision [{}] for principal [{}]", id, principal);
     }
 
     /**
