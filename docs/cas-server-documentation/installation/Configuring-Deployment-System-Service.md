@@ -9,7 +9,7 @@ CAS can be easily started as Unix/Linux services using either `init.d` or `syste
 
 ## `init.d` Service
 
-If CAS is built and run as a fully executable web application, then it can be used as an `init.d` service. Simply `symlink` the web application file to `init.d` to support the standard `start`, `stop`, `restart` and `status` commands.
+If CAS is built and run as [a fully executable web application](Configuring-Servlet-Container.html, then it can be used as an `init.d` service. Simply `symlink` the web application file to `init.d` to support the standard `start`, `stop`, `restart` and `status` commands.
 
 The configuration built into CAS allows it to interact with the OS system configuration as such:
 
