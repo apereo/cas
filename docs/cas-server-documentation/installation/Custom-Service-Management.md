@@ -30,12 +30,6 @@ At a minimum, your overlay will need to include the following modules:
      <artifactId>cas-server-core-services</artifactId>
      <version>${cas.version}</version>
 </dependency>
-
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-api-services</artifactId>
-     <version>${cas.version}</version>
-</dependency>
 ```
 
 [See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
