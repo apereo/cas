@@ -27,4 +27,5 @@ dependencies {
     implementation project(":support:cas-server-support-surrogate-api")
     
     testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
