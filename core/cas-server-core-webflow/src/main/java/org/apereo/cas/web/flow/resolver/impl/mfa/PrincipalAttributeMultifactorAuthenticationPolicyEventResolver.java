@@ -67,13 +67,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
-
-        final Principal principal = authentication.getPrincipal();
-        if (attributeNames.isEmpty()) {
-            LOGGER.debug("Attribute name to determine event is not configured for [{}]", principal.getId());
-            return null;
-        }
-
+        
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
@@ -81,6 +75,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
             return null;
         }
 
+        final Principal principal = authentication.getPrincipal();
         return resolveMultifactorAuthenticationProvider(context, service, principal, providerMap);
     }
 

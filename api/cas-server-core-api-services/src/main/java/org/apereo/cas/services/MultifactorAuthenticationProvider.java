@@ -37,7 +37,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
 
     /**
      * Does provider match/support this identifier?
-     *
+     * The identifier passed may be formed as a regular expression.
      * @param identifier the identifier
      * @return the boolean
      */
