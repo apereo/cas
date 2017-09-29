@@ -20,6 +20,23 @@ See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for m
 To see the relevant list of CAS properties, 
 please [review this guide](Configuration-Properties.html#embedded-container).
 
+### Execution
+
+The CAS web application, once built, may be deployed in place with the embedded container via the following command:
+
+```bash
+java -jar /path/to/cas.war
+```
+
+Additionally, it is also possible to run CAS as a fully executable web application:
+
+```bash
+# chmod +x /path/to/cas.war
+/path/to/cas.war
+```
+
+Running CAS as a standalone and fully executable web application is supported on most Linux distributions. Other platforms such as OS X, FreeBSD and Windows will require custom configuration.
+
 ### Apache Tomcat
 
 Note that by default, the embedded container attempts to enable the HTTP2 protocol.
@@ -115,8 +132,19 @@ Refer to the servlet container's own documentation for more info.
 
 Deploying into an external Apache Tomcat instance may require the below special considerations.
 
-#### Async Support
+#### Configuration
 
+Support for external containers is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-webapp</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+#### Async Support
 
 In the event that an external servlet container is used, you MAY need to make sure it's configured correctly to support asynchronous requests in the event you get related errors and your container requires this. This is typically handled by setting `<async-supported>true</async-supported>` inside the container's main `web.xml`  file.
 
@@ -134,3 +162,7 @@ You may need to do something similar on other containers if they skip scanning L
 
 You may also be interested to deploy CAS via [Docker](https://www.docker.com/).
 See [this guide](Docker-Installation.html) for more info.
+
+## System Service
+
+CAS can be easily started as Unix/Linux services using either `init.d` or `systemd`. To learn more, please [visit this guide](Configuring-Deployment-System-Service.html).
