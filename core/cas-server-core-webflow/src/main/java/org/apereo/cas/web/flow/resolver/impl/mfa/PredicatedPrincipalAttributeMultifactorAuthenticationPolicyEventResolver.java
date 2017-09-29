@@ -24,6 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -55,7 +56,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
     }
 
     @Override
-    protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context, 
+    protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context,
                                                                 final RegisteredService service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
@@ -69,17 +70,24 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             final GroovyClassLoader classLoader = new GroovyClassLoader(getClass().getClassLoader(),
                     new CompilerConfiguration(), true);
             final Class<Predicate> predicateClass = classLoader.parseClass(script);
-
             final Object[] args = {service, principal, providers, LOGGER};
 
+            LOGGER.debug("Preparing predicate arguments [{}]", args);
             final Constructor<Predicate> ctor = predicateClass.getDeclaredConstructor(PREDICATE_CTOR_PARAMETERS);
             final Predicate<MultifactorAuthenticationProvider> predicate = ctor.newInstance(args);
 
-            return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-                input -> providers.stream()
-                        .filter(predicate)
-                        .findFirst()
-                        .isPresent());
+            LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
+                    predicate.getClass().getSimpleName(), predicateResource, providers);
+
+            final MultifactorAuthenticationProvider provider = providers
+                    .stream()
+                    .filter(predicate)
+                    .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
+                    .findFirst()
+                    .orElse(null);
+
+            LOGGER.debug("Predicate instance [{}] returned multifactor authentication provider [{}]", predicate.getClass().getSimpleName(), provider);
+            return evaluateEventForProviderInContext(principal, service, context, provider);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

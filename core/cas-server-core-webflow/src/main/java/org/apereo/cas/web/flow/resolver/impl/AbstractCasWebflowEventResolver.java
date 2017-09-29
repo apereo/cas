@@ -364,27 +364,39 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
                 if (predicate.test((String) attributeValue)) {
                     LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
-
-                    LOGGER.debug("Attempting to isAvailable multifactor authentication provider [{}] for [{}]",
-                            provider, service);
-
-                    if (provider.isAvailable(service)) {
-                        LOGGER.debug("Provider [{}] is successfully verified", provider);
-                        final String id = provider.getId();
-                        final Event event = validateEventIdForMatchingTransitionInContext(id, context,
-                                buildEventAttributeMap(principal, service, provider));
-                        return CollectionUtils.wrapSet(event);
-                    }
-                    LOGGER.debug("Provider [{}] could not be verified", provider);
-                } else {
-                    LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
+                    return evaluateEventForProviderInContext(principal, service, context, provider);
                 }
+                LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
             }
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         LOGGER.debug("Attribute value [{}] is not a single-valued attribute", attributeValue);
         return null;
+    }
+
+    /**
+     * Verify provider for current context and validate event id.
+     *
+     * @param principal the principal
+     * @param service   the service
+     * @param context   the context
+     * @param provider  the provider
+     * @return the set
+     */
+    protected Set<Event> evaluateEventForProviderInContext(final Principal principal,
+                                                           final RegisteredService service,
+                                                           final RequestContext context,
+                                                           final MultifactorAuthenticationProvider provider) {
+        LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
+        if (provider != null && provider.isAvailable(service)) {
+            LOGGER.debug("Provider [{}] is successfully verified", provider);
+            final String id = provider.getId();
+            final Event event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));
+            return CollectionUtils.wrapSet(event);
+        }
+        LOGGER.debug("Provider [{}] could not be verified", provider);
+        return new HashSet<>();
     }
 
     private Set<Event> resolveEventViaAttribute(final Principal principal,
