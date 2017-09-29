@@ -15,6 +15,7 @@ layout: null
     *   [WAR Overlays](/$version/installation/Maven-Overlay-Installation.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
+    *   [OS Service](/$version/installation/Configuring-Deployment-System-Service.html).
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
 * [Configuration](#casconfigmgmt)
