@@ -31,7 +31,7 @@ var consentDecisions = (function () {
                 },
                 {
                     'targets': 1,
-                    'data': 'service',
+                    'data': 'decision.service',
                     'className': 'col-xs-8 col-md-8',
                     'render': function (data) {
                         return data.length > 60 ?
@@ -41,7 +41,7 @@ var consentDecisions = (function () {
                 },
                 {
                     'targets': 2,
-                    'data': 'options',
+                    'data': 'decision.options',
                     'className': 'col-xs-0 col-md-3',
                     'render': function (data) {
                         return '<span class="label label-primary">'+data+'</span>';

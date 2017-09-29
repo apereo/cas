@@ -3,10 +3,8 @@ package org.apereo.cas.web.consent;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
+import org.apereo.cas.web.support.WebUtils;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -20,7 +18,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link CasConsentReviewController}.
@@ -65,36 +62,20 @@ public class CasConsentReviewController {
     @ResponseBody
     public Collection<Map<String, Object>> getConsentDecisions(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
-        final WebContext context = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(context);
-        final Optional<UserProfile> profile = manager.get(true);
-        if (profile.isPresent()) {
-            final String principal = profile.get().getId();
+        final String principal = WebUtils.getPac4jAuthenticatedUsername();
+        if (!PrincipalResolver.UNKNOWN_USER.equals(principal)) {
             LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
             final Collection<ConsentDecision> consentDecisions = this.consentRepository.findConsentDecisions(principal);
             LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
             final Collection<Map<String, Object>> result = new HashSet<>();
-            consentDecisions.stream().map(this::decodeDecision).forEach(result::add);
+            consentDecisions.stream().forEach(d -> {
+                final Map<String, Object> map = new HashMap<>();
+                map.put("decision", d);
+                map.put("attributes", this.consentEngine.resolveConsentableAttributesFrom(d));
+                result.add(map);
+            });
             return result;
         }
         return null;
-    }
-
-    /**
-     * Returns decoded consent decision.
-     * @param decision the decision
-     * @return the decoded decision
-     */
-    private Map<String, Object> decodeDecision(final ConsentDecision decision) {
-        final Map<String, Object> map = new HashMap<>();
-        map.put("id", decision.getId());
-        map.put("principal", decision.getPrincipal());
-        map.put("service", decision.getService());
-        map.put("createdDate", decision.getCreatedDate());
-        map.put("options", decision.getOptions());
-        map.put("reminder", decision.getReminder());
-        map.put("reminderTimeUnit", decision.getReminderTimeUnit());
-        map.put("attributes", this.consentEngine.resolveConsentableAttributesFrom(decision));
-        return map;
     }
 }

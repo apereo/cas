@@ -1,6 +1,6 @@
 package org.apereo.cas.web.consent.config;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.consent.CasConsentReviewController;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
@@ -24,13 +23,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.pac4j.core.client.Client;
 
 /**
  * This is {@link CasConsentReviewConfiguration}.
@@ -43,14 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewConfiguration.class);
 
-    private static final String CAS_CLIENT_NAME = "CasClient";
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("config")
-    private Config config;
+    @Qualifier("casAdminPagesPac4jConfig")
+    private Config casAdminPagesPac4jConfig;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -75,12 +68,24 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @RefreshScope
-    public CasConsentReviewSecurityInterceptor casConsentReviewSecurityInterceptor() {
-        final String authorizer = IsAuthenticatedAuthorizer.class.getSimpleName();
-        if (!config.getAuthorizers().containsKey(authorizer)) {
-            config.addAuthorizer(authorizer, new IsAuthenticatedAuthorizer());
+    public Config casConsentPac4jConfig() {
+        final List<Client> clients = casAdminPagesPac4jConfig.getClients().getClients();
+        if (clients != null && !clients.isEmpty()) {
+            final Config config = new Config(casProperties.getServer().getPrefix().concat("/consent"), clients);
+            config.setAuthorizers(casAdminPagesPac4jConfig.getAuthorizers());
+            final String auth = IsAuthenticatedAuthorizer.class.getSimpleName();
+            if (!config.getAuthorizers().containsKey(auth)) {
+                config.addAuthorizer(auth, new IsAuthenticatedAuthorizer());
+            }
+            return config;
         }
-        return new CasConsentReviewSecurityInterceptor(config, CAS_CLIENT_NAME,
+        return new Config();
+    }
+
+    @Bean
+    @RefreshScope
+    public CasSecurityInterceptor casConsentReviewSecurityInterceptor() {
+        return new CasSecurityInterceptor(casConsentPac4jConfig(), "CasClient",
                 "securityHeaders,csrfToken,".concat(IsAuthenticatedAuthorizer.class.getSimpleName()));
     }
 
@@ -110,29 +115,5 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(casConsentReviewSecurityInterceptor()).addPathPatterns("/consent")
                 .addPathPatterns("/consent/*");
-    }
-
-    /**
-    * The security interceptor for consent overview.
-    */
-    public static class CasConsentReviewSecurityInterceptor extends CasSecurityInterceptor implements HandlerInterceptor {
-
-        public CasConsentReviewSecurityInterceptor(final Config config, final String clients,
-                final String authorizers) {
-            super(config, clients, authorizers);
-        }
-
-        @Override
-        public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                               final Object handler, final ModelAndView modelAndView) throws Exception {
-            if (modelAndView != null
-                    && StringUtils.isNotBlank(request.getQueryString())
-                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
-                final RedirectView v = new RedirectView(request.getRequestURL().toString());
-                v.setExposeModelAttributes(false);
-                v.setExposePathVariables(false);
-                modelAndView.setView(v);
-            }
-        }
     }
 }
