@@ -3434,14 +3434,6 @@ The signature location MUST BE the public key used to sign the metadata.
 # cas.samlSp.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
-## SQRL
-
-Allow CAS to authenticate accounts via SQRL. To learn more about this topic, [please review this guide](../protocol/SQRL-Protocol.html).
-
-```properties
-# cas.authn.sqrl.nutExpirationSeconds=200
-# cas.authn.sqrl.sfn=sqrl-example
-```
 
 ## OpenID Connect
 
