@@ -47,7 +47,7 @@ chmod 500 /path/to/cas.war
 Additionally, you should also take steps to limit the damage if the CAS web application or the account that’s running it is compromised. If an attacker does gain access, they could make the web application file writable and change its contents. One way to protect against this is to make it immutable using `chattr`:
 
 ```bash
-$ sudo chattr +i /path/to/cas.war
+sudo chattr +i /path/to/cas.war
 ```
 
 This will prevent any user, including `root`, from modifying the file.
