@@ -100,7 +100,7 @@ public final class CollectionUtils {
      */
     public static <K, V> Map<K, V> wrap(final String key, final Object value) {
         final Map map = new HashMap<>();
-        if (StringUtils.isNotBlank(key)) {
+        if (StringUtils.isNotBlank(key) && value != null) {
             map.put(key, value);
         }
         return map;
