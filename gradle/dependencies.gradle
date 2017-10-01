@@ -1080,7 +1080,15 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
-        
+        javers : [
+                dependencies.create("org.javers:javers-core:$javersVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
@@ -2158,6 +2166,7 @@ ext.libraries = [
                     exclude(group: "com.netflix.eureka", module: "eureka-client")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.google.code.gson", module: "gson")
                     force = true
                 }
         ],
@@ -2176,6 +2185,7 @@ ext.libraries = [
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
                     exclude(group: "com.thoughtworks.xstream", module: "xstream")
+                    exclude(group: "com.google.code.gson", module: "gson")
                     force = true
                 },
                 dependencies.create("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
@@ -2190,6 +2200,7 @@ ext.libraries = [
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.thoughtworks.xstream", module: "xstream")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.google.code.gson", module: "gson")
                     force = true
                 }
         ],
