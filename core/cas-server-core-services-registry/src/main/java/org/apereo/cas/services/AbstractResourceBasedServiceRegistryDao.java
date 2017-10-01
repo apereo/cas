@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
-import org.apereo.cas.util.PathWatcher;
+import org.apereo.cas.util.io.PathWatcher;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.ComposableSupplier;
