@@ -15,16 +15,49 @@ import java.util.Set;
  * This is {@link ObjectChangelog}.
  *
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 5.2.0
  */
 public interface ObjectChangelog<T> {
-    
+
+    /**
+     * Delete commit.
+     *
+     * @param author the author
+     * @param object the object
+     * @return the commit
+     */
     Commit delete(String author, T object);
 
+    /**
+     * Delete commit.
+     *
+     * @param author the author
+     * @param object the object
+     * @param branch the branch
+     * @return the commit
+     */
     Commit delete(String author, T object, String branch);
 
+    /**
+     * Delete commit.
+     *
+     * @param author the author
+     * @param object the object
+     * @param note   the note
+     * @param branch the branch
+     * @return the commit
+     */
     Commit delete(String author, T object, String note, String branch);
 
+    /**
+     * Delete commit.
+     *
+     * @param author     the author
+     * @param object     the object
+     * @param properties the properties
+     * @return the commit
+     */
     Commit delete(String author, T object, Map<String, String> properties);
 
     /**

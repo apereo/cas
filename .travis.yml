@@ -18,6 +18,7 @@ before_cache:
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
+    - $HOME/.m2
     - $HOME/.npm/
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/    
@@ -25,6 +26,8 @@ git:
   depth: 1
 notifications:
   slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
+matrix:
+  fast_finish: true
 env:
   global:
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
