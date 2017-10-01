@@ -20,14 +20,13 @@ ext {
 }
 
 def isArtifactSigningRequired = {
-    if (publishReleases && sonatypeUsername != null && sonatypePassword != null) {
-        return true
-    }
-    return false
+    return (publishReleases && sonatypeUsername != null && sonatypePassword != null)
 }
 
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
+apply plugin: "jacoco"
+apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.gradle.build-scan"
 
 buildScan {
@@ -99,15 +98,21 @@ allprojects {
     */
     conf2ScopeMappings.mappings.remove(configurations.findByName("testCompileOnly"))
     conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntimeOnly"))
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
 }
 
 subprojects {
     task allDependenciesInsight(type: DependencyInsightReportTask,
-                                description: "Produce insight information for all dependencies") {
+            description: "Produce insight information for all dependencies") {
         doLast {}
     }
     task allDependencies(type: DependencyReportTask,
-                         description: "Display a graph of all project dependencies") {
+            description: "Display a graph of all project dependencies") {
         doLast {}
     }
     if (Boolean.getBoolean("enableKotlin")) {
@@ -122,15 +127,14 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-    apply plugin: "jacoco"
-    apply plugin: "com.github.kt3k.coveralls"
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
-    
+
     repositories {
         mavenLocal()
+        mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
@@ -178,7 +182,7 @@ subprojects {
                 }
             }
         }
-        
+
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
@@ -292,7 +296,7 @@ subprojects {
         api libraries.javers
 
         provided libraries.javax
-        
+
         if (!Boolean.getBoolean("skipFindbugs")) {
             findbugs libraries.findbugs
             findbugs configurations.findbugsPlugins.dependencies
@@ -302,12 +306,12 @@ subprojects {
 
         testImplementation libraries.tests
     }
-    
+
     if (rootProject.enableJRebelAgent) {
         generateRebel.enabled = true
         jar.dependsOn(generateRebel)
     } else {
-        generateRebel.enabled = false 
+        generateRebel.enabled = false
     }
 }
 
@@ -335,10 +339,48 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
     doFirst {
         println "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
     }
-
 }
 
 artifacts {
     archives aggregateJavadocsIntoJar
     archives rootSourcesJar
+}
+
+def publishedProjects = subprojects.findAll()
+task jacocoMerge(type: JacocoMerge) {
+    publishedProjects.each { subproject ->
+        executionData subproject.tasks.withType(Test)
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+
+task jacocoTestReport(type: JacocoReport, description: "Aggregate all test reports into a single directory") {
+    dependsOn publishedProjects.test, jacocoMerge
+
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(files(subprojects.sourceSets.main.output).collect {
+        fileTree(dir: it,
+                exclude: [
+                        '**/**Configuration.class',
+                        '**/**Properties.class'
+                ])
+    })
+
+    executionData jacocoMerge.destinationFile
+    reports {
+        html.enabled = true
+        xml.enabled = true
+    }
+}
+
+coveralls {
+    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+}
+
+tasks.coveralls {
+    group = "Coverage reports"
+    description = "Uploads the aggregated coverage report to Coveralls"
+    dependsOn jacocoTestReport
 }
