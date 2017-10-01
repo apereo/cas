@@ -218,9 +218,13 @@ public class DefaultObjectChangelog<T> implements ObjectChangelog<T> {
      * @param limit                the limit. Optional parameter for all queries, default limit is 100. It simply limits the number of most recent snapshots
      *                             to be read from repository. Always choose reasonable limits to improve performance of your queries and to save server heap
      *                             size.
-     * @param skip                 the skip. This is an optional parameter for all queries (the default skip is 0). It defines the offset of the                             first (most recent) snapshot that it should fetch from a repository. Skip and limit parameters                             can be useful for implementing pagination.
+     * @param skip                 the skip. This is an optional parameter for all queries (the default skip is 0). It defines the offset of the first (most
+     *                             recent) snapshot that it should fetch from a repository. Skip and limit parameters can be useful for implementing pagination.
      * @param properties           the properties
-     * @param withNewObjectChanges This filter only affects queries for changes, by default it’s disabled. When enabled, a query produces additional changes                             for initial snapshots. An initial snapshot is taken when an object is committed to repository for the first time.                             With this filter, you can query for the initial state of an object. It’s represented as a NewObject change,                             followed by a list of property changes from null to something.
+     * @param withNewObjectChanges This filter only affects queries for changes, by default it’s disabled. When enabled, a query produces additional
+     *                             changes or initial snapshots. An initial snapshot is taken when an object is committed to repository for the first time.
+     *                             With this filter, you can query for the initial state of an object. It’s represented as a NewObject change, followed by a
+     *                             list of property changes from null to something.
      * @param commitId             the commit id filter
      * @param branch               the branch filter
      * @return the jql query
