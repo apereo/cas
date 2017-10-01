@@ -56,7 +56,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
             LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated. Requests will be challenged for authentication.");
         } else if (this.renewalStrategy.isParticipating(context)) {
             LOGGER.debug("Setting ticket-granting cookie for current session linked to [{}].", ticketGrantingTicketId);
-            this.ticketGrantingTicketCookieGenerator.addCookie(request, response, ticketGrantingTicketId);
+            this.ticketGrantingTicketCookieGenerator.addCookie(context, ticketGrantingTicketId);
         } else {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");

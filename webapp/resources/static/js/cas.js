@@ -14,18 +14,18 @@ function requestGeoPosition() {
 
 function logGeoLocationError(error) {
     switch (error.code) {
-    case error.PERMISSION_DENIED:
-        // console.log('User denied the request for GeoLocation.');
-        break;
-    case error.POSITION_UNAVAILABLE:
-        // console.log('Location information is unavailable.');
-        break;
-    case error.TIMEOUT:
-        // console.log('The request to get user location timed out.');
-        break;
-    default:
-        // console.log('An unknown error occurred.');
-        break;
+        case error.PERMISSION_DENIED:
+            // console.log('User denied the request for GeoLocation.');
+            break;
+        case error.POSITION_UNAVAILABLE:
+            // console.log('Location information is unavailable.');
+            break;
+        case error.TIMEOUT:
+            // console.log('The request to get user location timed out.');
+            break;
+        default:
+            // console.log('An unknown error occurred.');
+            break;
     }
 }
 
@@ -34,16 +34,26 @@ function showGeoPosition(position) {
         + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.timestamp);
 }
 
+
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(function () {
-        var hash = decodeURIComponent(self.document.location.hash);
+        var location = self.document.location;
+        var hash = decodeURIComponent(location.hash);
         if (hash && hash.indexOf('#') === -1) {
             hash = '#' + hash;
         }
-        var action = $('#fm1').attr('action') + hash;
+
+        var action = $('#fm1').attr('action');
+        var qidx = location.href.indexOf('?');
+        if (qidx != -1) {
+            var queryParams = location.href.substring(qidx)
+            action += queryParams;
+        }
+        action += hash;
         $('#fm1').attr('action', action);
     });
 }
+
 
 function areCookiesEnabled() {
     if ($.cookie == undefined) {
