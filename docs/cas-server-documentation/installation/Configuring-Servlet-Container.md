@@ -35,7 +35,7 @@ Additionally, it is also possible to run CAS as a fully executable web applicati
 /path/to/cas.war
 ```
 
-Running CAS as a standalone and fully executable web application is supported on most Linux distributions. Other platforms such as OS X, FreeBSD and Windows will require custom configuration.
+Running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. Other platforms such as Windows may require custom configuration.
 
 ### Apache Tomcat
 
