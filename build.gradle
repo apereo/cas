@@ -43,8 +43,6 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://repo.spring.io/snapshot" }
     }
 
     dependencies {
@@ -58,6 +56,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.7"
+        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
     }
 }
 
@@ -123,6 +122,8 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
+    apply plugin: "jacoco"
+    apply plugin: "com.github.kt3k.coveralls"
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
@@ -288,6 +289,7 @@ subprojects {
         api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
+        api libraries.javers
 
         provided libraries.javax
         

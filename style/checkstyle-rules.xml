@@ -172,7 +172,7 @@
         </module>
         <module name="MethodLength"/>
         <module name="ParameterNumber">
-            <property name="max" value="10"/>
+            <property name="max" value="15"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF"/>
         </module>
