@@ -74,7 +74,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
-    
+
     @Column(updatable = true, insertable = true)
     private boolean skipGeneratingSubjectConfirmationRecipient;
 
@@ -95,6 +95,13 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
+
+    /**
+     * Signing credential type
+     */
+    @Column(length = 255, updatable = true, insertable = true)
+    private String signingCredentialType = "BASIC_X509";
+
 
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
@@ -285,6 +292,15 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.metadataExpirationDuration = metadataExpirationDuration;
     }
 
+
+    public String getSigningCredentialType() {
+        return signingCredentialType;
+    }
+
+    public void setSigningCredentialType(final String signingCredentialType) {
+        this.signingCredentialType = signingCredentialType;
+    }
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
@@ -321,7 +337,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setSkipGeneratingSubjectConfirmationNotBefore(samlRegisteredService.skipGeneratingSubjectConfirmationNotBefore);
             setSkipGeneratingSubjectConfirmationNotOnOrAfter(samlRegisteredService.skipGeneratingSubjectConfirmationNotOnOrAfter);
             setSkipGeneratingSubjectConfirmationRecipient(samlRegisteredService.skipGeneratingSubjectConfirmationRecipient);
-            
+
+            setSigningCredentialType(samlRegisteredService.getSigningCredentialType());
+
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -348,6 +366,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataExpirationDuration, rhs.metadataExpirationDuration)
                 .append(this.signAssertions, rhs.signAssertions)
                 .append(this.signResponses, rhs.signResponses)
+                .append(this.signingCredentialType, rhs.signingCredentialType)
                 .append(this.encryptAssertions, rhs.encryptAssertions)
                 .append(this.requiredNameIdFormat, rhs.requiredNameIdFormat)
                 .append(this.metadataCriteriaDirection, rhs.metadataCriteriaDirection)
@@ -376,6 +395,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataSignatureLocation)
                 .append(this.signAssertions)
                 .append(this.signResponses)
+                .append(this.signingCredentialType)
                 .append(this.encryptAssertions)
                 .append(this.requiredNameIdFormat)
                 .append(this.metadataCriteriaDirection)
@@ -405,6 +425,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("metadataSignatureLocation", this.metadataSignatureLocation)
                 .append("signAssertions", this.signAssertions)
                 .append("signResponses", this.signResponses)
+                .append("signingCredentialType", this.signingCredentialType)
                 .append("encryptAssertions", this.encryptAssertions)
                 .append("requiredNameIdFormat", this.requiredNameIdFormat)
                 .append("metadataCriteriaDirection", this.metadataCriteriaDirection)
