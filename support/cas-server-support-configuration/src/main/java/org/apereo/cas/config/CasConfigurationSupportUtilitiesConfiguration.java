@@ -8,7 +8,7 @@ import org.apereo.cas.support.events.config.CasConfigurationCreatedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
-import org.apereo.cas.util.PathWatcher;
+import org.apereo.cas.util.io.PathWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

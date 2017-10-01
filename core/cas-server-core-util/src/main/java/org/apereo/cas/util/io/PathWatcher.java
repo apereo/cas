@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.io;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -60,14 +60,15 @@ public class PathWatcher implements Runnable, Closeable {
      * @param onCreate action triggered when a new file is created
      * @param onModify action triggered when a file is modified
      * @param onDelete action triggered when a file is deleted
-     * @param interval milliseconds interval to limit monitoring
+     * @param intervalMilliseconds milliseconds intervalMilliseconds to limit monitoring
      */
-    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete,
-                       final long interval) {
+    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, 
+                       final Consumer<File> onDelete,
+                       final long intervalMilliseconds) {
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
-        this.interval = interval;
+        this.interval = intervalMilliseconds;
         try {
             this.watcher = watchablePath.getFileSystem().newWatchService();
             LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
