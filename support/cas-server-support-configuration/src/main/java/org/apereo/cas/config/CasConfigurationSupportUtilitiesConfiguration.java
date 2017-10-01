@@ -8,7 +8,7 @@ import org.apereo.cas.support.events.config.CasConfigurationCreatedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
-import org.apereo.cas.util.io.PathWatcher;
+import org.apereo.cas.util.io.PathWatcherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,12 +69,12 @@ public class CasConfigurationSupportUtilitiesConfiguration {
                 final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
                 if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                     LOGGER.debug("Starting to watch configuration directory [{}]", config);
-                    new Thread(new PathWatcher(config.toPath(),
+                    final PathWatcherService watcher = new PathWatcherService(config.toPath(),
                             createConfigurationCreatedEvent.andThen(publish),
                             createConfigurationModifiedEvent.andThen(publish),
                             createConfigurationDeletedEvent.andThen(publish),
-                            INTERVAL))
-                        .start();
+                            INTERVAL);
+                    watcher.start(config.getName());
                 } else {
                     LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
                 }
