@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
-import org.apereo.cas.util.io.PathWatcher;
+import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.ComposableSupplier;
@@ -77,7 +77,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private Thread serviceRegistryWatcherThread;
 
-    private PathWatcher serviceRegistryConfigWatcher;
+    private PathWatcherService serviceRegistryConfigWatcher;
 
     private Pattern serviceFileNamePattern;
     
@@ -170,10 +170,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                 }
             }
         };
-        this.serviceRegistryConfigWatcher = new PathWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
-        this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
-        this.serviceRegistryWatcherThread.setName(this.getClass().getName());
-        this.serviceRegistryWatcherThread.start();
+        this.serviceRegistryConfigWatcher = new PathWatcherService(serviceRegistryDirectory, onCreate, onModify, onDelete);
+        this.serviceRegistryConfigWatcher.start(getClass().getSimpleName());
         LOGGER.debug("Started service registry watcher thread");
     }
 

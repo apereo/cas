@@ -17,23 +17,21 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * @author David Rodriguez
- *
  * @since 5.2.0
  */
-public class PathWatcher implements Runnable, Closeable {
+public class PathWatcherService implements Runnable, Closeable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PathWatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathWatcherService.class);
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Lock readLock = this.lock.readLock();
+    private Thread thread;
 
     private final WatchService watcher;
     private final Consumer<File> onCreate;
@@ -41,35 +39,47 @@ public class PathWatcher implements Runnable, Closeable {
     private final Consumer<File> onDelete;
     private final long interval;
 
-    /**
-     * Instantiates a new Json service registry config watcher.
-     *
-     * @param watchablePath path that will be watched
-     * @param onCreate action triggered when a new file is created
-     * @param onModify action triggered when a file is modified
-     * @param onDelete action triggered when a file is deleted
-     */
-    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
-        this(watchablePath, onCreate, onModify, onDelete, 0);
+    public PathWatcherService(final File watchablePath, final Consumer<File> onModify) {
+        this(watchablePath.toPath(),
+            file -> {
+            }, onModify,
+            file -> {
+            }, 0);
+    }
+
+    public PathWatcherService(final File watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
+        this(watchablePath.toPath(), onCreate, onModify, onDelete, 0);
     }
 
     /**
      * Instantiates a new Json service registry config watcher.
      *
      * @param watchablePath path that will be watched
-     * @param onCreate action triggered when a new file is created
-     * @param onModify action triggered when a file is modified
-     * @param onDelete action triggered when a file is deleted
+     * @param onCreate      action triggered when a new file is created
+     * @param onModify      action triggered when a file is modified
+     * @param onDelete      action triggered when a file is deleted
+     */
+    public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
+        this(watchablePath, onCreate, onModify, onDelete, 0);
+    }
+
+    /**
+     * Instantiates a new Json service registry config watcher.
+     *
+     * @param watchablePath        path that will be watched
+     * @param onCreate             action triggered when a new file is created
+     * @param onModify             action triggered when a file is modified
+     * @param onDelete             action triggered when a file is deleted
      * @param intervalMilliseconds milliseconds intervalMilliseconds to limit monitoring
      */
-    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, 
-                       final Consumer<File> onDelete,
-                       final long intervalMilliseconds) {
-        this.onCreate = onCreate;
-        this.onModify = onModify;
-        this.onDelete = onDelete;
-        this.interval = intervalMilliseconds;
+    public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
+                              final Consumer<File> onModify, final Consumer<File> onDelete,
+                              final long intervalMilliseconds) {
         try {
+            this.onCreate = onCreate;
+            this.onModify = onModify;
+            this.onDelete = onDelete;
+            this.interval = intervalMilliseconds;
             this.watcher = watchablePath.getFileSystem().newWatchService();
             LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
             watchablePath.register(this.watcher, KINDS);
@@ -144,5 +154,24 @@ public class PathWatcher implements Runnable, Closeable {
     @Override
     public void close() {
         IOUtils.closeQuietly(this.watcher);
+        if (this.thread != null) {
+            thread.interrupt();
+        }
+    }
+
+
+    /**
+     * Start thread.
+     *
+     * @param name the name
+     */
+    public void start(final String name) {
+        try {
+            this.thread = new Thread(this);
+            this.thread.setName(name);
+            thread.start();
+        } catch (final Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }
