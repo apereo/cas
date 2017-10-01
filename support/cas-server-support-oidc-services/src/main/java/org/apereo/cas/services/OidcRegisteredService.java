@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.javers.core.metamodel.annotation.TypeName;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -23,6 +24,7 @@ import java.util.Set;
  */
 @Entity
 @DiscriminatorValue("oidc")
+@TypeName("OidcRegisteredService")
 public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;

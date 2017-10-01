@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
+import org.javers.core.metamodel.annotation.TypeName;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
  */
 @Entity
 @DiscriminatorValue("regex")
+@TypeName("RegexRegisteredService")
 public class RegexRegisteredService extends AbstractRegisteredService {
 
     private static final long serialVersionUID = -8258660210826975771L;
