@@ -71,9 +71,9 @@ public final class WebUtils {
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
-    
+
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -745,6 +745,16 @@ public final class WebUtils {
      */
     public static void putRememberMeAuthenticationEnabled(final RequestContext context, final Boolean enabled) {
         context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled);
+    }
+
+    /**
+     * Is remember me authentication enabled ?.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
+        return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", false);
     }
 
     /**
