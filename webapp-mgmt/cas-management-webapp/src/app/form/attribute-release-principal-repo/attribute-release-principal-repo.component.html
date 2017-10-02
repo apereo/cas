@@ -16,12 +16,6 @@
   </md-radio-group>
 </div>
 
-<div *ngIf="type == TYPE.DEFAULT">
-  <ng-container i18n="services.service.noAction">
-    {{ messages.management_services_service_noAction }}
-  </ng-container>
-</div>
-
 <div *ngIf="type == TYPE.CACHING">
   <div>
     <md-select required style="width:400px;padding-top:25px;padding-bottom: 25px;"
