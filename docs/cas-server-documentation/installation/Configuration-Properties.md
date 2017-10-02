@@ -4135,7 +4135,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 ```
 
 ## Management Webapp
-<div class="alert alert-info"><p>Note: These settings should be defined in `management.properties` of the Management Web Application and NOT `cas.properties` of the CAS Server Web Application</p></div>
+<div class="alert alert-info"><p>Note: These settings should be defined in <code>management.properties</code> of the Management Web Application and NOT <code>cas.properties</code> of the CAS Server Web Application</p></div>
 
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
