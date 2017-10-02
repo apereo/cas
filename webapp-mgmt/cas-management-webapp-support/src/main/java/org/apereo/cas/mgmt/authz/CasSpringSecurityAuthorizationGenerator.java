@@ -31,21 +31,25 @@ public class CasSpringSecurityAuthorizationGenerator implements AuthorizationGen
             if (ResourceUtils.doesResourceExist(usersFile)) {
                 properties.load(usersFile.getInputStream());
             }
-            try {
-                final FileWatcherService watcher = new FileWatcherService(usersFile.getFile(),
-                        Unchecked.consumer(file -> {
-                            final Properties newProps = new Properties();
-                            newProps.load(new FileInputStream(file));
-                            this.generator = new SpringSecurityPropertiesAuthorizationGenerator(newProps);
-                        }));
-                watcher.start(getClass().getSimpleName());
-            } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
-            }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         this.generator = new SpringSecurityPropertiesAuthorizationGenerator(properties);
+        watchResource(usersFile);
+    }
+
+    private void watchResource(final Resource usersFile) {
+        try {
+            final FileWatcherService watcher = new FileWatcherService(usersFile.getFile(),
+                    Unchecked.consumer(file -> {
+                        final Properties newProps = new Properties();
+                        newProps.load(new FileInputStream(file));
+                        this.generator = new SpringSecurityPropertiesAuthorizationGenerator(newProps);
+                    }));
+            watcher.start(getClass().getSimpleName());
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
     }
 
     @Override
