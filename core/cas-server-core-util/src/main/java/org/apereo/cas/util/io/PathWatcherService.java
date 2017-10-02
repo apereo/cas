@@ -24,8 +24,9 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * @since 5.2.0
  */
 public class PathWatcherService implements Runnable, Closeable {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PathWatcherService.class);
+
+    private static final int INTERVAL = 2_000;
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -79,7 +80,7 @@ public class PathWatcherService implements Runnable, Closeable {
             this.onCreate = onCreate;
             this.onModify = onModify;
             this.onDelete = onDelete;
-            this.interval = intervalMilliseconds;
+            this.interval = intervalMilliseconds <= 0 ? INTERVAL : intervalMilliseconds;
             this.watcher = watchablePath.getFileSystem().newWatchService();
             LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
             watchablePath.register(this.watcher, KINDS);
@@ -137,7 +138,7 @@ public class PathWatcherService implements Runnable, Closeable {
                 final Path fullPath = parent.resolve(filename);
                 final File file = fullPath.toFile();
 
-                LOGGER.trace("Detected event [{}] on file [{}]. Loading change...", eventName, file);
+                LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
                 if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
                     onCreate.accept(file);
                 } else if (eventName.equals(ENTRY_DELETE.name())) {
