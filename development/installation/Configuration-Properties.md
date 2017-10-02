@@ -842,7 +842,6 @@ def Map<String, List<Object>> run(final Object... args) {
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
-
 ```
 
 ### JSON
@@ -3434,14 +3433,6 @@ The signature location MUST BE the public key used to sign the metadata.
 # cas.samlSp.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
-## SQRL
-
-Allow CAS to authenticate accounts via SQRL. To learn more about this topic, [please review this guide](../protocol/SQRL-Protocol.html).
-
-```properties
-# cas.authn.sqrl.nutExpirationSeconds=200
-# cas.authn.sqrl.sfn=sqrl-example
-```
 
 ## OpenID Connect
 
@@ -4989,6 +4980,7 @@ The configuration of the CAS management web application is handled inside a `man
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
+# cas.mgmt.userPropertiesFile=classpath:/user-details.[json|yml]
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 
 # cas.mgmt.serverName=https://localhost:8443
