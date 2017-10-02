@@ -79,11 +79,26 @@ def run(final Object... args) {
     def attributes = args[1]
     def service = args[2]
     def logger = args[3]
-    return new InterruptResponse("Message", [link1:"google.com", link2:"yahoo.com"], false, true)
+
+    ...
+    def block = false
+    def ssoEnabled = true
+
+    return new InterruptResponse("Message", [link1:"google.com", link2:"yahoo.com"], block, ssoEnabled)
 }
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-groovy).
+
+The following parameters are passed to the script:
+
+| Parameter             | Description
+|------------------------------------------------------------------------------------------------------------------------
+| `uid`                 | Authenticated principal id.
+| `attributes`          | A map of type `Map<String, Objec>` that contains both principal and authentication attributes. 
+| `service`             | The identifier (i.e. URL) of the requesting application.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
 
 ### REST
 
