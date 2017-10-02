@@ -2,6 +2,7 @@ package org.apereo.cas.mgmt.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.CasManagementUtils;
+import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.authorization.authorizer.Authorizer;
@@ -42,11 +43,11 @@ public class CasManagementAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("managementWebappAuthorizer")
     private Authorizer managementWebappAuthorizer;
-    
+
     @Autowired
     @Qualifier("authorizationGenerator")
     private AuthorizationGenerator authorizationGenerator;
@@ -54,7 +55,7 @@ public class CasManagementAuthenticationConfiguration {
     @Autowired
     @Qualifier("staticAdminRolesAuthorizationGenerator")
     private AuthorizationGenerator staticAdminRolesAuthorizationGenerator;
-    
+
     @ConditionalOnMissingBean(name = "authenticationClients")
     @Bean
     @RefreshScope
@@ -91,7 +92,7 @@ public class CasManagementAuthenticationConfiguration {
         }
         return clients;
     }
-    
+
     @ConditionalOnMissingBean(name = "casManagementSecurityConfiguration")
     @Bean
     @RefreshScope
@@ -99,5 +100,12 @@ public class CasManagementAuthenticationConfiguration {
         final Config cfg = new Config(CasManagementUtils.getDefaultCallbackUrl(casProperties, serverProperties), authenticationClients());
         cfg.setAuthorizer(this.managementWebappAuthorizer);
         return cfg;
+    }
+
+    @ConditionalOnMissingBean(name = "casUserProfileFactory")
+    @Bean
+    @RefreshScope
+    public CasUserProfileFactory casUserProfileFactory() {
+        return new CasUserProfileFactory(casProperties);
     }
 }
