@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.support.password;
 
-import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.util.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
