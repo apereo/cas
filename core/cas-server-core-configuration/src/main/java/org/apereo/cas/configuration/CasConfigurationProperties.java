@@ -20,6 +20,7 @@ import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityPr
 import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
+import org.apereo.cas.configuration.model.support.attributes.EditableAttributeProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
@@ -146,6 +147,9 @@ public class CasConfigurationProperties implements Serializable {
 
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
+    
+    @NestedConfigurationProperty
+    private EditableAttributeProperties editableAttribute = new EditableAttributeProperties();
 
     @NestedConfigurationProperty
     private ClearpassProperties clearpass = new ClearpassProperties();
@@ -352,10 +356,18 @@ public class CasConfigurationProperties implements Serializable {
         this.googleAnalytics = googleAnalytics;
     }
 
+    public EditableAttributeProperties getEditableAttribute() {
+        return editableAttribute;
+    }
+
+    public void setEditableAttribute(final EditableAttributeProperties editableAttribute) {
+        this.editableAttribute = editableAttribute;
+    }
+
     public AcceptableUsagePolicyProperties getAcceptableUsagePolicy() {
         return acceptableUsagePolicy;
     }
-
+    
     public void setAcceptableUsagePolicy(final AcceptableUsagePolicyProperties acceptableUsagePolicy) {
         this.acceptableUsagePolicy = acceptableUsagePolicy;
     }

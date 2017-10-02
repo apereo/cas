@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{cas.editableattributeview.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div id="login" style="width: 100%;">
+        <form method="post" id="fm1">
+
+            <h2>Edit your attributes</h2>
+            <div>
+                
+            </div>
+            <div class="row fl-controls-left">
+                <table width="100%">
+                    <tr th:each="attr : ${editableAttributes}">
+                        <td th:utext="${attr.getPrompt()}"></td>
+                        <td th:if="${attr.getType() == T(org.apereo.cas.configuration.model.support.attributes.EditableAttributeProperties.EditableAttribute.EditableAttributeType).PASSWORD}">
+                            <input type="password" class="required" th:name="${T(org.apereo.cas.web.flow.EditableAttributeFormAction.ATTRIBUTE_INPUT_PREFIX) + attr.getId()}" size="45"/>
+                        </td>
+                        <td th:if="${attr.getType() == T(org.apereo.cas.configuration.model.support.attributes.EditableAttributeProperties.EditableAttribute.EditableAttributeType).SELECT}">
+                            <select th:name="${T(org.apereo.cas.web.flow.EditableAttributeFormAction.ATTRIBUTE_INPUT_PREFIX) + attr.getId()}">
+                                <option th:each="option : ${attr.getOptions()}"
+                                        th:value="${option}"
+                                        th:selected="{$option} == ${outputEditableAttributeValues.get(attr.getId())}"
+                                        th:text="{$option}"></option>
+                        </td>
+                        <td th:if="${attr.getType() == T(org.apereo.cas.configuration.model.support.attributes.EditableAttributeProperties.EditableAttribute.EditableAttributeType).TEXT}">
+                            <input class="required" th:name="${T(org.apereo.cas.web.flow.EditableAttributeFormAction.ATTRIBUTE_INPUT_PREFIX) + attr.getId()}" size="45"/>
+                        </td>
+                    </tr>
+                </table>
+                    
+            <section class="row btn-row">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                <input type="hidden" name="_eventId" value="submit" />
+                <input class="btn-submit"
+                       name="submit"
+                       accesskey="s"
+                       th:value="#{screen.attributes.button.submit}"
+                       type="submit" />
+                <input
+                        class="btn-reset"
+                        name="cancel"
+                        accesskey="c"
+                        th:value="#{screen.attributes.button.cancel}"
+                        type="button"
+                        onclick="location.href = location.href;" />
+            </section>
+        </form>
+    </div>
+</div>
+</body>
+</html>

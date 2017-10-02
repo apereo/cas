@@ -5555,6 +5555,106 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.authn.fortress.rbaccontext=HOME
 ```
 
+## Attribute Editing
+
+Allow the user to edit attributes (security questions, etc) in-place
+
+```properties
+cas.editableAttributes.attributes[0].type=TEXT|SELECT|PASSWORD
+cas.editableAttributes.attributes[0].id=keyForDataStore
+cas.editableAttributes.attributes[0].prompt=User Prompt
+cas.editableAttributes.attributes[0].options=comma separated,options for,select type
+cas.editableAttributes.attributes[0].validationRegex=.*
+cas.editableAttributes.attributes[1].type=SELECT
+cas.editableAttributes.attributes[1].id=forgotPasswordQuestion1
+cas.editableAttributes.attributes[1].prompt=Security Question 1
+cas.editableAttributes.attributes[1].options=Mother's maiden name,Father's middle name
+cas.editableAttributes.attributes[1].validationRegex=^.+$
+cas.editableAttributes.attributes[2].type=PASSWORD
+cas.editableAttributes.attributes[2].id=forgotPasswordAnswer1
+cas.editableAttributes.attributes[2].prompt=Answer for Security Question 1
+cas.editableAttributes.attributes[2].options=N/A
+cas.editableAttributes.attributes[2].validationRegex=^.+$
+```
+
+#### REST
+
+```properties
+# cas.editableAttributes.rest.method=GET|POST
+# cas.editableAttributes.rest.order=0
+# cas.editableAttributes.rest.caseInsensitive=false
+# cas.editableAttributes.rest.basicAuthUsername=uid
+# cas.editableAttributes.rest.basicAuthPassword=password
+# cas.editableAttributes.rest.url=https://rest.somewhere.org/attributes
+```
+
+#### JDBC
+
+```properties
+# cas.editableAttributes.jdbc.tableName=attributes_table
+
+# cas.editableAttributes.jdbc.validationQuery=SELECT 1
+# cas.editableAttributes.jdbc.maxWait=5000
+# cas.editableAttributes.jdbc.healthQuery=
+# cas.editableAttributes.jdbc.isolateInternalQueries=false
+# cas.editableAttributes.jdbc.url=jpa:hsqldb:mem:cas-hsql-database
+# cas.editableAttributes.jdbc.failFastTimeout=1
+# cas.editableAttributes.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.editableAttributes.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.editableAttributes.jdbc.leakThreshold=10
+# cas.editableAttributes.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.editableAttributes.jdbc.batchSize=1
+# cas.editableAttributes.jdbc.user=sa
+# cas.editableAttributes.jdbc.ddlAuto=create-drop
+# cas.editableAttributes.jdbc.maxAgeDays=180
+# cas.editableAttributes.jdbc.password=
+# cas.editableAttributes.jdbc.autocommit=false
+# cas.editableAttributes.jdbc.driverClass=org.hsqldb.jpaDriver
+# cas.editableAttributes.jdbc.idleTimeout=5000
+# cas.editableAttributes.jdbc.dataSourceName=
+# cas.editableAttributes.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.editableAttributes.jdbc.properties.propertyName=propertyValue
+```
+
+#### LDAP
+
+```properties
+# cas.editableAttributes.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.editableAttributes.ldap.connectionStrategy=
+# cas.editableAttributes.ldap.baseDn=dc=example,dc=org
+# cas.editableAttributes.ldap.userFilter=cn={user}
+# cas.editableAttributes.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.editableAttributes.ldap.bindCredential=Password
+# cas.editableAttributes.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.editableAttributes.ldap.connectTimeout=5000
+# cas.editableAttributes.ldap.trustCertificates=
+# cas.editableAttributes.ldap.keystore=
+# cas.editableAttributes.ldap.keystorePassword=
+# cas.editableAttributes.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.editableAttributes.ldap.poolPassivator=NONE|CLOSE|BIND
+# cas.editableAttributes.ldap.minPoolSize=3
+# cas.editableAttributes.ldap.maxPoolSize=10
+# cas.editableAttributes.ldap.validateOnCheckout=true
+# cas.editableAttributes.ldap.validatePeriodically=true
+# cas.editableAttributes.ldap.validatePeriod=600
+# cas.editableAttributes.ldap.validateTimeout=5000
+# cas.editableAttributes.ldap.failFast=true
+# cas.editableAttributes.ldap.idleTime=500
+# cas.editableAttributes.ldap.prunePeriod=600
+# cas.editableAttributes.ldap.blockWaitTime=5000
+# cas.editableAttributes.ldap.useSsl=true
+# cas.editableAttributes.ldap.useStartTls=false
+
+# cas.editableAttributes.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.editableAttributes.ldap.validator.baseDn=
+# cas.editableAttributes.ldap.validator.searchFilter=(objectClass=*)
+# cas.editableAttributes.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.editableAttributes.ldap.validator.attributeName=objectClass
+# cas.editableAttributes.ldap.validator.attributeValues=top
+# cas.editableAttributes.ldap.validator.dn=
+```
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.

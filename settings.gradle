@@ -230,6 +230,12 @@ include "support:cas-server-support-aup-rest"
 include "support:cas-server-support-aup-ldap"
 include "support:cas-server-support-aup-webflow"
 
+include "support:cas-server-support-edit-attributes-core"
+include "support:cas-server-support-edit-attributes-jdbc"
+include "support:cas-server-support-edit-attributes-rest"
+include "support:cas-server-support-edit-attributes-ldap"
+include "support:cas-server-support-edit-attributes-webflow"
+
 include "webapp:cas-server-webapp-init"
 include "webapp:cas-server-webapp-session-redis"
 include "webapp:cas-server-webapp-session-hazelcast"
