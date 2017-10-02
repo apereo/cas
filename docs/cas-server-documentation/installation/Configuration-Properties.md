@@ -842,7 +842,6 @@ def Map<String, List<Object>> run(final Object... args) {
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
-
 ```
 
 ### JSON

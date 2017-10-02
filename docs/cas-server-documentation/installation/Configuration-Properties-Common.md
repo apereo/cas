@@ -100,8 +100,18 @@ The following options are supported:
 | `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
+| `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
 
-If you ned to design your own password encoding scheme, the structure of the component would be similiar to the following:
+In cases where you plan to design your own password encoder or write scripts to do so, you may also need to ensure the overlay has the following modules available at runtime:
+
+```xml
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core</artifactId>
+</dependency>
+```
+
+If you need to design your own password encoding scheme where the type is specified as a fully qualified Java class name, the structure of the class would be similiar to the following:
 
 ```java
 package org.example.cas;
@@ -111,19 +121,26 @@ import org.springframework.security.crypto.password.*;
 
 public class MyEncoder extends AbstractPasswordEncoder {
     @Override
-    protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
+    protected byte[] encode(CharSequence rawPassword, byte[] salt) {
         return ...
     }
 }
 ```
 
-You may also need to ensure the overlay has the following modules available at runtime:
+If you need to design your own password encoding scheme where the type is specified as a path to a Groovy script, the structure of the script would be similiar to the following:
 
-```xml
-<dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-core</artifactId>
-</dependency>
+```groovy
+import java.util.*
+
+def byte[] run(final Object... args) {
+    def rawPassword = args[0]
+    def generatedSalt = args[1]
+    def logger = args[2]
+    def casApplicationContext = args[3]
+
+    logger.debug("Encoding password...")
+    return ...
+}
 ```
 
 ## Authentication Principal Transformation
