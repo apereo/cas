@@ -57,9 +57,24 @@ public class ManagementWebappProperties implements Serializable {
      * This file lists the set of users that are allowed access to the CAS sensitive/admin endpoints.
      * The syntax of each entry should be in the form of:
      * {@code username=notused,grantedAuthority[,grantedAuthority][,enabled|disabled]}
+     * 
+     * <p>
+     * The file may also be specified in form of JSON or YAML. In either case, the contents should be a map
+     * of user records with key being the username whose authorization rules are defined as the value linked to that key.
+     * 
+     * Example:
+     * <pre>
+{
+    "casuser" : {
+        "roles" : [ "ROLE_ADMIN" ],
+        "permissions" : [ "PERMISSION_EXAMPLE" ]
+    }
+}
+     * </pre>
+     * </p>
      */
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
-
+    
     public Ldap getLdap() {
         return ldap;
     }

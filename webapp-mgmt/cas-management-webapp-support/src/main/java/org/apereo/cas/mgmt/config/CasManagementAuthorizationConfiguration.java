@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.apereo.cas.mgmt.authz.CasRoleBasedAuthorizer;
 import org.apereo.cas.mgmt.authz.CasSpringSecurityAuthorizationGenerator;
+import org.apereo.cas.mgmt.authz.json.JsonResourceAuthorizationGenerator;
+import org.apereo.cas.mgmt.authz.yaml.YamlResourceAuthorizationGenerator;
 import org.pac4j.core.authorization.authorizer.Authorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.authorization.generator.FromAttributesAuthorizationGenerator;
@@ -13,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
 import java.util.List;
 
@@ -40,6 +43,7 @@ public class CasManagementAuthorizationConfiguration {
             }
             return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[]{}), new String[]{});
         }
+        
         return springSecurityPropertiesAuthorizationGenerator();
     }
 
@@ -66,7 +70,14 @@ public class CasManagementAuthorizationConfiguration {
     public AuthorizationGenerator springSecurityPropertiesAuthorizationGenerator() {
         try {
             final ManagementWebappProperties mgmt = casProperties.getMgmt();
-            return new CasSpringSecurityAuthorizationGenerator(mgmt.getUserPropertiesFile());
+            final Resource userPropertiesFile = mgmt.getUserPropertiesFile();
+            if (userPropertiesFile.getFilename().endsWith("json")) {
+                return new JsonResourceAuthorizationGenerator(userPropertiesFile);
+            }
+            if (userPropertiesFile.getFilename().endsWith("yml")) {
+                return new YamlResourceAuthorizationGenerator(userPropertiesFile);
+            }
+            return new CasSpringSecurityAuthorizationGenerator(userPropertiesFile);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
