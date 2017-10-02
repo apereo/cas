@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mgmt.authentication.CasUserProfile;
+import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -48,7 +50,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     private static final String STATUS = "status";
 
     private final RegisteredServiceFactory registeredServiceFactory;
-
+    private final CasUserProfileFactory casUserProfileFactory;
     private final Service defaultService;
 
     private CasConfigurationProperties casProperties;
@@ -65,12 +67,14 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             final ServicesManager servicesManager,
             final RegisteredServiceFactory registeredServiceFactory,
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            final String defaultServiceUrl, 
-            final CasConfigurationProperties casProperties) {
+            final String defaultServiceUrl,
+            final CasConfigurationProperties casProperties,
+            final CasUserProfileFactory casUserProfileFactory) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
         this.defaultService = webApplicationServiceFactory.createService(defaultServiceUrl);
         this.casProperties = casProperties;
+        this.casUserProfileFactory = casUserProfileFactory;
     }
 
     /**
@@ -167,6 +171,22 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     @GetMapping(value = "/domains")
     public ResponseEntity<Collection<String>> getDomains() throws Exception {
         final Collection<String> data = this.servicesManager.getDomains();
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+
+    /**
+     * Gets user.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the user
+     * @throws Exception the exception
+     */
+    @GetMapping(value = "/user")
+    public ResponseEntity<CasUserProfile> getUser(final HttpServletRequest request,
+                                                  final HttpServletResponse response) throws Exception {
+        final CasUserProfile data = casUserProfileFactory.from(request, response);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
