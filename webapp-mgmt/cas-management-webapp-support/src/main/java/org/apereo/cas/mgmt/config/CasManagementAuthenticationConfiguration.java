@@ -44,8 +44,8 @@ public class CasManagementAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
     
     @Autowired
-    @Qualifier("requireAnyRoleAuthorizer")
-    private Authorizer requireAnyRoleAuthorizer;
+    @Qualifier("managementWebappAuthorizer")
+    private Authorizer managementWebappAuthorizer;
     
     @Autowired
     @Qualifier("authorizationGenerator")
@@ -97,7 +97,7 @@ public class CasManagementAuthenticationConfiguration {
     @RefreshScope
     public Config casManagementSecurityConfiguration() {
         final Config cfg = new Config(CasManagementUtils.getDefaultCallbackUrl(casProperties, serverProperties), authenticationClients());
-        cfg.setAuthorizer(requireAnyRoleAuthorizer);
+        cfg.setAuthorizer(this.managementWebappAuthorizer);
         return cfg;
     }
 }

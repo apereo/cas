@@ -46,7 +46,7 @@ public class CasManagementAuthorizationConfiguration {
         
         return springSecurityPropertiesAuthorizationGenerator();
     }
-
+    
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "staticAdminRolesAuthorizationGenerator")
@@ -57,10 +57,10 @@ public class CasManagementAuthorizationConfiguration {
         };
     }
 
-    @ConditionalOnMissingBean(name = "requireAnyRoleAuthorizer")
+    @ConditionalOnMissingBean(name = "managementWebappAuthorizer")
     @Bean
     @RefreshScope
-    public Authorizer requireAnyRoleAuthorizer() {
+    public Authorizer managementWebappAuthorizer() {
         return new CasRoleBasedAuthorizer(casProperties.getMgmt().getAdminRoles());
     }
 
