@@ -21,7 +21,7 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
  */
 public final class PasswordEncoderUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordEncoderUtils.class);
-    
+
     private PasswordEncoderUtils() {
     }
 
@@ -36,6 +36,11 @@ public final class PasswordEncoderUtils {
         if (StringUtils.isBlank(type)) {
             LOGGER.debug("No password encoder type is defined, and so none shall be created");
             return NoOpPasswordEncoder.getInstance();
+        }
+
+        if (type.endsWith(".groovy")) {
+            LOGGER.debug("Creating Groovy-based password encoder at [{}]", type);
+            return new GroovyPasswordEncoder(properties.getType());
         }
 
         if (type.contains(".")) {
