@@ -372,9 +372,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);
-
         doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
-
         return ticketGrantingTicket;
     }
 
