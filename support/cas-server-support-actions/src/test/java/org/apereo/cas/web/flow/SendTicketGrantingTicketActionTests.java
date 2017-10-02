@@ -36,15 +36,15 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";
     private static final String SUCCESS = "success";
-    
+
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
     private Action action;
-    
+
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
+
     private MockRequestContext context;
 
     @Before
@@ -54,9 +54,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyNoTgtToSet() throws Exception {
-        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-                new MockHttpServletRequest(), new MockHttpServletResponse()));
-
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertEquals(SUCCESS, this.action.execute(this.context).getId());
     }
 
@@ -73,8 +71,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         when(tgt.getId()).thenReturn(TEST_STRING);
 
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
-        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-                request, response));
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         assertEquals(SUCCESS, this.action.execute(this.context).getId());
         request.setCookies(response.getCookies());
