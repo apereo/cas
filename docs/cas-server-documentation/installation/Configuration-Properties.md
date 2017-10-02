@@ -4981,6 +4981,7 @@ The configuration of the CAS management web application is handled inside a `man
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
+# cas.mgmt.userPropertiesFile=classpath:/user-details.[json|yml]
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 
 # cas.mgmt.serverName=https://localhost:8443
