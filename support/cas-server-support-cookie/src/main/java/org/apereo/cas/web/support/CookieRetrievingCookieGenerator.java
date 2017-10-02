@@ -104,7 +104,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
             response.addCookie(cookie);
         } else {
             LOGGER.debug("Creating cookie [{}]", getCookieName());
-            super.addCookie(response, cookieValue);
+            super.addCookie(response, theCookieValue);
         }
     }
 
