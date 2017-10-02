@@ -3,7 +3,7 @@ layout: default
 title: CAS Properties Overview
 ---
 
-# CAS Properties Overview
+# CAS Common Properties
 
 This document describes a number of suggestions and configuration options that apply
 to and are common amongst a selection of CAS modules and features.
