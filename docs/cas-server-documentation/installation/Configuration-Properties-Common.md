@@ -91,7 +91,7 @@ password encoding. Most options are based on Spring Security's [support for pass
 
 The following options are supported:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No password encoding (i.e. plain-text) takes place.     
 | `DEFAULT`               | Use the `DefaultPasswordEncoder` of CAS. For message-digest algorithms via `characterEncoding` and `encodingAlgorithm`.
@@ -100,6 +100,31 @@ The following options are supported:
 | `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
+
+If you ned to design your own password encoding scheme, the structure of the component would be similiar to the following:
+
+```java
+package org.example.cas;
+
+import org.springframework.security.crypto.codec.*;
+import org.springframework.security.crypto.password.*;
+
+public class MyEncoder extends AbstractPasswordEncoder {
+    @Override
+    protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
+        return ...
+    }
+}
+```
+
+You may also need to ensure the overlay has the following modules available at runtime:
+
+```xml
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core</artifactId>
+</dependency>
+```
 
 ## Authentication Principal Transformation
 
