@@ -355,7 +355,7 @@ task jacocoMerge(type: JacocoMerge) {
 }
 
 task jacocoTestReport(type: JacocoReport, description: "Aggregate all test reports into a single directory") {
-    dependsOn publishedProjects.test, jacocoMerge
+    dependsOn jacocoMerge
 
     additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
