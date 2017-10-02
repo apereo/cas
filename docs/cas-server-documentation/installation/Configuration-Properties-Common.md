@@ -248,8 +248,7 @@ In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file l
 
 ## Signing & Encryption
 
-A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to 
-manually and beforehand create the signing and encryption keys.
+A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 
 Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
 of a cerain size for the key, you are to use the following set of commands to generate the token:
@@ -258,6 +257,18 @@ of a cerain size for the key, you are to use the following set of commands to ge
 wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
 java -jar jwk-gen.jar -t oct -s [size]
 ```
+
+The outcome would be similar to:
+
+```json
+{
+  "kty": "oct",
+  "kid": "...",
+  "k": "..."
+}
+```
+
+The generated value for `k` needs to be assigned to the relevant CAS settings.
 
 ## DDL Configuration
 
