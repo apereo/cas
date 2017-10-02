@@ -1,4 +1,4 @@
-package org.apereo.cas.mgmt.web;
+package org.apereo.cas.mgmt.authentication;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.pac4j.core.client.Client;

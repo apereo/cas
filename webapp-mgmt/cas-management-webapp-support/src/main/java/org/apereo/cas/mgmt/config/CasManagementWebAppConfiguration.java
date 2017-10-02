@@ -7,6 +7,8 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.CasManagementUtils;
 import org.apereo.cas.mgmt.DefaultCasManagementEventListener;
+import org.apereo.cas.mgmt.authentication.CasManagementSecurityInterceptor;
+import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
@@ -14,7 +16,6 @@ import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.FormDataPopulator;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.web.CasManagementRootController;
-import org.apereo.cas.mgmt.web.CasManagementSecurityInterceptor;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
@@ -87,6 +88,10 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("casUserProfileFactory")
+    private CasUserProfileFactory casUserProfileFactory;
 
     @Bean
     public Filter characterEncodingFilter() {
@@ -173,8 +178,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
             @Qualifier("servicesManager") final ServicesManager servicesManager) {
+        final String defaultCallbackUrl = CasManagementUtils.getDefaultCallbackUrl(casProperties, serverProperties);
         return new ManageRegisteredServicesMultiActionController(servicesManager, registeredServiceFactory(),
-                webApplicationServiceFactory, CasManagementUtils.getDefaultCallbackUrl(casProperties, serverProperties), casProperties);
+                webApplicationServiceFactory, defaultCallbackUrl, casProperties, casUserProfileFactory);
     }
 
     @Bean

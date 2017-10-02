@@ -18,7 +18,7 @@ public class UserAuthorizationDefinition implements Serializable {
 
     private Set<String> roles = new LinkedHashSet<>();
     private Set<String> permissions = new LinkedHashSet<>();
-
+    
     public Set<String> getRoles() {
         return roles;
     }
