@@ -42,7 +42,7 @@ public class JsonResourceAuthorizationGenerator implements AuthorizationGenerato
     private void watchResource(final Resource usersFile) {
         try {
             final FileWatcherService watcher = new FileWatcherService(usersFile.getFile(),
-                    Unchecked.consumer(file -> loadResource(usersFile)));
+                Unchecked.consumer(file -> loadResource(usersFile)));
             watcher.start(getClass().getSimpleName());
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
@@ -53,7 +53,7 @@ public class JsonResourceAuthorizationGenerator implements AuthorizationGenerato
         try (Reader reader = new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8)) {
             final TypeReference<Map<String, UserAuthorizationDefinition>> personList =
                     new TypeReference<Map<String, UserAuthorizationDefinition>>() {
-                    };
+                };
             this.rules = this.objectMapper.readValue(JsonValue.readHjson(reader).toString(), personList);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
