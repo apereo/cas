@@ -22,6 +22,7 @@ import {GrouperRegisteredServiceAccessStrategy} from "../../domain/access-strate
 enum Tabs {
   BASICS,
   TYPE,
+  CONTACTS,
   LOGOUT,
   ACCESS_STRATEGY,
   MULTIFACTOR,
@@ -124,6 +125,8 @@ export class FormComponent implements OnInit {
           return 'oauth';
         if(this.isWsFed())
           return 'wsfed';
+      case Tabs.CONTACTS :
+        return 'contacts';
       case Tabs.LOGOUT :
         return 'logout';
       case Tabs.ACCESS_STRATEGY :

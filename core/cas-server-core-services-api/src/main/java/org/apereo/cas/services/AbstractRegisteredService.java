@@ -26,9 +26,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -122,6 +124,11 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @JoinTable(name = "RegisteredServiceImpl_Props")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name="RegisteredService_Contacts")
+    private List<RegisteredServiceContact> contacts = new ArrayList<>();
+
+
     @Override
     public long getId() {
         return this.id;
@@ -205,6 +212,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         if (this.attributeReleasePolicy == null) {
             this.attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
         }
+        if (this.contacts == null) {
+            this.contacts = new ArrayList<>();
+        }
     }
 
     @Override
@@ -244,6 +254,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
                 .append(this.multifactorPolicy, that.multifactorPolicy)
                 .append(this.informationUrl, that.informationUrl)
                 .append(this.privacyUrl, that.privacyUrl)
+                .append(this.contacts, that.contacts)
                 .isEquals();
     }
 
@@ -269,6 +280,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
                 .append(this.multifactorPolicy)
                 .append(this.informationUrl)
                 .append(this.privacyUrl)
+                .append(this.contacts)
                 .toHashCode();
     }
 
@@ -387,6 +399,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         setMultifactorPolicy(source.getMultifactorPolicy());
         setInformationUrl(source.getInformationUrl());
         setPrivacyUrl(source.getPrivacyUrl());
+        setContacts(source.getContacts());
     }
 
     /**
@@ -428,6 +441,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         builder.append("multifactorPolicy", this.multifactorPolicy);
         builder.append("informationUrl", this.informationUrl);
         builder.append("privacyUrl", this.privacyUrl);
+        builder.append("contacts",this.contacts);
         return builder.toString();
     }
 
@@ -506,5 +520,14 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     public void setMultifactorPolicy(final RegisteredServiceMultifactorPolicy multifactorPolicy) {
         this.multifactorPolicy = multifactorPolicy;
+    }
+
+    @Override
+    public List<RegisteredServiceContact> getContacts() {
+        return this.contacts;
+    }
+
+    public void setContacts(final List<RegisteredServiceContact> contacts) {
+        this.contacts = contacts;
     }
 }
