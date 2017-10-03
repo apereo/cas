@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -22,6 +23,24 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalAttributeRegisteredServiceUsernameProvider.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    @Test
+    public void verifyUsernameByPrincipalAttributeAsCollection() {
+        final PrincipalAttributeRegisteredServiceUsernameProvider provider =
+                new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+
+        final Map<String, Object> attrs = new HashMap<>();
+        attrs.put("userid", CollectionUtils.wrap("u1"));
+        attrs.put("cn", CollectionUtils.wrap("TheName"));
+
+        final Principal p = mock(Principal.class);
+        when(p.getId()).thenReturn("person");
+        when(p.getAttributes()).thenReturn(attrs);
+
+        final String id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
+                RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        assertEquals(id, "TheName");
+    }
+    
     @Test
     public void verifyUsernameByPrincipalAttribute() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =

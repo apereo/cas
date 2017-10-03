@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,14 +68,16 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         LOGGER.debug("Principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, attributes);
 
         if (attributes.containsKey(this.usernameAttribute)) {
-            principalId = attributes.get(this.usernameAttribute).toString();
+            final Object value = attributes.get(this.usernameAttribute);
+            principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.warn("The selected username attribute [{}] was retrieved as a direct "
                             + "principal attributes and not through the attribute release policy for service [{}]. "
                             + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
                             + "is explicitly authorized for release via the service attribute release policy.",
                     this.usernameAttribute, service, this.usernameAttribute);
-            principalId = originalPrincipalAttributes.get(this.usernameAttribute).toString();
+            final Object value = originalPrincipalAttributes.get(this.usernameAttribute);
+            principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                             + "provide the user attribute the service expects. "
