@@ -5,14 +5,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CollectionUtils}.
@@ -94,7 +97,17 @@ public final class CollectionUtils {
     public static <T> List<T> wrap(final T source) {
         final List<T> list = new ArrayList<>();
         if (source != null) {
-            list.add(source);
+            if (source instanceof Collection) {
+                final Iterator it = ((Collection) source).iterator();
+                while (it.hasNext()) {
+                    list.add((T) it.next());
+                }
+            } else if (source.getClass().isArray()) {
+                final List elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                list.addAll(elements);
+            } else {
+                list.add(source);
+            }
         }
         return list;
     }

@@ -428,8 +428,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public void setSecretKey(final String secretKey) {
             this.secretKey = secretKey;
         }
-
-
+        
         public List<String> getApiUrls() {
             return apiUrls;
         }
