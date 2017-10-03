@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -236,4 +237,12 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
     default Map<String, RegisteredServiceProperty> getProperties() {
         return new LinkedHashMap<>();
     }
+
+    /**
+     * A list of contacts that are responsible for the clients that use
+     * this service.
+     * @return list of Contacts
+     * @since 5.2
+     */
+    List<RegisteredServiceContact> getContacts();
 }
