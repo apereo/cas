@@ -166,7 +166,7 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
-## Container-based JDBC Connections
+### Container-based JDBC Connections
 
 If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
 then you can set the `dataSourceName` property on any of the configuration items that require a database
