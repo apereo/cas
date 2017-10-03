@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction.*;
@@ -61,7 +61,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
                 LOGGER.warn("No security questions could be found for [{}]", username);
                 return error();
             }
-            requestContext.getFlowScope().put("questions", new HashSet<>(questions.keySet()));
+            requestContext.getFlowScope().put("questions", new LinkedHashSet<>(questions.keySet()));
         } else {
             LOGGER.debug("Security questions are not enabled");
         }
