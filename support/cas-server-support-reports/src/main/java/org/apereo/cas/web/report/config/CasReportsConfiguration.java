@@ -5,6 +5,11 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
@@ -38,6 +43,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.servlet.View;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -57,12 +63,44 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("cas3ServiceSuccessView")
+    private View cas3ServiceSuccessView;
+
+    @Autowired
+    @Qualifier("cas3ServiceJsonView")
+    private View cas3ServiceJsonView;
+
+    @Autowired
+    @Qualifier("cas2ServiceSuccessView")
+    private View cas2ServiceSuccessView;
+
+    @Autowired
+    @Qualifier("cas1ServiceSuccessView")
+    private View cas1ServiceSuccessView;
+    
+    @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("principalFactory")
+    private PrincipalFactory principalFactory;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -97,7 +135,9 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint personDirectoryAttributeResolutionController() {
-        return new PersonDirectoryAttributeResolutionController(casProperties);
+        return new PersonDirectoryAttributeResolutionController(casProperties, servicesManager, 
+                authenticationSystemSupport, personDirectoryPrincipalResolver, webApplicationServiceFactory,
+                principalFactory, cas3ServiceSuccessView, cas3ServiceJsonView, cas2ServiceSuccessView, cas1ServiceSuccessView);
     }
 
     @Profile("standalone")
