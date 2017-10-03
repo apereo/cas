@@ -29,7 +29,7 @@ public class DefaultCassandraRepository implements CassandraRepository {
     public DefaultCassandraRepository(final CassandraAuthenticationProperties cassandraProperties,
                                       final CassandraSessionFactory cassandraSessionFactory) {
         final String query = String.format(SELECT_USER_BY_UID_QUERY, cassandraProperties.getTableName(),
-                cassandraProperties.getUsername());
+                cassandraProperties.getUsernameAttribute());
 
         this.session = cassandraSessionFactory.getSession();
         this.selectUserQuery = session.prepare(query);
