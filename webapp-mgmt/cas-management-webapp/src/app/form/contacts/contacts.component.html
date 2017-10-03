@@ -1,0 +1,60 @@
+<div>
+  <md-tab-group [(selectedIndex)]="selectedTab">
+    <md-tab *ngFor="let contact of data.service.contacts;let i = index;" [label]="i+1">
+      <div>
+        <md-form-field class="textInput">
+          <input mdInput
+                 placeholder="Name"
+                 [(ngModel)]="contact.name">
+        </md-form-field>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="contact.name"
+                 mdTooltip="First and last name of the contact">help
+        </md-icon>
+      </div>
+      <div>
+        <md-form-field class="textInput">
+          <input mdInput
+                 placeholder="Email"
+                 [(ngModel)]="contact.email">
+        </md-form-field>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="contact.email"
+                 mdTooltip="EMail of the contact">help
+        </md-icon>
+      </div>
+      <div>
+        <md-form-field class="textInput">
+          <input mdInput
+                 placeholder="Phone"
+                 [(ngModel)]="contact.phone">
+        </md-form-field>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="contact.phone"
+                 mdTooltip="Phone number of the contact">help
+        </md-icon>
+      </div>
+      <div>
+        <md-form-field class="textInput">
+          <input mdInput
+                 placeholder="Department"
+                 [(ngModel)]="contact.department">
+        </md-form-field>
+        <md-icon style="font-size: medium"
+                 i18n-mdTooltip="contact.department"
+                 mdTooltip="Department of the contact">help
+        </md-icon>
+      </div>
+    </md-tab>
+  </md-tab-group>
+  <div style="height:25px;padding-top: 5px;">
+    <div style="float:right;padidng:5px">
+      <button md-mini-fab (click)="addContact()">
+        <md-icon>add</md-icon>
+      </button>
+      <button md-mini-fab (click)="deleteContact()">
+        <md-icon>delete</md-icon>
+      </button>
+    </div>
+  </div>
+</div>
