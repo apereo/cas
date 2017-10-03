@@ -1,7 +1,9 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -12,11 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by tschmidt on 4/20/16.
+ * @author Travis Schmidt
+ * @since 5.2
  */
 @Entity
-@Table(name="RegisteredServiceImplContact")
+@Table(name = "RegisteredServiceImplContact")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
+
+    private static final long serialVersionUID = 1324660891900737066L;
 
     @org.springframework.data.annotation.Id
     @Id
@@ -24,20 +30,19 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name="phone")
+    @Column(name = "phone")
     private String phone;
 
-    @Column(name="department")
+    @Column(name = "department")
     private String department;
 
     public DefaultRegisteredServiceContact() {
-
     }
 
     @Override
@@ -46,7 +51,7 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
     }
 
     @Override
-    public String getEMail() {
+    public String getEmail() {
         return email;
     }
 
@@ -86,16 +91,16 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
             return true;
         }
 
-        if(!(obj instanceof DefaultRegisteredServiceContact)) {
+        if (!(obj instanceof DefaultRegisteredServiceContact)) {
             return false;
         }
 
-        final DefaultRegisteredServiceContact that = (DefaultRegisteredServiceContact)obj;
+        final DefaultRegisteredServiceContact that = (DefaultRegisteredServiceContact) obj;
 
         final EqualsBuilder builder = new EqualsBuilder();
         return builder
                 .append(that.name, name)
-                .append(that.email,email)
+                .append(that.email, email)
                 .append(that.phone, phone)
                 .append(that.department, department)
                 .isEquals();
@@ -113,15 +118,12 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("name:")
-                .append(name)
-                .append("email:")
-                .append(email)
-                .append("phone:")
-                .append(phone)
-                .append("department:")
-                .append(department)
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("name", name)
+                .append("email", email)
+                .append("phone", phone)
+                .append("department", department)
                 .toString();
     }
 }
