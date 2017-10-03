@@ -416,6 +416,23 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         this.dao.save(r);
         this.dao.load();
     }
+
+    @Test
+    public void verifyServiceContacts() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("verifyServiceContacts");
+        r.setName("verifyServiceContacts");
+        r.setId(5000);
+
+        final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
+        contact.setDepartment("Department");
+        contact.setEmail("cas@example.org");
+        contact.setName("Contact");
+        contact.setPhone("123-456-7890");
+        r.setContacts(CollectionUtils.wrap(contact));
+        this.dao.save(r);
+        this.dao.load();
+    }
     
     @Test
     public void persistCustomServiceProperties() throws Exception {
