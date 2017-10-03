@@ -87,7 +87,7 @@ function releaseAttributes(uid, psw, service) {
             var resp = '<pre>' + JSON.stringify(data.registeredService, null, 4) + '</pre>';
             $('#serviceJson').html(resp);
 
-            var resp = '<pre>' + data.cas1Response + '</pre>';
+            resp = '<pre>' + data.cas1Response + '</pre>';
             $('#cas1').html(resp);
 
             resp = '<pre>' + data.cas2Response + '</pre>';
@@ -99,7 +99,7 @@ function releaseAttributes(uid, psw, service) {
             resp = '<pre>' + data.cas3JsonResponse + '</pre>';
             $('#cas3Json').html(resp);
         },
-        error: function (err, textStatus, errorThrown) {
+        error: function (err) {
             var html = '<div class=\'alert alert-danger\'>'
                 + '<h4>Response Error</h4>'
                 + 'Status: <code>' + err.responseJSON.status + '</code><p/>'
