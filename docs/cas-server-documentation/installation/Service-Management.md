@@ -17,7 +17,6 @@ service registry that stores one or more registered services containing metadata
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
 
-
 ## Service Management Web Application
 
 The service management webapp is a standalone web application that may be deployed along side CAS that provides a GUI
@@ -79,3 +78,13 @@ The following options may be used to store services in CAS.
 | DynamoDb         | [See this guide](DynamoDb-Service-Management.html).
 | REST             | [See this guide](REST-Service-Management.html).
 | Custom           | [See this guide](Custom-Service-Management.html).
+
+### How Do I Choose?
+
+There are is a wide range of ticket registries on the menu. The selection criteria is outlined below:
+
+- Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
+- Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
+- Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
+- Choose a technology that shows promisig results under *your expected load*, having run performance and stress tests.
+- Choose a technology that does not depend on outside processes, systems and manual work as much as possible, is self-reliant and self contained.
