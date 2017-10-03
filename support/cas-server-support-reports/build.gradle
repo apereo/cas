@@ -6,6 +6,7 @@ dependencies {
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-validation")
     compileOnly project(":support:cas-server-support-trusted-mfa")
     compileOnly project(":core:cas-server-core-events")
     provided project(":support:cas-server-support-cookie")
