@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,14 +72,17 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
                     registeredService.getServiceId(), this.usernameAttribute);
-            principalId = releasePolicyAttributes.get(this.usernameAttribute).toString();
+
+            final Object value = releasePolicyAttributes.get(this.usernameAttribute);
+            principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
                             + "principal attribute and not through the attribute release policy for service [{}]. "
                             + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
                             + "is explicitly authorized for release via the service attribute release policy.",
                     this.usernameAttribute, service, this.usernameAttribute);
-            principalId = originalPrincipalAttributes.get(this.usernameAttribute).toString();
+            final Object value = originalPrincipalAttributes.get(this.usernameAttribute);
+            principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                             + "provide the user attribute the service expects. "
