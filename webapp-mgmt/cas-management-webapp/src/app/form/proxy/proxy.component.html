@@ -15,12 +15,6 @@
 
 </md-radio-group>
 
-<div class="well well-sm" *ngIf="type == TYPE.REFUSE">
-  <ng-container i18n="management.services.service.noAction">
-    {{ messages.management_services_service_noAction }}
-  </ng-container>
-</div>
-
 <div *ngIf="type == TYPE.REGEX">
   <md-form-field class="textInput">
     <input mdInput required
