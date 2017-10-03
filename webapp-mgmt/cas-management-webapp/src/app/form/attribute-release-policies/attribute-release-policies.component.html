@@ -35,12 +35,6 @@
   </md-icon>
 </div>
 
-<div *ngIf="type == TYPE.RETURN_ALL || type == TYPE.DENY_ALL || isEmpty( formData.availableAttributes )">
-  <ng-container i18n="management.services.service.noAction">
-    {{ messages.management_services_service_noAction }}
-  </ng-container>
-</div>
-
 <div *ngIf="(type == TYPE.RETURN_ALLOWED || type == TYPE.METADATA) && !isEmpty( formData.availableAttributes )">
   <md-select multiple style="width:400px;padding-top:25px;"
              i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
