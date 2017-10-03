@@ -126,7 +126,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredService_Contacts")
-    private List<RegisteredServiceContact> contacts = new ArrayList<>();
+    private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
 
 
     @Override
@@ -524,10 +524,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Override
     public List<RegisteredServiceContact> getContacts() {
-        return this.contacts;
+        return (List) this.contacts;
     }
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {
-        this.contacts = contacts;
+        this.contacts = (List) contacts;
     }
 }
