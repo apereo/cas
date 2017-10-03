@@ -26,6 +26,11 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
     private static final Boolean DEFAULT_SENSITIVE_VALUE = Boolean.TRUE;
 
     /**
+     * CAS settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+
+    /**
      * App context.
      */
     @Autowired
@@ -44,9 +49,11 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
                               final MonitorProperties.BaseEndpoint endpoint,
                               final CasConfigurationProperties casProperties) {
         super(name, path, DEFAULT_SENSITIVE_VALUE);
+        this.casProperties = casProperties;
 
         setEndpointSensitivity(endpoint, casProperties);
         setEndpointCapability(endpoint, casProperties);
+
     }
 
     private void setEndpointSensitivity(final MonitorProperties.BaseEndpoint endpoint,
