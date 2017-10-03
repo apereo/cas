@@ -50,7 +50,7 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class AbstractRegisteredService implements RegisteredService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredService.class);
-    
+
     private static final long serialVersionUID = 7645279151115635245L;
 
     /**
@@ -125,7 +125,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="RegisteredService_Contacts")
+    @JoinTable(name = "RegisteredService_Contacts")
     private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
 
@@ -441,7 +441,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         builder.append("multifactorPolicy", this.multifactorPolicy);
         builder.append("informationUrl", this.informationUrl);
         builder.append("privacyUrl", this.privacyUrl);
-        builder.append("contacts",this.contacts);
+        builder.append("contacts", this.contacts);
         return builder.toString();
     }
 
