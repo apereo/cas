@@ -23,6 +23,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import java.net.URL;
@@ -126,6 +127,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredService_Contacts")
+    @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
 
 
@@ -254,6 +256,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
                 .append(this.multifactorPolicy, that.multifactorPolicy)
                 .append(this.informationUrl, that.informationUrl)
                 .append(this.privacyUrl, that.privacyUrl)
+                //.append(getContacts(), that.getContacts())
                 .append(this.contacts, that.contacts)
                 .isEquals();
     }
@@ -441,7 +444,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         builder.append("multifactorPolicy", this.multifactorPolicy);
         builder.append("informationUrl", this.informationUrl);
         builder.append("privacyUrl", this.privacyUrl);
-        builder.append("contacts", this.contacts);
+        builder.append("contacts", getContacts());
         return builder.toString();
     }
 

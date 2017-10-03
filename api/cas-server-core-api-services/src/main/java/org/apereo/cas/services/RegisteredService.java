@@ -20,7 +20,6 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredService extends Cloneable, Serializable, Comparable<RegisteredService> {
     
-
     /**
      * The logout type.
      */
