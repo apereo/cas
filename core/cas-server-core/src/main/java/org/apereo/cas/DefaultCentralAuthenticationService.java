@@ -46,7 +46,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.ImmutableAssertion;
+import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -303,7 +303,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
             final TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
-            final Authentication authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(), 
+            final Authentication authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(),
                     new ServiceContext(selectedService, registeredService));
             final Principal principal = authentication.getPrincipal();
 
@@ -314,25 +314,25 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     ? attributePolicy.getAttributes(principal, selectedService, registeredService) : new HashMap<>();
 
             LOGGER.debug("Calculated attributes for release per the release policy are [{}]", attributesToRelease.keySet());
-            
+
             final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
             LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
-            
-            final Authentication finalAuthentication = builder.build();
-            
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, 
-                    finalAuthentication, false);
-            
-            AuthenticationCredentialsLocalBinder.bindCurrent(finalAuthentication);
-            final Assertion assertion = new ImmutableAssertion(
-                    finalAuthentication,
-                    serviceTicket.getGrantingTicket().getChainedAuthentications(),
-                    selectedService,
-                    serviceTicket.isFromNewLogin());
 
+            final Authentication finalAuthentication = builder.build();
+
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService,
+                    finalAuthentication, false);
+
+            AuthenticationCredentialsLocalBinder.bindCurrent(finalAuthentication);
+            
+            final Assertion assertion = new DefaultAssertionBuilder(finalAuthentication)
+                    .with(selectedService)
+                    .with(serviceTicket.getGrantingTicket().getChainedAuthentications())
+                    .with(serviceTicket.isFromNewLogin())
+                    .build();
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
 
             return assertion;
@@ -372,9 +372,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);
-
         doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
-
         return ticketGrantingTicket;
     }
 

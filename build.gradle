@@ -25,7 +25,6 @@ def isArtifactSigningRequired = {
 
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
-apply plugin: "jacoco"
 apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.gradle.build-scan"
 
@@ -66,6 +65,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
+    apply plugin: "jacoco"
 
     if (project.name == "cas-server-support-bom") {
         logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
@@ -346,17 +346,7 @@ artifacts {
     archives rootSourcesJar
 }
 
-def publishedProjects = subprojects.findAll()
-task jacocoMerge(type: JacocoMerge) {
-    publishedProjects.each { subproject ->
-        executionData subproject.tasks.withType(Test)
-        executionData = files(executionData.findAll { it.exists() })
-    }
-}
-
-task jacocoTestReport(type: JacocoReport, description: "Aggregate all test reports into a single directory") {
-    dependsOn jacocoMerge
-
+task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test reports into a single directory") {
     additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
     classDirectories = files(files(subprojects.sourceSets.main.output).collect {
@@ -367,20 +357,25 @@ task jacocoTestReport(type: JacocoReport, description: "Aggregate all test repor
                 ])
     })
 
-    executionData jacocoMerge.destinationFile
+    executionData = files(subprojects.jacocoTestReport.executionData)
     reports {
         html.enabled = true
         xml.enabled = true
     }
+    doFirst {
+        executionData = files(executionData.findAll {
+            it.exists()
+        })
+    }
 }
 
 coveralls {
-    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml"
+    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
 }
 
 tasks.coveralls {
     group = "Coverage reports"
     description = "Uploads the aggregated coverage report to Coveralls"
-    dependsOn jacocoTestReport
+    dependsOn jacocoAggregateReport
 }
