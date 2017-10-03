@@ -29,7 +29,7 @@ export class ContactsComponent implements OnInit {
 
   deleteContact() {
     if (this.selectedTab > -1) {
-      this.data.service.contacts.splice(this.selectedTab,1);
+      this.data.service.contacts.splice(this.selectedTab, 1);
     }
   }
 

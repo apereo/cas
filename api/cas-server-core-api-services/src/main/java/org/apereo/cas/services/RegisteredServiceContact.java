@@ -10,7 +10,7 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceContact extends Serializable {
 
-    public static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
 
     String getName();
 
