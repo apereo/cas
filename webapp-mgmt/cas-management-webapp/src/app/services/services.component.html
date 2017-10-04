@@ -26,54 +26,7 @@
     <div style="flex: 1 1 auto;text-overflow: ellipsis">{{ item.description }}</div>
   </div>
   <div *ngIf="detailRowId == item.assignedId">
-    <table class="table-details">
-      <tr>
-        <td class="col-sm-2 detail-label">
-          <ng-container i18n="management.services.table.details.description">
-            {{messages.management_services_table_details_description }}
-          </ng-container>
-        </td>
-        <td class="col-sm-8">{{ detailRow.description }}</td>
-        <td class="col-sm-2 detail-logo" colspan="2" rowspan="5" *ngIf="item.logoUrl">
-          <img src="{{ detailRow.logoUrl }}" alt="{{ detailRow.name }}"/>
-        </td>
-      </tr>
-      <tr>
-        <td class="col-sm-2 detail-label">
-          <ng-container i18n="management.services.table.details.proxyPolicy">
-            {{messages.management_services_table_details_proxyPolicy }}
-          </ng-container>
-        </td>
-        <td class="col-sm-8">
-          <span>{{ detailRow.proxyPolicy | uppercase }}</span>
-          <span *ngIf="detailRow.proxyPolicyValue">{{ detailRow.proxyPolicyValue }}</span>
-        </td>
-      </tr>
-      <tr>
-        <td class="col-sm-2 detail-label">
-          <ng-container i18n="managemnt.services.table.details.attrPolicy">
-            {{ messages.management_services_table_details_attrPolicy }}
-          </ng-container>
-        </td>
-        <td class="col-sm-8">{{ detailRow.attributePolicy | uppercase }}</td>
-      </tr>
-      <tr>
-        <td class="col-sm-2 detail-label">
-          <ng-container i18n="management.services.table.details.releaseCred">
-            {{ messages.management_services_table_details_releaseCred }}
-          </ng-container>
-        </td>
-        <td class="col-sm-8">{{ detailRow.releaseCredential }} </td>
-      </tr>
-      <tr>
-        <td class="col-sm-2 detail-label">
-          <ng-container i18n="management.services.table.details.releaseProxy">
-            {{ messages.management_services_table_details_releaseProxy }}
-          </ng-container>
-        </td>
-        <td class="col-sm-8">{{ detailRow.releaseProxyTicket }}</td>
-      </tr>
-    </table>
+   <app-details [detailRow]="detailRow"></app-details>
   </div>
 </md-card>
 
