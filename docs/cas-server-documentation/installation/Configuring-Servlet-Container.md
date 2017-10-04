@@ -159,7 +159,7 @@ Support for external containers is enabled by including the following module in 
 
 #### Async Support
 
-In the event that an external servlet container is used, you MAY need to make sure it's configured correctly to support asynchronous requests in the event you get related errors and your container requires this. This is typically handled by setting `<async-supported>true</async-supported>` inside the container's main `web.xml`  file.
+In the event that an external servlet container is used, you MAY need to make sure it's configured correctly to support asynchronous requests in the event you get related errors and your container requires this. This is typically handled by setting `<async-supported>true</async-supported>` inside the container's main `web.xml`  file (i.e. For Apache Tomcat, that would be `$CATALINA_HOME/conf/web.xml`).
 
 #### Async Logging
 
