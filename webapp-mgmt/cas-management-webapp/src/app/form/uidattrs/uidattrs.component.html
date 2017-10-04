@@ -32,7 +32,7 @@
            [mdTooltip]="messages.services_form_tooltip_uap_saltSetting">help
   </md-icon>
   <md-form-field class="textInput">
-    <input mdInput
+    <input mdInput [mdAutocomplete]="auto"
            i18n-placeholder="services.form.label.uap.anonAttribute"
            [placeholder]="messages.services_form_label_uap_anonAttribute"
            [(ngModel)]="data.service.usernameAttributeProvider.persistentIdGenerator.attribute">
@@ -47,7 +47,7 @@
 
   <div>
     <md-form-field class="textInput">
-      <input mdInput required
+      <input mdInput required [mdAutocomplete]="auto"
              i18n-placeholder="services.form.label.uap.usernameAttribute"
              [placeholder]="messages.services_form_label_uap_usernameAttribute"
              [(ngModel)]="data.service.usernameAttributeProvider.usernameAttribute">
@@ -82,3 +82,7 @@
   </div>
 
 </div>
+
+<md-autocomplete style="width:300px" #auto="mdAutocomplete">
+  <md-option *ngFor="let opt of formData.availableAttributes" [value]="opt">{{ opt }}</md-option>
+</md-autocomplete>

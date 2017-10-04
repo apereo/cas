@@ -1,14 +1,14 @@
-import {Component, OnInit, Input, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {Data} from "../data";
+import {FormData} from "../../../domain/service-view-bean";
 
 @Component({
   selector: 'app-multiauthpane',
   templateUrl: './multiauthpane.component.html'
 })
 export class MultiauthpaneComponent implements OnInit {
-
+  formData: FormData;
   failureModes = ["NONE","OPEN","CLOSED","PHANTOM"];
   providers = [
     {key: "mfa-duo", value: "Duo Security"},
@@ -24,6 +24,7 @@ export class MultiauthpaneComponent implements OnInit {
 
   constructor(public messages: Messages,
               public data: Data) {
+    this.formData = data.formData;
   }
 
   ngOnInit() {

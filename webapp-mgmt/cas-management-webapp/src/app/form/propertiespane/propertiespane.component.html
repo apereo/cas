@@ -47,7 +47,7 @@
 
 
 </md-card>
-<md-autocomplete style="width:300px" #auto="mdAutocomplete" (optionSelected)="selection($event)">
+<md-autocomplete #auto="mdAutocomplete" (optionSelected)="selection($event)">
   <md-option *ngFor="let opt of options" [value]="opt">{{ opt.display }}</md-option>
 </md-autocomplete>
 

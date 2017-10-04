@@ -13,7 +13,7 @@
 
 <div>
   <md-form-field class="textInput">
-    <input mdInput
+    <input mdInput [mdAutocomplete]="auto"
            i18n-placeholder="services.form.label.sas.authorizedCodes"
            [placeholder]="messages.services_form_label_sas_authorizedCodes"
            [(ngModel)]="accessStrategy.acceptableResponseCodes">
@@ -22,4 +22,7 @@
            i18n-mdTooltip="services.form.tooltip.sas.authorizedCodes"
            [mdTooltip]="messages.services_form_label_sas_authorizedCodes">help
   </md-icon>
+  <md-autocomplete #auto="mdAutocomplete">
+    <md-option *ngFor="let code of codes" [value]="code">{{ code }}</md-option>
+  </md-autocomplete>
 </div>
