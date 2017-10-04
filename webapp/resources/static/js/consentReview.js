@@ -15,6 +15,17 @@ function format(d) {
     return detail;
 }
 
+function alertUser(message, alertType) {
+    $('#alertWrapper').append('<div id="alertdiv" class="alert alert-' + alertType + ' alert-dismissible">' +
+      '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+      '<span class="alertMessage">' + message + '</span></div>'
+    );
+
+    setTimeout(function () { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+        $('#alertdiv').remove();
+    }, 5000);
+}
+
 function attributeTable(t, attributes) {
 
     var table;
@@ -45,7 +56,32 @@ function date(d) {
 }
 
 function removeDecision(decisionId) {
-    alert('removing Decision [' + decisionId + ']!');
+        var factory = {};
+    factory.httpHeaders = {};
+    factory.httpHeaders[$('meta[name=\'_csrf_header\']').attr('content')] = $('meta[name=\'_csrf\']').attr('content');
+
+    $.ajax({
+        type: 'post',
+        url: urls.delete,
+        data: {decisionId: decisionId},
+        headers: factory.httpHeaders,
+        dataType: 'json',
+        success: function (data) {
+            // Reinitialize the table data
+            $('#consentDecisions').DataTable().ajax.reload();
+
+            if (!data) {
+                alertUser(messages.error, 'danger');
+            } else {
+                alertUser(messages.success, 'success');
+                // Reload the page
+                location.reload();
+            }
+        },
+        error: function () {
+            alertUser('There appears to be an error. Please try your request again.', 'danger');
+        }
+    });
 }
 
 var consentDecisions = (function () {

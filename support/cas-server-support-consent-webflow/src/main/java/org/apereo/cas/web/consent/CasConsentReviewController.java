@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,5 +79,18 @@ public class CasConsentReviewController {
             return result;
         }
         return null;
+    }
+    
+    /**
+     * Endpoint for deleting single consent decisions.
+     * @param decisionId the decision id
+     * @return true / false
+     */
+    @PostMapping("/deleteConsentDecision")
+    @ResponseBody
+    public boolean deleteConsentDecision(@RequestParam final Long decisionId) {
+        final String principal = WebUtils.getPac4jAuthenticatedUsername();
+        LOGGER.debug("Deleting consent decision with id [{}] for principal [{}].", decisionId, principal);        
+        return this.consentRepository.deleteConsentDecision(decisionId, principal);
     }
 }
