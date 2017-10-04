@@ -27,13 +27,13 @@ public class Cas10ResponseViewTests {
     private Map<String, Object> model;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.model = new HashMap<>();
         final List<Authentication> list = new ArrayList<>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new DefaultAssertionBuilder(
                 CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
-                CoreAuthenticationTestUtils.getService("TestService")).with(true));
+                CoreAuthenticationTestUtils.getService("TestService")).with(true).build());
     }
 
     @Test
