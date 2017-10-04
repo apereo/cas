@@ -79,6 +79,11 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
                     predicate.getClass().getSimpleName(), predicateResource, providers);
 
+            if (providers == null || providers.isEmpty()) {
+                LOGGER.error("No multifactor authentication providers are available in the application context");
+                return null;
+            }
+            
             final MultifactorAuthenticationProvider provider = providers
                     .stream()
                     .filter(predicate)
