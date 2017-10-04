@@ -477,6 +477,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final Collection<MultifactorAuthenticationProvider> providers,
                                                            final Predicate<String> predicate) {
 
+        if (providers == null || providers.isEmpty()) {
+            LOGGER.error("No multifactor authentication providers are available in the application context");
+            return null;
+        }
+        
         return resolveEventViaAttribute(principal, principal.getAttributes(), attributeNames, service, context, providers, predicate);
     }
 
