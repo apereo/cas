@@ -10,4 +10,6 @@
   flex: 0 0 20px;
 }
 
-
+/deep/.mat-autocomplete-panel {
+  min-width: 300px !important;
+}
