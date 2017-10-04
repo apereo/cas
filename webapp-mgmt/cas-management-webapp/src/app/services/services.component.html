@@ -25,7 +25,7 @@
     </div>
     <div style="flex: 1 1 auto;text-overflow: ellipsis">{{ item.description }}</div>
   </div>
-  <div *ngIf="detailRow == item.assignedId">
+  <div *ngIf="detailRowId == item.assignedId">
     <table class="table-details">
       <tr>
         <td class="col-sm-2 detail-label">
@@ -33,9 +33,9 @@
             {{messages.management_services_table_details_description }}
           </ng-container>
         </td>
-        <td class="col-sm-8">{{ item.description }}</td>
+        <td class="col-sm-8">{{ detailRow.description }}</td>
         <td class="col-sm-2 detail-logo" colspan="2" rowspan="5" *ngIf="item.logoUrl">
-          <img src="{{ item.logoUrl }}" alt="{{ item.name }}"/>
+          <img src="{{ detailRow.logoUrl }}" alt="{{ detailRow.name }}"/>
         </td>
       </tr>
       <tr>
@@ -45,8 +45,8 @@
           </ng-container>
         </td>
         <td class="col-sm-8">
-          <span *ngIf="!item.proxyPolicy.value">{{ item.proxyPolicy.type | uppercase }}</span>
-          <span *ngIf="item.proxyPolicy.value">{{ item.proxyPolicy.value }}</span>
+          <span>{{ detailRow.proxyPolicy | uppercase }}</span>
+          <span *ngIf="detailRow.proxyPolicyValue">{{ detailRow.proxyPolicyValue }}</span>
         </td>
       </tr>
       <tr>
@@ -55,7 +55,7 @@
             {{ messages.management_services_table_details_attrPolicy }}
           </ng-container>
         </td>
-        <td class="col-sm-8">{{ item.attrRelease.attrPolicy | uppercase }}</td>
+        <td class="col-sm-8">{{ detailRow.attributePolicy | uppercase }}</td>
       </tr>
       <tr>
         <td class="col-sm-2 detail-label">
@@ -63,7 +63,7 @@
             {{ messages.management_services_table_details_releaseCred }}
           </ng-container>
         </td>
-        <td class="col-sm-8">{{ item.attrRelease.releasePassword }} </td>
+        <td class="col-sm-8">{{ detailRow.releaseCredential }} </td>
       </tr>
       <tr>
         <td class="col-sm-2 detail-label">
@@ -71,7 +71,7 @@
             {{ messages.management_services_table_details_releaseProxy }}
           </ng-container>
         </td>
-        <td class="col-sm-8">{{ item.attrRelease.releaseTicket }}</td>
+        <td class="col-sm-8">{{ detailRow.releaseProxyTicket }}</td>
       </tr>
     </table>
   </div>
