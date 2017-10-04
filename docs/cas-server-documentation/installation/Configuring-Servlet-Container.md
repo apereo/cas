@@ -8,10 +8,23 @@ title: CAS - Overlay Installation
 A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide
 describes how to build and deploy CAS.
 
+## How Do I Choose?
+
+There are is a wide range of servlet containers and servers on the menu. The selection criteria is outlined below:
+
+- Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
+- Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
+- Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
+- Choose a technology that shows promisig results under *your expected load*, having run performance and stress tests.
+- Choose a technology that does not depend on outside processes, systems and manual work as much as possible, is self-reliant and self contained.
+
+## Production Quality
+
+All servlet containers presented here, embedded or otherwise, aim to be production ready. This means that CAS ships with useful defaults out of the box that may be overriden, if necessary and by default, CAS configures everything for you from development to production in today’s platforms. In terms of their production quality, there is almost no difference between using an embedded container vs. an external one.
+
 ## Embedded
 
-Note that CAS itself ships with a number of embedded containers that allows the platform to be self-contained as much as possible. You **DO
-NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
+Note that CAS itself ships with a number of embedded containers that allows the platform to be self-contained as much as possible. These embedded containers are an integral part of the CAS software, are maintained and updated usually for every release and surely are meant to and can be used in production deployments. You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>
 Remember that most if not all aspects of the embedded container can be controlled via the CAS properties.
@@ -126,7 +139,7 @@ While there is no official project support, the following containers should be c
 * [GlassFish](http://glassfish.java.net/)
 * [WebSphere](http://www.ibm.com/software/websphere/)
 
-Refer to the servlet container's own documentation for more info.
+Remember that an external container's configuration is **NEVER** automated by CAS in any way which means you are responsible for upgrades, maintenance and all other manners of configuration such as logging, SSL, etc. CAS does not provide official support and troubleshooting guidelines, etc for an external container's configuration or issues. Refer to the servlet container's own documentation for more info.
 
 ### Apache Tomcat
 
