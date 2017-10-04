@@ -73,8 +73,11 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   }
 
   toggleDetail(id: String) {
-    if (this.detailRowId != id) {
-      this.service.getDetails(id).then(resp => {this.detailRow = resp;this.detailRowId = id});
+    if (this.detailRowId !== id) {
+      this.service.getDetails(id).then(resp => {
+        this.detailRow = resp;
+        this.detailRowId = id
+      });
     } else {
       this.detailRowId = null;
       this.detailRow = null;
@@ -131,7 +134,7 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   moveUp(a: ServiceItem) {
     let index: number = this.servicesDatabase.data.indexOf(a);
     if(index > 0) {
-      let b: ServiceItem = this.servicesDatabase.data[index-1];
+      let b: ServiceItem = this.servicesDatabase.data[index - 1];
       a.evalOrder = index-1;
       b.evalOrder = index;
       this.service.updateOrder(a,b).then(resp => this.refresh());
@@ -141,7 +144,7 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   moveDown(a: ServiceItem) {
     let index: number = this.servicesDatabase.data.indexOf(a);
     if(index < this.servicesDatabase.data.length -1) {
-      let b: ServiceItem = this.servicesDatabase.data[index+1];
+      let b: ServiceItem = this.servicesDatabase.data[index + 1];
       a.evalOrder = index+1;
       b.evalOrder = index;
       this.service.updateOrder(a,b).then(resp => this.refresh());
