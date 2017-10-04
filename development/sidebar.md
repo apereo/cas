@@ -128,6 +128,7 @@ layout: null
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
+    *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
     *   [Replication](/$version/installation/Configuring-Service-Replication.html)
     *   [Storage](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
