@@ -27,6 +27,10 @@ import javax.servlet.http.HttpServletResponse;
  * The action takes into account the currently used PAC4J client which is stored
  * in the user profile. If the client is not a SAML2 client, nothing happens. If
  * it is a SAML2 client, its logout action is executed.
+ * 
+ * Assumption: The PAC4J user profile should be in the user session during
+ * logout, accessible with PAC4J Profile Manager. The Logout web flow should
+ * make sure the user profile is present.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -60,7 +64,7 @@ public class SAML2ClientLogoutAction extends AbstractAction {
 
             // Call logout on SAML2 clients only
             if (client instanceof SAML2Client) {
-            	final SAML2Client saml2Client = (SAML2Client) client;
+                final SAML2Client saml2Client = (SAML2Client) client;
                 LOGGER.debug("Located SAML2 client [{}]", saml2Client);
                 final RedirectAction action = saml2Client.getLogoutAction(context, null, null);
                 LOGGER.debug("Preparing logout message to send is [{}]", action.getLocation());
