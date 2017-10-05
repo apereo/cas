@@ -2941,6 +2941,10 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>spring-messaging</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>tomcat-embed-core</artifactId>
           <groupId>org.apache.tomcat.embed</groupId>
         </exclusion>
@@ -3013,24 +3017,16 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>ognl</artifactId>
           <groupId>ognl</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
+          <artifactId>spring-web</artifactId>
+          <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>cglib</artifactId>
-          <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
           <artifactId>servlet-api</artifactId>
@@ -3045,6 +3041,26 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -3053,8 +3069,12 @@
           <groupId>org.springframework.boot</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jul-to-slf4j</artifactId>
-          <groupId>org.slf4j</groupId>
+          <artifactId>spring-context</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-context-support</artifactId>
+          <groupId>org.springframework</groupId>
         </exclusion>
       </exclusions>
     </dependency>
