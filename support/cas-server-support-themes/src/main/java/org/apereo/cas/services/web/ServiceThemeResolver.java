@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -36,6 +37,8 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
 
     private final ServicesManager servicesManager;
 
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     /**
      * This sets a flag on the request called "isMobile" and also
      * provides the custom flag called browserType which can be mapped into the theme.
@@ -45,10 +48,13 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
     private final Map<Pattern, String> overrides;
 
     public ServiceThemeResolver(final ServicesManager servicesManager,
-                                final Map<String, String> mobileOverrides) {
+                                final Map<String, String> mobileOverrides,
+                                final AuthenticationServiceSelectionPlan serviceSelectionStrategies) {
         super();
         this.servicesManager = servicesManager;
-        this.overrides = mobileOverrides.entrySet().stream()
+        this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategies;
+        this.overrides = mobileOverrides.entrySet()
+                .stream()
                 .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
     }
 
@@ -57,27 +63,28 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
         if (this.servicesManager == null) {
             return getDefaultThemeName();
         }
-        // retrieve the user agent string from the request
+
         final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
 
         if (StringUtils.isBlank(userAgent)) {
             return getDefaultThemeName();
         }
 
-        overrides.entrySet().stream()
+        overrides.entrySet()
+                .stream()
                 .filter(entry -> entry.getKey().matcher(userAgent).matches())
                 .findFirst()
                 .ifPresent(entry -> {
-                    request.setAttribute("isMobile", "true");
+                    request.setAttribute("isMobile", Boolean.TRUE.toString());
                     request.setAttribute("browserType", entry.getValue());
                 });
 
         final RequestContext context = RequestContextHolder.getRequestContext();
-        final Service service = WebUtils.getService(context);
+        final Service serviceContext = WebUtils.getService(context);
+        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
         if (service != null) {
             final RegisteredService rService = this.servicesManager.findServiceBy(service);
-            if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()
-                    && StringUtils.isNotBlank(rService.getTheme())) {
+            if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed() && StringUtils.isNotBlank(rService.getTheme())) {
                 LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
                 final CasThemeResourceBundleMessageSource messageSource = new CasThemeResourceBundleMessageSource();
                 messageSource.setBasename(rService.getTheme());

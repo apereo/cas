@@ -259,9 +259,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * @param serviceId the service id
      * @return the candidate services to match
      */
-    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        return this.services.values();
-    }
+    protected abstract Collection<RegisteredService> getCandidateServicesToMatch(String serviceId);
 
     /**
      * Delete internal.

@@ -20,7 +20,7 @@ A sample JSON file follows:
     "deleteWhenExpired": true,
     "notifyWhenDeleted": false,
     "expirationDate": "2017-10-05"
-  },
+  }
 }
 ```
 
