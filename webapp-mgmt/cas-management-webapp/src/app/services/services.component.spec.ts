@@ -7,11 +7,11 @@ import { DebugElement } from '@angular/core';
 
 import { ServicesComponent } from './services.component';
 import {Messages} from "../messages";
-import {ServiceViewBean} from "../../domain/service-view-bean";
+import {ServiceItem} from "../../domain/service-view-bean";
 import {ServiceViewService} from "./service.service";
 
 let serviceViewServiceStub = {
-  getServices(domain: String): Promise<ServiceViewBean[]> {
+  getServices(domain: String): Promise<ServiceItem[]> {
     return Promise.resolve([]);
   },
 
@@ -19,7 +19,7 @@ let serviceViewServiceStub = {
      return Promise.resolve();
   },
 
-  updateOrder(a: ServiceViewBean, b: ServiceViewBean): Promise<String> {
+  updateOrder(a: ServiceItem, b: ServiceItem): Promise<String> {
     return Promise.resolve("200");
   }
 };

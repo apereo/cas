@@ -1,0 +1,50 @@
+<div style="display: flex;">
+  <div *ngIf="detailRow.logoUrl" style="padding-right: 15px; margin-top: auto; margin-bottom: auto;">
+      <img [src]="detailRow.logoUrl">
+  </div>
+  <table class="table-details">
+    <tr>
+      <td class="prompt">
+        <ng-container i18n="management.services.table.details.description">
+            {{messages.management_services_table_details_description }}
+        </ng-container>
+      </td>
+      <td>{{ detailRow.description }}</td>
+    </tr>
+    <tr>
+      <td class="prompt">
+        <ng-container i18n="management.services.table.details.proxyPolicy">
+            {{messages.management_services_table_details_proxyPolicy }}
+        </ng-container>
+      </td>
+      <td>
+        <span>{{ detailRow.proxyPolicy | uppercase }}</span>
+        <span *ngIf="detailRow.proxyPolicyValue">{{ detailRow.proxyPolicyValue }}</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="prompt">
+        <ng-container i18n="managemnt.services.table.details.attrPolicy">
+            {{ messages.management_services_table_details_attrPolicy }}
+        </ng-container>
+      </td>
+      <td>{{ detailRow.attributePolicy | uppercase }}</td>
+    </tr>
+    <tr>
+      <td class="prompt">
+        <ng-container i18n="management.services.table.details.releaseCred">
+            {{ messages.management_services_table_details_releaseCred }}
+        </ng-container>
+      </td>
+      <td>{{ detailRow.releaseCredential }} </td>
+    </tr>
+    <tr>
+      <td class="prompt">
+        <ng-container i18n="management.services.table.details.releaseProxy">
+            {{ messages.management_services_table_details_releaseProxy }}
+        </ng-container>
+      </td>
+      <td>{{ detailRow.releaseProxyTicket }}</td>
+    </tr>
+  </table>
+</div>

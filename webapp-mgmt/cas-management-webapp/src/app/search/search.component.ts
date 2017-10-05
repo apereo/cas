@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
-import {ServiceViewBean} from "../../domain/service-view-bean";
+import {ServiceItem} from "../../domain/service-view-bean";
 import {DataSource} from "@angular/cdk/collections";
 import {MdPaginator, MdSnackBar} from "@angular/material";
 import {Messages} from "../messages";
@@ -53,20 +53,20 @@ export class SearchComponent implements OnInit {
 }
 
 export class ServiceDatabase {
-  dataChange: BehaviorSubject<ServiceViewBean[]> = new BehaviorSubject<ServiceViewBean[]>([]);
-  get data(): ServiceViewBean[] { return this.dataChange.value; }
+  dataChange: BehaviorSubject<ServiceItem[]> = new BehaviorSubject<ServiceItem[]>([]);
+  get data(): ServiceItem[] { return this.dataChange.value; }
 
   constructor() {
   }
 
-  load(services: ServiceViewBean[]) {
+  load(services: ServiceItem[]) {
     this.dataChange.next([]);
     for(let service of services) {
       this.addService(service);
     }
   }
 
-  addService(service: ServiceViewBean) {
+  addService(service: ServiceItem) {
     const copiedData = this.data.slice();
     copiedData.push(service);
     this.dataChange.next(copiedData);
@@ -81,7 +81,7 @@ export class ServiceDataSource extends DataSource<any> {
     super();
   }
 
-  connect(): Observable<ServiceViewBean[]> {
+  connect(): Observable<ServiceItem[]> {
     const displayDataChanges = [
       this._serviceDatabase.dataChange,
       this._paginator.page,

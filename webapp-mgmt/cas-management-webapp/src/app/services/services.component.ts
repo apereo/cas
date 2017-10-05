@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {ServiceViewBean} from "../../domain/service-view-bean";
+import {ServiceItem, ServiceDetails} from "../../domain/service-view-bean";
 import {Messages} from "../messages";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ServiceViewService} from "./service.service";
@@ -17,11 +17,12 @@ import {Observable} from "rxjs/Observable";
 })
 export class ServicesComponent implements OnInit,AfterViewInit {
 
-  dataTable: ServiceViewBean[];
-  detailRow: String;
-  deleteItem: ServiceViewBean;
+  dataTable: ServiceItem[];
+  detailRowId: String;
+  detailRow: ServiceDetails;
+  deleteItem: ServiceItem;
   domain: String;
-  selectedItem: ServiceViewBean;
+  selectedItem: ServiceItem;
   servicesDatabase = new ServicesDatabase();
 
   @ViewChild("paginator")
@@ -39,7 +40,7 @@ export class ServicesComponent implements OnInit,AfterViewInit {
 
   ngOnInit() {
     this.route.data
-      .subscribe((data: { resp: ServiceViewBean[]}) => {
+      .subscribe((data: { resp: ServiceItem[]}) => {
         if (!data.resp) {
           this.snackBar.open(this.messages.management_services_status_listfail,'dismiss',{
             duration: 5000
@@ -72,14 +73,18 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   }
 
   toggleDetail(id: String) {
-    if (this.detailRow != id) {
-      this.detailRow = id;
+    if (this.detailRowId !== id) {
+      this.service.getDetails(id).then(resp => {
+        this.detailRow = resp;
+        this.detailRowId = id
+      });
     } else {
+      this.detailRowId = null;
       this.detailRow = null;
     }
   }
 
-  openModalDelete(selectedItem: ServiceViewBean) {
+  openModalDelete(selectedItem: ServiceItem) {
     let dialogRef = this.dialog.open(DeleteComponent,{
       data: selectedItem,
       width: '500px',
@@ -126,20 +131,20 @@ export class ServicesComponent implements OnInit,AfterViewInit {
     this.location.back();
   }
 
-  moveUp(a: ServiceViewBean) {
+  moveUp(a: ServiceItem) {
     let index: number = this.servicesDatabase.data.indexOf(a);
     if(index > 0) {
-      let b: ServiceViewBean = this.servicesDatabase.data[index-1];
+      let b: ServiceItem = this.servicesDatabase.data[index - 1];
       a.evalOrder = index-1;
       b.evalOrder = index;
       this.service.updateOrder(a,b).then(resp => this.refresh());
     }
   }
 
-  moveDown(a: ServiceViewBean) {
+  moveDown(a: ServiceItem) {
     let index: number = this.servicesDatabase.data.indexOf(a);
     if(index < this.servicesDatabase.data.length -1) {
-      let b: ServiceViewBean = this.servicesDatabase.data[index+1];
+      let b: ServiceItem = this.servicesDatabase.data[index + 1];
       a.evalOrder = index+1;
       b.evalOrder = index;
       this.service.updateOrder(a,b).then(resp => this.refresh());
@@ -149,20 +154,20 @@ export class ServicesComponent implements OnInit,AfterViewInit {
 }
 
 export class ServicesDatabase {
-  dataChange: BehaviorSubject<ServiceViewBean[]> = new BehaviorSubject<ServiceViewBean[]>([]);
-  get data(): ServiceViewBean[] { return this.dataChange.value; }
+  dataChange: BehaviorSubject<ServiceItem[]> = new BehaviorSubject<ServiceItem[]>([]);
+  get data(): ServiceItem[] { return this.dataChange.value; }
 
   constructor() {
   }
 
-  load(services: ServiceViewBean[]) {
+  load(services: ServiceItem[]) {
     this.dataChange.next([]);
     for(let service of services) {
       this.addService(service);
     }
   }
 
-  addService(service: ServiceViewBean) {
+  addService(service: ServiceItem) {
     const copiedData = this.data.slice();
     copiedData.push(service);
     this.dataChange.next(copiedData);

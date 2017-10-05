@@ -9,6 +9,7 @@ import {ServicesComponent} from "./services.component";
 import {ServicesResolve} from "./services.resolover";
 import {ServiceViewService} from "./service.service";
 import {SharedModule} from "../shared/shared.module";
+import { DetailsComponent } from './details/details.component';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import {SharedModule} from "../shared/shared.module";
     SharedModule
   ],
   declarations: [
-    ServicesComponent
+    ServicesComponent,
+    DetailsComponent
   ],
   providers: [
     ServicesResolve,
