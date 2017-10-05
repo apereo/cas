@@ -13,12 +13,3 @@ export class FormData {
   availableAttributes: String[] = [];
 }
 
-export class ServiceDetails {
-  releaseCredential: String;
-  releaseProxyTicket: String;
-  attributePolicy: String;
-  proxyPolicy: String;
-  proxyPolicyValue: String;
-  description: String;
-  logoUrl: String;
-}
