@@ -129,10 +129,18 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService service = findServiceBy(id);
+        return delete(service);
+    }
+
+    @Audit(action = "DELETE_SERVICE",
+            actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+    @Override
+    public synchronized RegisteredService delete(final RegisteredService service) {
         if (service != null) {
             publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
             this.serviceRegistryDao.delete(service);
-            this.services.remove(id);
+            this.services.remove(service.getId());
             deleteInternal(service);
             publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         }
@@ -237,7 +245,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry", registeredService.getServiceId());
                 publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService));
             }
-            delete(registeredService.getId());
+            delete(registeredService);
             return null;
         }
         LOGGER.debug("Disabling expired registered service [{}].", registeredService.getServiceId());
