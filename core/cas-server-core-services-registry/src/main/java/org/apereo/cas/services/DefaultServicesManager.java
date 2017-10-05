@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -19,7 +20,12 @@ public class DefaultServicesManager extends AbstractServicesManager {
     public DefaultServicesManager(final ServiceRegistryDao serviceRegistryDao, final ApplicationEventPublisher eventPublisher) {
         super(serviceRegistryDao, eventPublisher);
     }
-    
+
+    @Override
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        return this.orderedServices;
+    }
+
     @Override
     protected void deleteInternal(final RegisteredService service) {
         this.orderedServices.remove(service);
