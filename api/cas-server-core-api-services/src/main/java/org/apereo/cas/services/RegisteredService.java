@@ -44,6 +44,13 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
     long INITIAL_IDENTIFIER_VALUE = -1;
 
     /**
+     * Get the expiration policy rules for this service.
+     *
+     * @return the proxy policy
+     */
+    RegisteredServiceExpirationPolicy getExpirationPolicy();
+    
+    /**
      * Get the proxy policy rules for this service.
      *
      * @return the proxy policy

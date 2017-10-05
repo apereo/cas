@@ -60,4 +60,5 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
         assertNotNull(policy);
         assertEquals(policy.getAllowedAttributes().size(), 2);
     }
+    
 }
