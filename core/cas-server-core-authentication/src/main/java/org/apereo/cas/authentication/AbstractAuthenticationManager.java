@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication;
+    package org.apereo.cas.authentication;
 
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;

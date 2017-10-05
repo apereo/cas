@@ -93,15 +93,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 final Object attribute = dbFields.get(a.getKey());
                 if (attribute != null) {
                     LOGGER.debug("Found attribute [{}] from the query results", a);
-
-                    if (attribute != null) {
-                        LOGGER.debug("Found attribute [{}] from the query results", a);
-                        final String principalAttrName = a.getValue();
-                        attributes.put(principalAttrName, attribute.toString());
-                    } else {
-                        LOGGER.warn("Requested attribute [{}] could not be found in the query results", a.getKey());
-                    }
+                    final String principalAttrName = a.getValue();
+                    attributes.put(principalAttrName, attribute.toString());
+                } else {
+                    LOGGER.warn("Requested attribute [{}] could not be found in the query results", a.getKey());
                 }
+                
             });
 
         } catch (final IncorrectResultSizeDataAccessException e) {

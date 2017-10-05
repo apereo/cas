@@ -14,9 +14,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * Action that handles the TicketGrantingTicket creation and destruction. If the
  * action is given a TicketGrantingTicket and one also already exists, the old
@@ -50,8 +47,6 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get("ticketGrantingTicketId");
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
             LOGGER.debug("No ticket-granting ticket is found in the context.");
@@ -65,7 +60,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
         } else {
             LOGGER.debug("Setting TGC for current session linked to [{}].", ticketGrantingTicketId);
-            this.ticketGrantingTicketCookieGenerator.addCookie(request, response, ticketGrantingTicketId);
+            this.ticketGrantingTicketCookieGenerator.addCookie(context, ticketGrantingTicketId);
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {

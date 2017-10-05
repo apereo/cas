@@ -102,8 +102,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 LOGGER.debug("Returning the principal with id [{}] without any attributes", principalId);
                 return this.principalFactory.createPrincipal(principalId);
             }
-            LOGGER.debug("[{}] is configured to return null if no attributes are found for [{}]",
-                    this.getClass().getName(), principalId);
+            LOGGER.debug("[{}] is configured to return null if no attributes are found for [{}]", this.getClass().getName(), principalId);
             return null;
         }
         LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());

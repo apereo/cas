@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     /**
      * Responsible for manging and verifying the cookie value.
      **/
-    private CookieValueManager casCookieValueManager;
+    private final CookieValueManager casCookieValueManager;
 
     /**
      * Instantiates a new cookie retrieving cookie generator
@@ -84,22 +85,33 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      * Adds the cookie, taking into account {@link RememberMeCredential#REQUEST_PARAMETER_REMEMBER_ME}
      * in the request.
      *
-     * @param request     the request
-     * @param response    the response
-     * @param cookieValue the cookie value
+     * @param requestContext the request context
+     * @param cookieValue    the cookie value
      */
-    public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
+    public void addCookie(final RequestContext requestContext, final String cookieValue) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+
         final String theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
 
-        if (StringUtils.isBlank(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
-            super.addCookie(response, theCookieValue);
-        } else {
+        if (isRememberMeAuthentication(requestContext)) {
+            LOGGER.debug("Creating cookie [{}] for remember-me authentication with max-age [{}]", getCookieName(), this.rememberMeMaxAge);
             final Cookie cookie = createCookie(theCookieValue);
             cookie.setMaxAge(this.rememberMeMaxAge);
             cookie.setSecure(isCookieSecure());
             cookie.setHttpOnly(isCookieHttpOnly());
+            cookie.setComment("CAS Cookie w/ Remember-Me");
             response.addCookie(cookie);
+        } else {
+            LOGGER.debug("Creating cookie [{}]", getCookieName());
+            super.addCookie(response, theCookieValue);
         }
+    }
+
+    private boolean isRememberMeAuthentication(final RequestContext requestContext) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final String value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
+        return StringUtils.isNotBlank(value) || WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
     /**

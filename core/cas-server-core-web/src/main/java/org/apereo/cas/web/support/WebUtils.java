@@ -745,6 +745,16 @@ public final class WebUtils {
     }
 
     /**
+     * Is remember me authentication enabled ?.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
+        return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", false);
+    }
+    
+    /**
      * Gets all multifactor authentication providers from application context.
      *
      * @param applicationContext the application context

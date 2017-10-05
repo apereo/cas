@@ -156,5 +156,27 @@ public final class CollectionUtils {
         }
         return list;
     }
+
+    /**
+     * Wrap set set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> List<T> wrapList(final T... source) {
+        final List<T> list = new ArrayList<>();
+        addToCollection(list, source);
+        return list;
+    }
+
+    private static <T> void addToCollection(final Collection<T> list, final T[] source) {
+        if (source != null) {
+            Arrays.stream(source).forEach(s -> {
+                final Collection col = toCollection(s);
+                list.addAll(col);
+            });
+        }
+    }
 }
 
