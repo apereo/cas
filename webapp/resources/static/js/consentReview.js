@@ -1,5 +1,5 @@
 var infoEl = $('tr.info').clone();
-var btn = $('#consentDecisions .btn')[0].innerHTML;
+var strings = strings;
 
 /* Formatting function for row details - modify as you need */
 function format(d) {
@@ -7,9 +7,17 @@ function format(d) {
     $(detail).toggleClass('hidden');
     var dec = d.decision;
     detail.find('.created-date')[0].append(date(dec.createdDate).toLocaleString());
-    var unit = dec.reminderTimeUnit.toLowerCase();
-    detail.find('.consent-reminder span:not(.' + unit + ')').remove();
-    detail.find('.consent-reminder')[0].prepend(dec.reminder);
+    if (dec.options === 'ALWAYS') {
+        detail.find('.consent-reminder').parent().remove();
+    } else {
+        var unit = dec.reminderTimeUnit.toLowerCase();
+        detail.find('.consent-reminder span:not(.' + unit + ')').remove();
+        if (dec.reminder === 1) {
+            var _unit = detail.find('.consent-reminder span.' + unit);
+            _unit.html(_unit.text().slice(0, -1));
+        }
+        detail.find('.consent-reminder')[0].prepend(dec.reminder);
+    }
     detail.find('.consent-options span:not(.' + dec.options.toLowerCase().replace('_','-') + ')').remove();
     attributeTable(detail.find('.consent-attributes'),d.attributes);
     return detail;
@@ -55,8 +63,26 @@ function date(d) {
     return date;
 }
 
+function confirm(decisionId, service) {
+    $('#confirmdiv').remove();
+    var message = strings.confirm.replace('{}', service);
+    $('#alertWrapper').append('<div id="confirmdiv" class="alert alert-warning">' +
+      '<span class="alertMessage">' + message + '</span>' +
+      '<button type="button" id="delete" class="btn btn-xs btn-danger" aria-label="Yes"><strong>' +
+      strings.yes + ' </strong></button>' +
+      '<button type="button" class="btn btn-xs btn-default" aria-label="No" value="' + decisionId + '"><strong>' +
+      strings.no + '</strong></button></div>'
+    );
+    $('#confirmdiv .btn').click(function() {
+        $('#confirmdiv').alert('close');
+    });
+    $('#delete').click(function() {
+        removeDecision(decisionId);
+    });
+}
+
 function removeDecision(decisionId) {
-        var factory = {};
+    var factory = {};
     factory.httpHeaders = {};
     factory.httpHeaders[$('meta[name=\'_csrf_header\']').attr('content')] = $('meta[name=\'_csrf\']').attr('content');
 
@@ -71,9 +97,9 @@ function removeDecision(decisionId) {
             $('#consentDecisions').DataTable().ajax.reload();
 
             if (!data) {
-                alertUser(messages.error, 'danger');
+                alertUser(strings.error, 'danger');
             } else {
-                alertUser(messages.success, 'success');
+                alertUser(strings.success, 'success');
                 // Reload the page
                 location.reload();
             }
@@ -90,26 +116,24 @@ var consentDecisions = (function () {
             'order': [[1, 'desc']],
             'initComplete': function (settings, json) {
                 if (!json || json.length == 0) {
+                    $('#consent-decisons').hide();
                     $('#loadingMessage').hide();
                     $('#no-consent-decisions').show();
                 } else {
                     $('#loadingMessage').hide();
                     $('#no-consent-decisions').hide();
-                    $('#consent-decisions').show();
+                    $('#consent-decisons').show();
                 }
             },
-            'language': {
-                'zeroRecords': 'No matching decisions found'
-            },
+            'language': strings.data,
             'paging': false,
-            'info': false,
             'processing': true,
             'ajax': {
                 'url': urls.getConsentDecisions,
                 'dataSrc': ''
             },
-            data: consentDecisions,
-            columnDefs: [
+            'data': consentDecisions,
+            'columnDefs': [
                 {
                     'targets': 0,
                     'className': 'details-control',
@@ -129,10 +153,13 @@ var consentDecisions = (function () {
                 },
                 {
                     'targets': 2,
-                    'data': 'decision.id',
+                    'data': function (row) {
+                        return { 'id': row.decision.id, 'service': row.decision.service };
+                    },
                     'className': 'col-1',
-                    'render': function (data) {
-                        return '<button type"button" class="btn btn-xs btn-block btn-danger" value="' + data + '">'+ btn +'</button>';
+                    'render': function (data) {                        
+                        return '<button type="button" class="btn btn-xs btn-danger" name="' + data.id + 
+                          '" value="' + data.service + '"><strong>'+ strings.delete +'</strong></button>';
                     }
                 },
             ]
@@ -141,11 +168,16 @@ var consentDecisions = (function () {
 
     var addEventHandlers = function () {
         /**
+         * Enable tooltips
+         */
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        /**
          * Individual removal button
          */
         $(document).on('click', '#consentDecisions tbody tr td:last-child button.btn-danger', function (e) {
             e.preventDefault();
-            removeDecision(this.value);
+            confirm(this.name, this.value);
         });
         
         // Add event listener for opening and closing details

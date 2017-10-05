@@ -88,7 +88,7 @@ public class RestConsentRepositoryTests {
                             new TypeReference<HashMap<String, Object>>(){});
                     if (b.containsKey("id") && b.containsKey("principal") && b.get("id").equals(1)
                         && b.get("principal").equals("CasUser")) {
-                            return;
+                        return;
                     }
                     throw new AssertionError("Id '1' and/or principal 'CasUser' not present in request body.");
                 })
