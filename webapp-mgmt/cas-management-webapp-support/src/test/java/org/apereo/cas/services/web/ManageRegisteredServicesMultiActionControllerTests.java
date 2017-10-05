@@ -8,7 +8,7 @@ import org.apereo.cas.mgmt.config.CasManagementAuthenticationConfiguration;
 import org.apereo.cas.mgmt.config.CasManagementAuthorizationConfiguration;
 import org.apereo.cas.mgmt.config.CasManagementWebAppConfiguration;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceItem;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.junit.Rule;
@@ -54,14 +54,14 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     private static final String NAME = "name";
     private static final String UNIQUE_DESCRIPTION = "uniqueDescription";
-    
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("manageRegisteredServicesMultiActionController")
     private ManageRegisteredServicesMultiActionController controller;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -78,7 +78,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
         this.controller.manage(response);
-        this.controller.deleteRegisteredService(1200, response);
+        this.controller.deleteRegisteredService(1200);
 
         assertNull(this.servicesManager.findServiceBy(1200));
     }
@@ -86,7 +86,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     @Test
     public void verifyDeleteServiceNoService() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResponseEntity entity = this.controller.deleteRegisteredService(5000, response);
+        final ResponseEntity entity = this.controller.deleteRegisteredService(5000);
         assertNull(this.servicesManager.findServiceBy(5000));
         assertFalse(response.getContentAsString().contains("serviceName"));
         assertFalse(entity.getStatusCode().is2xxSuccessful());
@@ -103,11 +103,11 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.thrown.expect(IllegalArgumentException.class);
 
         this.servicesManager.save(r);
-        final RegisteredServiceViewBean[] svcs = new RegisteredServiceViewBean[2];
-        RegisteredServiceViewBean rsb = new RegisteredServiceViewBean();
+        final RegisteredServiceItem[] svcs = new RegisteredServiceItem[2];
+        RegisteredServiceItem rsb = new RegisteredServiceItem();
         rsb.setAssignedId("5000");
         svcs[0] = rsb;
-        rsb = new RegisteredServiceViewBean();
+        rsb = new RegisteredServiceItem();
         rsb.setAssignedId("1200");
         svcs[1] = rsb;
         this.controller.updateOrder(new MockHttpServletRequest(), new MockHttpServletResponse(), svcs);
