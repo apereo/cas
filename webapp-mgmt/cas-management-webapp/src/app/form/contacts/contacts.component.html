@@ -1,10 +1,10 @@
 <div>
   <md-tab-group [(selectedIndex)]="selectedTab">
-    <md-tab *ngFor="let contact of data.service.contacts;let i = index;" [label]="i+1">
+    <md-tab *ngFor="let contact of data.service.contacts;let i = index;" [label]="getTabHeader(contact)">
       <div>
         <md-form-field class="textInput">
-          <input mdInput
-                 placeholder="Name"
+          <input mdInput required
+                 placeholder="Name" name="name" id="name"
                  [(ngModel)]="contact.name">
         </md-form-field>
         <md-icon style="font-size: medium"
@@ -14,7 +14,7 @@
       </div>
       <div>
         <md-form-field class="textInput">
-          <input mdInput
+          <input mdInput required
                  placeholder="Email"
                  [(ngModel)]="contact.email">
         </md-form-field>
