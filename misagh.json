@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "width": 120,
+  "height": 22,
+  "duration": 14.475049,
+  "command": null,
+  "title": null,
+  "env": {
+    "TERM": "xterm-256color",
+    "SHELL": "/bin/bash"
+  },
+  "stdout": [
+    [
+      0.107054,
+      "\u001b[?1034hbash-3.2$ "
+    ],
+    [
+      3.419244,
+      "l"
+    ],
+    [
+      0.145447,
+      "a"
+    ],
+    [
+      0.069614,
+      "\r\n"
+    ],
+    [
+      0.002803,
+      "bash: la: command not found\r\n"
+    ],
+    [
+      0.000503,
+      "bash-3.2$ "
+    ],
+    [
+      0.742958,
+      "l"
+    ],
+    [
+      0.086565,
+      "s"
+    ],
+    [
+      0.143343,
+      "\r\n"
+    ],
+    [
+      0.006388,
+      "CONTRIBUTING.md\t\t\tcircle.yml\t\t\tgradlew\r\nISSUE_TEMPLATE.md\t\tcore\t\t\t\tgradlew.bat\r\nLICENSE\t\t\t\tdev-build-no-tests.sh\t\tmisagh.json\r\nNOTICE\t\t\t\tdev-build.sh\t\t\tsettings.gradle\r\nPULL_REQUEST_TEMPLATE.md\tdocker\t\t\t\tstyle\r\nREADME.md\t\t\tdocs\t\t\t\tsupport\r\napi\t\t\t\tetc\t\t\t\ttravis\r\nbuild\t\t\t\tgradle\t\t\t\twebapp\r\nbuild.gradle\t\t\tgradle.properties\t\twebapp-mgmt\r\n"
+    ],
+    [
+      0.000411,
+      "bash-3.2$ "
+    ],
+    [
+      1.387319,
+      "c"
+    ],
+    [
+      0.143105,
+      "l"
+    ],
+    [
+      0.142955,
+      "e"
+    ],
+    [
+      0.074114,
+      "a"
+    ],
+    [
+      0.101924,
+      "r"
+    ],
+    [
+      0.158451,
+      "\r\n"
+    ],
+    [
+      0.003778,
+      "\u001b[H\u001b[2J"
+    ],
+    [
+      0.000299,
+      "bash-3.2$ "
+    ],
+    [
+      1.599628,
+      "a"
+    ],
+    [
+      0.055465,
+      "s"
+    ],
+    [
+      0.175541,
+      "c"
+    ],
+    [
+      0.071471,
+      "i"
+    ],
+    [
+      0.440526,
+      "n"
+    ],
+    [
+      0.12051,
+      "e"
+    ],
+    [
+      0.1187,
+      "m"
+    ],
+    [
+      0.154844,
+      "m"
+    ],
+    [
+      0.102442,
+      "a"
+    ],
+    [
+      0.316821,
+      "\r\n"
+    ],
+    [
+      0.001257,
+      "bash: ascinemma: command not found\r\n"
+    ],
+    [
+      0.00048,
+      "bash-3.2$ "
+    ],
+    [
+      0.630495,
+      "ascinemma"
+    ],
+    [
+      0.519443,
+      "\b\u001b[K"
+    ],
+    [
+      0.144202,
+      "\b\u001b[K"
+    ],
+    [
+      0.241925,
+      "a"
+    ],
+    [
+      0.294897,
+      "\r\n"
+    ],
+    [
+      0.001488,
+      "bash: ascinema: command not found\r\n"
+    ],
+    [
+      0.000343,
+      "bash-3.2$ "
+    ],
+    [
+      0.893187,
+      "ascinema"
+    ],
+    [
+      0.201461,
+      "\b"
+    ],
+    [
+      0.252561,
+      "\b"
+    ],
+    [
+      0.036861,
+      "\b"
+    ],
+    [
+      0.293135,
+      "\b"
+    ],
+    [
+      0.593629,
+      "inema\b\b\b\b"
+    ],
+    [
+      0.264247,
+      "\r\n"
+    ],
+    [
+      0.191112,
+      "usage: asciinema [-h] [--version] {rec,play,upload,auth} ...\r\n\r\nRecord and share your terminal sessions, the right way.\r\n\r\npositional arguments:\r\n  {rec,play,upload,auth}\r\n    rec                 Record terminal session\r\n    play                Replay terminal session\r\n    upload              Upload locally saved terminal session to asciinema.org\r\n    auth                Manage recordings on asciinema.org account\r\n\r\noptional arguments:\r\n  -h, --help            show this help message and exit\r\n  --version             show program's version number and exit\r\n\r\nexample usage:\r\n  Record terminal and upload it to asciinema.org:\r\n    \u001b[1masciinema rec\u001b[0m\r\n  Record terminal to local file:\r\n    \u001b[1masciinema rec demo.json\u001b[0m\r\n  Record terminal and upload it to asciinema.org, specifying title:\r\n    \u001b[1masciinema rec -t \"My git tutorial\"\u001b[0m\r\n  Record terminal to local file, \"trimming\" longer pauses to max 2.5 sec:\r\n    \u001b[1masciinema rec -w 2.5 demo.json\u001b[0m\r\n  Replay terminal recording from local file:\r\n    \u001b[1mascii"
+    ],
+    [
+      2.8e-05,
+      "nema play demo.json\u001b[0m\r\n  Replay terminal recording hosted on asciinema.org:\r\n    \u001b[1masciinema play https://asciinema.org/a/difqlgx86ym6emrmd8u62yqu8\u001b[0m\r\n\r\nFor help on a specific command run:\r\n  \u001b[1masciinema <command> -h\u001b[0m\r\n"
+    ],
+    [
+      0.017791,
+      "bash-3.2$ "
+    ]
+  ]
+}
