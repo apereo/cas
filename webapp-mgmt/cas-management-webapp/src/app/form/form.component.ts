@@ -328,6 +328,14 @@ export class FormComponent implements OnInit {
       }
     }
 
+    if (data.contacts) {
+      for (let contact of data.contacts) {
+        if (!contact.name || !contact.email) {
+          return Tabs.CONTACTS;
+        }
+      }
+    }
+
     return -1;
   };
 }
