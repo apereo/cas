@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -200,16 +200,21 @@ public abstract class AbstractServicesManager implements ServicesManager {
      */
     private Predicate<RegisteredService> getRegisteredServiceExpirationPolicyPredicate() {
         return service -> {
-            if (service == null) {
-                return false;
+            try {
+                if (service == null) {
+                    return false;
+                }
+                final RegisteredServiceExpirationPolicy policy = service.getExpirationPolicy();
+                if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
+                    return true;
+                }
+                final LocalDateTime expirationDate = LocalDateTime.parse(policy.getExpirationDate());
+                final LocalDateTime now = LocalDateTime.now();
+                return expirationDate.isBefore(now);
+            } catch (final Exception e) {
+                LOGGER.warn(e.getMessage(), e);
             }
-            final RegisteredServiceExpirationPolicy policy = service.getExpirationPolicy();
-            if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
-                return true;
-            }
-            final LocalDate expirationDate = LocalDate.parse(policy.getExpirationDate());
-            final LocalDate now = LocalDate.now();
-            return expirationDate.isBefore(now);
+            return false;
         };
     }
 
