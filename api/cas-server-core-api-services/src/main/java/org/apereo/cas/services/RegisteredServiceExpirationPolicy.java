@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 /**
  * Expiration policy that dictates how long should this service be kept alive.
