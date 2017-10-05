@@ -149,7 +149,3 @@ a:focus {
   margin-left:auto;
   width:550px;
 }
-
-/deep/ .mat-tooltip {
-  font-size: 50px !important;
-}
