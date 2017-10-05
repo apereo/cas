@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,6 +45,9 @@ import java.util.List;
 public class CasCoreServicesConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreServicesConfiguration.class);
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -91,12 +95,12 @@ public class CasCoreServicesConfiguration {
         switch (casProperties.getServiceRegistry().getManagementType()) {
             case DOMAIN:
                 LOGGER.debug("Managing CAS service definitions via domains");
-                return new DomainServicesManager(serviceRegistryDao);
+                return new DomainServicesManager(serviceRegistryDao, eventPublisher);
             case DEFAULT:
             default:
                 break;
         }
-        return new DefaultServicesManager(serviceRegistryDao);
+        return new DefaultServicesManager(serviceRegistryDao, eventPublisher);
     }
 
     @Bean

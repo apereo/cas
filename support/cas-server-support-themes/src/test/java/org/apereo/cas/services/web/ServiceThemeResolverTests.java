@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -34,7 +35,8 @@ public class ServiceThemeResolverTests {
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry());
+        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry(),
+                mock(ApplicationEventPublisher.class));
 
         mobileBrowsers = new HashMap<>();
         mobileBrowsers.put(MOZILLA, "theme");

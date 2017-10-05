@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
@@ -48,7 +49,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
 
-        this.manager = new DomainServicesManager(new InMemoryServiceRegistry());
+        this.manager = new DomainServicesManager(new InMemoryServiceRegistry(), mock(ApplicationEventPublisher.class));
         this.controller = new RegisteredServiceSimpleFormController(this.manager);
     }
 

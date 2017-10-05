@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -80,6 +81,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String description;
+
+    @Lob
+    @Column(name = "expiration_policy", nullable = true, length = Integer.MAX_VALUE)
+    private RegisteredServiceExpirationPolicy expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
 
     @Lob
     @Column(name = "proxy_policy", nullable = true, length = Integer.MAX_VALUE)
@@ -181,7 +186,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         return this.logoutUrl;
     }
 
-
     /**
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.
@@ -216,6 +220,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         }
         if (this.contacts == null) {
             this.contacts = new ArrayList<>();
+        }
+        if (this.expirationPolicy == null) {
+            this.expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
         }
     }
 
@@ -256,8 +263,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
                 .append(this.multifactorPolicy, that.multifactorPolicy)
                 .append(this.informationUrl, that.informationUrl)
                 .append(this.privacyUrl, that.privacyUrl)
-                //.append(getContacts(), that.getContacts())
                 .append(this.contacts, that.contacts)
+                .append(this.expirationPolicy, that.expirationPolicy)
                 .isEquals();
     }
 
@@ -284,6 +291,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
                 .append(this.informationUrl)
                 .append(this.privacyUrl)
                 .append(this.contacts)
+                .append(this.expirationPolicy)
                 .toHashCode();
     }
 
@@ -345,7 +353,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.privacyUrl = privacyUrl;
     }
 
-
     /**
      * Sets the user attribute provider instance
      * when providing usernames to this registered service.
@@ -403,6 +410,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         setInformationUrl(source.getInformationUrl());
         setPrivacyUrl(source.getPrivacyUrl());
         setContacts(source.getContacts());
+        setExpirationPolicy(source.getExpirationPolicy());
     }
 
     /**
@@ -416,7 +424,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
                 .append(getEvaluationOrder(), other.getEvaluationOrder())
-                .append(getName().toLowerCase(), other.getName().toLowerCase())
+                .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
+                        StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
                 .append(getServiceId(), other.getServiceId())
                 .append(getId(), other.getId())
                 .toComparison();
@@ -444,7 +453,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         builder.append("multifactorPolicy", this.multifactorPolicy);
         builder.append("informationUrl", this.informationUrl);
         builder.append("privacyUrl", this.privacyUrl);
-        builder.append("contacts", getContacts());
+        builder.append("contacts", this.contacts);
+        builder.append("expirationPolicy", this.expirationPolicy);
         return builder.toString();
     }
 
@@ -532,5 +542,14 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {
         this.contacts = (List) contacts;
+    }
+
+    @Override
+    public RegisteredServiceExpirationPolicy getExpirationPolicy() {
+        return expirationPolicy;
+    }
+
+    public void setExpirationPolicy(final RegisteredServiceExpirationPolicy expirationPolicy) {
+        this.expirationPolicy = expirationPolicy;
     }
 }

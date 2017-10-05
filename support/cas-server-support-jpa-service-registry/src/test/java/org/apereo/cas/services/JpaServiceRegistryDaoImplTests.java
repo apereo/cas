@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,12 +30,18 @@ import static org.junit.Assert.*;
  * @since 3.1.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+        JpaServiceRegistryConfiguration.class,
+        CasCoreServicesConfiguration.class})
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Before
     public void setUp() {
@@ -97,7 +105,7 @@ public class JpaServiceRegistryDaoImplTests {
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
     }
-        
+
     @Test
     public void verifyRegisteredServiceProperties() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -162,5 +170,30 @@ public class JpaServiceRegistryDaoImplTests {
         r.setRequiredAuthenticationContextClass("Testing");
         final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
         assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyExpiredServiceDeleted() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("testExpired");
+        r.setName("expired");
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(LocalDate.now()));
+        final RegisteredService r2 = this.dao.save(r);
+        this.servicesManager.load();
+        final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        assertNull(svc);
+    }
+
+    @Test
+    public void verifyExpiredServiceDisabled() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("testExpired1");
+        r.setName("expired1");
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, LocalDate.now()));
+        final RegisteredService r2 = this.dao.save(r);
+        this.servicesManager.load();
+        final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        assertNotNull(svc);
+        assertFalse(svc.getAccessStrategy().isServiceAccessAllowed());
     }
 }

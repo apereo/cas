@@ -81,7 +81,7 @@ public class SamlRegisteredServiceTests {
 
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
-        final DefaultServicesManager impl = new DefaultServicesManager(dao);
+        final DefaultServicesManager impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         impl.load();
 
         final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()
