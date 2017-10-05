@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.authentication.CasUserProfile;
 import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
 import org.apereo.cas.mgmt.services.web.beans.FormData;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceDetails;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceItem;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
@@ -157,55 +156,6 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             return new ResponseEntity<>("Service id " + idAsLong + " cannot be found.", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(r.getName(), HttpStatus.OK);
-    }
-
-    /**
-     * Gets service details.
-     *
-     * @param idAsLong the id as long
-     * @return the service details
-     */
-    @GetMapping(value = "/serviceDetails")
-    public ResponseEntity<RegisteredServiceDetails> getServiceDetails(@RequestParam("id") final long idAsLong) {
-        final RegisteredService svc = this.servicesManager.findServiceBy(idAsLong);
-        final RegisteredServiceDetails details = new RegisteredServiceDetails();
-        final RegisteredServiceAttributeReleasePolicy attrPolicy = svc.getAttributeReleasePolicy();
-        details.setDescription(svc.getDescription());
-        if (attrPolicy instanceof ScriptedRegisteredServiceAttributeReleasePolicy) {
-            details.setAttributePolicy("SCRIPT");
-        } else if (attrPolicy instanceof GroovyScriptAttributeReleasePolicy) {
-            details.setAttributePolicy("GROOVY");
-        } else if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-            details.setAttributePolicy("ALL");
-        } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-            final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
-            if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                details.setAttributePolicy("NONE");
-            } else {
-                details.setAttributePolicy("ALLOWED");
-            }
-        } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-            final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
-            if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                details.setAttributePolicy("NONE");
-            } else {
-                details.setAttributePolicy("MAPPED");
-            }
-        } else if (attrPolicy instanceof DenyAllAttributeReleasePolicy) {
-            details.setAttributePolicy("DENY");
-        }
-        details.setReleaseCredential(String.valueOf(attrPolicy.isAuthorizedToReleaseCredentialPassword()));
-        details.setReleaseProxyTicket(String.valueOf(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket()));
-        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
-        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
-            details.setProxyPolicy("REFUSE");
-        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
-            final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            details.setProxyPolicy("REGEX");
-            details.setProxyPolicyValue(option.getPattern());
-        }
-        details.setLogoUrl(svc.getLogo());
-        return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
     /**

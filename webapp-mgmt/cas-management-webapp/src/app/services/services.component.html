@@ -25,9 +25,6 @@
     </div>
     <div style="flex: 1 1 auto;text-overflow: ellipsis">{{ item.description }}</div>
   </div>
-  <div *ngIf="detailRowId == item.assignedId">
-   <app-details [detailRow]="detailRow"></app-details>
-  </div>
 </md-card>
 
 <md-paginator #paginator style="margin-right:25px;margin-left:25px;"
@@ -55,10 +52,6 @@
     <ng-container i18n="management.services.table.button.delete">
       {{ messages.management_services_table_button_delete }}
     </ng-container>
-  </button>
-  <button md-menu-item (click)="toggleDetail(selectedItem.assignedId)">
-    <md-icon>format_list_bulleted</md-icon>
-    <ng-container i18n>Details</ng-container>
   </button>
   <button md-menu-item (click)="moveUp(selectedItem)" *ngIf="servicesDatabase.data.indexOf(selectedItem) > 0">
     <md-icon>arrow_upward</md-icon>
