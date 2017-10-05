@@ -3,7 +3,7 @@ package org.apereo.cas.mgmt.services.web.beans;
 import java.io.Serializable;
 
 /**
- * Class used to serialize Service Details to the client
+ * Class used to serialize Service Details to the client.
  *
  * @author Travis Schmidt
  * @since 5.2
