@@ -5,7 +5,9 @@ import org.joda.time.ReadableInstant;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -39,7 +41,7 @@ public final class DateTimeUtils {
             return null;
         }
     }
-
+    
     /**
      * Local date time of local date time.
      *
@@ -254,6 +256,21 @@ public final class DateTimeUtils {
                 return ChronoUnit.NANOS;
             default:
                 return null;
+        }
+    }
+
+    /**
+     * Local date time from local date time.
+     *
+     * @param dt the dt
+     * @return the local date time
+     */
+    public static LocalDateTime localDateTimeFrom(final String dt) {
+        try {
+            return LocalDateTime.parse(dt);
+        } catch (final Exception e) {
+            final LocalDate ld = LocalDate.parse(dt);
+            return LocalDateTime.of(ld, LocalTime.now());
         }
     }
 }

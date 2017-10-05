@@ -67,6 +67,10 @@ Registered services present the following metadata:
 
 [See this guide](Configuring-Service-Contacts.html) for more info please.
 
+### Expiration Policy
+
+[See this guide](Configuring-Service-Expiration-Policy.html) for more info please.
+
 ## Storage
 
 The following options may be used to store services in CAS.

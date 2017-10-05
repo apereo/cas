@@ -73,4 +73,11 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     default int getOrder() {
         return Integer.MAX_VALUE;
     }
+
+    /**
+     * Sets service access allowed.
+     *
+     * @param value the value
+     */
+    void setServiceAccessAllowed(boolean value);
 }

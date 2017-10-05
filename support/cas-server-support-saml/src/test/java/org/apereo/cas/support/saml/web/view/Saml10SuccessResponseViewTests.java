@@ -22,6 +22,7 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link Saml10SuccessResponseView} class.
@@ -56,7 +58,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(list);
 
-        final ServicesManager mgmr = new DefaultServicesManager(dao);
+        final ServicesManager mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         mgmr.load();
 
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, NoOpCipherExecutor.getInstance()),

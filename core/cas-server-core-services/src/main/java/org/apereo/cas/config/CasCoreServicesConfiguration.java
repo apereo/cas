@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -19,6 +20,7 @@ import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -45,6 +48,13 @@ public class CasCoreServicesConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreServicesConfiguration.class);
 
     @Autowired
+    @Qualifier("communicationsManager")
+    private CommunicationsManager communicationsManager;
+    
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -53,8 +63,10 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-        final String attributeNameTriggers = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers();
-        final String requestParameter = casProperties.getAuthn().getMfa().getRequestParameter();
+
+        final MultifactorAuthenticationProperties mfa = casProperties.getAuthn().getMfa();
+        final String attributeNameTriggers = mfa.getGlobalPrincipalAttributeNameTriggers();
+        final String requestParameter = mfa.getRequestParameter();
 
         return new DefaultMultifactorTriggerSelectionStrategy(attributeNameTriggers, requestParameter);
     }
@@ -91,18 +103,18 @@ public class CasCoreServicesConfiguration {
         switch (casProperties.getServiceRegistry().getManagementType()) {
             case DOMAIN:
                 LOGGER.debug("Managing CAS service definitions via domains");
-                return new DomainServicesManager(serviceRegistryDao);
+                return new DomainServicesManager(serviceRegistryDao, eventPublisher);
             case DEFAULT:
             default:
                 break;
         }
-        return new DefaultServicesManager(serviceRegistryDao);
+        return new DefaultServicesManager(serviceRegistryDao, eventPublisher);
     }
 
     @Bean
     @RefreshScope
     public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
-        return new RegisteredServicesEventListener(servicesManager);
+        return new RegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
     }
 
     @ConditionalOnMissingBean(name = "serviceRegistryDao")
