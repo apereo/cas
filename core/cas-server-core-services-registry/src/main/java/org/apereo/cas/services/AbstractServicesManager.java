@@ -8,6 +8,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -188,7 +190,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 }, Function.identity(), (r, s) -> s == null ? r : s));
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
+        evaluateExpiredServiceDefinitions();
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
+    }
+
+    private void evaluateExpiredServiceDefinitions() {
+        this.services.values()
+                .stream()
+                .filter(getRegisteredServicesFilteringPredicate().negate())
+                .filter(Objects::nonNull)
+                .forEach(this::processExpiredRegisteredService);
     }
 
     private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
@@ -216,8 +227,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
                     return true;
                 }
-                final LocalDateTime expirationDate = LocalDateTime.parse(policy.getExpirationDate());
                 final LocalDateTime now = LocalDateTime.now();
+                final LocalDateTime expirationDate = DateTimeUtils.localDateTimeFrom(policy.getExpirationDate());
                 return expirationDate.isBefore(now);
             } catch (final Exception e) {
                 LOGGER.warn(e.getMessage(), e);
@@ -235,7 +246,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (registeredService == null || getRegisteredServiceExpirationPolicyPredicate().test(registeredService)) {
             return registeredService;
         }
+        return processExpiredRegisteredService(registeredService);
+    }
 
+    private RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
         final RegisteredServiceExpirationPolicy policy = registeredService.getExpirationPolicy();
         LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
 
