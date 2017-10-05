@@ -8,8 +8,8 @@
         <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
         <script type="text/javascript" th:inline="javascript">
             var urls = {
-            delete: /*[[@{/consent/deleteConsentDecision}]]*/,
-                    getConsentDecisions: /*[[@{/consent/getConsentDecisions}]]*/
+                delete: /*[[@{/consent/deleteConsentDecision}]]*/,
+                getConsentDecisions: /*[[@{/consent/getConsentDecisions}]]*/
             };
             var strings = {
                 error: /*[[#{screen.consent.review.error}]]*/,
@@ -81,19 +81,11 @@
                                                         <tr>
                                                             <td class="field-label active consent-option-label col-3" th:utext="#{screen.consent.review.option}"/>
                                                             <td class="consent-options">
-                                                                <span class="attribute-name label label-primary" th:utext="#{screen.consent.review.options.attributename}"
+                                                                <span class="attribute-name label label-default" th:utext="#{screen.consent.review.options.attributename}"
                                                                       th:title="#{screen.consent.review.options.desc.attributename}" data-toggle="tooltip" data-placement="bottom"/>
-                                                                <span class="attribute-value label label-primary" th:utext="#{screen.consent.review.options.attributevalue}"
-                                                                      data-toggle="tooltip" data-placement="bottom">
-                                                                    <title th:utext="#{screen.consent.review.options.desc.attributevalue.intro}">
-                                                                        <ul>
-                                                                            <li th:text="#{screen.consent.review.options.desc.attributevalue.first}"/>
-                                                                            <li th:text="#{screen.consent.review.options.desc.attributevalue.second}"/>
-                                                                            <li th:text="#{screen.consent.review.options.desc.attributevalue.third}"/>
-                                                                        </ul>
-                                                                    </title>
-                                                                </span>
-                                                                <span class="always label label-primary" th:utext="#{screen.consent.review.options.always}"
+                                                                <span class="attribute-value label label-default" th:utext="#{screen.consent.review.options.attributevalue}"
+                                                                      th:title="#{screen.consent.review.options.desc.attributevalue}" data-toggle="tooltip" data-placement="bottom"/>
+                                                                <span class="always label label-default" th:utext="#{screen.consent.review.options.always}"
                                                                       th:title="#{screen.consent.review.options.desc.always}" data-toggle="tooltip" data-placement="bottom"/>
                                                             </td>
                                                         </tr>
@@ -103,8 +95,8 @@
                                                                 <table class="table table-striped table-bordered consent-attributes">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th th:utext="#{screen.consent.review.attribute}"/>
-                                                                            <th th:utext="#{screen.consent.review.values}"/>
+                                                                            <th th:text="#{screen.consent.review.attribute}"/>
+                                                                            <th th:text="#{screen.consent.review.values}"/>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -122,6 +114,8 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+                        <button type="button" name="logout" id="logout" class="btn btn-primary" th:utext="'<strong>' + #{screen.welcome.button.logout} + '</strong>'"/>
                     </div>
                 </div>
             </div>

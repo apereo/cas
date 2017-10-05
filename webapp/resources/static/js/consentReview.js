@@ -16,10 +16,11 @@ function format(d) {
             var _unit = detail.find('.consent-reminder span.' + unit);
             _unit.html(_unit.text().slice(0, -1));
         }
-        detail.find('.consent-reminder')[0].prepend(dec.reminder);
+        detail.find('.consent-reminder').prepend(dec.reminder);
     }
     detail.find('.consent-options span:not(.' + dec.options.toLowerCase().replace('_','-') + ')').remove();
     attributeTable(detail.find('.consent-attributes'),d.attributes);
+    detail.find('.consent-options [data-toggle="tooltip"]').tooltip();
     return detail;
 }
 
@@ -167,10 +168,12 @@ var consentDecisions = (function () {
     };
 
     var addEventHandlers = function () {
-        /**
-         * Enable tooltips
-         */
-        $('[data-toggle="tooltip"]').tooltip();
+        
+        /* Performs logout for consent application, no SLO */
+        $('#logout').click(function() {
+            var logout = window.location + '/logout';
+            window.location.assign(logout);
+        });
         
         /**
          * Individual removal button
