@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -123,5 +126,17 @@ public class BasePasswordManagementService implements PasswordManagementService 
      */
     public boolean changeInternal(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return false;
+    }
+
+    /**
+     * Orders security questions consistently.
+     *
+     * @param questionMap A map of question/answer key/value pairs
+     * @return A list of questions in a consistent order
+     */
+    public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
+        final List<String> keys = new ArrayList<>(questionMap.keySet());
+        keys.sort(String.CASE_INSENSITIVE_ORDER);
+        return keys;
     }
 }

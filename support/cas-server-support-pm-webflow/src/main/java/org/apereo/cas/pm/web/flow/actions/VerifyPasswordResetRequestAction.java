@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -14,8 +15,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.List;
 
 import static org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction.*;
 
@@ -56,12 +56,13 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
         }
 
         if (pm.getReset().isSecurityQuestionsEnabled()) {
-            final Map<String, String> questions = passwordManagementService.getSecurityQuestions(username);
+            final List<String> questions = BasePasswordManagementService
+                    .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
             if (questions.isEmpty()) {
                 LOGGER.warn("No security questions could be found for [{}]", username);
                 return error();
             }
-            requestContext.getFlowScope().put("questions", new LinkedHashSet<>(questions.keySet()));
+            requestContext.getFlowScope().put("questions", questions);
         } else {
             LOGGER.debug("Security questions are not enabled");
         }
