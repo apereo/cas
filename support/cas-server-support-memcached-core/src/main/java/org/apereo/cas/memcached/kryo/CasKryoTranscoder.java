@@ -33,6 +33,7 @@ import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerialize
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
 import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeTranscoder;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -195,6 +196,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
         this.kryo.register(RegisteredService.LogoutType.class);
         this.kryo.register(RegisteredServicePublicKeyImpl.class);
+        this.kryo.register(DefaultRegisteredServiceContact.class);
         this.kryo.register(RegisteredServiceRegexAttributeFilter.class);
         this.kryo.register(PrincipalAttributeRegisteredServiceUsernameProvider.class);
         this.kryo.register(DefaultRegisteredServiceAccessStrategy.class);

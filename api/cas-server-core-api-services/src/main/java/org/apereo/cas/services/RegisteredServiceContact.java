@@ -5,18 +5,39 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 
 /**
- * Created by tschmidt on 4/20/16.
+ * The interface Registered service contact.
+ *
+ * @author Travis Schmidt
+ * @since 5.2
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceContact extends Serializable {
 
-    static final long serialVersionUID = 1L;
-
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     String getName();
 
-    String getEMail();
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
+    String getEmail();
 
+    /**
+     * Gets phone.
+     *
+     * @return the phone
+     */
     String getPhone();
 
+    /**
+     * Gets department.
+     *
+     * @return the department
+     */
     String getDepartment();
 }

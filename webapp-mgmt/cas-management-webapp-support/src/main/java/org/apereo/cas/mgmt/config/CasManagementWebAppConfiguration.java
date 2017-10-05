@@ -11,10 +11,6 @@ import org.apereo.cas.mgmt.authentication.CasManagementSecurityInterceptor;
 import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
-import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
-import org.apereo.cas.mgmt.services.web.factory.FormDataPopulator;
-import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.web.CasManagementRootController;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
@@ -51,9 +47,7 @@ import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -71,9 +65,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     private ServerProperties serverProperties;
 
-    @Autowired(required = false)
-    @Qualifier("formDataPopulators")
-    private List formDataPopulators = new ArrayList<>();
 
     @Autowired
     private ApplicationContext context;
@@ -165,27 +156,16 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public RegisteredServiceFactory registeredServiceFactory() {
-        this.formDataPopulators.add(attributeFormDataPopulator());
-        return new DefaultRegisteredServiceFactory(formDataPopulators);
-    }
-
-    @Bean
-    public FormDataPopulator attributeFormDataPopulator() {
-        return new AttributeFormDataPopulator(attributeRepository());
-    }
-
-    @Bean
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
             @Qualifier("servicesManager") final ServicesManager servicesManager) {
         final String defaultCallbackUrl = CasManagementUtils.getDefaultCallbackUrl(casProperties, serverProperties);
-        return new ManageRegisteredServicesMultiActionController(servicesManager, registeredServiceFactory(),
+        return new ManageRegisteredServicesMultiActionController(servicesManager, attributeRepository(),
                 webApplicationServiceFactory, defaultCallbackUrl, casProperties, casUserProfileFactory);
     }
 
     @Bean
     public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(@Qualifier("servicesManager") final ServicesManager servicesManager) {
-        return new RegisteredServiceSimpleFormController(servicesManager, registeredServiceFactory());
+        return new RegisteredServiceSimpleFormController(servicesManager);
     }
 
     @RefreshScope

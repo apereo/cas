@@ -30,7 +30,7 @@
 
 <div>
   <md-form-field class="textInput">
-    <input mdInput
+    <input mdInput [mdAutocomplete]="auto"
            i18n-placeholder="services.form.label.multiauth.principalattribute.nametrigger"
            [placeholder]="messages.services_form_label_multiauth_principalattribute_nametrigger"
            [(ngModel)]="data.service.multifactorPolicy.principalAttributeNameTrigger">
@@ -39,6 +39,9 @@
            i18n-mdTooltip="services.form.tooltip.multiauth.principalattribute.nametrigger"
            [mdTooltip]="messages.services_form_tooltip_multiauth_principalattribute_nametrigger">help
   </md-icon>
+  <md-autocomplete style="width:300px" #auto="mdAutocomplete">
+    <md-option *ngFor="let opt of formData.availableAttributes" [value]="opt">{{ opt }}</md-option>
+  </md-autocomplete>
 </div>
 
 <div>

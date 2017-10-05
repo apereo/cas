@@ -6,12 +6,25 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.authentication.CasUserProfile;
 import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.beans.FormData;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceDetails;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceItem;
+import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
+import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
+import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
+import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceProxyPolicy;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,9 +43,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -49,7 +64,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
 
     private static final String STATUS = "status";
 
-    private final RegisteredServiceFactory registeredServiceFactory;
+    private final IPersonAttributeDao personAttributeDao;
     private final CasUserProfileFactory casUserProfileFactory;
     private final Service defaultService;
 
@@ -59,19 +74,19 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * Instantiates a new manage registered services multi action controller.
      *
      * @param servicesManager              the services manager
-     * @param registeredServiceFactory     the registered service factory
+     * @param personAttributeDao           the person attribute dao
      * @param webApplicationServiceFactory the web application service factory
      * @param defaultServiceUrl            the default service url
      */
     public ManageRegisteredServicesMultiActionController(
             final ServicesManager servicesManager,
-            final RegisteredServiceFactory registeredServiceFactory,
+            final IPersonAttributeDao personAttributeDao,
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final String defaultServiceUrl,
             final CasConfigurationProperties casProperties,
             final CasUserProfileFactory casUserProfileFactory) {
         super(servicesManager);
-        this.registeredServiceFactory = registeredServiceFactory;
+        this.personAttributeDao = personAttributeDao;
         this.defaultService = webApplicationServiceFactory.createService(defaultServiceUrl);
         this.casProperties = casProperties;
         this.casUserProfileFactory = casUserProfileFactory;
@@ -127,12 +142,10 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * or the user will be locked out.
      *
      * @param idAsLong the id
-     * @param response the response
      * @return the response entity
      */
     @GetMapping(value = "/deleteRegisteredService")
-    public ResponseEntity<String> deleteRegisteredService(@RequestParam("id") final long idAsLong,
-                                                          final HttpServletResponse response) {
+    public ResponseEntity<String> deleteRegisteredService(@RequestParam("id") final long idAsLong) {
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
         if (svc == null || svc.getId() == idAsLong) {
             return new ResponseEntity<>("The default service " + this.defaultService.getId() + " cannot be deleted. "
@@ -144,6 +157,55 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             return new ResponseEntity<>("Service id " + idAsLong + " cannot be found.", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(r.getName(), HttpStatus.OK);
+    }
+
+    /**
+     * Gets service details.
+     *
+     * @param idAsLong the id as long
+     * @return the service details
+     */
+    @GetMapping(value = "/serviceDetails")
+    public ResponseEntity<RegisteredServiceDetails> getServiceDetails(@RequestParam("id") final long idAsLong) {
+        final RegisteredService svc = this.servicesManager.findServiceBy(idAsLong);
+        final RegisteredServiceDetails details = new RegisteredServiceDetails();
+        final RegisteredServiceAttributeReleasePolicy attrPolicy = svc.getAttributeReleasePolicy();
+        details.setDescription(svc.getDescription());
+        if (attrPolicy instanceof ScriptedRegisteredServiceAttributeReleasePolicy) {
+            details.setAttributePolicy("SCRIPT");
+        } else if (attrPolicy instanceof GroovyScriptAttributeReleasePolicy) {
+            details.setAttributePolicy("GROOVY");
+        } else if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
+            details.setAttributePolicy("ALL");
+        } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
+            final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
+            if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
+                details.setAttributePolicy("NONE");
+            } else {
+                details.setAttributePolicy("ALLOWED");
+            }
+        } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
+            final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
+            if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
+                details.setAttributePolicy("NONE");
+            } else {
+                details.setAttributePolicy("MAPPED");
+            }
+        } else if (attrPolicy instanceof DenyAllAttributeReleasePolicy) {
+            details.setAttributePolicy("DENY");
+        }
+        details.setReleaseCredential(String.valueOf(attrPolicy.isAuthorizedToReleaseCredentialPassword()));
+        details.setReleaseProxyTicket(String.valueOf(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket()));
+        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
+        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
+            details.setProxyPolicy("REFUSE");
+        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
+            final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
+            details.setProxyPolicy("REGEX");
+            details.setProxyPolicyValue(option.getPattern());
+        }
+        details.setLogoUrl(svc.getLogo());
+        return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
     /**
@@ -197,12 +259,12 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return the services
      */
     @GetMapping(value = "/getServices")
-    public ResponseEntity<List<RegisteredServiceViewBean>> getServices(@RequestParam final String domain) {
+    public ResponseEntity<List<RegisteredServiceItem>> getServices(@RequestParam final String domain) {
         ensureDefaultServiceExists();
-        final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
+        final List<RegisteredServiceItem> serviceItems = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getServicesForDomain(domain));
-        serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
-        return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
+        serviceItems.addAll(services.stream().map(this::createServiceItem).collect(Collectors.toList()));
+        return new ResponseEntity<>(serviceItems, HttpStatus.OK);
     }
 
     /**
@@ -213,17 +275,36 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return - the resulting services
      */
     @GetMapping(value = "/search")
-    public ResponseEntity<List<RegisteredServiceViewBean>> search(@RequestParam final String query) {
+    public ResponseEntity<List<RegisteredServiceItem>> search(@RequestParam final String query) {
         final Pattern pattern = RegexUtils.createPattern("^.*" + query + ".*$");
-        final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
+        final List<RegisteredServiceItem> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = this.servicesManager.getAllServices()
                 .stream()
                 .filter(service -> pattern.matcher(service.getServiceId()).lookingAt()
                         || pattern.matcher(service.getName()).lookingAt()
                         || pattern.matcher(service.getDescription()).lookingAt())
                 .collect(Collectors.toList());
-        serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
+        serviceBeans.addAll(services.stream().map(this::createServiceItem).collect(Collectors.toList()));
         return new ResponseEntity<>(serviceBeans, HttpStatus.OK);
+    }
+
+    /**
+     * Gets form data.
+     *
+     * @return the form data
+     * @throws Exception the exception
+     */
+    @GetMapping(value = "formData")
+    public ResponseEntity<FormData> getFormData() throws Exception {
+        final FormData formData = new FormData();
+        final Set<String> possibleUserAttributeNames = this.personAttributeDao.getPossibleUserAttributeNames();
+        final List<String> possibleAttributeNames = new ArrayList<>();
+        if (possibleUserAttributeNames != null) {
+            possibleAttributeNames.addAll(possibleUserAttributeNames);
+            Collections.sort(possibleAttributeNames);
+        }
+        formData.setAvailableAttributes(possibleAttributeNames);
+        return new ResponseEntity<>(formData, HttpStatus.OK);
     }
 
     /**
@@ -236,7 +317,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     @PostMapping(value = "/updateOrder", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void updateOrder(final HttpServletRequest request, final HttpServletResponse response,
-                            @RequestBody final RegisteredServiceViewBean[] svcs) {
+                            @RequestBody final RegisteredServiceItem[] svcs) {
         final String id = svcs[0].getAssignedId();
         final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(id));
         if (svcA == null) {
@@ -252,5 +333,16 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         this.servicesManager.save(svcA);
         this.servicesManager.save(svcB);
     }
+
+    private RegisteredServiceItem createServiceItem(final RegisteredService service) {
+        final RegisteredServiceItem serviceItem = new RegisteredServiceItem();
+        serviceItem.setAssignedId(String.valueOf(service.getId()));
+        serviceItem.setEvalOrder(service.getEvaluationOrder());
+        serviceItem.setName(service.getName());
+        serviceItem.setServiceId(service.getServiceId());
+        serviceItem.setDescription(DigestUtils.abbreviate(service.getDescription()));
+        return serviceItem;
+    }
+
 }
 
