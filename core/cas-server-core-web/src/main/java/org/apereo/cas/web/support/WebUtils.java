@@ -654,7 +654,7 @@ public final class WebUtils {
      * @return the http servlet request geo location
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocation() {
-        HttpServletRequest servletRequest = WebUtils.getHttpServletRequest();
+        final HttpServletRequest servletRequest = WebUtils.getHttpServletRequest();
         if (servletRequest != null) {
             return getHttpServletRequestGeoLocation(servletRequest);
         }
