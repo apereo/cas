@@ -22,6 +22,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
@@ -158,6 +159,12 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return new ResponseEntity<>(r.getName(), HttpStatus.OK);
     }
 
+    /**
+     * Gets service details.
+     *
+     * @param idAsLong the id as long
+     * @return the service details
+     */
     @GetMapping(value = "/serviceDetails")
     public ResponseEntity<RegisteredServiceDetails> getServiceDetails(@RequestParam("id") final long idAsLong) {
         final RegisteredService svc = this.servicesManager.findServiceBy(idAsLong);
@@ -333,7 +340,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         serviceItem.setEvalOrder(service.getEvaluationOrder());
         serviceItem.setName(service.getName());
         serviceItem.setServiceId(service.getServiceId());
-        serviceItem.setDescription(service.getDescription().substring(0,service.getDescription().length() > 100 ? 99 : service.getDescription().length()));
+        serviceItem.setDescription(DigestUtils.abbreviate(service.getDescription()));
         return serviceItem;
     }
 
