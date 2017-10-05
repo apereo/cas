@@ -1,13 +1,12 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {ServiceItem, ServiceDetails} from "../../domain/service-view-bean";
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {ServiceItem} from "../../domain/service-view-bean";
 import {Messages} from "../messages";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ServiceViewService} from "./service.service";
 import {Location} from "@angular/common";
-import {MdDialog, MdPaginator, MdSnackBar, PageEvent} from "@angular/material";
+import {MdDialog, MdPaginator, MdSnackBar} from "@angular/material";
 import {DeleteComponent} from "../delete/delete.component";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {DataSource} from "@angular/cdk/collections";
 import {Observable} from "rxjs/Observable";
 
 @Component({
@@ -18,8 +17,6 @@ import {Observable} from "rxjs/Observable";
 export class ServicesComponent implements OnInit,AfterViewInit {
 
   dataTable: ServiceItem[];
-  detailRowId: String;
-  detailRow: ServiceDetails;
   deleteItem: ServiceItem;
   domain: String;
   selectedItem: ServiceItem;
@@ -70,18 +67,6 @@ export class ServicesComponent implements OnInit,AfterViewInit {
 
   serviceDuplicate(selectedItem: String) {
     this.router.navigate(['/form',selectedItem, {duplicate: true}]);
-  }
-
-  toggleDetail(id: String) {
-    if (this.detailRowId !== id) {
-      this.service.getDetails(id).then(resp => {
-        this.detailRow = resp;
-        this.detailRowId = id
-      });
-    } else {
-      this.detailRowId = null;
-      this.detailRow = null;
-    }
   }
 
   openModalDelete(selectedItem: ServiceItem) {
