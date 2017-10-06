@@ -15,6 +15,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +40,7 @@ public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
     @Qualifier("serviceRegistryDao")
-    private ServiceRegistryDao dao;
+    private ServiceRegistryDao serviceRegistryDao;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -47,8 +48,8 @@ public class JpaServiceRegistryDaoImplTests {
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.dao.load();
-        services.forEach(service -> this.dao.delete(service));
+        final List<RegisteredService> services = this.serviceRegistryDao.load();
+        services.forEach(service -> this.serviceRegistryDao.delete(service));
     }
 
     @Test
@@ -60,8 +61,8 @@ public class JpaServiceRegistryDaoImplTests {
         r.setDescription("description");
         r.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:/test.pub", "RSA"));
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -76,8 +77,8 @@ public class JpaServiceRegistryDaoImplTests {
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -94,15 +95,15 @@ public class JpaServiceRegistryDaoImplTests {
         r.setTheme("theme");
         r.setDescription("description");
 
-        this.dao.save(r);
+        this.serviceRegistryDao.save(r);
 
-        final List<RegisteredService> services = this.dao.load();
+        final List<RegisteredService> services = this.serviceRegistryDao.load();
         final RegisteredService r2 = services.get(0);
 
         r.setId(r2.getId());
-        this.dao.save(r);
+        this.serviceRegistryDao.save(r);
 
-        final RegisteredService r3 = this.dao.findServiceById(r.getId());
+        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r.getId());
 
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
@@ -135,9 +136,9 @@ public class JpaServiceRegistryDaoImplTests {
 
         r.setProperties(propertyMap);
 
-        this.dao.save(r);
+        this.serviceRegistryDao.save(r);
 
-        final RegisteredService r2 = this.dao.load().get(0);
+        final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
         assertEquals(r2.getProperties().size(), 2);
     }
 
@@ -152,7 +153,7 @@ public class JpaServiceRegistryDaoImplTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
         assertEquals(r, r2);
     }
 
@@ -170,7 +171,7 @@ public class JpaServiceRegistryDaoImplTests {
         r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
         r.setMetadataSignatureLocation("location");
         r.setRequiredAuthenticationContextClass("Testing");
-        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.serviceRegistryDao.save(r);
         assertEquals(r, r2);
     }
 
@@ -180,21 +181,24 @@ public class JpaServiceRegistryDaoImplTests {
         r.setServiceId("testExpired");
         r.setName("expired");
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(LocalDate.now()));
-        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
         this.servicesManager.load();
         final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNull(svc);
     }
 
     @Test
-    public void verifyExpiredServiceDisabled() {
+    public void verifyExpiredServiceDisabled() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("testExpired1");
         r.setName("expired1");
-        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, LocalDate.now()));
-        final RegisteredService r2 = this.dao.save(r);
-        this.servicesManager.load();
-        final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        final LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(1);
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
+        final RegisteredService r2 = this.servicesManager.save(r);
+        RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        assertNotNull(svc);
+        Thread.sleep(1100);
+        svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
         assertFalse(svc.getAccessStrategy().isServiceAccessAllowed());
     }
