@@ -37,7 +37,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Sample Request
 ```xml
-POST /cas/samlValidate?ticket=
+POST /cas/samlValidate?TARGET=my-service.com
 Host: cas.example.com
 Content-Length: 491
 Content-Type: text/xml
