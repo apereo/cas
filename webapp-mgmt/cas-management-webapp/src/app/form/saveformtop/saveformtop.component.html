@@ -1,6 +1,6 @@
 <div style="display:flex;">
   <div style="padding-top: 3px;">
-    <md-icon style="padding-top: 3px;">add_circle</md-icon>
+    <mat-icon style="padding-top: 3px;">add_circle</mat-icon>
     <h4 style="display: inline;position: relative;top: -5px;">
       <ng-container i18n="services.form.header.page.editService">
         {{ messages.services_form_header_page_editService }}
@@ -9,14 +9,14 @@
   </div>
   <div style="flex: 1 1 auto"></div>
   <div>
-    <button md-button (click)="saveFn();">
-      <md-icon>save</md-icon>
+    <button mat-button (click)="saveFn();">
+      <mat-icon>save</mat-icon>
       <ng-container i18n="services.form.button.save">
         {{ messages.services_form_button_save }}
       </ng-container>
     </button>
-    <button md-button (click)="goBack();">
-      <md-icon>cancel</md-icon>
+    <button mat-button (click)="goBack();">
+      <mat-icon>cancel</mat-icon>
       <ng-container i18n="services.form.button.cancel">
         {{ messages.services_form_button_cancel }}
       </ng-container>

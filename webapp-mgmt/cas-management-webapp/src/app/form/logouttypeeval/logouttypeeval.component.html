@@ -1,12 +1,12 @@
 <div>
-  <md-select style="width:300px;padding-top: 25px;"
+  <mat-select style="width:300px;padding-top: 25px;"
              i18n-placeholder="services.form.label.logoutType"
              [placeholder]="messages.services_form_label_logoutType"
              [(ngModel)]="data.service.logoutType">
-    <md-option *ngFor="let opt of logoutType" [value]="opt">{{ opt }}</md-option>
-  </md-select>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.logoutType"
-           [mdTooltip]="messages.services_form_tooltip_logoutType">help
-  </md-icon>
+    <mat-option *ngFor="let opt of logoutType" [value]="opt">{{ opt }}</mat-option>
+  </mat-select>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.logoutType"
+           [matTooltip]="messages.services_form_tooltip_logoutType">help
+  </mat-icon>
 </div>

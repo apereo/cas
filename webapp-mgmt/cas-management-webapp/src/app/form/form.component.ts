@@ -16,7 +16,7 @@ import {
 import {OAuthRegisteredService, OidcRegisteredService} from "../../domain/oauth-service";
 import {SamlRegisteredService} from "../../domain/saml-service";
 import {WSFederationRegisterdService} from "../../domain/wsed-service";
-import {MdSnackBar, MdTabGroup} from "@angular/material";
+import {MatSnackBar, MatTabGroup} from "@angular/material";
 import {GrouperRegisteredServiceAccessStrategy} from "../../domain/access-strategy";
 
 enum Tabs {
@@ -46,7 +46,7 @@ export class FormComponent implements OnInit {
   path: String;
 
   @ViewChild('tabGroup')
-  tabGroup: MdTabGroup;
+  tabGroup: MatTabGroup;
 
   constructor(public messages: Messages,
               private route: ActivatedRoute,
@@ -54,7 +54,7 @@ export class FormComponent implements OnInit {
               private service: FormService,
               public data: Data,
               private location: Location,
-              public snackBar: MdSnackBar) {
+              public snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
