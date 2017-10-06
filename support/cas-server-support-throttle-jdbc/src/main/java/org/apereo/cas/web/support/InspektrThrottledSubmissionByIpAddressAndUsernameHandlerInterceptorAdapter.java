@@ -30,13 +30,13 @@ import java.util.List;
  * @since 3.3.5
  */
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
-            extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
+        extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
     private static final String INSPEKTR_ACTION_THROTTLED = "THROTTLED_LOGIN_ATTEMPT";
     private static final String INSPEKTR_ACTION_FAILED = "FAILED_LOGIN_ATTEMPT";
-    
+
     private AuditTrailManager auditTrailManager;
 
     private DataSource dataSource;
@@ -48,17 +48,18 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private String sqlQueryAudit;
 
     private JdbcTemplate jdbcTemplate;
-    
+
     /**
      * Instantiates a new Inspektr throttled submission by ip address and username handler interceptor adapter.
      */
-    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter() {}
+    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter() {
+    }
 
     /**
      * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
      *
      * @param auditTrailManager the audit trail manager
-     * @param dataSource the data source
+     * @param dataSource        the data source
      */
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
                                                                                       final DataSource dataSource) {
@@ -88,11 +89,11 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
             final String remoteAddress = clientInfo.getClientIpAddress();
-            
+
             final List<Timestamp> failures = this.jdbcTemplate.query(
                     this.sqlQueryAudit,
                     new Object[]{remoteAddress, userToUse, this.authenticationFailureCode,
-                    this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
+                            this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
                     (resultSet, i) -> {
                         return resultSet.getTimestamp(1);
@@ -110,8 +111,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
-    	super.recordSubmissionFailure(request);
-    	recordAnyAction(request, INSPEKTR_ACTION_FAILED, "recordSubmissionFailure()");
+        super.recordSubmissionFailure(request);
+        recordAnyAction(request, INSPEKTR_ACTION_FAILED, "recordSubmissionFailure()");
     }
 
     @Override
@@ -119,7 +120,14 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         super.recordThrottle(request);
         recordAnyAction(request, INSPEKTR_ACTION_THROTTLED, "recordThrottle()");
     }
-    
+
+    /**
+     * Record any action.
+     *
+     * @param request    the request
+     * @param actionName the action name
+     * @param methodName the method name
+     */
     protected void recordAnyAction(final HttpServletRequest request, final String actionName, final String methodName) {
         if (this.dataSource != null && this.jdbcTemplate != null) {
             final String userToUse = constructUsername(request, getUsernameParameter());
@@ -147,7 +155,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     this.getName());
         }
     }
-    
+
     public void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
     }
@@ -163,7 +171,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     /**
      * Construct username from the request.
      *
-     * @param request the request
+     * @param request           the request
      * @param usernameParameter the username parameter
      * @return the string
      */

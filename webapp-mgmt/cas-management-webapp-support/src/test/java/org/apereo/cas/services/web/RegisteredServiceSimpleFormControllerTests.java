@@ -40,6 +40,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link RegisteredServiceSimpleFormController}.
+ *
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.1
@@ -58,7 +59,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Before
     public void setUp() throws Exception {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("test", Lists.newArrayList(new Object[] {"test"}));
+        attributes.put("test", Lists.newArrayList(new Object[]{"test"}));
 
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
@@ -94,7 +95,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setServiceId("serviceId");
         svc.setName("name");
         svc.setEvaluationOrder(123);
-        
+
         assertTrue(this.manager.getAllServices().isEmpty());
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
         this.controller.saveService(new MockHttpServletRequest(),
@@ -103,7 +104,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(final RegisteredService rs : this.manager.getAllServices()) {
+        for (final RegisteredService rs : this.manager.getAllServices()) {
             assertTrue(rs instanceof RegexRegisteredService);
         }
     }
@@ -136,7 +137,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         assertEquals("serviceId1", r2.getServiceId());
     }
 
-   @Test
+    @Test
     public void verifyAddRegexRegisteredService() throws Exception {
         final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
@@ -145,14 +146,14 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
 
-       final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-       this.controller.saveService(new MockHttpServletRequest(),
-               new MockHttpServletResponse(),
-               data, mock(BindingResult.class));
+        final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
+        this.controller.saveService(new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                data, mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(final RegisteredService rs : this.manager.getAllServices()) {
+        for (final RegisteredService rs : this.manager.getAllServices()) {
             assertTrue(rs instanceof RegexRegisteredService);
         }
     }
@@ -219,7 +220,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         r.setDescription("description");
 
         this.manager.save(r);
-        
+
         r.setServiceId("serviceId1");
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(r);
         this.controller.saveService(new MockHttpServletRequest(),

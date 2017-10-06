@@ -135,20 +135,15 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     }
 
-    /**
-     *  This test proves that in case BCRYPT is used authentication using encoded password always fail
-     * with FailedLoginException
-     * @throws Exception
-     */
     @Test(expected = FailedLoginException.class)
     public void verifyBCryptFail() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8,
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8,
                 new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
 
-        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") +"' password"));
+        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") + "' password"));
 
         q.setPasswordEncoder(encoder);
         q.authenticateUsernamePasswordInternal(
@@ -156,20 +151,20 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     /**
-     *  This test proves that in case BCRYPT and using raw password test can authenticate
+     * This test proves that in case BCRYPT and using raw password test can authenticate
      */
     @Test
     public void verifyBCryptSuccess() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6,
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6,
                 new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
 
-        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") +"' password"));
+        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") + "' password"));
 
         q.setPasswordEncoder(encoder);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw0"),"psw0");
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw0"), "psw0");
     }
 }
