@@ -11,5 +11,6 @@ dependencies {
     implementation project(":support:cas-server-support-consent-api")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":support:cas-server-support-pac4j-core")
 }

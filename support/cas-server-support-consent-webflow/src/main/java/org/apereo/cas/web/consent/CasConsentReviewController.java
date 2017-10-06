@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,20 +33,28 @@ import java.util.Map;
 public class CasConsentReviewController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewController.class);
 
+    /**
+     * The consent repository.
+     */
     private final ConsentRepository consentRepository;
+    
+    /**
+     * The consent engine.
+     */
     private final ConsentEngine consentEngine;
 
-    public CasConsentReviewController(final ConsentRepository consentRepository, final ConsentEngine consentEngine) {
+    public CasConsentReviewController(final ConsentRepository consentRepository,
+            final ConsentEngine consentEngine) {
         this.consentRepository = consentRepository;
         this.consentEngine = consentEngine;
     }
-
+    
     /**
      * Show consent decisions.
      *
      * @param request  the request
      * @param response the response
-     * @return the model and view where json data will be rendered
+     * @return the view where json data will be rendered
      */
     @GetMapping
     public String showConsent(final HttpServletRequest request,
@@ -83,6 +92,7 @@ public class CasConsentReviewController {
     
     /**
      * Endpoint for deleting single consent decisions.
+     * 
      * @param decisionId the decision id
      * @return true / false
      */
@@ -92,5 +102,19 @@ public class CasConsentReviewController {
         final String principal = WebUtils.getPac4jAuthenticatedUsername();
         LOGGER.debug("Deleting consent decision with id [{}] for principal [{}].", decisionId, principal);        
         return this.consentRepository.deleteConsentDecision(decisionId, principal);
+    }
+    
+    /**
+     * Endpoint for local logout, no SLO.
+     * 
+     * @param request the request
+     * @param session the session
+     * @return the logout view
+     */
+    @GetMapping("/logout")
+    public String logout(final HttpServletRequest request, final HttpSession session) {
+        LOGGER.debug("Invalidating application session...");
+        session.invalidate();
+        return "casConsentLogoutView";
     }
 }
