@@ -1,62 +1,62 @@
 <div>
-  <md-radio-group [(ngModel)]="type" (change)="changeType()">
+  <mat-radio-group [(ngModel)]="type" (change)="changeType()">
 
-    <md-radio-button [value]="TYPE.DEFAULT">
+    <mat-radio-button [value]="TYPE.DEFAULT">
       <ng-container i18n="services.form.label.attrRelease.principleAttRepo.default">
         {{ messages.services_form_label_attrRelease_principleAttRepo_default }}
       </ng-container>
-    </md-radio-button>
+    </mat-radio-button>
 
-    <md-radio-button [value]="TYPE.CACHING">
+    <mat-radio-button [value]="TYPE.CACHING">
       <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached">
         {{ messages.services_form_label_attrRelease_principleAttRepo_cached }}
       </ng-container>
-    </md-radio-button>
+    </mat-radio-button>
 
-  </md-radio-group>
+  </mat-radio-group>
 </div>
 
 <div *ngIf="type == TYPE.CACHING">
   <div>
-    <md-select required style="width:400px;padding-top:25px;padding-bottom: 25px;"
+    <mat-select required style="width:400px;padding-top:25px;padding-bottom: 25px;"
                i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.timeUnit"
                [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit"
                [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
-      <md-option *ngFor="let opt of timeUnits" [value]="opt">
+      <mat-option *ngFor="let opt of timeUnits" [value]="opt">
         {{ opt }}
-      </md-option>
-    </md-select>
-    <md-icon style="font-size: medium"
-             i18n-mdTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit"
-             [mdTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit">help
-    </md-icon>
+      </mat-option>
+    </mat-select>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit">help
+    </mat-icon>
   </div>
 
   <div>
-    <md-form-field class="textInput">
-      <input mdInput
+    <mat-form-field class="textInput">
+      <input matInput
              i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.expiration"
              [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_expiration"
              [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.expiration">
-    </md-form-field>
-    <md-icon style="font-size: medium"
-             i18n-mdTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration"
-             [mdTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_expiration">help
-    </md-icon>
+    </mat-form-field>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_expiration">help
+    </mat-icon>
   </div>
 
   <div>
-    <md-select required style="width: 400px;padding-top:25px;padding-bottom: 25px;"
+    <mat-select required style="width: 400px;padding-top:25px;padding-bottom: 25px;"
                i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy"
                [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy"
                [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
-      <md-option *ngFor="let opt of mergeStrategies" [value]="opt">
+      <mat-option *ngFor="let opt of mergeStrategies" [value]="opt">
         {{ opt }}
-      </md-option>
-    </md-select>
-    <md-icon style="font-size: medium"
-             i18n-mdTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy"
-             [mdTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy">help
-    </md-icon>
+      </mat-option>
+    </mat-select>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy">help
+    </mat-icon>
   </div>
 </div>

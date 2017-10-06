@@ -1,10 +1,10 @@
 <div>
-  <md-select i18n-placeholder="services.form.label.type" style="width:400px;padding-top: 25px;padding-bottom: 25px;"
+  <mat-select i18n-placeholder="services.form.label.type" style="width:400px;padding-top: 25px;padding-bottom: 25px;"
              [placeholder]="messages.services_form_label_type"
              [(ngModel)]="type"
              (change)="changeType()">
-    <md-option *ngFor="let opt of types; let i = index" [value]="opt">
+    <mat-option *ngFor="let opt of types; let i = index" [value]="opt">
       {{ display[i] }}
-    </md-option>
-  </md-select>
+    </mat-option>
+  </mat-select>
 </div>

@@ -1,79 +1,79 @@
-<md-card class="tabCard">
-  <md-card-title>
+<mat-card class="tabCard">
+  <mat-card-title>
     <h5>Service Access Strategy</h5>
-  </md-card-title>
+  </mat-card-title>
   <div class="cardContent">
     <div>
-      <md-checkbox [(ngModel)]="data.service.accessStrategy.ssoEnabled">
+      <mat-checkbox [(ngModel)]="data.service.accessStrategy.ssoEnabled">
         <ng-container i18n="services.form.label.sas.ssoEnabled">
           {{ messages.services_form_label_sas_ssoEnabled }}
         </ng-container>
-      </md-checkbox>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.sas.ssoEnabled"
-               [mdTooltip]="messages.services_form_tooltip_sas_ssoEnabled">help
-      </md-icon>
-      <md-checkbox [(ngModel)]="data.service.accessStrategy.requireAllAttributes">
+      </mat-checkbox>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.sas.ssoEnabled"
+               [matTooltip]="messages.services_form_tooltip_sas_ssoEnabled">help
+      </mat-icon>
+      <mat-checkbox [(ngModel)]="data.service.accessStrategy.requireAllAttributes">
         <ng-container i18n="services.form.label.sas.requireAll">
           {{ messages.services_form_label_sas_requireAll }}
         </ng-container>
-      </md-checkbox>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.sas.requireAll"
-               [mdTooltip]="messages.services_form_tooltip_sas_requireAll">help
-      </md-icon>
+      </mat-checkbox>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.sas.requireAll"
+               [matTooltip]="messages.services_form_tooltip_sas_requireAll">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.sas.unauthorizedredirecturl"
                [placeholder]="messages.services_form_label_sas_unauthorizedredirecturl"
                [(ngModel)]="data.service.accessStrategy.unauthorizedRedirectUrl">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.sas.unauthorizedredirecturl"
-               [mdTooltip]="messages.services_form_tooltip_sas_unauthorizedredirecturl">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.sas.unauthorizedredirecturl"
+               [matTooltip]="messages.services_form_tooltip_sas_unauthorizedredirecturl">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="data.service.accessStrategy.caseInsensitive">
+      <mat-checkbox [(ngModel)]="data.service.accessStrategy.caseInsensitive">
         <ng-container i18n="services.form.label.sas.caseinsensitive">
           {{ messages.services_form_label_sas_caseinsensitive }}
         </ng-container>
-      </md-checkbox>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.sas.unauthorizedredirecturl"
-               [mdTooltip]="messages.services_form_tooltip_sas_unauthorizedredirecturl">help
-      </md-icon>
+      </mat-checkbox>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.sas.unauthorizedredirecturl"
+               [matTooltip]="messages.services_form_tooltip_sas_unauthorizedredirecturl">help
+      </mat-icon>
     </div>
   </div>
-</md-card>
-<md-card class="tabCard">
-  <md-card-title>
+</mat-card>
+<mat-card class="tabCard">
+  <mat-card-title>
     <h5>Required Attributes</h5>
-  </md-card-title>
+  </mat-card-title>
   <div class="cardContent">
     <app-rejectedattributes [attributes]="data.service.accessStrategy.requiredAttributes"></app-rejectedattributes>
   </div>
-</md-card>
+</mat-card>
 
-  <md-card class="tabCard">
-    <md-card-title>
+  <mat-card class="tabCard">
+    <mat-card-title>
       <h5>Type</h5>
-    </md-card-title>
+    </mat-card-title>
     <div class="cardContent">
       <div>
-        <md-select i18n-placeHolder="services.form.label.sas.selecttype" style="width:400px;padding-top:25px;padding-bottom: 25px;"
+        <mat-select i18n-placeHolder="services.form.label.sas.selecttype" style="width:400px;padding-top:25px;padding-bottom: 25px;"
                    [placeholder]="messages.services_form_label_sas_selecttype"
                    [(ngModel)]="type" (change)="changeType()">
-          <md-option *ngFor="let opt of types" [value]="opt">{{ TYPE[opt] }}</md-option>
-        </md-select>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.sas.selecttype"
-                 [mdTooltip]="messages.services_form_tooltip_sas_selecttype">help
-        </md-icon>
+          <mat-option *ngFor="let opt of types" [value]="opt">{{ TYPE[opt] }}</mat-option>
+        </mat-select>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.sas.selecttype"
+                 [matTooltip]="messages.services_form_tooltip_sas_selecttype">help
+        </mat-icon>
       </div>
 
       <div *ngIf="type == TYPE.REMOTE">
@@ -93,16 +93,16 @@
       </div>
 
     </div>
-  </md-card>
+  </mat-card>
 
-  <md-card class="tabCard">
-    <md-card-title>
+  <mat-card class="tabCard">
+    <mat-card-title>
       <h5>Rejected Attributes</h5>
-    </md-card-title>
+    </mat-card-title>
     <div class="cardContent">
     <app-rejectedattributes [attributes]="data.service.accessStrategy.rejectedAttributes"></app-rejectedattributes>
     </div>
-  </md-card>
+  </mat-card>
 
 
 

@@ -9,7 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
 import {ServiceItem} from "../../domain/service-view-bean";
 import {DataSource} from "@angular/cdk/collections";
-import {MdPaginator, MdSnackBar} from "@angular/material";
+import {MatPaginator, MatSnackBar} from "@angular/material";
 import {Messages} from "../messages";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Location} from "@angular/common";
@@ -26,14 +26,14 @@ export class SearchComponent implements OnInit {
   dataSource: ServiceDataSource | null;
   query: String;
 
-  @ViewChild(MdPaginator) paginator: MdPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public messages: Messages,
               public router: Router,
               public route: ActivatedRoute,
               public location: Location,
               private service: SearchService,
-              public snackBar: MdSnackBar) { }
+              public snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.dataSource = new ServiceDataSource(this.serviceDatabase, this.paginator);
@@ -77,7 +77,7 @@ export class ServiceDatabase {
 
 export class ServiceDataSource extends DataSource<any> {
 
-  constructor(private _serviceDatabase: ServiceDatabase, private _paginator: MdPaginator) {
+  constructor(private _serviceDatabase: ServiceDatabase, private _paginator: MatPaginator) {
     super();
   }
 

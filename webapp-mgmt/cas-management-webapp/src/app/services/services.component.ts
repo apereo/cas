@@ -4,7 +4,7 @@ import {Messages} from "../messages";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ServiceViewService} from "./service.service";
 import {Location} from "@angular/common";
-import {MdDialog, MdPaginator, MdSnackBar} from "@angular/material";
+import {MatDialog, MatPaginator, MatSnackBar} from "@angular/material";
 import {DeleteComponent} from "../delete/delete.component";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable} from "rxjs/Observable";
@@ -23,15 +23,15 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   servicesDatabase = new ServicesDatabase();
 
   @ViewChild("paginator")
-  paginator: MdPaginator;
+  paginator: MatPaginator;
 
   constructor(public messages: Messages,
               private route: ActivatedRoute,
               private router: Router,
               private service: ServiceViewService,
               private location: Location,
-              public dialog: MdDialog,
-              public snackBar: MdSnackBar) {
+              public dialog: MatDialog,
+              public snackBar: MatSnackBar) {
     this.dataTable = [];
   }
 
