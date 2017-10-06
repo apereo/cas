@@ -1,280 +1,280 @@
-<md-card class="tabCard">
-  <md-card-title>
+<mat-card class="tabCard">
+  <mat-card-title>
     <h5>SAML Client Options</h5>
-  </md-card-title>
+  </mat-card-title>
   <div class="cardContent">
     <div>
-      <md-form-field class="textInput">
-        <input mdInput required
+      <mat-form-field class="textInput">
+        <input matInput required
                i18n-placeholder="services.form.label.saml.metadata.location"
                [placeholder]="messages.services_form_label_saml_metadata_location"
                [(ngModel)]="service.metadataLocation">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.metadata.location"
-               [mdTooltip]="messages.services_form_tooltip_saml_metadata_location">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.metadata.location"
+               [matTooltip]="messages.services_form_tooltip_saml_metadata_location">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.saml.metadata.maximumvalidity"
                [placeholder]="messages.services_form_label_saml_metadata_maximumvalidity"
                [(ngModel)]="service.metadataMaxValidity">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.metadata.maximumvalidity"
-               [mdTooltip]="messages.services_form_tooltip_saml_metadata_maximumvalidity">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.metadata.maximumvalidity"
+               [matTooltip]="messages.services_form_tooltip_saml_metadata_maximumvalidity">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.saml.authenticationcontextclass"
                [placeholder]=" messages.services_form_label_saml_authenticationcontextclass"
                [(ngModel)]="service.requiredAuthenticationContextClass">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.authenticationcontextclass"
-               [mdTooltip]="messages.services_form_tooltip_saml_authenticationcontextclass">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.authenticationcontextclass"
+               [matTooltip]="messages.services_form_tooltip_saml_authenticationcontextclass">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.saml.metadata.signaturepublickeylocation"
                [placeholder]="messages.services_form_label_saml_metadata_signaturepublickeylocation"
                [(ngModel)]="service.metadataSignatureLocation">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.metadata.signaturepublickeylocation"
-               [mdTooltip]="messages.services_form_tooltip_saml_metadata_signaturepublickeylocation">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.metadata.signaturepublickeylocation"
+               [matTooltip]="messages.services_form_tooltip_saml_metadata_signaturepublickeylocation">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                placeholder="Metadata Expiration Duration"
                [(ngModel)]="service.metadataExpirationDuration">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               mdTooltip="If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               matTooltip="If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.signAssertions">
+      <mat-checkbox [(ngModel)]="service.signAssertions">
         <ng-container i18n="services.form.label.saml.signassertions">
           {{ messages.services_form_label_saml_signassertions }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.signassertions"
-                 [mdTooltip]="messages.services_form_tooltip_saml_signassertions">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.signassertions"
+                 [matTooltip]="messages.services_form_tooltip_saml_signassertions">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.signResponses">
+      <mat-checkbox [(ngModel)]="service.signResponses">
         <ng-container i18n="services.form.label.saml.signresponses">
           {{ messages.services_form_label_saml_signresponses }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.signresponses"
-                 [mdTooltip]="messages.services_form_tooltip_saml_signresponses">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.signresponses"
+                 [matTooltip]="messages.services_form_tooltip_saml_signresponses">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.encryptAssertions">
+      <mat-checkbox [(ngModel)]="service.encryptAssertions">
         <ng-container i18n="services.form.label.saml.encryptassertions">
           {{ messages.services_form_label_saml_encryptassertions }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.encrpytassertions"
-                 [mdTooltip]="messages.services_form_tooltip_saml_encryptassertions">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.encrpytassertions"
+                 [matTooltip]="messages.services_form_tooltip_saml_encryptassertions">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.skipGeneratingAssertionNameId">
+      <mat-checkbox [(ngModel)]="service.skipGeneratingAssertionNameId">
         <ng-container i18n="services.form.label.saml.skipAssertionNameId">
           {{ messages.services_form_label_saml_skipAssertionNameId }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.skipAssertionNameID"
-                 [mdTooltip]="messages.services_form_tooltip_saml_skipAssertioNameId">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.skipAssertionNameID"
+                 [matTooltip]="messages.services_form_tooltip_saml_skipAssertioNameId">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationInResponseTo">
+      <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationInResponseTo">
         <ng-container i18n="services.form.label.saml.skipInResponseTo">
           {{ messages.services_form_label_saml_skipInResponseTo }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.skipInResponseTo"
-                 [mdTooltip]="messages.services_form_tooltip_saml_skipInResponseTo">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.skipInResponseTo"
+                 [matTooltip]="messages.services_form_tooltip_saml_skipInResponseTo">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotOnOrAfter">
+      <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotOnOrAfter">
         <ng-container i18n="services.form.label.saml.skipNotOnOrAfter">
           {{ messages.services_form_label_saml_skipNotOnOrAfter }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.skipNotOnOrAfter"
-                 [mdTooltip]="messages.services_form_tooltip_saml_skipNotOnOrAfter">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.skipNotOnOrAfter"
+                 [matTooltip]="messages.services_form_tooltip_saml_skipNotOnOrAfter">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationRecipient">
+      <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationRecipient">
         <ng-container i18n="services.form.label.saml.skipRecipient">
           {{ messages.services_form_label_saml_skipRecipient }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.skipRecipient"
-                 [mdTooltip]="messages.services_form_tooltip_saml_skipRecipient">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.skipRecipient"
+                 [matTooltip]="messages.services_form_tooltip_saml_skipRecipient">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotBefore">
+      <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotBefore">
         <ng-container i18n="services.form.label.saml.skipNotBefore">
           {{ messages.services_form_label_saml_skipNotBefore }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.skipNotBefore"
-                 [mdTooltip]="messages.services_form_tooltip_saml_skipNotBefore">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.skipNotBefore"
+                 [matTooltip]="messages.services_form_tooltip_saml_skipNotBefore">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.metadataCriteriaRemoveEmptyEntitiesDescriptors">
+      <mat-checkbox [(ngModel)]="service.metadataCriteriaRemoveEmptyEntitiesDescriptors">
         <ng-container i18n="services.form.saml.removeEmptyEntities">
           {{ messages.services_form_label_saml_removeEmptyEntities }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.removeEmptyEntitities"
-                 [mdTooltip]="messages.services_form_tooltip_saml_removeEmptyEntities">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.removeEmptyEntitities"
+                 [matTooltip]="messages.services_form_tooltip_saml_removeEmptyEntities">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-checkbox [(ngModel)]="service.metadataCriteriaRemoveRolelessEntityDescriptors">
+      <mat-checkbox [(ngModel)]="service.metadataCriteriaRemoveRolelessEntityDescriptors">
         <ng-container i18n="services.form.label.saml.removeRoleless">
           {{ messages.services_form_label_saml_removeRoleless }}
         </ng-container>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="services.form.tooltip.saml.removeRoleless"
-                 [mdTooltip]="messages.services_form_tooltip_saml_removeRoleless">help
-        </md-icon>
-      </md-checkbox>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.saml.removeRoleless"
+                 [matTooltip]="messages.services_form_tooltip_saml_removeRoleless">help
+        </mat-icon>
+      </mat-checkbox>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.saml.metadata.pattern"
                [placeholder]="messages.services_form_label_saml_metadata_pattern"
                [(ngModel)]="service.metadataCriteriaPattern">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.metadata.pattern"
-               [mdTooltip]="messages.services_form_tooltip_saml_metadata_pattern">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.metadata.pattern"
+               [matTooltip]="messages.services_form_tooltip_saml_metadata_pattern">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-select style="width: 400px;padding-top: 25px;padding-bottom: 25px;"
+      <mat-select style="width: 400px;padding-top: 25px;padding-bottom: 25px;"
                  i18n-placeholder="services.form.label.saml.metadata.dir"
                  [placeholder]="messages.services_form_label_saml_metadata_dir"
                  [(ngModel)]="service.metadataCriteriaDirection">
-        <md-option *ngFor="let opt of selectOptions.samlDirectionList" [value]="opt.value">
+        <mat-option *ngFor="let opt of selectOptions.samlDirectionList" [value]="opt.value">
           {{ opt.name }}
-        </md-option>
-      </md-select>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.metadata.dir"
-               [mdTooltip]="messages.services_form_tooltip_saml_metadata_dir">help
-      </md-icon>
+        </mat-option>
+      </mat-select>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.metadata.dir"
+               [matTooltip]="messages.services_form_tooltip_saml_metadata_dir">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-select style="width:400px;"
+      <mat-select style="width:400px;"
                  i18n-placeholder="services.form.label.saml.metadata.role"
                  [placeholder]="messages.services_form_label_saml_metadata_role"
                  [(ngModel)]="service.metadataCriteriaRoles">
-        <md-option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
+        <mat-option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
           {{ opt.name}}
-        </md-option>
-      </md-select>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.metadata.role"
-               [mdTooltip]="messages.services_form_tooltip_saml_metadata_role">help
-      </md-icon>
+        </mat-option>
+      </mat-select>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.metadata.role"
+               [matTooltip]="messages.services_form_tooltip_saml_metadata_role">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.saml.requiredNameIdFormat"
                [placeholder]=" messages.services_form_label_saml_requiredNameIdFormat"
                [(ngModel)]="service.requiredNameIdFormat">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.requiredNameIdFormat"
-               [mdTooltip]="messages.services_form_tooltip_saml_requiredNameIdFormat">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.requiredNameIdFormat"
+               [matTooltip]="messages.services_form_tooltip_saml_requiredNameIdFormat">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.saml.serviceProviderNameQualifier"
                [placeholder]=" messages.services_form_label_saml_serviceProviderNameQualifier"
                [(ngModel)]="service.serviceProviderNameIdQualifier">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.serviceProviderNameQualifier"
-               [mdTooltip]="messages.services_form_tooltip_saml_serviceProviderNameQualifier">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.serviceProviderNameQualifier"
+               [matTooltip]="messages.services_form_tooltip_saml_serviceProviderNameQualifier">help
+      </mat-icon>
     </div>
 
     <div>
-      <md-form-field class="textInput">
-        <input mdInput
+      <mat-form-field class="textInput">
+        <input matInput
                i18n-placeholder="services.form.label.saml.nameQualifier"
                [placeholder]=" messages.services_form_label_saml_nameQualifier"
                [(ngModel)]="service.nameIdQualifier">
-      </md-form-field>
-      <md-icon style="font-size: medium"
-               i18n-mdTooltip="services.form.tooltip.saml.nameQualifier"
-               [mdTooltip]="messages.services_form_tooltip_saml_nameQualifier">help
-      </md-icon>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.saml.nameQualifier"
+               [matTooltip]="messages.services_form_tooltip_saml_nameQualifier">help
+      </mat-icon>
     </div>
   </div>
-</md-card>
+</mat-card>
 
-<md-card class="tabCard">
-  <md-card-title>
+<mat-card class="tabCard">
+  <mat-card-title>
     <h5>SAML Attribute Name Formats</h5>
-  </md-card-title>
+  </mat-card-title>
   <div class="cardContent">
     <app-samlservicespane></app-samlservicespane>
   </div>
-</md-card>
+</mat-card>

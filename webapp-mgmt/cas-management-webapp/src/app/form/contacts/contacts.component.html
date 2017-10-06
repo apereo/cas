@@ -1,59 +1,59 @@
 <div>
-  <md-tab-group [(selectedIndex)]="selectedTab">
-    <md-tab *ngFor="let contact of data.service.contacts;let i = index;" [label]="getTabHeader(contact)">
+  <mat-tab-group [(selectedIndex)]="selectedTab">
+    <mat-tab *ngFor="let contact of data.service.contacts;let i = index;" [label]="getTabHeader(contact)">
       <div>
-        <md-form-field class="textInput">
-          <input mdInput required
+        <mat-form-field class="textInput">
+          <input matInput required
                  placeholder="Name" name="name" id="name"
                  [(ngModel)]="contact.name">
-        </md-form-field>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="contact.name"
-                 mdTooltip="First and last name of the contact">help
-        </md-icon>
+        </mat-form-field>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="contact.name"
+                 matTooltip="First and last name of the contact">help
+        </mat-icon>
       </div>
       <div>
-        <md-form-field class="textInput">
-          <input mdInput required
+        <mat-form-field class="textInput">
+          <input matInput required
                  placeholder="Email"
                  [(ngModel)]="contact.email">
-        </md-form-field>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="contact.email"
-                 mdTooltip="EMail of the contact">help
-        </md-icon>
+        </mat-form-field>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="contact.email"
+                 matTooltip="EMail of the contact">help
+        </mat-icon>
       </div>
       <div>
-        <md-form-field class="textInput">
-          <input mdInput
+        <mat-form-field class="textInput">
+          <input matInput
                  placeholder="Phone"
                  [(ngModel)]="contact.phone">
-        </md-form-field>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="contact.phone"
-                 mdTooltip="Phone number of the contact">help
-        </md-icon>
+        </mat-form-field>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="contact.phone"
+                 matTooltip="Phone number of the contact">help
+        </mat-icon>
       </div>
       <div>
-        <md-form-field class="textInput">
-          <input mdInput
+        <mat-form-field class="textInput">
+          <input matInput
                  placeholder="Department"
                  [(ngModel)]="contact.department">
-        </md-form-field>
-        <md-icon style="font-size: medium"
-                 i18n-mdTooltip="contact.department"
-                 mdTooltip="Department of the contact">help
-        </md-icon>
+        </mat-form-field>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="contact.department"
+                 matTooltip="Department of the contact">help
+        </mat-icon>
       </div>
-    </md-tab>
-  </md-tab-group>
+    </mat-tab>
+  </mat-tab-group>
   <div style="height:25px;padding-top: 5px;">
     <div style="float:right;padidng:5px">
-      <button md-mini-fab (click)="addContact()">
-        <md-icon>add</md-icon>
+      <button mat-mini-fab (click)="addContact()">
+        <mat-icon>add</mat-icon>
       </button>
-      <button md-mini-fab (click)="deleteContact()">
-        <md-icon>delete</md-icon>
+      <button mat-mini-fab (click)="deleteContact()">
+        <mat-icon>delete</mat-icon>
       </button>
     </div>
   </div>
