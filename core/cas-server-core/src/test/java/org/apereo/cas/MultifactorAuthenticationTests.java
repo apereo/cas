@@ -64,6 +64,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/core.properties"}, properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 public class MultifactorAuthenticationTests {
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
+    
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");
 
     @Autowired

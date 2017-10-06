@@ -396,6 +396,7 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "commons-collections", module: "commons-collections")
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-saml-api:$idpVersion") {
@@ -828,6 +829,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-collections", module: "commons-collections")
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-security-api:$opensamlVersion") {

@@ -40,9 +40,6 @@ public class CasCoreConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -88,9 +85,11 @@ public class CasCoreConfiguration {
                                                                      @Qualifier("principalFactory")
                                                                      final PrincipalFactory principalFactory,
                                                                      @Qualifier("protocolTicketCipherExecutor")
-                                                                     final CipherExecutor cipherExecutor) {
+                                                                     final CipherExecutor cipherExecutor,
+                                                                     @Qualifier("ticketRegistry")
+                                                                     final TicketRegistry ticketRegistry) {
         final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
-        impl.setTicketRegistry(this.ticketRegistry);
+        impl.setTicketRegistry(ticketRegistry);
         impl.setServicesManager(this.servicesManager);
         impl.setLogoutManager(this.logoutManager);
         impl.setTicketFactory(this.ticketFactory);
