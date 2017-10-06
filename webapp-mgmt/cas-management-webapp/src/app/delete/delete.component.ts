@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MdDialogRef} from "@angular/material";
-import {MD_DIALOG_DATA} from '@angular/material';
+import {MatDialogRef} from "@angular/material";
+import {MAT_DIALOG_DATA} from '@angular/material';
 import {Messages} from "../messages";
 
 @Component({
@@ -10,8 +10,8 @@ import {Messages} from "../messages";
 })
 export class DeleteComponent implements OnInit {
 
-  constructor(public dialogRef: MdDialogRef<DeleteComponent>,
-              @Inject(MD_DIALOG_DATA) public data: any,
+  constructor(public dialogRef: MatDialogRef<DeleteComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any,
               public messages: Messages) { }
 
   ngOnInit() {

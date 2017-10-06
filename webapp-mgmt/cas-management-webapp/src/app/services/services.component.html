@@ -1,6 +1,6 @@
 <div style="display:flex;margin-bottom:10px;">
   <div style="padding-top: 3px;">
-    <md-icon style="padding-top: 3px;">build</md-icon>
+    <mat-icon style="padding-top: 3px;">build</mat-icon>
     <h4 style="display: inline;position: relative;top: -5px;">
       <ng-container i18n>
         Manage Services - {{ domain }}
@@ -10,10 +10,10 @@
   <div style="flex: 1 1 auto"></div>
 </div>
 
-<md-card *ngFor="let item of dataTable; let i = index;" style="margin-bottom: 1px;margin-right:25px;margin-left:25px;">
+<mat-card *ngFor="let item of dataTable; let i = index;" style="margin-bottom: 1px;margin-right:25px;margin-left:25px;">
   <div style="display: flex;">
-    <div style="padding-right:20px" [mdMenuTriggerFor]="serviceMenu" (click)="selectedItem = item">
-        <md-icon>menu</md-icon>
+    <div style="padding-right:20px" [matMenuTriggerFor]="serviceMenu" (click)="selectedItem = item">
+        <mat-icon>menu</mat-icon>
     </div>
     <div style="padding-right:20px;flex: 0 0 200px;font-weight: 700;text-overflow: ellipsis">
       <a (click)="serviceEdit(item.assignedId)">
@@ -25,41 +25,41 @@
     </div>
     <div style="flex: 1 1 auto;text-overflow: ellipsis">{{ item.description }}</div>
   </div>
-</md-card>
+</mat-card>
 
-<md-paginator #paginator style="margin-right:25px;margin-left:25px;"
+<mat-paginator #paginator style="margin-right:25px;margin-left:25px;"
               [length]="servicesDatabase.data.length"
               [pageIndex]="0"
               [pageSize]="10"
               [pageSizeOptions]="[5, 10, 25, 100]">
-</md-paginator>
+</mat-paginator>
 
-<md-menu #serviceMenu>
-  <button md-menu-item (click)="serviceEdit( selectedItem.assignedId )">
-    <md-icon>edit</md-icon>
+<mat-menu #serviceMenu>
+  <button mat-menu-item (click)="serviceEdit( selectedItem.assignedId )">
+    <mat-icon>edit</mat-icon>
     <ng-container i18n="management.services.table.button.edit">
       {{ messages.management_services_table_button_edit }}
     </ng-container>
   </button>
-  <button md-menu-item (click)="serviceDuplicate( selectedItem.assignedId )">
-    <md-icon>content_copy</md-icon>
+  <button mat-menu-item (click)="serviceDuplicate( selectedItem.assignedId )">
+    <mat-icon>content_copy</mat-icon>
     <ng-container i18n="management.services.table.button.duplicate">
       {{ messages.management_services_table_button_duplicate }}
     </ng-container>
   </button>
-  <button md-menu-item (click)="openModalDelete(selectedItem)">
-    <md-icon>delete</md-icon>
+  <button mat-menu-item (click)="openModalDelete(selectedItem)">
+    <mat-icon>delete</mat-icon>
     <ng-container i18n="management.services.table.button.delete">
       {{ messages.management_services_table_button_delete }}
     </ng-container>
   </button>
-  <button md-menu-item (click)="moveUp(selectedItem)" *ngIf="servicesDatabase.data.indexOf(selectedItem) > 0">
-    <md-icon>arrow_upward</md-icon>
+  <button mat-menu-item (click)="moveUp(selectedItem)" *ngIf="servicesDatabase.data.indexOf(selectedItem) > 0">
+    <mat-icon>arrow_upward</mat-icon>
     <ng-container>Move Up</ng-container>
   </button>
-  <button md-menu-item (click)="moveDown(selectedItem)" *ngIf="servicesDatabase.data.indexOf(selectedItem) < servicesDatabase.data.length - 1">
-    <md-icon>arrow_downward</md-icon>
+  <button mat-menu-item (click)="moveDown(selectedItem)" *ngIf="servicesDatabase.data.indexOf(selectedItem) < servicesDatabase.data.length - 1">
+    <mat-icon>arrow_downward</mat-icon>
     <ng-container>Move Down</ng-container>
   </button>
-</md-menu>
+</mat-menu>
 
