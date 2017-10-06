@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mgmt.config.CasManagementAuditConfiguration;
@@ -43,6 +44,7 @@ import static org.junit.Assert.*;
                 CasManagementAuditConfiguration.class,
                 CasManagementWebAppConfiguration.class,
                 ServerPropertiesAutoConfiguration.class,
+                CasCoreUtilConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasManagementAuthenticationConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
