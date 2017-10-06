@@ -77,7 +77,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 .filter(r -> r.matches(serviceId))
                 .findFirst()
                 .orElse(null);
-        return validateRegisteredService(service);
+        final RegisteredService result = validateRegisteredService(service);
+        return result;
     }
 
     @Override
@@ -229,7 +230,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 }
                 final LocalDateTime now = LocalDateTime.now();
                 final LocalDateTime expirationDate = DateTimeUtils.localDateTimeFrom(policy.getExpirationDate());
-                return expirationDate.isBefore(now);
+                LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
+                return !now.isAfter(expirationDate);
             } catch (final Exception e) {
                 LOGGER.warn(e.getMessage(), e);
             }
