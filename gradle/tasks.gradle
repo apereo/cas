@@ -1,3 +1,24 @@
+import org.gradle.internal.logging.events.*
+import org.gradle.internal.logging.*
+
+tasks.withType(Javadoc) {
+    def exceptions = []
+    doFirst {
+        gradle.services.get(LoggingOutputInternal).addOutputEventListener(new OutputEventListener() {
+            void onOutput(OutputEvent event) {
+                if (event.toString() =~ " warning: ") {
+                    exceptions << new GradleException("Javadoc warning: ${event.toString()}")
+                }
+            }
+        })
+    }
+    doLast {
+        exceptions.each {
+            throw it
+        }
+    }
+}
+
 task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
     dependsOn configurations.runtime
     appendix = "pathing"
