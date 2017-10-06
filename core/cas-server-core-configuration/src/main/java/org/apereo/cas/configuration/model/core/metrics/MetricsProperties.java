@@ -222,7 +222,7 @@ public class MetricsProperties implements Serializable {
         private String prefix;
 
         /**
-         * The “key” is used to keep a global index of all metric names, so it should be unique “globally”,
+         * The key is used to keep a global index of all metric names, so it should be unique globally,
          * whatever that means for your system
          * (e.g. two instances of the same system could share a Redis cache if they have distinct keys).
          */
