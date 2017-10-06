@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.x509.authentication.handler.support.AbstractX509L
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -56,6 +57,7 @@ import java.security.cert.X509Certificate;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreUtilConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
