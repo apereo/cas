@@ -1,13 +1,13 @@
 <div>
-  <md-form-field class="textInput">
-    <input mdInput
+  <mat-form-field class="textInput">
+    <input matInput
            i18n-placeholder="services.form.label.attrRelease.attrFilter"
            [placeholder]="messages.services_form_label_attrRelease_attrFilter"
            [ngModel]="getPattern()"
            (ngModelChange)="updateFilter($event)"/>
-  </md-form-field>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.attrRelease.attrFilter"
-           [mdTooltip]="messages.services_form_tooltip_attrRelease_attrFilter">help
-  </md-icon>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.attrRelease.attrFilter"
+           [matTooltip]="messages.services_form_tooltip_attrRelease_attrFilter">help
+  </mat-icon>
 </div>
