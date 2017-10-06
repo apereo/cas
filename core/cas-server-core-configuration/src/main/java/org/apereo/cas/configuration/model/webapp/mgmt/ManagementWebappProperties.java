@@ -71,7 +71,6 @@ public class ManagementWebappProperties implements Serializable {
     }
 }
      * </pre>
-     * </p>
      */
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
     
