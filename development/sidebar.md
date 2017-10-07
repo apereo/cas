@@ -129,6 +129,7 @@ layout: null
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
     *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
+    *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
     *   [Replication](/$version/installation/Configuring-Service-Replication.html)
     *   [Storage](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
