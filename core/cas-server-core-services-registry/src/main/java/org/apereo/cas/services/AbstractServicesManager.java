@@ -229,7 +229,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
                     return true;
                 }
                 final LocalDateTime now = LocalDateTime.now();
-                final LocalDateTime expirationDate = DateTimeUtils.localDateTimeFrom(policy.getExpirationDate());
+                final LocalDateTime expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
                 LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
                 return !now.isAfter(expirationDate);
             } catch (final Exception e) {
