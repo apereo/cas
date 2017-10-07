@@ -35,13 +35,66 @@ public final class DateTimeUtils {
      * @return the date/time instance
      */
     public static LocalDateTime localDateTimeOf(final String value) {
+        LocalDateTime result;
         try {
-            return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            result = LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         } catch (final Exception e) {
-            return null;
+            result = null;
         }
+
+        if (result == null) {
+            try {
+                result = LocalDateTime.parse(value);
+            } catch (final Exception e) {
+                result = null;
+            }
+        }
+        
+        if (result == null) {
+            try {
+                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
+            } catch (final Exception e) {
+                result = null;
+            }
+        }
+
+        if (result == null) {
+            try {
+                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
+            } catch (final Exception e) {
+                result = null;
+            }
+        }
+
+        if (result == null) {
+            try {
+                result = LocalDateTime.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
+            } catch (final Exception e) {
+                result = null;
+            }
+        }
+
+        if (result == null) {
+            try {
+                final LocalDate ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                result = LocalDateTime.of(ld, LocalTime.now());
+            } catch (final Exception e) {
+                result = null;
+            }
+        }
+        
+        if (result == null) {
+            try {
+                final LocalDate ld = LocalDate.parse(value);
+                result = LocalDateTime.of(ld, LocalTime.now());
+            } catch (final Exception e) {
+                result = null;
+            }
+        }
+
+        return result;
     }
-    
+
     /**
      * Local date time of local date time.
      *
@@ -117,7 +170,7 @@ public final class DateTimeUtils {
     public static ZonedDateTime zonedDateTimeOf(final long time, final ZoneId zoneId) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(time), zoneId);
     }
-    
+
     /**
      * Gets ZonedDateTime for Date.
      *
@@ -256,21 +309,6 @@ public final class DateTimeUtils {
                 return ChronoUnit.NANOS;
             default:
                 return null;
-        }
-    }
-
-    /**
-     * Local date time from local date time.
-     *
-     * @param dt the dt
-     * @return the local date time
-     */
-    public static LocalDateTime localDateTimeFrom(final String dt) {
-        try {
-            return LocalDateTime.parse(dt);
-        } catch (final Exception e) {
-            final LocalDate ld = LocalDate.parse(dt);
-            return LocalDateTime.of(ld, LocalTime.now());
         }
     }
 }

@@ -27,7 +27,7 @@ A sample JSON file follows:
 The following settings are available by default for expiration policies:
 
 | Field                | Description
-|----------------------|-------------------------------------------------------------
-| `expirationDate`     | The date on which the registration record is deemed expired.
+|----------------------|-------------------------------------------------------------------
+| `expirationDate`     | The date on which the registration record is deemed expired. The expiration date may be specified in `2011-12-03T10:15:30`, `09/24/1980 04:30 PM`, `09/24/2014 6:30 AM`, `09/24/2013 18:45`, `09/24/2017` or `2017-10-25` formats.
 | `deleteWhenExpired`  | When `true`, removes the application from the CAS service registry if and when expired. Otherwise the application record will be marked as disabled.
 | `notifyWhenDeleted`  | Notifies [contacts](Configuring-Service-Contacts.html) of the application via email or text, assuming valid contacts with email addresses or phone numbers are defined and CAS is configured to send [email messages](Sending-Email-Configuration.html) or [SMS notifications](SMS-Messaging-Configuration.html). The notification is only sent if the application is expired and is about to be deleted from the registry.
