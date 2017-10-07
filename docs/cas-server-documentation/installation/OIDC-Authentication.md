@@ -71,17 +71,19 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 
 | Field                         | Description
 |-------------------------------|---------------------------------------------------------------------------------------
-| `serviceId`                   | The authorized redirect URI for this OIDC client.
-| `implicit`                    | Whether the response produced for this service should be [implicit](https://openid.net/specs/openid-connect-implicit-1_0.html).
-| `supportedGrantTypes`         | Collection of supported grant types for this service.
-| `supportedResponseTypes`      | Collection of supported response types for this service.
-| `signIdToken`                 | Whether ID tokens should be signed. Default is `true`.
-| `jwks`                        | Resource path to the keystore location that holds the keys for this application.
-| `encryptIdToken`              | Whether ID tokens should be encrypted. Default is `false`.
-| `idTokenEncryptionAlg`        | The algorithm header value used to encrypt the id token.
-| `idTokenEncryptionEncoding`   | The algorithm method header value used to encrypt the id token.
-| `subjectType`                 | Type to use when generating principal identifiers. Default is `public`.
-| `sectoreIdentifierUri`        | Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
+| `clientId`                    | Required. The identifier for this client application.
+| `clientSecret`                | Required. The secret for this client application.
+| `serviceId`                   | Required. The authorized redirect URI for this OIDC client.
+| `implicit`                    | Optional. Whether the response produced for this service should be [implicit](https://openid.net/specs/openid-connect-implicit-1_0.html).
+| `supportedGrantTypes`         | Optional. Collection of supported grant types for this service.
+| `supportedResponseTypes`      | Optional. Collection of supported response types for this service.
+| `signIdToken`                 | Optional. Whether ID tokens should be signed. Default is `true`.
+| `jwks`                        | Optional. Resource path to the keystore location that holds the keys for this application.
+| `encryptIdToken`              | Optional. Whether ID tokens should be encrypted. Default is `false`.
+| `idTokenEncryptionAlg`        | Optional. The algorithm header value used to encrypt the id token.
+| `idTokenEncryptionEncoding`   | Optional. The algorithm method header value used to encrypt the id token.
+| `subjectType`                 | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.
+| `sectoreIdentifierUri`        | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
@@ -89,7 +91,7 @@ Service definitions are typically managed by the [service management](Service-Ma
 
 ### Dynamically
 
-Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates 
+Client applications may dynamically be registered with CAS for authentication. By default, CAS operates 
 in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via 
 CAS settings to allow CAS to operate in an `OPEN` mode.
 
@@ -148,9 +150,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Authentication Context Class
 
-Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,
-which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS.
-Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
+Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request, which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS. Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
 ## Pairwise Identifiers
 
