@@ -34,6 +34,11 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
     }
 
     public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
+                                                    final String expirationDate) {
+        this(deleteWhenExpired, false, expirationDate);
+    }
+
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
                                                     final LocalDate expirationDate) {
         this(deleteWhenExpired, false, expirationDate.toString());
     }
@@ -43,8 +48,12 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
         this(deleteWhenExpired, false, expirationDate.toString());
     }
 
+    public DefaultRegisteredServiceExpirationPolicy(final LocalDateTime expirationDate) {
+        this(true, expirationDate);
+    }
+
     public DefaultRegisteredServiceExpirationPolicy(final LocalDate expirationDate) {
-        this(true, false, expirationDate.toString());
+        this(true, expirationDate.toString());
     }
 
     @Override

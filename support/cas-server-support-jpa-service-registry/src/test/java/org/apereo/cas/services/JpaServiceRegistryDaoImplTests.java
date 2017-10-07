@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -176,13 +175,14 @@ public class JpaServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void verifyExpiredServiceDeleted() {
+    public void verifyExpiredServiceDeleted() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("testExpired");
         r.setName("expired");
-        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(LocalDate.now()));
-        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now().minusSeconds(1)));
+        final RegisteredService r2 = this.servicesManager.save(r);
         this.servicesManager.load();
+        Thread.sleep(1100);
         final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNull(svc);
     }
