@@ -13,16 +13,19 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     gradleBuild="$gradleBuild aggregateJavadocsIntoJar"
 fi
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
-	echo -e "Th build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-	gradleUpload="uploadArchives -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
-fi
-
 if [ "$PUBLISH_SNAPSHOTS" == "false" ] && [ "$TRAVIS_COMMIT_MESSAGE" != "[skip tests]" ]; then
     echo -e "The build indicates that tests along with coveralls test coverage should run.\n"
     gradleTest="checkstyleTest test coveralls"
 fi
 
-tasks="$gradle $gradleOptions $gradleBuild $gradleTest $gradleUpload"
+tasks="$gradle $gradleOptions $gradleBuild $gradleTest"
 echo $tasks
 eval $tasks
+
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+	echo -e "Th build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+	gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+	upload="$gradle $gradleOptions $gradleUpload"
+	echo upload
+    eval "upload "
+fi
