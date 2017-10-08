@@ -1,10 +1,10 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -15,6 +15,8 @@ import java.util.Set;
  */
 public class GroovyConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = 4882998768083902246L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyConsentRepository.class);
+    
     private final Resource groovyResource;
 
     public GroovyConsentRepository(final Resource groovyResource) {
@@ -29,10 +31,10 @@ public class GroovyConsentRepository extends BaseConsentRepository {
     }
 
     private void writeAccountToGroovyResource(final ConsentDecision decision) {
-        ScriptingUtils.executeGroovyScript(groovyResource, "write", Boolean.class, decision);
+        ScriptingUtils.executeGroovyScript(groovyResource, "write", Boolean.class, decision, LOGGER);
     }
 
     private Set<ConsentDecision> readDecisionsFromGroovyResource() {
-        return ScriptingUtils.executeGroovyScript(groovyResource, "read", Set.class, getConsentDecisions());
+        return ScriptingUtils.executeGroovyScript(groovyResource, "read", Set.class, getConsentDecisions(), LOGGER);
     }
 }
