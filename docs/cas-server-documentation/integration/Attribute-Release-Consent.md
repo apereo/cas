@@ -99,6 +99,32 @@ Valid values for `options` include:
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#json-attribute-consent).
 
+### Groovy
+
+Consent operations may be handled via a Groovy script whose path is taught to CAS via settings.
+
+The script may be designed as:
+
+```groovy
+import java.util.*
+import org.apereo.cas.consent.*
+
+def Set<ConsentDecision> read(final Object... args) {
+    def consentDecisions = args[0]
+    def logger = args[1]
+    ...
+    return null;
+}
+
+def Boolean write(final Object... args) {
+    def consentDecision = args[0]
+    def logger = args[1]
+    ...
+    return true;
+}
+```
+
+
 ### JDBC
 
 Support is enabled by including the following module in the Overlay:
