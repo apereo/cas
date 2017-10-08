@@ -1,5 +1,6 @@
 #!/bin/bash
 
+branchName="master"
 
 gradle="sudo ./gradlew"
 gradleOptions="--stacktrace --parallel --build-cache --max-workers=8 --configure-on-demand --no-daemon"
@@ -12,7 +13,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     gradleBuild="$gradleBuild aggregateJavadocsIntoJar"
 fi
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
 	echo -e "Th build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
 	gradleUpload="uploadArchives -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 fi
