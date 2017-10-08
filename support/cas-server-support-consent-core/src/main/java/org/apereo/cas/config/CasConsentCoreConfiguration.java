@@ -10,6 +10,7 @@ import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
 import org.apereo.cas.consent.DefaultConsentEngine;
+import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -76,6 +77,12 @@ public class CasConsentCoreConfiguration {
                     + "Consider choosing an alternative repository format for storing consent decisions", location);
             return new JsonConsentRepository(location);
         }
+
+        final Resource groovy = casProperties.getConsent().getGroovy().getLocation();
+        if (groovy != null) {
+            return new GroovyConsentRepository(groovy);
+        }
+        
         LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
         return new InMemoryConsentRepository();
     }
