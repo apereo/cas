@@ -4,7 +4,7 @@ branchName="master"
 
 gradle="sudo ./gradlew"
 gradleOptions="--stacktrace --parallel --build-cache --max-workers=8 --configure-on-demand --no-daemon"
-gradleBuild="bootRepackage install"
+gradleBuild="bootRepackage"
 gradleUpload=""
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
@@ -15,6 +15,8 @@ else
     if [ "$TRAVIS_COMMIT_MESSAGE" != "[skip tests]" ]; then
         echo -e "The build indicates that tests along with coveralls test coverage should run.\n"
         gradleBuild="$gradleBuild checkstyleTest test coveralls"
+    else
+        gradleBuild="$gradleBuild -x test"
     fi
 fi
 
