@@ -14,7 +14,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 public class GroovyConsentRepository extends BaseConsentRepository {
-    private static final long serialVersionUID = 4882998768083902246L;
+    private static final long serialVersionUID = 3482998768083902246L;
     private static final Logger LOGGER = LoggerFactory.getLogger(GroovyConsentRepository.class);
     
     private final Resource groovyResource;
