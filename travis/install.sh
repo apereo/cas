@@ -23,6 +23,7 @@ fi
 tasks="$gradle $gradleOptions $gradleBuild"
 echo $tasks
 eval $tasks
+echo "Gradle build finished at `date`"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
 	echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
@@ -30,4 +31,5 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" 
 	upload="$gradle $gradleOptions $gradleUpload"
 	echo $upload
     eval $upload
+    echo "Deploying snapshots finished at `date`"
 fi
