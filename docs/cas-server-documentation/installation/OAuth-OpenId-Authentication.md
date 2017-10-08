@@ -143,8 +143,7 @@ By default, the requested user profile is rendered using a `NESTED` format where
 ```json
 {
   "id": "casuser",
-  "attributes":
-  {
+  "attributes": {
     "email": "casuser@example.org",
     "name": "CAS"
   },
@@ -166,6 +165,27 @@ This option flattens principal attributes by one degree, putting them at the sam
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+
+### Custom
+
+If you wish to create your own profile structure, you will need to design a component and register it with CAS to handle the rendering of the user profile:
+
+```java
+package org.apereo.cas.support.oauth;
+
+@Configuration("MyOAuthConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyOAuthConfiguration {
+
+    @Bean
+    @RefreshScope
+    public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
+        ...
+    }
+}
+```
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 ## Server Configuration
 
