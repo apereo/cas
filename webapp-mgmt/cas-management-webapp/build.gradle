@@ -74,11 +74,7 @@ war {
                 "Implementation-Version": project.version)
     }
     enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
-    if (rootProject.publishSnapshots) {
-        dependsOn(buildClientDev)
-    } else {
-        dependsOn(buildClient)
-    }
+    dependsOn(buildClient)
 }
 
 task angularTest(type: NpmTask, dependsOn: 'npm_install', group: 'test', description: "Run Angular unit tests") {
