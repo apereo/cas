@@ -30,10 +30,12 @@ sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
 echo -e "Configuring Gradle wrapper...\n"
 chmod -R 777 ./gradlew
 
+echo -e "Installing NodeJS...\n"
+sudo curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - &>/dev/null
+sudo apt-get update  -qq > /dev/null
+sudo apt-get install -y nodejs -qq > /dev/null
+
 echo -e "Installing NPM...\n"
-sudo curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
-sudo apt-get -qq update
-sudo apt-get -qq install -y nodejs
 sudo ./gradlew npmInstall --stacktrace -q
 
 echo -e "Configured build environment\n"
