@@ -27,5 +27,5 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" 
 	gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 	upload="$gradle $gradleOptions $gradleUpload"
 	echo upload
-    eval "upload "
+    eval $upload
 fi
