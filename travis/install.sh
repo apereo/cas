@@ -5,7 +5,6 @@ branchName="master"
 gradle="sudo ./gradlew"
 gradleOptions="--stacktrace --parallel --build-cache --max-workers=8 --configure-on-demand --no-daemon"
 gradleBuild="bootRepackage"
-gradleUpload=""
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
