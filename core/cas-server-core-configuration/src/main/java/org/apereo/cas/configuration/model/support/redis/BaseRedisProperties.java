@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 
 import java.io.Serializable;
 
@@ -46,6 +47,11 @@ public class BaseRedisProperties implements Serializable {
      * Radius connection pool settings.
      */
     private Pool pool;
+    
+    /**
+     * Redis Sentinel settings.
+     */
+    private RedisProperties.Sentinel sentinel;
 
     /**
      * Whether or not to activate the pool configuration.
@@ -122,7 +128,15 @@ public class BaseRedisProperties implements Serializable {
         this.pool = pool;
     }
 
-    /**
+    public RedisProperties.Sentinel getSentinel() {
+		return sentinel;
+	}
+
+	public void setSentinel(RedisProperties.Sentinel sentinel) {
+		this.sentinel = sentinel;
+	}
+
+	/**
      * Pool properties.
      */
     public static class Pool implements Serializable {
@@ -324,6 +338,28 @@ public class BaseRedisProperties implements Serializable {
 
         public void setMinEvictableIdleTimeMillis(final long minEvictableIdleTimeMillis) {
             this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+        }
+    }
+    
+    /**
+     * Sentinel properties.
+     */
+    public static class Sentinel {
+        private String master;
+        private String nodes;
+        public Sentinel() {
+        }
+        public String getMaster() {
+            return this.master;
+        }
+        public void setMaster(String master) {
+            this.master = master;
+        }
+        public String getNodes() {
+            return this.nodes;
+        }
+        public void setNodes(String nodes) {
+            this.nodes = nodes;
         }
     }
 

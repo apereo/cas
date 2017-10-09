@@ -1,9 +1,17 @@
 package org.apereo.cas.redis.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisNode;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.util.StringUtils;
+
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
@@ -23,7 +31,8 @@ public class RedisObjectFactory {
     public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
 
         final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig(redis) : new JedisPoolConfig();
-        final JedisConnectionFactory factory = new JedisConnectionFactory(poolConfig);
+        final RedisSentinelConfiguration sentinelConfig = potentiallyGetSentinelConfig(redis);
+        final JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig,poolConfig);
         factory.setHostName(redis.getHost());
         factory.setPort(redis.getPort());
         if (redis.getPassword() != null) {
@@ -64,4 +73,29 @@ public class RedisObjectFactory {
         }
         return config;
     }
+    
+    private RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
+		if (redis.getSentinel() == null) {
+			return null;
+		}
+		RedisSentinelConfiguration sentinelConfig = null;
+		if (redis.getSentinel() != null) {
+			sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
+			sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
+		}
+		return sentinelConfig;
+	}
+    
+    private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
+		List<RedisNode> nodes = new ArrayList<RedisNode>();
+		if (StringUtils.hasText(redis.getSentinel().getNodes())) {
+			String[] nodesString = redis.getSentinel().getNodes().split(",");
+			for (String hostAndPort : nodesString) {
+				String[] args = StringUtils.split(hostAndPort, ":");
+				nodes.add(new RedisNode(args[0], Integer.valueOf(args[1])));
+			}
+		}
+		return nodes;
+	}
+    
 }
