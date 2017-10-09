@@ -1,12 +1,14 @@
 <div>
-  <mat-select style="width:500px;padding-top: 25px;padding-bottom: 25px;"
+  <mat-form-field class="textInput">
+    <mat-select
              placeholder="Policy"
              [(ngModel)]="type"
              (change)="changeType()">
-    <mat-option *ngFor="let opt of types; let i = index" [value]="opt">
-      {{ display[i] }}
-    </mat-option>
-  </mat-select>
+      <mat-option *ngFor="let opt of types; let i = index" [value]="opt">
+        {{ display[i] }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
 
 <div *ngIf="type == TYPE.SCRIPT">
@@ -36,14 +38,16 @@
 </div>
 
 <div *ngIf="(type == TYPE.RETURN_ALLOWED || type == TYPE.METADATA) && !isEmpty( formData.availableAttributes )">
-  <mat-select multiple style="width:400px;padding-top:25px;"
-             i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
-             [placeholder]="messages.services_form_label_attrRelease_policies_returnAllowed"
-             [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes">
-    <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
-      {{ opt }}
-    </mat-option>
-  </mat-select>
+  <mat-form-field class="textInput">
+    <mat-select multiple
+                i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
+                [placeholder]="messages.services_form_label_attrRelease_policies_returnAllowed"
+                [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes">
+      <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-icon style="font-size: medium"
            i18n-matTooltip="services.form.tooltip.attrRelease.policies.returnAllowed"
            [matTooltip]="messages.services_form_tooltip_attrRelease_policies_returnAllowed">help

@@ -71,14 +71,15 @@
   </div>
 
   <div>
-    <mat-select style="width:400px;padding-top:25px;"
-               i18n-placeholder="services.form.label.uap.canonicalizationMode"
-               [placeholder]="messages.services_form_label_uap_canonicalizationMode"
-               [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
-      <mat-option *ngFor="let opt of canonicalizations" [value]="opt">
-        {{ opt }}
-      </mat-option>
-    </mat-select>
+    <mat-form-field class="textInput">
+      <mat-select i18n-placeholder="services.form.label.uap.canonicalizationMode"
+                  [placeholder]="messages.services_form_label_uap_canonicalizationMode"
+                  [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
+        <mat-option *ngFor="let opt of canonicalizations" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
 </div>

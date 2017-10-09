@@ -29,10 +29,11 @@
         </mat-icon>
       </mat-header-cell>
       <mat-cell *cdkCellDef="let row">
-        <mat-select class="form-control"
-                   [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes[row.key]">
-          <mat-option *ngFor="let item of selectOptions.wsfedClaimList" [value]="item.name">{{ item.name }}</mat-option>
-        </mat-select>
+        <mat-form-field>
+          <mat-select [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes[row.key]">
+            <mat-option *ngFor="let item of selectOptions.wsfedClaimList" [value]="item.name">{{ item.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </mat-cell>
     </ng-container>
 

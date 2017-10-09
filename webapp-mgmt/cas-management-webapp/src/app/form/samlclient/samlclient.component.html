@@ -174,7 +174,7 @@
       </mat-checkbox>
     </div>
 
-    <div>
+    <div style="padding-bottom: 10px;">
       <mat-checkbox [(ngModel)]="service.metadataCriteriaRemoveRolelessEntityDescriptors">
         <ng-container i18n="services.form.label.saml.removeRoleless">
           {{ messages.services_form_label_saml_removeRoleless }}
@@ -200,14 +200,15 @@
     </div>
 
     <div>
-      <mat-select style="width: 400px;padding-top: 25px;padding-bottom: 25px;"
-                 i18n-placeholder="services.form.label.saml.metadata.dir"
-                 [placeholder]="messages.services_form_label_saml_metadata_dir"
-                 [(ngModel)]="service.metadataCriteriaDirection">
-        <mat-option *ngFor="let opt of selectOptions.samlDirectionList" [value]="opt.value">
-          {{ opt.name }}
-        </mat-option>
-      </mat-select>
+      <mat-form-field class="textInput">
+        <mat-select i18n-placeholder="services.form.label.saml.metadata.dir"
+                    [placeholder]="messages.services_form_label_saml_metadata_dir"
+                    [(ngModel)]="service.metadataCriteriaDirection">
+          <mat-option *ngFor="let opt of selectOptions.samlDirectionList" [value]="opt.value">
+            {{ opt.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-icon style="font-size: medium"
                i18n-matTooltip="services.form.tooltip.saml.metadata.dir"
                [matTooltip]="messages.services_form_tooltip_saml_metadata_dir">help
@@ -215,14 +216,15 @@
     </div>
 
     <div>
-      <mat-select style="width:400px;"
-                 i18n-placeholder="services.form.label.saml.metadata.role"
-                 [placeholder]="messages.services_form_label_saml_metadata_role"
-                 [(ngModel)]="service.metadataCriteriaRoles">
-        <mat-option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
-          {{ opt.name}}
-        </mat-option>
-      </mat-select>
+      <mat-form-field class="textInput">
+        <mat-select i18n-placeholder="services.form.label.saml.metadata.role"
+                    [placeholder]="messages.services_form_label_saml_metadata_role"
+                    [(ngModel)]="service.metadataCriteriaRoles">
+          <mat-option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
+            {{ opt.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-icon style="font-size: medium"
                i18n-matTooltip="services.form.tooltip.saml.metadata.role"
                [matTooltip]="messages.services_form_tooltip_saml_metadata_role">help
