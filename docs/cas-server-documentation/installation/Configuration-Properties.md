@@ -4332,6 +4332,9 @@ To learn more about this topic, [please review this guide](Redis-Service-Managem
 # cas.serviceRegistry.redis.pool.testOnBorrow=false
 # cas.serviceRegistry.redis.pool.testOnReturn=false
 # cas.serviceRegistry.redis.pool.testWhileIdle=false
+
+# cas.serviceRegistry.redis.sentinel.master=mymaster
+# cas.serviceRegistry.redis.sentinel.nodes=localhost:26379,localhost:26380,localhost:26381
 ```
 
 ### DynamoDb Service Registry
