@@ -27,20 +27,19 @@ eval $tasks
 retVal=$?
 echo -e "Gradle build finished at `date` with exit code $retVal\n"
 
-if [ $retVal == 0 ]; then
-    echo -e "Gradle build finished with an error exit code\n"
-    exit $retVal
-else
-    if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
-        if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
-             echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        else
-            echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-            gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
-            upload="$gradle $gradleOptions $gradleUpload"
-            echo $upload
-            eval $upload
-            echo -e "Deploying snapshots to sonatype finished at `date` \n"
-        fi
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+    if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
+         echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+    else
+        echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+        gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+        upload="$gradle $gradleOptions $gradleUpload"
+        echo $upload
+        eval $upload
+        retVal=$?
+        echo -e "Deploying snapshots to sonatype finished at `date` \n"
     fi
 fi
+
+echo -e "Gradle build finished with a exit code\n"
+exit $retVal
