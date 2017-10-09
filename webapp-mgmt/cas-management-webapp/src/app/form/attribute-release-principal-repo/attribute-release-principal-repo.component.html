@@ -18,14 +18,16 @@
 
 <div *ngIf="type == TYPE.CACHING">
   <div>
-    <mat-select required style="width:400px;padding-top:25px;padding-bottom: 25px;"
-               i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.timeUnit"
-               [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit"
-               [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
-      <mat-option *ngFor="let opt of timeUnits" [value]="opt">
-        {{ opt }}
-      </mat-option>
-    </mat-select>
+    <mat-form-field class="textInput">
+      <mat-select required
+                  i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.timeUnit"
+                  [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit"
+                  [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
+        <mat-option *ngFor="let opt of timeUnits" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-icon style="font-size: medium"
              i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit"
              [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit">help
@@ -46,14 +48,16 @@
   </div>
 
   <div>
-    <mat-select required style="width: 400px;padding-top:25px;padding-bottom: 25px;"
-               i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy"
-               [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy"
-               [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
-      <mat-option *ngFor="let opt of mergeStrategies" [value]="opt">
-        {{ opt }}
-      </mat-option>
-    </mat-select>
+    <mat-form-field class="textInput">
+      <mat-select required
+                  i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy"
+                  [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy"
+                  [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
+        <mat-option *ngFor="let opt of mergeStrategies" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-icon style="font-size: medium"
              i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy"
              [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy">help

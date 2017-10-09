@@ -1,10 +1,12 @@
 <div>
-  <mat-select i18n-placeholder="services.form.label.type" style="width:400px;padding-top: 25px;padding-bottom: 25px;"
-             [placeholder]="messages.services_form_label_type"
-             [(ngModel)]="type"
-             (change)="changeType()">
-    <mat-option *ngFor="let opt of types; let i = index" [value]="opt">
-      {{ display[i] }}
-    </mat-option>
-  </mat-select>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.type"
+               [placeholder]="messages.services_form_label_type"
+               [(ngModel)]="type"
+               (change)="changeType()">
+      <mat-option *ngFor="let opt of types; let i = index" [value]="opt">
+        {{ display[i] }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>

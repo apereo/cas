@@ -14,12 +14,13 @@
   <ng-container cdkColumnDef="mapped">
     <mat-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</mat-header-cell>
     <mat-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
-      <mat-select style="width:200px;position: relative; top:-13px;"
-                 [(ngModel)]="data.service.attributeNameFormats[row.key]">
-        <mat-option *ngFor="let item of selectOptions.nameIdList" [value]="item.name">
-          {{item.name}}
-        </mat-option>
-      </mat-select>
+      <mat-form-field>
+        <mat-select [(ngModel)]="data.service.attributeNameFormats[row.key]">
+          <mat-option *ngFor="let item of selectOptions.nameIdList" [value]="item.name">
+            {{item.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </mat-cell>
   </ng-container>
 
