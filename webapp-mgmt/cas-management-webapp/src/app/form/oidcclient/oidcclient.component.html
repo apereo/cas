@@ -17,12 +17,14 @@
     </div>
 
     <div>
-      <mat-select multiple style="width:400px;padding-top: 25px;padding-bottom: 25px;"
-                 i18n-placeholder="services.form.label.oidc.scopes"
-                 [placeholder]="messages.services_form_label_oidc_scopes"
-                 [(ngModel)]="service.scopes">
-        <mat-option *ngFor="let opt of oidcScopes" [value]="opt.value">{{ opt.name }}</mat-option>
-      </mat-select>
+      <mat-form-field class="textInput">
+        <mat-select multiple
+                    i18n-placeholder="services.form.label.oidc.scopes"
+                    [placeholder]="messages.services_form_label_oidc_scopes"
+                    [(ngModel)]="service.scopes">
+          <mat-option *ngFor="let opt of oidcScopes" [value]="opt.value">{{ opt.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-icon style="font-size: medium"
                i18n-matTooltip="services.form.tooltip.oidc.scopes"
                [matTooltip]="messages.services_form_tooltip_oidc_scopes">help
@@ -111,12 +113,13 @@
     </div>
 
     <div>
-      <mat-select style="width:400px;padding-top: 25px;padding-bottom: 25px;"
-                 i18n-placeholder="services.form.label.oidc.subject.type"
-                 [placeholder]="messages.services_form_label_oidc_subject_type"
-                 [(ngModel)]="service.subjectType">
-        <mat-option *ngFor="let opt of subjectType" [value]="opt.value">{{ opt.name }}</mat-option>
-      </mat-select>
+      <mat-form-field class="textInput">
+        <mat-select i18n-placeholder="services.form.label.oidc.subject.type"
+                    [placeholder]="messages.services_form_label_oidc_subject_type"
+                    [(ngModel)]="service.subjectType">
+          <mat-option *ngFor="let opt of subjectType" [value]="opt.value">{{ opt.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-icon style="font-size: medium"
                i18n-matTooltip="services.form.tooltip.oidc.subject.type"
                [matTooltip]="messages.services_form_tooltip_oidc_subject_type">help

@@ -65,15 +65,18 @@
     </mat-card-title>
     <div class="cardContent">
       <div>
-        <mat-select i18n-placeHolder="services.form.label.sas.selecttype" style="width:400px;padding-top:25px;padding-bottom: 25px;"
-                   [placeholder]="messages.services_form_label_sas_selecttype"
-                   [(ngModel)]="type" (change)="changeType()">
-          <mat-option *ngFor="let opt of types" [value]="opt">{{ TYPE[opt] }}</mat-option>
-        </mat-select>
+        <mat-form-field class="textInput">
+          <mat-select i18n-placeHolder="services.form.label.sas.selecttype"
+                      [placeholder]="messages.services_form_label_sas_selecttype"
+                     [(ngModel)]="type" (change)="changeType()">
+            <mat-option *ngFor="let opt of types" [value]="opt">{{ TYPE[opt] }}</mat-option>
+          </mat-select>
+        </mat-form-field>
         <mat-icon style="font-size: medium"
                  i18n-matTooltip="services.form.tooltip.sas.selecttype"
                  [matTooltip]="messages.services_form_tooltip_sas_selecttype">help
         </mat-icon>
+
       </div>
 
       <div *ngIf="type == TYPE.REMOTE">

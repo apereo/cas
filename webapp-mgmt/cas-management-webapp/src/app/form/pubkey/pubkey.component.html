@@ -15,12 +15,13 @@
 </div>
 
 <div>
-  <mat-select style="width: 400px;padding-top:25px;"
-             i18n-placeholder="services.form.label.pubKey.algorithm"
-             [placeholder]="messages.services_form_label_pubKey_algorithm"
-             [(ngModel)]="data.service.publicKey.algorithm">
-    <mat-option value="RSA">RSA</mat-option>
-  </mat-select>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.pubKey.algorithm"
+                [placeholder]="messages.services_form_label_pubKey_algorithm"
+                [(ngModel)]="data.service.publicKey.algorithm">
+      <mat-option value="RSA">RSA</mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-icon style="font-size: medium"
            i18n-matTooltip="services.form.tooltip.pubKey.algorithm"
            [matTooltip]="messages.services_form_tooltip_pubKey_algorithm">help
