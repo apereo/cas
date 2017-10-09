@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import net.jradius.exception.TimeoutException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
