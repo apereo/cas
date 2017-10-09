@@ -27,7 +27,7 @@ eval $tasks
 retVal=$?
 echo -e "Gradle build finished at `date` with exit code $retVal\n"
 
-if [ ! $? -eq 0 ]; then
+if [ $retVal == 0 ]; then
     echo -e "Gradle build finished with an error exit code\n"
     exit $retVal
 else
