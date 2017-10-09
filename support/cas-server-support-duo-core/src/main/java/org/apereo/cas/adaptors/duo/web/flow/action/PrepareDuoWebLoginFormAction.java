@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
@@ -33,7 +33,7 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
         c.setUsername(p.getId());
 
         WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext).forEach(pr -> {
-            final DuoAuthenticationService duoAuthenticationService =
+            final DuoSecurityAuthenticationService duoAuthenticationService =
                     provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
             requestContext.getViewScope().put("sigRequest", duoAuthenticationService.signRequestToken(p.getId()));
             requestContext.getViewScope().put("apiHost", duoAuthenticationService.getApiHost());

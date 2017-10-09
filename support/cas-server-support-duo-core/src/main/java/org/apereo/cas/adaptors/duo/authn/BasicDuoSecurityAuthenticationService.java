@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicDuoAuthenticationService.class);
+public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicDuoSecurityAuthenticationService.class);
     private static final long serialVersionUID = -6690808348975271382L;
 
     /**
@@ -33,7 +33,7 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
      * @param duoProperties Duo authentication properties
      * @param httpClient http client used to run the requests
      */
-    public BasicDuoAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
+    public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
         super(duoProperties, httpClient);
     }
 
