@@ -3051,6 +3051,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.response.defaultAuthenticationContextClass=
 # cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
+# cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 
@@ -4352,6 +4353,9 @@ To learn more about this topic, [please review this guide](Redis-Service-Managem
 # cas.serviceRegistry.redis.pool.testOnBorrow=false
 # cas.serviceRegistry.redis.pool.testOnReturn=false
 # cas.serviceRegistry.redis.pool.testWhileIdle=false
+
+# cas.serviceRegistry.redis.sentinel.master=mymaster
+# cas.serviceRegistry.redis.sentinel.nodes=localhost:26379,localhost:26380,localhost:26381
 ```
 
 ### DynamoDb Service Registry
@@ -4889,6 +4893,11 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 # cas.ticket.registry.redis.pool.testOnBorrow=false
 # cas.ticket.registry.redis.pool.testOnReturn=false
 # cas.ticket.registry.redis.pool.testWhileIdle=false
+
+# cas.ticket.registry.redis.sentinel.master=mymaster
+# cas.ticket.registry.redis.sentinel.node[0]=localhost:26379
+# cas.ticket.registry.redis.sentinel.node[1]=localhost:26380
+# cas.ticket.registry.redis.sentinel.node[2]=localhost:26381
 
 # cas.ticket.registry.redis.crypto.signing.key=
 # cas.ticket.registry.redis.crypto.signing.keySize=512
