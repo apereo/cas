@@ -13,9 +13,9 @@
   dependencies match that of CAS. 
  */
 ext["hibernateVersion"] = "5.2.11.Final"
-ext["springBootTomcatVersion"] = "8.5.21"
-ext["hazelcastVersion"] = "3.8.5"
-ext["infinispanVersion"] = "9.1.0.Final"
+ext["springBootTomcatVersion"] = "8.5.23"
+ext["hazelcastVersion"] = "3.8.6"
+ext["infinispanVersion"] = "9.1.1.Final"
 ext["springVersion"] = "4.3.11.RELEASE"
 ext["jacksonDatabindVersion"] = "2.9.0"
 ext["thymeleafVersion"] = "3.0.7.RELEASE"
@@ -28,7 +28,7 @@ ext["groovyVersion"] = "2.4.12"
 ext["log4jVersion"] = "2.9.1"
 ext["commonsBeansVersion"] = "1.9.3"
 ext["dropwizardMetricsVersion"] = "3.2.5"
-ext["caffeinVersion"] = "2.5.5"
+ext["caffeinVersion"] = "2.5.6"
 
 ext["caffeine.version"] = ext["caffeinVersion"]
 ext["commons-beanutils.version"] = "1.8.3"
