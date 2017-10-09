@@ -12,7 +12,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     gradleBuild="$gradleBuild checkstyleMain aggregateJavadocsIntoJar"
 else
     gradleBuild="$gradleBuild -x check aggregateJavadocsIntoJar"
-    if [ "$TRAVIS_COMMIT_MESSAGE" == "[skip tests]" ]; then
+    if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
         echo -e "The build indicates that tests should be skipped.\n"
         gradleBuild="$gradleBuild -x test"
     else
@@ -32,11 +32,15 @@ if [ ! $? -eq 0 ]; then
     exit $retVal
 else
     if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
-        echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        gradleUpload="uploadArchives -x test -x check -x javadoc --offline -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
-        upload="$gradle $gradleOptions $gradleUpload"
-        echo $upload
-        eval $upload
-        echo -e "Deploying snapshots to sonatype finished at `date` \n"
+        if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
+             echo -e "The build will skip deploying SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+        else
+            echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+            gradleUpload="uploadArchives -x test -x check -x javadoc --offline -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+            upload="$gradle $gradleOptions $gradleUpload"
+            echo $upload
+            eval $upload
+            echo -e "Deploying snapshots to sonatype finished at `date` \n"
+        fi
     fi
 fi
