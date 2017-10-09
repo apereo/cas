@@ -55,15 +55,13 @@ public class SurrogateAuthenticationProperties implements Serializable {
     private Tgt tgt = new Tgt();
 
     /**
-     * Email settings for notifications,
-     * If an authentication attempt is deemed risky.
+     * Email settings for notifications.
      */
     @NestedConfigurationProperty
     private EmailProperties mail = new EmailProperties();
 
     /**
-     * SMS settings for notifications,
-     * If an authentication attempt is deemed risky.
+     * SMS settings for notifications.
      */
     @NestedConfigurationProperty
     private SmsProperties sms = new SmsProperties();

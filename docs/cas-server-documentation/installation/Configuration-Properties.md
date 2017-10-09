@@ -1396,6 +1396,9 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 ## Email Submissions
 
+To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+
+
 ```properties
 # spring.mail.host=
 # spring.mail.port=
@@ -4261,15 +4264,32 @@ The default options are avaiable for hostname verification:
 | `NONE`                  | Ignore hostname verification.
 | `DEFAULT`               | Enforce hostname verification.
 
-
 ## Service Registry
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
+
 # cas.serviceRegistry.schedule.repeatInterval=120000
 # cas.serviceRegistry.schedule.startDelay=15000
+
 # cas.serviceRegistry.initFromJson=false
+
 # cas.serviceRegistry.managementType=DEFAULT|DOMAIN
+```
+
+### Service Registry Notifications
+
+```properties
+# cas.serviceRegistry.sms.from=
+# cas.serviceRegistry.sms.text=
+# cas.serviceRegistry.sms.attributeName=phone
+
+# cas.serviceRegistry.mail.from=
+# cas.serviceRegistry.mail.text=
+# cas.serviceRegistry.mail.subject=
+# cas.serviceRegistry.mail.cc=
+# cas.serviceRegistry.mail.bcc=
+# cas.serviceRegistry.mail.attributeName=mail
 ```
 
 ### JSON Service Registry
@@ -5446,6 +5466,12 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ```properties
 # cas.consent.json.location=file:/etc/cas/config/consent.json
+```
+
+### Groovy Attribute Consent
+
+```properties
+# cas.consent.groovy.location=file:/etc/cas/config/consent.groovy
 ```
 
 ### JPA Attribute Consent

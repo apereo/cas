@@ -1,41 +1,41 @@
 <div>
-  <md-checkbox [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.enabled">
+  <mat-checkbox [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.enabled">
     <ng-container i18n="services.form.label.attrRelease.constent.enabled">
       {{ messages.services_form_label_attrRelease_consent_enabled }}
     </ng-container>
-    <md-icon style="font-size: medium"
-             i18n-mdTooltip="services.form.tooltip.attrRelease.consent.enabled"
-             [mdTooltip]="messages.services_form_tooltip_attrRelease_consent_enabled">help
-    </md-icon>
-  </md-checkbox>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.consent.enabled"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_consent_enabled">help
+    </mat-icon>
+  </mat-checkbox>
 </div>
 
 <div *ngIf="data.service.attributeReleasePolicy.consentPolicy.enabled && !isEmpty( formData.availableAttributes )">
-  <md-select multiple style="width:400px;padding-top:25px;"
+  <mat-select multiple style="width:400px;padding-top:25px;"
              i18n-placeholder="services.form.label.attrRelease.consent.excludedAttributes"
              [placeholder]="messages.services_form_label_attrRelease_consent_excludedAttributes"
              [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.excludedAttributes">
-    <md-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+    <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
       {{ opt }}
-    </md-option>
-  </md-select>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.attrRelease.consent.excludedAttributes"
-           [mdTooltip]="messages.services_form_tooltip_attrRelease_consent_excludedAttributes">help
-  </md-icon>
+    </mat-option>
+  </mat-select>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.attrRelease.consent.excludedAttributes"
+           [matTooltip]="messages.services_form_tooltip_attrRelease_consent_excludedAttributes">help
+  </mat-icon>
 </div>
 
 <div *ngIf="data.service.attributeReleasePolicy.consentPolicy.enabled && !isEmpty( formData.availableAttributes )">
-  <md-select multiple style="width:400px;padding-top:25px;"
+  <mat-select multiple style="width:400px;padding-top:25px;"
              i18n-placeholder="services.form.label.attrRelease.consent.includeOnlyAttributes"
              [placeholder]="messages.services_form_label_attrRelease_consent_includeOnlyAttributes"
              [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.includeOnlyAttributes">
-    <md-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+    <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
       {{ opt }}
-    </md-option>
-  </md-select>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.attrRelease.consent.includeOnlyAttributes"
-           [mdTooltip]="messages.services_form_tooltip_attrRelease_consent_includeOnlyAttributes">help
-  </md-icon>
+    </mat-option>
+  </mat-select>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.attrRelease.consent.includeOnlyAttributes"
+           [matTooltip]="messages.services_form_tooltip_attrRelease_consent_includeOnlyAttributes">help
+  </mat-icon>
 </div>

@@ -1,53 +1,53 @@
 <div>
-  <md-select style="width:500px;padding-top: 25px;padding-bottom: 25px;"
+  <mat-select style="width:500px;padding-top: 25px;padding-bottom: 25px;"
              placeholder="Policy"
              [(ngModel)]="type"
              (change)="changeType()">
-    <md-option *ngFor="let opt of types; let i = index" [value]="opt">
+    <mat-option *ngFor="let opt of types; let i = index" [value]="opt">
       {{ display[i] }}
-    </md-option>
-  </md-select>
+    </mat-option>
+  </mat-select>
 </div>
 
 <div *ngIf="type == TYPE.SCRIPT">
-  <md-form-field class="textInput">
-    <input mdInput
+  <mat-form-field class="textInput">
+    <input matInput
            i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
            [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
            [(ngModel)]="data.service.attributeReleasePolicy.scriptFile">
-  </md-form-field>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
-           [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
-  </md-icon>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
+           [matTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
+  </mat-icon>
 </div>
 
 <div *ngIf="type == TYPE.GROOVY">
-  <md-form-field class="textInput">
-    <input mdInput
+  <mat-form-field class="textInput">
+    <input matInput
            i18n-placeholder="services.form.label.attrRelease.policies.scriptFile"
            [placeholder]="messages.services_form_label_attrRelease_policies_scriptFile"
            [(ngModel)]="data.service.attributeReleasePolicy.groovyScript">
-  </md-form-field>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
-           [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
-  </md-icon>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.attrRelease.policies.scriptFile"
+           [matTooltip]="messages.services_form_tooltip_attrRelease_policies_scriptFile">help
+  </mat-icon>
 </div>
 
 <div *ngIf="(type == TYPE.RETURN_ALLOWED || type == TYPE.METADATA) && !isEmpty( formData.availableAttributes )">
-  <md-select multiple style="width:400px;padding-top:25px;"
+  <mat-select multiple style="width:400px;padding-top:25px;"
              i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
              [placeholder]="messages.services_form_label_attrRelease_policies_returnAllowed"
              [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes">
-    <md-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+    <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
       {{ opt }}
-    </md-option>
-  </md-select>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.attrRelease.policies.returnAllowed"
-           [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_returnAllowed">help
-  </md-icon>
+    </mat-option>
+  </mat-select>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.attrRelease.policies.returnAllowed"
+           [matTooltip]="messages.services_form_tooltip_attrRelease_policies_returnAllowed">help
+  </mat-icon>
 </div>
 
 <div *ngIf="type == TYPE.RETURN_MAPPED && !isEmpty( formData.availableAttributes )">
@@ -56,43 +56,43 @@
 
 <div *ngIf="type == TYPE.METADATA" style="padding-top:25px;">
   <div>
-    <md-form-field class="textInput">
-      <input mdInput
+    <mat-form-field class="textInput">
+      <input matInput
              i18n-placeholder="services.form.label.attrRelease.entityAttribute"
              [placeholder]="messages.services_form_label_attrRelease_entityAttribute"
              [(ngModel)]="data.service.attributeReleasePolicy.entityAttribute">
-    </md-form-field>
-    <md-icon style="font-size: medium"
-             i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttribute"
-             [mdTooltip]="messages.services_form_tooltip_attrRelease_policies_entityAttribute">help
-    </md-icon>
+    </mat-form-field>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.entityAttribute"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_policies_entityAttribute">help
+    </mat-icon>
   </div>
 
   <div>
-    <md-form-field class="textInput">
-      <input mdInput
+    <mat-form-field class="textInput">
+      <input matInput
              i18n-placeholder="services.form.label.attrRelease.entityAttributeFormat"
              [placeholder]="messages.services_form_label_attrRelease_entityAttributeFormat"
              [(ngModel)]="data.service.attributeReleasePolicy.entityAttributeFormat">
-    </md-form-field>
-    <md-icon style="font-size: medium"
-             i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttributeFormat"
-             [mdTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeFormat">help
-    </md-icon>
+    </mat-form-field>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.entityAttributeFormat"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeFormat">help
+    </mat-icon>
   </div>
 
   <div>
-    <md-form-field class="textInput">
-      <input mdInput
+    <mat-form-field class="textInput">
+      <input matInput
              i18n-placeholder="services.form.label.attrRelease.entityAttributeValues"
              [placeholder]="messages.services_form_label_attrRelease_entityAttributeValues"
              [ngModel]="data.service.attributeReleasePolicy.entityAttributeValues"
              (ngModelChange)="data.service.attributeReleasePolicy.entityAttributeValues = $event.split(',')">
-    </md-form-field>
-    <md-icon style="font-size: medium"
-             i18n-mdTooltip="services.form.tooltip.attrRelease.entityAttribute"
-             [mdTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeValues">help
-    </md-icon>
+    </mat-form-field>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.entityAttribute"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_entityAttributeValues">help
+    </mat-icon>
   </div>
 
 </div>

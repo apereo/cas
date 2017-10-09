@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.services;
 
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
@@ -10,6 +11,7 @@ import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProp
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -105,6 +107,18 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
+
+    /**
+     * Email settings for notifications.
+     */
+    @NestedConfigurationProperty
+    private EmailProperties mail = new EmailProperties();
+
+    /**
+     * SMS settings for notifications.
+     */
+    @NestedConfigurationProperty
+    private SmsProperties sms = new SmsProperties();
     
     /**
      * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
@@ -239,5 +253,21 @@ public class ServiceRegistryProperties implements Serializable {
 
     public void setRedis(final RedisServiceRegistryProperties redis) {
         this.redis = redis;
+    }
+
+    public EmailProperties getMail() {
+        return mail;
+    }
+
+    public void setMail(final EmailProperties mail) {
+        this.mail = mail;
+    }
+
+    public SmsProperties getSms() {
+        return sms;
+    }
+
+    public void setSms(final SmsProperties sms) {
+        this.sms = sms;
     }
 }

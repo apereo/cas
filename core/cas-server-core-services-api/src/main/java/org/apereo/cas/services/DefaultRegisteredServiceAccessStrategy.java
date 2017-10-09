@@ -278,9 +278,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             LOGGER.trace("Service is not enabled in service registry.");
             return false;
         }
-
-
+        
         return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public void setServiceAccessAllowed(final boolean value) {
+        this.enabled = value;
     }
 
     @Override

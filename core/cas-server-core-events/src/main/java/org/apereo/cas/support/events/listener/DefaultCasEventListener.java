@@ -121,7 +121,9 @@ public class DefaultCasEventListener {
         dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
 
         final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
-        dto.putGeoLocation(location);
+        if (location != null) {
+            dto.putGeoLocation(location);
+        }
         return dto;
     }
 

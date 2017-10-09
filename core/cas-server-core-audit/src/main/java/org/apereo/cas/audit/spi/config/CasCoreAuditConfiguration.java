@@ -162,6 +162,8 @@ public class CasCoreAuditConfiguration {
 
     /**
      * Extension point for deployers to define custom AuditActionResolvers to extend the stock resolvers.
+     *
+     * @return the map
      */
     @ConditionalOnMissingBean(name = "customAuditActionResolverMap")
     @Bean
@@ -196,6 +198,8 @@ public class CasCoreAuditConfiguration {
 
     /**
      * Extension point for deployers to define custom AuditResourceResolvers to extend the stock resolvers.
+     *
+     * @return the map
      */
     @ConditionalOnMissingBean(name = "customAuditResourceResolverMap")
     @Bean
@@ -205,8 +209,7 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditablePrincipalResolver")
     @Bean
-    public PrincipalResolver auditablePrincipalResolver(@Qualifier("auditPrincipalIdProvider") 
-                                                        final AuditPrincipalIdProvider auditPrincipalIdProvider) {
+    public PrincipalResolver auditablePrincipalResolver(@Qualifier("auditPrincipalIdProvider") final AuditPrincipalIdProvider auditPrincipalIdProvider) {
         return new ThreadLocalPrincipalResolver(auditPrincipalIdProvider);
     }
 
