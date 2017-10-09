@@ -1,8 +1,9 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {Data} from "../data";
 import {SamlRegisteredService} from "../../../domain/saml-service";
+import {OAuthRegisteredService, OidcRegisteredService} from "../../../domain/oauth-service";
+import {WSFederationRegisterdService} from "../../../domain/wsed-service";
 
 @Component({
   selector: 'app-serviceid',
@@ -23,6 +24,11 @@ export class ServiceidComponent implements OnInit {
   placeholder() {
     if (SamlRegisteredService.instanceOf(this.data.service)) {
       return this.messages.services_form_label_entityId;
+    } else if (OidcRegisteredService.instanceOf(this.data.service) ||
+               OAuthRegisteredService.instanceOf(this.data.service)) {
+      return this.messages.services_form_label_redirect_url;
+    } else if (WSFederationRegisterdService.instanceOf(this.data.service)) {
+      return this.messages.services_form_label_consumer_url;
     } else {
       return this.messages.services_form_label_serviceId;
     }
@@ -31,6 +37,11 @@ export class ServiceidComponent implements OnInit {
   tooltip() {
     if (SamlRegisteredService.instanceOf(this.data.service)) {
       return this.messages.services_form_tooltip_entityId;
+    } else if (OidcRegisteredService.instanceOf(this.data.service) ||
+               OAuthRegisteredService.instanceOf(this.data.service)) {
+      return this.messages.services_form_tooltip_redirect_url;
+    } else if (WSFederationRegisterdService.instanceOf(this.data.service)) {
+      return this.messages.services_form_tooltip_consumer_url;
     } else {
       return this.messages.services_form_tooltip_serviceId;
     }
