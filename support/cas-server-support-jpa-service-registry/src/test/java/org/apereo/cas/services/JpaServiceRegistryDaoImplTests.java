@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +38,7 @@ import static org.junit.Assert.*;
         CasCoreServicesConfiguration.class})
 @DirtiesContext
 public class JpaServiceRegistryDaoImplTests {
-    
+
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
@@ -57,7 +56,7 @@ public class JpaServiceRegistryDaoImplTests {
     @Test
     public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setName("test");
+        r.setName("verifySaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -73,7 +72,7 @@ public class JpaServiceRegistryDaoImplTests {
     @Test
     public void verifySaveAttributeReleasePolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setName("test");
+        r.setName("verifySaveAttributeReleasePolicy");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -90,9 +89,8 @@ public class JpaServiceRegistryDaoImplTests {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
-
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setName("test");
+        r.setName("verifySaveMethodWithExistingServiceNoAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -147,7 +145,7 @@ public class JpaServiceRegistryDaoImplTests {
     @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();
-        r.setName("test456");
+        r.setName("verifyOAuthServices");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -162,7 +160,7 @@ public class JpaServiceRegistryDaoImplTests {
     @Test
     public void verifySamlService() {
         final SamlRegisteredService r = new SamlRegisteredService();
-        r.setName("test345");
+        r.setName("verifySamlService");
         r.setServiceId("Testing");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
@@ -200,8 +198,7 @@ public class JpaServiceRegistryDaoImplTests {
         final RegisteredService r2 = this.servicesManager.save(r);
         RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
-        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 1100);
-        Thread.sleep(1100);
+        Thread.sleep(1500);
         svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
         assertFalse(svc.getAccessStrategy().isServiceAccessAllowed());

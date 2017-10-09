@@ -124,7 +124,7 @@ public class MockWebServer {
             while (this.running) {
                 try {
                     writeResponse(this.serverSocket.accept());
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (final SocketException e) {
                     LOGGER.debug("Stopping on socket close.");
                     this.running = false;

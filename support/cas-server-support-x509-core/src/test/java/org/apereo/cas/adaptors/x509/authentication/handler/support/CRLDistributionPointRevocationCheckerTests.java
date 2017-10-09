@@ -203,7 +203,6 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
     public void tearDown() throws Exception {
         LOGGER.debug("Stopping web server...");
         this.webServer.stop();
-        Thread.sleep(500);
         LOGGER.debug("Web server stopped [{}]", !this.webServer.isRunning());
     }
 
