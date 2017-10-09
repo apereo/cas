@@ -18,6 +18,7 @@ before_cache:
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
+    - $HOME/.m2
     - $HOME/.npm/
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/    
@@ -25,6 +26,8 @@ git:
   depth: 1
 notifications:
   slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
+matrix:
+  fast_finish: true
 env:
   global:
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
@@ -33,21 +36,16 @@ env:
   matrix:
   - PUBLISH_SNAPSHOTS=false
   - PUBLISH_SNAPSHOTS=true
-before_script:
- - export JAVA_OPTS="-Xmx2048m"
 before_install:
+- export JAVA_OPTS="-Xmx2048m"
 - chmod -R 777 ./travis/init-travis-build.sh
-- ./travis/init-travis-build.sh
-- chmod -R 777 ./travis/pre-install.sh
 - ./travis/init-travis-build.sh
 install:
 - chmod -R 777 ./travis/install.sh
 - ./travis/install.sh
 script:
-- chmod -R 777 ./travis/script.sh
+- chmod -R 777 ./travis/install.sh
 - ./travis/script.sh
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
-- chmod -R 777 ./travis/deploy-to-sonatype.sh
-- ./travis/deploy-to-sonatype.sh

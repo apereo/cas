@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +20,6 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredService extends Cloneable, Serializable, Comparable<RegisteredService> {
     
-
     /**
      * The logout type.
      */
@@ -43,6 +43,13 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      */
     long INITIAL_IDENTIFIER_VALUE = -1;
 
+    /**
+     * Get the expiration policy rules for this service.
+     *
+     * @return the proxy policy
+     */
+    RegisteredServiceExpirationPolicy getExpirationPolicy();
+    
     /**
      * Get the proxy policy rules for this service.
      *
@@ -236,4 +243,12 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
     default Map<String, RegisteredServiceProperty> getProperties() {
         return new LinkedHashMap<>();
     }
+
+    /**
+     * A list of contacts that are responsible for the clients that use
+     * this service.
+     * @return list of Contacts
+     * @since 5.2
+     */
+    List<RegisteredServiceContact> getContacts();
 }

@@ -17,7 +17,6 @@ service registry that stores one or more registered services containing metadata
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
 
-
 ## Service Management Web Application
 
 The service management webapp is a standalone web application that may be deployed along side CAS that provides a GUI
@@ -48,6 +47,7 @@ Registered services present the following metadata:
 | `logoutUrl`                          | URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
 | `properties`                      | Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 | `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](Configuring-Multifactor-Authentication.html).
+| `contacts`               | Specify the collection of contacts associated with service that own the application. See [this guide](Configuring-Service-Contacts.html) for more info.
 
 <div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
 
@@ -62,6 +62,14 @@ Registered services present the following metadata:
 ### Tags & Properties
 
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
+
+### Contacts & Owners
+
+[See this guide](Configuring-Service-Contacts.html) for more info please.
+
+### Expiration Policy
+
+[See this guide](Configuring-Service-Expiration-Policy.html) for more info please.
 
 ## Storage
 
@@ -79,3 +87,13 @@ The following options may be used to store services in CAS.
 | DynamoDb         | [See this guide](DynamoDb-Service-Management.html).
 | REST             | [See this guide](REST-Service-Management.html).
 | Custom           | [See this guide](Custom-Service-Management.html).
+
+### How Do I Choose?
+
+There are is a wide range of service registries on the menu. The selection criteria is outlined below:
+
+- Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
+- Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
+- Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
+- Choose a technology that shows promisig results under *your expected load*, having run performance and stress tests.
+- Choose a technology that does not depend on outside processes, systems and manual work as much as possible, is self-reliant and self contained.

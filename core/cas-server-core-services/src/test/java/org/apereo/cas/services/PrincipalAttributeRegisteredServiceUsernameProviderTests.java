@@ -59,6 +59,24 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
                 RegisteredServiceTestUtils.getService("verifyUsernameByPrincipalAttributeWithMapping"), registeredService);
         assertEquals(id, "user@example.org");
     }
+
+    @Test
+    public void verifyUsernameByPrincipalAttributeAsCollection() {
+        final PrincipalAttributeRegisteredServiceUsernameProvider provider =
+                new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+
+        final Map<String, Object> attrs = new HashMap<>();
+        attrs.put("userid", CollectionUtils.wrap("u1"));
+        attrs.put("cn", CollectionUtils.wrap("TheName"));
+
+        final Principal p = mock(Principal.class);
+        when(p.getId()).thenReturn("person");
+        when(p.getAttributes()).thenReturn(attrs);
+
+        final String id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
+                RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        assertEquals(id, "TheName");
+    }
     
     @Test
     public void verifyUsernameByPrincipalAttribute() {

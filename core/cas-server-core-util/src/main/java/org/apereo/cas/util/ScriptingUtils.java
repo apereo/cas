@@ -132,6 +132,23 @@ public final class ScriptingUtils {
      * @param <T>          the type parameter
      * @param groovyScript the groovy script
      * @param methodName   the method name
+     * @param clazz        the clazz
+     * @param args         the args
+     * @return the type to return
+     */
+    public static <T> T executeGroovyScript(final Resource groovyScript,
+                                            final String methodName,
+                                            final Class<T> clazz,
+                                            final Object... args) {
+        return executeGroovyScript(groovyScript, methodName, args, clazz);
+    }
+
+    /**
+     * Execute groovy script t.
+     *
+     * @param <T>          the type parameter
+     * @param groovyScript the groovy script
+     * @param methodName   the method name
      * @param args         the args
      * @param clazz        the clazz
      * @return the t

@@ -52,6 +52,11 @@ public class ConsentProperties implements Serializable {
     private Json json = new Json();
 
     /**
+     * Keep consent decisions stored via a Groovy resource.
+     */
+    private Groovy groovy = new Groovy();
+
+    /**
      * Keep consent decisions stored via a MongoDb database resource.
      */
     private MongoDb mongo = new MongoDb();
@@ -72,6 +77,14 @@ public class ConsentProperties implements Serializable {
 
     public Json getJson() {
         return json;
+    }
+
+    public Groovy getGroovy() {
+        return groovy;
+    }
+
+    public void setGroovy(final Groovy groovy) {
+        this.groovy = groovy;
     }
 
     public void setJson(final Json json) {
@@ -128,6 +141,11 @@ public class ConsentProperties implements Serializable {
 
     @RequiredModule(name = "cas-server-consent-webflow")
     public static class Json extends SpringResourceProperties {
+        private static final long serialVersionUID = 7079027843747126083L;
+    }
+
+    @RequiredModule(name = "cas-server-consent-webflow")
+    public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 7079027843747126083L;
     }
 

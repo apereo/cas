@@ -12,6 +12,7 @@ import {
 } from "./attribute-release";
 import {RegisteredServicePublicKey} from "./public-key";
 import {DefaultRegisteredServiceProperty} from "./property";
+import {RegisteredServiceContact} from "./contact";
 
 export abstract class RegisteredService {
   serviceId: String;
@@ -33,6 +34,7 @@ export abstract class RegisteredService {
   accessStrategy: RegisteredServiceAccessStrategy;
   publicKey: RegisteredServicePublicKey;
   properties: Map<String, DefaultRegisteredServiceProperty>;
+  contacts: RegisteredServiceContact[];
 
   constructor(service?: RegisteredService) {
     this.serviceId = service && service.serviceId;
@@ -54,6 +56,7 @@ export abstract class RegisteredService {
     this.accessStrategy = (service && service.accessStrategy) || new DefaultRegisteredServiceAccessStrategy();
     this.publicKey = service && service.publicKey;
     this.properties = service && service.properties;
+    this.contacts = service && service.contacts;
   }
 }
 
