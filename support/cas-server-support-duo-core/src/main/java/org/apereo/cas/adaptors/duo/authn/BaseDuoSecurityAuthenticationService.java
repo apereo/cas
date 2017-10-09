@@ -18,12 +18,12 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 /**
- * This is {@link BaseDuoAuthenticationService}.
+ * This is {@link BaseDuoSecurityAuthenticationService}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseDuoAuthenticationService implements DuoAuthenticationService {
+public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
     
     private static final int AUTH_API_VERSION = 2;
@@ -33,7 +33,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseDuoAuthenticationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseDuoSecurityAuthenticationService.class);
     
     /**
      * Duo Properties.
@@ -48,7 +48,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
      * @param duoProperties the duo properties
      * @param httpClient    the http client
      */
-    public BaseDuoAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
+    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
     }
@@ -94,7 +94,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final BaseDuoAuthenticationService rhs = (BaseDuoAuthenticationService) obj;
+        final BaseDuoSecurityAuthenticationService rhs = (BaseDuoSecurityAuthenticationService) obj;
         return new EqualsBuilder()
                 .append(this.duoProperties.getDuoApiHost(), rhs.duoProperties.getDuoApiHost())
                 .append(this.duoProperties.getDuoApplicationKey(), rhs.duoProperties.getDuoApplicationKey())

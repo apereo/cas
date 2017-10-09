@@ -40,7 +40,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     /**
-     * Do an out of band request using the DuoWeb api (encapsulated in DuoAuthenticationService)
+     * Do an out of band request using the DuoWeb api (encapsulated in DuoSecurityAuthenticationService)
      * to the hosted duo service. If it is successful
      * it will return a String containing the username of the successfully authenticated user, but if not - will
      * return a blank String or null.
@@ -61,7 +61,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private HandlerResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
-            final DuoAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
+            final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
             final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(c).getKey()) {
                 final Principal principal = c.getAuthentication().getPrincipal();
@@ -82,7 +82,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
                         + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
             }
 
-            final DuoAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
+            final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
             final String duoVerifyResponse = duoAuthenticationService.authenticate(duoCredential).getValue();
             LOGGER.debug("Response from Duo verify: [{}]", duoVerifyResponse);
             final String primaryCredentialsUsername = duoCredential.getUsername();
@@ -104,7 +104,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         }
     }
 
-    private DuoAuthenticationService getDuoAuthenticationService() {
+    private DuoSecurityAuthenticationService getDuoAuthenticationService() {
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
         if (requestContext == null) {
             throw new IllegalArgumentException("No request context is held to locate the Duo authentication service");

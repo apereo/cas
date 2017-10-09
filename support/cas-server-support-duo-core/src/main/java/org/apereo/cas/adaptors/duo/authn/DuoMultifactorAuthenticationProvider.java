@@ -15,5 +15,5 @@ public interface DuoMultifactorAuthenticationProvider extends MultifactorAuthent
      *
      * @return the duo authentication service
      */
-    DuoAuthenticationService getDuoAuthenticationService();
+    DuoSecurityAuthenticationService getDuoAuthenticationService();
 }
