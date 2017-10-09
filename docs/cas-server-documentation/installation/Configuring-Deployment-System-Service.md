@@ -86,7 +86,7 @@ Refer to `man systemctl` for more details.
 
 [Upstart](http://upstart.ubuntu.com/) is an event-based service manager, a potential replacement for the System V init that offers more control on the behavior of the different daemons. When using Ubuntu you probably have it installed and configured already (check if there are any jobs with a name starting with `cas` in `/etc/init`).
 
-We create a job `cas.conf` to start our Spring Boot application:
+We create a job `cas.conf` to start the CAS web application:
 
 ```bash
 # Place in /home/{user}/.config/cas
