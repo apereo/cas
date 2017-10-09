@@ -22,80 +22,79 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class RedisObjectFactory {
 
-	/**
-	 * New redis connection factory.
-	 *
-	 * @param redis
-	 *            the redis
-	 * @return the redis connection factory
-	 */
-	public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
+    /**
+     * New redis connection factory.
+     *
+     * @param redis the redis
+     * @return the redis connection factory
+     */
+    public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
 
-		final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig(redis) : new JedisPoolConfig();
-		final RedisSentinelConfiguration sentinelConfig = potentiallyGetSentinelConfig(redis);
-		final JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig, poolConfig);
-		factory.setHostName(redis.getHost());
-		factory.setPort(redis.getPort());
-		if (redis.getPassword() != null) {
-			factory.setPassword(redis.getPassword());
-		}
-		factory.setDatabase(redis.getDatabase());
-		if (redis.getTimeout() > 0) {
-			factory.setTimeout(redis.getTimeout());
-		}
-		factory.setUseSsl(redis.isUseSsl());
-		factory.setUsePool(redis.isUsePool());
+        final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig(redis) : new JedisPoolConfig();
+        final RedisSentinelConfiguration sentinelConfig = potentiallyGetSentinelConfig(redis);
+        final JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig, poolConfig);
+        factory.setHostName(redis.getHost());
+        factory.setPort(redis.getPort());
+        if (redis.getPassword() != null) {
+            factory.setPassword(redis.getPassword());
+        }
+        factory.setDatabase(redis.getDatabase());
+        if (redis.getTimeout() > 0) {
+            factory.setTimeout(redis.getTimeout());
+        }
+        factory.setUseSsl(redis.isUseSsl());
+        factory.setUsePool(redis.isUsePool());
 
-		return factory;
-	}
+        return factory;
+    }
 
-	private JedisPoolConfig jedisPoolConfig(final BaseRedisProperties redis) {
-		final JedisPoolConfig config = new JedisPoolConfig();
-		final RedisTicketRegistryProperties.Pool props = redis.getPool();
-		config.setMaxTotal(props.getMaxActive());
-		config.setMaxIdle(props.getMaxIdle());
-		config.setMinIdle(props.getMinIdle());
-		config.setMaxWaitMillis(props.getMaxWait());
-		config.setLifo(props.isLifo());
-		config.setFairness(props.isFairness());
-		config.setTestWhileIdle(props.isTestWhileIdle());
-		config.setTestOnBorrow(props.isTestOnBorrow());
-		config.setTestOnReturn(props.isTestOnReturn());
-		config.setTestOnCreate(props.isTestOnCreate());
+    private JedisPoolConfig jedisPoolConfig(final BaseRedisProperties redis) {
+        final JedisPoolConfig config = new JedisPoolConfig();
+        final RedisTicketRegistryProperties.Pool props = redis.getPool();
+        config.setMaxTotal(props.getMaxActive());
+        config.setMaxIdle(props.getMaxIdle());
+        config.setMinIdle(props.getMinIdle());
+        config.setMaxWaitMillis(props.getMaxWait());
+        config.setLifo(props.isLifo());
+        config.setFairness(props.isFairness());
+        config.setTestWhileIdle(props.isTestWhileIdle());
+        config.setTestOnBorrow(props.isTestOnBorrow());
+        config.setTestOnReturn(props.isTestOnReturn());
+        config.setTestOnCreate(props.isTestOnCreate());
 
-		if (props.getMinEvictableIdleTimeMillis() > 0) {
-			config.setMinEvictableIdleTimeMillis(props.getMinEvictableIdleTimeMillis());
-		}
-		if (props.getNumTestsPerEvictionRun() > 0) {
-			config.setNumTestsPerEvictionRun(props.getNumTestsPerEvictionRun());
-		}
-		if (props.getSoftMinEvictableIdleTimeMillis() > 0) {
-			config.setSoftMinEvictableIdleTimeMillis(props.getSoftMinEvictableIdleTimeMillis());
-		}
-		return config;
-	}
+        if (props.getMinEvictableIdleTimeMillis() > 0) {
+            config.setMinEvictableIdleTimeMillis(props.getMinEvictableIdleTimeMillis());
+        }
+        if (props.getNumTestsPerEvictionRun() > 0) {
+            config.setNumTestsPerEvictionRun(props.getNumTestsPerEvictionRun());
+        }
+        if (props.getSoftMinEvictableIdleTimeMillis() > 0) {
+            config.setSoftMinEvictableIdleTimeMillis(props.getSoftMinEvictableIdleTimeMillis());
+        }
+        return config;
+    }
 
-	private RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
-		if (redis.getSentinel() == null) {
-			return null;
-		}
-		RedisSentinelConfiguration sentinelConfig = null;
-		if (redis.getSentinel() != null) {
-			sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
-			sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
-		}
-		return sentinelConfig;
-	}
+    private RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
+        if (redis.getSentinel() == null) {
+            return null;
+        }
+        RedisSentinelConfiguration sentinelConfig = null;
+        if (redis.getSentinel() != null) {
+            sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
+            sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
+        }
+        return sentinelConfig;
+    }
 
-	private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
-		List<RedisNode> redisNodes = new ArrayList<RedisNode>();
-		if (redis.getSentinel().getNode() != null) {
-			List<String> nodes = redis.getSentinel().getNode();
-			for (String hostAndPort : nodes) {
-				String[] args = StringUtils.split(hostAndPort, ":");
-				redisNodes.add(new RedisNode(args[0], Integer.valueOf(args[1])));
-			}
-		}
-		return redisNodes;
-	}
+    private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
+        List<RedisNode> redisNodes = new ArrayList<RedisNode>();
+        if (redis.getSentinel().getNode() != null) {
+            List<String> nodes = redis.getSentinel().getNode();
+            for (String hostAndPort : nodes) {
+                String[] args = StringUtils.split(hostAndPort, ":");
+                redisNodes.add(new RedisNode(args[0], Integer.valueOf(args[1])));
+            }
+        }
+        return redisNodes;
+    }
 }
