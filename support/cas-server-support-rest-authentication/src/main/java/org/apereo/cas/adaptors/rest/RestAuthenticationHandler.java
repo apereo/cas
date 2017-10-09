@@ -15,6 +15,7 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.CredentialExpiredException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
@@ -65,6 +66,9 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 throw new AccountLockedException("Could not authenticate locked account for " + c.getUsername());
             }
             if (e.getStatusCode() == HttpStatus.PRECONDITION_REQUIRED) {
+                throw new CredentialExpiredException("Account password must change for " + c.getUsername());
+            }
+            if (e.getStatusCode() == HttpStatus.PRECONDITION_FAILED) {
                 throw new AccountExpiredException("Could not authenticate expired account for " + c.getUsername());
             }
 
