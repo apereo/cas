@@ -53,7 +53,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         headers.put("oldPassword", Arrays.asList(upc.getPassword()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final ResponseEntity<Boolean> result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.POST, entity, Boolean.class);
+        final ResponseEntity<Boolean> result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return result.getBody();
         }
