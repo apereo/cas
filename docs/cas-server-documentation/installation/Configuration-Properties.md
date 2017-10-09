@@ -1396,6 +1396,9 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 ## Email Submissions
 
+To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+
+
 ```properties
 # spring.mail.host=
 # spring.mail.port=
