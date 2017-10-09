@@ -1,7 +1,11 @@
 #!/bin/bash
 
-branchName="master"
+if [ "$TRAVIS_PULL_REQUEST" == "true" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+    echo -e "Skipping build since this is a pull request and we are not publishing snapshots.\n"
+    exit 0
+fi
 
+branchName="master"
 gradle="sudo ./gradlew"
 gradleOptions="--stacktrace --parallel --build-cache --max-workers=15 --configure-on-demand --no-daemon"
 gradleBuild="bootRepackage"
