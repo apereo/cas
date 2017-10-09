@@ -15,6 +15,7 @@ import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -159,6 +160,22 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         assertEquals(r2, r3);
     }
 
+    @Test
+    public void verifyServiceExpirationPolicy() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("verifyServiceExpirationPolicy");
+        r.setServiceId(SERVICE_ID);
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDate.now()));
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getExpirationPolicy());
+        assertEquals(r2.getExpirationPolicy(), r3.getExpirationPolicy());
+    }
+    
     @Test
     public void verifySaveAttributeReleasePolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -413,6 +430,23 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         p.setAttributeFilter(filter);
 
         r.setAttributeReleasePolicy(p);
+        this.dao.save(r);
+        this.dao.load();
+    }
+
+    @Test
+    public void verifyServiceContacts() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("verifyServiceContacts");
+        r.setName("verifyServiceContacts");
+        r.setId(5000);
+
+        final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
+        contact.setDepartment("Department");
+        contact.setEmail("cas@example.org");
+        contact.setName("Contact");
+        contact.setPhone("123-456-7890");
+        r.setContacts(CollectionUtils.wrap(contact));
         this.dao.save(r);
         this.dao.load();
     }

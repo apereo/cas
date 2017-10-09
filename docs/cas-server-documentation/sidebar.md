@@ -128,6 +128,8 @@ layout: null
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
+    *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
+    *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
     *   [Replication](/$version/installation/Configuring-Service-Replication.html)
     *   [Storage](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
@@ -186,7 +188,7 @@ layout: null
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
-    *   [SQRL](/$version/protocol/SQRL-Protocol.html)
+
 
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)

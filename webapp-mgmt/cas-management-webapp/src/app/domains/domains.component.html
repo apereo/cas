@@ -1,6 +1,6 @@
 <div style="display:flex;margin-bottom:10px;">
   <div style="padding-top: 10px;">
-    <md-icon style="padding-top: 3px;">build</md-icon>
+    <mat-icon style="padding-top: 3px;">build</mat-icon>
     <h4 style="display: inline;position: relative;top: -5px;">
       <ng-container i18n>
         Domains
@@ -13,38 +13,38 @@
 </div>
 
 <div style="margin-right:25px;margin-left:25px;">
-<md-table #table [dataSource]="dataSource">
+<mat-table #table [dataSource]="dataSource">
 
-  <ng-container mdColumnDef="row">
-     <md-header-cell *mdHeaderCellDef style="text-align: center"> <md-form-field floatPlaceholder="never" style="width:500px;">
-       <input mdInput (keyup)="doFilter($event.target.value)" placeholder="Filter Domains" >
-     </md-form-field></md-header-cell>
-     <md-cell *mdCellDef="let row">
+  <ng-container matColumnDef="row">
+     <mat-header-cell *matHeaderCellDef style="text-align: center"> <mat-form-field floatPlaceholder="never" style="width:500px;">
+       <input matInput (keyup)="doFilter($event.target.value)" placeholder="Filter Domains" >
+     </mat-form-field></mat-header-cell>
+     <mat-cell *matCellDef="let row">
        <div style="display: flex;">
-         <div style="padding-right:20px" [mdMenuTriggerFor]="serviceMenu" (click)="selectedItem = row">
-           <md-icon>menu</md-icon>
+         <div style="padding-right:20px" [matMenuTriggerFor]="serviceMenu" (click)="selectedItem = row">
+           <mat-icon>menu</mat-icon>
          </div>
          <div style="padding-right:20px;flex: 0 0 200px;font-weight: 700;text-overflow: ellipsis"> <a (click)="view(row)">{{row}}</a></div>
        </div>
-     </md-cell>
+     </mat-cell>
   </ng-container>
 
-  <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
-  <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
-</md-table>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
 
-<md-paginator #paginator
+<mat-paginator #paginator
               [length]="domainDatabase.data.length"
               [pageIndex]="0"
               [pageSize]="10"
               [pageSizeOptions]="[5, 10, 25, 100]">
-</md-paginator>
+</mat-paginator>
 </div>
-<md-menu #serviceMenu>
-  <button md-menu-item (click)="view(selectedItem)">
-    <md-icon>edit</md-icon>
+<mat-menu #serviceMenu>
+  <button mat-menu-item (click)="view(selectedItem)">
+    <mat-icon>edit</mat-icon>
     <ng-container i18n="management.services.table.button.edit">
       {{ messages.management_services_table_button_edit }}
     </ng-container>
   </button>
-</md-menu>
+</mat-menu>

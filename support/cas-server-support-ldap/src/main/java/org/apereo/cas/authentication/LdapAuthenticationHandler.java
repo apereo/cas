@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -162,6 +163,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throw new PreventedException("Unexpected LDAP error", e);
         }
         LOGGER.debug("LDAP response: [{}]", response);
+
+        if (!response.getResult() && response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
+            throw new FailedLoginException("Invalid credentials");
+        }
 
         final List<MessageDescriptor> messageList;
         final LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration = (LdapPasswordPolicyConfiguration) super.getPasswordPolicyConfiguration();

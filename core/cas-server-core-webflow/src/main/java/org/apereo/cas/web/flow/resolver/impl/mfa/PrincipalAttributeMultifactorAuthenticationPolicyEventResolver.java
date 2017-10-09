@@ -68,15 +68,9 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
             return null;
         }
         
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
-            LOGGER.error("No multifactor authentication providers are available in the application context");
-            return null;
-        }
 
         final Principal principal = authentication.getPrincipal();
-        return resolveMultifactorAuthenticationProvider(context, service, principal, providerMap);
+        return resolveMultifactorAuthenticationProvider(context, service, principal);
     }
 
     /**
@@ -85,12 +79,12 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
      * @param context     the context
      * @param service     the service
      * @param principal   the principal
-     * @param providerMap the provider map
      * @return the set
      */
     protected Set<Event> resolveMultifactorAuthenticationProvider(final RequestContext context, final RegisteredService service,
-                                                                  final Principal principal,
-                                                                  final Map<String, MultifactorAuthenticationProvider> providerMap) {
+                                                                  final Principal principal) {
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             return resolveSingleMultifactorProvider(context, service, principal, providers);

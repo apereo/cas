@@ -10,9 +10,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * Action that handles the TicketGrantingTicket creation and destruction. If the
  * action is given a TicketGrantingTicket and one also already exists, the old
@@ -23,10 +20,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.0.0
  */
 public class SendTicketGrantingTicketAction extends AbstractAction {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
-    
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final CentralAuthenticationService centralAuthenticationService;
     private final SingleSignOnParticipationStrategy renewalStrategy;
@@ -36,7 +31,6 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
                                           final SingleSignOnParticipationStrategy renewalStrategy) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-
         this.renewalStrategy = renewalStrategy;
     }
 
@@ -44,8 +38,6 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID);
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
             LOGGER.debug("No ticket-granting ticket is found in the context.");
@@ -56,7 +48,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
             LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated. Requests will be challenged for authentication.");
         } else if (this.renewalStrategy.isParticipating(context)) {
             LOGGER.debug("Setting ticket-granting cookie for current session linked to [{}].", ticketGrantingTicketId);
-            this.ticketGrantingTicketCookieGenerator.addCookie(request, response, ticketGrantingTicketId);
+            this.ticketGrantingTicketCookieGenerator.addCookie(context, ticketGrantingTicketId);
         } else {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");

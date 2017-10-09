@@ -1,7 +1,5 @@
 package org.apereo.cas.mgmt.services.web;
 
-import org.apereo.cas.mgmt.services.web.beans.FormData;
-import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -27,19 +25,12 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceSimpleFormController.class);
 
     /**
-     * Instance of the RegisteredServiceFactory.
-     */
-    private final RegisteredServiceFactory registeredServiceFactory;
-
-    /**
      * Instantiates a new registered service simple form controller.
      *
      * @param servicesManager          the services manager
-     * @param registeredServiceFactory the registered service factory
      */
-    public RegisteredServiceSimpleFormController(final ServicesManager servicesManager, final RegisteredServiceFactory registeredServiceFactory) {
+    public RegisteredServiceSimpleFormController(final ServicesManager servicesManager) {
         super(servicesManager);
-        this.registeredServiceFactory = registeredServiceFactory;
     }
 
     /**
@@ -75,16 +66,5 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             }
         }
         return new ResponseEntity<>(service, HttpStatus.OK);
-    }
-
-    /**
-     * Gets form data.
-     *
-     * @return the form data
-     * @throws Exception the exception
-     */
-    @GetMapping(value = "formData")
-    public ResponseEntity<FormData> getFormData() throws Exception {
-        return new ResponseEntity<>(this.registeredServiceFactory.createFormData(), HttpStatus.OK);
     }
 }

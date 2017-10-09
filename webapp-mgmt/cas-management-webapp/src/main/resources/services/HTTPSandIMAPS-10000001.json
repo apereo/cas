@@ -24,5 +24,6 @@
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true
-  }
+  },
+  "logo" : "images/logo_cas.png"
 }

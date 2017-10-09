@@ -1,6 +1,5 @@
 import {Component, OnInit, Input, ChangeDetectorRef} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {Data} from "../data";
 import {DataSource} from "@angular/cdk/table";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
@@ -10,7 +9,7 @@ import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
 import {Util} from "../../util/util";
 import {DefaultRegisteredServiceProperty} from "../../../domain/property";
-import {MdAutocompleteSelectedEvent} from "@angular/material";
+import {MatAutocompleteSelectedEvent} from "@angular/material";
 
 @Component({
   selector: 'app-propertiespane',
@@ -71,7 +70,7 @@ export class PropertiespaneComponent implements OnInit {
     this.attributeDatabase.removeRow(row);
   }
 
-  selection(val: MdAutocompleteSelectedEvent) {
+  selection(val: MatAutocompleteSelectedEvent) {
     let opt: PropertyOption = val.option.value as PropertyOption;
     this.doChange(this.selectedRow,opt.id)
     if (val) {

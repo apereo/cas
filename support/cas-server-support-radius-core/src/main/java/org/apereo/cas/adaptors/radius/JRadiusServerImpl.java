@@ -19,9 +19,11 @@ import net.jradius.packet.attribute.AttributeList;
 import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.Security;
 import java.util.List;
 
 /**
@@ -71,6 +73,17 @@ public class JRadiusServerImpl implements RadiusServer {
     
     static {
         AttributeFactory.loadAttributeDictionary("net.jradius.dictionary.AttributeDictionaryImpl");
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
+    /**
+     * Instantiates a new J radius server.
+     *
+     * @param protocol            the protocol
+     * @param radiusClientFactory the radius client factory
+     */
+    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory radiusClientFactory) {
+        this(protocol, radiusClientFactory, 1, null, null, -1, -1, null, -1);
     }
 
     /**

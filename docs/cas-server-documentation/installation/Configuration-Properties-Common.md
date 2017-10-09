@@ -3,7 +3,7 @@ layout: default
 title: CAS Properties Overview
 ---
 
-# CAS Properties Overview
+# CAS Common Properties
 
 This document describes a number of suggestions and configuration options that apply
 to and are common amongst a selection of CAS modules and features.
@@ -91,7 +91,7 @@ password encoding. Most options are based on Spring Security's [support for pass
 
 The following options are supported:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No password encoding (i.e. plain-text) takes place.     
 | `DEFAULT`               | Use the `DefaultPasswordEncoder` of CAS. For message-digest algorithms via `characterEncoding` and `encodingAlgorithm`.
@@ -100,6 +100,48 @@ The following options are supported:
 | `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
+| `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
+
+In cases where you plan to design your own password encoder or write scripts to do so, you may also need to ensure the overlay has the following modules available at runtime:
+
+```xml
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core</artifactId>
+</dependency>
+```
+
+If you need to design your own password encoding scheme where the type is specified as a fully qualified Java class name, the structure of the class would be similiar to the following:
+
+```java
+package org.example.cas;
+
+import org.springframework.security.crypto.codec.*;
+import org.springframework.security.crypto.password.*;
+
+public class MyEncoder extends AbstractPasswordEncoder {
+    @Override
+    protected byte[] encode(CharSequence rawPassword, byte[] salt) {
+        return ...
+    }
+}
+```
+
+If you need to design your own password encoding scheme where the type is specified as a path to a Groovy script, the structure of the script would be similiar to the following:
+
+```groovy
+import java.util.*
+
+def byte[] run(final Object... args) {
+    def rawPassword = args[0]
+    def generatedSalt = args[1]
+    def logger = args[2]
+    def casApplicationContext = args[3]
+
+    logger.debug("Encoding password...")
+    return ...
+}
+```
 
 ## Authentication Principal Transformation
 
@@ -124,7 +166,7 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
-## Container-based JDBC Connections
+### Container-based JDBC Connections
 
 If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
 then you can set the `dataSourceName` property on any of the configuration items that require a database
@@ -206,8 +248,7 @@ In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file l
 
 ## Signing & Encryption
 
-A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to 
-manually and beforehand create the signing and encryption keys.
+A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 
 Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
 of a cerain size for the key, you are to use the following set of commands to generate the token:
@@ -216,6 +257,18 @@ of a cerain size for the key, you are to use the following set of commands to ge
 wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
 java -jar jwk-gen.jar -t oct -s [size]
 ```
+
+The outcome would be similar to:
+
+```json
+{
+  "kty": "oct",
+  "kid": "...",
+  "k": "..."
+}
+```
+
+The generated value for `k` needs to be assigned to the relevant CAS settings.
 
 ## DDL Configuration
 
@@ -229,6 +282,12 @@ which may not be appropriate for use in production. Setting the value to
 | `update`             | Update the schema.
 | `create`             | Create the schema, destroying previous data.
 | `create-drop`        | Drop the schema at the end of the session.
+
+Note that during a version migration where any schema has changed `create-drop` will result
+in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
+not an issue, but in cases like the audit table important data could be lost. Using `update`, while safe
+for data, is confirmed to result in invalid database state. `validate` or the undocumented `none` settings
+are likely the only safe options for production use.
 
 For more information on configuration of transaction levels and propagation behaviors,
 please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).

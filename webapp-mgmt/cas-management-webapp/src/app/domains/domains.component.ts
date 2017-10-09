@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DataSource} from '@angular/cdk/collections';
-import {MdPaginator, MdSnackBar} from '@angular/material';
+import {MatPaginator, MatSnackBar} from '@angular/material';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
@@ -25,12 +25,12 @@ export class DomainsComponent implements OnInit {
   dataSource: DomainDataSource | null;
   selectedItem: String;
 
-  @ViewChild(MdPaginator) paginator: MdPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public messages: Messages,
               private router: Router,
               private domainService: DomainService,
-              public snackBar: MdSnackBar,
+              public snackBar: MatSnackBar,
               private location: Location) { }
 
   ngOnInit() {
@@ -83,7 +83,7 @@ export class DomainDataSource extends DataSource<any> {
   get filter(): string { return this._filterChange.value; }
   set filter(filter: string) { this._filterChange.next(filter); }
 
-  constructor(private _domainDatabase: DomainDatabase, private _paginator: MdPaginator) {
+  constructor(private _domainDatabase: DomainDatabase, private _paginator: MatPaginator) {
     super();
   }
 

@@ -16,12 +16,13 @@ import {
 import {OAuthRegisteredService, OidcRegisteredService} from "../../domain/oauth-service";
 import {SamlRegisteredService} from "../../domain/saml-service";
 import {WSFederationRegisterdService} from "../../domain/wsed-service";
-import {MdSnackBar, MdTabGroup} from "@angular/material";
+import {MatSnackBar, MatTabGroup} from "@angular/material";
 import {GrouperRegisteredServiceAccessStrategy} from "../../domain/access-strategy";
 
 enum Tabs {
   BASICS,
   TYPE,
+  CONTACTS,
   LOGOUT,
   ACCESS_STRATEGY,
   MULTIFACTOR,
@@ -45,7 +46,7 @@ export class FormComponent implements OnInit {
   path: String;
 
   @ViewChild('tabGroup')
-  tabGroup: MdTabGroup;
+  tabGroup: MatTabGroup;
 
   constructor(public messages: Messages,
               private route: ActivatedRoute,
@@ -53,7 +54,7 @@ export class FormComponent implements OnInit {
               private service: FormService,
               public data: Data,
               private location: Location,
-              public snackBar: MdSnackBar) {
+              public snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -124,6 +125,8 @@ export class FormComponent implements OnInit {
           return 'oauth';
         if(this.isWsFed())
           return 'wsfed';
+      case Tabs.CONTACTS :
+        return 'contacts';
       case Tabs.LOGOUT :
         return 'logout';
       case Tabs.ACCESS_STRATEGY :
@@ -322,6 +325,14 @@ export class FormComponent implements OnInit {
         data.attributeReleasePolicy.authorizedToReleaseCredentialPassword) {
       if (!data.publicKey || !data.publicKey.location) {
         return Tabs.ADVANCED;
+      }
+    }
+
+    if (data.contacts) {
+      for (let contact of data.contacts) {
+        if (!contact.name || !contact.email) {
+          return Tabs.CONTACTS;
+        }
       }
     }
 

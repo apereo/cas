@@ -56,12 +56,42 @@ The management web application can be configured to allow anonymous access if no
 
 ## Authorization
 
-Learn how to control access to the management web application.
+Learn how to control access to the management web application. The following options describe how authorization rules for authenticated users are generated and made available to the management web application. Once roles, permissions and such are produced then the user authenticated profile that is now fully populated is compared to rules required and defined by the cas management web application for access. Essentially, the following steps execute:
+
+1. Load roles and permissions required of authenticated users to have to enter the management web application.
+2. Authenticate a given user and establish a profile.
+3. Populate profile with authorization rules that contain roles, permissions, etc.
+4. Compare the profile against required rules and permissions.
 
 ### Static List of Users
 
-By default, access is limited to a static list of users whose credentials may be
-specified in a `user-details.properties` file that should be available on the runtime classpath.
+#### Properties
+
+By default, access is limited to a static list of users whose credentials may be specified in a single properties file which is watched and monitored at runtime for changes and reloaded automatically. The format of the file which houses a list of authorized users to access the web application mimics that of Spring Security, which is:
+
+```properties
+# casuser=notused,ROLE_ADMIN
+```
+
+The format of the file is as such:
+
+- `casuser`: This is the authenticated user id received from CAS
+- `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
+- `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
+
+#### JSON & YAML
+
+File-based authorization rules may also be specified inside a single `.json` or `.yml` that maps usernames to roles and permissions. A JSON example follows:
+
+```json
+{
+  "casuser" : {
+    "@class" : "org.apereo.cas.mgmt.authz.json.UserAuthorizationDefinition",
+    "roles" : [ "ROLE_ADMIN" ],
+    "permissions" : [ "CAN_DO_XYZ" ]
+  }
+}
+```
 
 ### Attribute
 
@@ -91,3 +121,35 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-authorization).
+
+### Custom
+
+You may also decide to design your own authorization generator for the management web application:
+
+```java
+package org.apereo.cas.support;
+
+@Configuration("myConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyConfiguration {
+
+ /**
+  * Decide how roles and permissions should be stuffed into the authenticated profile.
+  */
+  @Bean
+  public AuthorizationGenerator authorizationGenerator() {
+      ...
+  }
+
+ /**
+  * Decide the profile should be compared to the required rules for access.
+  */
+  @Bean
+  public Authorizer managementWebappAuthorizer() {
+      ...
+  }
+
+}
+```
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.

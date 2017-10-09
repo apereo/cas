@@ -136,8 +136,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         String accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-            if (StringUtils.isNotBlank(authHeader)
-                    && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
+            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
                 accessToken = authHeader.substring(OAuth20Constants.BEARER_TOKEN.length() + 1);
             }
         }

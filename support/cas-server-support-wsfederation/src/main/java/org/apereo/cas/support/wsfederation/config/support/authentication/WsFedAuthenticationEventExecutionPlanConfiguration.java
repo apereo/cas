@@ -76,6 +76,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setAttributeMutator(this.attributeMutator);
         config.setAutoRedirect(wsfed.isAutoRedirect());
         config.setName(wsfed.getName());
+        config.initialize();
 
         return config;
     }

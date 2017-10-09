@@ -27,7 +27,6 @@ import org.apereo.cas.configuration.model.support.rest.RestAuthenticationPropert
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
-import org.apereo.cas.configuration.model.support.sqrl.SqrlAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
@@ -52,8 +51,6 @@ import java.util.List;
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;
-    @NestedConfigurationProperty
-    private SqrlAuthenticationProperties sqrl = new SqrlAuthenticationProperties();
     
     @NestedConfigurationProperty
     private CouchbaseAuthenticationProperties couchbase = new CouchbaseAuthenticationProperties();
@@ -494,14 +491,5 @@ public class AuthenticationProperties implements Serializable {
 
     public void setFortress(final FortressAuthenticationProperties fortress) {
         this.fortress = fortress;
-    }
-
-    public SqrlAuthenticationProperties getSqrl() {
-        return sqrl;
-    }
-
-    public void setSqrl(final SqrlAuthenticationProperties sqrl) {
-        this.sqrl = sqrl;
-
     }
 }

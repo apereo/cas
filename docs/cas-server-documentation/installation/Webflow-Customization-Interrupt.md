@@ -7,7 +7,7 @@ title: CAS - Authentication Interrupt
 
 CAS has the ability to pause and interrupt the authentication flow to reach out to external services and resources, querying for status and setings that would then dicatate how CAS should manage and control the SSO session. Interrupt services are able to present notification messages to the user, provide options for redirects to external services, etc. A common use case deals with presenting a *bulletin board* during the authentication flow to present messages and announcements to select users and then optionally require the audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
 
-In the interrupt flow, CAS is not at the moment reaching back to an external resource acting as an interrupt service to store, track or remember a user's decision. In other words, we are only dealing with the `R` in `CRUD`. Today's functionality only deals with inquiring status and reading results solely in read-only mode. Interrupt services are themselves required and encouraged to redirect the audience to external resources where execution of an action resets the interrupt status thereby freeing CAS to proceed forward later on without having to interrupt the authentication flow again.  
+In the interrupt flow, CAS is not at the moment reaching back to an external resource acting as an interrupt service to store, track or remember a user's decision. In other words, we are only dealing with the `R` (ie. Read) in `CRUD`. Today's functionality only deals with inquiring status and reading results solely in read-only mode. Interrupt services are themselves required and encouraged to redirect the audience to external resources where execution of an action resets the interrupt status thereby freeing CAS to proceed forward later on without having to interrupt the authentication flow again.  
 
 ## Configuration
 
@@ -79,11 +79,26 @@ def run(final Object... args) {
     def attributes = args[1]
     def service = args[2]
     def logger = args[3]
-    return new InterruptResponse("Message", [link1:"google.com", link2:"yahoo.com"], false, true)
+
+    ...
+    def block = false
+    def ssoEnabled = true
+
+    return new InterruptResponse("Message", [link1:"google.com", link2:"yahoo.com"], block, ssoEnabled)
 }
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-groovy).
+
+The following parameters are passed to the script:
+
+| Parameter             | Description
+|------------------------------------------------------------------------------------------------------------------------
+| `uid`                 | Authenticated principal id.
+| `attributes`          | A map of type `Map<String, Objec>` that contains both principal and authentication attributes. 
+| `service`             | The identifier (i.e. URL) of the requesting application.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
 
 ### REST
 

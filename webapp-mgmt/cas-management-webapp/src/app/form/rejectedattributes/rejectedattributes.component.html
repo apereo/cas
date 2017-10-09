@@ -1,40 +1,40 @@
 <div>
-  <md-table [dataSource]="dataSource">
+  <mat-table [dataSource]="dataSource">
 
     <ng-container cdkColumnDef="source">
-      <md-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</md-header-cell>
-      <md-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
-        <md-form-field>
-          <input mdInput #text
+      <mat-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</mat-header-cell>
+      <mat-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
+        <mat-form-field>
+          <input matInput #text
                  [ngModel]="row.key"
                  (change)="doChange(row,$event.target.value)">
-        </md-form-field>
-      </md-cell>
+        </mat-form-field>
+      </mat-cell>
     </ng-container>
 
     <ng-container cdkColumnDef="mapped">
-      <md-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</md-header-cell>
-      <md-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
-        <md-form-field>
-          <input mdInput
+      <mat-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</mat-header-cell>
+      <mat-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
+        <mat-form-field>
+          <input matInput
                  [ngModel]="attributes[row.key]"
                  (ngModelChange)="attributes[row.key] = $event.split(',')">
-        </md-form-field>
-      </md-cell>
+        </mat-form-field>
+      </mat-cell>
     </ng-container>
 
     <ng-container cdkColumnDef="delete">
-      <md-header-cell *cdkHeaderCellDef [ngClass]="'actionWidth'"></md-header-cell>
-      <md-cell *cdkCellDef="let row" [ngClass]="'actionWidth'">
-        <button md-icon-button (click)="delete(row)"><md-icon style="font-size: medium">delete</md-icon></button>
-      </md-cell>
+      <mat-header-cell *cdkHeaderCellDef [ngClass]="'actionWidth'"></mat-header-cell>
+      <mat-cell *cdkCellDef="let row" [ngClass]="'actionWidth'">
+        <button mat-icon-button (click)="delete(row)"><mat-icon style="font-size: medium">delete</mat-icon></button>
+      </mat-cell>
     </ng-container>
 
-    <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-    <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
 
-  </md-table>
+  </mat-table>
   <div style="height:25px;padding-top: 5px;">
-    <button md-mini-fab (click)="addRow()" style="float:right;">+</button>
+    <button mat-mini-fab (click)="addRow()" style="float:right;">+</button>
   </div>
 </div>

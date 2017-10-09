@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
@@ -76,6 +77,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         JpaTicketRegistryTests.JpaTestConfiguration.class,
         RefreshAutoConfiguration.class,
+        CasCoreUtilConfiguration.class,
         CasCoreAuthenticationConfiguration.class, 
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,

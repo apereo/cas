@@ -842,7 +842,6 @@ def Map<String, List<Object>> run(final Object... args) {
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
-
 ```
 
 ### JSON
@@ -1396,6 +1395,9 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 ```
 
 ## Email Submissions
+
+To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+
 
 ```properties
 # spring.mail.host=
@@ -3434,14 +3436,6 @@ The signature location MUST BE the public key used to sign the metadata.
 # cas.samlSp.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
-## SQRL
-
-Allow CAS to authenticate accounts via SQRL. To learn more about this topic, [please review this guide](../protocol/SQRL-Protocol.html).
-
-```properties
-# cas.authn.sqrl.nutExpirationSeconds=200
-# cas.authn.sqrl.sfn=sqrl-example
-```
 
 ## OpenID Connect
 
@@ -4270,15 +4264,32 @@ The default options are avaiable for hostname verification:
 | `NONE`                  | Ignore hostname verification.
 | `DEFAULT`               | Enforce hostname verification.
 
-
 ## Service Registry
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
+
 # cas.serviceRegistry.schedule.repeatInterval=120000
 # cas.serviceRegistry.schedule.startDelay=15000
+
 # cas.serviceRegistry.initFromJson=false
+
 # cas.serviceRegistry.managementType=DEFAULT|DOMAIN
+```
+
+### Service Registry Notifications
+
+```properties
+# cas.serviceRegistry.sms.from=
+# cas.serviceRegistry.sms.text=
+# cas.serviceRegistry.sms.attributeName=phone
+
+# cas.serviceRegistry.mail.from=
+# cas.serviceRegistry.mail.text=
+# cas.serviceRegistry.mail.subject=
+# cas.serviceRegistry.mail.cc=
+# cas.serviceRegistry.mail.bcc=
+# cas.serviceRegistry.mail.attributeName=mail
 ```
 
 ### JSON Service Registry
@@ -4989,6 +5000,7 @@ The configuration of the CAS management web application is handled inside a `man
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
+# cas.mgmt.userPropertiesFile=classpath:/user-details.[json|yml]
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 
 # cas.mgmt.serverName=https://localhost:8443
@@ -5446,6 +5458,12 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ```properties
 # cas.consent.json.location=file:/etc/cas/config/consent.json
+```
+
+### Groovy Attribute Consent
+
+```properties
+# cas.consent.groovy.location=file:/etc/cas/config/consent.groovy
 ```
 
 ### JPA Attribute Consent

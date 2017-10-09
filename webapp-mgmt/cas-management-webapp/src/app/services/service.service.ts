@@ -2,7 +2,7 @@
  * Created by tschmidt on 2/13/17.
  */
 import {Injectable} from "@angular/core";
-import {ServiceViewBean} from "../../domain/service-view-bean";
+import {ServiceItem} from "../../domain/service-view-bean";
 import {Service} from "../service";
 import {Http} from "@angular/http";
 
@@ -13,16 +13,16 @@ export class ServiceViewService extends Service {
     super(http);
   }
 
-  getServices(domain: String): Promise<ServiceViewBean[]> {
-    return this.get<ServiceViewBean[]>("getServices?domain="+domain);
+  getServices(domain: String): Promise<ServiceItem[]> {
+    return this.get<ServiceItem[]>("getServices?domain=" + domain);
   }
 
   delete(id: number): Promise<String> {
-    return this.get<String>("deleteRegisteredService?id="+id);
+    return this.get<String>("deleteRegisteredService?id=" + id);
   }
 
-  updateOrder(a: ServiceViewBean, b: ServiceViewBean): Promise<String> {
-    return this.post<String>("updateOrder",[a,b]);
+  updateOrder(a: ServiceItem, b: ServiceItem): Promise<String> {
+    return this.post<String>("updateOrder",[a, b]);
   }
 
 }

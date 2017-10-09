@@ -18,7 +18,7 @@ import {SharedModule} from "../shared/shared.module";
     SharedModule
   ],
   declarations: [
-    ServicesComponent
+    ServicesComponent,
   ],
   providers: [
     ServicesResolve,

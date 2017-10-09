@@ -16,6 +16,8 @@ import {DomainsModule} from "./domains/domains.module";
 import { SearchComponent } from './search/search.component';
 import {SearchService} from "./search/SearchService";
 
+import {MATERIAL_COMPATIBILITY_MODE} from '@angular/material';
+
 
 @NgModule({
   imports: [
@@ -40,7 +42,8 @@ import {SearchService} from "./search/SearchService";
   ],
   providers: [
     Messages,
-    SearchService
+    SearchService,
+    {provide: MATERIAL_COMPATIBILITY_MODE, useValue: true}
   ],
   bootstrap: [AppComponent]
 })
