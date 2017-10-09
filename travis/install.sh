@@ -7,7 +7,7 @@ fi
 
 branchName="master"
 gradle="sudo ./gradlew"
-gradleOptions="--stacktrace --parallel --build-cache --max-workers=15 --configure-on-demand --no-daemon"
+gradleOptions="--stacktrace --parallel --build-cache --max-workers=8 --configure-on-demand --no-daemon"
 gradleBuild="bootRepackage"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
