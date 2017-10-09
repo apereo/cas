@@ -18,7 +18,6 @@ war {
 
 springBoot  {
     mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
-    executable = true
 }
 
 bootRepackage {

@@ -32,7 +32,6 @@ if (rootProject.enableJRebelAgent) {
 
 springBoot  {
     mainClass = MAIN_CLASS
-    executable = true
 }
 
 bootRepackage {
