@@ -291,6 +291,27 @@ public class SamlIdPProperties implements Serializable {
 
     public static class Response implements Serializable {
         private static final long serialVersionUID = 7200477683583467619L;
+
+        /**
+         * Indicate the type of encoding used when rendering the
+         * saml response and its signature blog.
+         */
+        public enum SignatureCredentialTypes {
+            /**
+             * DER-Encoded format.
+             */
+            BASIC,
+            /**
+             * PEM-encoded X509 format.
+             */
+            X509
+        }
+
+        /**
+         * Indicate the encoding type of the credential used when rendering the saml response.
+         */
+        private SignatureCredentialTypes credentialType = SignatureCredentialTypes.X509;
+        
         /**
          * Time unit in seconds used to skew authentication dates such
          * as valid-from and valid-until elements.
@@ -321,6 +342,14 @@ public class SamlIdPProperties implements Serializable {
          * Example: {@code attributeName->basic|uri|unspecified|custom-format-etc,...}.
          */
         private List<String> attributeNameFormats = new ArrayList<>();
+
+        public SignatureCredentialTypes getCredentialType() {
+            return credentialType;
+        }
+
+        public void setCredentialType(final SignatureCredentialTypes credentialType) {
+            this.credentialType = credentialType;
+        }
 
         public String getDefaultAuthenticationContextClass() {
             return defaultAuthenticationContextClass;

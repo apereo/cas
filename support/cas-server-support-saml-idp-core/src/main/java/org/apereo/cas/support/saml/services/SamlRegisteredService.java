@@ -97,14 +97,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
-
-    /**
-     * Signing credential type
-     */
+    
     @Column(length = 255, updatable = true, insertable = true)
-    private String signingCredentialType = "BASIC_X509";
-
-
+    private String signingCredentialType;
+    
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
     @MapKeyColumn(name = "key")
@@ -339,7 +335,6 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setSkipGeneratingSubjectConfirmationNotBefore(samlRegisteredService.skipGeneratingSubjectConfirmationNotBefore);
             setSkipGeneratingSubjectConfirmationNotOnOrAfter(samlRegisteredService.skipGeneratingSubjectConfirmationNotOnOrAfter);
             setSkipGeneratingSubjectConfirmationRecipient(samlRegisteredService.skipGeneratingSubjectConfirmationRecipient);
-
             setSigningCredentialType(samlRegisteredService.getSigningCredentialType());
 
         } catch (final Exception e) {
