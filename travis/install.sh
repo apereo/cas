@@ -36,7 +36,7 @@ else
              echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
         else
             echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-            gradleUpload="uploadArchives -x test -x check -x javadoc --offline -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+            gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
             upload="$gradle $gradleOptions $gradleUpload"
             echo $upload
             eval $upload
