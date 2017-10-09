@@ -11,14 +11,16 @@
 </div>
 
 <div *ngIf="data.service.attributeReleasePolicy.consentPolicy.enabled && !isEmpty( formData.availableAttributes )">
-  <mat-select multiple style="width:400px;padding-top:25px;"
-             i18n-placeholder="services.form.label.attrRelease.consent.excludedAttributes"
-             [placeholder]="messages.services_form_label_attrRelease_consent_excludedAttributes"
-             [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.excludedAttributes">
-    <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
-      {{ opt }}
-    </mat-option>
-  </mat-select>
+  <mat-form-field class="textInput">
+    <mat-select multiple
+                i18n-placeholder="services.form.label.attrRelease.consent.excludedAttributes"
+                [placeholder]="messages.services_form_label_attrRelease_consent_excludedAttributes"
+                [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.excludedAttributes">
+      <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-icon style="font-size: medium"
            i18n-matTooltip="services.form.tooltip.attrRelease.consent.excludedAttributes"
            [matTooltip]="messages.services_form_tooltip_attrRelease_consent_excludedAttributes">help
@@ -26,14 +28,16 @@
 </div>
 
 <div *ngIf="data.service.attributeReleasePolicy.consentPolicy.enabled && !isEmpty( formData.availableAttributes )">
-  <mat-select multiple style="width:400px;padding-top:25px;"
-             i18n-placeholder="services.form.label.attrRelease.consent.includeOnlyAttributes"
-             [placeholder]="messages.services_form_label_attrRelease_consent_includeOnlyAttributes"
-             [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.includeOnlyAttributes">
-    <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
-      {{ opt }}
-    </mat-option>
-  </mat-select>
+  <mat-form-field class="textInput">
+    <mat-select multiple
+                i18n-placeholder="services.form.label.attrRelease.consent.includeOnlyAttributes"
+                [placeholder]="messages.services_form_label_attrRelease_consent_includeOnlyAttributes"
+                [(ngModel)]="data.service.attributeReleasePolicy.consentPolicy.includeOnlyAttributes">
+      <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-icon style="font-size: medium"
            i18n-matTooltip="services.form.tooltip.attrRelease.consent.includeOnlyAttributes"
            [matTooltip]="messages.services_form_tooltip_attrRelease_consent_includeOnlyAttributes">help
