@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         MemcachedMonitorConfiguration.class,
         CasCoreUtilSerializationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/monitor.properties"})
+@DirtiesContext
 public class MemcachedMonitorTests {
 
     @Autowired
