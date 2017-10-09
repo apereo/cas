@@ -9,35 +9,38 @@
  */
 
 #consent-decisions, #no-consent-decisions {
-  display: none;
+    display: none;
 }
 
 #no-consent-decisions div {
-  margin-top: 2em;
+    margin-top: 2em;
 }
 
-#consentDecisions td.details-control {
-  cursor: pointer;
-  font-family: FontAwesome;
-  font-size: 10pt;
-  color: #337ab7;
+#consentDecisions > tbody > tr:not(.info) {
+    cursor: pointer;
 }
 
-#consentDecisions td.details-control::after {
-  content: "\f067";
-  /*content: "\002B"; - thinner plus sign */
+@media only screen and (max-width: 855px) {
+    #consentDecisions .consent-attributes td, #consentDecisions .consent-attributes th {
+        padding: 4px;
+    }
 }
 
-#consentDecisions tr.shown td.details-control::after {
-  content: "\f068";
-  /*content: "\002D"; - thinner minus sign */
+#consentDecisions .consent-attributes {
+    margin-bottom: 0;
+}
+
+#consentDecisions tr.info .btn-danger {
+    float: right;
+    padding: .5em;
+    margin: 0 .2em 1em 0;
 }
 
 #alertWrapper .btn {
-  margin-left: 1em;
+  margin: 1em 1em 0 0;
 }
 
 #logout {
-  float: right;
-  margin: 1em;
+    float: right;
+    margin: 1em;
 }

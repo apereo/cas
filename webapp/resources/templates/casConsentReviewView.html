@@ -13,16 +13,16 @@
             };
             var strings = {
                 error: /*[[#{screen.consent.review.error}]]*/,
-                success: /*[[#{screen.consent.review.success}]]*/,                
-                delete: /*[[#{screen.consent.review.delete}]]*/,
+                success: /*[[#{screen.consent.review.success}]]*/,
                 confirm: /*[[#{screen.consent.review.confirm}]]*/,
                 yes: /*[[#{screen.consent.review.yes}]]*/,
                 no: /*[[#{screen.consent.review.no}]]*/,
                 data: {
                     search: /*[[#{screen.consent.review.data.search}]]*/,
-                    zerorecords: /*[[#{screen.consent.review.data.zerorecords}]]*/,
+                    zeroRecords: /*[[#{screen.consent.review.data.zerorecords}]]*/,
                     info: /*[[#{screen.consent.review.data.info}]]*/,
-                    infofiltered: /*[[#{screen.consent.review.data.infofiltered}]]*/
+                    infoFiltered: /*[[#{screen.consent.review.data.infofiltered}]]*/,
+                    infoEmpty: /*[[#{screen.consent.review.data.infoempty}]]*/
                 }
             };
             function jqueryReady() {
@@ -55,7 +55,10 @@
                         <div id="consent-decisons">
                             <div id="alertWrapper"></div>
                             <table id="consentDecisions" class="display table table-striped table-hover">
-                                <thead/>
+                                <thead>
+                                    <th th:text="#{screen.consent.review.date}"/>
+                                    <th th:texT="#{screen.consent.review.service}"/>
+                                </thead>
                                 <tbody>
                                     <tr class="info hidden">
                                         <td class="info" colspan="3">
@@ -104,10 +107,9 @@
                                                                 </table>
                                                             </td>
                                                         </tr>
-                                                        <tr>
-                                                        </tr>
                                                     </tbody>
                                                 </table>
+                                                <button type="button" class="btn btn-danger" th:utext="#{screen.consent.review.delete}"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -115,7 +117,7 @@
                             </table>
                         </div>
                         
-                        <button type="button" name="logout" id="logout" class="btn btn-primary" th:utext="'<strong>' + #{screen.welcome.button.logout} + '</strong>'"/>
+                        <button type="button" name="logout" id="logout" class="btn btn-lg btn-primary" th:utext="#{screen.welcome.button.logout}"/>
                     </div>
                 </div>
             </div>
