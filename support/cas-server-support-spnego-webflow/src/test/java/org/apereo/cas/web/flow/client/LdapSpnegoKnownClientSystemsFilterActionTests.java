@@ -92,7 +92,7 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1381);
     }
 
     @TestConfiguration
