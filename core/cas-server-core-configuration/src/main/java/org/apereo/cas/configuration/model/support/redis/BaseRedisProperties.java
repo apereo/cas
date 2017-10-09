@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link BaseRedisProperties}.
@@ -48,6 +48,11 @@ public class BaseRedisProperties implements Serializable {
     private Pool pool;
 
     /**
+     * Redis Sentinel settings.
+     */
+    private Sentinel sentinel;
+
+    /**
      * Whether or not to activate the pool configuration.
      */
     private boolean usePool = true;
@@ -56,7 +61,7 @@ public class BaseRedisProperties implements Serializable {
      * Whether or not to use SSL for connection factory.
      */
     private boolean useSsl;
-    
+
     public int getDatabase() {
         return this.database;
     }
@@ -113,13 +118,20 @@ public class BaseRedisProperties implements Serializable {
         this.useSsl = useSsl;
     }
 
-
     public Pool getPool() {
         return this.pool;
     }
 
     public void setPool(final Pool pool) {
         this.pool = pool;
+    }
+
+    public Sentinel getSentinel() {
+        return sentinel;
+    }
+
+    public void setSentinel(final Sentinel sentinel) {
+        this.sentinel = sentinel;
     }
 
     /**
@@ -130,82 +142,93 @@ public class BaseRedisProperties implements Serializable {
         private static final long serialVersionUID = 8534823157764550894L;
 
         /**
-         * Sets the maximum number of objects to examine during each run (if any) of the idle object evictor
-         * thread. When positive, the number of tests performed for a run will be the minimum of the
-         * configured value and the number of idle instances in the pool. When negative, the number of
-         * tests performed will be ceil(getNumIdle()/ abs(getNumTestsPerEvictionRun())) which means that
-         * when the value is -n roughly one nth of the idle objects will be tested per run.
+         * Sets the maximum number of objects to examine during each run (if any) of the
+         * idle object evictor thread. When positive, the number of tests performed for
+         * a run will be the minimum of the configured value and the number of idle
+         * instances in the pool. When negative, the number of tests performed will be
+         * ceil(getNumIdle()/ abs(getNumTestsPerEvictionRun())) which means that when
+         * the value is -n roughly one nth of the idle objects will be tested per run.
          */
         private int numTestsPerEvictionRun;
 
         /**
-         * Sets the minimum amount of time an object may sit idle in the pool before it is eligible for eviction
-         * by the idle object evictor (if any - see setTimeBetweenEvictionRunsMillis(long)), with the extra
-         * condition that at least minIdle object instances remain in the pool. This setting is overridden by
-         * getMinEvictableIdleTimeMillis() (that is, if getMinEvictableIdleTimeMillis() is positive,
-         * then getSoftMinEvictableIdleTimeMillis() is ignored).
+         * Sets the minimum amount of time an object may sit idle in the pool before it
+         * is eligible for eviction by the idle object evictor (if any - see
+         * setTimeBetweenEvictionRunsMillis(long)), with the extra condition that at
+         * least minIdle object instances remain in the pool. This setting is overridden
+         * by getMinEvictableIdleTimeMillis() (that is, if
+         * getMinEvictableIdleTimeMillis() is positive, then
+         * getSoftMinEvictableIdleTimeMillis() is ignored).
          */
         private long softMinEvictableIdleTimeMillis;
 
         /**
-         * Sets the minimum amount of time an object may sit idle in the pool before it is eligible for eviction by the idle object
-         * evictor (if any - see setTimeBetweenEvictionRunsMillis(long)). When non-positive,
-         * no objects will be evicted from the pool due to idle time alone.
+         * Sets the minimum amount of time an object may sit idle in the pool before it
+         * is eligible for eviction by the idle object evictor (if any - see
+         * setTimeBetweenEvictionRunsMillis(long)). When non-positive, no objects will
+         * be evicted from the pool due to idle time alone.
          */
         private long minEvictableIdleTimeMillis;
 
         /**
-         * Returns whether the pool has LIFO (last in, first out) behaviour with respect to idle objects - always returning the most recently
-         * used object from the pool, or as a FIFO (first in, first out) queue, where the pool always returns the oldest object in the idle object pool.
+         * Returns whether the pool has LIFO (last in, first out) behaviour with respect
+         * to idle objects - always returning the most recently used object from the
+         * pool, or as a FIFO (first in, first out) queue, where the pool always returns
+         * the oldest object in the idle object pool.
          */
         private boolean lifo = true;
 
         /**
-         * Returns whether or not the pool serves threads waiting to borrow objects fairly.
-         * True means that waiting threads are served as if waiting in a FIFO queue.
+         * Returns whether or not the pool serves threads waiting to borrow objects
+         * fairly. True means that waiting threads are served as if waiting in a FIFO
+         * queue.
          */
         private boolean fairness;
 
         /**
-         * Returns whether objects created for the pool will be validated before being returned from the borrowObject() method. Validation
-         * is performed by the validateObject() method of the factory associated with the pool.
-         * If the object fails to validate, then borrowObject() will fail.
+         * Returns whether objects created for the pool will be validated before being
+         * returned from the borrowObject() method. Validation is performed by the
+         * validateObject() method of the factory associated with the pool. If the
+         * object fails to validate, then borrowObject() will fail.
          */
         private boolean testOnCreate;
 
         /**
-         * Returns whether objects borrowed from the pool will be validated before being returned from the borrowObject() method.
-         * Validation is performed by the validateObject() method of the factory associated with the pool.
-         * If the object fails to validate, it will be removed from the pool and destroyed, and a new attempt
-         * will be made to borrow an object from the pool.
+         * Returns whether objects borrowed from the pool will be validated before being
+         * returned from the borrowObject() method. Validation is performed by the
+         * validateObject() method of the factory associated with the pool. If the
+         * object fails to validate, it will be removed from the pool and destroyed, and
+         * a new attempt will be made to borrow an object from the pool.
          */
         private boolean testOnBorrow;
 
         /**
-         * Returns whether objects borrowed from the pool will be validated when they are returned to the pool
-         * via the returnObject() method. Validation is performed by the
-         * validateObject() method of the factory associated with the pool. Returning objects that fail validation
-         * are destroyed rather then being returned the pool.
+         * Returns whether objects borrowed from the pool will be validated when they
+         * are returned to the pool via the returnObject() method. Validation is
+         * performed by the validateObject() method of the factory associated with the
+         * pool. Returning objects that fail validation are destroyed rather then being
+         * returned the pool.
          */
         private boolean testOnReturn;
 
         /**
-         * Returns whether objects sitting idle in the pool will be validated by the idle object evictor (
-         * if any - see setTimeBetweenEvictionRunsMillis(long)). Validation is
-         * performed by the validateObject() method of the factory associated with the pool. If the object fails
-         * to validate, it will be removed from the pool and destroyed.
+         * Returns whether objects sitting idle in the pool will be validated by the
+         * idle object evictor ( if any - see setTimeBetweenEvictionRunsMillis(long)).
+         * Validation is performed by the validateObject() method of the factory
+         * associated with the pool. If the object fails to validate, it will be removed
+         * from the pool and destroyed.
          */
         private boolean testWhileIdle;
 
         /**
-         * Max number of "idle" connections in the pool. Use a negative value to indicate
-         * an unlimited number of idle connections.
+         * Max number of "idle" connections in the pool. Use a negative value to
+         * indicate an unlimited number of idle connections.
          */
         private int maxIdle = 8;
 
         /**
-         * Target for the minimum number of idle connections to maintain in the pool. This
-         * setting only has an effect if it is positive.
+         * Target for the minimum number of idle connections to maintain in the pool.
+         * This setting only has an effect if it is positive.
          */
         private int minIdle;
 
@@ -324,6 +347,40 @@ public class BaseRedisProperties implements Serializable {
 
         public void setMinEvictableIdleTimeMillis(final long minEvictableIdleTimeMillis) {
             this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+        }
+    }
+
+    /**
+     * Redis sentinel properties.
+     */
+    public static class Sentinel implements Serializable {
+
+        private static final long serialVersionUID = 5434823157764550831L;
+
+        /**
+         * Name of Redis server.
+         */
+        private String master;
+
+        /**
+         * list of host:port pairs.
+         */
+        private List<String> node;
+
+        public String getMaster() {
+            return this.master;
+        }
+
+        public void setMaster(final String master) {
+            this.master = master;
+        }
+
+        public List<String> getNode() {
+            return node;
+        }
+
+        public void setNode(final List<String> node) {
+            this.node = node;
         }
     }
 
