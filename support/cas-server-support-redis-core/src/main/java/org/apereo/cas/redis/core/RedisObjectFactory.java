@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
@@ -29,10 +28,8 @@ public class RedisObjectFactory {
      * @return the redis connection factory
      */
     public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
-
         final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig(redis) : new JedisPoolConfig();
-        final RedisSentinelConfiguration sentinelConfig = potentiallyGetSentinelConfig(redis);
-        final JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig, poolConfig);
+        final JedisConnectionFactory factory = new JedisConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
         factory.setHostName(redis.getHost());
         factory.setPort(redis.getPort());
         if (redis.getPassword() != null) {

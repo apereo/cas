@@ -130,7 +130,7 @@ public class BaseRedisProperties implements Serializable {
         return sentinel;
     }
 
-    public void setSentinel(Sentinel sentinel) {
+    public void setSentinel(final Sentinel sentinel) {
         this.sentinel = sentinel;
     }
 
@@ -371,7 +371,7 @@ public class BaseRedisProperties implements Serializable {
             return this.master;
         }
 
-        public void setMaster(String master) {
+        public void setMaster(final String master) {
             this.master = master;
         }
 
