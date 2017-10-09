@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -35,8 +37,9 @@ import static org.junit.Assert.*;
         CasCoreUtilConfiguration.class,
         JpaServiceRegistryConfiguration.class,
         CasCoreServicesConfiguration.class})
+@DirtiesContext
 public class JpaServiceRegistryDaoImplTests {
-
+    
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
@@ -197,6 +200,7 @@ public class JpaServiceRegistryDaoImplTests {
         final RegisteredService r2 = this.servicesManager.save(r);
         RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
+        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 1100);
         Thread.sleep(1100);
         svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
