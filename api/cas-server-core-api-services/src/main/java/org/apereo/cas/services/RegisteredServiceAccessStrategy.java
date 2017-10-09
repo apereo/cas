@@ -23,14 +23,18 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      *
      * @return true /false if service is enabled
      */
-    boolean isServiceAccessAllowed();
+    default boolean isServiceAccessAllowed() {
+        return true;
+    }
 
     /**
      * Assert that the service can participate in sso.
      *
      * @return true /false if service can participate in sso
      */
-    boolean isServiceAccessAllowedForSso();
+    default boolean isServiceAccessAllowedForSso() {
+        return true;
+    }
 
     /**
      * Verify authorization policy by checking the pre-configured rules
@@ -56,7 +60,9 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      *                   given they may be coming from a source external to the principal itself. (Cached principal attributes, etc)
      * @return true /false if service access can be granted to principal
      */
-    boolean doPrincipalAttributesAllowServiceAccess(String principal, Map<String, Object> attributes);
+    default boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
+        return true;
+    }
 
     /**
      * Redirect the request to a separate and possibly external URL
@@ -67,7 +73,9 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * @return the redirect url
      * @since 4.2
      */
-    URI getUnauthorizedRedirectUrl();
+    default URI getUnauthorizedRedirectUrl() {
+        return null;
+    }
 
     @Override
     default int getOrder() {
@@ -77,7 +85,8 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     /**
      * Sets service access allowed.
      *
-     * @param value the value
+     * @param enabled the value
      */
-    void setServiceAccessAllowed(boolean value);
+    default void setServiceAccessAllowed(final boolean enabled) {
+    }
 }
