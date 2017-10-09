@@ -4873,6 +4873,11 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 # cas.ticket.registry.redis.pool.testOnReturn=false
 # cas.ticket.registry.redis.pool.testWhileIdle=false
 
+# cas.ticket.registry.redis.sentinel.master=mymaster
+# cas.ticket.registry.redis.sentinel.node[0]=localhost:26379
+# cas.ticket.registry.redis.sentinel.node[1]=localhost:26380
+# cas.ticket.registry.redis.sentinel.node[2]=localhost:26381
+
 # cas.ticket.registry.redis.crypto.signing.key=
 # cas.ticket.registry.redis.crypto.signing.keySize=512
 # cas.ticket.registry.redis.crypto.encryption.key=

@@ -1,9 +1,8 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link BaseRedisProperties}.
@@ -51,7 +50,7 @@ public class BaseRedisProperties implements Serializable {
     /**
      * Redis Sentinel settings.
      */
-    private RedisProperties.Sentinel sentinel;
+    private Sentinel sentinel;
 
     /**
      * Whether or not to activate the pool configuration.
@@ -128,11 +127,11 @@ public class BaseRedisProperties implements Serializable {
         this.pool = pool;
     }
 
-    public RedisProperties.Sentinel getSentinel() {
+    public Sentinel getSentinel() {
 		return sentinel;
 	}
 
-	public void setSentinel(RedisProperties.Sentinel sentinel) {
+	public void setSentinel(Sentinel sentinel) {
 		this.sentinel = sentinel;
 	}
 
@@ -342,25 +341,34 @@ public class BaseRedisProperties implements Serializable {
     }
     
     /**
-     * Sentinel properties.
+     * Redis sentinel properties.
      */
-    public static class Sentinel {
+    public static class Sentinel implements Serializable {
+    	
+    	private static final long serialVersionUID = 5434823157764550831L;
+    	
+    	/**
+		 * Name of Redis server.
+		 */
         private String master;
-        private String nodes;
-        public Sentinel() {
-        }
+        
+        /**
+		 * list of host:port pairs.
+		 */
+        private List<String> node;
+        
         public String getMaster() {
             return this.master;
         }
         public void setMaster(String master) {
             this.master = master;
         }
-        public String getNodes() {
-            return this.nodes;
-        }
-        public void setNodes(String nodes) {
-            this.nodes = nodes;
-        }
-    }
+		public List<String> getNode() {
+			return node;
+		}
+		public void setNode(final List<String> node) {
+			this.node = node;
+		}
+	}
 
 }
