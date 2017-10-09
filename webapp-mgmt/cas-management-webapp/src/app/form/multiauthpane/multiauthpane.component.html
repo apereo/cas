@@ -1,5 +1,6 @@
 <div>
-    <mat-select multiple style="padding-top:25px;padding-bottom: 25px;width: 500px;"
+  <mat-form-field class="textInput">
+    <mat-select multiple
            i18n-placeholder="services.form.label.multiauth.providers"
            [placeholder]="messages.services_form_label_multiauth_providers"
            [(ngModel)]="data.service.multifactorPolicy.multifactorAuthenticationProviders">
@@ -7,6 +8,7 @@
         {{ opt.value }}
       </mat-option>
     </mat-select>
+  </mat-form-field>
   <mat-icon style="font-size: medium"
            i18n-matTooltip="services.form.tooltip.multiauth_providers"
            [matTooltip]="messages.services_form_tooltip_multiauth_providers">help
@@ -14,14 +16,15 @@
 </div>
 
 <div>
-  <mat-select style="width:400px;padding-top:25px;padding-bottom:25px;"
-             i18n-placeholder="services.form.label.multiauth.failuremode"
-             [placeholder]="messages.services_form_label_multiauth_failuremode"
-             [(ngModel)]="data.service.multifactorPolicy.failureMode">
-    <mat-option *ngFor="let opt of failureModes" [value]="opt">
-      {{ opt }}
-    </mat-option>
-  </mat-select>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.multiauth.failuremode"
+                [placeholder]="messages.services_form_label_multiauth_failuremode"
+                [(ngModel)]="data.service.multifactorPolicy.failureMode">
+      <mat-option *ngFor="let opt of failureModes" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-icon style="font-size: medium"
            i18n-matTooltip="services.form.tooltip.multiauth.failuremode"
            [matTooltip]="messages.services_form_tooltip_multiauth_failuremode">help
