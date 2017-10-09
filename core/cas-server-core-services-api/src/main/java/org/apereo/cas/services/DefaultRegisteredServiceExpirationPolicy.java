@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * This is {@link DefaultRegisteredServiceExpirationPolicy}.
@@ -33,12 +34,26 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
     }
 
     public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
+                                                    final String expirationDate) {
+        this(deleteWhenExpired, false, expirationDate);
+    }
+
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
                                                     final LocalDate expirationDate) {
         this(deleteWhenExpired, false, expirationDate.toString());
     }
 
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
+                                                    final LocalDateTime expirationDate) {
+        this(deleteWhenExpired, false, expirationDate.toString());
+    }
+
+    public DefaultRegisteredServiceExpirationPolicy(final LocalDateTime expirationDate) {
+        this(true, expirationDate);
+    }
+
     public DefaultRegisteredServiceExpirationPolicy(final LocalDate expirationDate) {
-        this(true, false, expirationDate.toString());
+        this(true, expirationDate.toString());
     }
 
     @Override

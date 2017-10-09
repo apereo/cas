@@ -223,7 +223,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             throws AuthenticationException, AbstractTicketException {
 
         AuthenticationCredentialsLocalBinder.bindCurrent(authenticationResult.getAuthentication());
-
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {

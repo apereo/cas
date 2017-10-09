@@ -1396,6 +1396,9 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 ## Email Submissions
 
+To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+
+
 ```properties
 # spring.mail.host=
 # spring.mail.port=
@@ -3048,6 +3051,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.response.defaultAuthenticationContextClass=
 # cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
+# cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 
@@ -4261,15 +4265,32 @@ The default options are avaiable for hostname verification:
 | `NONE`                  | Ignore hostname verification.
 | `DEFAULT`               | Enforce hostname verification.
 
-
 ## Service Registry
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
+
 # cas.serviceRegistry.schedule.repeatInterval=120000
 # cas.serviceRegistry.schedule.startDelay=15000
+
 # cas.serviceRegistry.initFromJson=false
+
 # cas.serviceRegistry.managementType=DEFAULT|DOMAIN
+```
+
+### Service Registry Notifications
+
+```properties
+# cas.serviceRegistry.sms.from=
+# cas.serviceRegistry.sms.text=
+# cas.serviceRegistry.sms.attributeName=phone
+
+# cas.serviceRegistry.mail.from=
+# cas.serviceRegistry.mail.text=
+# cas.serviceRegistry.mail.subject=
+# cas.serviceRegistry.mail.cc=
+# cas.serviceRegistry.mail.bcc=
+# cas.serviceRegistry.mail.attributeName=mail
 ```
 
 ### JSON Service Registry
@@ -4332,6 +4353,9 @@ To learn more about this topic, [please review this guide](Redis-Service-Managem
 # cas.serviceRegistry.redis.pool.testOnBorrow=false
 # cas.serviceRegistry.redis.pool.testOnReturn=false
 # cas.serviceRegistry.redis.pool.testWhileIdle=false
+
+# cas.serviceRegistry.redis.sentinel.master=mymaster
+# cas.serviceRegistry.redis.sentinel.nodes=localhost:26379,localhost:26380,localhost:26381
 ```
 
 ### DynamoDb Service Registry
@@ -4869,6 +4893,11 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 # cas.ticket.registry.redis.pool.testOnBorrow=false
 # cas.ticket.registry.redis.pool.testOnReturn=false
 # cas.ticket.registry.redis.pool.testWhileIdle=false
+
+# cas.ticket.registry.redis.sentinel.master=mymaster
+# cas.ticket.registry.redis.sentinel.node[0]=localhost:26379
+# cas.ticket.registry.redis.sentinel.node[1]=localhost:26380
+# cas.ticket.registry.redis.sentinel.node[2]=localhost:26381
 
 # cas.ticket.registry.redis.crypto.signing.key=
 # cas.ticket.registry.redis.crypto.signing.keySize=512
@@ -5438,6 +5467,12 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ```properties
 # cas.consent.json.location=file:/etc/cas/config/consent.json
+```
+
+### Groovy Attribute Consent
+
+```properties
+# cas.consent.groovy.location=file:/etc/cas/config/consent.groovy
 ```
 
 ### JPA Attribute Consent

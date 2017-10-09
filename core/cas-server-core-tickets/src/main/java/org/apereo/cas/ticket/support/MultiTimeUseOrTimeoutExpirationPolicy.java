@@ -79,9 +79,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         final ZonedDateTime expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
 
         if (systemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Ticket has expired because the difference between current time [{}] "
-                            + "and ticket time [{}] is greater than or equal to [{}]. Ticket has expired", systemTime, lastTimeUsed,
-                    this.timeToKillInSeconds);
+            LOGGER.debug("Ticket has expired because the difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
+                    systemTime, lastTimeUsed, this.timeToKillInSeconds);
             return true;
         }
         return false;

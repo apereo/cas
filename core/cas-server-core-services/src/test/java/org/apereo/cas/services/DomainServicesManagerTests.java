@@ -8,7 +8,10 @@ import static org.mockito.Mockito.*;
  * @author Travis Schmidt
  * @since 5.2.0
  */
-public class DomainServicesManagerTests extends BaseServicesManagerTests {
+public class DomainServicesManagerTests extends AbstractServicesManagerTests {
+    public DomainServicesManagerTests() {
+        super();
+    }
 
     @Override
     protected ServicesManager getServicesManagerInstance() {

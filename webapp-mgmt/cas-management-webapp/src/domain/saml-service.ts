@@ -14,6 +14,7 @@ export class SamlRegisteredService extends RegexRegisteredService {
   metadataExpirationDuration: String;
   signAssertions: boolean;
   signResponses: boolean;
+  signingCredentialType: String;
   encryptAssertions: boolean;
   metadataCriteriaRoles: String;
   metadataCriteriaRemoveEmptyEntitiesDescriptors: boolean;
@@ -33,6 +34,7 @@ export class SamlRegisteredService extends RegexRegisteredService {
     this.metadataExpirationDuration = "PT60M";
     this.metadataCriteriaRoles = "SPSSODescriptor";
     this.signResponses = true;
+    this.signingCredentialType = "BASIC_X509";
     this.metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
     this.metadataCriteriaRemoveRolelessEntityDescriptors = true;
     this.skipGeneratingSubjectConfirmationNotBefore = true;

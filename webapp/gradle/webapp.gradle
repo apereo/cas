@@ -9,9 +9,6 @@ def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 description = "Apereo CAS Web Application"
 mainClassName = MAIN_CLASS
 
-distZip.enabled = false
-distTar.enabled = false
-
 sourceSets {
     main {
         resources {
@@ -28,9 +25,13 @@ if (rootProject.enableJRebelAgent) {
     war.dependsOn(generateRebel)
 }
 
+[distZip, distTar].each { task -> configurations.archives.artifacts.removeAll
+        { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
+    task.enabled = false
+}
+
 springBoot  {
     mainClass = MAIN_CLASS
-    executable = true
 }
 
 bootRepackage {
