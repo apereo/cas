@@ -19,6 +19,8 @@ This registry stores tickets in one or more [Redis](http://redis.io/) instances.
 [spring data redis](http://projects.spring.io/spring-data-redis/) library used by this component presents Redis as a
 key/value store that accepts `String` keys and CAS ticket objects as values. The key is started with `CAS_TICKET:`.
 
+The Redis ticket registry supports Redis Sentinel, which provides high availability for Redis. In practical terms this means that using Sentinel you can create a Redis deployment that resists without human intervention to certain kind of failures. Redis Sentinel also provides other collateral tasks such as monitoring, notifications and acts as a configuration provider for clients.
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#redis-ticket-registry).
