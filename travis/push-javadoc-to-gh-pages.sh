@@ -16,12 +16,10 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$PUBLISH_SNAPSHOTS" == "false" ] 
   esac
 fi
 
-echo -e "Starting with project documentation...\n"
 if [ "$invokeDoc" == true ]; then
   echo -e "Copying project documentation over to $HOME/docs-latest...\n"
   cp -R docs/cas-server-documentation $HOME/docs-latest
 fi
-echo -e "Finished with project documentation...\n"
 
 if [[ "$invokeDoc" == true ]]; then
 
@@ -88,5 +86,4 @@ if [[ "$invokeDoc" == true ]]; then
   git push -fq origin --all > /dev/null
 
   echo -e "Successfully published documentation.\n"
-
 fi

@@ -23,14 +23,14 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDuoMultifactorAuthenticationProvider.class);
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private final DuoAuthenticationService duoAuthenticationService;
+    private final DuoSecurityAuthenticationService duoAuthenticationService;
 
-    public DefaultDuoMultifactorAuthenticationProvider(final DuoAuthenticationService duoAuthenticationService) {
+    public DefaultDuoMultifactorAuthenticationProvider(final DuoSecurityAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
     }
 
     @Override
-    public DuoAuthenticationService getDuoAuthenticationService() {
+    public DuoSecurityAuthenticationService getDuoAuthenticationService() {
         return this.duoAuthenticationService;
     }
 
