@@ -1037,6 +1037,7 @@ ext.libraries = [
                     exclude(group: "org.glassfish.jersey.core", module: "oauth2-client")
                     exclude(group: "org.glassfish.jersey.core", module: "jersey-common")
                     exclude(group: "org.glassfish.jersey.core", module: "jersey-client")
+                    exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "javax.xml.bind", module: "jaxb-api")
                     exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
                     exclude(group: "com.google.guava", module: "guava")
