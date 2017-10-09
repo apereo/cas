@@ -23,11 +23,12 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisObjectFactory {
 
 	/**
-     * New redis connection factory.
-     *
-     * @param redis the redis
-     * @return the redis connection factory
-     */
+	 * New redis connection factory.
+	 *
+	 * @param redis
+	 *            the redis
+	 * @return the redis connection factory
+	 */
 	public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
 
 		final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig(redis) : new JedisPoolConfig();
