@@ -193,6 +193,10 @@ export class Messages {
  readonly services_form_label_oidc_subject_type = "Subject Type";
  readonly services_form_label_oidc_sector_identifier_uri = "Sector Identifier URI";
 
+ readonly services_form_label_expirationPolicy_expirationDate = "Expiration Date";
+ readonly services_form_label_expirationPolicy_deleteWhenExpired = "Delete service when expired";
+ readonly services_form_label_expirationPolicy_notifyWhenDeleted = "Notfiy contacts when service deleted";
+
  readonly services_form_header_page_addService = "Add Service";
  readonly services_form_header_page_editService = "Edit Service";
  readonly services_form_header_oauthOptions = "OAuth Client Options Only";
@@ -331,6 +335,10 @@ export class Messages {
  readonly services_form_tooltip_oidc_user_defined_scopes = "List any custom defined scopes that should be released."
  readonly services_form_tooltip_oidc_subject_type = "Type to use when generating principal identifiers. Default is public."
  readonly services_form_tooltip_oidc_sector_identifier_uri = "Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the serviceId will be used instead."
+
+ readonly services_form_tooltip_expirationPolicy_expirationDate = "The date on which the registration record is deemed expired. The expiration date may be specified in 2011-12-03T10:15:30, 09/24/1980 04:30 PM, 09/24/2014 6:30 AM, 09/24/2013 18:45, 09/24/2017 or 2017-10-25 formats.";
+ readonly services_form_tooltip_expirationPolicy_deleteWhenExpired = "When true, removes the application from the CAS service registry if and when expired. Otherwise the application record will be marked as disabled.";
+ readonly services_form_tooltip_expirationPolicy_notifyWhenDeleted = "Notifies contacts of the application via email or text, assuming valid contacts with email addresses or phone numbers are defined and CAS is configured to send email messages or SMS notifications. The notification is only sent if the application is expired and is about to be deleted from the registry.";
 
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy = "Decides how attributes that are retrieved from the cache "+
     "should be merged into the existing attribute repository. Attributes may be replaced, ignored or contain multiple " +

@@ -64,6 +64,8 @@ import { AttributeReleaseConsentComponent } from './attribute-release-consent/at
 import { SurrogateComponent } from './access-strategy/surrogate/surrogate.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { TabContactsComponent } from './tab-contacts/tab-contacts.component';
+import { ExpirationComponent } from './expiration/expiration.component';
+import { TabExpirationComponent } from './tab-expiration/tab-expiration.component';
 
 @NgModule({
   imports: [
@@ -131,6 +133,8 @@ import { TabContactsComponent } from './tab-contacts/tab-contacts.component';
     SurrogateComponent,
     ContactsComponent,
     TabContactsComponent,
+    ExpirationComponent,
+    TabExpirationComponent,
   ],
   providers: [
     FormResolve,
