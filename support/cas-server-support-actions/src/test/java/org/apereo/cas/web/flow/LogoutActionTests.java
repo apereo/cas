@@ -13,6 +13,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -54,7 +55,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
         when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap());
 
-        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry());
+        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(), mock(ApplicationEventPublisher.class));
         this.serviceManager.load();
     }
 

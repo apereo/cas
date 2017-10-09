@@ -7,7 +7,8 @@
         /*<![CDATA[*/
 
         var urls = {
-            resolveAttributes: /*[[@{/status/attrresolution/resolveattrs}]]*/
+            resolveAttributes: /*[[@{/status/attrresolution/resolveattrs}]]*/,
+            releaseAttributes: /*[[@{/status/attrresolution/releaseattrs}]]*/
         };
 
         /*]]>*/
@@ -16,7 +17,7 @@
 
         function jqueryReady() {
             head.load(
-                    /*[[@{/js/attrresolution.js}]]*/
+                /*[[@{/js/attrresolution.js}]]*/
             );
         }
     </script>
@@ -24,50 +25,138 @@
 
 <body id="cas">
 <div layout:fragment="content">
-    <h1 th:text="#{cas.attrresolutionview.pagetitle}"/>
-    <p>
-    <p>Allow CAS to execute a query against configured attribute repositories to determine the set of attributes that may be retrieved and resolved for a 
-    given user. Note that this functionality is only productive if CAS is configured to <strong>NOT</strong> directly retrieve attributes as part of the 
-    authentication attempt.
-    <p/>
-    
-    <div class="box fl-panel" id="login">
-        
-        <form method="post" id="fm1" class="fm-v clearfix">
-            <div class="row fl-controls-left">
-                <label for="uid" class="fl-label" th:utext="#{cas.attrresolutionview.label.uid}"/>
-                <input type="text" class="required"
-                       size="35"
-                       tabindex="0"
-                       id="uid"
-                       name="uid"
-                       autocomplete="off"/>
-                <div>
-                    <p/>
-                </div>
-                <input class="btn btn-success"
-                       name="_eventId_submit"
-                       accesskey="l"
-                       th:value="#{cas.attrresolutionview.button.submit}"
-                       tabindex="1"
-                       type="submit"/>
-            </div>
-        </form>
-        <div class="alert alert-info" id="status"></div>
-        <table id="attributesTable" class="display table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Attribute</th>
-                <th>Value(s)</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
 
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#attributeResolutionPanel" th:text="#{cas.attrresolutionview.pagetitle}"/></li>
+        <li><a data-toggle="tab" href="#attributeReleasePanel" th:text="#{cas.attrreleaseview.pagetitle}"/></li>
+    </ul>
+
+    <div class="tab-content clearfix">
+        <div class="tab-pane active" id="attributeResolutionPanel">
+            <h1 th:text="#{cas.attrresolutionview.pagetitle}"/>
+            <p>
+            <p>Allow CAS to execute a query against configured attribute repositories to determine the set of attributes that may be retrieved and resolved for
+                a
+                given user. Note that this functionality is only productive if CAS is configured to <strong>NOT</strong> directly retrieve attributes as part of
+                the
+                authentication attempt.
+            <p/>
+
+            <div class="box fl-panel" id="login">
+
+                <form method="post" id="fm1" class="fm-v clearfix">
+                    <div class="row fl-controls-left">
+                        <label for="uid" class="fl-label" th:utext="#{cas.attrresolutionview.label.uid}"/>
+                        <input type="text" class="required"
+                               size="35"
+                               tabindex="0"
+                               id="uid"
+                               name="uid"
+                               autocomplete="off"/>
+                        <div>
+                            <p/>
+                        </div>
+                        <input class="btn btn-success"
+                               name="_eventId_submit"
+                               accesskey="l"
+                               th:value="#{cas.attrresolutionview.button.submit}"
+                               tabindex="1"
+                               type="submit"/>
+                    </div>
+                </form>
+                <div class="alert alert-info" id="status"></div>
+                <table id="attributesTable" class="display table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Value(s)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="tab-pane" id="attributeReleasePanel">
+            <h1 th:text="#{cas.attrreleaseview.pagetitle}"/>
+            <p>
+            <p>Allow CAS to determine the collection of attributes that will be released to a given application. The application will be matched against the
+                CAS service registry to find the corresponding record whose associated policies determine released attributes, etc.
+            <p/>
+
+            <div class="box fl-panel" id="login">
+                <form method="post" id="fmrel" class="fm-v clearfix">
+                    <div class="row fl-controls-left">
+                        <label for="username" class="fl-label">Username:</label>
+                        <input type="text" class="required"
+                               size="35"
+                               tabindex="0"
+                               id="username"
+                               name="username"
+                               placeholder="Username..."
+                               autocomplete="off"/>
+                        <label for="password" class="fl-label">Password:</label>
+                        <input type="password" class="required"
+                               size="35"
+                               tabindex="0"
+                               id="password"
+                               name="password"
+                               placeholder="Password..."
+                               autocomplete="off"/>
+                        <label for="service" class="fl-label">Service:</label>
+                        <input type="text" class="required"
+                               size="35"
+                               tabindex="0"
+                               id="service"
+                               name="service"
+                               placeholder="Application URL (i.e. https://app.example.org)"
+                               autocomplete="off"/>
+                        <div>
+                            <p/>
+                        </div>
+                        <input class="btn btn-success"
+                               name="_eventId_submit"
+                               accesskey="l"
+                               th:value="#{cas.attrresolutionview.button.submit}"
+                               tabindex="1"
+                               type="submit"/>
+                    </div>
+                </form>
+
+                <div id="validationresult">
+                    <h3>Response</h3>
+                    <div id="validationresponse"></div>
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#cas1">CAS v1</a></li>
+                        <li><a data-toggle="tab" href="#cas2">CAS v2</a></li>
+                        <li><a data-toggle="tab" href="#cas3Xml">CAS v3 XML</a></li>
+                        <li><a data-toggle="tab" href="#cas3Json">CAS v3 JSON</a></li>
+                        <li><a data-toggle="tab" href="#serviceJson">Service</a></li>
+                    </ul>
+
+                    <div class="tab-content clearfix">
+                        <div class="tab-pane active" id="cas1">
+                        </div>
+                        <div class="tab-pane" id="cas2">
+                        </div>
+                        <div class="tab-pane" id="cas3Xml">
+                        </div>
+                        <div class="tab-pane" id="cas3Json">
+                        </div>
+                        <div class="tab-pane" id="serviceJson">
+                        </div>
+                    </div>
+                </div>
+                <p/>
+            </div>
+        </div>
     </div>
 
-    <div th:replace="fragments/footerButtons"/>
+    <div>
+        <div th:replace="fragments/footerButtons"/>
+    </div>
 </div>
 </body>
 </html>

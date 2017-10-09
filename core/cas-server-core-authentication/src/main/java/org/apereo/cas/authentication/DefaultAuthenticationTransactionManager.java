@@ -19,9 +19,9 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    
+
     private final AuthenticationManager authenticationManager;
-    
+
     public DefaultAuthenticationTransactionManager(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
@@ -29,7 +29,7 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
     @Override
     public AuthenticationTransactionManager handle(final AuthenticationTransaction authenticationTransaction,
                                                    final AuthenticationResultBuilder authenticationResult)
-                                                    throws AuthenticationException {
+            throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);

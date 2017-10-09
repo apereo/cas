@@ -1,28 +1,28 @@
 
 <div>
-  <md-form-field class="textInput">
-    <input mdInput [required]="data.service.usernameAttributeProvider.encryptUserName ||
+  <mat-form-field class="textInput">
+    <input matInput [required]="data.service.usernameAttributeProvider.encryptUserName ||
                                data.service.attributeReleasePolicy.authorizedToReleaseCredentialPassword ||
                                data.service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket"
            i18n-placeholder="services.form.label.pubKey.location"
            [placeholder]="messages.services_form_label_pubKey_location"
            [(ngModel)]="data.service.publicKey.location">
-  </md-form-field>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.pubKey.location"
-           [mdTooltip]="messages.services_form_tooltip_pubKey_location">help
-  </md-icon>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.pubKey.location"
+           [matTooltip]="messages.services_form_tooltip_pubKey_location">help
+  </mat-icon>
 </div>
 
 <div>
-  <md-select style="width: 400px;padding-top:25px;"
+  <mat-select style="width: 400px;padding-top:25px;"
              i18n-placeholder="services.form.label.pubKey.algorithm"
              [placeholder]="messages.services_form_label_pubKey_algorithm"
              [(ngModel)]="data.service.publicKey.algorithm">
-    <md-option value="RSA">RSA</md-option>
-  </md-select>
-  <md-icon style="font-size: medium"
-           i18n-mdTooltip="services.form.tooltip.pubKey.algorithm"
-           [mdTooltip]="messages.services_form_tooltip_pubKey_algorithm">help
-  </md-icon>
+    <mat-option value="RSA">RSA</mat-option>
+  </mat-select>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.pubKey.algorithm"
+           [matTooltip]="messages.services_form_tooltip_pubKey_algorithm">help
+  </mat-icon>
 </div>

@@ -11,6 +11,7 @@ import {Data} from "../../data";
 export class RemoteComponent implements OnInit {
 
   accessStrategy: RemoteEndpointServiceAccessStrategy;
+  codes = ["100","200","401","403","404","500"];
 
   constructor(public messages: Messages,
               public data: Data) {

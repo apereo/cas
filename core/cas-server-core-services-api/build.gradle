@@ -5,6 +5,7 @@ dependencies {
     
     compileOnly project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-configuration")
 
     implementation libraries.groovy
     implementation libraries.bouncycastle
