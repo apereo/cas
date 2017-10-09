@@ -84,11 +84,11 @@ public class RedisObjectFactory {
     }
 
     private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
-        List<RedisNode> redisNodes = new ArrayList<RedisNode>();
+        final List<RedisNode> redisNodes = new ArrayList<RedisNode>();
         if (redis.getSentinel().getNode() != null) {
-            List<String> nodes = redis.getSentinel().getNode();
-            for (String hostAndPort : nodes) {
-                String[] args = StringUtils.split(hostAndPort, ":");
+            final List<String> nodes = redis.getSentinel().getNode();
+            for (final String hostAndPort : nodes) {
+                final String[] args = StringUtils.split(hostAndPort, ":");
                 redisNodes.add(new RedisNode(args[0], Integer.valueOf(args[1])));
             }
         }
