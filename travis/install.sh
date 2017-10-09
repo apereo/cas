@@ -15,6 +15,9 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     else
         echo -e "The build indicates that tests along with coveralls test coverage should run.\n"
         gradleBuild="$gradleBuild checkstyleTest test coveralls"
+        if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
+            gradleBuild="$gradleBuild -DshowStandardStreams=true"
+        fi
     fi
 else
     echo -e "The build indicates that tests should be skipped since we are publishing snapshots.\n"
@@ -41,5 +44,5 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANC
     fi
 fi
 
-echo -e "Gradle build finished with a exit code\n"
+echo -e "Gradle build finished with exit code $retVal\n"
 exit $retVal
