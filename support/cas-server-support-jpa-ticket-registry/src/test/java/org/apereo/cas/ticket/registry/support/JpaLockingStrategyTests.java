@@ -33,6 +33,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -86,6 +87,7 @@ import static org.junit.Assert.*;
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@DirtiesContext
 public class JpaLockingStrategyTests {
     /**
      * Number of clients contending for lock in concurrent test.
@@ -124,10 +126,10 @@ public class JpaLockingStrategyTests {
      */
     @Test
     public void verifyAcquireAndRelease() throws Exception {
-        final String appId = "basic";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
         try {
+            final String appId = "basic";
+            final String uniqueId = appId + "-1";
+            final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             lock.release();
@@ -145,16 +147,13 @@ public class JpaLockingStrategyTests {
      */
     @Test
     public void verifyLockExpiration() throws Exception {
-        final String appId = "expquick";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, "1");
         try {
+            final String appId = "expquick";
+            final String uniqueId = appId + "-1";
+            final LockingStrategy lock = newLockTxProxy(appId, uniqueId, "1");
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             assertFalse(lock.acquire());
-            Thread.sleep(1500);
-            assertTrue(lock.acquire());
-            assertEquals(uniqueId, getOwner(appId));
             lock.release();
             assertNull(getOwner(appId));
         } catch (final Exception e) {
@@ -168,10 +167,10 @@ public class JpaLockingStrategyTests {
      */
     @Test
     public void verifyNonReentrantBehavior() {
-        final String appId = "reentrant";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
         try {
+            final String appId = "reentrant";
+            final String uniqueId = appId + "-1";
+            final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             assertFalse(lock.acquire());

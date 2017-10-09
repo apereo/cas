@@ -60,7 +60,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1390);
     }
 
     @Before

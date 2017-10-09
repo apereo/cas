@@ -42,7 +42,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
      */
     public InMemoryTestLdapDirectoryServer(final InputStream properties,
                                            final InputStream ldifFile,
-                                           final InputStream schemaFile) {
+                                           final InputStream schemaFile,
+                                           final int port) {
         try {
 
             LOGGER.debug("Loading properties...");
@@ -69,11 +70,11 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             config.setListenerConfigs(
                     InMemoryListenerConfig.createLDAPConfig("LDAP", // Listener name
                             null, // Listen address. (null = listen on all interfaces)
-                            1389, // Listen port (0 = automatically choose an available port)
+                            port, // Listen port (0 = automatically choose an available port)
                             serverSSLUtil.createSSLSocketFactory()), // StartTLS factory
                     InMemoryListenerConfig.createLDAPSConfig("LDAPS", // Listener name
                             null, // Listen address. (null = listen on all interfaces)
-                            1636, // Listen port (0 = automatically choose an available port)
+                            0, // Listen port (0 = automatically choose an available port)
                             serverSSLUtil.createSSLServerSocketFactory(), // Server factory
                             clientSSLUtil.createSSLSocketFactory())); // Client factory
 

@@ -21,7 +21,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
 
     public static void bootstrap() throws Exception {
         try {
-            initDirectoryServer();
+            initDirectoryServer(1388);
             getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
             populateCertificateRevocationListAttribute();
         } catch (final Exception e) {

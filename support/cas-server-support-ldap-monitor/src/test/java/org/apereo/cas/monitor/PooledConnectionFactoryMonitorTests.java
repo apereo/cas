@@ -34,7 +34,7 @@ public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1383);
     }
 
     @Test
