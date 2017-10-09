@@ -66,39 +66,7 @@ user if the browser has turned off its support for cookies. This behavior is con
 
 ## Preserving Anchor Fragments
 
-Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url.
-This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
-
-### Changes to `cas.js`
-
-```javascript
-/**
- * Prepares the login form for submission by appending any URI
- * fragment (hash) to the form action in order to propagate it
- * through the re-direct (i.e. store it client side).
- * @param form The login form object.
- * @returns true to allow the form to be submitted.
- */
-function prepareSubmit(form) {
-    // Extract the fragment from the browser's current location.
-    var hash = decodeURIComponent(self.document.location.hash);
-
-    // The fragment value may not contain a leading # symbol
-    if (hash && hash.indexOf("#") === -1) {
-        hash = "#" + hash;
-    }
-
-    // Append the fragment to the current action so that it persists to the redirected URL.
-    form.action = form.action + hash;
-    return true;
-}
-```
-
-### Changes to Login Form
-
-```html
-<form method="post" id="fm1" th:object="${credential}" onsubmit="return prepareSubmit(this);">
-```
+Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url. This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking. CAS is configured by default to preserve anchor fragments where and when specified. There is nothing further for you to do.
 
 ### WebJARs for Javascript/CSS Libraries
 
