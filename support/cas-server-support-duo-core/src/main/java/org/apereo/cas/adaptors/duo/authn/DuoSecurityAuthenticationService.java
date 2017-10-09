@@ -7,12 +7,12 @@ import org.apereo.cas.authentication.Credential;
 import java.io.Serializable;
 
 /**
- * This is {@link DuoAuthenticationService}.
+ * This is {@link DuoSecurityAuthenticationService}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface DuoAuthenticationService extends Serializable {
+public interface DuoSecurityAuthenticationService extends Serializable {
 
     /**
      * Verify the authentication response from Duo.
