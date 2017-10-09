@@ -188,6 +188,22 @@
 
     <div>
       <mat-form-field class="textInput">
+        <mat-select i18n-placeholder="services.form.label.saml.signingCredentialType"
+                    [placeholder]="messages.services_form_label_saml_signingCredentialType"
+                    [(ngModel)]="service.signingCredentialType">
+          <mat-option *ngFor="let opt of credentialType" [value]="opt">
+            {{ opt }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+                i18n-matTooltip="services.form.tooltip.saml.signingCredentialType"
+                [matTooltip]="messages.services_form_tooltip_saml_signingCredentialType">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
         <input matInput
                i18n-placeholder="services.form.label.saml.metadata.pattern"
                [placeholder]="messages.services_form_label_saml_metadata_pattern"
