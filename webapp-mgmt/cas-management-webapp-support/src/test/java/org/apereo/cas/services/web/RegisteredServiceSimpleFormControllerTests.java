@@ -1,8 +1,6 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
-import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -13,11 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +40,6 @@ public class RegisteredServiceSimpleFormControllerTests {
     private RegisteredServiceSimpleFormController controller;
     private DomainServicesManager manager;
     private StubPersonAttributeDao repository;
-    private DefaultRegisteredServiceFactory registeredServiceFactory;
 
     @Before
     public void setUp() throws Exception {
@@ -52,10 +49,8 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
 
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
-
-        this.manager = new DomainServicesManager(new InMemoryServiceRegistry());
-        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
+        this.manager = new DomainServicesManager(new InMemoryServiceRegistry(), mock(ApplicationEventPublisher.class));
+        this.controller = new RegisteredServiceSimpleFormController(this.manager);
     }
 
     @Test
@@ -149,10 +144,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyAddMockRegisteredService() throws Exception {
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(
-                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
-
-        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
+        this.controller = new RegisteredServiceSimpleFormController(this.manager);
 
         final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription(DESCRIPTION);
@@ -170,10 +162,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyEditMockRegisteredService() throws Exception {
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(
-                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
-
-        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
+        this.controller = new RegisteredServiceSimpleFormController(this.manager);
 
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);

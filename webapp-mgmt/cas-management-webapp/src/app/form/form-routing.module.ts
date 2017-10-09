@@ -17,6 +17,7 @@ import {TabAdvancedComponent} from "./tab-advanced/tab-advanced.component";
 import {TabSamlComponent} from "./tab-saml/tab-saml.component";
 import {TabOauthComponent} from "./tab-oauth/tab-oauth.component";
 import {TabWsfedComponent} from "./tab-wsfed/tab-wsfed.component";
+import {TabContactsComponent} from "./tab-contacts/tab-contacts.component";
 
 @NgModule({
   imports: [
@@ -46,6 +47,11 @@ import {TabWsfedComponent} from "./tab-wsfed/tab-wsfed.component";
           {
             path: 'wsfed',
             component: TabWsfedComponent,
+            outlet: 'form'
+          },
+          {
+            path: 'contacts',
+            component: TabContactsComponent,
             outlet: 'form'
           },
           {

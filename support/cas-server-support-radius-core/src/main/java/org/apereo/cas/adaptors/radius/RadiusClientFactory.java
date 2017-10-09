@@ -17,30 +17,45 @@ public class RadiusClientFactory {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
 
-    /** The port to do accounting on. */
+    /**
+     * The port to do accounting on.
+     */
     private int accountingPort = RadiusServer.DEFAULT_PORT_ACCOUNTING;
 
-    /** The port to do authentication on. */
+    /**
+     * The port to do authentication on.
+     */
     private int authenticationPort = RadiusServer.DEFAULT_PORT_AUTHENTICATION;
 
-    /** Socket timeout in seconds. */
+    /**
+     * Socket timeout in seconds.
+     */
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
 
-    /** RADIUS server network address. */
+    /**
+     * RADIUS server network address.
+     */
     private InetAddress inetAddress;
 
-    /** The shared secret to send to the RADIUS server. */
+    /**
+     * The shared secret to send to the RADIUS server.
+     */
     private final String sharedSecret;
 
+    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final String inetAddress, final String sharedSecret) {
+        this(accountingPort, authenticationPort, DEFAULT_SOCKET_TIMEOUT, inetAddress, sharedSecret);
+    }
+
     /**
-     *
-     * @param accountingPort Sets the RADIUS server accounting port.
+     * @param accountingPort     Sets the RADIUS server accounting port.
      * @param authenticationPort Sets the RADIUS server authentication port.
-     * @param socketTimeout Sets the RADIUS server UDP socket timeout.
-     * @param inetAddress RADIUS server network address.
-     * @param sharedSecret RADIUS server authentication shared secret.
+     * @param socketTimeout      Sets the RADIUS server UDP socket timeout.
+     * @param inetAddress        RADIUS server network address.
+     * @param sharedSecret       RADIUS server authentication shared secret.
      */
-    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final int socketTimeout, final String inetAddress,
+    public RadiusClientFactory(final int accountingPort, final int authenticationPort,
+                               final int socketTimeout,
+                               final String inetAddress,
                                final String sharedSecret) {
         this.accountingPort = accountingPort;
         this.authenticationPort = authenticationPort;
@@ -60,8 +75,7 @@ public class RadiusClientFactory {
      * @throws IOException In case the transport method encounters an error.
      */
     public RadiusClient newInstance() throws IOException {
-        return new RadiusClient(
-                this.inetAddress, this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
+        return new RadiusClient(this.inetAddress, this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
     }
 
     @Override

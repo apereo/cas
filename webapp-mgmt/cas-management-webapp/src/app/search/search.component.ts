@@ -7,9 +7,9 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
-import {ServiceViewBean} from "../../domain/service-view-bean";
+import {ServiceItem} from "../../domain/service-view-bean";
 import {DataSource} from "@angular/cdk/collections";
-import {MdPaginator, MdSnackBar} from "@angular/material";
+import {MatPaginator, MatSnackBar} from "@angular/material";
 import {Messages} from "../messages";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Location} from "@angular/common";
@@ -26,14 +26,14 @@ export class SearchComponent implements OnInit {
   dataSource: ServiceDataSource | null;
   query: String;
 
-  @ViewChild(MdPaginator) paginator: MdPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public messages: Messages,
               public router: Router,
               public route: ActivatedRoute,
               public location: Location,
               private service: SearchService,
-              public snackBar: MdSnackBar) { }
+              public snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.dataSource = new ServiceDataSource(this.serviceDatabase, this.paginator);
@@ -53,20 +53,20 @@ export class SearchComponent implements OnInit {
 }
 
 export class ServiceDatabase {
-  dataChange: BehaviorSubject<ServiceViewBean[]> = new BehaviorSubject<ServiceViewBean[]>([]);
-  get data(): ServiceViewBean[] { return this.dataChange.value; }
+  dataChange: BehaviorSubject<ServiceItem[]> = new BehaviorSubject<ServiceItem[]>([]);
+  get data(): ServiceItem[] { return this.dataChange.value; }
 
   constructor() {
   }
 
-  load(services: ServiceViewBean[]) {
+  load(services: ServiceItem[]) {
     this.dataChange.next([]);
     for(let service of services) {
       this.addService(service);
     }
   }
 
-  addService(service: ServiceViewBean) {
+  addService(service: ServiceItem) {
     const copiedData = this.data.slice();
     copiedData.push(service);
     this.dataChange.next(copiedData);
@@ -77,11 +77,11 @@ export class ServiceDatabase {
 
 export class ServiceDataSource extends DataSource<any> {
 
-  constructor(private _serviceDatabase: ServiceDatabase, private _paginator: MdPaginator) {
+  constructor(private _serviceDatabase: ServiceDatabase, private _paginator: MatPaginator) {
     super();
   }
 
-  connect(): Observable<ServiceViewBean[]> {
+  connect(): Observable<ServiceItem[]> {
     const displayDataChanges = [
       this._serviceDatabase.dataChange,
       this._paginator.page,

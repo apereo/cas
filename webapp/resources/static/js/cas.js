@@ -34,14 +34,32 @@ function showGeoPosition(position) {
         + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.timestamp);
 }
 
+
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(function () {
-        var hash = decodeURIComponent(self.document.location.hash);
+        var location = self.document.location;
+        var hash = decodeURIComponent(location.hash);
+        
+        if (hash == undefined || hash === '') {
+            return;
+        }
+        
         if (hash && hash.indexOf('#') === -1) {
             hash = '#' + hash;
         }
-        var action = $('#fm1').attr('action') + hash;
+
+        var action = $('#fm1').attr('action');
+        if (action == undefined) {
+            action = location.href;
+        }
+        var qidx = location.href.indexOf('?');
+        if (qidx != -1) {
+            var queryParams = location.href.substring(qidx);
+            action += queryParams;
+        }
+        action += hash;
         $('#fm1').attr('action', action);
+        
     });
 }
 

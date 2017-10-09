@@ -21,7 +21,7 @@ key/value store that accepts `String` keys and CAS ticket objects as values. The
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#redis-ticket-regisry).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#redis-ticket-registry).
 
 ### Eviction Policy
 

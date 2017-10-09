@@ -13,22 +13,22 @@
     <input #search class="search" placeholder="Search Services">
   </div>
   <div class="links">
-    <button *ngIf="type === 'DOMAIN' "md-button routerLink="/domains">
-      <md-icon>apps</md-icon>
+    <button *ngIf="type === 'DOMAIN' "mat-button routerLink="/domains">
+      <mat-icon>apps</mat-icon>
       <span i18n>Domains</span>
     </button>
-    <button *ngIf="type === 'DEFAULT'" md-button routerLink="/services/defualt">
-      <md-icon>apps</md-icon>
+    <button *ngIf="type === 'DEFAULT'" mat-button routerLink="/services/defualt">
+      <mat-icon>apps</mat-icon>
       <span i18n>Services</span>
     </button>
-    <button md-button routerLink="/form/-1">
-      <md-icon>add_circle</md-icon>
+    <button mat-button routerLink="/form/-1">
+      <mat-icon>add_circle</mat-icon>
       <span i18n="managment.services.header.navitem.addNewService">
         {{ messages.management_services_header_navbar_navitem_addNewService }}
       </span>
     </button>
-    <button md-button target="_self" id="logoutUrlLink" (click)="logout()">
-      <md-icon>exit_to_app</md-icon>
+    <button mat-button target="_self" id="logoutUrlLink" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
       <ng-container i18n="management.services.header.navbar.navitem.logout">
         {{ messages.management_services_header_navbar_navitem_logout }}
       </ng-container>
