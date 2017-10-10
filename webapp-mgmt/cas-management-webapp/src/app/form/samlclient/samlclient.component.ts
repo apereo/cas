@@ -1,6 +1,5 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
 import {SamlRegisteredService} from "../../../domain/saml-service";
 import {Data} from "../data";
 
@@ -12,6 +11,7 @@ export class SamlclientComponent implements OnInit {
 
   selectOptions;
   service: SamlRegisteredService;
+  credentialType = ["BASIC","X509"];
 
   constructor(public messages: Messages,
               public data: Data) {
