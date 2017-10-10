@@ -6,9 +6,7 @@ title: CAS - JSON Service Registry
 # JSON Service Registry
 
 This registry reads services definitions from JSON configuration files at the application context initialization time.
-JSON files are
-expected to be found inside a configured directory location and this registry will recursively look through
-the directory structure to find relevant JSON files.
+JSON files are expected to be found inside a configured directory location and this registry will recursively look through the directory structure to find relevant JSON files.
 
 Support is enabled by adding the following module into the overlay:
 
@@ -133,3 +131,7 @@ An example legacy JSON file is listed below for reference:
 ## Replication
 
 If CAS is to deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.
+
+## Auto Initialization
+
+Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.
