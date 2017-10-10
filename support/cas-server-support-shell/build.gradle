@@ -43,3 +43,8 @@ run {
         args execArgs.split()
     }
 }
+
+[distZip, distTar].each { task -> configurations.archives.artifacts.removeAll
+        { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
+    task.enabled = false
+}

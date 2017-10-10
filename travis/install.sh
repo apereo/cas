@@ -7,8 +7,8 @@ fi
 
 branchName="master"
 gradle="sudo ./gradlew"
-gradleOptions="--stacktrace --parallel --build-cache --max-workers=20 --configure-on-demand --no-daemon"
-gradleBuild="bootRepackage"
+gradleOptions="--stacktrace --parallel --build-cache --configure-on-demand --no-daemon"
+gradleBuild="clean bootRepackage install"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -32,7 +32,9 @@ tasks="$gradle $gradleOptions $gradleBuild"
 echo $tasks
 eval $tasks
 retVal=$?
+echo "***********************************************************"
 echo -e "Gradle build finished at `date` with exit code $retVal\n"
+echo "***********************************************************"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
@@ -49,4 +51,11 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANC
 fi
 
 echo -e "Gradle build finished with exit code $retVal\n"
-exit $retVal
+if [ $retVal == 0 ]; then
+    echo "Gradle build finished successfully."
+else
+    echo "Gradle build did NOT finished successfully."
+    exit $retVal
+fi
+
+
