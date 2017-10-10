@@ -139,21 +139,17 @@ public class JpaLockingStrategyTests {
             fail("testAcquireAndRelease failed");
         }
     }
-
-    /**
-     * Test lock expiration.
-     *
-     * @throws Exception On errors.
-     */
+    
     @Test
-    public void verifyLockExpiration() throws Exception {
+    public void verifyLockExpiration() {
         try {
             final String appId = "expquick";
             final String uniqueId = appId + "-1";
             final LockingStrategy lock = newLockTxProxy(appId, uniqueId, "1");
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
-            assertFalse(lock.acquire());
+            lock.release();
+            assertTrue(lock.acquire());
             lock.release();
             assertNull(getOwner(appId));
         } catch (final Exception e) {
