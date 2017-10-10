@@ -35,10 +35,10 @@ After enabling OAuth support, the following endpoints will be available:
 | `/oauth2.0/accessToken`     | Get an access token in plain-text or JSON                                 | `POST`
 | `/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
-
 ## Response/Grant Types
 
-The following types are supported; they allow you to get an access token representing the current user and OAuth client application. With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
+The following types are supported; they allow you to get an access token representing the current user and OAuth 
+client application. With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
 ### Authorization Code
 
@@ -114,6 +114,11 @@ The following fields are supported:
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
 | `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
 | `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type.
+
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
+particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
+you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
+deployment at that.</p></div>
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
