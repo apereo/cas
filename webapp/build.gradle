@@ -33,6 +33,7 @@ task compileSass(type: NpmTask) {
 if (!rootProject.publishReleases) {
     processResources.dependsOn npmLint
 }
+
 processResources.dependsOn compileSass
 
 clean.delete << file("./node_modules")
