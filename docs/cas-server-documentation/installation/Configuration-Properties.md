@@ -4267,12 +4267,15 @@ The default options are avaiable for hostname verification:
 
 ## Service Registry
 
+See [this guide](Service-Management.html) to learn more.
+
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
 
 # cas.serviceRegistry.schedule.repeatInterval=120000
 # cas.serviceRegistry.schedule.startDelay=15000
 
+# Auto-initialize the registry from default JSON service definitions
 # cas.serviceRegistry.initFromJson=false
 
 # cas.serviceRegistry.managementType=DEFAULT|DOMAIN
