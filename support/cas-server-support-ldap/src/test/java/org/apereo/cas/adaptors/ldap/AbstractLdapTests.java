@@ -36,6 +36,10 @@ public abstract class AbstractLdapTests {
         initDirectoryServer(new ClassPathResource("ldif/ldap-base.ldif").getInputStream(), port);
     }
 
+    public static void initDirectoryServer() throws IOException {
+        initDirectoryServer(1389);
+    }
+
     protected static InMemoryTestLdapDirectoryServer getDirectory() {
         return DIRECTORY;
     }

@@ -5,13 +5,16 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -35,6 +38,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
         CasCoreUtilConfiguration.class,
         JpaServiceRegistryConfiguration.class,
+        JpaServiceRegistryDaoImplTests.TimeAwareServicesManagerConfiguration.class,
         CasCoreServicesConfiguration.class})
 @DirtiesContext
 public class JpaServiceRegistryDaoImplTests {
@@ -176,20 +180,20 @@ public class JpaServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void verifyExpiredServiceDeleted() throws Exception {
+    public void verifyExpiredServiceDeleted() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("testExpired");
         r.setName("expired");
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now().minusSeconds(1)));
         final RegisteredService r2 = this.servicesManager.save(r);
+        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         this.servicesManager.load();
-        Thread.sleep(1100);
         final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNull(svc);
     }
 
     @Test
-    public void verifyExpiredServiceDisabled() throws Exception {
+    public void verifyExpiredServiceDisabled() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("testExpired1");
         r.setName("expired1");
@@ -198,9 +202,33 @@ public class JpaServiceRegistryDaoImplTests {
         final RegisteredService r2 = this.servicesManager.save(r);
         RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
-        Thread.sleep(1500);
+        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
         assertFalse(svc.getAccessStrategy().isServiceAccessAllowed());
+    }
+    
+    @TestConfiguration("timeAwareServicesManagerConfiguration")
+    public static class TimeAwareServicesManagerConfiguration {
+
+        @Autowired
+        @Qualifier("serviceRegistryDao")
+        private ServiceRegistryDao serviceRegistryDao;
+        
+        @Bean
+        public ServicesManager servicesManager() {
+            return new TimeAwareServicesManager(serviceRegistryDao);
+        }
+        
+        public class TimeAwareServicesManager extends DefaultServicesManager {
+            public TimeAwareServicesManager(final ServiceRegistryDao serviceRegistryDao) {
+                super(serviceRegistryDao, null);
+            }
+
+            @Override
+            protected LocalDateTime getCurrentSystemTime() {
+                return org.apereo.cas.util.DateTimeUtils.localDateTimeOf(DateTimeUtils.currentTimeMillis());
+            }
+        }
     }
 }
