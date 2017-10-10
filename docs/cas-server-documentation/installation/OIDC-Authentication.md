@@ -57,17 +57,12 @@ OpenID Connect clients can be *statically* registered with CAS as such:
   "clientId": "client",
   "clientSecret": "secret",
   "serviceId" : "^<https://the-redirect-uri>",
-  "signIdToken": true,
-  "implicit": false,
   "name": "OIDC",
-  "id": 1000,
-  "evaluationOrder": 100,
-  "jwks": "...",
-  "encryptIdToken": false,
-  "idTokenEncryptionAlg": "...",
-  "idTokenEncryptionEncoding": "..."
+  "id": 1000
 }
 ```
+
+The following fields are available:
 
 | Field                         | Description
 |-------------------------------|---------------------------------------------------------------------------------------
@@ -85,9 +80,18 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 | `subjectType`                 | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.
 | `sectoreIdentifierUri`        | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.
 
-Service definitions are typically managed by the [service management](Service-Management.html) facility.
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
+particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
+you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
+deployment at that.</p></div>
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
+Service definitions are typically managed and registered with CAS by the [service management](Service-Management.html) facility.
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported 
+response/grant types for backward compatibility reasons if left blank. This means that if left undefined, all grant and response types may be allowed by 
+the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases 
+and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition 
+immediately to avoid surprises in the future.</p></div>
 
 ### Dynamically
 
@@ -102,8 +106,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## Server Configuration
 
 Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow
-are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers accordinngly.
+as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
+You will need to configure your deployment environment and load-balancers accordingly.
 
 ## Claims
 
@@ -113,7 +117,6 @@ be [resolved, mapped and released](../integration/Attribute-Release-Policies.htm
 ### Scope-based Claims
 
 You may chain various attribute release policies that authorize claim release based on specific scopes:
-
 
 ```json
 {
@@ -131,7 +134,12 @@ You may chain various attribute release policies that authorize claim release ba
 
 ### Mapping Claims
 
-Claims associated with a scope (i.e. `given_name` for `profile`) are fixed in the [OpenID specification](http://openid.net/specs/openid-connect-basic-1_0.html). In the event that custom arbitrary attributes should be mapped to claims, mappings can be defined in CAS settings to link a CAS-defined attribute to a fixed given scope. For instance, CAS configuration may allow the value of the attribute `sys_given_name` to be mapped and assigned to the claim `given_name` without having an impact on the attribute resolution configuration and all other CAS-enabled applications. 
+Claims associated with a scope (i.e. `given_name` for `profile`) are fixed in 
+the [OpenID specification](http://openid.net/specs/openid-connect-basic-1_0.html). In the 
+event that custom arbitrary attributes should be mapped to claims, mappings can be defined in CAS 
+settings to link a CAS-defined attribute to a fixed given scope. For instance, CAS configuration may 
+allow the value of the attribute `sys_given_name` to be mapped and assigned to the claim `given_name` 
+without having an impact on the attribute resolution configuration and all other CAS-enabled applications. 
 
 If mapping is not defined, by default CAS attributes are expected to match claim names.
 
@@ -150,12 +158,16 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Authentication Context Class
 
-Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request, which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS. Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
+Support for authentication context class references is implemented in form of `acr_values` as part of the original 
+authorization request, which is mostly taken into account by 
+the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS. 
+Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
 ## Pairwise Identifiers
 
-When `pairwise` subject type is used, CAS will calculate a unique `sub` value for each sector identifier. This identifier should not be reversible by any party other than CAS and is somewhat akin to CAS generating persistent anonymous user identifiers. Each value provided to every relying party is different so as not to enable clients to correlate the user's activities without permission.
-
+When `pairwise` subject type is used, CAS will calculate a unique `sub` value for each sector identifier. This identifier 
+should not be reversible by any party other than CAS and is somewhat akin to CAS generating persistent anonymous user 
+identifiers. Each value provided to every relying party is different so as not to enable clients to correlate the user's activities without permission.
 
 ```json
 {
