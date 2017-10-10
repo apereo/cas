@@ -32,11 +32,8 @@ so in reality the bucket property must also be set.
 
 ## Auto Initialization
 
-Upon startup and configuration permitting,
-the registry is able to auto initialize itself from default
-JSON service definitions available to CAS.
+Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
 
 ## Troubleshooting
 
