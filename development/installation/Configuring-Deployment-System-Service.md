@@ -5,11 +5,15 @@ title: CAS - OS Service Deployment
 
 # OS Service Deployment
 
-CAS can be easily started as Unix/Linux services using either `init.d` or `systemd`. Windows support is also made available via an exteral daemon.
+CAS can be easily started as Unix/Linux services using either `init.d` or `systemd`. Windows support is also made available 
+via an external daemon. Note that most if not all of the below strategies attempt to run CAS via an embedded
+servlet container whose configuration is [explained here](Configuring-Servlet-Container.html#embedded).
 
 ## `init.d` Service
 
-If CAS is built and run as [a fully executable web application](Configuring-Servlet-Container.html), then it can be used as an `init.d` service. Simply `symlink` the web application file to `init.d` to support the standard `start`, `stop`, `restart` and `status` commands.
+If CAS is built and run as [a fully executable web application](Configuring-Servlet-Container.html), 
+then it can be used as an `init.d` service. Simply `symlink` the web application file to `init.d` 
+to support the standard `start`, `stop`, `restart` and `status` commands.
 
 The configuration built into CAS allows it to interact with the OS system configuration as such:
 
@@ -32,19 +36,25 @@ update-rc.d myapp defaults <priority>
 
 ### Security
 
-When executed as `root`, as is the case when `root` is being used to start an `init.d` service, the CAS default executable script will run the web application as the user which owns the web application file. You should **never** run CAS as `root` so the web applicatio file should never be owned by `root`. Instead, create a specific user to run CAS and use `chown` to make it the owner of the file. For example:
+When executed as `root`, as is the case when `root` is being used to start an `init.d` service, the CAS default 
+executable script will run the web application as the user which owns the web application file. You should **never** 
+run CAS as `root` so the web applicatio file should never be owned by `root`. Instead, create a specific user to run 
+CAS and use `chown` to make it the owner of the file. For example:
 
 ```bash
 chown bootapp:bootapp /path/to/cas.war
 ```
 
-You may also take steps to prevent the modification of the CAS web application file. Firstly, configure its permissions so that it cannot be written and can only be read or executed by its owner:
+You may also take steps to prevent the modification of the CAS web application file. Firstly, configure 
+its permissions so that it cannot be written and can only be read or executed by its owner:
 
 ```bash
 chmod 500 /path/to/cas.war
 ```
 
-Additionally, you should also take steps to limit the damage if the CAS web application or the account that’s running it is compromised. If an attacker does gain access, they could make the web application file writable and change its contents. One way to protect against this is to make it immutable using `chattr`:
+Additionally, you should also take steps to limit the damage if the CAS web application or 
+the account that’s running it is compromised. If an attacker does gain access, they could make the web application 
+file writable and change its contents. One way to protect against this is to make it immutable using `chattr`:
 
 ```bash
 sudo chattr +i /path/to/cas.war
