@@ -50,12 +50,12 @@ flows as necessary. The provider id need not be defined if there is only a singl
 
 ## User Account Status
 
-If users are unregistered with Duo Security or allowed through via a direct bypass,
-CAS will query Duo Security for the user account apriori to learn
-whether user is registered or configured for direct bypass. If the account status matches either of those conditions or if the
-user account is not registered yet the new-user enrollment policy allows folks to skip registration, CAS will bypass
-Duo Security altogether, shall not challenge the user
-and will also **NOT** report back a multifactor-enabled authentication context back to the application.
+If users are unregistered with Duo Security or allowed through via a direct bypass, CAS will query Duo Security for the user account apriori to learn
+whether user is registered or configured for direct bypass. If the account is configured for direct bypass or the
+user account is not registered yet the new-user enrollment policy allows the user to skip registration, CAS will bypass
+Duo Security altogether and shall not challenge the user and will also **NOT** report back a multifactor-enabled authentication context back to the application.
+
+<div class="alert alert-warning"><strong>YMMV</strong><p>In recent conversations with Duo Security, it turns out that the API behavior has changed (for security reasons) where it may no longer accurately report back account status. This means even if the above conditions hold true, CAS may continue to route the user to Duo Security having received an eligibility status from the API. Duo Security is reportedly working on a fix to restore the AP behavior in a more secure way. In the meanwhile, YMMV.</p></div>
 
 ## Non-Browser MFA
 
