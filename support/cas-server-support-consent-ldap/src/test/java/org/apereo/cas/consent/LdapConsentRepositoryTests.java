@@ -62,7 +62,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1387);
         DIRECTORY.populateEntries(new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());
     }
     
