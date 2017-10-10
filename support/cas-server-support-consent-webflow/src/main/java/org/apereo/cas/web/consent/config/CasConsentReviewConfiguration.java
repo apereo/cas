@@ -12,9 +12,18 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.apereo.cas.web.consent.CasConsentReviewController;
+import org.pac4j.cas.authorization.DefaultCasAuthorizationGenerator;
+import org.pac4j.cas.client.CasClient;
+import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.authorization.authorizer.Authorizer;
+import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
+import org.pac4j.core.client.Clients;
+import org.pac4j.core.engine.DefaultCallbackLogic;
+import org.pac4j.core.engine.DefaultLogoutLogic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -24,10 +33,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
-import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link CasConsentReviewConfiguration}.
@@ -40,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewConfiguration.class);
     
-    private static final String CAS_CLIENT = "CasClient";
+    private static final String CAS_CONSENT_CLIENT = "CasConsentClient";
     
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -68,18 +75,34 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public CasConsentReviewController casConsentReviewController() {
-        return new CasConsentReviewController(consentRepository, consentEngine);
+        return new CasConsentReviewController(consentRepository, consentEngine, casConsentPac4jConfig(),
+                casProperties.getServer().getPrefix().concat("/consent"));
     }
 
     @Bean
     @RefreshScope
     public Config casConsentPac4jConfig() {
-        final List<Client> clients = casAdminPagesPac4jConfig.getClients().getClients();
-        final Config config = new Config(casProperties.getServer().getPrefix().concat("/consent"), clients);
-        config.setAuthorizers(casAdminPagesPac4jConfig.getAuthorizers());
-        final String auth = IsAuthenticatedAuthorizer.class.getSimpleName();
-        if (!config.getAuthorizers().containsKey(auth)) {
-            config.addAuthorizer(auth, new IsAuthenticatedAuthorizer());
+        final CasConfiguration conf = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        
+        final CasClient client = new CasClient(conf);
+        client.setName(CAS_CONSENT_CLIENT);
+        client.setCallbackUrl(casProperties.getServer().getPrefix().concat("/consent/callback"));
+        client.setAuthorizationGenerator(new DefaultCasAuthorizationGenerator<>());
+        client.setIncludeClientNameInCallbackUrl(false);
+        
+        final Clients clients = new Clients(client);
+        clients.setDefaultClient(client);
+        
+        final Config config = new Config(clients);
+        config.setAuthorizer(new IsAuthenticatedAuthorizer());
+        config.setCallbackLogic(new DefaultCallbackLogic());
+        config.setLogoutLogic(new DefaultLogoutLogic());
+        
+        // get role authorizer from admin pages for smooth integration
+        final Map<String, Authorizer> adminAuthorizers = casAdminPagesPac4jConfig.getAuthorizers();
+        final String auth = RequireAnyRoleAuthorizer.class.getSimpleName();
+        if (adminAuthorizers.containsKey(auth)) {
+            config.addAuthorizer(auth, adminAuthorizers.get(auth));
         }
         return config;
     }
@@ -87,9 +110,10 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public CasSecurityInterceptor casConsentReviewSecurityInterceptor() {
-        return new CasSecurityInterceptor(casConsentPac4jConfig(), CAS_CLIENT,
+        return new CasSecurityInterceptor(casConsentPac4jConfig(), CAS_CONSENT_CLIENT,
                 "securityHeaders,csrfToken,".concat(IsAuthenticatedAuthorizer.class.getSimpleName()));
     }
+    
     /**
     * Initialize consent service.
     */
@@ -122,6 +146,6 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(casConsentReviewSecurityInterceptor())
-                .addPathPatterns("/consent", "/consent/*").excludePathPatterns("/consent/logout*");
+                .addPathPatterns("/consent", "/consent/*").excludePathPatterns("/consent/logout*", "/consent/callback*");
     }
 }

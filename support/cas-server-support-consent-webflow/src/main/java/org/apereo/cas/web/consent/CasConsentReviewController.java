@@ -5,6 +5,10 @@ import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.pac4j.core.config.Config;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.engine.CallbackLogic;
+import org.pac4j.core.http.J2ENopHttpActionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -33,6 +37,9 @@ import java.util.Map;
 public class CasConsentReviewController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewController.class);
 
+    private final Config pac4jConfig;
+    private final String defaultUrl;
+    
     /**
      * The consent repository.
      */
@@ -44,9 +51,11 @@ public class CasConsentReviewController {
     private final ConsentEngine consentEngine;
 
     public CasConsentReviewController(final ConsentRepository consentRepository,
-            final ConsentEngine consentEngine) {
+            final ConsentEngine consentEngine, final Config pac4jConfig, final String defaultUrl) {
         this.consentRepository = consentRepository;
         this.consentEngine = consentEngine;
+        this.pac4jConfig = pac4jConfig;
+        this.defaultUrl = defaultUrl;
     }
     
     /**
@@ -116,5 +125,20 @@ public class CasConsentReviewController {
         LOGGER.debug("Invalidating application session...");
         session.invalidate();
         return "casConsentLogoutView";
+    }
+    
+    /**
+     * Endpoint for Cas Client Callback.
+     * 
+     * @param request the request
+     * @param response the response
+     */
+    @GetMapping("/callback")
+    public void callback(final HttpServletRequest request, final HttpServletResponse response) {
+        LOGGER.debug("Callback endpoint hit...");
+        
+        final CallbackLogic logic = this.pac4jConfig.getCallbackLogic();
+        final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
+        logic.perform(context, this.pac4jConfig, J2ENopHttpActionAdapter.INSTANCE, this.defaultUrl, Boolean.FALSE, Boolean.FALSE);
     }
 }
