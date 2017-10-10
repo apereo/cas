@@ -48,7 +48,16 @@ Additionally, it is also possible to run CAS as a fully executable web applicati
 /path/to/cas.war
 ```
 
-Running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. Other platforms such as Windows may require custom configuration.
+This is achieved via the build process of the deployment overlay where a launch script is *inserted* at the beginning of the web application artifact. If you
+ wish to see and exmaine the script, simply run the following commands:
+ 
+ ```bash
+ # X is the number of lines from the beginning of the file
+ head -n X /path/to.cas.war
+ ```
+ 
+Note that running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. Other platforms such as Windows
+may require custom configuration.
 
 ### Apache Tomcat
 
