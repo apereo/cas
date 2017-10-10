@@ -7,8 +7,12 @@ fi
 
 branchName="master"
 gradle="sudo ./gradlew"
-gradleOptions="--stacktrace --parallel --build-cache --configure-on-demand --no-daemon"
+
+gradleBuildOptions="--stacktrace --parallel --build-cache"
 gradleBuild="clean bootRepackage install"
+
+gradleUploadOptions="--parallel"
+gradleUpload="uploadArchives --parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -28,7 +32,7 @@ else
     gradleBuild="$gradleBuild -x check -x test aggregateJavadocsIntoJar"
 fi
 
-tasks="$gradle $gradleOptions $gradleBuild"
+tasks="$gradle $gradleBuild $gradleBuildOptions"
 echo $tasks
 eval $tasks
 retVal=$?
@@ -41,8 +45,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANC
          echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
     else
         echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
-        upload="$gradle $gradleOptions $gradleUpload"
+        upload="$gradle $gradleUpload $gradleUploadOptions"
         echo $upload
         eval $upload
         retVal=$?
