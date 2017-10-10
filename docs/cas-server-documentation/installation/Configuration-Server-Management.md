@@ -86,7 +86,7 @@ may load CAS settings and properties via the following order and mechanics:
 The configuration and behavior of the configuration server is also controlled by its own
 `src/main/resources/bootstrap.properties` file. By default, it runs under port `8888` at `/casconfigserver` inside
 an embedded Apache Tomcat server whose endpoints are protected with basic authentication
-where the default credentials are `casuser` and `Mellon`. Furthermore, by default it runs
+where the default credentials are `casuser` and `Mellon` defined in `src/main/resources/application.properties`. Furthermore, by default it runs
 under a `native` profile described below.
 
 The following endpoints are secured and exposed by the configuration server:
