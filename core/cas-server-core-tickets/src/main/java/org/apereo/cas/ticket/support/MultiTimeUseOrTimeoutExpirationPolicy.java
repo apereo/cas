@@ -74,7 +74,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             return true;
         }
 
-        final ZonedDateTime systemTime = ZonedDateTime.now(ZoneOffset.UTC);
+        final ZonedDateTime systemTime = getCurrentSystemTime();
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
         final ZonedDateTime expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
 
@@ -84,6 +84,15 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             return true;
         }
         return false;
+    }
+
+    /**
+     * Gets current system time.
+     *
+     * @return the current system time
+     */
+    protected ZonedDateTime getCurrentSystemTime() {
+        return ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     @Override
