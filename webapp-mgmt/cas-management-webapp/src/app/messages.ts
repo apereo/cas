@@ -179,6 +179,7 @@ export class Messages {
  readonly services_form_label_saml_skipNotOnOrAfter = "Skip generating subject confirmation NotOnOrAfter";
  readonly services_form_label_saml_skipRecipient = "Skip generating subject confirmation Recipient";
  readonly services_form_label_saml_skipNotBefore = "Skip generating subject confirmation NotBefore";
+ readonly services_form_label_saml_signingCredentialType = "Signing Credential Type";
 
  readonly services_form_label_oidc_scopes = "Scopes";
  readonly services_form_label_oidc_dynamic = "Dynamically Registered";
@@ -320,6 +321,7 @@ export class Messages {
  readonly services_form_tooltip_saml_skipNotOnOrAfter = "Whether generation of the NotOnOrAfter element should be skipped for subject confirmations";
  readonly services_form_tooltip_saml_skipRecipient = "Whether generation of the Recipient element should be skipped for subject confirmations";
  readonly services_form_tooltip_saml_skipNotBefore = "Whether generation of the NotBefore element should be skipped for subject confirmations";
+ readonly services_form_tooltip_saml_signingCredentialType = "This setting controls the type of the signature block produced in the final SAML response for this application. The latter, being the default, encodes the signature in PEM format inside a X509Data block while the former encodes the signature based on the resolved public key under a DEREncodedKeyValue block.";
 
  readonly services_form_tooltip_oidc_signToken = "Whether ID tokens should be signed.";
  readonly services_form_tooltip_oidc_encrypt = "Whether ID tokens should be encrypted.";
