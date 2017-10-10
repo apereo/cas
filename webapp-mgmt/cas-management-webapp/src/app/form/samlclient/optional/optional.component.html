@@ -1,0 +1,59 @@
+<div>
+  <mat-checkbox [(ngModel)]="service.skipGeneratingAssertionNameId">
+    <ng-container i18n="services.form.label.saml.skipAssertionNameId">
+      {{ messages.services_form_label_saml_skipAssertionNameId }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.skipAssertionNameID"
+              [matTooltip]="messages.services_form_tooltip_saml_skipAssertioNameId">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationInResponseTo">
+    <ng-container i18n="services.form.label.saml.skipInResponseTo">
+      {{ messages.services_form_label_saml_skipInResponseTo }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.skipInResponseTo"
+              [matTooltip]="messages.services_form_tooltip_saml_skipInResponseTo">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotOnOrAfter">
+    <ng-container i18n="services.form.label.saml.skipNotOnOrAfter">
+      {{ messages.services_form_label_saml_skipNotOnOrAfter }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.skipNotOnOrAfter"
+              [matTooltip]="messages.services_form_tooltip_saml_skipNotOnOrAfter">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationRecipient">
+    <ng-container i18n="services.form.label.saml.skipRecipient">
+      {{ messages.services_form_label_saml_skipRecipient }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.skipRecipient"
+              [matTooltip]="messages.services_form_tooltip_saml_skipRecipient">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.skipGeneratingSubjectConfirmationNotBefore">
+    <ng-container i18n="services.form.label.saml.skipNotBefore">
+      {{ messages.services_form_label_saml_skipNotBefore }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.skipNotBefore"
+              [matTooltip]="messages.services_form_tooltip_saml_skipNotBefore">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
