@@ -64,6 +64,10 @@ import { AttributeReleaseConsentComponent } from './attribute-release-consent/at
 import { SurrogateComponent } from './access-strategy/surrogate/surrogate.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { TabContactsComponent } from './tab-contacts/tab-contacts.component';
+import { MetadataComponent } from './samlclient/metadata/metadata.component';
+import { SecurityComponent } from './samlclient/security/security.component';
+import { OptionalComponent } from './samlclient/optional/optional.component';
+import { NameidComponent } from './samlclient/nameid/nameid.component';
 
 @NgModule({
   imports: [
@@ -131,6 +135,10 @@ import { TabContactsComponent } from './tab-contacts/tab-contacts.component';
     SurrogateComponent,
     ContactsComponent,
     TabContactsComponent,
+    MetadataComponent,
+    SecurityComponent,
+    OptionalComponent,
+    NameidComponent,
   ],
   providers: [
     FormResolve,

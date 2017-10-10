@@ -1,0 +1,38 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.saml.requiredNameIdFormat"
+           [placeholder]=" messages.services_form_label_saml_requiredNameIdFormat"
+           [(ngModel)]="service.requiredNameIdFormat">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.requiredNameIdFormat"
+            [matTooltip]="messages.services_form_tooltip_saml_requiredNameIdFormat">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.saml.serviceProviderNameQualifier"
+           [placeholder]=" messages.services_form_label_saml_serviceProviderNameQualifier"
+           [(ngModel)]="service.serviceProviderNameIdQualifier">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.serviceProviderNameQualifier"
+            [matTooltip]="messages.services_form_tooltip_saml_serviceProviderNameQualifier">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.saml.nameQualifier"
+           [placeholder]=" messages.services_form_label_saml_nameQualifier"
+           [(ngModel)]="service.nameIdQualifier">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.nameQualifier"
+            [matTooltip]="messages.services_form_tooltip_saml_nameQualifier">help
+  </mat-icon>
+</div>
