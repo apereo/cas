@@ -3,6 +3,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
 apply plugin: "application"
+apply plugin: "com.moowork.gulp"
 
 def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 
