@@ -228,7 +228,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
                     return true;
                 }
-                final LocalDateTime now = LocalDateTime.now();
+                final LocalDateTime now = getCurrentSystemTime();
                 final LocalDateTime expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
                 LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
                 return !now.isAfter(expirationDate);
@@ -237,6 +237,15 @@ public abstract class AbstractServicesManager implements ServicesManager {
             }
             return false;
         };
+    }
+
+    /**
+     * Gets current system time.
+     *
+     * @return the current system time
+     */
+    protected LocalDateTime getCurrentSystemTime() {
+        return LocalDateTime.now();
     }
 
     private RegisteredService validateRegisteredService(final RegisteredService registeredService) {
