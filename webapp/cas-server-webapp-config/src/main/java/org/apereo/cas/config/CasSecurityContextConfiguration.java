@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This is {@link CasSecurityContextConfiguration} that attempts to create Spring-managed beans
@@ -152,6 +153,18 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
                 return requiresAuthenticationStatusInterceptor().preHandle(request, response, handler);
             }
             return requiresAuthenticationStatusAdminEndpointsInterceptor().preHandle(request, response, handler);
+        }
+        
+        @Override
+        public void postHandle(HttpServletRequest request, HttpServletResponse response,
+                Object handler, ModelAndView modelAndView) throws Exception {
+            final String requestPath = request.getRequestURI();
+            final Pattern pattern = Pattern.compile("/status(/)*$");
+
+            if (pattern.matcher(requestPath).find()) {
+                requiresAuthenticationStatusInterceptor().postHandle(request, response, handler, modelAndView);
+            }
+            requiresAuthenticationStatusAdminEndpointsInterceptor().postHandle(request, response, handler, modelAndView);
         }
     }
 }
