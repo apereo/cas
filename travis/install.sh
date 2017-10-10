@@ -12,11 +12,11 @@ gradleBuildOptions="--stacktrace --parallel --build-cache"
 gradleBuild="clean bootRepackage install"
 
 gradleUploadOptions="--parallel"
-gradleUpload="uploadArchives --parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+gradleUpload="aggregateJavadocsIntoJar uploadArchives --parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
-    gradleBuild="$gradleBuild checkstyleMain aggregateJavadocsIntoJar"
+    gradleBuild="$gradleBuild checkstyleMain"
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
         echo -e "The build commit message indicates that tests should be skipped.\n"
         gradleBuild="$gradleBuild -x test"
@@ -29,7 +29,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     fi
 else
     echo -e "The build indicates that tests should be skipped since we are publishing snapshots.\n"
-    gradleBuild="$gradleBuild -x check -x test aggregateJavadocsIntoJar"
+    gradleBuild="$gradleBuild -x check -x test"
 fi
 
 tasks="$gradle $gradleBuild $gradleBuildOptions"
@@ -37,7 +37,7 @@ echo $tasks
 eval $tasks
 retVal=$?
 echo "***********************************************************"
-echo -e "Gradle build finished at `date` with exit code $retVal\n"
+echo -e "Gradle build finished at `date` with exit code $retVal"
 echo "***********************************************************"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
