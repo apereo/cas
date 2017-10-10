@@ -34,7 +34,7 @@ export class SamlRegisteredService extends RegexRegisteredService {
     this.metadataExpirationDuration = "PT60M";
     this.metadataCriteriaRoles = "SPSSODescriptor";
     this.signResponses = true;
-    this.signingCredentialType = "BASIC_X509";
+    this.signingCredentialType = "BASIC";
     this.metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
     this.metadataCriteriaRemoveRolelessEntityDescriptors = true;
     this.skipGeneratingSubjectConfirmationNotBefore = true;
