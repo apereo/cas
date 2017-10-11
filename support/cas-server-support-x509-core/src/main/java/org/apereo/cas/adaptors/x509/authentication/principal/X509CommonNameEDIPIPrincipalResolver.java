@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
  * placed at the end of the CN.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalResolver {
