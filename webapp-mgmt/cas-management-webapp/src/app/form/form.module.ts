@@ -68,6 +68,7 @@ import { MetadataComponent } from './samlclient/metadata/metadata.component';
 import { SecurityComponent } from './samlclient/security/security.component';
 import { OptionalComponent } from './samlclient/optional/optional.component';
 import { NameidComponent } from './samlclient/nameid/nameid.component';
+import { MappedComponent } from './attribute-release-filters/mapped/mapped.component';
 
 @NgModule({
   imports: [
@@ -139,6 +140,7 @@ import { NameidComponent } from './samlclient/nameid/nameid.component';
     SecurityComponent,
     OptionalComponent,
     NameidComponent,
+    MappedComponent,
   ],
   providers: [
     FormResolve,

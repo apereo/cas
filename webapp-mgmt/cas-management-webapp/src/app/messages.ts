@@ -113,6 +113,9 @@ export class Messages {
  readonly services_form_label_attrRelease_releaseCredPassword = "Authorized to release to credential password";
  readonly services_form_label_attrRelease_releaseProxyTicket = "Authorized to release proxy granting ticket ID";
  readonly services_form_label_attrRelease_attrFilter = "Attribute Filter Pattern";
+ readonly services_form_label_attrRelease_attrFilter_excludeUnmapped = "Exclude Unmapped Attributes";
+ readonly services_form_label_attrRelease_attrFilter_completeMatch = "Complete Match";
+ readonly services_form_label_attrRelease_attrFilter_scripted = "Script";
  readonly services_form_label_attrRelease_principleAttRepo_default = "Default";
  readonly services_form_label_attrRelease_principleAttRepo_cached = "Cached";
  readonly services_form_label_attrRelease_principleAttRepo_cached_timeUnit = "Time Unit";
@@ -262,6 +265,9 @@ export class Messages {
     "should be excluded for release for this specific application."
  readonly services_form_tooltip_attrRelease_attrFilter = "A regex pattern used to filter attributes based on their values only. " +
     "Values that successfully pass the filter will be available for release to the application."
+ readonly services_form_tooltip_attrRelease_attrFilter_excludeUnmapped = "Indicates whether unmapped attributes should be removed from the final bundle.";
+ readonly services_form_tooltip_attrRelease_attrFilter_completeMatch = "Indicates whether pattern-matching should execute over the entire value region";
+ readonly services_form_tooltip_attrRelease_attrFilter_scripted = "This field can accept either an inline groovy script that will be executed or a location of an external script file that will be loaded and executed."
  readonly services_form_tooltip_attrRelease_releaseCredPassword = "Release credential password to the application?";
  readonly services_form_tooltip_attrRelease_releaseProxyTicket = "Release proxy-granting ticket id to the application?";
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit = "Time unit of measure for the cache expiration policy.";
