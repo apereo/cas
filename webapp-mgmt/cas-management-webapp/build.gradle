@@ -61,8 +61,10 @@ bootRepackage {
     mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
     enabled = !rootProject.publishReleases
 
-    if (rootProject.publishSnapshots) {
+    if (rootProject.publishReleases) {
         dependsOn(buildClient)
+    } else {
+        dependsOn(buildClientDev)
     }
 }
 
