@@ -32,14 +32,14 @@ public class HazelcastConfigurationFactory {
     /**
      * Build map config map config.
      *
-     * @param hz          the hz
-     * @param mapName the storage name
-     * @param timeoutSeconds     the timeoutSeconds
+     * @param hz             the hz
+     * @param mapName        the storage name
+     * @param timeoutSeconds the timeoutSeconds
      * @return the map config
      */
     public MapConfig buildMapConfig(final BaseHazelcastProperties hz,
-                               final String mapName,
-                               final long timeoutSeconds) {
+                                    final String mapName,
+                                    final long timeoutSeconds) {
         final HazelcastClusterProperties cluster = hz.getCluster();
         final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
 
@@ -84,7 +84,7 @@ public class HazelcastConfigurationFactory {
         cfg.put(mapConfig.getName(), mapConfig);
         return build(hz, cfg);
     }
-    
+
     /**
      * Build config.
      *

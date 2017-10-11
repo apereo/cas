@@ -5,12 +5,13 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; 
     exit 0
 fi
 
-gradle="sudo ./gradlew"
-
-gradleBuildOptions="--stacktrace --parallel --configure-on-demand --max-workers=8"
-gradleBuild="bootRepackage install"
-
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
+
+    gradle="sudo ./gradlew"
+    
+    gradleBuildOptions="--stacktrace --parallel --configure-on-demand --max-workers=8"
+    gradleBuild="bootRepackage install"
+
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
     gradleBuild="$gradleBuild checkstyleMain aggregateJavadocsIntoJar"
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
@@ -38,4 +39,5 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     fi
 else
     echo "Gradle build is publishing snapshots; Skipping the install phase for now..."
+    exit 0
 fi
