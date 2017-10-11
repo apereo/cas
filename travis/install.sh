@@ -23,22 +23,19 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
             gradleBuild="$gradleBuild -DshowStandardStreams=true"
         fi
     fi
+
+    tasks="$gradle $gradleBuildOptions $gradleBuild"
+    echo $tasks
+    eval $tasks
+    retVal=$?
+    echo -e "Gradle build finished at `date` with exit code $retVal\n"
+    
+    if [ $retVal == 0 ]; then
+        echo "Gradle build finished successfully."
+    else
+        echo "Gradle build did NOT finished successfully."
+        exit $retVal
+    fi
 else
-    echo -e "The build indicates that tests should be skipped since we are publishing snapshots.\n"
-    gradleBuild="$gradleBuild -x check -x test aggregateJavadocsIntoJar"
+    echo "Gradle build is publishing snapshots; Skipping the install phase for now..."
 fi
-
-tasks="$gradle $gradleBuildOptions $gradleBuild"
-echo $tasks
-eval $tasks
-retVal=$?
-echo -e "Gradle build finished at `date` with exit code $retVal\n"
-
-if [ $retVal == 0 ]; then
-    echo "Gradle build finished successfully."
-else
-    echo "Gradle build did NOT finished successfully."
-    exit $retVal
-fi
-
-
