@@ -12,8 +12,8 @@ gradle="sudo ./gradlew"
 gradleBuildOptions="--stacktrace --parallel --configure-on-demand --max-workers=8"
 gradleBuild="bootRepackage install"
 
-gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
-gradleUploadOptions="--stacktrace --parallel"
+gradleUpload="uploadArchives -x test -x check -x javadoc -x javadocJar"
+gradleUploadOptions="--stacktrace --parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
