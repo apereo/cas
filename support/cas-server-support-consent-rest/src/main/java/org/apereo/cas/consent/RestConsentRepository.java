@@ -16,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,15 +117,11 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             final HttpHeaders headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final Map<String, Object> body = new HashMap<>();
-            body.put("id", decisionId);
-            body.put("principal", principal);
 
-            final HttpEntity<Map> entity = new HttpEntity<>(body, headers);
-            final ResponseEntity<Boolean> result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, Boolean.class);
-            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
-                return result.getBody();
-            }
+            final HttpEntity<Map> entity = new HttpEntity<>(headers);
+            final String deleteEndpoint = this.endpoint.concat("/" + Long.toString(decisionId));
+            final ResponseEntity<Boolean> result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
+            return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

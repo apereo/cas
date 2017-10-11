@@ -1,6 +1,5 @@
 package org.apereo.cas.consent;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -12,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,8 +21,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link RestConsentRepositoryTests}.
@@ -79,20 +75,9 @@ public class RestConsentRepositoryTests {
     
     @Test
     public void verifyConsentDecisionIsDeleted() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-        final String body = mapper.writeValueAsString(Boolean.TRUE);
-        server.expect(manyTimes(), requestTo("/consent"))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect((ClientHttpRequest request) -> {
-                    final Map<String, Object> b = mapper.readValue(request.getBody().toString(),
-                            new TypeReference<HashMap<String, Object>>(){});
-                    if (b.containsKey("id") && b.containsKey("principal") && b.get("id").equals(1)
-                        && b.get("principal").equals("CasUser")) {
-                        return;
-                    }
-                    throw new AssertionError("Id '1' and/or principal 'CasUser' not present in request body.");
-                })
-                .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+        server.expect(manyTimes(), requestTo("/consent/1"))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withSuccess());
         
         final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
         final boolean b = repo.deleteConsentDecision(1, "CasUser");
