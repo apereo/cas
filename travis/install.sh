@@ -44,7 +44,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANC
          echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
     else
         echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        upload="travis_wait 30 $gradle $gradleUploadOptions $gradleUpload"
+        upload="$gradle $gradleUploadOptions $gradleUpload"
         echo $upload
         eval $upload
         retVal=$?
