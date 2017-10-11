@@ -2313,12 +2313,13 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 X.509 principal resolution can act on the following principal types:
 
 | Type                    | Description                            
-|-------------------------|----------------------------------------------------------------------------------------------------
+|-------------------------|----------------------------------------------------------------------
 | `SERIAL_NO`             | Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36. If <code>radix</code> is <code>16</code>, then the serial number could be filled with leading zeros to even the number of digits.
 | `SERIAL_NO_DN`          | Resolve the principal by serial number and issuer dn.
 | `SUBJECT`               | Resolve the principal by extracting one or more attribute values from the certificate subject DN and combining them with intervening delimiters.
 | `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension.
 | `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
+| `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
 
 ### CRL Fetching / Revocation
 
