@@ -7,8 +7,8 @@ fi
 
 branchName="master"
 gradle="sudo ./gradlew"
-gradleOptions="--stacktrace --parallel --build-cache --max-workers=20 --configure-on-demand --no-daemon"
-gradleBuild="bootRepackage"
+gradleOptions="--stacktrace --parallel --build-cache --configure-on-demand --max-workers=8"
+gradleBuild="clean bootRepackage install"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -49,4 +49,11 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANC
 fi
 
 echo -e "Gradle build finished with exit code $retVal\n"
-exit $retVal
+if [ $retVal == 0 ]; then
+    echo "Gradle build finished successfully."
+else
+    echo "Gradle build did NOT finished successfully."
+    exit $retVal
+fi
+
+

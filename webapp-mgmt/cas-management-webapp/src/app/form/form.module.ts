@@ -1,8 +1,8 @@
 /**
  * Created by tschmidt on 2/23/17.
  */
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 
@@ -66,6 +66,11 @@ import { ContactsComponent } from './contacts/contacts.component';
 import { TabContactsComponent } from './tab-contacts/tab-contacts.component';
 import { ExpirationComponent } from './expiration/expiration.component';
 import { TabExpirationComponent } from './tab-expiration/tab-expiration.component';
+import { MetadataComponent } from './samlclient/metadata/metadata.component';
+import { SecurityComponent } from './samlclient/security/security.component';
+import { OptionalComponent } from './samlclient/optional/optional.component';
+import { NameidComponent } from './samlclient/nameid/nameid.component';
+
 
 @NgModule({
   imports: [
@@ -135,6 +140,10 @@ import { TabExpirationComponent } from './tab-expiration/tab-expiration.componen
     TabContactsComponent,
     ExpirationComponent,
     TabExpirationComponent,
+    MetadataComponent,
+    SecurityComponent,
+    OptionalComponent,
+    NameidComponent,
   ],
   providers: [
     FormResolve,
