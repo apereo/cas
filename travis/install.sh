@@ -9,7 +9,7 @@ branchName="master"
 
 gradle="sudo ./gradlew"
 
-gradleBuildOptions="--stacktrace --parallel --build-cache --configure-on-demand --max-workers=8"
+gradleBuildOptions="--stacktrace --parallel --configure-on-demand --max-workers=8"
 gradleBuild="bootRepackage install"
 
 gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
