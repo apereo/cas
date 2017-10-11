@@ -1,5 +1,6 @@
-<mat-accordion style="width:600px;">
-  <mat-expansion-panel *ngFor="let filter of filters()" style="width:600px;left:-30px;position:relative;">
+<mat-accordion #accordian style="width:600px;" multi="true">
+  <mat-expansion-panel *ngFor="let filter of filters();let last=last" style="width:630px;left:-35px;position:relative;"
+       [expanded]="last">
     <mat-expansion-panel-header>
       <mat-panel-title>
           <button [matMenuTriggerFor]="panelMenu" mat-icon-button (click)="selectedFilter = filter;$event.stopPropagation()" style="width:auto;height:auto;line-height: 0px!important;">

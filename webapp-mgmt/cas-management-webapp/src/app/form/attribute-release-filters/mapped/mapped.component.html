@@ -36,7 +36,7 @@
 <div style="height:25px;padding-top: 5px;">
   <button mat-mini-fab (click)="addRow()" style="float:right;">+</button>
 </div>
-<div>
+<div style="padding-top: 10px">
   <mat-checkbox [(ngModel)]="filter.excludeUnmappedAttributes">
     <ng-container i18n="services.form.label.attrRelease.attrFilter.excludeUnmapped">
       {{ messages.services_form_label_attrRelease_attrFilter_excludeUnmapped }}
@@ -47,7 +47,7 @@
     </mat-icon>
   </mat-checkbox>
 </div>
-<div>
+<div style="padding-bottom: 20px;">
   <mat-checkbox [(ngModel)]="filter.completeMatch">
     <ng-container i18n="service.form.label.attrRelease.attrFilter.completeMatch">
       {{ messages.services_form_label_attrRelease_attrFilter_completeMatch }}
@@ -58,7 +58,6 @@
     </mat-icon>
   </mat-checkbox>
 </div>
-
 <mat-autocomplete #attributeAuto>
   <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
     {{ opt }}

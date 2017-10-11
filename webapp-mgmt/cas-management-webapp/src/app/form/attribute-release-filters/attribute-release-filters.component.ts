@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Messages} from "../../messages";
 import {
     RegisteredServiceAttributeFilter, RegisteredServiceChainingAttributeFilter,
@@ -18,6 +18,8 @@ export class AttributeReleaseFiltersComponent implements OnInit {
 
   selectedFilter: RegisteredServiceAttributeFilter;
 
+  @ViewChild("accordian")
+  accordian: ElementRef;
 
   constructor(public messages: Messages,
               public data: Data) {
