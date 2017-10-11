@@ -207,11 +207,21 @@ public class CasValidationConfiguration {
     public ProxyValidateController proxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                            @Qualifier("defaultAuthenticationSystemSupport") 
                                                            final AuthenticationSystemSupport authenticationSystemSupport) {
+        if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
+            return new ProxyValidateController(
+                    cas20ProtocolValidationSpecification, authenticationSystemSupport,
+                    servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
+                    multifactorTriggerSelectionStrategy, authenticationContextValidator,
+                    cas3ServiceJsonView(), cas3ServiceSuccessView(), cas3ServiceFailureView,
+                    casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
+            );
+        }
+
         return new ProxyValidateController(
                 cas20ProtocolValidationSpecification, authenticationSystemSupport,
                 servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
-                cas3ServiceJsonView(), cas3ServiceSuccessView(), cas3ServiceFailureView,
+                cas3ServiceJsonView(), cas2ServiceSuccessView(), cas2ServiceFailureView,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
         );
     }
