@@ -20,6 +20,11 @@ else
   #echo -e "GH_TOKEN -> ${GH_TOKEN}"
 fi
 
+if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+    echo -e "Skipping build since this is a pull request and we are not publishing snapshots.\n"
+    exit 0
+fi
+
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
@@ -30,10 +35,10 @@ sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
 echo -e "Configuring Gradle wrapper...\n"
 chmod -R 777 ./gradlew
 
-echo -e "Installing NodeJS...\n"
-sudo curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - &>/dev/null
-sudo apt-get update  -qq > /dev/null
-sudo apt-get install -y nodejs -qq > /dev/null
+# echo -e "Installing NodeJS...\n"
+# sudo curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - &>/dev/null
+# sudo apt-get update  -qq > /dev/null
+# sudo apt-get install -y nodejs -qq > /dev/null
 
 echo -e "Installing NPM...\n"
 sudo ./gradlew npmInstall --stacktrace -q
