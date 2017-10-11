@@ -1,1 +1,3 @@
 apply from: project.file("../gradle/webapp.gradle")
+
+description = "Apereo CAS Web Application"
