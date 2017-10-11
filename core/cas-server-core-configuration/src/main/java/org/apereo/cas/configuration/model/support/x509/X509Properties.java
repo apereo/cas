@@ -45,7 +45,11 @@ public class X509Properties implements Serializable {
         /**
          * Create principal by subject alternative name.
          */
-        SUBJECT_ALT_NAME
+        SUBJECT_ALT_NAME,
+        /**
+         * Create principal by common name and EDIPI.
+         */
+        CN_EDIPI,
     }
 
     /**
