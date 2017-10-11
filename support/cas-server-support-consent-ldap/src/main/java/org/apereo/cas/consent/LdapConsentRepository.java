@@ -139,7 +139,7 @@ public class LdapConsentRepository implements ConsentRepository {
         final Map<String, Set<String>> attrMap = new HashMap<>();
         attrMap.put(this.ldap.getConsentAttributeName(), newConsent);
 
-        LOGGER.debug("Storing consent decision [{}] at LDAP attribute [{}] for [{}]", newConsent, attrMap.keySet(), entry.getDn());
+        LOGGER.debug("Storing consent decisions [{}] at LDAP attribute [{}] for [{}]", newConsent, attrMap.keySet(), entry.getDn());
         return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, CollectionUtils.wrap(attrMap));
     }
 

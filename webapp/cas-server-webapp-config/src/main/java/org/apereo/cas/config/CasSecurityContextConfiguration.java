@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.pac4j.cas.authorization.DefaultCasAuthorizationGenerator;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -24,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -33,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Properties;
 import java.util.regex.Pattern;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This is {@link CasSecurityContextConfiguration} that attempts to create Spring-managed beans
@@ -154,10 +154,10 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
             }
             return requiresAuthenticationStatusAdminEndpointsInterceptor().preHandle(request, response, handler);
         }
-        
+
         @Override
-        public void postHandle(HttpServletRequest request, HttpServletResponse response,
-                Object handler, ModelAndView modelAndView) throws Exception {
+        public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
+                final Object handler, final ModelAndView modelAndView) throws Exception {
             final String requestPath = request.getRequestURI();
             final Pattern pattern = Pattern.compile("/status(/)*$");
 

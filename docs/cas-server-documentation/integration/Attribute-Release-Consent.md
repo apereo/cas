@@ -9,7 +9,7 @@ CAS provides the ability to enforce user-informed consent upon attribute release
 
 Consent attribute records stored in the configured repository are signed and encrypted.
 
-Support is enabled by including the following module in the Overlay:  
+Support is enabled by including the following module in the Overlay:
 
 ```xml
 <dependency>
@@ -192,7 +192,7 @@ Endpoints must be designed to accept/process `application/json`.
 | Locate consent decision for user   | `GET`     | `principal` as headers    | `200`. The consent decisions object in the body.
 | Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
 | Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
-| Delete consent decision   | 'DELETE'  | `/consentDecisionId` in URL path      | `200`.
+| Delete consent decision   | 'DELETE'  | `/<decisionId>` appended to URL      | `200`.
 
 The consent decision object in transit will and must match the JSON structure above.
 
