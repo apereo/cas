@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$TRAVIS_PULL_REQUEST" == "true" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
     echo -e "Skipping build since this is a pull request and we are not publishing snapshots.\n"
     exit 0
 fi
@@ -10,7 +10,7 @@ branchName="master"
 gradle="sudo ./gradlew"
 
 gradleBuildOptions="--stacktrace --parallel --build-cache --configure-on-demand --max-workers=8"
-gradleBuild="clean bootRepackage install"
+gradleBuild="bootRepackage install"
 
 gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 gradleUploadOptions="--stacktrace --parallel"
