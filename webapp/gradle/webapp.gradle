@@ -3,6 +3,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
 apply plugin: "application"
+apply plugin: "com.moowork.node"
 
 def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 
@@ -37,7 +38,7 @@ if (!rootProject.publishReleases) {
 
 processResources.dependsOn compileSass
 
-clean.delete << new File(project(":webapp").projectDir, file("./node_modules"))
+clean.delete << new File(project(":webapp").projectDir, "node_modules")
 clean.delete << fileTree(dir: project(":webapp").projectDir.getPath() + '/resources/static/js' , include: '*-bundle.js')
 
 sourceSets {
