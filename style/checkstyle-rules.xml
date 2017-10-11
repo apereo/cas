@@ -110,7 +110,9 @@
             <property name="validateComments" value="true"/>
             <property name="severity" value="error"/>
         </module>
-        <module name="AbbreviationAsWordInName"/>
+        <module name="AbbreviationAsWordInName">
+            <property name="allowedAbbreviationLength" value="5" />
+        </module>
         <module name="TypeName">
             <property name="severity" value="error"/>
         </module>

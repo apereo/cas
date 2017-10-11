@@ -17,7 +17,8 @@ public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolve
     public X509SubjectDNPrincipalResolver() {
     }
 
-    public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+    public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository, 
+                                          final PrincipalFactory principalFactory,
                                           final boolean returnNullIfNoAttributes,
                                           final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);

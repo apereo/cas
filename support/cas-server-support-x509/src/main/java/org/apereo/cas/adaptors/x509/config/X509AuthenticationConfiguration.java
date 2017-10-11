@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509CommonNameEDIPIPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolver;
@@ -279,6 +280,16 @@ public class X509AuthenticationConfiguration {
                 x509.getSerialNumberPrefix(), x509.getValueDelimiter());
     }
 
+    @Bean
+    @RefreshScope
+    public PrincipalResolver x509CommonNameEDIPIPrincipalResolver() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
+        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository,
+                x509PrincipalFactory(),
+                x509.getPrincipal().isReturnNull(),
+                x509.getPrincipal().getPrincipalAttribute());
+    }
+
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer x509AuthenticationEventExecutionPlanConfigurer() {
@@ -297,6 +308,9 @@ public class X509AuthenticationConfiguration {
                         break;
                     case SUBJECT_ALT_NAME:
                         resolver = x509SubjectAlternativeNameUPNPrincipalResolver();
+                        break;
+                    case CN_EDIPI:
+                        resolver = x509CommonNameEDIPIPrincipalResolver();
                         break;
                     default:
                         resolver = x509SubjectDNPrincipalResolver();
