@@ -1,5 +1,19 @@
 #!/bin/bash
 
-# This file serves as a placeholder for Travis CI's script phase.
-# It intentionally does nothing in order to override Travis CI's built-in commands for this phase.
-# All relevant checks and commands execute as part of the install phase, indicated by the install.sh script.
+branchName="master"
+gradle="sudo ./gradlew"
+gradleUpload="uploadArchives -x test -x check -x javadoc"
+gradleUploadOptions="--stacktrace --parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+    if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
+         echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+    else
+        echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+        upload="$gradle $gradleUploadOptions $gradleUpload"
+        echo $upload
+        eval $upload
+        retVal=$?
+        echo -e "Deploying snapshots to sonatype finished at `date` \n"
+    fi
+fi
