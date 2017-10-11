@@ -126,8 +126,8 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
 
             final RegexRegisteredService service = new RegexRegisteredService();
             service.setEvaluationOrder(0);
-            service.setName(service.getClass().getSimpleName());
-            service.setDescription("CAS Consent Overview");
+            service.setName("CAS Consent Review");
+            service.setDescription("Review consent decisions for attribute release");
             service.setServiceId(callbackService.getId());
             
             // disable consent for this service
