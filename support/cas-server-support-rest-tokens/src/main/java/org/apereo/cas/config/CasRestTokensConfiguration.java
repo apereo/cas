@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.ServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.tokens.JWTServiceTicketResourceEntityResponseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,13 @@ public class CasRestTokensConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+    
     @Bean
     public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory() {
         return new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService,
-                tokenTicketBuilder, servicesManager);
+                tokenTicketBuilder, ticketRegistrySupport, servicesManager);
     }
 }

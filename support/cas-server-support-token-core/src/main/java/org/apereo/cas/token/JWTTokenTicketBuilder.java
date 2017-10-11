@@ -39,14 +39,14 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     }
 
     @Override
-    public String build(final String ticketId, final Service service) {
+    public String build(final String serviceTicketId, final Service service) {
         try {
-            final Assertion assertion = this.ticketValidator.validate(ticketId, service.getId());
+            final Assertion assertion = this.ticketValidator.validate(serviceTicketId, service.getId());
             final JWTClaimsSet.Builder claims =
                     new JWTClaimsSet.Builder()
                             .audience(service.getId())
                             .issuer(casSeverPrefix)
-                            .jwtID(ticketId)
+                            .jwtID(serviceTicketId)
                             .issueTime(assertion.getAuthenticationDate())
                             .subject(assertion.getPrincipal().getName());
             assertion.getAttributes().forEach(claims::claim);
