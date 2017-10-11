@@ -8,11 +8,11 @@ fi
 gradle="sudo ./gradlew"
 
 gradleBuildOptions="--stacktrace --parallel --configure-on-demand --max-workers=8"
-gradleBuild="bootRepackage install"
+gradleBuild="assemble"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
-    gradleBuild="$gradleBuild checkstyleMain aggregateJavadocsIntoJar"
+    gradleBuild="$gradleBuild checkstyleMain"
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
         echo -e "The build commit message indicates that tests should be skipped.\n"
         gradleBuild="$gradleBuild -x test"
@@ -24,21 +24,20 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
         fi
     fi
 else
-    echo -e "The build indicates that tests should be skipped since we are publishing snapshots.\n"
-    gradleBuild="$gradleBuild -x check -x test aggregateJavadocsIntoJar"
+    echo -e "The build is publishing snapshots; Skipping tests and checks...\n"
+    gradleBuild="$gradleBuild -x test -x check"
 fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo $tasks
 eval $tasks
 retVal=$?
-echo -e "Gradle build finished at `date` with exit code $retVal\n"
-
+echo -e "********************************************************"
+echo -e "Gradle build finished at `date` with exit code $retVal"
+echo -e "********************************************************"
 if [ $retVal == 0 ]; then
     echo "Gradle build finished successfully."
 else
     echo "Gradle build did NOT finished successfully."
     exit $retVal
 fi
-
-
