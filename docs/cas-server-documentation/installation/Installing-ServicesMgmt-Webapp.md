@@ -2,6 +2,7 @@
 layout: default
 title: CAS - Services Management Webapp
 ---
+
 # Services Management Webapp
 
 The services management webapp is no longer part of the CAS server and
@@ -15,11 +16,18 @@ You <strong>MUST</strong> keep in mind that both applications (the CAS server an
 share the <strong>same</strong> service registry configuration for CAS services.
 </p></div>
 
+The management web application is purely an administrative interface that may be deployed in a completely different environment separate from CAS. It allows CAS administrators and application owners delegated access so they can manage and modify policies associated with their applications. The operational capacity of the CAS server itself is not in any way tied to the deployment status of the management web application; you may decide to take the application offline for maintenance or completely remove it from your deployment scenario at any given time.
+
+Note that for certain type of service registry backends, deploying the management web application is a requirement since it acts as the interface fronting CRUD operations that deal with the storage backend. The absence of the management web application means that you will need to find alternative tooling to *manually* interact with your registry of choice and the storage backend it employs.
+
+## Installation
+
 A template overlay for the services management webapp is [provided here](https://github.com/apereo/cas-services-management-overlay).
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
 ## Configuration
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
 The management web application is primarily controlled by a `management.yml|properties` file. However, all strategies outlined in [CAS configuration management](Configuration-Management.html) equally apply here as well in the way that settings are defined, passed and resolved. The primary difference of course is the name of the configuration file.
 
