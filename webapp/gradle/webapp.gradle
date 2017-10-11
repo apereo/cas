@@ -3,11 +3,43 @@ import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
 apply plugin: "application"
+apply plugin: "com.moowork.node"
 
 def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 
 description = "Apereo CAS Web Application"
 mainClassName = MAIN_CLASS
+
+node {
+    version = "${nodeVersion}"
+    nodeModulesDir = project(":webapp").projectDir
+    download = true
+}
+
+npm_install.dependsOn(npm_cache_clean)
+
+task npmLint(type: NpmTask) {
+    dependsOn npm_install
+    description "Lint the JavaScript files"
+    group "UI"
+    args = ['run', 'lint', '--silent']
+}
+
+task compileSass(type: NpmTask) {
+    group 'UI'
+    dependsOn npm_install
+    description "Compile Sass"
+    args = ['run', 'gulp', '--silent']
+}
+
+if (!rootProject.publishReleases) {
+    processResources.dependsOn npmLint
+}
+
+processResources.dependsOn compileSass
+
+clean.delete << new File(project(":webapp").projectDir, "node_modules")
+clean.delete << fileTree(dir: project(":webapp").projectDir.getPath() + '/resources/static/js' , include: '*-bundle.js')
 
 sourceSets {
     main {

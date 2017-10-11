@@ -44,7 +44,7 @@ install:
 - chmod -R 777 ./travis/install.sh
 - ./travis/install.sh
 script:
-- chmod -R 777 ./travis/install.sh
+- chmod -R 777 ./travis/script.sh
 - ./travis/script.sh
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
