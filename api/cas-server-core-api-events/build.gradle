@@ -1,4 +1,4 @@
-description = "Apereo CAS Core AAPI Events"
+description = "Apereo CAS Core API Events"
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")

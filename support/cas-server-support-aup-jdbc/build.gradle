@@ -1,0 +1,13 @@
+description = "Apereo CAS AUP JDBC Support"
+dependencies {
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-authentication")
+
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-aup-core")
+
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+}

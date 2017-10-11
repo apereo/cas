@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@DirtiesContext
 public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTests {
 
     @Rule
@@ -48,10 +50,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() throws Exception {
         this.thrown.expect(AuthenticationException.class);
-
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
-
         getCentralAuthenticationService().createTicketGrantingTicket(ctx);
     }
 
@@ -181,8 +181,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final TicketGrantingTicket ticket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticket.getId(), getService(), ctx);
 
-        final Service service = serviceTicketId.getService();
-        assertSame(((AbstractWebApplicationService) service).getPrincipal(), ticket.getAuthentication().getPrincipal());
+        final AbstractWebApplicationService service = AbstractWebApplicationService.class.cast(serviceTicketId.getService());
+        assertEquals(service.getPrincipal(), ticket.getAuthentication().getPrincipal().getId());
     }
 
     @Test

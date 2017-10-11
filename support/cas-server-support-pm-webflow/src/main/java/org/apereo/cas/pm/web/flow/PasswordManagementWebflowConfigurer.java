@@ -4,10 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -38,19 +36,19 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private static final String PASSWORD_CHANGE_ACTION = "passwordChangeAction";
     private static final String SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION = "sendInstructions";
 
-    @Autowired
-    @Qualifier("initPasswordChangeAction")
-    private Action passwordChangeAction;
+    private final Action initPasswordChangeAction;
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final ApplicationContext applicationContext,
-                                               final CasConfigurationProperties casProperties) {
+                                               final CasConfigurationProperties casProperties,
+                                               final Action initPasswordChangeAction) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        this.initPasswordChangeAction = initPasswordChangeAction;
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createAccountStatusViewStates(flow);
@@ -67,11 +65,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createEndState(flow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
 
         if (casProperties.getAuthn().getPm().isEnabled()) {
-            configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
+            configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
             createPasswordResetFlow();
         } else {
-            createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
             createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             createViewState(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
         }
@@ -110,7 +107,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         final ViewState viewState = createViewState(flow, id, id, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
-        viewState.getEntryActionList().add(this.passwordChangeAction);
+        viewState.getEntryActionList().add(this.initPasswordChangeAction);
         final Transition transition = createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, PASSWORD_CHANGE_ACTION);
         transition.getAttributes().put("bind", Boolean.TRUE);
         transition.getAttributes().put("validate", Boolean.TRUE);

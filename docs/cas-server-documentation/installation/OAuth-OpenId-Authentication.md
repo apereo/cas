@@ -35,10 +35,10 @@ After enabling OAuth support, the following endpoints will be available:
 | `/oauth2.0/accessToken`     | Get an access token in plain-text or JSON                                 | `POST`
 | `/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
-
 ## Response/Grant Types
 
-The following types are supported; they allow you to get an access token representing the current user and OAuth client application. With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
+The following types are supported; they allow you to get an access token representing the current user and OAuth 
+client application. With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
 ### Authorization Code
 
@@ -115,6 +115,11 @@ The following fields are supported:
 | `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
 | `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type.
 
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
+particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
+you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
+deployment at that.</p></div>
+
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
@@ -129,6 +134,63 @@ See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 The expiration policy for OAuth tokens is controlled by CAS settings and properties. Note that while access and refresh tokens may have their own lifetime and expiration policy, they are typically upper-bound to the length of the CAS single sign-on session.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+
+## OAuth User Profile
+
+The requested user profile may be rendered and consumed by the application using the following options.
+
+The following alternative options are available.
+
+### Nested
+
+By default, the requested user profile is rendered using a `NESTED` format where the authenticated principal and attributes are placed inside `id` and `attributes` tags respectively in the final structure.
+
+```json
+{
+  "id": "casuser",
+  "attributes": {
+    "email": "casuser@example.org",
+    "name": "CAS"
+  },
+  "something": "else"
+}
+```
+
+### Flat
+
+This option flattens principal attributes by one degree, putting them at the same level as `id`. Other nested elements in the final payload are left untouched.
+
+```json
+{
+  "id": "casuser",
+  "email": "casuser@example.org",
+  "name": "CAS",
+  "something": "else"
+}
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+
+### Custom
+
+If you wish to create your own profile structure, you will need to design a component and register it with CAS to handle the rendering of the user profile:
+
+```java
+package org.apereo.cas.support.oauth;
+
+@Configuration("MyOAuthConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyOAuthConfiguration {
+
+    @Bean
+    @RefreshScope
+    public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
+        ...
+    }
+}
+```
+
+[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 ## Server Configuration
 

@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Before;
@@ -55,6 +56,8 @@ import static org.junit.Assert.*;
                 CasCoreServicesConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
+                CasCoreWebConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
                 RefreshAutoConfiguration.class})
 @EnableScheduling
 @TestPropertySource(locations={"classpath:/mongo.properties"})

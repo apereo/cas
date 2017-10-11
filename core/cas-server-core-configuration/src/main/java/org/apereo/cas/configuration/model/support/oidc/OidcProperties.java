@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -15,6 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-support-oidc")
 public class OidcProperties implements Serializable {
 
     private static final long serialVersionUID = 813028615694269276L;
@@ -25,6 +28,7 @@ public class OidcProperties implements Serializable {
     /**
      * OIDC issuer.
      */
+    @RequiredProperty
     private String issuer = "http://localhost:8080/cas/oidc";
     /**
      * Skew value used to massage the authentication issue instance.
@@ -33,6 +37,7 @@ public class OidcProperties implements Serializable {
     /**
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
      */
+    @RequiredProperty
     private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.

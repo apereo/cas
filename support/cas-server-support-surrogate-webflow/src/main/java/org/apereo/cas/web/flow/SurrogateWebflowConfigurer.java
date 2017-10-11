@@ -33,14 +33,13 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createSurrogateListViewState(flow);
             createSurrogateSelectionActionState(flow);
             createTransitionToInjectSurrogateIntoFlow(flow);
             createSurrogateAuthorizationActionState(flow);
-
         }
     }
 

@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasOAuthConfiguration,\
-  org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration
+  org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration,\
+  org.apereo.cas.config.CasOAuthComponentSerializationConfiguration

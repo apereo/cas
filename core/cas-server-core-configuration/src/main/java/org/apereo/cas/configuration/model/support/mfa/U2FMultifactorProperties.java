@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -13,7 +15,8 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class U2FMultifactorProperties extends BaseMultifactorProvider {
+@RequiredModule(name = "cas-server-support-u2f")
+public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 6151350313777066398L;
 
     /**
@@ -38,7 +41,10 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
      * Device registration record expiration time unit.
      */
     private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
-
+    /**
+     * Store device registration records inside a MongoDb resource.
+     */
+    private MongoDb mongo = new MongoDb();
     /**
      * Store device registration records inside a static JSON resource.
      */
@@ -101,6 +107,14 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
         this.expireDevicesTimeUnit = expireDevicesTimeUnit;
     }
 
+    public MongoDb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
+    }
+
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = -6883660787308509919L;
     }
@@ -117,5 +131,12 @@ public class U2FMultifactorProperties extends BaseMultifactorProvider {
         private static final long serialVersionUID = -4334840263678287815L;
     }
 
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
+        private static final long serialVersionUID = -7963843335569634144L;
+
+        public MongoDb() {
+            setCollection("CasMongoDbU2FRepository");
+        }
+    }
 }
 

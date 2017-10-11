@@ -1,0 +1,44 @@
+<div>
+  <mat-checkbox [(ngModel)]="wsFedOnly" [disabled]="isEmpty(formData.availableAttributes )">
+    <ng-container i18n="services.form.label.wsfed.wsFederationOnly">
+      {{ messages.services_form_label_wsfed_wsFederationOnly }}
+    </ng-container>
+  </mat-checkbox>
+</div>
+
+<div class="panel panel-default" *ngIf="wsFedOnly && !isEmpty(formData.availableAttributes )">
+  <mat-table [dataSource]="dataSource">
+
+    <ng-container cdkColumnDef="source">
+      <mat-header-cell *cdkHeaderCellDef>
+        <ng-container i18n="services.form.label.attrRelease.policies.sourceAttribute">
+          {{ messages.services_form_label_attrRelease_policies_sourceAttribute }}
+        </ng-container>
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let row"> {{ row.key }}</mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="mapped">
+      <mat-header-cell *cdkHeaderCellDef>
+        <ng-container i18n="services.form.label.attrRelease.policies.casAttribute">
+          {{ messages.services_form_label_attrRelease_policies_casAttribute }}
+        </ng-container>
+        <mat-icon style="font-size: medium;"
+                 i18n-matTooltip="services.form.tooltip.attrRelease.policies.returnMapped"
+                 [matTooltip]="messages.services_form_tooltip_attrRelease_policies_returnMapped">help
+        </mat-icon>
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let row">
+        <mat-form-field>
+          <mat-select [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes[row.key]">
+            <mat-option *ngFor="let item of selectOptions.wsfedClaimList" [value]="item.name">{{ item.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </mat-table>
+</div>

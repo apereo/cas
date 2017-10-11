@@ -67,8 +67,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                 LOGGER.debug("JSON resource [{}] does not exist or is empty", jsonResource);
                 return new ArrayList<>();
             }
-
-
+            
             final Map<String, List<U2FDeviceRegistration>> devices = readDevicesFromJsonResource();
 
             if (!devices.isEmpty()) {
@@ -77,7 +76,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                 final List<U2FDeviceRegistration> list = devs
                         .stream()
                         .filter(d -> d.getUsername().equals(username)
-                                && (d.getDate().isEqual(expirationDate) || d.getDate().isAfter(expirationDate)))
+                                && (d.getCreatedDate().isEqual(expirationDate) || d.getCreatedDate().isAfter(expirationDate)))
                         .collect(Collectors.toList());
 
                 return list.stream()
@@ -118,7 +117,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                     final U2FDeviceRegistration current = new U2FDeviceRegistration();
                     current.setUsername(username);
                     current.setRecord(d.toJson());
-                    current.setDate(LocalDate.now());
+                    current.setCreatedDate(LocalDate.now());
                     return current;
                 })
                 .collect(Collectors.toList());
@@ -136,7 +135,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
             final U2FDeviceRegistration device = new U2FDeviceRegistration();
             device.setUsername(username);
             device.setRecord(registration.toJson());
-            device.setDate(LocalDate.now());
+            device.setCreatedDate(LocalDate.now());
 
             final Collection<DeviceRegistration> devices = getRegisteredDevices(username);
             final List<U2FDeviceRegistration> list = getU2fDeviceRegistrations(username, devices);
@@ -163,7 +162,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
                 final List<U2FDeviceRegistration> list = devs.stream()
-                        .filter(d -> d.getDate().isEqual(expirationDate) || d.getDate().isBefore(expirationDate))
+                        .filter(d -> d.getCreatedDate().isEqual(expirationDate) || d.getCreatedDate().isBefore(expirationDate))
                         .collect(Collectors.toList());
 
                 LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());

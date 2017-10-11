@@ -18,10 +18,9 @@ import java.util.Collection;
 public abstract class AbstractX509LdapTests extends AbstractLdapTests {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
-
+    
     public static void bootstrap() throws Exception {
         try {
-            initDirectoryServer();
             getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
             populateCertificateRevocationListAttribute();
         } catch (final Exception e) {
@@ -54,7 +53,5 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
         }
     }
 
-    public String getTestDN() {
-        return DN;
-    }
+    
 }

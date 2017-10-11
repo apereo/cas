@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.services;
 
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
@@ -10,6 +11,9 @@ import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProp
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -20,10 +24,30 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-core-services", automated = true)
 public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;
 
+    /**
+     * Types of service managers that one can control.
+     */
+    public enum ServiceManagementTypes {
+        /**
+         * Group service definitions by their domain.
+         */
+        DOMAIN,
+        /**
+         * Default option to keep definitions in a map as they arrive.
+         */
+        DEFAULT
+    }
+    /**
+     * Properties pertaining to REST service registry.
+     */
+    @NestedConfigurationProperty
+    private BaseRestEndpointProperties rest = new BaseRestEndpointProperties();
+    
     /**
      * Properties pertaining to redis service registry.
      */
@@ -83,6 +107,18 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
+
+    /**
+     * Email settings for notifications.
+     */
+    @NestedConfigurationProperty
+    private EmailProperties mail = new EmailProperties();
+
+    /**
+     * SMS settings for notifications.
+     */
+    @NestedConfigurationProperty
+    private SmsProperties sms = new SmsProperties();
     
     /**
      * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
@@ -95,6 +131,33 @@ public class ServiceRegistryProperties implements Serializable {
      * from persistent data store.
      */
     private boolean watcherEnabled = true;
+
+    /**
+     * Determine how services are internally managed, queried, cached and reloaded by CAS.
+     * Accepted values are the following:
+     * 
+     * <ul>
+     *     <li>DEFAULT: Keep all services inside a concurrent map.</li>
+     *     <li>DOMAIN: Group registered services by their domain having been explicitly defined.</li>
+     * </ul>
+     */
+    private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
+
+    public ServiceManagementTypes getManagementType() {
+        return managementType;
+    }
+
+    public void setManagementType(final ServiceManagementTypes managementType) {
+        this.managementType = managementType;
+    }
+
+    public BaseRestEndpointProperties getRest() {
+        return rest;
+    }
+
+    public void setRest(final BaseRestEndpointProperties rest) {
+        this.rest = rest;
+    }
 
     public boolean isInitFromJson() {
         return initFromJson;
@@ -190,5 +253,21 @@ public class ServiceRegistryProperties implements Serializable {
 
     public void setRedis(final RedisServiceRegistryProperties redis) {
         this.redis = redis;
+    }
+
+    public EmailProperties getMail() {
+        return mail;
+    }
+
+    public void setMail(final EmailProperties mail) {
+        this.mail = mail;
+    }
+
+    public SmsProperties getSms() {
+        return sms;
+    }
+
+    public void setSms(final SmsProperties sms) {
+        this.sms = sms;
     }
 }

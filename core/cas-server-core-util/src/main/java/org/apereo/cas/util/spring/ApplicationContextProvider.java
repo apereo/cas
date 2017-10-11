@@ -4,6 +4,8 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * @author Misagh Moayyed
@@ -11,9 +13,10 @@ import org.springframework.context.ConfigurableApplicationContext;
  * holds the application context
  * @since 3.0.0.
  */
-public class ApplicationContextProvider implements ApplicationContextAware {
+public class ApplicationContextProvider implements ApplicationContextAware, ResourceLoaderAware {
     private static ApplicationContext CONTEXT;
-    
+    private static ResourceLoader RESOURCE_LOADER;
+
     public static ApplicationContext getApplicationContext() {
         return CONTEXT;
     }
@@ -25,6 +28,20 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     public ConfigurableApplicationContext getConfigurableApplicationContext() {
         return (ConfigurableApplicationContext) CONTEXT;
+    }
+
+    /**
+     * Gets reource loader.
+     *
+     * @return the reource loader
+     */
+    public static ResourceLoader getReourceLoader() {
+        return RESOURCE_LOADER;
+    }
+
+    @Override
+    public void setResourceLoader(final org.springframework.core.io.ResourceLoader resourceLoader) {
+        RESOURCE_LOADER = resourceLoader;
     }
 
     public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {

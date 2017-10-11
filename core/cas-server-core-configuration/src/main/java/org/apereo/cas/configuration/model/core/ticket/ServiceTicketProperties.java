@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-core-tickets", automated = true)
 public class ServiceTicketProperties implements Serializable {
 
     private static final long serialVersionUID = -7445209580598499921L;

@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -10,6 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-core-authentication", automated = true)
 public class PrincipalTransformationProperties implements Serializable {
 
     private static final long serialVersionUID = 1678602647607236322L;
@@ -34,8 +37,9 @@ public class PrincipalTransformationProperties implements Serializable {
     private String suffix;
 
     /**
-     * Indicate whether the principal identifer should be transformed
+     * Indicate whether the principal identifier should be transformed
      * into upper-case, lower-case, etc.
+     * Accepted values are {@code NONE, UPPERCASE, LOWERCASE},
      */
     private CaseConversion caseConversion = CaseConversion.NONE;
 

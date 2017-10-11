@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apereo.cas.authentication.Authentication;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -25,15 +26,16 @@ public interface ResponseBuilder<T extends WebApplicationService> extends Serial
      *
      * @param service         the service
      * @param serviceTicketId the service ticket id
+     * @param authentication  the authentication
      * @return the response
      */
-    Response build(T service, String serviceTicketId);
+    Response build(T service, String serviceTicketId, Authentication authentication);
 
     /**
      * Supports this service.
      *
      * @param service the service
-     * @return true/false
+     * @return true /false
      */
     boolean supports(T service);
 }

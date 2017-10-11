@@ -18,6 +18,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("ehcacheTicketRegistryTicketCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class EhcacheTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
+    /**
+     * Service ticket cache name.
+     */
+    public static final String SERVICE_TICKETS_CACHE = "serviceTicketsCache";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheTicketRegistryTicketCatalogConfiguration.class);
 
     @Autowired
@@ -25,7 +30,7 @@ public class EhcacheTicketRegistryTicketCatalogConfiguration extends CasCoreTick
 
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("serviceTicketsCache");
+        metadata.getProperties().setStorageName(SERVICE_TICKETS_CACHE);
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
         super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }

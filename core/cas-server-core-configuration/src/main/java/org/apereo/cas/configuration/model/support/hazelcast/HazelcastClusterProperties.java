@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -11,6 +13,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-support-hazelcast-ticket-registry")
 public class HazelcastClusterProperties implements Serializable {
     private static final long serialVersionUID = 1817784607045775145L;
     /**
@@ -32,6 +35,7 @@ public class HazelcastClusterProperties implements Serializable {
     /**
      * The instance name.
      */
+    @RequiredProperty
     private String instanceName = "localhost";
     /**
      * You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of port.
@@ -43,6 +47,7 @@ public class HazelcastClusterProperties implements Serializable {
      * By default, Hazelcast will try 100 ports to bind. Meaning that, if you set the value of port as 5701,
      * as members are joining to the cluster, Hazelcast tries to find ports between 5701 and 5801.
      */
+    @RequiredProperty
     private int port = 5701;
     /**
      * Enables a multicast configuration using a group address and port.
@@ -65,6 +70,7 @@ public class HazelcastClusterProperties implements Serializable {
      * If members is empty, calling this method will have the same effect as calling clear().
      * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which indicates multiple members are going to be added.
      */
+    @RequiredProperty
     private List<String> members = CollectionUtils.wrap("localhost");
     /**
      * Sets the maximum size of the map.

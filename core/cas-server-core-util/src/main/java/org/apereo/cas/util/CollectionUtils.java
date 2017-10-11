@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,7 +37,7 @@ public final class CollectionUtils {
      */
     @SuppressWarnings("unchecked")
     public static Set<Object> toCollection(final Object obj) {
-        final Set<Object> c = new HashSet<>();
+        final Set<Object> c = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
@@ -101,7 +100,7 @@ public final class CollectionUtils {
      */
     public static <K, V> Map<K, V> wrap(final String key, final Object value) {
         final Map map = new HashMap<>();
-        if (StringUtils.isNotBlank(key)) {
+        if (StringUtils.isNotBlank(key) && value != null) {
             map.put(key, value);
         }
         return map;
@@ -201,7 +200,7 @@ public final class CollectionUtils {
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
-     * @param source Nullable list to wrap.
+     * @param source list to wrap.
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
@@ -212,6 +211,9 @@ public final class CollectionUtils {
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }
+            } else if (source.getClass().isArray()) {
+                final List elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                list.addAll(elements);
             } else {
                 list.add(source);
             }
@@ -276,7 +278,7 @@ public final class CollectionUtils {
         addToCollection(list, source);
         return list;
     }
-    
+
     /**
      * Wrap set set.
      *

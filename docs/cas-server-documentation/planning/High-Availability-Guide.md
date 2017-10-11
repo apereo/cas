@@ -195,14 +195,8 @@ desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/d
 
 ### HA Ticket Registry
 
-The following ticket storage components provide the best tradeoff among ease of use, scalability, and
-fault tolerance and are suitable for both active/passive and active/active setups:
-
-* [Hazelcast](../installation/Hazelcast-Ticket-Registry.html)
-* [EhCache](../installation/Ehcache-Ticket-Registry.html)
-* [MemCached](../installation/Memcached-Ticket-Registry.html)
-* [Ignite](../installation/Ignite-Ticket-Registry.html)
-* [Couchbase](../installation/Couchbase-Ticket-Registry.html)
+The following [ticket storage components](../installation/Configuring-Ticketing-Components.html) provide the best tradeoff among ease of use, scalability, and
+fault tolerance and are suitable for both active/passive and active/active setups.
 
 The particular choice of storage technology should be driven by infrastructure and expertise as much as performance
 and availability considerations. It's hardly valuable to have a high-performance storage for which you lack the
@@ -231,10 +225,9 @@ so that tickets are encrypted and signed on replication attempts to prevent snif
 ### Distributing Service Definitions
 
 In an HA environment, service definitions must be replicated and accessible by all nodes in 
-the CAS cluster. Typically, this may be achieved by leveraging centralized registry implementation that are backed 
-by JPA or LDAP. Registries that are backed by the file system need to devise a process of ensuring proper file 
-replication, either manually or via background daemon.
-
+the CAS cluster. Typically, this may be achieved by leveraging centralized [registry implementations](../installation/Service-Management.html) that are backed 
+by JPA, LDAP, MongoDb, etc. Registries that are backed by the file system need to devise a process of ensuring proper file 
+replication, either manually or via a background daemon.
 
 ### Connection Pooling
 

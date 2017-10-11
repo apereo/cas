@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -65,6 +66,7 @@ import static org.junit.Assert.*;
         CasPersonDirectoryConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreUtilConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
@@ -90,7 +92,7 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1381);
     }
 
     @TestConfiguration

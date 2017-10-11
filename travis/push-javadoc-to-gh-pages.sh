@@ -1,5 +1,4 @@
 #!/bin/bash
-invokeJavadoc=false
 invokeDoc=false
 
 casBranch="master"
@@ -13,40 +12,16 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$PUBLISH_SNAPSHOTS" == "false" ] 
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1)
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
-        # Do not deploy javadocs to gh-pages as they are pulled from Maven Central
-        # invokeJavadoc=true;
         invokeDoc=true;;
   esac
 fi
 
-echo -e "Starting with project documentation...\n"
-
 if [ "$invokeDoc" == true ]; then
-
   echo -e "Copying project documentation over to $HOME/docs-latest...\n"
   cp -R docs/cas-server-documentation $HOME/docs-latest
-
 fi
 
-echo -e "Finished with project documentation...\n"
-
-echo -e "Staring with project Javadocs...\n"
-
-if [ "$invokeJavadoc" == true ]; then
-
-  echo -e "Started to publish latest Javadoc to gh-pages...\n"
-
-  echo -e "Invoking build to generate the project site...\n"
-  ./gradlew javadoc -q -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8 --parallel
-
-  echo -e "Copying the generated docs over...\n"
-  cp -R build/javadoc $HOME/javadoc-latest
-
-fi
-
-echo -e "Finished with project Javadocs...\n"
-
-if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
+if [[ "$invokeDoc" == true ]]; then
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
@@ -54,19 +29,17 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git config --global pack.threads "24"
   
   echo -e "Cloning the repository to push documentation...\n"
-  git clone --single-branch --depth 3 --branch gh-pages --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
-  
+  git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
   cd gh-pages
   # git gc --aggressive --prune=now
   
-  echo -e "Configuring tracking branches for repository:\n"
+  echo -e "Configuring tracking branches for repository...\n"
   for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v $casBranch`; do
      git branch --track ${branch##*/} $branch
   done
 
   echo -e "Switching to gh-pages branch\n"
   git checkout gh-pages
-  git status
 
   echo -e "\nStaring to move project documentation over...\n"
 
@@ -80,24 +53,6 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
     echo -e "Copying new docs from $HOME/docs-latest over to $branchVersion...\n"
     cp -Rf $HOME/docs-latest/* "./$branchVersion"
     echo -e "Copied project documentation...\n"
-  fi
-
-  if [ "$invokeJavadoc" == true ]; then
-    echo -e "Staring to move project Javadocs over...\n"
-
-    echo -e "Removing previous Javadocs from /$branchVersion/javadocs...\n"
-    git rm -rf ./"$branchVersion"/javadocs > /dev/null
-
-    echo -e "Creating $branchVersion directory...\n"
-    test -d "./$branchVersion" || mkdir -m777 -v ./"$branchVersion"
-
-    echo -e "Creating Javadocs directory at /$branchVersion/javadocs...\n"
-    test -d "./$branchVersion/javadocs" || mkdir -m777 -v ./"$branchVersion"/javadocs
-
-    echo -e "Copying new Javadocs...\n"
-    cp -Rf $HOME/javadoc-latest/* ./"$branchVersion"/javadocs
-    echo -e "Copied project Javadocs...\n"
-
   fi
 
   echo -e "Adding changes to the git index...\n"
@@ -131,5 +86,4 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git push -fq origin --all > /dev/null
 
   echo -e "Successfully published documentation.\n"
-
 fi

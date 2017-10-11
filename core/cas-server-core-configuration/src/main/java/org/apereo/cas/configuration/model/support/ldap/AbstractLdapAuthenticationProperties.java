@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +40,10 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
     /**
      * The authentication type.
      * <ul>
-     * <li>Active Directory - Users authenticate with sAMAccountName. </li>
-     * <li>Authenticated Search - Manager bind/search</li>
-     * <li>Anonymous Search</li>
-     * <li>Direct Bind: Direct Bind - Compute user DN from format string and perform simple bind.
+     * <li>AD - Users authenticate with sAMAccountName. </li>
+     * <li>AUTHENTICATED - Manager bind/search</li>
+     * <li>ANONYMOUS</li>
+     * <li>DIRECT: Direct Bind - Compute user DN from format string and perform simple bind.
      * This is relevant when no search is required to compute the DN needed for a bind operation.
      * Use cases for this type are:
      * 1) All users are under a single branch in the directory, {@code e.g. ou=Users,dc=example,dc=org.}
@@ -49,6 +51,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * {@code uid=%s,ou=Users,dc=example,dc=org}.</li>
      * </ul>
      */
+    @RequiredProperty
     private AuthenticationTypes type;
 
     /**
@@ -86,6 +89,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * User filter to use for searching.
      * Syntax is {@code cn={user}} or {@code cn={0}}.
      */
+    @RequiredProperty
     private String userFilter;
 
     /**

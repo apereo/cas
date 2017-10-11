@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
@@ -104,7 +105,7 @@ public class ElectronicFenceConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector selector;
@@ -132,7 +133,7 @@ public class ElectronicFenceConfiguration {
     @Autowired
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
-                                                                                   final AuthenticationSystemSupport authenticationSystemSupport) {
+                                                                               final AuthenticationSystemSupport authenticationSystemSupport) {
         final CasWebflowEventResolver r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
                 servicesManager,
                 ticketRegistrySupport, warnCookieGenerator,
@@ -237,8 +238,7 @@ public class ElectronicFenceConfiguration {
     }
 
     private void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b) {
-        final RiskBasedAuthenticationProperties.Response.Mail mail =
-                casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
+        final EmailProperties mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
         if (StringUtils.isNotBlank(mail.getText()) && StringUtils.isNotBlank(mail.getFrom()) && StringUtils.isNotBlank(mail.getSubject())) {
             b.getNotifiers().add(authenticationRiskEmailNotifier());
         }

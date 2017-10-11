@@ -4,8 +4,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class FileAuthenticationHandlerTests {
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");
         p.setCharacterEncoding("UTF-8");
-        this.authenticationHandler.setPasswordEncoder(Beans.newPasswordEncoder(p));
+        this.authenticationHandler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(p));
     }
 
     @Test

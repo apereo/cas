@@ -41,14 +41,14 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     }
 
     @Override
-    public String getSecret(final String username) {
+    public OneTimeTokenAccount get(final String username) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final ResponseEntity<String> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, String.class);
+        final ResponseEntity<OneTimeTokenAccount> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, OneTimeTokenAccount.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return result.getBody();
         }

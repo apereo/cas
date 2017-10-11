@@ -13,6 +13,7 @@
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="initializeLoginForm"/>
         <transition on="success" to="ticketGrantingTicketCheck"/>
+        <transition on="successWithWarnings" to="ticketGrantingTicketCheck"/>
     </action-state>
 
     <action-state id="ticketGrantingTicketCheck">

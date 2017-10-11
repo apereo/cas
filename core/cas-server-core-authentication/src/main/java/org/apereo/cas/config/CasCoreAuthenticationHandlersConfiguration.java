@@ -8,8 +8,10 @@ import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentials
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
@@ -92,11 +94,11 @@ public class CasCoreAuthenticationHandlersConfiguration {
         final AcceptAuthenticationProperties acceptAuthenticationProperties = casProperties.getAuthn().getAccept();
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager,
                 acceptUsersPrincipalFactory(), null, getParsedUsers());
-        h.setPasswordEncoder(Beans.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(acceptAuthenticationProperties.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(acceptAuthenticationProperties.getPrincipalTransformation()));
         return h;
     }
 
@@ -149,12 +151,12 @@ public class CasCoreAuthenticationHandlersConfiguration {
                         h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
                         h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
                         h.setRealm(jaas.getRealm());
-                        h.setPasswordEncoder(Beans.newPasswordEncoder(jaas.getPasswordEncoder()));
+                        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
 
                         if (jaasPasswordPolicyConfiguration != null) {
                             h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
                         }
-                        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
+                        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
                         h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
                         return h;
                     })

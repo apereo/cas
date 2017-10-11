@@ -20,6 +20,24 @@ public abstract class AbstractCasEventRepositoryTests {
 
     @Test
     public void verifySave() {
+        final CasEvent dto1 = getCasEvent();
+        getRepositoryInstance().save(dto1);
+
+        final CasEvent dto2 = getCasEvent();
+        getRepositoryInstance().save(dto2);
+        
+        final Collection<? extends CasEvent> col = getRepositoryInstance().load();
+        assertEquals(2, col.size());
+        
+        assertNotEquals(dto1.getId(), 0);
+        assertNotEquals(dto2.getId(), 0);
+        assertNotEquals(dto2.getId(), dto1.getId());
+        
+        final CasEvent casEvent = col.stream().findFirst().get();
+        assertFalse(casEvent.getProperties().isEmpty());
+    }
+
+    private CasEvent getCasEvent() {
         final TicketGrantingTicket ticket = new MockTicketGrantingTicket("casuser");
         final CasTicketGrantingTicketCreatedEvent event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
 
@@ -29,12 +47,7 @@ public abstract class AbstractCasEventRepositoryTests {
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime());
         dto.putId(event.getTicketGrantingTicket().getId());
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-
-        getRepositoryInstance().save(dto);
-
-        final Collection<CasEvent> col = getRepositoryInstance().load();
-        assertEquals(col.size(), 1);
-        assertFalse(col.stream().findFirst().get().getProperties().isEmpty());
+        return dto;
     }
 
     public abstract CasEventRepository getRepositoryInstance();

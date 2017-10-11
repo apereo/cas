@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -8,16 +11,19 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiredModule(name = "cas-server-support-sms-textmagic")
 public class TextMagicProperties implements Serializable {
 
     private static final long serialVersionUID = 5645993472155203013L;
     /**
      * Secure token used to establish a handshake.
      */
+    @RequiredProperty
     private String token;
     /**
      * Username authorized to use the service as the bind account.
      */
+    @RequiredProperty
     private String username;
 
     public String getUsername() {

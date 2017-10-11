@@ -48,7 +48,6 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                     LOGGER.debug("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
                             registeredService.getServiceId(), isAllowedForSso);
                     return isAllowedForSso;
-
                 } finally {
                     AuthenticationCredentialsLocalBinder.bindCurrent(ca);
                 }

@@ -1,0 +1,9 @@
+description = "Apereo CAS Service Registry Changelog Support"
+
+dependencies {
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

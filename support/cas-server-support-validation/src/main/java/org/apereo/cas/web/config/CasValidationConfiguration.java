@@ -121,12 +121,14 @@ public class CasValidationConfiguration {
     private AuthenticationServiceSelectionPlan selectionStrategies;
             
     @Bean
+    @ConditionalOnMissingBean(name = "cas1ServiceSuccessView")
     public View cas1ServiceSuccessView() {
         return new Cas10ResponseView(true, protocolAttributeEncoder, servicesManager,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "cas1ServiceFailureView")
     public View cas1ServiceFailureView() {
         return new Cas10ResponseView(false, protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());

@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,7 +169,9 @@ public class DashboardController extends BaseCasMvcEndpoint {
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties));
         model.put("attributeResolutionEndpointEnabled",
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties));
-
+        model.put("configurationMetadataEndpointEnabled",
+                isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties));
+        
         final boolean endpointAvailable = model.entrySet().stream()
                 .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
         model.put("dashboardEndpointsEnabled", endpointAvailable);

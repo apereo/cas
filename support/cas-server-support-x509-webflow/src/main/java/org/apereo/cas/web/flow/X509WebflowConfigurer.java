@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -22,7 +22,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * couldn't find entry for the certificate in an attribute repository and
  * falling back to principal from the certificate is turned off via:
  * {@code cas.authn.x509.principal.returnNull=true} provided by
- * {@link PersonDirPrincipalResolverProperties#isReturnNull()}.
+ * {@link PersonDirectoryPrincipalResolverProperties#isReturnNull()}.
  * <p>
  * Credentials are cleared out at the end of the action in case the user
  * is sent to the login page where the X509 credentials object will cause

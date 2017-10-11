@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -15,6 +16,8 @@ import java.util.Arrays;
  * @since 5.0.0
  */
 public final class DigestUtils {
+    private static final int ABBREVIATE_MAX_WIDTH = 125;
+    
     private DigestUtils() {
     }
 
@@ -120,6 +123,7 @@ public final class DigestUtils {
         }
     }
 
+    
     /**
      * Raw digest byte [ ].
      *
@@ -138,6 +142,16 @@ public final class DigestUtils {
         }
     }
 
+    /**
+     * Abbreviate string.
+     *
+     * @param str the str
+     * @return the string
+     */
+    public static String abbreviate(final String str) {
+        return StringUtils.abbreviate(str, ABBREVIATE_MAX_WIDTH);
+    }
+    
     private static MessageDigest getMessageDigestInstance(final String alg) throws Exception {
         final MessageDigest digest = MessageDigest.getInstance(alg);
         digest.reset();

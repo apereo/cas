@@ -5,10 +5,11 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CouchbaseAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +68,8 @@ public class CouchbaseAuthenticationConfiguration {
         final CouchbaseAuthenticationHandler handler = new CouchbaseAuthenticationHandler(
                 servicesManager, couchbasePrincipalFactory(),
                 authenticationCouchbaseClientFactory(), couchbase);
-        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
-        handler.setPasswordEncoder(Beans.newPasswordEncoder(couchbase.getPasswordEncoder()));
+        handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchbase.getPasswordEncoder()));
         return handler;
     }
 

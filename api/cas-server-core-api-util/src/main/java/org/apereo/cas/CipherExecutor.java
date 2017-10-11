@@ -5,11 +5,11 @@ package org.apereo.cas;
  * and verification of a value.
  *
  * @author Misagh Moayyed
- * @param <T> the type parameter
- * @param <R> the type parameter
+ * @param <I> the type parameter for the input
+ * @param <O> the type parameter for the output
  * @since 4.1
  */
-public interface CipherExecutor<T, R> {
+public interface CipherExecutor<I, O> {
 
     /**
      * Encrypt the value. Implementations may
@@ -18,7 +18,7 @@ public interface CipherExecutor<T, R> {
      * @param value the value
      * @return the encrypted value or null
      */
-    R encode(T value);
+    O encode(I value);
 
     /**
      * Decode the value. Signatures may also be verified.
@@ -26,7 +26,7 @@ public interface CipherExecutor<T, R> {
      * @param value encrypted value
      * @return the decoded value.
      */
-    R decode(T value);
+    O decode(I value);
 
     /**
      * Supports encryption of values.

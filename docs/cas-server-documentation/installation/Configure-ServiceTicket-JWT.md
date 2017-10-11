@@ -13,9 +13,7 @@ JWTs are entirely self-contained and contain the authenticated principal as well
 
 ## Overview
 
-JWT-based service tickets are issued to application based on the same semantics defined by the [CAS Protocol](../protocol/CAS-Protocol.html).
-
-CAS having received an authentication request via its `/login` endpoint, will conditionally issue back service tickets to the application in form of a `ticket` parameter via the requested http method.
+JWT-based service tickets are issued to application based on the same semantics defined by the [CAS Protocol](../protocol/CAS-Protocol.html). CAS having received an authentication request via its `/login` endpoint, will conditionally issue back `JWT` service tickets to the application in form of a `ticket` parameter via the requested http method.
 
 All JWTs are by default signed and encrypted by CAS based on keys generated and controlled during deployment. Such keys may be exchanged with client applications to unpack the JWT and access claims.
 
@@ -26,6 +24,10 @@ All JWTs are by default signed and encrypted by CAS based on keys generated and 
 Note that per the above diagram, the JWT request by default internally causes CAS to generate an `ST` for the application and immediately then validate it in order to get access to the auhenticated principal and attributes per policies associated with the application registration record in the CAS service registry. This response is transformed into a `JWT` that is then passed onto the client application.
 
 In other words, the responsibility of receiving a service ticket (`ST`) and validating it is all moved into and handled internally by CAS. The application only needs to learn how to decipher and unpack the final `JWT`.
+
+The expiration time of the generated `JWT` is controlled by the length of the assertion returned as part of the validation event. If the assertion validity length is not specified, then the expiration time is controlled by the length of the SSO session defined as part of SSO expiration policy of the CAS server. 
+
+<div class="alert alert-warning"><strong>Not OpenID Connect</strong><p>Remember that you are just receiving a ticket in form of a JWT, thereby removing the need from your client to validate a normal service ticket. The ticket is internally validated by CAS and you as the client are only left in charge of validating the JWT itself. Do not confuse this with OpenID Connect. While a JWT, the token itself is not an ID token, cannot be refreshed and must be obtained again once you deem it expired. If you need more, consider using the OpenID Connect protocol instead.</p></div>
 
 ## Configuration
 

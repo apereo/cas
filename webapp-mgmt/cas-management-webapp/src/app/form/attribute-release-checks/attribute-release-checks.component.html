@@ -1,0 +1,47 @@
+<div>
+  <mat-checkbox [(ngModel)]="data.service.attributeReleasePolicy.excludeDefaultAttributes">
+    <ng-container i18n="services.form.label.attrRelease.excludeDefault">
+      {{ messages.services_form_label_attrRelease_excludeDefault }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.excludeDefault"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_excludeDefault">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="data.service.attributeReleasePolicy.authorizedToReleaseCredentialPassword">
+    <ng-container i18n="services.form.label.attrRelease.releaseCredPassword">
+      {{ messages.services_form_label_attrRelease_releaseCredPassword }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.releaseCredPassword"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_releaseCredPassword">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="data.service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket">
+    <ng-container i18n="services.form.label.attrRelease.releaseProxyTicket">
+      {{ messages.services_form_label_attrRelease_releaseProxyTicket }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.releaseProxyTicket"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_releaseProxyTicket">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="data.service.attributeReleasePolicy.authorizedToReleaseAuthenticationAttributes">
+    <ng-container i18n="services.form.label.attrRelease.releaseAuthenticationAttributes">
+      {{ messages.services_form_label_attrRelease_releaseAuthenticationAttributes }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.releaseAuthenticationAttributes"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_releaseAuthenticationAttributes">help
+    </mat-icon>
+  </mat-checkbox>
+</div>

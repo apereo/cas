@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.pm.PasswordChangeBean;
@@ -53,6 +54,8 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationConfiguration.class, 
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilConfiguration.class,
         PasswordManagementConfiguration.class})
 @TestPropertySource(locations = {"classpath:/pm.properties"})

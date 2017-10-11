@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -12,28 +14,34 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-support-wsfederation-webflow")
 public class WsFederationDelegationProperties implements Serializable {
 
     private static final long serialVersionUID = 5743971334977239938L;
     /**
      * The attribute extracted from the assertion and used to construct the CAS principal id.
      */
+    @RequiredProperty
     private String identityAttribute = "upn";
     /**
      * The entity id or the identifier of the Wsfed instance.
      */
+    @RequiredProperty
     private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
     /**
      * Wsfed identity provider url.
      */
+    @RequiredProperty
     private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
     /**
      * Locations of signing certificates used to verify assertions.
      */
+    @RequiredProperty
     private String signingCertificateResources = "classpath:adfs-signing.crt";
     /**
      * The identifier for CAS (RP) registered with wsfed.
      */
+    @RequiredProperty
     private String relyingPartyIdentifier = "urn:cas:localhost";
     /**
      * Tolerance value used to skew assertions to support clock drift.
@@ -74,7 +82,7 @@ public class WsFederationDelegationProperties implements Serializable {
      * Principal resolution settings.
      */
     @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
 
     /**
      * Name of the authentication handler.
@@ -89,11 +97,11 @@ public class WsFederationDelegationProperties implements Serializable {
         this.name = name;
     }
 
-    public PersonDirPrincipalResolverProperties getPrincipal() {
+    public PersonDirectoryPrincipalResolverProperties getPrincipal() {
         return principal;
     }
 
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+    public void setPrincipal(final PersonDirectoryPrincipalResolverProperties principal) {
         this.principal = principal;
     }
 

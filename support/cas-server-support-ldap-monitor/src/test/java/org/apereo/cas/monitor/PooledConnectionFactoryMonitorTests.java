@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +22,9 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {LdapMonitorConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {LdapMonitorConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        RefreshAutoConfiguration.class})
 @TestPropertySource(locations={"classpath:/ldapmonitor.properties"})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
@@ -31,7 +34,7 @@ public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1383);
     }
 
     @Test

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.adaptors.duo.authn.BasicDuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
@@ -92,7 +92,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                         && StringUtils.isNotBlank(duo.getDuoSecretKey())
                         && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
                 .forEach(duo -> {
-                    final BasicDuoAuthenticationService s = new BasicDuoAuthenticationService(duo, httpClient);
+                    final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
                     final DefaultDuoMultifactorAuthenticationProvider pWeb = new DefaultDuoMultifactorAuthenticationProvider(s);
                     pWeb.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
                     pWeb.setBypassEvaluator(new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass()));

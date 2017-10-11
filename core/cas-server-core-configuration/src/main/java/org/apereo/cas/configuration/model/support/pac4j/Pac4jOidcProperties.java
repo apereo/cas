@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-support-pac4j-webflow")
 public class Pac4jOidcProperties extends Pac4jGenericClientProperties {
     private static final long serialVersionUID = 3359382317533639638L;
     /**
@@ -18,6 +22,7 @@ public class Pac4jOidcProperties extends Pac4jGenericClientProperties {
     /**
      * The discovery endpoint to locate the provide metadata.
      */
+    @RequiredProperty
     private String discoveryUri;
 
     /**

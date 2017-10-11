@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -8,15 +11,18 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiredModule(name = "cas-server-support-pac4j-webflow")
 public class Pac4jGenericClientProperties implements Serializable {
     private static final long serialVersionUID = 3007013267786902465L;
     /**
      * The client id.
      */
+    @RequiredProperty
     private String id;
     /**
      * The client secret.
      */
+    @RequiredProperty
     private String secret;
     /**
      * Name of the client mostly for UI purposes and uniqueness.

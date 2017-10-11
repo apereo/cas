@@ -13,4 +13,5 @@ dependencies {
     provided project(":support:cas-server-support-validation")
 
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-web")
 }

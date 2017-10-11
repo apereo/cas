@@ -1,17 +1,24 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,30 +35,39 @@ import static org.junit.Assert.*;
  * @since 3.1.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        JpaServiceRegistryConfiguration.class,
+        JpaServiceRegistryDaoImplTests.TimeAwareServicesManagerConfiguration.class,
+        CasCoreServicesConfiguration.class})
+@DirtiesContext
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
     @Qualifier("serviceRegistryDao")
-    private ServiceRegistryDao dao;
+    private ServiceRegistryDao serviceRegistryDao;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.dao.load();
-        services.forEach(service -> this.dao.delete(service));
+        final List<RegisteredService> services = this.serviceRegistryDao.load();
+        services.forEach(service -> this.serviceRegistryDao.delete(service));
     }
 
     @Test
     public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setName("test");
+        r.setName("verifySaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
         r.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:/test.pub", "RSA"));
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -60,14 +76,14 @@ public class JpaServiceRegistryDaoImplTests {
     @Test
     public void verifySaveAttributeReleasePolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setName("test");
+        r.setName("verifySaveAttributeReleasePolicy");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -77,27 +93,26 @@ public class JpaServiceRegistryDaoImplTests {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
-
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setName("test");
+        r.setName("verifySaveMethodWithExistingServiceNoAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
 
-        this.dao.save(r);
+        this.serviceRegistryDao.save(r);
 
-        final List<RegisteredService> services = this.dao.load();
+        final List<RegisteredService> services = this.serviceRegistryDao.load();
         final RegisteredService r2 = services.get(0);
 
         r.setId(r2.getId());
-        this.dao.save(r);
+        this.serviceRegistryDao.save(r);
 
-        final RegisteredService r3 = this.dao.findServiceById(r.getId());
+        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r.getId());
 
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
     }
-        
+
     @Test
     public void verifyRegisteredServiceProperties() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -125,16 +140,16 @@ public class JpaServiceRegistryDaoImplTests {
 
         r.setProperties(propertyMap);
 
-        this.dao.save(r);
+        this.serviceRegistryDao.save(r);
 
-        final RegisteredService r2 = this.dao.load().get(0);
+        final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
         assertEquals(r2.getProperties().size(), 2);
     }
 
     @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();
-        r.setName("test456");
+        r.setName("verifyOAuthServices");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -142,14 +157,14 @@ public class JpaServiceRegistryDaoImplTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
         assertEquals(r, r2);
     }
 
     @Test
     public void verifySamlService() {
         final SamlRegisteredService r = new SamlRegisteredService();
-        r.setName("test345");
+        r.setName("verifySamlService");
         r.setServiceId("Testing");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
@@ -160,7 +175,60 @@ public class JpaServiceRegistryDaoImplTests {
         r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
         r.setMetadataSignatureLocation("location");
         r.setRequiredAuthenticationContextClass("Testing");
-        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.serviceRegistryDao.save(r);
         assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyExpiredServiceDeleted() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("testExpired");
+        r.setName("expired");
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now().minusSeconds(1)));
+        final RegisteredService r2 = this.servicesManager.save(r);
+        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
+        this.servicesManager.load();
+        final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        assertNull(svc);
+    }
+
+    @Test
+    public void verifyExpiredServiceDisabled() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("testExpired1");
+        r.setName("expired1");
+        final LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(1);
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
+        final RegisteredService r2 = this.servicesManager.save(r);
+        RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        assertNotNull(svc);
+        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
+        svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        assertNotNull(svc);
+        assertFalse(svc.getAccessStrategy().isServiceAccessAllowed());
+    }
+    
+    @TestConfiguration("timeAwareServicesManagerConfiguration")
+    public static class TimeAwareServicesManagerConfiguration {
+
+        @Autowired
+        @Qualifier("serviceRegistryDao")
+        private ServiceRegistryDao serviceRegistryDao;
+        
+        @Bean
+        public ServicesManager servicesManager() {
+            return new TimeAwareServicesManager(serviceRegistryDao);
+        }
+        
+        public class TimeAwareServicesManager extends DefaultServicesManager {
+            public TimeAwareServicesManager(final ServiceRegistryDao serviceRegistryDao) {
+                super(serviceRegistryDao, null);
+            }
+
+            @Override
+            protected LocalDateTime getCurrentSystemTime() {
+                return org.apereo.cas.util.DateTimeUtils.localDateTimeOf(DateTimeUtils.currentTimeMillis());
+            }
+        }
     }
 }

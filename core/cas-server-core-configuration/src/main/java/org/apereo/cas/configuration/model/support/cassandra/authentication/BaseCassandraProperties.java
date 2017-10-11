@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -13,10 +15,12 @@ public abstract class BaseCassandraProperties implements Serializable {
     /**
      * Username to bind and establish a connection to cassandra.
      */
+    @RequiredProperty
     private String username;
     /**
      * Password to bind and establish a connection to cassandra.
      */
+    @RequiredProperty
     private String password;
 
     /**
@@ -26,10 +30,12 @@ public abstract class BaseCassandraProperties implements Serializable {
     /**
      * Keyspace address to use where the cluster would connect.
      */
+    @RequiredProperty
     private String keyspace;
     /**
      * The list of contact points to use for the new cluster.
      */
+    @RequiredProperty
     private String contactPoints = "localhost";
     /**
      * Used by a DC-ware round-robin load balancing policy.
@@ -104,6 +110,7 @@ public abstract class BaseCassandraProperties implements Serializable {
     /**
      * Cassandra instance port.
      */
+    @RequiredProperty
     private int port = 9042;
 
     public String getUsername() {

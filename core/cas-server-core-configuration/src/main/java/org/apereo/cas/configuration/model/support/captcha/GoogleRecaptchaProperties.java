@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-support-captcha")
 public class GoogleRecaptchaProperties implements Serializable {
     private static final long serialVersionUID = -8955074129123813915L;
     /**

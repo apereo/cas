@@ -64,7 +64,8 @@ public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
     @Override
     public List<RegisteredService> load() {
         try {
-            return this.template.keys(getPatternRegisteredServiceRedisKey()).stream()
+            return this.template.keys(getPatternRegisteredServiceRedisKey())
+                    .stream()
                     .map(redisKey -> this.template.boundValueOps(redisKey).get())
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());

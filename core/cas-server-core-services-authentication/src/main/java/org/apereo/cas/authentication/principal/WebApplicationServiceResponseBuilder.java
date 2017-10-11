@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -23,7 +24,8 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
     }
 
     @Override
-    public Response build(final WebApplicationService service, final String serviceTicketId) {
+    public Response build(final WebApplicationService service, final String serviceTicketId,
+                          final Authentication authentication) {
         final Map<String, String> parameters = new HashMap<>();
         if (StringUtils.hasText(serviceTicketId)) {
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);

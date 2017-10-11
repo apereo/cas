@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
@@ -52,6 +53,8 @@ public class PasswordChangeAction extends AbstractAction {
             if (passwordManagementService.change(c, bean)) {
                 return new EventFactorySupport().event(this, PASSWORD_UPDATE_SUCCESS);
             }
+        } catch (final InvalidPasswordException e) {
+            return getErrorEvent(requestContext, "pm.validationFailure");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

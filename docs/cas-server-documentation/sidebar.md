@@ -15,6 +15,7 @@ layout: null
     *   [WAR Overlays](/$version/installation/Maven-Overlay-Installation.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
+    *   [OS Service](/$version/installation/Configuring-Deployment-System-Service.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
 * [Configuration](#casconfigmgmt)
@@ -64,6 +65,7 @@ layout: null
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
+    *   [GUA](/$version/installation/GUA-Authentication.html)
     
 * [Attributes](#casattributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
@@ -89,7 +91,6 @@ layout: null
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
-    *   [GUA](/$version/installation/GUA-Authentication.html)
     
 *   [SSO & SLO](#ssoandslo) 
     *   [SSO Session](/$version/installation/Configuring-SSO-Session-Cookie.html)
@@ -123,10 +124,12 @@ layout: null
 
 * [Services](#service_management)
     *   [Overview](/$version/installation/Service-Management.html)
-    *   [Management Webapp](/$version/installation/Installing-ServicesMgmt-Webapp.html)
+    *   [Management Web Application](/$version/installation/Installing-ServicesMgmt-Webapp.html)
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
+    *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
+    *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
     *   [Replication](/$version/installation/Configuring-Service-Replication.html)
     *   [Storage](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
@@ -138,6 +141,8 @@ layout: null
         *   [Redis](/$version/installation/Redis-Service-Management.html)
         *   [DynamoDb](/$version/installation/DynamoDb-Service-Management.html)
         *   [Couchbase](/$version/installation/Couchbase-Service-Management.html)
+        *   [REST](/$version/installation/REST-Service-Management.html)
+        *   [Custom](/$version/installation/Custom-Service-Management.html)
 
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
@@ -183,7 +188,7 @@ layout: null
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
-    *   [SQRL](/$version/protocol/SQRL-Protocol.html)
+
 
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)

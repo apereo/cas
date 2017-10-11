@@ -1,0 +1,11 @@
+<div style="padding-bottom: 10px;">
+  <mat-checkbox [(ngModel)]="data.service.accessStrategy.enabled">
+    <ng-container i18n="services.form.label.sas.casEnabled">
+      {{ messages.services_form_label_sas_casEnabled }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.sas.casEnabled"
+             [matTooltip]="messages.services_form_tooltip_sas_casEnabled">help
+    </mat-icon>
+  </mat-checkbox>
+</div>

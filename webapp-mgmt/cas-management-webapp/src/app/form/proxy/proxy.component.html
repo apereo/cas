@@ -1,0 +1,29 @@
+
+<mat-radio-group [(ngModel)]="type" (change)="changeType()">
+
+  <mat-radio-button [value]="TYPE.REFUSE">
+    <ng-container i18n="services.form.label.proxyPolicy.refuse">
+      {{ messages.services_form_label_proxyPolicy_refuse }}
+    </ng-container>
+  </mat-radio-button>
+
+  <mat-radio-button  [value]="TYPE.REGEX">
+    <ng-container i18n="services.form.label.proxyPolicy.regex">
+      {{ messages.services_form_label_proxyPolicy_regex }}
+    </ng-container>
+  </mat-radio-button>
+
+</mat-radio-group>
+
+<div *ngIf="type == TYPE.REGEX">
+  <mat-form-field class="textInput">
+    <input matInput required
+           i18n-placeholder="services.form.label.proxyPolicy.regex"
+           [placeholder]="messages.services_form_label_proxyPolicy_regex"
+           [(ngModel)]="data.service.proxyPolicy.pattern">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.proxyPolicy.regex"
+           [matTooltip]="messages.services_form_tooltip_proxyPolicy_regex">help
+  </mat-icon>
+</div>

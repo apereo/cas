@@ -3,9 +3,11 @@ dependencies {
     api project(":api:cas-server-core-api-services")
     implementation libraries.groovy
     compileOnly project(":core:cas-server-core-util")
-    compileOnly project(":api:cas-server-core-api-events")
+    api project(":api:cas-server-core-api-events")
     compileOnly project(":core:cas-server-core-authentication")
     compileOnly project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-services-api")
     api project(":api:cas-server-core-api-web")
+
+    testImplementation project(":core:cas-server-core-web")
 }

@@ -27,7 +27,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorTokenCredentialRepository.class);
 
     private final IGoogleAuthenticator googleAuthenticator;
-    
+
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
 
@@ -41,15 +41,13 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     }
 
     @Override
-    public String getSecret(final String username) {
+    public OneTimeTokenAccount get(final String username) {
         try {
             final GoogleAuthenticatorAccount r =
-                    this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorAccount.class.getSimpleName() 
+                    this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorAccount.class.getSimpleName()
                                     + " r where r.username = :username",
                             GoogleAuthenticatorAccount.class).setParameter("username", username).getSingleResult();
-            if (r != null) {
-                return r.getSecretKey();
-            }
+            return r;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }
@@ -58,8 +56,8 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
 
     @Override
     public void save(final String userName, final String secretKey,
-                                    final int validationCode,
-                                    final List<Integer> scratchCodes) {
+                     final int validationCode,
+                     final List<Integer> scratchCodes) {
         final GoogleAuthenticatorAccount r = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
         this.entityManager.merge(r);
     }

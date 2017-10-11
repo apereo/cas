@@ -23,10 +23,11 @@ import java.time.LocalDate;
 @Table(name = "U2FDeviceRegistration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public class U2FDeviceRegistration {
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = Integer.MAX_VALUE;
+    private long id = -1;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String username;
@@ -37,7 +38,11 @@ public class U2FDeviceRegistration {
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    private LocalDate createdDate;
+
+    public U2FDeviceRegistration() {
+        setId(System.currentTimeMillis());
+    }
 
     public String getRecord() {
         return record;
@@ -47,12 +52,12 @@ public class U2FDeviceRegistration {
         this.record = record;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getCreatedDate() {
+        return createdDate;
     }
 
-    public void setDate(final LocalDate date) {
-        this.date = date;
+    public void setCreatedDate(final LocalDate createdDate) {
+        this.createdDate = createdDate;
     }
 
     public long getId() {

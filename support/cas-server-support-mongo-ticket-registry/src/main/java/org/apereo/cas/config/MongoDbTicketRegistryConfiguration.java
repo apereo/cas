@@ -2,8 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
@@ -41,7 +42,9 @@ public class MongoDbTicketRegistryConfiguration {
     @Autowired
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) throws Exception {
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        return new MongoDbTicketRegistry(ticketCatalog, mongo.isDropCollection(), mongoDbTicketRegistryTemplate());
+        final MongoDbTicketRegistry registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
+        registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
+        return registry;
     }
 
     @Autowired
@@ -57,13 +60,14 @@ public class MongoDbTicketRegistryConfiguration {
         LOGGER.debug("Ticket registry cleaner is not enabled. "
                 + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
                 + "clean up tickets based on expiration and eviction policies.");
-        return new NoOpTicketRegistryCleaner();
+        return NoOpTicketRegistryCleaner.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbTicketRegistryTemplate() {
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(casProperties.getTicket().getRegistry().getMongo());
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
+        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
+        return factory.buildMongoTemplate(mongo);
     }
 }

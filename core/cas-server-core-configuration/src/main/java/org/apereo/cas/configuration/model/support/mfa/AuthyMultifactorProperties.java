@@ -1,20 +1,26 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 /**
  * This is {@link AuthyMultifactorProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class AuthyMultifactorProperties extends BaseMultifactorProvider {
+@RequiredModule(name = "cas-server-support-authy")
+public class AuthyMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = -3746749663459157641L;
     /**
      * Authy API key.
      */
+    @RequiredProperty
     private String apiKey;
     /**
      * Authy API url.
      */
+    @RequiredProperty
     private String apiUrl;
     /**
      * Principal attribute used to look up a phone number
@@ -22,6 +28,7 @@ public class AuthyMultifactorProperties extends BaseMultifactorProvider {
      * is then used to look up the user record in Authy, or
      * create the user.
      */
+    @RequiredProperty
     private String phoneAttribute = "phone";
 
     /**
@@ -30,6 +37,7 @@ public class AuthyMultifactorProperties extends BaseMultifactorProvider {
      * is then used to look up the user record in Authy, or
      * create the user.
      */
+    @RequiredProperty
     private String mailAttribute = "mail";
     
     /**

@@ -16,19 +16,15 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Mock ticket-granting ticket.
@@ -53,7 +49,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     private final Map<String, Service> services = new HashMap<>();
 
-    private final Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
+    private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -163,7 +159,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+    public Map<String, Service> getProxyGrantingTickets() {
         return this.proxyGrantingTickets;
     }
 

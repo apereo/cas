@@ -4,17 +4,24 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 /**
  * Represents a service which wishes to use the CAS protocol.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
+@Entity
+@DiscriminatorValue("simple")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 8334068957483758042L;
 
+    private SimpleWebApplicationServiceImpl() {}
+    
     /**
      * Instantiates a new Simple web application service.
      *

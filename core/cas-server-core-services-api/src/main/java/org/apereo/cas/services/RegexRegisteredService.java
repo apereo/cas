@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
+import org.javers.core.metamodel.annotation.TypeName;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -18,17 +19,21 @@ import java.util.regex.Pattern;
  */
 @Entity
 @DiscriminatorValue("regex")
+@TypeName("RegexRegisteredService")
 public class RegexRegisteredService extends AbstractRegisteredService {
 
     private static final long serialVersionUID = -8258660210826975771L;
 
     private transient Pattern servicePattern;
 
+    /**
+     * {@inheritDoc}
+     * Resets the pattern because we just changed the id.
+     * @param id the new service id
+     */
     @Override
     public void setServiceId(final String id) {
         this.serviceId = id;
-
-        // reset the servicePattern because we just changed the serviceId
         this.servicePattern = null;
     }
     

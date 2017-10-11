@@ -21,7 +21,7 @@ import java.util.function.Function;
 public interface ComposableFunction<T, R> extends Function<T, R> {
 
     /**
-     * Chain this funcion with a Consumer that expects the same type.
+     * Chain this function with a Consumer that expects the same type.
      *
      * @param after Consumer that will receive the output of the function
      *

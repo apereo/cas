@@ -35,7 +35,31 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     private Key secretKeyEncryptionKey;
 
+    private boolean encryptionEnabled = true;
+
     private BaseStringCipherExecutor() {
+    }
+
+    /**
+     * Instantiates a new cipher.
+     * <p>Note that in order to customize the encryption algorithms,
+     * you will need to download and install the JCE Unlimited Strength Jurisdiction
+     * Policy File into your Java installation.</p>
+     *
+     * @param secretKeyEncryption the secret key encryption; must be represented as a octet sequence JSON Web Key (JWK)
+     * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
+     * @param encryptionEnabled   the enable encryption
+     */
+    public BaseStringCipherExecutor(final String secretKeyEncryption,
+                                    final String secretKeySigning,
+                                    final boolean encryptionEnabled) {
+        this(secretKeyEncryption, secretKeySigning, ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256, encryptionEnabled);
+    }
+
+    public BaseStringCipherExecutor(final String secretKeyEncryption,
+                                    final String secretKeySigning,
+                                    final String alg) {
+        this(secretKeyEncryption, secretKeySigning, alg, true);
     }
 
     /**
@@ -49,8 +73,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning) {
-        this(secretKeyEncryption, secretKeySigning,
-                ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+        this(secretKeyEncryption, secretKeySigning, ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256, true);
     }
 
     /**
@@ -59,26 +82,24 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @param secretKeyEncryption                  the key for encryption
      * @param secretKeySigning                     the key for signing
      * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
+     * @param encryptionEnabled                    the encryption enabled
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
-                                    final String contentEncryptionAlgorithmIdentifier) {
+                                    final String contentEncryptionAlgorithmIdentifier,
+                                    final boolean encryptionEnabled) {
         super();
-        if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
-            LOGGER.warn("Content encryption algorithm identifier is not defined");
-            return;
-        }
-
-        String secretKeyToUse = secretKeyEncryption;
-        if (StringUtils.isBlank(secretKeyToUse)) {
-            LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
-            secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
-            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                    secretKeyToUse, ENCRYPTION_KEY_SIZE, getName(), getEncryptionKeySetting());
+        this.encryptionEnabled = encryptionEnabled;
+        if (this.encryptionEnabled) {
+            configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
         } else {
-            LOGGER.debug("Located encryption key to use for [{}]", getName());
+            LOGGER.warn("Encryption operations of [{}] are not enabled so the cipher [{}] will only attempt to produce signed objects", 
+                    getName(), getClass().getSimpleName());
         }
+        configureSigningParameters(secretKeySigning);
+    }
 
+    private void configureSigningParameters(final String secretKeySigning) {
         String signingKeyToUse = secretKeySigning;
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
@@ -88,18 +109,27 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         } else {
             LOGGER.debug("Located signing key to use for [{}]", getName());
         }
-
-
         setSigningKey(signingKeyToUse);
+    }
+
+    private void configureEncryptionParameters(final String secretKeyEncryption, final String contentEncryptionAlgorithmIdentifier) {
+        String secretKeyToUse = secretKeyEncryption;
+        if (StringUtils.isBlank(secretKeyToUse)) {
+            LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
+            secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
+            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
+                    secretKeyToUse, ENCRYPTION_KEY_SIZE, getName(), getEncryptionKeySetting());
+        } else {
+            LOGGER.debug("Located encryption key to use for [{}]", getName());
+        }
         this.secretKeyEncryptionKey = prepareJsonWebTokenKey(secretKeyToUse);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
         LOGGER.debug("Initialized cipher encryption sequence via [{}]", contentEncryptionAlgorithmIdentifier);
-
     }
 
     @Override
     public String encode(final Serializable value) {
-        final String encoded = encryptValue(value);
+        final String encoded = this.encryptionEnabled ? encryptValue(value) : value.toString();
         return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
 
@@ -108,7 +138,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         try {
             final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
             if (encoded != null && encoded.length > 0) {
-                return decryptValue(new String(encoded, StandardCharsets.UTF_8));
+                final String encodedObj = new String(encoded, StandardCharsets.UTF_8);
+                return this.encryptionEnabled ? decryptValue(encodedObj) : encodedObj;
             }
             return null;
         } catch (final Exception e) {

@@ -3,6 +3,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
 apply plugin: "application"
+apply plugin: "com.moowork.gulp"
 
 def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 
@@ -21,9 +22,13 @@ javadoc {
     enabled false
 }
 
-
 if (rootProject.enableJRebelAgent) {
     war.dependsOn(generateRebel)
+}
+
+[distZip, distTar].each { task -> configurations.archives.artifacts.removeAll
+        { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
+    task.enabled = false
 }
 
 springBoot  {

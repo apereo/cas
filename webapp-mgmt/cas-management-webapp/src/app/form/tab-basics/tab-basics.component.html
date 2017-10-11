@@ -1,0 +1,25 @@
+<mat-card class="tabCard">
+  <mat-card-title>
+    <h5>Basics</h5>
+  </mat-card-title>
+  <div class="cardContent">
+    <form #basicsForm="ngForm">
+      <app-enabled></app-enabled>
+      <app-servicetype></app-servicetype>
+      <app-serviceid></app-serviceid>
+      <app-servicename></app-servicename>
+      <app-servicedesc></app-servicedesc>
+      <app-themeid></app-themeid>
+      <button type="submit" style="display:none;" #submit></button>
+    </form>
+  </div>
+</mat-card>
+<mat-card class="tabCard">
+  <mat-card-title>
+    <h5>Reference Links</h5>
+  </mat-card-title>
+  <div class="cardContent">
+    <app-logo></app-logo>
+    <app-linkrefs></app-linkrefs>
+  </div>
+</mat-card>

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,8 +31,6 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -187,7 +186,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
      */
     @Test
     public void verifyBCryptFail() throws Exception {
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, RandomUtils.getInstanceNative());
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc1") + "' password");
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
                 null, null, new HashMap<>(0));
@@ -202,7 +201,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
      */
     @Test
     public void verifyBCryptSuccess() throws Exception {
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, RandomUtils.getInstanceNative());
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc2") + "' password");
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
                 null, null, new HashMap<>(0));

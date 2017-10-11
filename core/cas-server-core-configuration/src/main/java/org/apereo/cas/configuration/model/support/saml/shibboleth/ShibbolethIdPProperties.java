@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.shibboleth;
 
+import org.apereo.cas.configuration.support.RequiredModule;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiredModule(name = "cas-server-support-shibboleth")
 public class ShibbolethIdPProperties implements Serializable {
     private static final long serialVersionUID = 1741075420882227768L;
     /**

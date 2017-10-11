@@ -14,6 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * This is {@link RestConsentRepository}.
  *
@@ -35,6 +39,41 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+        try {
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+            headers.put("principal", CollectionUtils.wrap(principal));
+
+            final HttpEntity<String> entity = new HttpEntity<>(headers);
+            final ResponseEntity<List> result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+                return result.getBody();
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions() {
+        try {
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+
+            final HttpEntity<String> entity = new HttpEntity<>(headers);
+            final ResponseEntity<List> result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+                return result.getBody();
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 
     @Override

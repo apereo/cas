@@ -1,0 +1,38 @@
+<div class="header">
+  <div>
+    <a class="brand" href="manage.html" target="_self" id="homepageUrlLink">
+      <img src="images/logo_cas.png" alt="apereo CAS logo" />
+      <h4>
+        <ng-container i18n="management.services.header.apptitle">
+          {{ messages.management_services_header_apptitle }}
+        </ng-container>
+      </h4>
+    </a>
+  </div>
+  <div class="searchbox">
+    <input #search class="search" placeholder="Search Services">
+  </div>
+  <div class="links">
+    <button *ngIf="type === 'DOMAIN' "mat-button routerLink="/domains">
+      <mat-icon>apps</mat-icon>
+      <span i18n>Domains</span>
+    </button>
+    <button *ngIf="type === 'DEFAULT'" mat-button routerLink="/services/defualt">
+      <mat-icon>apps</mat-icon>
+      <span i18n>Services</span>
+    </button>
+    <button mat-button routerLink="/form/-1">
+      <mat-icon>add_circle</mat-icon>
+      <span i18n="managment.services.header.navitem.addNewService">
+        {{ messages.management_services_header_navbar_navitem_addNewService }}
+      </span>
+    </button>
+    <button mat-button target="_self" id="logoutUrlLink" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
+      <ng-container i18n="management.services.header.navbar.navitem.logout">
+        {{ messages.management_services_header_navbar_navitem_logout }}
+      </ng-container>
+    </button>
+  </div>
+</div>
+

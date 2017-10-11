@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -73,14 +74,14 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final ZonedDateTime currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
+        final ZonedDateTime currentSystemTime = getCurrentSystemTime();
         final ZonedDateTime creationTime = ticketState.getCreationTime();
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
 
         // Ticket has been used, check maxTimeToLive (hard window)
         ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Ticket is expired because the time since creation is greater than maxTimeToLiveInSeconds");
+            LOGGER.debug("Ticket is expired because the time since creation [{}] is greater than current system time", expirationTime, currentSystemTime);
             return true;
         }
 
@@ -93,6 +94,16 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         return false;
     }
 
+    /**
+     * Gets current system time.
+     *
+     * @return the current system time
+     */
+    @JsonIgnore
+    protected ZonedDateTime getCurrentSystemTime() {
+        return ZonedDateTime.now(ZoneOffset.UTC);
+    }
+
     @Override
     public Long getTimeToLive() {
         return this.maxTimeToLiveInSeconds;
@@ -102,8 +113,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     public Long getTimeToIdle() {
         return this.timeToKillInSeconds;
     }
-
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

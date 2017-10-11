@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiredModule(name = "cas-server-support-ldap")
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
     private static final long serialVersionUID = -5357843463521189892L;
@@ -30,7 +32,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * Password encoder settings for REST authentication.
+     * Password encoder settings for LDAP authentication.
      */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();

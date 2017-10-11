@@ -31,7 +31,7 @@ public class Pac4jAuditablePrincipalResolver implements PrincipalResolver {
     }
 
     private static String getFromSecurityContext() {
-        return WebUtils.getAuthenticatedUsername();
+        return WebUtils.getPac4jAuthenticatedUsername();
     }
 
 }

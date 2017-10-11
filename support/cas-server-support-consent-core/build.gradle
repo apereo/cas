@@ -5,4 +5,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services")
+    
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

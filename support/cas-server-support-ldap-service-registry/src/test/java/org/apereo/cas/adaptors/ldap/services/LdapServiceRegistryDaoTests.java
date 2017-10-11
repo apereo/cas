@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -50,19 +51,20 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
 @EnableScheduling
+@DirtiesContext
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
-
+    
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1390);
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.dao.load().forEach(service -> this.dao.delete(service));
     }
 
