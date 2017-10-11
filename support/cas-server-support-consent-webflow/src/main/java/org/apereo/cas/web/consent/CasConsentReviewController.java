@@ -9,6 +9,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.CallbackLogic;
 import org.pac4j.core.http.J2ENopHttpActionAdapter;
+import org.pac4j.core.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,9 +33,11 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Controller("casConsentReviewController")
-@RequestMapping("/consent")
+@RequestMapping("/consentReview")
 public class CasConsentReviewController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewController.class);
+    private static final String CONSENT_REVIEW_VIEW = "casConsentReviewView";
+    private static final String CONSENT_LOGOUT_VIEW = "casConsentLogoutView";
 
     private final Config pac4jConfig;
     private final String defaultUrl;
@@ -68,7 +70,7 @@ public class CasConsentReviewController {
     @GetMapping
     public String showConsent(final HttpServletRequest request,
                                         final HttpServletResponse response) {
-        return "casConsentReviewView";
+        return CONSENT_REVIEW_VIEW;
     }
 
     /**
@@ -117,14 +119,15 @@ public class CasConsentReviewController {
      * Endpoint for local logout, no SLO.
      * 
      * @param request the request
-     * @param session the session
+     * @param response the response
      * @return the logout view
      */
     @GetMapping("/logout")
-    public String logout(final HttpServletRequest request, final HttpSession session) {
-        LOGGER.debug("Invalidating application session...");
-        session.invalidate();
-        return "casConsentLogoutView";
+    public String logout(final HttpServletRequest request, final HttpServletResponse response) {
+        LOGGER.debug("Performing Pac4j logout...");
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        manager.logout();
+        return CONSENT_LOGOUT_VIEW;
     }
     
     /**

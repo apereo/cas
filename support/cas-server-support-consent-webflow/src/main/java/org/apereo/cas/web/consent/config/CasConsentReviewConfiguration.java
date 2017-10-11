@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
@@ -76,7 +76,7 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public CasConsentReviewController casConsentReviewController() {
         return new CasConsentReviewController(consentRepository, consentEngine, casConsentPac4jConfig(),
-                casProperties.getServer().getPrefix().concat("/consent"));
+                casProperties.getServer().getPrefix().concat("/consentReview"));
     }
 
     @Bean
@@ -86,7 +86,7 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
         
         final CasClient client = new CasClient(conf);
         client.setName(CAS_CONSENT_CLIENT);
-        client.setCallbackUrl(casProperties.getServer().getPrefix().concat("/consent/callback"));
+        client.setCallbackUrl(casProperties.getServer().getPrefix().concat("/consentReview/callback"));
         client.setAuthorizationGenerator(new DefaultCasAuthorizationGenerator<>());
         client.setIncludeClientNameInCallbackUrl(false);
         
@@ -120,7 +120,7 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     @PostConstruct
     protected void registerConsentService() {
         final Service callbackService = this.webApplicationServiceFactory.createService(
-                casProperties.getServer().getPrefix().concat("/consent.*"));
+                casProperties.getServer().getPrefix().concat("/consentReview/callback"));
         if (!this.servicesManager.matchesExistingService(callbackService)) {
             LOGGER.debug("Initializing consent service [{}]", callbackService);
 
@@ -131,7 +131,7 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
             service.setServiceId(callbackService.getId());
             
             // disable consent for this service
-            final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+            final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
             final DefaultRegisteredServiceConsentPolicy consentPolicy = new DefaultRegisteredServiceConsentPolicy();
             consentPolicy.setEnabled(false);
             policy.setConsentPolicy(consentPolicy);
@@ -146,6 +146,7 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(casConsentReviewSecurityInterceptor())
-                .addPathPatterns("/consent", "/consent/*").excludePathPatterns("/consent/logout*", "/consent/callback*");
+                .addPathPatterns("/consentReview", "/consentReview/*")
+                .excludePathPatterns("/consentReview/logout*", "/consentReview/callback*");
     }
 }

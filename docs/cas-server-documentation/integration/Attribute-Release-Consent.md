@@ -54,7 +54,7 @@ A sample definition follows:
 
 ## Consent Review
 
-A page for users to review their consent decisions will be exposed at the `/consent` endpoint. A link is included automatically on the login page. 
+A page for users to review their consent decisions will be exposed at the `/consentReview` endpoint. A link is included automatically on the login page.
 
 Users may view and delete the consent decisions they have made in the past.
 

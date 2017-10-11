@@ -1,4 +1,4 @@
 <div class="well hidden-xs" th:if="${@applicationContextProvider.getApplicationContext().containsBean('casConsentReviewController')}">
     <h2 th:utext="#{screen.consent.review.header}"></h2>
-    <p>You can review your consent decisions <a href="consent" th:inline="text">here</a>.</p>
+    <p th:utext="#{screen.consent.fragment}"/>
 </div>
