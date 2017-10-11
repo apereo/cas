@@ -158,7 +158,7 @@ var consentDecisions = (function () {
                     },
                     'render': function (data) {
                         var opts = { year: 'numeric', month: 'numeric' };
-                        return '<div class="label label-success">' + data.toLocaleDateString('en', opts ) + 
+                        return '<div class="label label-info">' + data.toLocaleDateString('en', opts ) + 
                             '</div>';
                     }
                 },
