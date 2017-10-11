@@ -1,14 +1,19 @@
 #!/bin/bash
 
-if [ "$TRAVIS_PULL_REQUEST" == "true" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
+if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
     echo -e "Skipping build since this is a pull request and we are not publishing snapshots.\n"
     exit 0
 fi
 
 branchName="master"
+
 gradle="sudo ./gradlew"
-gradleOptions="--stacktrace --parallel --build-cache --configure-on-demand --max-workers=8"
-gradleBuild="clean bootRepackage install"
+
+gradleBuildOptions="--stacktrace --parallel --build-cache --configure-on-demand --max-workers=8"
+gradleBuild="bootRepackage install"
+
+gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+gradleUploadOptions="--stacktrace --parallel"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -28,7 +33,7 @@ else
     gradleBuild="$gradleBuild -x check -x test aggregateJavadocsIntoJar"
 fi
 
-tasks="$gradle $gradleOptions $gradleBuild"
+tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo $tasks
 eval $tasks
 retVal=$?
@@ -39,8 +44,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $retVal == 0 ] && [ "$TRAVIS_BRANC
          echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
     else
         echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        gradleUpload="uploadArchives -x test -x check -x javadoc -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
-        upload="$gradle $gradleOptions $gradleUpload"
+        upload="$gradle $gradleUploadOptions $gradleUpload"
         echo $upload
         eval $upload
         retVal=$?
