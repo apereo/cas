@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasPersonDirectoryConfiguration.class, RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/ldap.properties"})
+@TestPropertySource(locations = {"classpath:/ldappersondir.properties"})
 @DirtiesContext
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonDirectoryPrincipalResolverLdaptiveTests.class);
