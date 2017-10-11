@@ -47,5 +47,5 @@ script:
 - chmod -R 777 ./travis/script.sh
 - ./travis/script.sh
 after_success:
-- chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
-- ./travis/push-javadoc-to-gh-pages.sh
+- chmod -R 777 ./travis/push-docs-ghpages.sh
+- ./travis/push-docs-ghpages.sh
