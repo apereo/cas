@@ -13,7 +13,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     gradleBuild="bootRepackage install"
 
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
-    gradleBuild="$gradleBuild checkstyleMain aggregateJavadocsIntoJar"
+    gradleBuild="$gradleBuild checkstyleMain"
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
         echo -e "The build commit message indicates that tests should be skipped.\n"
         gradleBuild="$gradleBuild -x test"
