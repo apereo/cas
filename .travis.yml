@@ -37,15 +37,14 @@ env:
   - PUBLISH_SNAPSHOTS=false
   - PUBLISH_SNAPSHOTS=true
 before_install:
-- export JAVA_OPTS="-Xmx2048m"
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
-install:
-- chmod -R 777 ./travis/install.sh
-- ./travis/install.sh
-script:
-- chmod -R 777 ./travis/script.sh
-- ./travis/script.sh
-after_success:
 - chmod -R 777 ./travis/push-docs-ghpages.sh
 - ./travis/push-docs-ghpages.sh
+install: true
+script:
+- chmod -R 777 ./travis/install.sh
+- ./travis/install.sh
+after_success:
+- chmod -R 777 ./travis/script.sh
+- ./travis/script.sh
