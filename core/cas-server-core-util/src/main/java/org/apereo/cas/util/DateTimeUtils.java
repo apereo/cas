@@ -42,6 +42,12 @@ public final class DateTimeUtils {
             result = null;
         }
 
+        try {
+            result = LocalDateTime.parse(value, DateTimeFormatter.ISO_ZONED_DATE_TIME);
+        } catch (final Exception e) {
+            result = null;
+        }
+
         if (result == null) {
             try {
                 result = LocalDateTime.parse(value);
