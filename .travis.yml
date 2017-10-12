@@ -47,4 +47,4 @@ script:
 - ./travis/install.sh
 after_success:
 - chmod -R 777 ./travis/script.sh
-- ./travis/script.sh
+- travis_wait 30 ./travis/script.sh
