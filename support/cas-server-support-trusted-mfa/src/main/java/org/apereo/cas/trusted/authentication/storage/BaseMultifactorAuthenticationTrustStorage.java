@@ -1,10 +1,10 @@
-	package org.apereo.cas.trusted.authentication.storage;
+package org.apereo.cas.trusted.authentication.storage;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ import java.util.Set;
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseMultifactorAuthenticationTrustStorage.class);
-    
+
     private CipherExecutor<Serializable, String> cipherExecutor;
 
     @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
