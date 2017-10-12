@@ -39,4 +39,9 @@ public class DateTimeUtilsTests {
     public void verifyParsingDateAsLocalDateString3() {
         assertNotNull(DateTimeUtils.localDateTimeOf("09/19/2017 4:30 pm"));
     }
+
+    @Test
+    public void verifyParsingDateAsLocalDateString4() {
+        assertNotNull(DateTimeUtils.localDateTimeOf("2017-10-12T07:00:00.000Z"));
+    }
 }
