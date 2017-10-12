@@ -28,6 +28,7 @@ import org.springframework.test.util.AopTestUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -386,5 +387,28 @@ public abstract class AbstractTicketRegistryTests {
         assertNull(this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class));
         assertNull(this.ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));
         assertNull(this.ticketRegistry.getTicket(PGT_1_ID, ProxyGrantingTicket.class));
+    }
+
+    @Test
+    public void verifyDeleteTicketsWithMultiplePGTs() {
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
+        
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        IntStream.range(1, 5).forEach(i -> {
+            final ServiceTicket st = tgt.grantServiceTicket(ST_1_ID + "-" + i, service, 
+                    new NeverExpiresExpirationPolicy(), false, true);
+            this.ticketRegistry.addTicket(st);
+            this.ticketRegistry.updateTicket(tgt);
+
+            final ProxyGrantingTicket pgt = st.grantProxyGrantingTicket(PGT_1_ID + "-" + i, a, new NeverExpiresExpirationPolicy());
+            this.ticketRegistry.addTicket(pgt);
+            this.ticketRegistry.updateTicket(tgt);
+            this.ticketRegistry.updateTicket(st);
+        });
+        
+        final int c = this.ticketRegistry.deleteTicket(TGT_ID);
+        assertEquals(c, 6);
     }
 }
