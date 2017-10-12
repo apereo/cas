@@ -26,6 +26,7 @@ enum Tabs {
   CONTACTS,
   LOGOUT,
   ACCESS_STRATEGY,
+  EXPIRATION,
   MULTIFACTOR,
   PROXY,
   USERNAME_ATTRIBUTE,
@@ -132,6 +133,8 @@ export class FormComponent implements OnInit {
         return 'logout';
       case Tabs.ACCESS_STRATEGY :
         return 'accessstrategy';
+      case Tabs.EXPIRATION :
+        return 'expiration';
       case Tabs.MULTIFACTOR :
         return 'multiauth';
       case Tabs.PROXY :
