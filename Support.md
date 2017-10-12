@@ -46,12 +46,5 @@ ecosystem.
 A number of [consulting firms offer paid support](https://www.apereo.org/content/commercial-affiliates) for CAS. We list a few here with whom we have had positive experiences
 and feel comfortable recommending.
 
-### Unicon
-
-[Unicon](http://www.unicon.net/) is a software consulting services firm that provides educational institutions with
-‘best-fit’ open source solutions to IT business challenges. The company’s focus is enterprise deployments of open
-source software for campus portals, collaboration, learning, calendaring, email and integration technology for
-higher education.
-
 
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
