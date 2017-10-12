@@ -1,4 +1,4 @@
-package org.apereo.cas.trusted.authentication.storage;
+	package org.apereo.cas.trusted.authentication.storage;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -33,7 +33,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
         LOGGER.debug("Stored authentication trust record for [{}]", record);
-        record.setKey(generateKey(record));
+        record.setRecordKey(generateKey(record));
         return setInternal(record);
     }
 
@@ -41,10 +41,10 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
         final Set<MultifactorAuthenticationTrustRecord> res = get(principal);
         res.removeIf(entry -> {
-            if (entry.getDate().isBefore(onOrAfterDate)) {
+            if (entry.getRecordDate().isBefore(onOrAfterDate)) {
                 return true;
             }
-            final String decodedKey = this.cipherExecutor.decode(entry.getKey());
+            final String decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
             final String currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
             if (StringUtils.isBlank(decodedKey)) {
                 return true;
