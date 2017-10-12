@@ -1,0 +1,36 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.expirationPolicy.expirationDate"
+           [placeholder]="messages.services_form_label_expirationPolicy_expirationDate"
+           [(ngModel)]="data.service.expirationPolicy.expirationDate">
+  </mat-form-field>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.expirationPolicy.expirationDate"
+              [matTooltip]="messages.services_form_tooltip_expirationPolicy_expirationDate">help
+    </mat-icon>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="data.service.expirationPolicy.deleteWhenExpired">
+    <ng-container i18n="services.form.label.expirationPolicy.deleteWhenExpired">
+      {{ messages.services_form_label_expirationPolicy_deleteWhenExpired }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.expirationPolicy.deleteWhenExpired"
+              [matTooltip]="messages.services_form_tooltip_expirationPolicy_deleteWhenExpired">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="data.service.expirationPolicy.notifyWhenDeleted">
+    <ng-container i18n="services.form.label.expirationPolicy.notifyWhenDeleted">
+      {{ messages.services_form_label_expirationPolicy_notifyWhenDeleted }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.expirationPolicy.notifyWhenDeleted"
+              [matTooltip]="messages.services_form_tooltip_expirationPolicy_notifyWhenDeleted">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
