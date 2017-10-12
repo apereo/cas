@@ -18,6 +18,7 @@ import {TabSamlComponent} from "./tab-saml/tab-saml.component";
 import {TabOauthComponent} from "./tab-oauth/tab-oauth.component";
 import {TabWsfedComponent} from "./tab-wsfed/tab-wsfed.component";
 import {TabContactsComponent} from "./tab-contacts/tab-contacts.component";
+import {TabExpirationComponent} from "./tab-expiration/tab-expiration.component";
 
 @NgModule({
   imports: [
@@ -62,6 +63,11 @@ import {TabContactsComponent} from "./tab-contacts/tab-contacts.component";
           {
             path: 'accessstrategy',
             component: TabAccessstrategyComponent,
+            outlet: 'form'
+          },
+          {
+            path: 'expiration',
+            component: TabExpirationComponent,
             outlet: 'form'
           },
           {
