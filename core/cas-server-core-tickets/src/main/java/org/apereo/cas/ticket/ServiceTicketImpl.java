@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
@@ -31,7 +33,8 @@ import javax.persistence.Table;
 @DiscriminatorValue(ServiceTicket.PREFIX)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceTicketImpl.class);
+    
     private static final long serialVersionUID = -4223319704861765405L;
 
     /**
@@ -125,6 +128,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
             final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         synchronized (this) {
             if (this.grantedTicketAlready) {
+                LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
                 throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
             }
             this.grantedTicketAlready = Boolean.TRUE;

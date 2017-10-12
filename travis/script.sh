@@ -14,6 +14,10 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" 
         echo $upload
         eval $upload
         retVal=$?
-        echo -e "Deploying snapshots to sonatype finished at `date` \n"
+        echo -e "*************************************************************"
+        echo -e "Deploying snapshots to Sonatype finished at `date` \n"
+        echo -e "*************************************************************"
     fi
+else
+    echo -e "Publishing snapshots to Sonatype will be skipped.\n"
 fi
