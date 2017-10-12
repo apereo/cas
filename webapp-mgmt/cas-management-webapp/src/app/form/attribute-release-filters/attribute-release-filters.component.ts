@@ -123,6 +123,10 @@ export class AttributeReleaseFiltersComponent implements OnInit {
     return RegisteredServiceScriptedAttributeFilter.instanceof(filter);
   }
 
+  getAttributes(filter: RegisteredServiceMappedRegexAttributeFilter) {
+    return Object.keys(filter.patterns);
+  }
+
   moveUp() {
     let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter as RegisteredServiceChainingAttributeFilter;
     let i = attributeFilter.filters.indexOf(this.selectedFilter);
