@@ -47,6 +47,8 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
+import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.EncodedTicket;
@@ -229,6 +231,8 @@ public class CasKryoTranscoder implements Transcoder<Object> {
     private void registerCasTicketsWithKryo() {
         this.kryo.register(TicketGrantingTicketImpl.class);
         this.kryo.register(ServiceTicketImpl.class);
+        this.kryo.register(ProxyGrantingTicketImpl.class);
+        this.kryo.register(ProxyTicketImpl.class);
         this.kryo.register(EncodedTicket.class);
     }
 
