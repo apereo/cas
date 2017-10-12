@@ -74,7 +74,7 @@ function attributeTable(t, attributes) {
 }
 
 function date(d) {
-    var date = new Date(d[0],d[1],d[2],d[3],d[4],d[5]);
+    var date = new Date(d[0],d[1]-1,d[2],d[3],d[4],d[5]);
     return date;
 }
 
@@ -143,7 +143,6 @@ var consentDecisions = (function () {
             },
             'language': strings.data,
             'paging': false,
-            'processing': true,
             'ajax': {
                 'url': urls.getConsentDecisions,
                 'dataSrc': ''
@@ -158,7 +157,8 @@ var consentDecisions = (function () {
                     },
                     'render': function (data) {
                         var opts = { year: 'numeric', month: 'numeric' };
-                        return '<div class="label label-info">' + data.toLocaleDateString('en', opts ) + 
+                        return '<div class="label label-info"><span class="hidden">' + data.toISOString() +
+                                '</span>' + data.toLocaleDateString('en', opts ) +
                             '</div>';
                     }
                 },
