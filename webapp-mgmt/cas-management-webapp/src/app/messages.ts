@@ -249,8 +249,7 @@ export class Messages {
  readonly services_form_tooltip_theme = "A token that represents the theme that should be applied to CAS when this service asks for authentication.";
  readonly services_form_tooltip_evalOrder = "Determines how CAS should load, sort and evaluate services per this numeric order.";
  readonly services_form_tooltip_requiredHandlers = "Collection of authentication handler ids defined in the CAS server configuration " +
-    "that indicate the set of authentication handlers that must successfully execute before access to "
-  "this service can be granted."
+    "that indicate the set of authentication handlers that must successfully execute before access to this service can be granted.";
  readonly services_form_tooltip_requiresDuo = "Setting to true will require Duo authentication for this service.";
  readonly services_form_tooltip_logoutUrl = "Url where logout requests will be sent to, for this service.";
  readonly services_form_tooltip_informationUrl = "Url that describes help information and guides for this service.";
