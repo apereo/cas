@@ -3,10 +3,33 @@
 <div *ngIf="!isOidc && !isWsFed">
   <mat-card class="tabCard">
     <mat-card-title>
-      <h5>Attribute Release Options</h5>
+      <h5 i18n>Attribute Release Policy</h5>
+    </mat-card-title>
+    <div class="cardContent">
+      <app-attribute-release-policies></app-attribute-release-policies>
+    </div>
+  </mat-card>
+  <mat-card class="tabCard">
+    <mat-card-title>
+      <h5 i18n>Attribute Release Options</h5>
     </mat-card-title>
     <div class="cardContent">
       <app-attribute-release-checks></app-attribute-release-checks>
+    </div>
+  </mat-card>
+  <mat-card class="tabCard">
+    <mat-card-title>
+      <h5 i18n>Attribute Release Consent</h5>
+    </mat-card-title>
+    <div class="cardContent">
+      <app-attribute-release-consent></app-attribute-release-consent>
+    </div>
+  </mat-card>
+  <mat-card class="tabCard">
+    <mat-card-title>
+      <h5 i18n>Atrribute Value Filters</h5>
+    </mat-card-title>
+    <div class="cardContent">
       <app-attribute-release-filters></app-attribute-release-filters>
     </div>
   </mat-card>
@@ -18,29 +41,13 @@
       <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
     </div>
   </mat-card>
-  <mat-card class="tabCard">
-    <mat-card-title>
-      <h5>Attribute Policy</h5>
-    </mat-card-title>
-    <div class="cardContent">
-      <app-attribute-release-policies></app-attribute-release-policies>
-    </div>
-  </mat-card>
-  <mat-card class="tabCard">
-    <mat-card-title>
-      <h5>Attribute Release Consent</h5>
-    </mat-card-title>
-    <div class="cardContent">
-      <app-attribute-release-consent></app-attribute-release-consent>
-    </div>
-  </mat-card>
 </div>
 
 
 <div *ngIf="isOidc">
   <mat-card class="tabCard">
     <mat-card-title>
-      <h5>Attribute Release Options</h5>
+      <h5 i18n>Attribute Release Options</h5>
     </mat-card-title>
     <div class="cardContent">
       <div class="well well-sm">
@@ -55,7 +62,7 @@
 <div *ngIf="isWsFed">
   <mat-card class="tabCard">
     <mat-card-title>
-      <h5>Attribute Release Options</h5>
+      <h5 i18n>Attribute Release Options</h5>
     </mat-card-title>
     <div class="cardContent">
       <app-attribute-release-principal-repo></app-attribute-release-principal-repo>
