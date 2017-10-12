@@ -7,7 +7,7 @@ fi
 
 gradle="sudo ./gradlew"
 
-gradleBuildOptions="--stacktrace --parallel --configure-on-demand --max-workers=8"
+gradleBuildOptions="--stacktrace --parallel"
 gradleBuild="assemble"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
