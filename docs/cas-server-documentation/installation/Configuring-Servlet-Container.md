@@ -169,7 +169,7 @@ In the event that an external servlet container is used, you MAY need to make su
 
 When using an external container, you may need to ensure that logging configuration file that ships with CAS by default is disabled and turned into a no-op **specially** if the log configuration and location is to be controlled via CAS settings. This is required because initialization of the CAS web applications context inside an external servlet container tends to prematurely initialize the log configuration from classpath before CAS itself has had a chance to control logging via settings.
 
-To disable CAS, define a `log4j2.xml` under `src/main/resources` and put the following content in it:
+To disable CAS' own logging, define a `log4j2.xml` under `src/main/resources` and put the following content in it:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
