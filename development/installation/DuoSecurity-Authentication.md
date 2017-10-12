@@ -50,21 +50,21 @@ flows as necessary. The provider id need not be defined if there is only a singl
 
 ## User Account Status
 
-If users are unregistered with Duo Security or allowed through via a direct bypass,
-CAS will query Duo Security for the user account apriori to learn
-whether user is registered or configured for direct bypass. If the account status matches either of those conditions or if the
-user account is not registered yet the new-user enrollment policy allows folks to skip registration, CAS will bypass
-Duo Security altogether, shall not challenge the user
-and will also **NOT** report back a multifactor-enabled authentication context back to the application.
+If users are unregistered with Duo Security or allowed through via a direct bypass, CAS will query Duo Security for the user account apriori to learn
+whether user is registered or configured for direct bypass. If the account is configured for direct bypass or the
+user account is not registered yet the new-user enrollment policy allows the user to skip registration, CAS will bypass
+Duo Security altogether and shall not challenge the user and will also **NOT** report back a multifactor-enabled authentication context back to the application.
+
+<div class="alert alert-warning"><strong>YMMV</strong><p>In recent conversations with Duo Security, it turns out that the API behavior has changed (for security reasons) where it may no longer accurately report back account status. This means even if the above conditions hold true, CAS may continue to route the user to Duo Security having received an eligibility status from the API. Duo Security is reportedly working on a fix to restore the AP behavior in a more secure way. In the meanwhile, YMMV.</p></div>
 
 ## Non-Browser MFA
 
 The Duo Security module of CAS is able to also support [non-browser based multifactor authentication](https://duo.com/docs/authapi) requests.
 In order to trigger this behavior, applications (i.e. `curl`, REST APIs, etc) need to specify a special
-`Content-Type` to signal to CAS that the request is submitted from a non-web based environment.
+`Content-Type` to signal to CAS that the request is submitted from a non-web based environment. The multifactor authentication request is [submitted to Duo Security](https://duo.com/docs/authapi#/auth) in `auto` mode which effectively may translate into an out-of-band factor (push or phone) recommended by Duo as the best for the user's devices.
 
 In order to successfully complete the authentication flow, CAS must also be configured with a method
-of primary authentication that is able to support non-web based environments.
+of primary authentication that is able to support non-web based environments such as [Basic Authentication](Basic-Authentication.html).
 
 Here is an example using `curl` that attempts to authenticate into a service by first exercising
 basic authentication while identifying the request content type as `application/cas`. It is assumed that the
