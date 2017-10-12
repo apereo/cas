@@ -32,11 +32,11 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     private EntityManager entityManager;
 
     @Override
-    public void expire(final String key) {
+    public void expire(final String recordKey) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.key = :key",
+            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordKey = :recordKey",
                     MultifactorAuthenticationTrustRecord.class)
-                    .setParameter("key", key)
+                    .setParameter("recordKey", recordKey)
                     .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
@@ -47,9 +47,9 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public void expire(final LocalDate onOrBefore) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.date < :date",
+            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordDate < :recordDate",
                     MultifactorAuthenticationTrustRecord.class)
-                    .setParameter("date", onOrBefore)
+                    .setParameter("recordDate", onOrBefore)
                     .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
@@ -61,8 +61,8 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
         try {
             final List<MultifactorAuthenticationTrustRecord> results =
-                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.date >= :date",
-                            MultifactorAuthenticationTrustRecord.class).setParameter("date", onOrAfterDate).getResultList();
+                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.recordDate >= :recordDate",
+                            MultifactorAuthenticationTrustRecord.class).setParameter("recordDate", onOrAfterDate).getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found for [{}]", onOrAfterDate);
