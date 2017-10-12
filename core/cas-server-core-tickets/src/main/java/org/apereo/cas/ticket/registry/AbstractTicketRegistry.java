@@ -15,11 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Scott Battaglia
@@ -129,16 +130,30 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return count.intValue();
     }
 
+    /**
+     * Delete tickets.
+     *
+     * @param tickets the tickets
+     * @return the total number of deleted tickets
+     */
+    protected int deleteTickets(final Set<String> tickets) {
+        return deleteTickets(tickets.stream());
+    }
+
+    /**
+     * Delete tickets.
+     *
+     * @param tickets the tickets
+     * @return the total number of deleted tickets
+     */
+    protected int deleteTickets(final Stream<String> tickets) {
+        return tickets.mapToInt(this::deleteTicket).sum();
+    }
+    
     private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
-        final Set<String> pgts = tgt.getProxyGrantingTickets().keySet();
+        final Set<String> pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
         final boolean hasPgts = !pgts.isEmpty();
-        final Iterator<String> proxyGrantingTickets = pgts.iterator();
-        while (proxyGrantingTickets.hasNext()) {
-            final String t = proxyGrantingTickets.next();
-            LOGGER.debug("Removing proxy-granting ticket [{}]", t);
-            final int c = this.deleteTicket(t);
-            count.addAndGet(c);
-        }
+        count.getAndAdd(deleteTickets(pgts));
         if (hasPgts) {
             LOGGER.debug("Removing proxy-granting tickets from parent ticket-granting ticket");
             tgt.getProxyGrantingTickets().clear();
