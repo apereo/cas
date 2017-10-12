@@ -75,8 +75,7 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public CasConsentReviewController casConsentReviewController() {
-        return new CasConsentReviewController(consentRepository, consentEngine, casConsentPac4jConfig(),
-                casProperties.getServer().getPrefix().concat("/consentReview"));
+        return new CasConsentReviewController(consentRepository, consentEngine, casConsentPac4jConfig(), casProperties);
     }
 
     @Bean
