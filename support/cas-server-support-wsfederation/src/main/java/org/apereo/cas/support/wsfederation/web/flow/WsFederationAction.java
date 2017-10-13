@@ -81,7 +81,7 @@ public class WsFederationAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final String wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 return handleWsFederationAuthenticationRequest(context);
@@ -120,7 +120,7 @@ public class WsFederationAction extends AbstractAction {
     }
 
     private Event routeToLoginRequest(final RequestContext context, final WsFederationConfiguration config) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
 
         final Service service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
@@ -143,7 +143,7 @@ public class WsFederationAction extends AbstractAction {
     }
 
     private Event handleWsFederationAuthenticationRequest(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         final String wResult = request.getParameter(WRESULT);
         LOGGER.debug("Parameter [{}] received: [{}]", WRESULT, wResult);
@@ -174,7 +174,7 @@ public class WsFederationAction extends AbstractAction {
 
     private Event buildCredentialsFromAssertion(final RequestContext context, final Pair<Assertion, WsFederationConfiguration> assertion) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final HttpSession session = request.getSession();
 
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);

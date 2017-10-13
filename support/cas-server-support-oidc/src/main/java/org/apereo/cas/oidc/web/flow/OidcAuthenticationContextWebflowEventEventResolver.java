@@ -53,7 +53,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");

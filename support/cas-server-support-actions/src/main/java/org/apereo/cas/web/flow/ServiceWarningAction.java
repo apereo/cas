@@ -46,8 +46,8 @@ public class ServiceWarningAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         final Service service = WebUtils.getService(context);
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);

@@ -33,7 +33,7 @@ public class ConfirmConsentAction extends AbstractConsentAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
         final RegisteredService registeredService = getRegisteredServiceForConsent(requestContext, service);
         final Authentication authentication = WebUtils.getAuthentication(requestContext);

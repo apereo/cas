@@ -51,8 +51,8 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
             final DigestAuthExtractor extractor = new DigestAuthExtractor(this.getClass().getSimpleName());
             final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);

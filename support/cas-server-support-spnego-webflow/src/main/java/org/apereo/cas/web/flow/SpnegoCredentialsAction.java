@@ -56,7 +56,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
         LOGGER.debug("SPNEGO Authorization header located as [{}]", authorizationHeader);
@@ -105,7 +105,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
             return;
         }
 
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {

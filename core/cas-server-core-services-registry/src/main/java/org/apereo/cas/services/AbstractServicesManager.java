@@ -63,6 +63,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
+        if (predicate == null) {
+            return new ArrayList<>();
+        }
+        
         return getAllServices()
                 .stream()
                 .filter(getRegisteredServicesFilteringPredicate(predicate))
@@ -72,6 +76,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final String serviceId) {
+        if (StringUtils.isBlank(serviceId)) {
+            return null;
+        }
+        
         final RegisteredService service = getCandidateServicesToMatch(serviceId)
                 .stream()
                 .filter(r -> r.matches(serviceId))
@@ -83,11 +91,14 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        return findServiceBy(service.getId());
+        return service != null ? findServiceBy(service.getId()) : null;
     }
 
     @Override
     public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
+        if (StringUtils.isBlank(serviceId)) {
+            return null;
+        }
         final RegisteredService service = findServiceBy(serviceId);
         if (service != null && service.getClass().isAssignableFrom(clazz)) {
             return (T) service;

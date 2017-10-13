@@ -59,7 +59,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
