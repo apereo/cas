@@ -47,7 +47,7 @@ The authorization code type is made for UI interactions: the user will enter cre
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
 | `/oauth2.0/authorize`   | `response_type=code&client_id=<ID>&redirect_uri=<CALLBACK>`  | OAuth code as a parameter of the `CALLBACK` url.
-| `/oauth2.0/accessToken` | `grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK`  | The access token.
+| `/oauth2.0/accessToken` | `grant_type=authorization_code&client_id=ID`<br/>`&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK`  | The access token.
 
 ### Token
 
@@ -64,7 +64,7 @@ This grant is a great user experience for trusted first party clients both on th
 
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
-| `/oauth2.0/authorize`   | `grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` | The access token.
+| `/oauth2.0/authorize`   | `grant_type=password&client_id=ID`<br/>`&username=USERNAME&password=PASSWORD` | The access token.
 
 Because there is no `redirect_uri` specified by this grant type, the service identifier recognized by CAS and matched in the service registry is taken as the `client_id` instead. You may optionally also pass along a `service` or `X-service` header value that identifies the target application url. The header value must match the OAuth service definition in the registry that is linked to the client id.
 
@@ -86,7 +86,7 @@ when this previous access token is expired.
 
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
-| `/oauth2.0/accessToken`   | `grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` | The new access token.
+| `/oauth2.0/accessToken`   | `grant_type=refresh_token&client_id=ID`<br/>`&client_secret=SECRET&refresh_token=REFRESH_TOKEN` | The new access token.
 
 ## Grant Type Selection
 
