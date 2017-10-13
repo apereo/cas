@@ -66,7 +66,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
             return null;
         }
         
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final String[] values = request.getParameterValues(mfaRequestParameter);
         if (values != null && values.length > 0) {
             LOGGER.debug("Received request parameter [{}] as [{}]", mfaRequestParameter, values);

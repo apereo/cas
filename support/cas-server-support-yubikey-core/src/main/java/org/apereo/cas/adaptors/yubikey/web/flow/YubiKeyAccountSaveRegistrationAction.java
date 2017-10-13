@@ -25,7 +25,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final String uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String token = request.getParameter("token");
         if (StringUtils.isNotBlank(token) && registry.registerAccountFor(uid, token)) {
             success();

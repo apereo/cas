@@ -99,8 +99,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
 
         // web context
@@ -179,8 +179,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @throws HttpAction the http action
      */
     protected void prepareForLoginPage(final RequestContext context) throws HttpAction {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
 
         // web context

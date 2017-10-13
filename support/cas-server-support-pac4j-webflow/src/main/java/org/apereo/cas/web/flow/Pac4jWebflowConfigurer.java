@@ -75,8 +75,8 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         state.getEntryActionList().add(new AbstractAction() {
             @Override
             protected Event doExecute(final RequestContext requestContext) throws Exception {
-                final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-                final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+                final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request,
                         response.getStatus());
                 mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));

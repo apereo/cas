@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
@@ -83,10 +84,7 @@ public class OAuth20CasAuthenticationBuilder {
     public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context, final boolean useServiceHeader) {
         String id = null;
         if (useServiceHeader) {
-            id = context.getRequestHeader(CasProtocolConstants.PARAMETER_SERVICE);
-            if (StringUtils.isBlank(id)) {
-                id = context.getRequestHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
-            }
+            id = OAuth20Utils.getServiceRequestHeaderIfAny(context.getRequest());
             LOGGER.debug("Located service based on request header is [{}]", id);
         }
         if (StringUtils.isBlank(id)) {

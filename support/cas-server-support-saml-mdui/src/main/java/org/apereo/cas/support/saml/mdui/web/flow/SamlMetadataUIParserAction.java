@@ -94,7 +94,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId, final RegisteredService registeredService) {
         LOGGER.debug("Locating SAML MDUI for entity [{}]", entityId);
         final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(
-            this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequest(requestContext));
+            this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
         LOGGER.debug("Located SAML MDUI for entity [{}] as [{}]", entityId, mdui);
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }
@@ -153,7 +153,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the entity id from request
      */
     protected String getEntityIdFromRequest(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameter(this.entityIdParameterName);
     }
 }

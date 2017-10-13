@@ -48,8 +48,8 @@ public class SAML2ClientLogoutAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
 
             Client<?, ?> client;

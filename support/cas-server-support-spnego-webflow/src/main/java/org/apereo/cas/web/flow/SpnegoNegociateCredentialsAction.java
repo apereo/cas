@@ -93,8 +93,8 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
         final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);

@@ -44,7 +44,7 @@ public class ValidateCaptchaAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
         if (StringUtils.isBlank(gRecaptchaResponse)) {

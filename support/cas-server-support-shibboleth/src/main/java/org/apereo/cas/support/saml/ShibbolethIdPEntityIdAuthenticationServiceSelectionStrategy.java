@@ -67,7 +67,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
             if (param.isPresent()) {
                 return Optional.of(param.get().getValue());
             }
-            final HttpServletRequest request = WebUtils.getHttpServletRequest();
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             final String[] query = request.getQueryString().split("&");
             final Optional<String> paramRequest = Arrays.stream(query)
                     .map(p -> {

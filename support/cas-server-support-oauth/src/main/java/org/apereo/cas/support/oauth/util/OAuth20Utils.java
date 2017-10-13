@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -307,5 +308,22 @@ public final class OAuth20Utils {
             return new HashSet<>(0);
         }
         return CollectionUtils.wrapSet(parameterValues.split(" "));
+    }
+
+    /**
+     * Gets service request header if any.
+     *
+     * @param context the context
+     * @return the service request header if any
+     */
+    public static String getServiceRequestHeaderIfAny(final HttpServletRequest context) {
+        if (context == null) {
+            return null;
+        }
+        String id = context.getHeader(CasProtocolConstants.PARAMETER_SERVICE);
+        if (StringUtils.isBlank(id)) {
+            id = context.getHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
+        }
+        return id;
     }
 }

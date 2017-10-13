@@ -48,7 +48,7 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final String remoteUser = getRemotePrincipalId(request);
 
         if (StringUtils.isNotBlank(remoteUser)) {

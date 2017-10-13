@@ -29,7 +29,7 @@ public class InjectResponseHeadersAction extends RedirectToServiceAction {
     protected Event finalizeResponseEvent(final RequestContext requestContext,
                                           final WebApplicationService service,
                                           final Response response) {
-        final HttpServletResponse httpResponse = WebUtils.getHttpServletResponse(requestContext);
+        final HttpServletResponse httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         httpResponse.addHeader(CasProtocolConstants.PARAMETER_SERVICE, response.getUrl());
         response.getAttributes().forEach(httpResponse::addHeader);
         return success();

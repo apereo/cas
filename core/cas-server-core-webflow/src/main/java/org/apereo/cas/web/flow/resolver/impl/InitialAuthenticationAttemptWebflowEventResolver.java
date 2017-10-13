@@ -99,7 +99,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 LOGGER.warn(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(event);
         }
