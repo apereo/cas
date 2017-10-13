@@ -1,8 +1,5 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {FormData} from "../../../domain/service-view-bean";
-import {RegisteredServiceRegexAttributeFilter} from "../../../domain/attribute-release";
 import {Data} from "../data";
 import {OidcRegisteredService} from "../../../domain/oauth-service";
 import {WSFederationRegisterdService} from "../../../domain/wsed-service";
