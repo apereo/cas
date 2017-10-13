@@ -23,7 +23,7 @@ All JWTs are by default signed and encrypted by CAS based on keys generated and 
 
 Note that per the above diagram, the JWT request by default internally causes CAS to generate an `ST` for the application and immediately then validate it in order to get access to the auhenticated principal and attributes per policies associated with the application registration record in the CAS service registry. This response is transformed into a `JWT` that is then passed onto the client application.
 
-In other words, the responsibility of receiving a service ticket (`ST`) and validating it is all moved into and handled internally by CAS. The application only needs to learn how to decipher and unpack the final `JWT`.
+In other words, the responsibility of receiving a service ticket (`ST`) and validating it is all moved into and handled internally by CAS. The application only needs to learn how to decipher and unpack the final `JWT` and ensure its validity.
 
 The expiration time of the generated `JWT` is controlled by the length of the assertion returned as part of the validation event. If the assertion validity length is not specified, then the expiration time is controlled by the length of the SSO session defined as part of SSO expiration policy of the CAS server. 
 
