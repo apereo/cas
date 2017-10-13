@@ -2465,6 +2465,8 @@ To learn more about this topic, [please review this guide](Trusted-Authenticatio
 # cas.authn.trusted.principalAttribute=
 # cas.authn.trusted.returnNull=false
 # cas.authn.trusted.name=
+
+# cas.authn.trusted.remotePrincipalHeader=
 ```
 
 ## WS-Fed Delegated Authentication
