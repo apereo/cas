@@ -25,9 +25,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
-After enabling OAuth support, the following endpoints will be available:
-
 ## Endpoints
+
+After enabling OAuth support, the following endpoints will be available:
 
 | Endpoint                        | Description                                                           | Method
 |---------------------------------|-----------------------------------------------------------------------|---------
