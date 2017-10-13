@@ -42,10 +42,9 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./travis/push-docs-ghpages.sh
 - ./travis/push-docs-ghpages.sh
-install: true
-script:
+install: 
 - chmod -R 777 ./travis/install.sh
 - ./travis/install.sh
-after_success:
+script:
 - chmod -R 777 ./travis/script.sh
-- travis_wait 60 ./travis/script.sh
+- ./travis/script.sh
