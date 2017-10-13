@@ -15,9 +15,18 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${springboot.version}</version>
                 <configuration>
-                    <mainClass>org.springframework.boot.loader.WarLauncher</mainClass>
+                    <mainClass>${mainClassName}</mainClass>
                     <addResources>true</addResources>
+                    <executable>${isExecutable}</executable>
+                    <layout>WAR</layout>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -29,13 +38,12 @@
                     <recompressZippedFiles>false</recompressZippedFiles>
                     <archive>
                         <compress>false</compress>
-                        <manifestFile>${project.build.directory}/war/work/org.apereo.cas/cas-server-webapp/META-INF/MANIFEST.MF
-                        </manifestFile>
+                        <manifestFile>${manifestFileToUse}</manifestFile>
                     </archive>
                     <overlays>
                         <overlay>
                             <groupId>org.apereo.cas</groupId>
-                            <artifactId>cas-server-webapp</artifactId>
+                            <artifactId>cas-server-webapp${app.server}</artifactId>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -47,7 +55,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-webapp</artifactId>
+            <artifactId>cas-server-webapp${app.server}</artifactId>
             <version>${cas.version}</version>
             <type>war</type>
             <scope>runtime</scope>
@@ -55,10 +63,14 @@
     </dependencies>
 
     <properties>
-        <springboot.version>1.4.2.RELEASE</springboot.version>
+        <springboot.version>1.5.7.RELEASE</springboot.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <app.server>-tomcat</app.server>
+        <mainClassName>org.springframework.boot.loader.WarLauncher</mainClassName>
+        <isExecutable>false</isExecutable>
+        <manifestFileToUse>${project.build.directory}/war/work/org.apereo.cas/cas-server-webapp${app.server}/META-INF/MANIFEST.MF</manifestFileToUse>
     </properties>
 
     <repositories>
@@ -86,9 +98,40 @@
             <id>shibboleth-releases</id>
             <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
         </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
     </repositories>
+
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>exec</id>
+            <properties>
+                <mainClassName>org.apereo.cas.web.CasWebApplication</mainClassName>
+                <isExecutable>true</isExecutable>
+                <manifestFileToUse></manifestFileToUse>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.soebes.maven.plugins</groupId>
+                        <artifactId>echo-maven-plugin</artifactId>
+                        <version>0.3.0</version>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>echo</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <echos>
+                                <echo>Executable profile to make the generated CAS web application executable.</echo></echos>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
