@@ -2,7 +2,7 @@
 
 branchName="master"
 gradle="sudo ./gradlew"
-gradleUpload="uploadArchives -x test -x check"
+gradleUpload="uploadArchives -x test -x check -x build"
 gradleUploadOptions="-DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
