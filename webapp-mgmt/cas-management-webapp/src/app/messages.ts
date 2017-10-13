@@ -38,7 +38,7 @@ export class Messages {
   readonly management_services_table_modal_delete_header = "Confirm Delete";
   readonly management_services_table_modal_delete_msgPt1 = "You are about to permanently delete";
   readonly management_services_table_modal_delete_msgPt2 = "Are you sure you wish to continue?";
-  readonly management_services_table_modal_commit_header = "Commit to Reposistory";
+  readonly management_services_table_modal_commit_header = "Commit to Repository";
   readonly management_services_table_modal_commit_listheader = "Services to be committed:";
   readonly management_services_table_modal_commit_required = "A commit message is required";
   readonly management_services_table_modal_commit_placeholder = "Enter a commit message";
@@ -153,7 +153,7 @@ export class Messages {
  readonly services_form_label_sas_selecttype = "Select Type";
  readonly services_form_label_sas_grouper_groupfield = "Group Field";
  readonly services_form_label_sas_surrogate_enabled = "Surrogate Enabled";
- readonly services_form_label_sas_surrogate_ssoEnabled = "Surragate SSO Enabled";
+ readonly services_form_label_sas_surrogate_ssoEnabled = "Surrogate SSO Enabled";
  readonly services_form_label_sas_surrogate_requiredAttributes = "Surrogate Required Attributes";
  readonly services_form_label_multiauth_providers = "Providers";
  readonly services_form_label_multiauth_failuremode = "Failure Mode";
@@ -199,7 +199,7 @@ export class Messages {
 
  readonly services_form_label_expirationPolicy_expirationDate = "Expiration Date";
  readonly services_form_label_expirationPolicy_deleteWhenExpired = "Delete service when expired";
- readonly services_form_label_expirationPolicy_notifyWhenDeleted = "Notfiy contacts when service deleted";
+ readonly services_form_label_expirationPolicy_notifyWhenDeleted = "Notifiy contacts when service is deleted";
 
  readonly services_form_header_page_addService = "Add Service";
  readonly services_form_header_page_editService = "Edit Service";
@@ -299,7 +299,7 @@ export class Messages {
  readonly services_form_tooltip_sas_grouper = "This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by " +
     "Grouper are collected as CAS attributes and examined against the list of required attributes for service access."
  readonly services_form_tooltip_sas_surrogate_enabled = "Determines whether this service is allowed to use surrogate authentication.";
- readonly services_form_tooltip_sas_surrogate_ssoEnabled = "Determines whether a surrogater authentication should participate in SSO";
+ readonly services_form_tooltip_sas_surrogate_ssoEnabled = "Determines whether a Surrogate authentication should participate in SSO";
  readonly services_form_tooltip_sas_surrogate_requiredAttributes = "List of attributes and values that must be present for the primary user in order to allow surrogate authentication";
  readonly services_form_tooltip_multiauth_providers = "List of multifactor provider ids to assign to this service.";
  readonly services_form_tooltip_multiauth_failuremode = "Decide what CAS should do in the event that a provider is not available.";
@@ -325,7 +325,7 @@ export class Messages {
  readonly services_form_tooltip_saml_requiredNameIdFormat = "Force the indicated Name ID format in the final SAML response";
  readonly services_form_tooltip_saml_serviceProviderNameQualifier = "Overwrite the SPNameQualifier attribute of the produced subject name id";
  readonly services_form_tooltip_saml_nameQualifier = "Overwrite the NameQualifier attribute of the produced subject name id";
- readonly services_form_tooltip_saml_skipAssertioNameId = "Whether generation of a name identifer should be skipped for assertions";
+ readonly services_form_tooltip_saml_skipAssertioNameId = "Whether generation of a name identifier should be skipped for assertions";
  readonly services_form_tooltip_saml_skipInResponseTo = "Whether generation of the InResponseTo element should be skipped for subject confirmations";
  readonly services_form_tooltip_saml_skipNotOnOrAfter = "Whether generation of the NotOnOrAfter element should be skipped for subject confirmations";
  readonly services_form_tooltip_saml_skipRecipient = "Whether generation of the Recipient element should be skipped for subject confirmations";
