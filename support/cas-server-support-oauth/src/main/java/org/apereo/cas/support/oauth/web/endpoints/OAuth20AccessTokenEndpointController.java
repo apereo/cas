@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
@@ -181,9 +180,12 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         }
 
         final UserProfile uProfile = profile.get();
+        if (uProfile == null) {
+            LOGGER.warn("Could not locate authenticated profile for this request as null");
+            return false;
+        }
         if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE)) {
             return verifyAccessForGrantAuthorizationCode(request, grantType, uProfile);
-
         }
 
         if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
@@ -205,24 +207,21 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
-
-        return uProfile instanceof OAuthClientProfile
-                && this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
+        return this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
                 && this.validator.checkServiceValid(registeredService);
     }
-    
+
     private boolean verifyAccessForGrantPassword(final HttpServletRequest request, final String grantType, final UserProfile uProfile) {
         final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
-        return uProfile instanceof OAuthClientProfile
-                && this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
+        return this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
                 && this.validator.checkServiceValid(registeredService);
     }
 
     private boolean verifyAccessForGrantRefreshToken(final HttpServletRequest request, final UserProfile uProfile) {
-        return uProfile instanceof OAuthClientProfile && this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN);
+        return this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN);
     }
 
     private boolean verifyAccessForGrantAuthorizationCode(final HttpServletRequest request, final String grantType, final UserProfile uProfile) {
@@ -232,8 +231,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
 
-        return uProfile instanceof OAuthClientProfile
-                && this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
+        return this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
                 && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
                 && this.validator.checkCallbackValid(registeredService, redirectUri);
     }

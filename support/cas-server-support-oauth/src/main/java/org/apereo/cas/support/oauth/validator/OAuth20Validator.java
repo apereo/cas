@@ -56,6 +56,7 @@ public class OAuth20Validator {
      */
     public boolean checkServiceValid(final RegisteredService registeredService) {
         if (registeredService == null) {
+            LOGGER.warn("Provided registered service cannot be null and must be defined");
             return false;
         }
 
@@ -65,6 +66,7 @@ public class OAuth20Validator {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return true;
         } catch (final UnauthorizedServiceException e) {
+            LOGGER.warn("Registered service access is not allowed for [{}]", registeredService.getServiceId());
             return false;
         }
     }
