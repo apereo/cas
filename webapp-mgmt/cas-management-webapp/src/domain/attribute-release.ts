@@ -1,4 +1,5 @@
 import {DefaultPrincipalAttributesRepository, PrincipalAttributesRepository} from "./attribute-repo";
+import {RegisteredServiceAttributeFilter} from "./attribute-filter";
 
 export abstract class RegisteredServiceAttributeReleasePolicy {
   attributeFilter: RegisteredServiceAttributeFilter;
@@ -113,28 +114,6 @@ export class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 
   static instanceOf(obj: any): boolean {
     return obj["@class"] === GroovyScriptAttributeReleasePolicy.cName;
-  }
-}
-
-export abstract class RegisteredServiceAttributeFilter {
-  order: number;
-  pattern: String
-
-  constructor(filter?: RegisteredServiceAttributeFilter) {
-    this.pattern = (filter && filter.pattern) || "";
-  }
-}
-
-export class RegisteredServiceRegexAttributeFilter extends RegisteredServiceAttributeFilter {
-  static cName = "org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter";
-
-  constructor(filter?) {
-    super(filter);
-    this["@class"] = RegisteredServiceRegexAttributeFilter.cName;
-  }
-
-  static instanceOf(obj: any): boolean {
-    return obj["@class"] === RegisteredServiceRegexAttributeFilter.cName;
   }
 }
 

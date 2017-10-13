@@ -36,18 +36,6 @@
                [matTooltip]="messages.services_form_tooltip_sas_unauthorizedredirecturl">help
       </mat-icon>
     </div>
-
-    <div>
-      <mat-checkbox [(ngModel)]="data.service.accessStrategy.caseInsensitive">
-        <ng-container i18n="services.form.label.sas.caseinsensitive">
-          {{ messages.services_form_label_sas_caseinsensitive }}
-        </ng-container>
-      </mat-checkbox>
-      <mat-icon style="font-size: medium"
-               i18n-matTooltip="services.form.tooltip.sas.unauthorizedredirecturl"
-               [matTooltip]="messages.services_form_tooltip_sas_unauthorizedredirecturl">help
-      </mat-icon>
-    </div>
   </div>
 </mat-card>
 <mat-card class="tabCard">
@@ -56,6 +44,17 @@
   </mat-card-title>
   <div class="cardContent">
     <app-rejectedattributes [attributes]="data.service.accessStrategy.requiredAttributes"></app-rejectedattributes>
+    <div>
+      <mat-checkbox [(ngModel)]="data.service.accessStrategy.caseInsensitive">
+        <ng-container i18n="services.form.label.sas.caseinsensitive">
+          {{ messages.services_form_label_sas_caseinsensitive }}
+        </ng-container>
+      </mat-checkbox>
+      <mat-icon style="font-size: medium"
+                i18n-matTooltip="services.form.tooltip.sas.unauthorizedredirecturl"
+                [matTooltip]="messages.services_form_tooltip_sas_unauthorizedredirecturl">help
+      </mat-icon>
+    </div>
   </div>
 </mat-card>
 
