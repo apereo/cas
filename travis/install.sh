@@ -32,9 +32,9 @@ tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo $tasks
 eval $tasks
 retVal=$?
-echo -e "*************************************************************"
+echo -e "******************************************************************"
 echo -e "Gradle build finished at `date` with exit code $retVal"
-echo -e "*************************************************************"
+echo -e "******************************************************************"
 if [ $retVal == 0 ]; then
     echo "Gradle build finished successfully."
 else
