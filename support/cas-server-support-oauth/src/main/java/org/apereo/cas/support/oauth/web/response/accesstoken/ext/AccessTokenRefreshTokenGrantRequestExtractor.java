@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AccessTokenRefreshTokenGrantRequestExtractor}.
@@ -23,11 +22,9 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenRefreshTokenGrantRequestExtractor.class);
 
     public AccessTokenRefreshTokenGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                        final HttpServletRequest request, final HttpServletResponse response,
                                                         final CentralAuthenticationService centralAuthenticationService,
                                                         final OAuthProperties oAuthProperties) {
-        super(servicesManager, ticketRegistry, request, response,
-                centralAuthenticationService, oAuthProperties);
+        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties);
     }
 
     @Override

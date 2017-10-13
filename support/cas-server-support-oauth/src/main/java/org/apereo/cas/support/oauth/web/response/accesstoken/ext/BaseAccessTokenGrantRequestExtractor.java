@@ -28,14 +28,6 @@ public abstract class BaseAccessTokenGrantRequestExtractor {
      * The Ticket registry.
      */
     protected final TicketRegistry ticketRegistry;
-    /**
-     * The Request.
-     */
-    protected final HttpServletRequest request;
-    /**
-     * The Response.
-     */
-    protected final HttpServletResponse response;
 
     /**
      * OAuth settings.
@@ -48,13 +40,10 @@ public abstract class BaseAccessTokenGrantRequestExtractor {
     protected final CentralAuthenticationService centralAuthenticationService;
 
     public BaseAccessTokenGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                final HttpServletRequest request, final HttpServletResponse response,
                                                 final CentralAuthenticationService centralAuthenticationService,
                                                 final OAuthProperties oAuthProperties) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
-        this.request = request;
-        this.response = response;
         this.centralAuthenticationService = centralAuthenticationService;
         this.oAuthProperties = oAuthProperties;
     }
@@ -62,9 +51,11 @@ public abstract class BaseAccessTokenGrantRequestExtractor {
     /**
      * Extract access token request for grant.
      *
+     * @param request  the request
+     * @param response the response
      * @return the access token request data holder
      */
-    public abstract AccessTokenRequestDataHolder extract();
+    public abstract AccessTokenRequestDataHolder extract(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Supports grant type?

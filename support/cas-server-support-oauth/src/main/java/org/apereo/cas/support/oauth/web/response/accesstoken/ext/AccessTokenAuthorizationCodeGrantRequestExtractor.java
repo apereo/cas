@@ -31,19 +31,17 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenAuthorizationCodeGrantRequestExtractor.class);
 
     public AccessTokenAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                             final HttpServletRequest request, final HttpServletResponse response,
                                                              final CentralAuthenticationService centralAuthenticationService,
                                                              final OAuthProperties oAuthProperties) {
-        super(servicesManager, ticketRegistry, request, response,
-                centralAuthenticationService, oAuthProperties);
+        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties);
     }
 
     @Override
-    public AccessTokenRequestDataHolder extract() {
+    public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
-        
+
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
         final Optional<UserProfile> profile = manager.get(true);
@@ -51,14 +49,14 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        final OAuthToken token = getOAuthTokenFromRequest();
+        final OAuthToken token = getOAuthTokenFromRequest(request);
         if (token == null) {
-            throw new InvalidTicketException(getOAuthParameter());
+            throw new InvalidTicketException(getOAuthParameter(request));
         }
-        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(), 
+        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(),
                 isAllowedToGenerateRefreshToken(), scopes);
     }
-    
+
     /**
      * Is allowed to generate refresh token ?
      *
@@ -72,19 +70,26 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         return OAuth20Constants.CODE;
     }
 
-    protected String getOAuthParameter() {
+    /**
+     * Gets o auth parameter.
+     *
+     * @param request the request
+     * @return the o auth parameter
+     */
+    protected String getOAuthParameter(final HttpServletRequest request) {
         return request.getParameter(getOAuthParameterName());
     }
 
     /**
      * Return the OAuth token.
      *
+     * @param request the request
      * @return the OAuth token
      */
-    protected OAuthToken getOAuthTokenFromRequest() {
-        final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(), OAuthToken.class);
+    protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request) {
+        final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(request), OAuthToken.class);
         if (token == null || token.isExpired()) {
-            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(), token);
+            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
             if (token != null) {
                 this.ticketRegistry.deleteTicket(token.getId());
             }

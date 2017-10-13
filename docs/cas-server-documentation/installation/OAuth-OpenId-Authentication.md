@@ -32,7 +32,7 @@ After enabling OAuth support, the following endpoints will be available:
 | Endpoint                        | Description                                                           | Method
 |---------------------------------|-----------------------------------------------------------------------|---------
 | `/oauth2.0/authorize`       | Authorize the user and start the CAS authentication flow.                 | `GET`
-| `/oauth2.0/accessToken`     | Get an access token in plain-text or JSON                                 | `POST`
+| `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON           | `POST`
 | `/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
 ## Response/Grant Types
@@ -49,13 +49,13 @@ The authorization code type is made for UI interactions: the user will enter cre
 | `/oauth2.0/authorize`   | `response_type=code&client_id=<ID>&redirect_uri=<CALLBACK>`  | OAuth code as a parameter of the `CALLBACK` url.
 | `/oauth2.0/accessToken` | `grant_type=authorization_code&client_id=ID`<br/>`&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK`  | The access token.
 
-### Token
+### Token/Implicit
 
 The `token` type is also made for UI interactions as well as indirect non-interactive (i.e. Javascript) applications.
 
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
-| `/oauth2.0/authorize`   | `response_type=token&client_id=ID&redirect_uri=CALLBACK` | the access token as an anchor parameter of the `CALLBACK` url.
+| `/oauth2.0/authorize`   | `response_type=token&client_id=ID&redirect_uri=CALLBACK` | The access token as an anchor parameter of the `CALLBACK` url.
 
 ### Resource Owner Credentials
 
@@ -64,7 +64,7 @@ This grant is a great user experience for trusted first party clients both on th
 
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
-| `/oauth2.0/authorize`   | `grant_type=password&client_id=ID`<br/>`&username=USERNAME&password=PASSWORD` | The access token.
+| `/oauth2.0/accessToken` | `grant_type=password&client_id=ID`<br/>`&client_secret=<SECRET>`<br/>>`username=USERNAME&password=PASSWORD` | The access token.
 
 Because there is no `redirect_uri` specified by this grant type, the service identifier recognized by CAS and matched in the service registry is taken as the `client_id` instead. You may optionally also pass along a `service` or `X-service` header value that identifies the target application url. The header value must match the OAuth service definition in the registry that is linked to the client id.
 
@@ -75,7 +75,7 @@ where a specific user’s permission to access data is not required.
 
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
-| `/oauth2.0/authorize`   | `grant_type=client_credentials&client_id=client&secret=secret` | The access token.
+| `/oauth2.0/accessToken` | `grant_type=client_credentials&client_id=client&client_secret=secret` | The access token.
 
 Because there is no `redirect_uri` specified by this grant type, the service identifier recognized by CAS and matched in the service registry is taken as the `client_id` instead. You may optionally also pass along a `service` or `X-service` header value that identifies the target application url. The header value must match the OAuth service definition in the registry that is linked to the client id.
 
