@@ -11,10 +11,14 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -52,7 +56,18 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                 return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
             }
             if (grantType.isPresent()) {
-                return this.webApplicationServiceFactory.createService(clientId.get().getValue());
+                String id = null;
+                final String grantValue = grantType.get().getValue();
+                if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
+                    LOGGER.debug("Located grant type [{}]; checking for service headers");
+                    final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+                    id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
+                }
+                if (StringUtils.isBlank(id)) {
+                    id = clientId.get().getValue();
+                }
+                LOGGER.debug("Built web application service based on identifier [{}]", id);
+                return this.webApplicationServiceFactory.createService(id);
             }
         }
         return service;
@@ -61,7 +76,11 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID)).findFirst();
+            return builder.getQueryParams()
+                    .stream()
+                    .filter(p -> p.getName()
+                    .equals(OAuth20Constants.CLIENT_ID))
+                    .findFirst();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -71,7 +90,10 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI)).findFirst();
+            return builder.getQueryParams()
+                    .stream()
+                    .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
+                    .findFirst();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -81,7 +103,11 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private static Optional<NameValuePair> resolveGrantType(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE)).findFirst();
+            return builder.getQueryParams()
+                    .stream()
+                    .filter(p -> p.getName()
+                    .equals(OAuth20Constants.GRANT_TYPE))
+                    .findFirst();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -92,7 +118,6 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     public boolean supports(final Service service) {
         final RegisteredService svc = this.servicesManager.findServiceBy(service);
         final boolean res = svc != null && service.getId().startsWith(this.callbackUrl);
-
         LOGGER.debug("Authentication request is{}identified as an OAuth request",
                 BooleanUtils.toString(res, StringUtils.EMPTY, " not "));
         return res;
@@ -100,6 +125,6 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     @Override
     public int getOrder() {
-        return order;
+        return this.order;
     }
 }

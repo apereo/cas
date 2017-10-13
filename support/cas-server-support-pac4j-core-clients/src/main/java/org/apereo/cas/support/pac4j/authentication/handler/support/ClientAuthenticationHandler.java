@@ -60,8 +60,8 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
             final Client client = this.clients.findClient(clientName);
             LOGGER.debug("Delegated client is: [{}]", client);
 
-            final HttpServletRequest request = WebUtils.getHttpServletRequest();
-            final HttpServletResponse response = WebUtils.getHttpServletResponse();
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
 
             final UserProfile userProfile = client.getUserProfile(credentials, webContext);
