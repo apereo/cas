@@ -2,15 +2,15 @@
 
 branchName="master"
 gradle="sudo ./gradlew"
-gradleUpload="uploadArchives -x test -x check -x build"
-gradleUploadOptions="-DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+gradleUpload="aggregateJavadocsIntoJar uploadArchives"
+gradleUploadOptions="--parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
          echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
     else
         echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        upload="$gradle $gradleUploadOptions $gradleUpload"
+        upload="$gradle $gradleUpload $gradleUploadOptions"
         echo $upload
         eval $upload
         retVal=$?
