@@ -65,8 +65,8 @@ public class TerminateSessionAction extends AbstractAction {
     public Event terminate(final RequestContext context) {
         // in login's webflow : we can get the value from context as it has already been stored
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
             String tgtId = WebUtils.getTicketGrantingTicketId(context);
             // for logout, we need to get the cookie's value
@@ -109,7 +109,7 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }
 }

@@ -89,8 +89,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      * @param cookieValue    the cookie value
      */
     public void addCookie(final RequestContext requestContext, final String cookieValue) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
         final String theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
 
@@ -109,7 +109,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     }
 
     private boolean isRememberMeAuthentication(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
         return StringUtils.isNotBlank(value) || WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }

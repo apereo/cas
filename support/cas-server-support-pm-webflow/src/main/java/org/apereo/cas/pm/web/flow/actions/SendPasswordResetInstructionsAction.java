@@ -49,7 +49,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return error();
         }
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String username = request.getParameter("username");
         if (StringUtils.isBlank(username)) {
             LOGGER.warn("No username is provided");

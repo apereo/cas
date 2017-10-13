@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -39,7 +40,8 @@ public class ServiceAuthorizationCheck extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
-        final Service service = authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(context));
+        final WebApplicationService serviceInContext = WebUtils.getService(context);
+        final Service service = authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext);
         if (service == null) {
             return success();
         }

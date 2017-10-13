@@ -98,7 +98,7 @@ public final class WebUtils {
      * @param context the context
      * @return the http servlet request
      */
-    public static HttpServletRequest getHttpServletRequest(final RequestContext context) {
+    public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
                 "Cannot obtain HttpServletRequest from event of type: "
                         + context.getExternalContext().getClass().getName());
@@ -111,7 +111,7 @@ public final class WebUtils {
      *
      * @return the http servlet request
      */
-    public static HttpServletRequest getHttpServletRequest() {
+    public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
@@ -149,7 +149,7 @@ public final class WebUtils {
      * @param context the context
      * @return the http servlet response
      */
-    public static HttpServletResponse getHttpServletResponse(final RequestContext context) {
+    public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
                 "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
         return (HttpServletResponse) context.getExternalContext().getNativeResponse();
@@ -160,7 +160,7 @@ public final class WebUtils {
      *
      * @return the http servlet response
      */
-    public static HttpServletResponse getHttpServletResponse() {
+    public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
@@ -188,7 +188,7 @@ public final class WebUtils {
      * @return the service
      */
     public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         return getService(argumentExtractors, request);
     }
 
@@ -515,7 +515,7 @@ public final class WebUtils {
     public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
             LOGGER.debug("Evaluating request to determine if warning cookie should be generated");
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
             }
@@ -620,7 +620,7 @@ public final class WebUtils {
      * @return the http servlet request user agent
      */
     public static String getHttpServletRequestUserAgent() {
-        return getHttpServletRequestUserAgent(getHttpServletRequest());
+        return getHttpServletRequestUserAgent(getHttpServletRequestFromExternalWebflowContext());
     }
 
     /**
@@ -654,7 +654,7 @@ public final class WebUtils {
      * @return the http servlet request geo location
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocation() {
-        final HttpServletRequest servletRequest = WebUtils.getHttpServletRequest();
+        final HttpServletRequest servletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (servletRequest != null) {
             return getHttpServletRequestGeoLocation(servletRequest);
         }
