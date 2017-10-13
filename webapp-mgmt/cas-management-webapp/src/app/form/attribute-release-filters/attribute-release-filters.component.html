@@ -5,7 +5,7 @@
       <mat-panel-title>
           <button [matMenuTriggerFor]="panelMenu" mat-icon-button (click)="selectedFilter = filter;$event.stopPropagation()" style="width:auto;height:auto;line-height: 0px!important;">
             <mat-icon style="font-size: medium;">menu</mat-icon></button>
-        <span *ngIf="isRegEx(filter)">RegEx</span>
+        <span *ngIf="isRegEx(filter)">Regex</span>
         <span *ngIf="isMappedRegEx(filter)">Mapped</span>
         <span *ngIf="isReverseMapped(filter)">Reverse Mapped</span>
         <span *ngIf="isScripted(filter)">Scripted</span>
@@ -57,7 +57,7 @@
 </mat-menu>
 
 <mat-menu #addMenu>
-  <button mat-menu-item (click)="addRegEx()">RegEx</button>
+  <button mat-menu-item (click)="addRegEx()">Regex</button>
   <button mat-menu-item (click)="addMappedRegex()">Mapped Regex</button>
   <button mat-menu-item (click)="addReverseMapped()">Reverse Mapped Regex</button>
   <button mat-menu-item (click)="addScript()">Script</button>
