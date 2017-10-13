@@ -66,8 +66,7 @@ This grant is a great user experience for trusted first party clients both on th
 |-------------------------|----------------------------------------------------------|---------------------------
 | `/oauth2.0/authorize`   | `grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` | The access token.
 
-You may also pass along a `service` or `X-service` header value that identifies the target application url. The header value
-must match the OAuth service definition in the registry that is linked to the client id.
+Because there is no `redirect_uri` specified by this grant type, the service identifier recognized by CAS and matched in the service registry is taken as the `client_id` instead. You may optionally also pass along a `service` or `X-service` header value that identifies the target application url. The header value must match the OAuth service definition in the registry that is linked to the client id.
 
 ### Client Credentials
 
@@ -77,6 +76,8 @@ where a specific user’s permission to access data is not required.
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
 | `/oauth2.0/authorize`   | `grant_type=client_credentials&client_id=client&secret=secret` | The access token.
+
+Because there is no `redirect_uri` specified by this grant type, the service identifier recognized by CAS and matched in the service registry is taken as the `client_id` instead. You may optionally also pass along a `service` or `X-service` header value that identifies the target application url. The header value must match the OAuth service definition in the registry that is linked to the client id.
 
 ### Refresh Token
 
@@ -122,10 +123,9 @@ The following fields are supported:
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
 | `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
-| `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type.
+| `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).
 
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
-particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of all service fields and try to configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of all service fields and try to configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
