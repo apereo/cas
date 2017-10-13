@@ -1,10 +1,12 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {FormData} from "../../../domain/service-view-bean";
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {RegisteredServiceRegexAttributeFilter} from "../../../domain/attribute-release";
+import {
+    RegisteredServiceAttributeFilter, RegisteredServiceChainingAttributeFilter,
+    RegisteredServiceMappedRegexAttributeFilter,
+    RegisteredServiceRegexAttributeFilter, RegisteredServiceReverseMappedRegexAttributeFilter,
+    RegisteredServiceScriptedAttributeFilter
+} from "../../../domain/attribute-filter";
 import {Data} from "../data";
-import {Util} from "../../util/util";
 
 @Component({
   selector: 'app-attribute-release-filters',
@@ -14,17 +16,20 @@ import {Util} from "../../util/util";
 
 export class AttributeReleaseFiltersComponent implements OnInit {
 
+  selectedFilter: RegisteredServiceAttributeFilter;
+
+  @ViewChild("accordian")
+  accordian: ElementRef;
 
   constructor(public messages: Messages,
               public data: Data) {
   }
 
   ngOnInit() {
-
   }
 
   updateFilter(pattern: String) {
-    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter;
+    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
     if (pattern && pattern != '') {
       attributeFilter = new RegisteredServiceRegexAttributeFilter();
       attributeFilter.pattern = pattern;
@@ -36,10 +41,112 @@ export class AttributeReleaseFiltersComponent implements OnInit {
   }
 
   getPattern(): String {
-    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter;
+    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
     if (attributeFilter) {
       return attributeFilter.pattern;
     }
     return '';
   }
+
+  filters(): RegisteredServiceAttributeFilter[] {
+    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter;
+    if (RegisteredServiceChainingAttributeFilter.instanceof(attributeFilter)) {
+      return (attributeFilter as RegisteredServiceChainingAttributeFilter).filters;
+    } else if (attributeFilter) {
+      return [attributeFilter];
+    } else {
+      return [];
+    }
+  }
+
+  addRegEx() {
+    this.addFilter(new RegisteredServiceRegexAttributeFilter())
+  }
+
+  addMappedRegex() {
+    this.addFilter(new RegisteredServiceMappedRegexAttributeFilter());
+  }
+
+  addReverseMapped() {
+    this.addFilter(new RegisteredServiceReverseMappedRegexAttributeFilter());
+  }
+
+  addScript() {
+    this.addFilter(new RegisteredServiceScriptedAttributeFilter());
+  }
+
+  addFilter(filter: any) {
+      let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter;
+      if (RegisteredServiceChainingAttributeFilter.instanceof(attributeFilter)) {
+          (attributeFilter as RegisteredServiceChainingAttributeFilter).filters.push(filter);
+      } else if (attributeFilter) {
+          let chaining = new RegisteredServiceChainingAttributeFilter();
+          chaining.filters.push(attributeFilter);
+          chaining.filters.push(filter);
+          this.data.service.attributeReleasePolicy.attributeFilter = chaining;
+      } else {
+          this.data.service.attributeReleasePolicy.attributeFilter = filter;
+      }
+  }
+
+  removeFilter() {
+    if (this.isChaining(this.data.service.attributeReleasePolicy.attributeFilter)) {
+      let filters = (this.data.service.attributeReleasePolicy.attributeFilter as RegisteredServiceChainingAttributeFilter).filters;
+      filters.splice(filters.indexOf(this.selectedFilter),1);
+      if (filters.length > 1) {
+        return;
+      } else if (filters.length == 1) {
+        this.data.service.attributeReleasePolicy.attributeFilter = filters[0];
+        return;
+      }
+    }
+    this.data.service.attributeReleasePolicy.attributeFilter = null;
+  }
+
+  isRegEx(filter: any): boolean {
+    return RegisteredServiceRegexAttributeFilter.instanceOf(filter);
+  }
+
+  isChaining(filter: any): boolean {
+    return RegisteredServiceChainingAttributeFilter.instanceof(filter);
+  }
+
+  isMappedRegEx(filter: any): boolean {
+    return RegisteredServiceMappedRegexAttributeFilter.instanceof(filter);
+  }
+
+  isReverseMapped(filter:any): boolean {
+    return RegisteredServiceReverseMappedRegexAttributeFilter.instanceof(filter);
+  }
+
+  isScripted(filter: any): boolean {
+    return RegisteredServiceScriptedAttributeFilter.instanceof(filter);
+  }
+
+  getAttributes(filter: RegisteredServiceMappedRegexAttributeFilter) {
+    return Object.keys(filter.patterns);
+  }
+
+  moveUp() {
+    let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter as RegisteredServiceChainingAttributeFilter;
+    let i = attributeFilter.filters.indexOf(this.selectedFilter);
+    if (i == 0) {
+      return;
+    }
+    attributeFilter.filters[i] = attributeFilter.filters[i-1];
+    attributeFilter.filters[i-1] = this.selectedFilter;
+  }
+
+    moveDown() {
+        let attributeFilter = this.data.service.attributeReleasePolicy.attributeFilter as RegisteredServiceChainingAttributeFilter;
+        let i = attributeFilter.filters.indexOf(this.selectedFilter);
+        if (i == attributeFilter.filters.length -1) {
+            return;
+        }
+        attributeFilter.filters[i] = attributeFilter.filters[i+1];
+        attributeFilter.filters[i+1] = this.selectedFilter;
+    }
+
 }
+
+
