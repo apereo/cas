@@ -23,8 +23,7 @@ public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implem
         return Collections.list(request
                 .getHeaderNames())
                 .stream()
-                .filter(t -> t.startsWith(PREFIX))
-                .filter(t -> !t.startsWith(PREFIX + "Shib-"))
+                .filter(t -> t.toUpperCase().startsWith(PREFIX))
                 .filter(t -> StringUtils.isNotBlank(request.getHeader(t)))
                 .map(t -> StringUtils.removeAll(t, PREFIX))
                 .collect(Collectors.toMap(Function.identity(),
