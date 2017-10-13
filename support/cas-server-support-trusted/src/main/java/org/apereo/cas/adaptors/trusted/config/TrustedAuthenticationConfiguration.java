@@ -99,7 +99,6 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserAction() {
         return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
@@ -109,7 +108,6 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserPrincipalAction() {
         return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
@@ -119,7 +117,6 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteHeaderPrincipalAction() {
         final TrustedAuthenticationProperties trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
