@@ -59,6 +59,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
@@ -224,6 +225,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("oauthUserProfileViewRenderer")
     private OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer;
     
+    @Autowired
+    @Qualifier("accessTokenGrantRequestExtractors")
+    private Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
+    
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -328,8 +333,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, oauthTokenGenerator,
                 oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator, authenticationBuilder, centralAuthenticationService,
-                accessTokenExpirationPolicy);
+                ticketGrantingTicketCookieGenerator, accessTokenExpirationPolicy, accessTokenGrantRequestExtractors);
     }
 
     @Bean
@@ -482,7 +486,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcHandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor,
                 requiresAuthenticationAuthorizeInterceptor(),
                 requiresAuthenticationDynamicRegistrationInterceptor(),
-                mode);
+                mode, accessTokenGrantRequestExtractors);
     }
 
     @RefreshScope

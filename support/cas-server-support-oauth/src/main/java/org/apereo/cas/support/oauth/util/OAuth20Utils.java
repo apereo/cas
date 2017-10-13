@@ -262,7 +262,7 @@ public final class OAuth20Utils {
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
                 + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
-                + "While just warning for now, this behavior will be strongly enforced by CAS in future versions.", registeredService.getName());
+                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -282,7 +282,7 @@ public final class OAuth20Utils {
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
                 + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-                + "While just warning for now, this behavior will be strongly enforced by CAS in future versions.", registeredService.getName());
+                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 

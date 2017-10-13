@@ -2,10 +2,12 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 /**
  * This is {@link OidcHandlerInterceptorAdapter}.
@@ -16,14 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
     private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
+    private final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor,
-                                         final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode) {
-        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor);
+                                         final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
+                                         final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
+        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
+        this.accessTokenGrantRequestExtractors = accessTokenGrantRequestExtractors;
     }
 
     @Override
