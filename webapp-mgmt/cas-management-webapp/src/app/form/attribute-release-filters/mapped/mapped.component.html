@@ -1,0 +1,65 @@
+<mat-table [dataSource]="dataSource">
+
+  <ng-container cdkColumnDef="source">
+    <mat-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Attribute</mat-header-cell>
+    <mat-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
+      <mat-form-field>
+        <input matInput #text [matAutocomplete]="attributeAuto"
+               [ngModel]="row.key"
+
+               (ngModelChange)="doChange(row,text.value)">
+      </mat-form-field>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="mapped">
+    <mat-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Filter</mat-header-cell>
+    <mat-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
+      <mat-form-field>
+        <input matInput
+               [(ngModel)]="filter.patterns[row.key]">
+      </mat-form-field>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="delete">
+    <mat-header-cell *cdkHeaderCellDef [ngClass]="'actionWidth'"></mat-header-cell>
+    <mat-cell *cdkCellDef="let row" [ngClass]="'actionWidth'">
+      <button mat-icon-button (click)="delete(row)"><mat-icon style="font-size: medium">delete</mat-icon></button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+
+</mat-table>
+<div style="height:25px;padding-top: 5px;">
+  <button mat-mini-fab (click)="addRow()" style="float:right;">+</button>
+</div>
+<div style="padding-top: 10px">
+  <mat-checkbox [(ngModel)]="filter.excludeUnmappedAttributes">
+    <ng-container i18n="services.form.label.attrRelease.attrFilter.excludeUnmapped">
+      {{ messages.services_form_label_attrRelease_attrFilter_excludeUnmapped }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.attrRelease.attrFilter.excludeUnmapped"
+              [matTooltip]="messages.services_form_tooltip_attrRelease_attrFilter_excludeUnmapped">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+<div style="padding-bottom: 20px;">
+  <mat-checkbox [(ngModel)]="filter.completeMatch">
+    <ng-container i18n="service.form.label.attrRelease.attrFilter.completeMatch">
+      {{ messages.services_form_label_attrRelease_attrFilter_completeMatch }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.attrRelease.attrFilter.completeMatch"
+              [matTooltip]="messages.services_form_tooltip_attrRelease_attrFilter_completeMatch">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+<mat-autocomplete #attributeAuto>
+  <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">
+    {{ opt }}
+  </mat-option>
+</mat-autocomplete>
