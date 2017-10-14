@@ -4,10 +4,6 @@ apply plugin: "com.moowork.node"
 
 description = "Apereo CAS Management Web Application"
 
-if (rootProject.enableJRebelAgent) {
-    war.dependsOn(generateRebel)
-}
-
 javadoc {
     enabled false
 }
@@ -43,11 +39,7 @@ bootRun {
     if (rootProject.enableRemoteDebugging) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5006,server=y,suspend=n")
     }
-    if (rootProject.enableJRebelAgent) {
-        def lib = System.getProperty("JREBEL_LIB_PATH")
-        list.add("-agentpath:$lib")
-        list.add("-Drebel.remoting_plugin=true")
-    }
+    
     jvmArgs = list
     dependsOn(buildClientDev)
 }

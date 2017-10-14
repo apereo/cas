@@ -8,7 +8,7 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
-    enableJRebelAgent = Boolean.getBoolean("enableJRebelAgent")
+    
     /*
     Open the Git repository in the current directory.
     Get commit id of HEAD.
@@ -26,13 +26,6 @@ def isArtifactSigningRequired = {
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
-apply plugin: "com.gradle.build-scan"
-
-buildScan {
-    licenseAgreementUrl = "https://gradle.com/terms-of-service"
-    licenseAgree = "yes"
-    licenseAgree = "yes"
-}
 
 buildscript {
     repositories {
@@ -48,12 +41,9 @@ buildscript {
         classpath "com.netflix.nebula:gradle-lint-plugin:8.3.1"
         classpath "org.standardout:gradle-versioneye-plugin:1.5.0"
         classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
-        classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.7.2"
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
-        classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.7"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
     }
 }
@@ -64,17 +54,19 @@ allprojects {
     apply plugin: "maven"
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
-    apply plugin: "nebula.lint"
     apply plugin: "jacoco"
 
+    if (!rootProject.publishSnapshots) {
+        apply plugin: "nebula.lint"
+        gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
+    }
+    
     if (project.name == "cas-server-support-bom") {
         logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
-
-    gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
-
+    
     signing {
         required = isArtifactSigningRequired
         sign configurations.archives
@@ -115,14 +107,9 @@ subprojects {
             description: "Display a graph of all project dependencies") {
         doLast {}
     }
-    if (Boolean.getBoolean("enableKotlin")) {
-        apply plugin: "kotlin"
-    }
     apply plugin: "java-library"
-    apply plugin: "rebel"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
-    apply plugin: "project-report"
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
@@ -136,7 +123,11 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        
+        if (rootProject.publishSnapshots) {
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        }
+        
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
         jcenter()
     }
@@ -190,10 +181,12 @@ subprojects {
     artifacts {
         tests testJar
 
-        archives sourcesJar
-        archives javadocJar
-        archives resourcesJar
-        archives testJar
+        if (!rootProject.publishSnapshots) {
+            archives sourcesJar
+            archives javadocJar
+            archives resourcesJar
+            archives testJar
+        }
     }
 
     sourceSets {
@@ -303,13 +296,6 @@ subprojects {
         }
 
         testImplementation libraries.tests
-    }
-
-    if (rootProject.enableJRebelAgent) {
-        generateRebel.enabled = true
-        jar.dependsOn(generateRebel)
-    } else {
-        generateRebel.enabled = false
     }
 }
 
