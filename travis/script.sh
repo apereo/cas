@@ -2,8 +2,8 @@
 
 branchName="master"
 gradle="sudo ./gradlew"
-gradleUpload="aggregateJavadocsIntoJar uploadArchives"
-gradleUploadOptions="--info --parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+gradleUpload="uploadArchives"
+gradleUploadOptions="--parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then

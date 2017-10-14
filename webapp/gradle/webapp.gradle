@@ -53,10 +53,6 @@ javadoc {
     enabled false
 }
 
-if (rootProject.enableJRebelAgent) {
-    war.dependsOn(generateRebel)
-}
-
 [distZip, distTar].each { task -> configurations.archives.artifacts.removeAll
         { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
     task.enabled = false
@@ -87,11 +83,7 @@ bootRun {
     if (rootProject.enableRemoteDebugging) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
     }
-    if (rootProject.enableJRebelAgent) {
-        def lib = System.getProperty("JREBEL_LIB_PATH")
-        list.add("-agentpath:$lib")
-        list.add("-Drebel.remoting_plugin=true")
-    }
+    
     jvmArgs = list
 }
 
