@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry.queue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
