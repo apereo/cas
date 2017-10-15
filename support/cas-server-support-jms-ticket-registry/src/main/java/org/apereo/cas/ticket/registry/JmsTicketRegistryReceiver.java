@@ -6,21 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 
-import java.util.Map;
-
 /**
- * This is {@link MessageQueueTicketRegistryReceiver}.
+ * This is {@link JmsTicketRegistryReceiver}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class MessageQueueTicketRegistryReceiver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageQueueTicketRegistryReceiver.class);
+public class JmsTicketRegistryReceiver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JmsTicketRegistryReceiver.class);
     
     private final TicketRegistry ticketRegistry;
     private final StringBean ticketRegistryId;
 
-    public MessageQueueTicketRegistryReceiver(final TicketRegistry ticketRegistry, final StringBean ticketRegistryId) {
+    public JmsTicketRegistryReceiver(final TicketRegistry ticketRegistry, final StringBean ticketRegistryId) {
         this.ticketRegistry = ticketRegistry;
         this.ticketRegistryId = ticketRegistryId;
     }
@@ -30,7 +28,7 @@ public class MessageQueueTicketRegistryReceiver {
      *
      * @param command command to execute.
      */
-    @JmsListener(destination = MessageQueueTicketRegistry.QUEUE_DESTINATION, containerFactory = "messageQueueTicketRegistryFactory")
+    @JmsListener(destination = JmsTicketRegistry.QUEUE_DESTINATION, containerFactory = "messageQueueTicketRegistryFactory")
     public void receive(final BaseMessageQueueCommand command) {
         if (!command.getId().equals(this.ticketRegistryId)) {
             LOGGER.debug("Received message from ticket registry id [{}]. Executing command [{}]", 

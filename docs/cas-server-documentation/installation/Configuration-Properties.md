@@ -2505,7 +2505,6 @@ strategies when collecting principal attributes:
 # cas.authn.wsfed[0].encryptionPrivateKeyPassword=NONE
 ```
 
-
 ## Multifactor Authentication
 
 To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
@@ -4693,6 +4692,36 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.inMemory.crypto.encryption.key=
 # cas.ticket.registry.inMemory.crypto.encryption.keySize=16
 # cas.ticket.registry.inMemory.crypto.alg=AES
+```
+
+### JMS Ticket Registry
+
+To learn more about this topic, [please review this guide](Messaging-JMS-Ticket-Registry.html).
+
+#### JMS Ticket Registry ActiveMQ
+
+```properties
+# spring.activemq.broker-url=tcp://192.168.1.210:9876
+# spring.activemq.user=admin
+# spring.activemq.password=secret
+# spring.activemq.pool.enabled=true
+# spring.activemq.pool.max-connections=50
+```
+
+#### JMS Ticket Registry Artemis
+
+```properties
+# spring.artemis.mode=native
+# spring.artemis.host=192.168.1.210
+# spring.artemis.port=9876
+# spring.artemis.user=admin
+# spring.artemis.password=secret
+```
+
+#### JMS Ticket Registry JNDI
+
+```properties
+# spring.jms.jndi-name=java:/MyConnectionFactory
 ```
 
 ### Ehcache Ticket Registry
