@@ -49,4 +49,4 @@ Artemis configuration is controlled by external configuration properties in [CAS
 
 ## JNDI
 
-If you are running CAS in an application server, CAS will attempt to locate a JMS connection using JNDI. By default the locations `java:/JmsXA` and `java:/XAConnectionFactory` will be checked. Of course, alternative locations may be specified using CAS settings.
+If you are running CAS in an application server, CAS will attempt to locate a JMS connection using JNDI. By default the locations `java:/JmsXA` and `java:/XAConnectionFactory` will be checked. Of course, alternative locations may be specified using [CAS settings](Configuration-Properties.html#jms-ticket-registry).
