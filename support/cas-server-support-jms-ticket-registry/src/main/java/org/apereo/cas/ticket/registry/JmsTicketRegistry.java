@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommand;
@@ -12,23 +13,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
- * This is {@link MessageQueueTicketRegistry}.
+ * This is {@link JmsTicketRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class MessageQueueTicketRegistry extends DefaultTicketRegistry {
+public class JmsTicketRegistry extends DefaultTicketRegistry {
     /**
      * Queue destination name.
      */
-    public static final String QUEUE_DESTINATION = "MessageQueueTicketRegistry";
+    public static final String QUEUE_DESTINATION = "CasJmsTicketRegistry";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageQueueTicketRegistry.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JmsTicketRegistry.class);
 
     private final JmsTemplate jmsTemplate;
     private final StringBean id;
 
-    public MessageQueueTicketRegistry(final JmsTemplate jmsTemplate, final StringBean id) {
+    public JmsTicketRegistry(final JmsTemplate jmsTemplate, final StringBean id, final CipherExecutor cipherExecutor) {
+        super(cipherExecutor);
         this.jmsTemplate = jmsTemplate;
         this.id = id;
     }
@@ -62,9 +64,9 @@ public class MessageQueueTicketRegistry extends DefaultTicketRegistry {
 
     private void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
         jmsTemplate.convertAndSend(QUEUE_DESTINATION, cmd,
-                message -> {
-                    LOGGER.debug("Sending message [{}] from ticket registry id [{}]", message, cmd.getId());
-                    return message;
-                });
+            message -> {
+                LOGGER.trace("Sending message [{}] from ticket registry id [{}]", message, cmd.getId());
+                return message;
+            });
     }
 }

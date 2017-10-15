@@ -30,8 +30,7 @@ public abstract class BaseMessageQueueCommand {
      */
     public void execute(final TicketRegistry registry) {
     }
-
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this)

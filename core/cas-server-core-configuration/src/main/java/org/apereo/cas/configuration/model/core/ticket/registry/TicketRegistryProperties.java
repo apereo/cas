@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
+import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
@@ -27,6 +28,12 @@ import java.io.Serializable;
 public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
+
+    /**
+     * JMS registry settings.
+     */
+    @NestedConfigurationProperty
+    private JmsTicketRegistryProperties jms = new JmsTicketRegistryProperties();
     
     /**
      * DynamoDb registry settings.
@@ -193,6 +200,14 @@ public class TicketRegistryProperties implements Serializable {
                                         
     public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
         this.dynamoDb = dynamoDb;
+    }
+
+    public JmsTicketRegistryProperties getJms() {
+        return jms;
+    }
+
+    public void setJms(final JmsTicketRegistryProperties jms) {
+        this.jms = jms;
     }
 
     @RequiredModule(name = "cas-server-core-tickets", automated = true)

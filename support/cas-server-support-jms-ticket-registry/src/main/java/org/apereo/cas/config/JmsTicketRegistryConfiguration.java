@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.registry.MessageQueueTicketRegistry;
-import org.apereo.cas.ticket.registry.MessageQueueTicketRegistryReceiver;
+import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.ticket.registry.JmsTicketRegistry;
+import org.apereo.cas.ticket.registry.JmsTicketRegistryReceiver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +26,15 @@ import org.springframework.jms.support.converter.MessageType;
 import javax.jms.ConnectionFactory;
 
 /**
- * This is {@link MessageQueueTicketRegistryConfiguration}.
+ * This is {@link JmsTicketRegistryConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("messageQueueTicketRegistryConfiguration")
+@Configuration("jmsTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableJms
-public class MessageQueueTicketRegistryConfiguration {
+public class JmsTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -44,13 +47,15 @@ public class MessageQueueTicketRegistryConfiguration {
     }
 
     @Bean
-    public MessageQueueTicketRegistryReceiver messageQueueTicketRegistryReceiver() {
-        return new MessageQueueTicketRegistryReceiver(ticketRegistry(), messageQueueTicketRegistryIdentifier());
+    public JmsTicketRegistryReceiver messageQueueTicketRegistryReceiver() {
+        return new JmsTicketRegistryReceiver(ticketRegistry(), messageQueueTicketRegistryIdentifier());
     }
 
     @Bean
     public TicketRegistry ticketRegistry() {
-        return new MessageQueueTicketRegistry(this.jmsTemplate, messageQueueTicketRegistryIdentifier());
+        final JmsTicketRegistryProperties jms = casProperties.getTicket().getRegistry().getJms();
+        final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
+        return new JmsTicketRegistry(this.jmsTemplate, messageQueueTicketRegistryIdentifier(), cipher);
     }
 
     @Autowired

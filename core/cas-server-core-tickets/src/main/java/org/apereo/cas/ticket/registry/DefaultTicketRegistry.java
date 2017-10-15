@@ -21,7 +21,11 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
     private final Map<String, Ticket> cache;
 
     public DefaultTicketRegistry() {
-        super(NoOpCipherExecutor.getInstance());
+        this(NoOpCipherExecutor.getInstance());
+    }
+
+    public DefaultTicketRegistry(final CipherExecutor cipherExecutor) {
+        super(cipherExecutor);
         this.cache = new ConcurrentHashMap<>();
     }
 

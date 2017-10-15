@@ -111,6 +111,8 @@ layout: null
     *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
     *   [Expiration Policies](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
     *   [Storage](#ticketingstorage)
+        *   [Default](/$version/installation/Default-Ticket-Registry.html)
+        *   [JMS](/$version/installation/Messaging-JMS-Ticket-Registry.html)
         *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)
         *   [Ehcache](/$version/installation/Ehcache-Ticket-Registry.html)
         *   [Memcached](/$version/installation/Memcached-Ticket-Registry.html)
