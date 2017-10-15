@@ -4989,6 +4989,23 @@ applicable to STs.
 
 ## TGT Expiration Policy
 
+Ticket expiration policies are activated in the following conditions:
+
+- If the timeout values for the default policy are all set to zero or less, CAS shall ensure tickets are *never* considered expired.
+- Disabling a policy requires that all its timeout settings be set to a value equal or less than zero.
+- If not ticket expiration policy is determined, CAS shall ensure the ticket are *always* considered expired.
+
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
+
+Ticket expiration policies are activated in the following order:
+
+1. Tickets are never expired, if and when settings for the default policy are configured accordingly.
+2. Timeout
+3. Default
+4. Throttled Timeout
+5. Hard Timeout
+6. Tickets always expire immediately.
+
 ### Default
 
 Provides a hard-time out as well as a sliding window.
