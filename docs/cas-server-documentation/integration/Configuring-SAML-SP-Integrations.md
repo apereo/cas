@@ -112,7 +112,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="Google-Apps-Integration.html">
 <img src="https://cloud.githubusercontent.com/assets/1205228/25385497/18e09c84-2979-11e7-94c1-5ad430b3d768.png" height="48" width="120"></a>
 
-<a href="Google-Apps-Integration.html">
+<a href="http://www.accruent.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30735450-f9a12792-9f8b-11e7-941d-7ab4ac7628b9.png" height="48" width="120"></a>
 
 </div>
