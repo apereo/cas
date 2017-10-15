@@ -1,4 +1,4 @@
-package org.apereo.cas.services.publisher;
+package org.apereo.cas;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -7,20 +7,20 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * This is {@link PublisherIdentifier}.
+ * This is {@link StringBean}. Allows one to declare strings as Spring beans.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class PublisherIdentifier implements Serializable {
+public class StringBean implements Serializable {
     private static final long serialVersionUID = -2216572507148074902L;
     private String id;
 
-    public PublisherIdentifier(final String id) {
+    public StringBean(final String id) {
         this.id = id;
     }
 
-    public PublisherIdentifier() {
+    public StringBean() {
         this(UUID.randomUUID().toString());
     }
 
@@ -39,7 +39,7 @@ public class PublisherIdentifier implements Serializable {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final PublisherIdentifier rhs = (PublisherIdentifier) obj;
+        final StringBean rhs = (StringBean) obj;
         return new EqualsBuilder()
                 .append(this.id, rhs.id)
                 .isEquals();

@@ -1,5 +1,6 @@
 package org.apereo.cas.services.publisher;
 
+import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.slf4j.Logger;
@@ -20,9 +21,9 @@ public abstract class BaseCasRegisteredServiceStreamPublisher implements CasRegi
     /**
      * Publisher id.
      */
-    protected final PublisherIdentifier publisherId;
+    protected final StringBean publisherId;
 
-    public BaseCasRegisteredServiceStreamPublisher(final PublisherIdentifier publisherId) {
+    public BaseCasRegisteredServiceStreamPublisher(final StringBean publisherId) {
         this.publisherId = publisherId;
     }
 
