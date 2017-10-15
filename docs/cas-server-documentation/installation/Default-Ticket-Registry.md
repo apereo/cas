@@ -5,7 +5,7 @@ title: CAS - Default Ticket Registry
 
 # Default Ticket Registry
 
-The default registry uses a memory-backed internal conurrent map for ticket storage and retrieval, though there is also the option to use an implementation that is backed by a caching engine to gain slightly better performance when it comes to eviciting expired tickets.
+The default registry uses a memory-backed internal conurrent map for ticket storage and retrieval, though there is also the option to use an implementation that is backed by a caching engine to gain slightly better performance when it comes to evicting expired tickets.
 
 This component does not preserve ticket state across restarts and is not a suitable solution
 for clustered CAS environments that are deployed in active/active mode.
