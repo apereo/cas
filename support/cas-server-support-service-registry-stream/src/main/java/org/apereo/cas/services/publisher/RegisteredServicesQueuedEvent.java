@@ -1,6 +1,7 @@
 package org.apereo.cas.services.publisher;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.context.ApplicationEvent;
 
@@ -17,10 +18,10 @@ public class RegisteredServicesQueuedEvent implements Serializable {
     private final String timestamp;
     private final ApplicationEvent event;
     private final RegisteredService service;
-    private final PublisherIdentifier publisher;
+    private final StringBean publisher;
 
     public RegisteredServicesQueuedEvent(final String timestamp, final ApplicationEvent event,
-                                         final RegisteredService service, final PublisherIdentifier publisher) {
+                                         final RegisteredService service, final StringBean publisher) {
         this.timestamp = timestamp;
         this.event = event;
         this.service = service;
@@ -39,7 +40,7 @@ public class RegisteredServicesQueuedEvent implements Serializable {
         return service;
     }
 
-    public PublisherIdentifier getPublisher() {
+    public StringBean getPublisher() {
         return publisher;
     }
 
