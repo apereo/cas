@@ -2,7 +2,7 @@ package org.apereo.cas.services.listener;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.publisher.PublisherIdentifier;
+import org.apereo.cas.StringBean;
 import org.apereo.cas.services.publisher.RegisteredServicesQueuedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +26,10 @@ public abstract class BaseThreadedRegisteredServiceEntryEventService implements 
     protected final ServicesManager servicesManager;
     
     private final ExecutorService executor;
-    private final PublisherIdentifier publisherIdentifier;
+    private final StringBean publisherIdentifier;
     
     public BaseThreadedRegisteredServiceEntryEventService(final ExecutorService executor,
-                                                          final PublisherIdentifier publisher,
+                                                          final StringBean publisher,
                                                           final ServicesManager servicesManager) {
         this.executor = executor;
         this.publisherIdentifier = publisher;

@@ -17,7 +17,7 @@ import org.apereo.cas.services.listener.HazelcastRegisteredServiceEventListener;
 import org.apereo.cas.services.listener.BaseThreadedRegisteredServiceEntryEventService;
 import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPublisher;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
-import org.apereo.cas.services.publisher.PublisherIdentifier;
+import org.apereo.cas.StringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
-    private PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier;
+    private StringBean casRegisteredServiceStreamPublisherIdentifier;
 
     @Autowired
     @Bean

@@ -4,7 +4,7 @@ import com.hazelcast.core.EntryEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.listener.handlers.RegisteredServiceEntryAddedEventHandler;
-import org.apereo.cas.services.publisher.PublisherIdentifier;
+import org.apereo.cas.StringBean;
 import org.apereo.cas.services.publisher.RegisteredServicesQueuedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class HazelcastRegisteredServiceEntryEventService extends BaseThreadedReg
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastRegisteredServiceEntryEventService.class);
     
     public HazelcastRegisteredServiceEntryEventService(final ExecutorService executor, 
-                                                       final PublisherIdentifier publisher, 
+                                                       final StringBean publisher, 
                                                        final ServicesManager servicesManager) {
         super(executor, publisher, servicesManager);
     }
