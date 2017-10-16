@@ -10,12 +10,11 @@ def MAIN_CLASS = "org.apereo.cas.web.CasWebApplication"
 description = "Apereo CAS Web Application"
 mainClassName = MAIN_CLASS
 
-def nodejsDirectory = new File(project(":webapp").buildDir, "nodejs")
+def nodejsDirectory = 
 
 node {
     version = "${nodeVersion}"
     nodeModulesDir = project(":webapp").projectDir
-    workDir = nodejsDirectory
     download = true
 }
 
