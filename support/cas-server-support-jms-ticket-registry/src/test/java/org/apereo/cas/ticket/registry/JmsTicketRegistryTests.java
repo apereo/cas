@@ -1,8 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.StringBean;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
@@ -10,8 +8,6 @@ import org.springframework.jms.core.JmsTemplate;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * This is {@link JmsTicketRegistryTests}.
