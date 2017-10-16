@@ -84,7 +84,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             }
         } else if (!casProperties.getSso().isMissingService()) {
             LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
-                    WebUtils.getHttpServletRequest(context).getRequestURL());
+                    WebUtils.getHttpServletRequestFromExternalWebflowContext(context).getRequestURL());
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
                     new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
@@ -92,7 +92,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowContext(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
         WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -261,7 +262,7 @@ public final class OAuth20Utils {
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
                 + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
-                + "While just warning for now, this behavior will be strongly enforced by CAS in future versions.", registeredService.getName());
+                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -281,7 +282,7 @@ public final class OAuth20Utils {
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
                 + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-                + "While just warning for now, this behavior will be strongly enforced by CAS in future versions.", registeredService.getName());
+                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -307,5 +308,22 @@ public final class OAuth20Utils {
             return new HashSet<>(0);
         }
         return CollectionUtils.wrapSet(parameterValues.split(" "));
+    }
+
+    /**
+     * Gets service request header if any.
+     *
+     * @param context the context
+     * @return the service request header if any
+     */
+    public static String getServiceRequestHeaderIfAny(final HttpServletRequest context) {
+        if (context == null) {
+            return null;
+        }
+        String id = context.getHeader(CasProtocolConstants.PARAMETER_SERVICE);
+        if (StringUtils.isBlank(id)) {
+            id = context.getHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
+        }
+        return id;
     }
 }

@@ -992,6 +992,24 @@ ext.libraries = [
                     force = true
                 }
         ],
+        activemq               : [
+                dependencies.create("org.apache.activemq:activemq-core:$activemqVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.jasypt", module: "jasypt")
+                    exclude(group: "org.fusesource.hawtbuf", module: "hawtbuf")
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.activemq", module: "activemq-client")
+                    exclude(group: "org.fusesource.hawtbuf", module: "hawtbuf")
+                    force = true
+                },
+                dependencies.create("org.apache.activemq:activemq-pool:$activemqPoolVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         thymeleaf               : [
                 dependencies.create("org.thymeleaf:thymeleaf-spring4:$thymeleafVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1008,17 +1026,6 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.sourceforge.nekohtml", module: "nekohtml")
-                    force = true
-                }
-        ],
-        kotlin                  : [
-                dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {
-                    force = true
-                },
-                dependencies.create("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {
-                    force = true
-                },
-                dependencies.create("org.jetbrains.kotlin:kotlin-test:$kotlinVersion") {
                     force = true
                 }
         ],

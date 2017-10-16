@@ -39,6 +39,11 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponse
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenAuthorizationCodeGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenClientCredentialsGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
@@ -61,6 +66,7 @@ import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -86,12 +92,13 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 
@@ -213,7 +220,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
+        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
+                requiresAuthenticationAuthorizeInterceptor(), accessTokenGrantRequestExtractors());
     }
 
     @Override
@@ -323,6 +331,28 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(), ticketRegistry, defaultRefreshTokenFactory());
     }
 
+    @Bean
+    public Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors() {
+        final BaseAccessTokenGrantRequestExtractor authzCodeExt =
+                new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry,
+                        centralAuthenticationService, casProperties.getAuthn().getOauth());
+
+        final BaseAccessTokenGrantRequestExtractor refreshTokenExt =
+                new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry,
+                        centralAuthenticationService, casProperties.getAuthn().getOauth());
+
+        final BaseAccessTokenGrantRequestExtractor pswExt =
+                new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry,
+                        oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                        casProperties.getAuthn().getOauth());
+
+        final BaseAccessTokenGrantRequestExtractor credsExt =
+                new AccessTokenClientCredentialsGrantRequestExtractor(servicesManager, ticketRegistry,
+                        oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                        casProperties.getAuthn().getOauth());
+        
+        return CollectionUtils.wrapList(authzCodeExt, refreshTokenExt, pswExt, credsExt);
+    }
 
     @ConditionalOnMissingBean(name = "accessTokenController")
     @Bean
@@ -340,9 +370,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 profileScopeToAttributesFilter(),
                 casProperties,
                 ticketGrantingTicketCookieGenerator,
-                oauthCasAuthenticationBuilder(),
-                centralAuthenticationService,
-                accessTokenExpirationPolicy()
+                accessTokenExpirationPolicy(),
+                accessTokenGrantRequestExtractors()
         );
     }
 

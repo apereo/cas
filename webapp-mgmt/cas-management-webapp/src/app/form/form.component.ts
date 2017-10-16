@@ -18,6 +18,7 @@ import {SamlRegisteredService} from "../../domain/saml-service";
 import {WSFederationRegisterdService} from "../../domain/wsed-service";
 import {MatSnackBar, MatTabGroup} from "@angular/material";
 import {GrouperRegisteredServiceAccessStrategy} from "../../domain/access-strategy";
+import {RegisteredServiceRegexAttributeFilter} from "../../domain/attribute-filter";
 
 enum Tabs {
   BASICS,
@@ -25,6 +26,7 @@ enum Tabs {
   CONTACTS,
   LOGOUT,
   ACCESS_STRATEGY,
+  EXPIRATION,
   MULTIFACTOR,
   PROXY,
   USERNAME_ATTRIBUTE,
@@ -131,6 +133,8 @@ export class FormComponent implements OnInit {
         return 'logout';
       case Tabs.ACCESS_STRATEGY :
         return 'accessstrategy';
+      case Tabs.EXPIRATION :
+        return 'expiration';
       case Tabs.MULTIFACTOR :
         return 'multiauth';
       case Tabs.PROXY :
@@ -317,7 +321,8 @@ export class FormComponent implements OnInit {
       }
     }
     if (data.attributeReleasePolicy.attributeFilter != null) {
-      if (!this.validateRegex(data.attributeReleasePolicy.attributeFilter.pattern)) {
+      let filter = data.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
+      if (!this.validateRegex(filter.pattern)) {
         return Tabs.ATTRIBUTE_RELEASE;
       }
     }

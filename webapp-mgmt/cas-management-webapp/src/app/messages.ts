@@ -38,7 +38,7 @@ export class Messages {
   readonly management_services_table_modal_delete_header = "Confirm Delete";
   readonly management_services_table_modal_delete_msgPt1 = "You are about to permanently delete";
   readonly management_services_table_modal_delete_msgPt2 = "Are you sure you wish to continue?";
-  readonly management_services_table_modal_commit_header = "Commit to Reposistory";
+  readonly management_services_table_modal_commit_header = "Commit to Repository";
   readonly management_services_table_modal_commit_listheader = "Services to be committed:";
   readonly management_services_table_modal_commit_required = "A commit message is required";
   readonly management_services_table_modal_commit_placeholder = "Enter a commit message";
@@ -113,6 +113,9 @@ export class Messages {
  readonly services_form_label_attrRelease_releaseCredPassword = "Authorized to release to credential password";
  readonly services_form_label_attrRelease_releaseProxyTicket = "Authorized to release proxy granting ticket ID";
  readonly services_form_label_attrRelease_attrFilter = "Attribute Filter Pattern";
+ readonly services_form_label_attrRelease_attrFilter_excludeUnmapped = "Exclude Unmapped Attributes";
+ readonly services_form_label_attrRelease_attrFilter_completeMatch = "Complete Match";
+ readonly services_form_label_attrRelease_attrFilter_scripted = "Script";
  readonly services_form_label_attrRelease_principleAttRepo_default = "Default";
  readonly services_form_label_attrRelease_principleAttRepo_cached = "Cached";
  readonly services_form_label_attrRelease_principleAttRepo_cached_timeUnit = "Time Unit";
@@ -150,7 +153,7 @@ export class Messages {
  readonly services_form_label_sas_selecttype = "Select Type";
  readonly services_form_label_sas_grouper_groupfield = "Group Field";
  readonly services_form_label_sas_surrogate_enabled = "Surrogate Enabled";
- readonly services_form_label_sas_surrogate_ssoEnabled = "Surragate SSO Enabled";
+ readonly services_form_label_sas_surrogate_ssoEnabled = "Surrogate SSO Enabled";
  readonly services_form_label_sas_surrogate_requiredAttributes = "Surrogate Required Attributes";
  readonly services_form_label_multiauth_providers = "Providers";
  readonly services_form_label_multiauth_failuremode = "Failure Mode";
@@ -193,6 +196,10 @@ export class Messages {
  readonly services_form_label_oidc_user_defined_scopes = "User Defined Scopes";
  readonly services_form_label_oidc_subject_type = "Subject Type";
  readonly services_form_label_oidc_sector_identifier_uri = "Sector Identifier URI";
+
+ readonly services_form_label_expirationPolicy_expirationDate = "Expiration Date";
+ readonly services_form_label_expirationPolicy_deleteWhenExpired = "Delete service when expired";
+ readonly services_form_label_expirationPolicy_notifyWhenDeleted = "Notifiy contacts when service is deleted";
 
  readonly services_form_header_page_addService = "Add Service";
  readonly services_form_header_page_editService = "Edit Service";
@@ -242,8 +249,7 @@ export class Messages {
  readonly services_form_tooltip_theme = "A token that represents the theme that should be applied to CAS when this service asks for authentication.";
  readonly services_form_tooltip_evalOrder = "Determines how CAS should load, sort and evaluate services per this numeric order.";
  readonly services_form_tooltip_requiredHandlers = "Collection of authentication handler ids defined in the CAS server configuration " +
-    "that indicate the set of authentication handlers that must successfully execute before access to "
-  "this service can be granted."
+    "that indicate the set of authentication handlers that must successfully execute before access to this service can be granted.";
  readonly services_form_tooltip_requiresDuo = "Setting to true will require Duo authentication for this service.";
  readonly services_form_tooltip_logoutUrl = "Url where logout requests will be sent to, for this service.";
  readonly services_form_tooltip_informationUrl = "Url that describes help information and guides for this service.";
@@ -262,6 +268,9 @@ export class Messages {
     "should be excluded for release for this specific application."
  readonly services_form_tooltip_attrRelease_attrFilter = "A regex pattern used to filter attributes based on their values only. " +
     "Values that successfully pass the filter will be available for release to the application."
+ readonly services_form_tooltip_attrRelease_attrFilter_excludeUnmapped = "Indicates whether unmapped attributes should be removed from the final bundle.";
+ readonly services_form_tooltip_attrRelease_attrFilter_completeMatch = "Indicates whether pattern-matching should execute over the entire value region";
+ readonly services_form_tooltip_attrRelease_attrFilter_scripted = "This field can accept either an inline groovy script that will be executed or a location of an external script file that will be loaded and executed."
  readonly services_form_tooltip_attrRelease_releaseCredPassword = "Release credential password to the application?";
  readonly services_form_tooltip_attrRelease_releaseProxyTicket = "Release proxy-granting ticket id to the application?";
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit = "Time unit of measure for the cache expiration policy.";
@@ -290,7 +299,7 @@ export class Messages {
  readonly services_form_tooltip_sas_grouper = "This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by " +
     "Grouper are collected as CAS attributes and examined against the list of required attributes for service access."
  readonly services_form_tooltip_sas_surrogate_enabled = "Determines whether this service is allowed to use surrogate authentication.";
- readonly services_form_tooltip_sas_surrogate_ssoEnabled = "Determines whether a surrogater authentication should participate in SSO";
+ readonly services_form_tooltip_sas_surrogate_ssoEnabled = "Determines whether a Surrogate authentication should participate in SSO";
  readonly services_form_tooltip_sas_surrogate_requiredAttributes = "List of attributes and values that must be present for the primary user in order to allow surrogate authentication";
  readonly services_form_tooltip_multiauth_providers = "List of multifactor provider ids to assign to this service.";
  readonly services_form_tooltip_multiauth_failuremode = "Decide what CAS should do in the event that a provider is not available.";
@@ -316,7 +325,7 @@ export class Messages {
  readonly services_form_tooltip_saml_requiredNameIdFormat = "Force the indicated Name ID format in the final SAML response";
  readonly services_form_tooltip_saml_serviceProviderNameQualifier = "Overwrite the SPNameQualifier attribute of the produced subject name id";
  readonly services_form_tooltip_saml_nameQualifier = "Overwrite the NameQualifier attribute of the produced subject name id";
- readonly services_form_tooltip_saml_skipAssertioNameId = "Whether generation of a name identifer should be skipped for assertions";
+ readonly services_form_tooltip_saml_skipAssertioNameId = "Whether generation of a name identifier should be skipped for assertions";
  readonly services_form_tooltip_saml_skipInResponseTo = "Whether generation of the InResponseTo element should be skipped for subject confirmations";
  readonly services_form_tooltip_saml_skipNotOnOrAfter = "Whether generation of the NotOnOrAfter element should be skipped for subject confirmations";
  readonly services_form_tooltip_saml_skipRecipient = "Whether generation of the Recipient element should be skipped for subject confirmations";
@@ -333,6 +342,10 @@ export class Messages {
  readonly services_form_tooltip_oidc_user_defined_scopes = "List any custom defined scopes that should be released."
  readonly services_form_tooltip_oidc_subject_type = "Type to use when generating principal identifiers. Default is public."
  readonly services_form_tooltip_oidc_sector_identifier_uri = "Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the serviceId will be used instead."
+
+ readonly services_form_tooltip_expirationPolicy_expirationDate = "The date on which the registration record is deemed expired. The expiration date may be specified in 2011-12-03T10:15:30, 09/24/1980 04:30 PM, 09/24/2014 6:30 AM, 09/24/2013 18:45, 09/24/2017 or 2017-10-25 formats.";
+ readonly services_form_tooltip_expirationPolicy_deleteWhenExpired = "When true, removes the application from the CAS service registry if and when expired. Otherwise the application record will be marked as disabled.";
+ readonly services_form_tooltip_expirationPolicy_notifyWhenDeleted = "Notifies contacts of the application via email or text, assuming valid contacts with email addresses or phone numbers are defined and CAS is configured to send email messages or SMS notifications. The notification is only sent if the application is expired and is about to be deleted from the registry.";
 
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy = "Decides how attributes that are retrieved from the cache "+
     "should be merged into the existing attribute repository. Attributes may be replaced, ignored or contain multiple " +

@@ -42,7 +42,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     private static final long serialVersionUID = -8415599777321259365L;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJacksonBackedStringSerializer.class);
     
-
     private final PrettyPrinter prettyPrinter;
 
     private final ObjectMapper objectMapper;
@@ -229,6 +228,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * @return the type to serialize
      */
     protected abstract Class<T> getTypeToSerialize();
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
 
     private T readObjectFromJson(final String jsonString) {
         try {

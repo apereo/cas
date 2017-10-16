@@ -5,9 +5,9 @@ title: CAS - Configuring Service Replication
 
 # Configure Service Replication
 
-In the event that CAS service definitions are not managed globally via a centralized store, 
+In the event that CAS service definitions are not managed globally via a [centralized store](Service-Management.html), 
 definitions need to be kept in sync throughout all CAS nodes in a cluster when more than one node is deployed. 
-When the management strategy of such definitions is to store them on disk local to each node (such as JSON or YAML) files, 
+When the management strategy of such definitions is to store them on disk local to each node (such as [JSON](JSON-Service-Management.html) or [YAML](YAML-Service-Management.html)) files, 
 the following mechanisms may be used to copy files from one host to another.
 
 ## Native
@@ -15,6 +15,28 @@ the following mechanisms may be used to copy files from one host to another.
 A background task can be scheduled with the likes of `rsync` to copy files from from host to another. 
 The job needs to of course run periodically to ensure configuration is kept in sync. 
 This is the simplest option as CAS is completely ignorant of extra process in the background.
+
+On Linux machines, `rsync` may be installed as:
+
+```bash
+# yum install rsync (On Red Hat based systems)
+# apt-get install rsync (On Debian based systems)
+```
+
+As an example, this command will sync a directory `/etc/cas/services` from a local machine to a remote server:
+
+```bash
+rsync -avz /etc/cas/services root@192.168.0.101:/etc/cas/services
+```
+
+The exact opposite of the above command may be carried as such:
+
+```bash
+rsync -avzh root@192.168.0.100:/etc/cas/services /etc/cas/services
+```
+
+- To execute the transfer operation over ssh, use the `ssh --progress` flags.
+- To test the command execution in mock mode, use the `--dry-run` flag.
 
 ## Hazelcast
 

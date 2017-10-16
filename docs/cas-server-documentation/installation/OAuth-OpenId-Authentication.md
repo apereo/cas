@@ -25,14 +25,14 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
-After enabling OAuth support, the following endpoints will be available:
-
 ## Endpoints
 
-| Endpoint                        | Description                                                               | Method
-|---------------------------------|--------------------------------------------------------------------------------------------------------------------
+After enabling OAuth support, the following endpoints will be available:
+
+| Endpoint                        | Description                                                           | Method
+|---------------------------------|-----------------------------------------------------------------------|---------
 | `/oauth2.0/authorize`       | Authorize the user and start the CAS authentication flow.                 | `GET`
-| `/oauth2.0/accessToken`     | Get an access token in plain-text or JSON                                 | `POST`
+| `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON           | `POST`
 | `/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
 ## Response/Grant Types
@@ -42,47 +42,57 @@ client application. With the access token, you'll be able to query the `/profile
 
 ### Authorization Code
 
-The authorization code type is made for UI interactions: the user will enter his own credentials.
+The authorization code type is made for UI interactions: the user will enter credentials, shall receive a code and will exchange that code for an access token.
 
-- `/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the `CALLBACK` url
-- `/oauth2.0/accessToken?grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
+| Endpoint                | Parameters                                               | Response
+|-------------------------|----------------------------------------------------------|---------------------------
+| `/oauth2.0/authorize`   | `response_type=code&client_id=<ID>&redirect_uri=<CALLBACK>`  | OAuth code as a parameter of the `CALLBACK` url.
+| `/oauth2.0/accessToken` | `grant_type=authorization_code&client_id=ID`<br/>`&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK`  | The access token.
 
-### Token
+### Token/Implicit
 
 The `token` type is also made for UI interactions as well as indirect non-interactive (i.e. Javascript) applications.
 
-- `/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the `CALLBACK` url.
+| Endpoint                | Parameters                                               | Response
+|-------------------------|----------------------------------------------------------|------------------------------------------------
+| `/oauth2.0/authorize`   | `response_type=token&client_id=ID&redirect_uri=CALLBACK` | The access token as an anchor parameter of the `CALLBACK` url.
 
 ### Resource Owner Credentials
 
 The `password` grant type allows the OAuth client to directly send the user's credentials to the OAuth server.
 This grant is a great user experience for trusted first party clients both on the web and in native device applications.
 
-- `/oauth2.0/authorize?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
+| Endpoint                | Parameters                                               | Response
+|-------------------------|----------------------------------------------------------|-----------------------------------------------------
+| `/oauth2.0/accessToken` | `grant_type=password&client_id=ID`<br/>`&client_secret=<SECRET>`<br/>`&username=USERNAME&password=PASSWORD` | The access token.
 
-You may also pass along a `service` or `X-service` header value that identifies the target application url. The header value
-must match the OAuth service definition in the registry that is linked to the client id.
+Because there is no `redirect_uri` specified by this grant type, the service identifier recognized by CAS and matched in the service registry is taken as the `client_id` instead. You may optionally also pass along a `service` or `X-service` header value that identifies the target application url. The header value must match the OAuth service definition in the registry that is linked to the client id.
 
 ### Client Credentials
 
 The simplest of all of the OAuth grants, this grant is suitable for machine-to-machine authentication 
 where a specific user’s permission to access data is not required.
 
-- `/oauth2.0/authorize?grant_type=client_credentials&client_id=client&secret=secret`
+| Endpoint                | Parameters                                               | Response
+|-------------------------|----------------------------------------------------------|---------------------------
+| `/oauth2.0/accessToken` | `grant_type=client_credentials&client_id=client&client_secret=secret` | The access token.
+
+Because there is no `redirect_uri` specified by this grant type, the service identifier recognized by CAS and matched in the service registry is taken as the `client_id` instead. You may optionally also pass along a `service` or `X-service` header value that identifies the target application url. The header value must match the OAuth service definition in the registry that is linked to the client id.
 
 ### Refresh Token
 
 The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token),
 when this previous access token is expired.
 
-- `/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token.
-
+| Endpoint                | Parameters                                               | Response
+|-------------------------|----------------------------------------------------------|---------------------------
+| `/oauth2.0/accessToken`   | `grant_type=refresh_token&client_id=ID`<br/>`&client_secret=SECRET&refresh_token=REFRESH_TOKEN` | The new access token.
 
 ## Grant Type Selection
 
 A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the end user will be using, and the experience you want for your users.
 
-![](https://alexbilbie.com/images/oauth-grants.svg) 
+![](https://alexbilbie.com/images/oauth-grants.svg)
 
 To learn more about profiles and grant types, please [review this guide](https://alexbilbie.com/guide-to-oauth-2-grants/).
 
@@ -96,8 +106,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "clientId": "clientid",
   "clientSecret": "clientSecret",
   "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name" : "My OAuth service ",
-  "description" : "This is the description for this OAuth service.",
+  "name" : "OAuthService",
   "id" : 100
 }
 ```
@@ -113,12 +122,9 @@ The following fields are supported:
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
 | `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
-| `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type.
+| `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).
 
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
-particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
-you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
-deployment at that.</p></div>
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of all service fields and try to configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
@@ -135,11 +141,9 @@ The expiration policy for OAuth tokens is controlled by CAS settings and propert
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
-## OAuth User Profile
+## OAuth User Profile Structure
 
 The requested user profile may be rendered and consumed by the application using the following options.
-
-The following alternative options are available.
 
 ### Nested
 
@@ -195,8 +199,7 @@ public class MyOAuthConfiguration {
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow
-are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers accordinngly.
+as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers accordinngly.
 
 # OpenID Authentication
 

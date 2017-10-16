@@ -129,7 +129,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @return the remote ip
      */
     private String getRemoteIp(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         String userAddress = request.getRemoteAddr();
         LOGGER.debug("Remote Address = [{}]", userAddress);
 
