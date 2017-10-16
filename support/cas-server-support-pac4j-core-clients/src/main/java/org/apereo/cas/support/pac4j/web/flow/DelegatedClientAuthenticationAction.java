@@ -41,10 +41,12 @@ import java.util.regex.Pattern;
 /**
  * This class represents an action to put at the beginning of the webflow.
  * <p>
- * Before any authentication, redirection urls are computed for the different clients defined as well as the theme,
- * locale, method and service are saved into the web session.</p>
- * After authentication, appropriate information are expected on this callback url to finish the authentication
- * process with the provider.
+ * Before any authentication, redirection urls are computed for the different
+ * clients defined as well as the theme, locale, method and service are saved
+ * into the web session.
+ * </p>
+ * After authentication, appropriate information are expected on this callback
+ * url to finish the authentication process with the provider.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -78,6 +80,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
+    private static final Pattern PAC4J_CLIENT_CSS_CLASS_PATTERN = Pattern.compile("\\W");
 
     private final Clients clients;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -86,9 +89,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final String localParamName;
     private final boolean autoRedirect;
 
-    public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
-                                               final String localParamName, final boolean autoRedirect) {
+    public DelegatedClientAuthenticationAction(final Clients clients,
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
+            final String localParamName, final boolean autoRedirect) {
         this.clients = clients;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -116,7 +120,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
             // get client
-            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients
+                    .findClient(clientName);
             LOGGER.debug("Client: [{}]", client);
 
             // get credentials
@@ -147,6 +152,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 final AuthenticationResult authenticationResult =
                         this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
             }
@@ -204,7 +210,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 final String type = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName()).replaceAll(StringUtils.EMPTY).toLowerCase();
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type));
+                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
+
             } catch (final HttpAction e) {
                 if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                     LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
@@ -222,14 +229,24 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         }
     }
 
+    private String getCssClass(final String name) {
+        String computedCssClass = "fa fa-lock";
+        if (name != null) {
+            computedCssClass = computedCssClass.concat(" " + this.PAC4J_CLIENT_CSS_CLASS_PATTERN.matcher(name).replaceAll("-"));
+        }
+        LOGGER.debug("cssClass for {} is {} ", name, computedCssClass);
+        return computedCssClass;
+    }
+
     /**
      * Restore an attribute in web session as an attribute in request.
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name    The name of the parameter
+     * @param name The name of the parameter
      */
-    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
+    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
+            final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -239,9 +256,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name    The name of the parameter
+     * @param name The name of the parameter
      */
-    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
+    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
+            final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
@@ -259,7 +277,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param status  the status
      * @return the optional model and view, if request is an error.
      */
-    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
+    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request,
+            final int status) {
         final Map<String, String[]> params = request.getParameterMap();
         if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description")
                 || params.containsKey("error_message")) {
@@ -277,7 +296,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             } else if (params.containsKey("error_message")) {
                 model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
             }
-            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
+            model.put(CasProtocolConstants.PARAMETER_SERVICE,
+                    request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
 
             LOGGER.debug("Delegation request has failed. Details are [{}]", model);
@@ -294,18 +314,23 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         private final String name;
         private final String redirectUrl;
         private final String type;
+        private final String cssClass;
 
         /**
          * Instantiates a new Provider ui configuration.
          *
          * @param name        the name
          * @param redirectUrl the redirect url
-         * @param type        the type
+         * @param type the type
+         * @param cssClass for SAML clients, the class name used for custom styling of the redirect link
+
          */
-        ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type) {
+        ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type,
+                final String cssClass) {
             this.name = name;
             this.redirectUrl = redirectUrl;
             this.type = type;
+            this.cssClass = cssClass;
         }
 
         public String getName() {
@@ -318,6 +343,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         public String getType() {
             return type;
+        }
+
+        public String getCssClass() {
+            return cssClass;
         }
     }
 }
