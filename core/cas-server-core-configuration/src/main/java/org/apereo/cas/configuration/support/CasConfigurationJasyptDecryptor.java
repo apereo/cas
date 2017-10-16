@@ -145,10 +145,10 @@ public class CasConfigurationJasyptDecryptor {
      */
     public Pair<String, Object> decryptPair(final Pair<String, Object> pair) {
         try {
-            initializeJasyptInstanceIfNecessary();
-
             final String stringValue = getStringPropertyValue(pair.getValue());
             if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
+                initializeJasyptInstanceIfNecessary();
+                
                 try {
                     final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
                     LOGGER.debug("Decrypting property [{}]...", pair.getKey());
