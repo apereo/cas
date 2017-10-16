@@ -53,8 +53,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
 
     @Override
     public void save(final String userName, final String secretKey,
-                     final int validationCode,
-                     final List<Integer> scratchCodes) {
+                     final int validationCode, final List<Integer> scratchCodes) {
         try {
             LOGGER.debug("Storing google authenticator account for [{}]", userName);
             final OneTimeTokenAccount account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
