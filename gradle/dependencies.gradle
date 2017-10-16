@@ -2625,7 +2625,7 @@ ext.libraries = [
                 }
         ],
 
-        springsecuritywebconfig : [
+        springsecurityconfig : [
                 dependencies.create("org.springframework.security:spring-security-config:$springSecurityVersion") {
                     exclude(group: "aopalliance", module: "aopalliance")
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -2642,7 +2642,9 @@ ext.libraries = [
                     exclude(group: "org.aspectj", module: "aspectjrt")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
-                },
+                }
+        ],
+        springsecurityweb : [
                 dependencies.create("org.springframework.security:spring-security-web:$springSecurityVersion") {
                     exclude(group: "aopalliance", module: "aopalliance")
                     exclude(group: "org.springframework", module: "spring-aop")

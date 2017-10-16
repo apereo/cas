@@ -78,7 +78,11 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
      * @return the highest service id in the list of registered services
      */
     private long findHighestId() {
-        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse((long) 0);
+        return this.registeredServices
+                .stream()
+                .map(RegisteredService::getId)
+                .max(Comparator.naturalOrder())
+                .orElse(0L);
     }
 
     @Override
