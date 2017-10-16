@@ -25,7 +25,7 @@ springBoot {
 
 bootRepackage {
     mainClass = MAIN_CLASS
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishingRelease
 }
 
 bootRun {
