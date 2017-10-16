@@ -13,7 +13,7 @@ bootRun {
 }
 
 war {
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
 }
 
 springBoot  {
@@ -22,7 +22,7 @@ springBoot  {
 
 bootRepackage {
     mainClass = "org.apereo.cas.CasEurekaServerWebApplication"
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishingRelease
 }
 
 dependencies {
