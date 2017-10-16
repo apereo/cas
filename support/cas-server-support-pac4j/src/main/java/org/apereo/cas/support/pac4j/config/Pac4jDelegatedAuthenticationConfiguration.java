@@ -15,14 +15,14 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link Pac4jConfiguration}.
+ * This is {@link Pac4jDelegatedAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("pac4jConfiguration")
+@Configuration("pac4jDelegatedAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class Pac4jConfiguration {
+public class Pac4jDelegatedAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
