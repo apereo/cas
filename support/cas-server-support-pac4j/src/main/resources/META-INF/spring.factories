@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.support.pac4j.config.support.authentication.Pac4jAuthenticationEventExecutionPlanConfiguration,\
-  org.apereo.cas.support.pac4j.config.Pac4jConfiguration
+  org.apereo.cas.support.pac4j.config.Pac4jDelegatedAuthenticationConfiguration

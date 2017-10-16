@@ -36,6 +36,7 @@ import org.pac4j.oauth.client.WordPressClient;
 import org.pac4j.oauth.client.YahooClient;
 import org.pac4j.oidc.client.AzureAdClient;
 import org.pac4j.oidc.client.GoogleOidcClient;
+import org.pac4j.oidc.client.KeycloakOidcClient;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
@@ -351,6 +352,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                             break;
                         case "AZURE":
                             client = new AzureAdClient(cfg);
+                            break;
+                        case "KEYCLOAK":
+                            client = new KeycloakOidcClient(cfg);
                             break;
                         case "GENERIC":
                         default:
