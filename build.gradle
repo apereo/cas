@@ -8,7 +8,9 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
+    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
     
+    publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
     Open the Git repository in the current directory.
     Get commit id of HEAD.
@@ -83,7 +85,7 @@ allprojects {
         }
     }
 
-    signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
+    signArchives.enabled = (rootProject.publishingRelease) || rootProject.publishSnapshots
 
     /*
         Do NOT publish test dependencies into the final POM.
