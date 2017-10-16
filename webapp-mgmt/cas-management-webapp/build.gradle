@@ -8,11 +8,9 @@ javadoc {
     enabled false
 }
 
-def nodejsDirectory = new File(project(":webapp").buildDir, "nodejs")
 node {
     version = "${nodeVersion}"
     nodeModulesDir = file("./")
-    workDir = nodejsDirectory
     download = true
 }
 
