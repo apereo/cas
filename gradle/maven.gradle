@@ -233,7 +233,7 @@ uploadArchives {
         configuration = configurations.archives
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        if (publishReleases) {
+        if (publishingRelease) {
             repository(url: "$sonatypeRepositoryUrl") {
                 authentication(userName: sonatypeUsername, password: sonatypePassword);
             }
