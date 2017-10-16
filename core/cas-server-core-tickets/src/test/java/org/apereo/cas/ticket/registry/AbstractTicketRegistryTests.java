@@ -4,6 +4,8 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -14,7 +16,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Assume;
 import org.junit.Before;
@@ -37,7 +38,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public abstract class AbstractTicketRegistryTests {
-    
+
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -67,17 +68,15 @@ public abstract class AbstractTicketRegistryTests {
             setUpEncryption();
         }
     }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
-            final DefaultTicketCipherExecutor cipher = new DefaultTicketCipherExecutor(
-                    null, null, "AES",
-                    512, 16, "test");
+            final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(
+                    new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
             registry.setCipherExecutor(cipher);
         } else {
-            registry.setCipherExecutor((CipherExecutor) NoOpCipherExecutor.getInstance());
+            registry.setCipherExecutor(NoOpCipherExecutor.getInstance());
         }
     }
 
@@ -394,10 +393,10 @@ public abstract class AbstractTicketRegistryTests {
         final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
-        
+
         final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         IntStream.range(1, 5).forEach(i -> {
-            final ServiceTicket st = tgt.grantServiceTicket(ST_1_ID + "-" + i, service, 
+            final ServiceTicket st = tgt.grantServiceTicket(ST_1_ID + "-" + i, service,
                     new NeverExpiresExpirationPolicy(), false, true);
             this.ticketRegistry.addTicket(st);
             this.ticketRegistry.updateTicket(tgt);
@@ -407,7 +406,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.updateTicket(tgt);
             this.ticketRegistry.updateTicket(st);
         });
-        
+
         final int c = this.ticketRegistry.deleteTicket(TGT_ID);
         assertEquals(c, 6);
     }
