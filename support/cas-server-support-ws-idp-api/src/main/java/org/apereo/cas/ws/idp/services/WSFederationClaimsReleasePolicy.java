@@ -54,14 +54,22 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
-        getAllowedAttributes().forEach((claim, attributeName) -> {
-            LOGGER.debug("Evaluating claim [{}] mapped to attribute name [{}]", WSFederationClaims.valueOf(claim).getUri(), attributeName);
-            final Object value = resolvedAttributes.get(attributeName);
-            if (value != null) {
-                LOGGER.debug("Adding claim [{}] to the collection of released attributes", WSFederationClaims.valueOf(claim).getUri());
-                attributesToRelease.put(claim, value);
-            }
-        });
+        getAllowedAttributes()
+                .entrySet()
+                .stream()
+                .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase()))
+                .forEach(entry -> {
+                    final String claimName = entry.getKey();
+                    final String attributeName = entry.getValue();
+                    
+                    final WSFederationClaims claim = WSFederationClaims.valueOf(claimName.toUpperCase());
+                    LOGGER.debug("Evaluating claimName [{}] mapped to attribute name [{}]", claim.getUri(), attributeName);
+                    final Object value = resolvedAttributes.get(attributeName);
+                    if (value != null) {
+                        LOGGER.debug("Adding claimName [{}] to the collection of released attributes", claim.getUri());
+                        attributesToRelease.put(claim.getUri(), value);
+                    }
+                });
         return attributesToRelease;
 
     }
