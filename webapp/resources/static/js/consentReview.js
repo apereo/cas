@@ -157,7 +157,7 @@ var consentDecisions = (function () {
                     },
                     'render': function (data) {
                         var opts = { year: 'numeric', month: 'numeric' };
-                        return '<div class="label label-info"><span class="hidden">' + data.toISOString() +
+                        return '<div class="label label-primary"><span class="hidden">' + data.toISOString() +
                                 '</span>' + data.toLocaleDateString('en', opts ) +
                             '</div>';
                     }
