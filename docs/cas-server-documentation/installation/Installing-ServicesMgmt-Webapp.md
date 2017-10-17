@@ -22,8 +22,13 @@ Note that for certain type of service registry backends, deploying the managemen
 
 ## Installation
 
-A template overlay for the services management webapp is [provided here](https://github.com/apereo/cas-services-management-overlay).
+### Maven
 
+A template overlay for the management webapp is [provided here](https://github.com/apereo/cas-services-management-overlay).
+
+### Gradle
+
+A template overlay for the management webapp is [provided here](https://github.com/apereo/cas-services-management--gradle-overlay).
 
 ## Configuration
 
