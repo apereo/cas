@@ -13,7 +13,7 @@ JWTs are entirely self-contained and contain the authenticated principal as well
 
 ## Overview
 
-JWT-based service tickets are issued to application based on the same semantics defined by the [CAS Protocol](../protocol/CAS-Protocol.html). CAS having received an authentication request via its `/login` endpoint, will conditionally issue back `JWT` service tickets to the application in form of a `ticket` parameter via the requested http method.
+JWT-based service tickets are issued to applicationس based on the same semantics defined by the [CAS Protocol](../protocol/CAS-Protocol.html). CAS having received an authentication request via its `/login` endpoint will conditionally issue back `JWT` service tickets to the application in form of a `ticket` parameter via the requested http method.
 
 All JWTs are by default signed and encrypted by CAS based on keys generated and controlled during deployment. Such keys may be exchanged with client applications to unpack the JWT and access claims.
 
