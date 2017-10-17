@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public abstract class BaseConsentRepository implements ConsentRepository {
-    private static final long serialVersionUID = 1736846686280785564L;
+    private static final long serialVersionUID = 1736846688546785564L;
     
     private Set<ConsentDecision> consentDecisions;
 
@@ -65,7 +65,16 @@ public abstract class BaseConsentRepository implements ConsentRepository {
         getConsentDecisions().add(decision);
         return true;
     }
-    
+
+    @Override
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+        final Collection<ConsentDecision> decisions = findConsentDecisions(principal);
+        return this.consentDecisions.remove(decisions
+            .stream()
+            .filter(d -> d.getId() == decisionId)
+            .findFirst().get());
+    }
+
     protected Set<ConsentDecision> getConsentDecisions() {
         return this.consentDecisions;
     }

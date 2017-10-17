@@ -30,7 +30,12 @@ public class GroovyConsentRepository extends BaseConsentRepository {
         writeAccountToGroovyResource(decision);
         return result;
     }
-
+    
+    @Override
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+        return ScriptingUtils.executeGroovyScript(groovyResource, "delete", Boolean.class, decisionId, principal, LOGGER);
+    }
+    
     private void writeAccountToGroovyResource(final ConsentDecision decision) {
         ScriptingUtils.executeGroovyScript(groovyResource, "write", Boolean.class, decision, LOGGER);
     }

@@ -16,6 +16,9 @@
         var data = {
             attributes: /*[[${attributes}]]*/
         };
+        var strings = {
+            info: /*[[#{screen.consent.attributes.data.info}]]*/
+        };
         /*]]>*/
     </script>
     <script type="text/javascript" th:inline="javascript">
@@ -37,19 +40,19 @@
 
 
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#attributesPanel">Attributes</a></li>
-                <li><a data-toggle="tab" href="#optionsPanel">Options</a></li>
+                <li class="active"><a data-toggle="tab" href="#attributesPanel" th:text="#{screen.consent.attributes}"/></li>
+                <li><a data-toggle="tab" href="#optionsPanel" th:text="#{screen.consent.options}"/></li>
             </ul>
 
             <div class="tab-content clearfix">
                 <div class="tab-pane active" id="attributesPanel">
                     <br/>
-                    <p>The following attributes will be released to <strong>[<span th:text="${service.id}"/>]</strong>:</p>
+                    <p th:utext="#{screen.consent.attributes.header(${service.id})}"/>
                     <table id="attributesTable" class="display table table-striped table-bordered">
                         <thead>
                         <tr>
-                            <th>Attribute</th>
-                            <th>Value(s)</th>
+                            <th th:text="#{screen.consent.attributes.attribute}"/>
+                            <th th:text="#{screen.consent.attributes.values}"/>
                         </tr>
                         </thead>
                         <tbody>
@@ -60,42 +63,38 @@
 
                     <div class="panel panel-primary">
 
-                        <div class="panel-heading">How should I be prompted for consent again?</div>
+                        <div class="panel-heading" th:text="#{screen.consent.options.header}"/>
                         <div class="panel-body">
                             <div class="radio">
-                                <label><input type="radio" name="option" value="0" th:checked="${option == 0}" onclick="optionSelected()">
-                                    <strong>Every Time</strong></label>
-                                <span class="help-block">Show the consent screen every time I attempt to log into <span th:text="${service.id}"/></span>
+                                <label><input type="radio" name="option" value="0" th:checked="${option == 0}" onclick="optionSelected()"
+                                              th:utext="#{screen.consent.options.always}"/>
+                                <span class="help-block" th:text="#{screen.consent.options.desc.always(${service.id})}"/>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" name="option" value="1" th:checked="${option == 1}" onclick="optionSelected()">
-                                    <strong>Attribute Name</strong></label>
-                                <span class="help-block">
-                            Show the consent screen, if an attribute is added or removed from the collection of attributes released
-                            to <span th:text="${service.id}"/>.
+                                <label><input type="radio" name="option" value="1" th:checked="${option == 1}" onclick="optionSelected()"
+                                              th:utext="#{screen.consent.options.attributename}"/>
+                                <span class="help-block" th:text="#{screen.consent.options.desc.attributename(${service.id})}"/>
                         </span>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" name="option" value="2" th:checked="${option == 2}" onclick="optionSelected()">
-                                    <strong>Attribute Value</strong></label>
-                                <span class="help-block">
-                             Show the consent screen, if:
-                            <ul>
-                                <li>A new attribute is authorized for release to <span th:text="${service.id}"/>.</li>
-                                <li>An attribute is removed from the attribute bundle previously released to <span th:text="${service.id}"/>.</li>
-                                <li>The value of an attribute authorized for release to <span th:text="${service.id}"/> has changed.</li>
-                            </ul>
-                        </span>
+                                <label><input type="radio" name="option" value="2" th:checked="${option == 2}" onclick="optionSelected()"
+                                              th:utext="#{screen.consent.options.attributevalue}"/>
+                                <span class="help-block" th:utext="#{screen.consent.options.desc.attributevalue.intro} +
+                                      '<ul><li>' +
+                                      #{screen.consent.options.desc.attributevalue.first(${service.id})} +
+                                      '</li><li>' +
+                                      #{screen.consent.options.desc.attributevalue.second(${service.id})} +
+                                      '</li><li>' +
+                                      #{screen.consent.options.desc.attributevalue.third(${service.id})} +
+                                      '</li><ul>'"/>
                             </div>
                         </div>
                     </div>
 
                     <div id="reminderPanel" class="panel panel-primary">
-                        <div class="panel-heading">How often should I be reminded to consent again?</div>
+                        <div class="panel-heading" th:text="#{screen.consent.options.reminder.header}"/>
                         <div class="panel-body">
-                            <span>
-                                Show the consent screen, as a reminder, in that event that there is no change to the collection of attributes
-                                released to <span th:text="${service.id}"/>  <p/>
+                            <span th:text="#{screen.consent.options.reminder.expl(${service.id})}"/> <p/>
                             </span>
                             <table>
                                 <tr>
@@ -105,13 +104,20 @@
                                     </td>
                                     <td>
                                         <select name="reminderTimeUnit" id="reminderTimeUnit" class="selectpicker">
-                                            <option value="seconds" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'seconds'}">Seconds</option>
-                                            <option value="minutes" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'minutes'}">Minutes</option>
-                                            <option value="hours" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'hours'}">Hours</option>
-                                            <option value="days" th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'days'}">Days</option>
-                                            <option value="weeks" th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'weeks'}">Weeks</option>
-                                            <option value="months" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'months'}">Months</option>
-                                            <option value="years" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'years'}">Years</option>
+                                            <option value="seconds" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'seconds'}"
+                                                    th:text="#{screen.consent.options.timeunit.seconds}"/>
+                                            <option value="minutes" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'minutes'}"
+                                                    th:text="#{screen.consent.options.timeunit.minutes}"/>
+                                            <option value="hours" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'hours'}"
+                                                    th:text="#{screen.consent.options.timeunit.hours}"/>
+                                            <option value="days" th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'days'}"
+                                                    th:text="#{screen.consent.options.timeunit.days}"/>
+                                            <option value="weeks" th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'weeks'}"
+                                                    th:text="#{screen.consent.options.timeunit.weeks}"/>
+                                            <option value="months" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'months'}"
+                                                    th:text="#{screen.consent.options.timeunit.months}"/>
+                                            <option value="years" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'years'}"
+                                                    th:text="#{screen.consent.options.timeunit.years}"/>
                                         </select>
                                     </td>
                                 </tr>

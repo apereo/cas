@@ -1,3 +1,5 @@
+var strings = strings;
+
 /* global data */
 $(document).ready(function(){
     resolveAttributes();
@@ -24,7 +26,10 @@ function resolveAttributes() {
     else {
         table = $('#attributesTable').DataTable( {
             paging : false,
-            searching : false
+            searching : false,
+            language: {
+                info: strings.info
+            }
         } );
     }
 

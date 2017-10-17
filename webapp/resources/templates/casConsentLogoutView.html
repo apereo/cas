@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{screen.logout.header}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+      <div class="alert alert-success">
+          <h2 th:utext="#{screen.logout.header}"/>
+          <p th:utext="#{screen.consent.review.logout.success}"/>
+          <p th:utext="#{screen.logout.security}" />
+      </div>
+</div>
+</body>
+</html>
