@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.pac4j.cas.authorization.DefaultCasAuthorizationGenerator;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -12,9 +12,6 @@ import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.engine.DefaultSecurityLogic;
-import org.pac4j.core.exception.HttpAction;
 import org.pac4j.http.client.direct.IpClient;
 import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -32,11 +29,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -68,14 +63,14 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public SecurityInterceptor requiresAuthenticationStatusInterceptor() {
-        return new SecurityInterceptor(new
+        return new CasSecurityInterceptor(new
                 Config(new IpClient(new IpRegexpAuthenticator(casProperties.getAdminPagesSecurity().getIp()))),
                 "IpClient");
     }
 
     @RefreshScope
     @Bean
-    public Config config() {
+    public Config casAdminPagesPac4jConfig() {
         try {
             final AdminPagesSecurityProperties adminProps = casProperties.getAdminPagesSecurity();
             if (StringUtils.isNotBlank(adminProps.getLoginUrl())
@@ -84,7 +79,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
                 final CasConfiguration casConfig = new CasConfiguration(adminProps.getLoginUrl());
                 final DirectCasClient client = new DirectCasClient(casConfig);
                 client.setName(CAS_CLIENT_NAME);
-
                 final Config cfg = new Config(adminProps.getService(), client);
                 if (adminProps.getUsers() == null) {
                     LOGGER.warn("List of authorized users for admin pages security is not defined. "
@@ -112,11 +106,11 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public SecurityInterceptor requiresAuthenticationStatusAdminEndpointsInterceptor() {
-        final Config cfg = config();
+        final Config cfg = casAdminPagesPac4jConfig();
         if (cfg.getClients() == null) {
             return requiresAuthenticationStatusInterceptor();
         }
-        final CasAdminPagesSecurityInterceptor interceptor = new CasAdminPagesSecurityInterceptor(cfg,
+        final CasSecurityInterceptor interceptor = new CasSecurityInterceptor(cfg,
                 CAS_CLIENT_NAME, "securityHeaders,csrfToken,".concat(getAuthorizerName()));
         return interceptor;
     }
@@ -163,39 +157,14 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
 
         @Override
         public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                               final Object handler, final ModelAndView modelAndView) throws Exception {
-            if (StringUtils.isNotBlank(request.getQueryString())
-                    && modelAndView != null
-                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
-                final RedirectView v = new RedirectView(request.getRequestURL().toString());
-                v.setExposeModelAttributes(false);
-                v.setExposePathVariables(false);
-                modelAndView.setView(v);
+                final Object handler, final ModelAndView modelAndView) throws Exception {
+            final String requestPath = request.getRequestURI();
+            final Pattern pattern = Pattern.compile("/status(/)*$");
+
+            if (pattern.matcher(requestPath).find()) {
+                requiresAuthenticationStatusInterceptor().postHandle(request, response, handler, modelAndView);
             }
-        }
-    }
-
-    /**
-     * The Cas admin pages security interceptor.
-     */
-    public static class CasAdminPagesSecurityInterceptor extends SecurityInterceptor {
-
-        public CasAdminPagesSecurityInterceptor(final Config config, final String clients, final String authorizers) {
-            super(config, clients, authorizers);
-
-            final DefaultSecurityLogic secLogic = new DefaultSecurityLogic() {
-                @Override
-                protected HttpAction unauthorized(final WebContext context, final List currentClients) {
-                    return HttpAction.forbidden("Access Denied", context);
-                }
-
-                @Override
-                protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
-                    return true;
-                }
-            };
-            secLogic.setSaveProfileInSession(true);
-            setSecurityLogic(secLogic);
+            requiresAuthenticationStatusAdminEndpointsInterceptor().postHandle(request, response, handler, modelAndView);
         }
     }
 }
