@@ -1,5 +1,8 @@
 description = "Apereo CAS Consent Webflow"
 dependencies {
+    implementation libraries.pac4j
+    
+    implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-services-api")
@@ -8,4 +11,6 @@ dependencies {
     implementation project(":support:cas-server-support-consent-api")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":support:cas-server-support-pac4j-core")
 }

@@ -18,7 +18,7 @@ import java.util.Collection;
  * @since 5.2.0
  */
 public class MongoDbConsentRepository implements ConsentRepository {
-    private static final long serialVersionUID = 7734391779139907616L;
+    private static final long serialVersionUID = 7734163279139907616L;
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbConsentRepository.class);
 
     private final String collectionName;
@@ -51,6 +51,13 @@ public class MongoDbConsentRepository implements ConsentRepository {
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         this.mongoTemplate.save(decision, this.collectionName);
+        return true;
+    }
+    
+    @Override
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+        final Query query = new Query(Criteria.where("id").is(decisionId));
+        this.mongoTemplate.remove(query, this.collectionName);
         return true;
     }
 }
