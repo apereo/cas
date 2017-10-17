@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link ConsentDecision}.
@@ -45,7 +45,7 @@ public class ConsentDecision {
     private Long reminder = 14L;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
-    private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
+    private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
     @Lob
     @Column(name = "attributes", length = Integer.MAX_VALUE)
@@ -59,11 +59,11 @@ public class ConsentDecision {
         this.createdDate = date;
     }
 
-    public TimeUnit getReminderTimeUnit() {
+    public ChronoUnit getReminderTimeUnit() {
         return reminderTimeUnit;
     }
 
-    public void setReminderTimeUnit(final TimeUnit reminderTimeUnit) {
+    public void setReminderTimeUnit(final ChronoUnit reminderTimeUnit) {
         this.reminderTimeUnit = reminderTimeUnit;
     }
 

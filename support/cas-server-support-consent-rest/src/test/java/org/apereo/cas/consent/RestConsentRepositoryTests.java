@@ -71,4 +71,16 @@ public class RestConsentRepositoryTests {
         assertEquals(d.getPrincipal(), "casuser");
         server.verify();
     }
+    
+    @Test
+    public void verifyConsentDecisionIsDeleted() throws Exception {
+        server.expect(manyTimes(), requestTo("/consent/1"))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withSuccess());
+        
+        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
+        final boolean b = repo.deleteConsentDecision(1, "CasUser");
+        assertTrue(b);
+        server.verify();
+    }
 }
