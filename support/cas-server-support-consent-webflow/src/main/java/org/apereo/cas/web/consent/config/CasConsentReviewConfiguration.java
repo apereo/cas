@@ -14,7 +14,9 @@ import org.apereo.cas.web.pac4j.CasSecurityInterceptor;
 import org.apereo.cas.web.consent.CasConsentReviewController;
 import org.pac4j.cas.authorization.DefaultCasAuthorizationGenerator;
 import org.pac4j.cas.client.CasClient;
+import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.authorization.authorizer.Authorizer;
@@ -102,6 +104,8 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
         final String auth = RequireAnyRoleAuthorizer.class.getSimpleName();
         if (adminAuthorizers.containsKey(auth)) {
             config.addAuthorizer(auth, adminAuthorizers.get(auth));
+            final BaseClient adminClient = (BaseClient) casAdminPagesPac4jConfig.getClients().findClient(DirectCasClient.class);
+            client.addAuthorizationGenerators(adminClient.getAuthorizationGenerators());
         }
         return config;
     }
