@@ -91,6 +91,6 @@ public class OpenSamlConfigBean {
         this.marshallerFactory = registry.getMarshallerFactory();
         this.unmarshallerFactory = registry.getUnmarshallerFactory();
 
-        LOGGER.info("Initialized OpenSaml successfully.");
+        LOGGER.debug("Initialized OpenSaml successfully.");
     }
 }

@@ -39,6 +39,8 @@ public class CasCommandLineParser {
         options.addOption(CommandLineOptions.OPTION_SKIP_BANNER);
         options.addOption(CommandLineOptions.OPTION_SHELL);
         options.addOption(CommandLineOptions.OPTION_GENERATE_KEY);
+        options.addOption(CommandLineOptions.OPTION_GENERATE_JWT);
+        options.addOption(CommandLineOptions.OPTION_SUBJECT);
         
         parser = new DefaultParser();
     }
@@ -77,7 +79,7 @@ public class CasCommandLineParser {
                         + "2) Generating signing/encryption keys for relevant CAS configuration.\n"
                         + "3) Validating JSON/YAML service definitions for fun and profit.\n"
                         + "4) Retrieving list of available settings for a given module/group.\n"
-                        + "4) etc.\n",
+                        + "5) etc.\n",
                 true);
     }
     
@@ -89,6 +91,16 @@ public class CasCommandLineParser {
      */
     public Pattern getProperty(final CommandLine line) {
         return RegexUtils.createPattern(getOptionValue(line, CommandLineOptions.OPTION_PROPERTY, ".+"));
+    }
+
+    /**
+     * Gets subject.
+     *
+     * @param line the line
+     * @return the subject
+     */
+    public String getSubject(final CommandLine line) {
+        return getOptionValue(line, CommandLineOptions.OPTION_SUBJECT, null);
     }
 
     /**
@@ -131,6 +143,17 @@ public class CasCommandLineParser {
         return hasOption(line, CommandLineOptions.OPTION_GENERATE_KEY);
     }
 
+    /**
+     * Is jwt gen.
+     *
+     * @param line the line
+     * @return the boolean
+     */
+    public boolean isGeneratingJwt(final CommandLine line) {
+        return hasOption(line, CommandLineOptions.OPTION_GENERATE_JWT);
+    }
+
+    
     /**
      * Is summary boolean.
      *
@@ -193,7 +216,7 @@ public class CasCommandLineParser {
      * @return the option value
      */
     public boolean getOptionValue(final CommandLine line, final Option opt, final boolean defaultValue) {
-        return line.hasOption(opt.getOpt()) ? Boolean.valueOf(line.getOptionValue(opt.getOpt())) : defaultValue;
+        return line.hasOption(opt.getOpt()) ? Boolean.parseBoolean(line.getOptionValue(opt.getOpt())) : defaultValue;
     }
 
     /**
