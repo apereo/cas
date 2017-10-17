@@ -55,7 +55,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) {
         configureCookieGenerators(context);
         configureWebflowContext(context);
         configureWebflowContextForService(context);
