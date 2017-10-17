@@ -4,19 +4,25 @@ apply plugin: "org.springframework.boot"
 def MAIN_CLASS = "org.apereo.cas.CasCommandLineShellApplication"
 
 mainClassName = MAIN_CLASS
-description = "Apereo CAS Shell Support via Spring"
+description = "Apereo CAS Shell Support via Spring Shell"
 
 dependencies {
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
-    implementation project(":core:cas-server-core-services-api")
+    /**
+     * Marking all dependencies as API so they can be included in the final
+     * executable jar by the build packaging process.
+     */
     api project(":api:cas-server-core-api-services")
-    implementation project(":support:cas-server-support-oauth-services")
-    implementation project(":support:cas-server-support-oidc-services")
-    implementation project(":support:cas-server-support-saml-idp-core")
-    implementation project(":support:cas-server-support-ws-idp-api")
-    implementation project(":core:cas-server-core-configuration-metadata-repository")
-    implementation libraries.springbootconfigmetadata
+    api project(":core:cas-server-core-configuration")
+    api project(":core:cas-server-core-util")
+    api project(":core:cas-server-core-services-api")
+    api project(":support:cas-server-support-oauth-services")
+    api project(":support:cas-server-support-oidc-services")
+    api project(":support:cas-server-support-saml-idp-core")
+    api project(":support:cas-server-support-ws-idp-api")
+    api project(":core:cas-server-core-configuration-metadata-repository")
+    api libraries.springbootconfigmetadata
+    api libraries.metrics
+    api libraries.pac4j
 }
 
 springBoot {
@@ -32,7 +38,7 @@ bootRun {
     systemProperties = System.properties
     def list = []
     if (rootProject.enableRemoteDebugging) {
-        list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
+        list.add("-Xrunjdwp:transport=dt_socket,address=5007,server=y,suspend=n")
     }
     jvmArgs = list
 }

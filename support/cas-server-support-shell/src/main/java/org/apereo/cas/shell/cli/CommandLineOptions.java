@@ -45,6 +45,15 @@ public class CommandLineOptions {
             .build();
 
     /**
+     * Command line option that indicates a subject.
+     */
+    public static final Option OPTION_SUBJECT = Option.builder("sub")
+            .hasArg()
+            .longOpt("subject")
+            .desc("Provide the subject (authenticated user id) to be used in JWTs, etc")
+            .build();
+
+    /**
      * Command line option that indicates a strict-mode matching.
      */
     public static final Option OPTION_STRICT_MATCH = Option.builder("sm")
@@ -54,13 +63,21 @@ public class CommandLineOptions {
             .build();
 
     /**
-     * Command line option that indicates banner should be skipped.
+     * Command line option that indicates key generation.
      */
     public static final Option OPTION_GENERATE_KEY = Option.builder("gk")
             .desc("Generate signing/encryption keys for the specified CAS property group (i.e. cas.webflow). The group must have a child category of 'crypto'.")
             .longOpt("generate-key")
             .build();
 
+    /**
+     * Command line option that indicates jwt generation.
+     */
+    public static final Option OPTION_GENERATE_JWT = Option.builder("gw")
+            .desc("Generate JWTs based on given size and algorithm")
+            .longOpt("generate-jwt")
+            .build();
+    
     /**
      * Command line option that indicates banner should be skipped.
      */
