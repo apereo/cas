@@ -104,7 +104,8 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 sets.addAll(EncryptionMethod.Family.AES_GCM);
 
                 final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod);
-                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(getSecretBytes(encryptionSecret, secretsAreBase64Encoded), encAlg, encMethod));
+                final byte[] encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
+                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
             } else {
                 LOGGER.warn("JWT authentication is configured to share a single key for both signing/encryption");
             }
