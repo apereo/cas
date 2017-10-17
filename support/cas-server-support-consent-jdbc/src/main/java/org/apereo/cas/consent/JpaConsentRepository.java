@@ -23,7 +23,7 @@ import java.util.Collection;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerConsent")
 public class JpaConsentRepository implements ConsentRepository {
-    private static final long serialVersionUID = 6599908862493270206L;
+    private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
 
@@ -90,6 +90,21 @@ public class JpaConsentRepository implements ConsentRepository {
             if (!isNew) {
                 this.entityManager.persist(mergedDecision);
             }
+            return true;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+        try {
+            final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY
+                    .concat("where r.id = :id"), ConsentDecision.class)
+                    .setParameter("id", decisionId)
+                    .getSingleResult();
+            this.entityManager.remove(decision);
             return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

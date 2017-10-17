@@ -52,6 +52,14 @@ A sample definition follows:
 }
 ```
 
+## Consent Review
+
+A page for users to review their consent decisions will be exposed at the `/consentReview` endpoint. A link is included automatically on the login page.
+
+Users may view and delete the consent decisions they have made in the past.
+
+The CAS service for the consent endpoint will be auto-registered during startup. Regular service access strategies may be used to control access to the endpoint.
+
 ## Storage
 
 User consent decisions may be stored and remembered using one of the following options.
@@ -122,6 +130,14 @@ def Boolean write(final Object... args) {
     ...
     return true;
 }
+
+def Boolean delete(final Object... args) {
+    def decisionId = args[0]
+    def principal = args[1]
+    def logger = args[2]
+    ...
+    return true;
+}
 ```
 
 
@@ -176,6 +192,7 @@ Endpoints must be designed to accept/process `application/json`.
 | Locate consent decision for user   | `GET`     | `principal` as headers    | `200`. The consent decisions object in the body.
 | Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
 | Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
+| Delete consent decision   | 'DELETE'  | `/<decisionId>` appended to URL      | `200`.
 
 The consent decision object in transit will and must match the JSON structure above.
 

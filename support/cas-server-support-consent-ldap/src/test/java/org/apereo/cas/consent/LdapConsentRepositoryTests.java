@@ -52,7 +52,9 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     private static final String USER2_CN = "consentTest2";
     private static final String USER2_DN = "cn=consentTest2,ou=people,dc=example,dc=org";
     private static final Service SVC = RegisteredServiceTestUtils.getService();
+    private static final Service SVC2 = RegisteredServiceTestUtils.getService2();
     private static final AbstractRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
+    private static final AbstractRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
     private static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");
     private static final String DEF_FILTER = "(objectClass=*)";
     
@@ -88,6 +90,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     @Test
     public void verifyConsentDecisionIsNotMistaken() throws Exception {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
         
@@ -102,6 +105,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
         
@@ -113,9 +117,11 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     @Test
     public void verifyAllConsentDecisionsAreFoundForSingleUser() throws Exception {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
         final ConsentDecision decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
+        decision2.setId(2);
         final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
         assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER2_DN, mod2).getResultCode());
         
@@ -128,9 +134,11 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     @Test
     public void verifyAllConsentDecisionsAreFoundForAllUsers() throws Exception {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
         final ConsentDecision decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
+        decision2.setId(2);
         final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
         assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER2_DN, mod2).getResultCode());
         
@@ -155,6 +163,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     @Test
     public void verifyConsentDecisionIsUpdated() throws Exception {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
                 
@@ -169,5 +178,27 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         assertNotNull(d);
         assertEquals(d.getId(), decision.getId());
         assertEquals(d.getCreatedDate(), t);
+    }
+
+    @Test
+    public void verifyConsentDecisionIsDeleted() throws Exception {
+        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        decision.setId(1);
+        final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
+        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
+        final ConsentDecision decision2 = BUILDER.build(SVC2, REG_SVC2, USER_CN, ATTR);
+        decision2.setId(2);
+        final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
+        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod2).getResultCode());
+        final ConsentDecision decision3 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
+        decision3.setId(3);
+        final Modification mod3 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision3));
+        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER2_DN, mod3).getResultCode());
+
+        assertTrue(this.repository.deleteConsentDecision(decision2.getId(), USER_CN));
+
+        final SearchResult r = DIRECTORY.getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        assertTrue(r.getEntryCount() > 0);
+        assertEquals(r.getSearchEntry(USER_DN).getAttributeValues(ATTR_NAME).length, 1);
     }
 }
