@@ -8,21 +8,21 @@ description = "Apereo CAS Shell Support via Spring Shell"
 
 dependencies {
     /**
-     * Marking all dependencies as API so they can be included in the final
+     * Marking all dependencies as compile so they can be included in the final
      * executable jar by the build packaging process.
      */
-    api project(":api:cas-server-core-api-services")
-    api project(":core:cas-server-core-configuration")
-    api project(":core:cas-server-core-util")
-    api project(":core:cas-server-core-services-api")
-    api project(":support:cas-server-support-oauth-services")
-    api project(":support:cas-server-support-oidc-services")
-    api project(":support:cas-server-support-saml-idp-core")
-    api project(":support:cas-server-support-ws-idp-api")
-    api project(":core:cas-server-core-configuration-metadata-repository")
-    api libraries.springbootconfigmetadata
-    api libraries.metrics
-    api libraries.pac4j
+    compile project(":api:cas-server-core-api-services")
+    compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-services-api")
+    compile project(":support:cas-server-support-oauth-services")
+    compile project(":support:cas-server-support-oidc-services")
+    compile project(":support:cas-server-support-saml-idp-core")
+    compile project(":support:cas-server-support-ws-idp-api")
+    compile project(":core:cas-server-core-configuration-metadata-repository")
+    compile libraries.springbootconfigmetadata
+    compile libraries.metrics
+    compile libraries.pac4j
 }
 
 springBoot {
