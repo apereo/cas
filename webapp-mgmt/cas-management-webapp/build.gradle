@@ -44,7 +44,6 @@ bootRun {
 
 springBoot {
     mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
-    executable = true
 }
 
 bootRepackage {
