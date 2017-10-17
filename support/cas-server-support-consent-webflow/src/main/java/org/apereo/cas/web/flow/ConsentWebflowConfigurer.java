@@ -2,12 +2,17 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link ConsentWebflowConfigurer}.
@@ -32,10 +37,21 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
+            createInitialConsentEnabledAction(flow);
             createConsentRequiredCheckAction(flow);
             createConsentTransitions(flow);
             createConsentView(flow);
         }
+    }
+
+    private void createInitialConsentEnabledAction(final Flow flow) {
+        flow.getStartActionList().add(new Action() {
+            @Override
+            public Event execute(final RequestContext requestContext) throws Exception {
+                WebUtils.putAttributeConsentEnabled(requestContext, Boolean.TRUE);
+                return new EventFactorySupport().success(this);
+            }
+        });
     }
 
     private void createConsentView(final Flow flow) {
