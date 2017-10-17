@@ -201,7 +201,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     public abstract boolean deleteSingleTicket(String ticketId);
 
-    public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
+    public void setCipherExecutor(final CipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 

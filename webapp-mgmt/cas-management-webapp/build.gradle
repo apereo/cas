@@ -9,21 +9,19 @@ javadoc {
 }
 
 node {
-    version = "7.10.0"
+    version = "${nodeVersion}"
     nodeModulesDir = file("./")
     download = true
 }
 
 npm_install.dependsOn(npm_cache_clean)
 
-task buildClientDev(type: NpmTask, dependsOn: "npm_install",
-        group: "build",
+task buildClientDev(type: NpmTask, dependsOn: "npm_install", group: "build",
         description: "Compile client side folder for development") {
     args = ['run', 'buildDev']
 }
 
-task buildClient(type: NpmTask, dependsOn: "npm_install",
-        group: "build",
+task buildClient(type: NpmTask, dependsOn: "npm_install", group: "build",
         description: "Compile client side folder for production") {
     args = ['run', 'build']
 }
@@ -51,7 +49,7 @@ springBoot {
 
 bootRepackage {
     mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishingRelease
 
     if (rootProject.publishReleases) {
         dependsOn(buildClient)
@@ -71,7 +69,7 @@ war {
                 "Specification-Version": rootProject.currentRevision,
                 "Implementation-Version": project.version)
     }
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
 
     if (rootProject.publishReleases) {
         dependsOn(buildClient)

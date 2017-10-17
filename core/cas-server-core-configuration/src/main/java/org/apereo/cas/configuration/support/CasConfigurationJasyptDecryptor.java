@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.slf4j.Logger;
@@ -19,15 +20,33 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class CasConfigurationJasyptDecryptor {
+    /**
+     * Prefix inserted at the beginning of a value to indicate it's encrypted.
+     */
+    public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationJasyptDecryptor.class);
+    
+    /**
+     * The Jasypt encryption parameters.
+     */
+    public enum JasyptEncryptionParameters {
 
-    private static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
-
-    private enum JasyptEncryptionParameters {
-
+        /**
+         * Jasypt algorithm name to use.
+         */
         ALGORITHM("cas.standalone.config.security.alg", "PBEWithMD5AndTripleDES"),
+        /**
+         * Jasypt provider name to use.
+         */
         PROVIDER("cas.standalone.config.security.provider", null),
+        /**
+         * Jasypt number of iterations to use.
+         */
         ITERATIONS("cas.standalone.config.security.iteration", null),
+        /**
+         * Jasypt password to use.
+         */
         PASSWORD("cas.standalone.config.security.psw", null);
 
         private final String name;
@@ -47,35 +66,35 @@ public class CasConfigurationJasyptDecryptor {
         }
     }
 
-    private final StandardPBEStringEncryptor decryptor;
+    private final StandardPBEStringEncryptor jasyptInstance;
 
     public CasConfigurationJasyptDecryptor(final Environment environment) {
-        this.decryptor = new StandardPBEStringEncryptor();
+        this.jasyptInstance = new StandardPBEStringEncryptor();
 
         final String alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
         if (StringUtils.isNotBlank(alg)) {
-            LOGGER.debug("Configured decryptor algorithm [{}]", alg);
-            decryptor.setAlgorithm(alg);
+            LOGGER.debug("Configured jasyptInstance algorithm [{}]", alg);
+            jasyptInstance.setAlgorithm(alg);
         }
 
         final String psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
         if (StringUtils.isNotBlank(psw)) {
-            LOGGER.debug("Configured decryptor password");
-            decryptor.setPassword(psw);
+            LOGGER.debug("Configured jasyptInstance password");
+            jasyptInstance.setPassword(psw);
         }
 
         final String pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
         if (StringUtils.isNotBlank(pName)) {
-            LOGGER.debug("Configured decryptor provider");
+            LOGGER.debug("Configured jasyptInstance provider");
             if (StringUtils.equals(pName, BouncyCastleProvider.PROVIDER_NAME)) {
                 Security.addProvider(new BouncyCastleProvider());
             }
-            this.decryptor.setProviderName(pName);
+            this.jasyptInstance.setProviderName(pName);
         }
         final String iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         if (StringUtils.isNotBlank(iter) && NumberUtils.isCreatable(iter)) {
-            LOGGER.debug("Configured decryptor iterations");
-            decryptor.setKeyObtentionIterations(Integer.parseInt(iter));
+            LOGGER.debug("Configured jasyptInstance iterations");
+            jasyptInstance.setKeyObtentionIterations(Integer.parseInt(iter));
         }
     }
 
@@ -84,32 +103,95 @@ public class CasConfigurationJasyptDecryptor {
     }
 
     /**
+     * Encrypt value string.
+     *
+     * @param value the value
+     * @return the string
+     */
+    public String encryptValue(final String value) {
+        try {
+            initializeJasyptInstanceIfNecessary();
+            final String result = this.jasyptInstance.encrypt(value);
+            return result;
+        } catch (final Exception e) {
+            LOGGER.error("Could not encrypt value [{}]", e);
+        }
+        return null;
+    }
+
+
+    /**
+     * Decrypt value string.
+     *
+     * @param value the value
+     * @return the string
+     */
+    public String decryptValue(final String value) {
+        try {
+            initializeJasyptInstanceIfNecessary();
+            final String result = this.jasyptInstance.decrypt(value);
+            return result;
+        } catch (final Exception e) {
+            LOGGER.error("Could not decrypt value [{}]", e);
+        }
+        return null;
+    }
+
+    /**
+     * Decrypt key/value string.
+     *
+     * @param pair the value
+     * @return the string
+     */
+    public Pair<String, Object> decryptPair(final Pair<String, Object> pair) {
+        try {
+            final String stringValue = getStringPropertyValue(pair.getValue());
+            if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
+                initializeJasyptInstanceIfNecessary();
+                
+                try {
+                    final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
+                    LOGGER.debug("Decrypting property [{}]...", pair.getKey());
+                    final String value = decryptValue(encValue);
+
+                    if (StringUtils.isNotBlank(value)) {
+                        LOGGER.debug("Decrypted property [{}] successfully.", pair.getKey());
+                        return Pair.of(pair.getKey(), value);
+                    }
+                    LOGGER.warn("Decrypted property [{}] has no values.", pair.getKey());
+                    return null;
+                } catch (final Exception e) {
+                    LOGGER.error("Could not decrypt property [{}].", pair.getKey(), e);
+                }
+            }
+            return pair;
+        } catch (final Exception e) {
+            LOGGER.error("Could not decrypt value [{}]", e);
+        }
+        return null;
+    }
+
+    private void initializeJasyptInstanceIfNecessary() {
+        if (!this.jasyptInstance.isInitialized()) {
+            LOGGER.debug("Initializing Jasypt...");
+            this.jasyptInstance.initialize();
+        }
+    }
+
+    /**
      * Decrypt map.
      *
      * @param settings the settings
      * @return the map
      */
-    public Map<Object, Object> decrypt(final Map<Object, Object> settings) {
-        final Map<Object, Object> decrypted = new HashMap<>();
-        settings.forEach((key, value1) -> {
-            final String stringValue = getStringPropertyValue(value1);
-            if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
-                try {
-                    if (!this.decryptor.isInitialized()) {
-                        LOGGER.debug("Initializing decryptor...");
-                        this.decryptor.initialize();
-                    }
-                    final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
-                    LOGGER.debug("Decrypting property [{}]...", key);
-                    final String value = this.decryptor.decrypt(encValue);
-
-                    LOGGER.debug("Decrypted property [{}] successfully.", key);
-                    decrypted.put(key, value);
-                } catch (final Exception e) {
-                    LOGGER.error("Could not decrypt property [{}]. Setting will be ignored by CAS", key, e);
-                }
+    public Map<String, Object> decrypt(final Map<String, Object> settings) {
+        final Map<String, Object> decrypted = new HashMap<>();
+        settings.forEach((key, value) -> {
+            final Pair<String, Object> pair = decryptPair(Pair.of(key, value));
+            if (pair != null) {
+                decrypted.put(pair.getKey(), pair.getValue());
             } else {
-                decrypted.put(key, value1);
+                LOGGER.error("CAS will ignore [{}] as it could not process it", key);
             }
         });
         return decrypted;

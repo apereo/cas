@@ -121,7 +121,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         }
     }
 
-    private Map<Object, Object> decryptProperties(final Map<Object, Object> properties) {
+    private Map<String, Object> decryptProperties(final Map properties) {
         return this.configurationJasyptDecryptor.decrypt(properties);
     }
 
@@ -134,7 +134,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
-                final Map<Object, Object> pp = loadYamlProperties(new FileSystemResource(f));
+                final Map<String, Object> pp = loadYamlProperties(new FileSystemResource(f));
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             } else {
@@ -171,7 +171,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         return profiles;
     }
 
-    private static Map<Object, Object> loadYamlProperties(final Resource... resource) {
+    private static Map loadYamlProperties(final Resource... resource) {
         final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(resource);
