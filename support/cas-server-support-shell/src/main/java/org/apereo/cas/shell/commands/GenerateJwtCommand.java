@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 @Service
 public class GenerateJwtCommand implements CommandMarker {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateJwtCommand.class);
+    private static final int SEP_LENGTH = 8;
+    
     private static final int DEFAULT_SIGNING_SECRET_SIZE = 256;
     private static final int DEFAULT_ENCRYPTION_SECRET_SIZE = 48;
     private static final String DEFAULT_SIGNING_ALGORITHM = "HS256";
@@ -98,8 +100,15 @@ public class GenerateJwtCommand implements CommandMarker {
 
         final CommonProfile profile = new CommonProfile();
         profile.setId(subject);
+
+        LOGGER.debug(StringUtils.repeat('=', SEP_LENGTH));
+        LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
+                + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n", 
+                subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
+        LOGGER.debug(StringUtils.repeat('=', SEP_LENGTH));
+        
         final String token = g.generate(profile);
-        LOGGER.info("JWT:\n{}", token);
+        LOGGER.info("==== JWT ====\n{}", token);
     }
 
     private void configureJwtEncryption(final int encryptionSecretSize, final String encryptionAlgorithm,
@@ -110,7 +119,7 @@ public class GenerateJwtCommand implements CommandMarker {
         }
 
         final String encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
-        LOGGER.info("Encryption Secret:\n{}", encryptionSecret);
+        LOGGER.info("==== Encryption Secret ====\n{}\n", encryptionSecret);
 
         final String acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
                 .filter(f -> f.getType().equals(JWEAlgorithm.class))
@@ -158,7 +167,7 @@ public class GenerateJwtCommand implements CommandMarker {
         }
 
         final String signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
-        LOGGER.info("Signing Secret:\n{}", signingSecret);
+        LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
         final String acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
                 .filter(f -> f.getType().equals(JWSAlgorithm.class))
