@@ -9,9 +9,12 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,8 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConsentDecisionBuilder.class);
+    
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final CipherExecutor<Serializable, String> consentCipherExecutor;
@@ -77,6 +82,10 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     public Map<String, Object> getConsentableAttributesFrom(final ConsentDecision decision) {
         try {
             final String result = this.consentCipherExecutor.decode(decision.getAttributes());
+            if (StringUtils.isBlank(result)) {
+                LOGGER.warn("Unable to decipher attributes from consent decision [{}]", decision.getId());
+                return new HashMap<>();
+            }
             final String names = EncodingUtils.decodeBase64ToString(result);
             final Map<String, Object> attributes = MAPPER.readValue(names, Map.class);
             return attributes;
