@@ -19,7 +19,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 public class JsonConsentRepository extends BaseConsentRepository {
-    private static final long serialVersionUID = -402728451864783825L;
+    private static final long serialVersionUID = -402728417464783825L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private final Resource jsonResource;
@@ -35,7 +35,14 @@ public class JsonConsentRepository extends BaseConsentRepository {
         writeAccountToJsonResource();
         return result;
     }
-
+    
+    @Override
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+        final boolean result = super.deleteConsentDecision(decisionId, principal);
+        writeAccountToJsonResource();
+        return result;
+    }
+    
     private Set<ConsentDecision> readDecisionsFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {
             try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {

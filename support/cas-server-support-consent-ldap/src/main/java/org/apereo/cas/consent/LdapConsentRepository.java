@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public class LdapConsentRepository implements ConsentRepository {
-    private static final long serialVersionUID = 8561721414482490L;
+    private static final long serialVersionUID = 8561763114482490L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapConsentRepository.class);
@@ -112,13 +112,35 @@ public class LdapConsentRepository implements ConsentRepository {
         final LdapEntry entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
             final Set<String> newConsent = mergeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), decision);
-            final Map<String, Set<String>> attrMap = new HashMap<>();
-            attrMap.put(this.ldap.getConsentAttributeName(), newConsent);
-
-            LOGGER.debug("Storing consent decision [{}] at LDAP attribute [{}] for [{}]", newConsent, attrMap.keySet(), entry.getDn());
-            return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, CollectionUtils.wrap(attrMap));
+            return executeModifyOperation(newConsent, entry);
         }
         return false;
+    }
+
+    @Override
+    public boolean deleteConsentDecision(final long id, final String principal) {
+        LOGGER.debug("Deleting consent decision [{}] for principal [{}]", id, principal);
+        final LdapEntry entry = readConsentEntry(principal);
+        if (entry != null) {
+            final Set<String> newConsent = removeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), id);
+            return executeModifyOperation(newConsent, entry);
+        }
+        return false;
+    }
+
+    /**
+     * Modifies the consent decisions attribute on the entry.
+     *
+     * @param newConsent new set of consent decisions
+     * @param entry entry of consent decisions
+     * @return true / false
+     */
+    private boolean executeModifyOperation(final Set<String> newConsent, final LdapEntry entry) {
+        final Map<String, Set<String>> attrMap = new HashMap<>();
+        attrMap.put(this.ldap.getConsentAttributeName(), newConsent);
+
+        LOGGER.debug("Storing consent decisions [{}] at LDAP attribute [{}] for [{}]", newConsent, attrMap.keySet(), entry.getDn());
+        return LdapUtils.executeModifyOperation(entry.getDn(), this.connectionFactory, CollectionUtils.wrap(attrMap));
     }
 
     /**
@@ -130,25 +152,42 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return new decision set
      */
     private Set<String> mergeDecision(final LdapAttribute ldapConsent, final ConsentDecision decision) {
-        final Set<String> result = new HashSet<>();
-        if (ldapConsent != null && ldapConsent.size() != 0) {
-            ldapConsent.getStringValues()
-                    .stream()
-                    .map(LdapConsentRepository::mapFromJson)
-                    .filter(d -> d.getId() != decision.getId())
-                    .map(LdapConsentRepository::mapToJson)
-                    .forEach(result::add);
-            LOGGER.debug("Merged consent decision [{}] with LDAP attribute [{}]", decision, ldapConsent.getName());
-        }
         if (decision.getId() < 0) {
             decision.setId(System.currentTimeMillis());
         }
+        if (ldapConsent != null) {
+            final Set<String> result = removeDecision(ldapConsent, decision.getId());
+            result.add(mapToJson(decision));
+            LOGGER.debug("Merged consent decision [{}] with LDAP attribute [{}]", decision, ldapConsent.getName());
+            return CollectionUtils.wrap(result);
+        }
+        final Set<String> result = new HashSet<>();
         result.add(mapToJson(decision));
-        return CollectionUtils.wrap(result);
+        return result;
     }
 
     /**
-     * Fetches a User Entry from LDAP along with its consent attributes.
+     * Removes decision from ldap attribute set.
+     *
+     * @param ldapConsent the ldap attribute holding consent decisions
+     * @param decisionId the decision Id
+     * @return the new decision set
+     */
+    private Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
+        final Set<String> result = new HashSet<>();
+        if (ldapConsent.size() != 0) {
+            ldapConsent.getStringValues()
+                .stream()
+                .map(LdapConsentRepository::mapFromJson)
+                .filter(d -> d.getId() != decisionId)
+                .map(LdapConsentRepository::mapToJson)
+                .forEach(result::add);
+        }
+        return result;
+    }
+
+    /**
+     * Fetches a user entry along with its consent attributes.
      *
      * @param principal user name
      * @return the user's LDAP entry

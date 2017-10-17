@@ -4,7 +4,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link DefaultConsentEngine}.
@@ -60,7 +58,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
-        final ChronoUnit unit = DateTimeUtils.toChronoUnit(decision.getReminderTimeUnit());
+        final ChronoUnit unit = decision.getReminderTimeUnit();
         final LocalDateTime dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
         final LocalDateTime now = LocalDateTime.now();
 
@@ -82,7 +80,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final RegisteredService registeredService,
                                                 final Authentication authentication,
                                                 final long reminder,
-                                                final TimeUnit reminderTimeUnit,
+                                                final ChronoUnit reminderTimeUnit,
                                                 final ConsentOptions options) {
         final Map<String, Object> attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         final String principalId = authentication.getPrincipal().getId();

@@ -49,4 +49,13 @@ public interface ConsentRepository extends Serializable {
      * @return true /false
      */
     boolean storeConsentDecision(ConsentDecision decision);
+
+    /**
+     * Delete consent decision.
+     *
+     * @param id the decicion's id
+     * @param principal the principal
+     * @return true / false
+     */
+    boolean deleteConsentDecision(long id, String principal);
 }
