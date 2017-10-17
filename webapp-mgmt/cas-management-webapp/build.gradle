@@ -3,6 +3,7 @@ apply plugin: "org.springframework.boot"
 apply plugin: "com.moowork.node"
 
 description = "Apereo CAS Management Web Application"
+def MAIN_CLASS = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
 
 javadoc {
     enabled false
@@ -43,11 +44,11 @@ bootRun {
 }
 
 springBoot {
-    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+    mainClass = MAIN_CLASS
 }
 
 bootRepackage {
-    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+    mainClass = MAIN_CLASS
     enabled = !rootProject.publishingRelease
 
     if (rootProject.publishReleases) {
