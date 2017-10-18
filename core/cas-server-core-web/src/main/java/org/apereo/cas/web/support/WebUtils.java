@@ -752,6 +752,16 @@ public final class WebUtils {
     }
 
     /**
+     * Put attribute consent enabled.
+     *
+     * @param context the context
+     * @param enabled the enabled
+     */
+    public static void putAttributeConsentEnabled(final RequestContext context, final Boolean enabled) {
+        context.getFlowScope().put("attributeConsentEnabled", enabled);
+    }
+    
+    /**
      * Is remember me authentication enabled ?.
      *
      * @param context the context

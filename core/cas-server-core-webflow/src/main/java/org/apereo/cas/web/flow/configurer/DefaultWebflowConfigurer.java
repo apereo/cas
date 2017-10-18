@@ -76,7 +76,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createRememberMeAuthnWebflowConfig(final Flow flow) {
         if (casProperties.getTicket().getTgt().getRememberMe().isEnabled()) {
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, RememberMeUsernamePasswordCredential.class);
-            final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            final ViewState state = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             final BinderConfiguration cfg = getViewStateBinderConfiguration(state);
             cfg.addBinding(new BinderConfiguration.Binding("rememberMe", null, false));
         } else {
@@ -144,9 +144,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createRedirectToServiceActionState(final Flow flow) {
-        final ActionState redirectToView = createActionState(flow,
-                CasWebflowConstants.STATE_ID_REDIRECT,
-                createEvaluateAction("redirectToServiceAction"));
+        final ActionState redirectToView = createActionState(flow, CasWebflowConstants.STATE_ID_REDIRECT, createEvaluateAction("redirectToServiceAction"));
         createTransitionForState(redirectToView, Response.ResponseType.POST.name().toLowerCase(), CasWebflowConstants.STATE_ID_POST_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.HEADER.name().toLowerCase(), CasWebflowConstants.STATE_ID_HEADER_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.REDIRECT.name().toLowerCase(), CasWebflowConstants.STATE_ID_REDIR_VIEW);

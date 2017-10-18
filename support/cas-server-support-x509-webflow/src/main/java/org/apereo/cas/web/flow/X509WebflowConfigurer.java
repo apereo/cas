@@ -62,7 +62,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
             actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
-            final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+            final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, EVENT_ID_START_X509, true);
         }
     }

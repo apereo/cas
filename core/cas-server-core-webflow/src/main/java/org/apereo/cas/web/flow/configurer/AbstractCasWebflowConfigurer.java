@@ -29,6 +29,7 @@ import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
+import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
@@ -52,6 +53,8 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
 import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.expression.spel.ActionPropertyAccessor;
 import org.springframework.webflow.expression.spel.BeanFactoryPropertyAccessor;
@@ -66,6 +69,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -105,7 +109,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected final FlowBuilderServices flowBuilderServices;
 
-    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                         final ApplicationContext applicationContext,
                                         final CasConfigurationProperties casProperties) {
@@ -144,7 +148,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final FlowDefinitionRegistry registry = builder.build();
         return (Flow) registry.getFlowDefinition(id);
     }
-
+    
     @Override
     public Flow getLoginFlow() {
         if (this.loginFlowDefinitionRegistry == null) {
@@ -174,11 +178,34 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return TransitionableState.class.cast(flow.getStartState());
     }
 
+    /**
+     * Create action state action state.
+     *
+     * @param flow the flow
+     * @param name the name
+     * @return the action state
+     */
+    public ActionState createActionState(final Flow flow, final String name) {
+        return createActionState(flow, name, new Action[]{});
+    }
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow   the flow
+     * @param name   the name
+     * @param action the action
+     * @return the action state
+     */
+    public ActionState createActionState(final Flow flow, final String name, final Action action) {
+        return createActionState(flow, name, new Action[]{action});
+    }
+
     @Override
     public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
         if (containsFlowState(flow, name)) {
             LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), name);
-            return (ActionState) flow.getTransitionableState(name);
+            return getTransitionableState(flow, name, ActionState.class);
         }
         final ActionState actionState = new ActionState(flow, name);
         LOGGER.debug("Created action state [{}]", actionState.getId());
@@ -187,13 +214,24 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return actionState;
     }
 
+    /**
+     * Create action state.
+     *
+     * @param flow    the flow
+     * @param name    the name
+     * @param actions the actions
+     * @return the action state
+     */
+    public ActionState createActionState(final Flow flow, final String name, final Function<? extends RequestContext, ? extends Event>... actions) {
+        return createActionState(flow, name, actions);
+    }
 
     @Override
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                              final String thenStateId, final String elseStateId) {
         if (containsFlowState(flow, id)) {
             LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-            return (DecisionState) flow.getTransitionableState(id);
+            return getTransitionableState(flow, id, DecisionState.class);
         }
 
         final DecisionState decisionState = new DecisionState(flow, id);
@@ -207,6 +245,14 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
         return decisionState;
 
+    }
+
+    public FlowDefinitionRegistry getLoginFlowDefinitionRegistry() {
+        return loginFlowDefinitionRegistry;
+    }
+
+    public FlowBuilderServices getFlowBuilderServices() {
+        return flowBuilderServices;
     }
 
     @Override
@@ -240,7 +286,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param state       the state to include the default transition
      * @param targetState the id of the destination state to which the flow should transfer
      */
-    protected void createStateDefaultTransition(final TransitionableState state, final String targetState) {
+    public void createStateDefaultTransition(final TransitionableState state, final String targetState) {
         if (state == null) {
             LOGGER.debug("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
             return;
@@ -250,6 +296,15 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
+     * Create state default transition.
+     *
+     * @param state       the state
+     * @param targetState the target state
+     */
+    public void createStateDefaultTransition(final TransitionableState state, final StateDefinition targetState) {
+        createStateDefaultTransition(state, targetState.getId());
+    }
+    /**
      * Create transition for state transition.
      *
      * @param state           the state
@@ -257,9 +312,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param targetState     the target state
      * @return the transition
      */
-    protected Transition createTransitionForState(final TransitionableState state,
-                                                  final String criteriaOutcome,
-                                                  final String targetState) {
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState) {
         return createTransitionForState(state, criteriaOutcome, targetState, false);
     }
 
@@ -272,10 +327,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param removeExisting  the remove existing
      * @return the transition
      */
-    protected Transition createTransitionForState(final TransitionableState state,
-                                                  final String criteriaOutcome,
-                                                  final String targetState,
-                                                  final boolean removeExisting) {
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState,
+                                               final boolean removeExisting) {
         try {
             if (removeExisting) {
                 final Transition success = (Transition) state.getTransition(criteriaOutcome);
@@ -332,7 +387,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param expectedType the expected type
      * @return the expression
      */
-    protected Expression createExpression(final String expression, final Class expectedType) {
+    public Expression createExpression(final String expression, final Class expectedType) {
         final ParserContext parserContext = new FluentParserContext()
                 .expectResult(expectedType);
         return getSpringExpressionParser().parseExpression(expression, parserContext);
@@ -343,7 +398,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      *
      * @return the spring expression parser
      */
-    protected SpringELExpressionParser getSpringExpressionParser() {
+    public SpringELExpressionParser getSpringExpressionParser() {
         final SpelParserConfiguration configuration = new SpelParserConfiguration();
         final SpelExpressionParser spelExpressionParser = new SpelExpressionParser(configuration);
         final SpringELExpressionParser parser = new SpringELExpressionParser(spelExpressionParser,
@@ -424,7 +479,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         try {
             if (containsFlowState(flow, id)) {
                 LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-                return (ViewState) flow.getTransitionableState(id);
+                return getTransitionableState(flow, id, ViewState.class);
             }
 
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
@@ -458,7 +513,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public SubflowState createSubflowState(final Flow flow, final String id, final String subflow, final Action entryAction) {
         if (containsFlowState(flow, id)) {
             LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-            return (SubflowState) flow.getTransitionableState(id);
+            return getTransitionableState(flow, id, SubflowState.class);
         }
 
         final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.loginFlowDefinitionRegistry));
@@ -480,7 +535,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param mappings the mappings
      * @return the mapper
      */
-    protected Mapper createMapperToSubflowState(final List<DefaultMapping> mappings) {
+    public Mapper createMapperToSubflowState(final List<DefaultMapping> mappings) {
         final DefaultMapper inputMapper = new DefaultMapper();
         mappings.forEach(inputMapper::addMapping);
         return inputMapper;
@@ -495,7 +550,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param type     the type
      * @return the default mapping
      */
-    protected DefaultMapping createMappingToSubflowState(final String name, final String value, final boolean required, final Class type) {
+    public DefaultMapping createMappingToSubflowState(final String name, final String value, final boolean required, final Class type) {
         final ExpressionParser parser = this.flowBuilderServices.getExpressionParser();
 
         final Expression source = parser.parseExpression(value, new FluentParserContext());
@@ -517,7 +572,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param outputMapper the output mapper
      * @return the subflow attribute mapper
      */
-    protected SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, final Mapper outputMapper) {
+    public SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, final Mapper outputMapper) {
         return new GenericSubflowAttributeMapper(inputMapper, outputMapper);
     }
 
@@ -532,7 +587,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param stateId the state id
      * @return true if flow contains the state.
      */
-    protected boolean containsFlowState(final Flow flow, final String stateId) {
+    public boolean containsFlowState(final Flow flow, final String stateId) {
         if (flow == null) {
             LOGGER.error("Flow is not configured correctly and cannot be null.");
             return false;
@@ -547,7 +602,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param transition the transition
      * @return the boolean
      */
-    protected boolean containsTransition(final TransitionableState state, final String transition) {
+    public boolean containsTransition(final TransitionableState state, final String transition) {
         if (state == null) {
             LOGGER.error("State is not configured correctly and cannot be null.");
             return false;
@@ -563,7 +618,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param type the type
      * @return the flow variable
      */
-    protected FlowVariable createFlowVariable(final Flow flow, final String id, final Class type) {
+    public FlowVariable createFlowVariable(final Flow flow, final String id, final Class type) {
         final Optional<FlowVariable> opt = Arrays.stream(flow.getVariables()).filter(v -> v.getName().equalsIgnoreCase(id)).findFirst();
         if (opt.isPresent()) {
             return opt.get();
@@ -580,7 +635,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param properties the properties
      * @return the binder configuration
      */
-    protected BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
+    public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
         final BinderConfiguration binder = new BinderConfiguration();
         properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
         return binder;
@@ -593,7 +648,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param modelName the model name
      * @param modelType the model type
      */
-    protected void createStateModelBinding(final TransitionableState state, final String modelName, final Class modelType) {
+    public void createStateModelBinding(final TransitionableState state, final String modelName, final Class modelType) {
         state.getAttributes().put("model", createExpression(modelName, modelType));
     }
 
@@ -603,7 +658,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param state the state
      * @return the state binder configuration
      */
-    protected BinderConfiguration getViewStateBinderConfiguration(final ViewState state) {
+    public BinderConfiguration getViewStateBinderConfiguration(final ViewState state) {
         final Field field = ReflectionUtils.findField(state.getViewFactory().getClass(), "binderConfiguration");
         ReflectionUtils.makeAccessible(field);
         return (BinderConfiguration) ReflectionUtils.getField(field, state.getViewFactory());
@@ -615,7 +670,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param source the source
      * @param target the target
      */
-    protected void cloneActionState(final ActionState source, final ActionState target) {
+    public void cloneActionState(final ActionState source, final ActionState target) {
         source.getActionList().forEach(a -> target.getActionList().add(a));
         source.getExitActionList().forEach(a -> target.getExitActionList().add(a));
         source.getAttributes().asMap().forEach((k, v) -> target.getAttributes().put(k, v));
@@ -637,7 +692,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param def the def
      * @return the transition execution criteria chain for transition
      */
-    protected List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
+    public List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
 
         if (def.getExecutionCriteria() instanceof TransitionCriteriaChain) {
             final TransitionCriteriaChain chain = (TransitionCriteriaChain) def.getExecutionCriteria();
@@ -660,7 +715,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param act the act
      * @return the expression string from action
      */
-    protected Expression getExpressionStringFromAction(final EvaluateAction act) {
+    public Expression getExpressionStringFromAction(final EvaluateAction act) {
         final Field field = ReflectionUtils.findField(act.getClass(), "expression");
         ReflectionUtils.makeAccessible(field);
         return (Expression) ReflectionUtils.getField(field, act);
@@ -671,7 +726,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      *
      * @param state the state
      */
-    protected void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
+    public void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> createTransitionForState(state, v.getId(), v.getId()));
@@ -685,9 +740,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param evaluateActionId the evaluate action id
      * @return the action
      */
-    protected Action createEvaluateActionForExistingActionState(final Flow flow, final String actionStateId,
-                                                                final String evaluateActionId) {
-        final ActionState action = (ActionState) flow.getState(actionStateId);
+    public Action createEvaluateActionForExistingActionState(final Flow flow, final String actionStateId,
+                                                             final String evaluateActionId) {
+        final ActionState action = getState(flow, actionStateId, ActionState.class);
         final List<Action> actions = StreamSupport.stream(action.getActionList().spliterator(), false)
                 .collect(Collectors.toList());
         final Action evaluateAction = createEvaluateAction(evaluateActionId);
@@ -704,10 +759,58 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param actionStateId        the action state id
      * @param actionStateIdToClone the action state id to clone
      */
-    protected void createClonedActionState(final Flow flow, final String actionStateId,
-                                           final String actionStateIdToClone) {
-        final ActionState generateServiceTicket = (ActionState) flow.getState(actionStateIdToClone);
+    public void createClonedActionState(final Flow flow, final String actionStateId,
+                                        final String actionStateIdToClone) {
+        final ActionState generateServiceTicket = getState(flow, actionStateIdToClone, ActionState.class);
         final ActionState consentTicketAction = createActionState(flow, actionStateId);
         cloneActionState(generateServiceTicket, consentTicketAction);
+    }
+
+    /**
+     * Gets state.
+     *
+     * @param <T>     the type parameter
+     * @param flow    the flow
+     * @param stateId the state id
+     * @param clazz   the clazz
+     * @return the state
+     */
+    public <T> T getState(final Flow flow, final String stateId, final Class<T> clazz) {
+        if (containsFlowState(flow, stateId)) {
+            final StateDefinition state = flow.getState(stateId);
+            return clazz.cast(state);
+        }
+        return null;
+    }
+
+    /**
+     * Gets transitionable state.
+     *
+     * @param <T>     the type parameter
+     * @param flow    the flow
+     * @param stateId the state id
+     * @param clazz   the clazz
+     * @return the transitionable state
+     */
+    public <T extends TransitionableState> T getTransitionableState(final Flow flow, final String stateId, final Class<T> clazz) {
+        if (containsFlowState(flow, stateId)) {
+            final StateDefinition state = flow.getTransitionableState(stateId);
+            return clazz.cast(state);
+        }
+        return null;
+    }
+
+    /**
+     * Gets transitionable state.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the transitionable state
+     */
+    public TransitionableState getTransitionableState(final Flow flow, final String stateId) {
+        if (containsFlowState(flow, stateId)) {
+            return TransitionableState.class.cast(flow.getTransitionableState(stateId));
+        }
+        return null;
     }
 }

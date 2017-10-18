@@ -32,7 +32,7 @@ task compileSass(type: NpmTask) {
     args = ['run', 'gulp', '--silent']
 }
 
-if (!rootProject.publishReleases) {
+if (!rootProject.publishingRelease) {
     processResources.dependsOn npmLint
 }
 
@@ -64,7 +64,7 @@ springBoot  {
 
 bootRepackage {
     mainClass = MAIN_CLASS
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishingRelease
 }
 
 bootRun {
@@ -99,7 +99,7 @@ war {
                 "Implementation-Version": project.version)
     }
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
 }
 
 dependencies {

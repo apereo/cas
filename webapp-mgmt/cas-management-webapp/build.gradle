@@ -3,27 +3,26 @@ apply plugin: "org.springframework.boot"
 apply plugin: "com.moowork.node"
 
 description = "Apereo CAS Management Web Application"
+def MAIN_CLASS = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
 
 javadoc {
     enabled false
 }
 
 node {
-    version = "7.10.0"
+    version = "${nodeVersion}"
     nodeModulesDir = file("./")
     download = true
 }
 
 npm_install.dependsOn(npm_cache_clean)
 
-task buildClientDev(type: NpmTask, dependsOn: "npm_install",
-        group: "build",
+task buildClientDev(type: NpmTask, dependsOn: "npm_install", group: "build",
         description: "Compile client side folder for development") {
     args = ['run', 'buildDev']
 }
 
-task buildClient(type: NpmTask, dependsOn: "npm_install",
-        group: "build",
+task buildClient(type: NpmTask, dependsOn: "npm_install", group: "build",
         description: "Compile client side folder for production") {
     args = ['run', 'build']
 }
@@ -45,13 +44,12 @@ bootRun {
 }
 
 springBoot {
-    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
-    executable = true
+    mainClass = MAIN_CLASS
 }
 
 bootRepackage {
-    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
-    enabled = !rootProject.publishReleases
+    mainClass = MAIN_CLASS
+    enabled = !rootProject.publishingRelease
 
     if (rootProject.publishReleases) {
         dependsOn(buildClient)
@@ -71,7 +69,7 @@ war {
                 "Specification-Version": rootProject.currentRevision,
                 "Implementation-Version": project.version)
     }
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
 
     if (rootProject.publishReleases) {
         dependsOn(buildClient)

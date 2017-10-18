@@ -35,7 +35,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorTrustedDeviceWebflowConfigurer.class);
 
-    private boolean enableDeviceRegistration = true;
+    private final boolean enableDeviceRegistration;
 
     public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -60,7 +60,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         final Flow flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
 
         // Set the verify action
-        final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         final Transition transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         final String targetStateId = transition.getTargetStateId();
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE));
@@ -80,7 +80,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
                 isDeviceRegistrationRequired(),
                 CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
-        final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+        final ActionState submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         final Transition success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         if (enableDeviceRegistration) {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.VIEW_ID_REGISTER_DEVICE));
@@ -124,11 +124,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             throw new IllegalArgumentException(String.format(msg, MFA_VERIFY_TRUST_ACTION_BEAN_ID));
         }
     }
-
-    public boolean isEnableDeviceRegistration() {
-        return enableDeviceRegistration;
-    }
-
+    
     private static String isDeviceRegistrationRequired() {
         return "flashScope.".concat(MFA_TRUSTED_AUTHN_SCOPE_ATTR).concat("== null");
     }

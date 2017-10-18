@@ -48,7 +48,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     private ActionState getRealSubmissionState(final Flow flow) {
-        return (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+        return getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
     }
 
     private EvaluateAction createAcceptableUsagePolicyAction(final String actionId) {
