@@ -51,7 +51,7 @@ public class OAuthProperties {
         return throttler;
     }
 
-    public void setThrottler(String throttler) {
+    public void setThrottler(final String throttler) {
         this.throttler = throttler;
     }
 
