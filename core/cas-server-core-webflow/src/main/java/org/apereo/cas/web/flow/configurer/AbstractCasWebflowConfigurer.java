@@ -688,7 +688,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected Action createEvaluateActionForExistingActionState(final Flow flow, final String actionStateId,
                                                                 final String evaluateActionId) {
-        final ActionState action = (ActionState) flow.getState(actionStateId);
+        final ActionState action = getState(flow, actionStateId, ActionState.class);
         final List<Action> actions = StreamSupport.stream(action.getActionList().spliterator(), false)
                 .collect(Collectors.toList());
         final Action evaluateAction = createEvaluateAction(evaluateActionId);
@@ -707,7 +707,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected void createClonedActionState(final Flow flow, final String actionStateId,
                                            final String actionStateIdToClone) {
-        final ActionState generateServiceTicket = (ActionState) flow.getState(actionStateIdToClone);
+        final ActionState generateServiceTicket = getState(flow, actionStateIdToClone, ActionState.class);
         final ActionState consentTicketAction = createActionState(flow, actionStateId);
         cloneActionState(generateServiceTicket, consentTicketAction);
     }

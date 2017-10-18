@@ -37,7 +37,7 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
         if (flow != null) {
-            final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+            final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             final Transition transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
             final String targetStateId = transition.getTargetStateId();
 
