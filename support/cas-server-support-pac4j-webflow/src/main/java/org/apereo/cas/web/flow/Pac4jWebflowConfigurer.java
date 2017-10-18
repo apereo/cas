@@ -54,7 +54,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createSaml2ClientLogoutAction() {
         final Flow logoutFlow = getLogoutFlow();
-        final DecisionState state = (DecisionState) logoutFlow.getState(CasWebflowConstants.STATE_ID_FINISH_LOGOUT);
+        final DecisionState state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
         state.getEntryActionList().add(saml2ClientLogoutAction);
     }
 

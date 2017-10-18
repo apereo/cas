@@ -31,7 +31,7 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
         if (flow != null) {
-            final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+            final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
             final List<Action> currentActions = new ArrayList<>();
             state.getActionList().forEach(currentActions::add);
             currentActions.forEach(a -> state.getActionList().remove(a));

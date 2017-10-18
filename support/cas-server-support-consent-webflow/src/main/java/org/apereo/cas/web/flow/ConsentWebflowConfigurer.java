@@ -64,7 +64,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createConsentTransitions(final Flow flow) {
-        final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+        final ActionState sendTicket = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         createTransitionForState(sendTicket, CheckConsentRequiredAction.EVENT_ID_CONSENT_REQUIRED, VIEW_ID_CONSENT_VIEW);
     }
 
