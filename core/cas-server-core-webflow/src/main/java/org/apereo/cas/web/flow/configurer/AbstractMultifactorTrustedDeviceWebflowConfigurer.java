@@ -35,7 +35,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorTrustedDeviceWebflowConfigurer.class);
 
-    private boolean enableDeviceRegistration = true;
+    private final boolean enableDeviceRegistration;
 
     public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -124,11 +124,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             throw new IllegalArgumentException(String.format(msg, MFA_VERIFY_TRUST_ACTION_BEAN_ID));
         }
     }
-
-    public boolean isEnableDeviceRegistration() {
-        return enableDeviceRegistration;
-    }
-
+    
     private static String isDeviceRegistrationRequired() {
         return "flashScope.".concat(MFA_TRUSTED_AUTHN_SCOPE_ATTR).concat("== null");
     }

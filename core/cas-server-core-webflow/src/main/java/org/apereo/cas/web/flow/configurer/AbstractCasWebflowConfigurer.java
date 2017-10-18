@@ -29,6 +29,7 @@ import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
+import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
@@ -178,7 +179,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
         if (containsFlowState(flow, name)) {
             LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), name);
-            return (ActionState) flow.getTransitionableState(name);
+            return getTransitionableState(flow, name, ActionState.class);
         }
         final ActionState actionState = new ActionState(flow, name);
         LOGGER.debug("Created action state [{}]", actionState.getId());
@@ -193,7 +194,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                              final String thenStateId, final String elseStateId) {
         if (containsFlowState(flow, id)) {
             LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-            return (DecisionState) flow.getTransitionableState(id);
+            return getTransitionableState(flow, id, DecisionState.class);
         }
 
         final DecisionState decisionState = new DecisionState(flow, id);
@@ -424,7 +425,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         try {
             if (containsFlowState(flow, id)) {
                 LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-                return (ViewState) flow.getTransitionableState(id);
+                return getTransitionableState(flow, id, ViewState.class);
             }
 
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
@@ -458,7 +459,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public SubflowState createSubflowState(final Flow flow, final String id, final String subflow, final Action entryAction) {
         if (containsFlowState(flow, id)) {
             LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-            return (SubflowState) flow.getTransitionableState(id);
+            return getTransitionableState(flow, id, SubflowState.class);
         }
 
         final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.loginFlowDefinitionRegistry));
@@ -709,5 +710,53 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final ActionState generateServiceTicket = (ActionState) flow.getState(actionStateIdToClone);
         final ActionState consentTicketAction = createActionState(flow, actionStateId);
         cloneActionState(generateServiceTicket, consentTicketAction);
+    }
+
+    /**
+     * Gets state.
+     *
+     * @param <T>     the type parameter
+     * @param flow    the flow
+     * @param stateId the state id
+     * @param clazz   the clazz
+     * @return the state
+     */
+    protected <T> T getState(final Flow flow, final String stateId, final Class<T> clazz) {
+        if (containsFlowState(flow, stateId)) {
+            final StateDefinition state = flow.getState(stateId);
+            return clazz.cast(state);
+        }
+        return null;
+    }
+
+    /**
+     * Gets transitionable state.
+     *
+     * @param <T>     the type parameter
+     * @param flow    the flow
+     * @param stateId the state id
+     * @param clazz   the clazz
+     * @return the transitionable state
+     */
+    protected <T extends TransitionableState> T getTransitionableState(final Flow flow, final String stateId, final Class<T> clazz) {
+        if (containsFlowState(flow, stateId)) {
+            final StateDefinition state = flow.getTransitionableState(stateId);
+            return clazz.cast(state);
+        }
+        return null;
+    }
+
+    /**
+     * Gets transitionable state.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the transitionable state
+     */
+    protected TransitionableState getTransitionableState(final Flow flow, final String stateId) {
+        if (containsFlowState(flow, stateId)) {
+            return TransitionableState.class.cast(flow.getTransitionableState(stateId));
+        }
+        return null;
     }
 }
