@@ -77,7 +77,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private void createPasswordResetFlow() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
-            final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            final ViewState state = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD,
                     CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO);
             final ViewState accountInfo = createViewState(flow, CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO,
