@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.LogoutConversionService;
 import org.apereo.cas.web.flow.configurer.DefaultWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
 import org.apereo.spring.webflow.plugin.Transcoder;
@@ -23,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -307,6 +309,16 @@ public class CasWebflowContextConfiguration {
     @Bean
     public CasWebflowConfigurer defaultWebflowConfigurer() {
         final DefaultWebflowConfigurer c = new DefaultWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
+        c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
+        c.initialize();
+        return c;
+    }
+
+    @ConditionalOnMissingBean(name = "groovyWebflowConfigurer")
+    @Bean
+    @DependsOn("defaultWebflowConfigurer")
+    public CasWebflowConfigurer groovyWebflowConfigurer() {
+        final GroovyWebflowConfigurer c = new GroovyWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         c.initialize();
         return c;
