@@ -120,9 +120,9 @@ You may configure CAS to alter and auto-configure the webflow via a Groovy scrip
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow-groovy-auto-configuration).
 
-<div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided here are considered implementations internal to CAS mostly. They may be added or removed with little hesitation which means changed may break your deployment and upgrades at runtime. Remember that scripts are not statically compiled when you build CAS and you only may observe failures when you do in fact turn on the server. Thus, choose this option with good reason and make sure you have thought changes through before stepping into code.</p></div>
+<div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided here, specifically executed as part of the Groovy script are considered implementations internal to CAS mostly. They may be added or removed with little hesitation which means changed may break your deployment and upgrades at runtime. Remember that unlike Java classes, scripts are not statically compiled when you build CAS and you only may observe failures when you do in fact turn on the server. Thus, choose this option with good reason and make sure you have thought changes through before stepping into code.</p></div>
 
-A sample groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom action is inserted into the state to execute as soon as CAS enters that state in the flow. While this is a rather modest example, note that the script has the ability to add/remove actions, states, transitions, add/remove subflows, etc.
+A sample Groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom action is inserted into the state to execute as soon as CAS enters that state in the flow. While this is a rather modest example, note that the script has the ability to add/remove actions, states, transitions, add/remove subflows, etc.
 
 ```groovy
 import java.util.*
