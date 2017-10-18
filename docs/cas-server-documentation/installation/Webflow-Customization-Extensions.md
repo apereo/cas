@@ -22,7 +22,7 @@ So in truth, what you see above is not necessarily all of what you may get.
 
 ## Modifying Webflow
 
-In modest trivial cases, you may be able to simply [overlay and modify](Maven-Overlay-Installation.html) the core flow configuration files to add or override the desired behavior. Again, think very carefully before introducing those changes into your deployment environment. Avoid making ad-hoc changes to the Webflow as much as possible and consider how the change you have in mind might be more suitable as a direct contribution to the CAS project itself so you can just take advantage of its configuration and *NOT* its maintenance.
+In modest trivial cases, you may be able to simply [overlay and modify](Maven-Overlay-Installation.html) the core flow configuration files to add or override the desired behavior. Again, think very carefully before introducing those changes into your deployment environment. Avoid making ad-hoc changes to the webflow as much as possible and consider how the change you have in mind might be more suitable as a direct contribution to the CAS project itself so you can just take advantage of its configuration and *NOT* its maintenance.
 
 To learn how to introduce new actions and state into a Spring Webflow, please [see this guide](http://projects.spring.io/spring-webflow/).
 
@@ -55,6 +55,13 @@ Design your dynamic webflow configuration agent that alters the webflow using th
 
 ```java
 public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
+     public SomethingWebflowConfigurer(FlowBuilderServices flowBuilderServices,
+                                       FlowDefinitionRegistry flowDefinitionRegistry,
+                                       ApplicationContext applicationContext,
+                                       CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
+     }
+    
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = super.getLoginFlow();
@@ -71,11 +78,18 @@ You will then need to register your newly-designed component into the CAS applic
 package org.example.something;
 
 @Configuration("somethingConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration {
 
     @Autowired
+    private CasConfigurationProperties casProperties;
+    
+    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -83,10 +97,10 @@ public class SomethingConfiguration {
     @ConditionalOnMissingBean(name = "somethingWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer somethingWebflowConfigurer() {
-        final SomethingWebflowConfigurer w = new SomethingWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(this.loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(this.flowBuilderServices);
+        final SomethingWebflowConfigurer w = new SomethingWebflowConfigurer(flowBuilderServices, 
+                              loginFlowDefinitionRegistry, applicationContext, casProperties);
         ...
+        w.initialize();
         return w;
     }
 }
@@ -102,13 +116,13 @@ See [this guide](https://docs.spring.io/spring-boot/docs/current/reference/html/
 
 ### Groovy
 
-You may configure CAS to alter and auto-configure the webflow via a Groovy script. This is the a elaborate option where you have modest access to CAS APIs that allow you alter the webflow but configuration and scaffolding of the overlay and required dependencies is easier as all is provided by CAS at runtime.
+You may configure CAS to alter and auto-configure the webflow via a Groovy script. This is the less elaborate option where you have modest access to CAS APIs that allow you alter the webflow. However, configuration and scaffolding of the overlay and required dependencies is easier as all is provided by CAS at runtime.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow-groovy-auto-configuration).
 
-<div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided are considered implementations internal to CAS mostly. They may be added or removed with little hesititation which would eventually break your deployment at runtime as scripts are not statically compiled when you build CAS. You only may observe failures when you do in fact turn on the server. Thus, choose this option with good reason and make sure you have thought changes through before stepping into code.</p></div>
+<div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided here, specifically executed as part of the Groovy script are considered implementations internal to CAS mostly. They may be added or removed with little hesitation which means changed may break your deployment and upgrades at runtime. Remember that unlike Java classes, scripts are not statically compiled when you build CAS and you only may observe failures when you do in fact turn on the server. Thus, choose this option with good reason and make sure you have thought changes through before stepping into code.</p></div>
 
-A sample groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom action is inserted into the state as soon as the flow enters its execution. While this is a rather modest example, note that the script through provided CAS APIs has the ability to add/remove actions, states, traditions and add/remove subflows and such.
+A sample Groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom action is inserted into the state to execute as soon as CAS enters that state in the flow. While this is a rather modest example, note that the script has the ability to add/remove actions, states, transitions, add/remove subflows, etc.
 
 ```groovy
 import java.util.*
@@ -145,9 +159,6 @@ def Object run(final Object... args) {
         })
 
         logger.info("Added action to ${state.id}'s entry action list")
-
-        webflow.createStateDefaultTransition(state, customActionState)
-        logger.info("Created default transition for ${state.id} to run ${customActionState.id}")
     }
 
     return true
