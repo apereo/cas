@@ -99,7 +99,7 @@ public class OAuthProperties implements Serializable {
         return throttler;
     }
 
-    public void setThrottler(String throttler) {
+    public void setThrottler(final String throttler) {
         this.throttler = throttler;
     }
 }
