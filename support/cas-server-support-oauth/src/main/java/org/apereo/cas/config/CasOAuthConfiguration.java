@@ -225,7 +225,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
         final String throttler = casProperties.getAuthn().getOauth().getThrottler();
-        OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
+        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
                 requiresAuthenticationAuthorizeInterceptor(), accessTokenGrantRequestExtractors());
 
         if ("neverThrottle".equals(throttler)) {
@@ -233,7 +233,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         } else {
             final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
             final String throttledUrl = BASE_OAUTH20_URL.concat("/").concat(ACCESS_TOKEN_URL);
-            HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
+            final HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
                 @Override
                 public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
                     if (request.getServletPath().startsWith(throttledUrl) && !throttledInterceptor.preHandle(request, response, handler)) {
@@ -243,7 +243,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 }
 
                 @Override
-                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final ModelAndView modelAndView) throws Exception {
+                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final ModelAndView modelAndView)
+                        throws Exception {
                     if (request.getServletPath().startsWith(throttledUrl)) {
                         throttledInterceptor.postHandle(request, response, handler, modelAndView);
                     }
