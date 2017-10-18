@@ -17,7 +17,7 @@ Example use cases for impersonation include:
 1. Logging into an application on behalf of a user to execute and make changes.
 2. Troubleshoot a bothersome authentication experience with an application on behalf of another user.
 
-Surrogate authentication is enabled by including the following dependencies in the WAR overlay (Changed in version 5.2!):
+Surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
 ```xml
 <dependency>
