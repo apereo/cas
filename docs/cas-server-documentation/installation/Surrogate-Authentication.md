@@ -17,7 +17,7 @@ Example use cases for impersonation include:
 1. Logging into an application on behalf of a user to execute and make changes.
 2. Troubleshoot a bothersome authentication experience with an application on behalf of another user.
 
-Surrogate authentication is enabled by including the following dependencies in the WAR overlay:
+Surrogate authentication is enabled by including the following dependencies in the WAR overlay (Changed in version 5.2!):
 
 ```xml
 <dependency>
@@ -90,7 +90,7 @@ REST support for surrogate authentication is enabled by including the following 
 ```
 
 | Method       | Description                                                   | Parameter(s)             | Response
-|--------------|---------------------------------------------------------------|--------------------------------------
+|--------------|---------------------------------------------------------------|--------------------------|-----------
 | `GET`        | Whether principal can authenticate as a surrogate account.    | `surrogate`, `principal` | `202`
 | `GET`        | List of accounts principal is eligible to impersonate.        | `principal` | JSON list of usernames.
 
@@ -151,7 +151,7 @@ An impersonation session can be assigned a specific expiration policy that would
 Upon a successful surrogate authentication event, the following attributes are communicated back to the application in order to detect an impersontion session:
 
 | Attribute             | Instructions
-|-----------------------|-----------------|--------------------------------------------------------------
+|-----------------------|-------------------------------------------------------------------------------
 | `surrogateEnabled`    | Boolean to indicate whether session is impersonated.
 | `surrogatePrincipal`  | The admin user whose credentials are validated and acts as the impersonator.
 | `surrogateUser`       | The surrogate user that is impersonated.
