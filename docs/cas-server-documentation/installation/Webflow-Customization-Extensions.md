@@ -55,6 +55,13 @@ Design your dynamic webflow configuration agent that alters the webflow using th
 
 ```java
 public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
+     public SomethingWebflowConfigurer(FlowBuilderServices flowBuilderServices,
+                                       FlowDefinitionRegistry flowDefinitionRegistry,
+                                       ApplicationContext applicationContext,
+                                       CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
+     }
+    
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = super.getLoginFlow();
@@ -71,11 +78,18 @@ You will then need to register your newly-designed component into the CAS applic
 package org.example.something;
 
 @Configuration("somethingConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration {
 
     @Autowired
+    private CasConfigurationProperties casProperties;
+    
+    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -83,9 +97,8 @@ public class SomethingConfiguration {
     @ConditionalOnMissingBean(name = "somethingWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer somethingWebflowConfigurer() {
-        final SomethingWebflowConfigurer w = new SomethingWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(this.loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(this.flowBuilderServices);
+        final SomethingWebflowConfigurer w = new SomethingWebflowConfigurer(flowBuilderServices, 
+                              loginFlowDefinitionRegistry, applicationContext, casProperties);
         ...
         w.initialize();
         return w;
