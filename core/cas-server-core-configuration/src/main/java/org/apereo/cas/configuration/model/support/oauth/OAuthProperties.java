@@ -53,6 +53,8 @@ public class OAuthProperties implements Serializable {
      */
     private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
 
+    private String throttler = "neverThrottle";
+
     public UserProfileViewTypes getUserProfileViewType() {
         return userProfileViewType;
     }
@@ -91,6 +93,14 @@ public class OAuthProperties implements Serializable {
 
     public void setCode(final OAuthCodeProperties code) {
         this.code = code;
+    }
+
+    public String getThrottler() {
+        return throttler;
+    }
+
+    public void setThrottler(String throttler) {
+        this.throttler = throttler;
     }
 }
 
