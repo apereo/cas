@@ -196,7 +196,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
 
-        this.clients.findAllClients().forEach(client -> {
+        this.clients.findAllClients().stream().filter(c -> c instanceof IndirectClient).forEach(client -> {
             try {
                 final IndirectClient indirectClient = (IndirectClient) client;
 
