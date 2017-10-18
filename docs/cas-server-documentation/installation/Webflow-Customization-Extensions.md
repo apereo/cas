@@ -87,6 +87,7 @@ public class SomethingConfiguration {
         w.setLoginFlowDefinitionRegistry(this.loginFlowDefinitionRegistry);
         w.setFlowBuilderServices(this.flowBuilderServices);
         ...
+        w.initialize();
         return w;
     }
 }
