@@ -199,13 +199,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
         final String throttler = casProperties.getAuthn().getOauth().getThrottler();
-        OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
+        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
         if ("neverThrottle".equals(throttler)) {
             return oAuth20HandlerInterceptorAdapter;
         } else {
             final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
             final String throttledUrl = BASE_OAUTH20_URL.concat("/").concat(ACCESS_TOKEN_URL);
-            HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
+            final HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
                 @Override
                 public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
                     if (request.getServletPath().startsWith(throttledUrl) && !throttledInterceptor.preHandle(request, response, handler)) {
