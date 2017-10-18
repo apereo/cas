@@ -5147,42 +5147,80 @@ To learn more about this topic, [please review this guide](../integration/Config
 Control how Spring Webflow's conversational session state should be managed by CAS,
 and all other webflow related settings.
 
-To learn more about this topic, [please review this guide](Webflow-Customization.html) or [this guide](Webflow-Customization-Sessions.html).
+To learn more about this topic, [please review this guide](Webflow-Customization.html).
 
 ```properties
-# cas.webflow.autoconfigure=true
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+```
 
+### Spring Webflow Auto Configuration
+
+Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](Webflow-Customization-Extensions.html).
+
+```properties
+# cas.webflow.autoconfigure=true
+```
+
+#### Spring Webflow Groovy Auto Configuration
+
+Control the Spring Webflow context via a custom Groovy script.
+
+```properties
+# cas.webflow.groovy.location=file:/etc/cas/config/custom-webflow.groovy
+```
+
+### Spring Webflow Session Management
+
+To learn more about this topic, [see this guide](Webflow-Customization-Sessions.html).
+
+```properties
 # cas.webflow.session.lockTimeout=30
 # cas.webflow.session.compress=false
 # cas.webflow.session.maxConversations=5
-# cas.webflow.session.storage=true
 
-# Manage session storage via Hazelcast
-# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+# Enable server-side session management
+# cas.webflow.session.storage=false
+```
 
-# Manage session storage via Mongo
-# spring.data.mongodb.host=mongo-srv
-# spring.data.mongodb.port=27018
-# spring.data.mongodb.database=prod
+#### Spring Webflow Client-Side Session
 
-# Manage session storage via Redis
-# spring.session.store-type=redis
-# spring.redis.host=localhost
-# spring.redis.password=secret
-# spring.redis.port=6379
-
+```properties
 # cas.webflow.crypto.signing.key=
 # cas.webflow.crypto.signing.keySize=512
+
 # cas.webflow.crypto.encryption.keySize=16
 # cas.webflow.crypto.encryption.key=
+
 # cas.webflow.crypto.alg=AES
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
 The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
+
+#### Spring Webflow Hazelcast Server-Side Session
+
+```properties
+# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+```
+
+#### Spring Webflow MongoDb Server-Side Session
+
+```properties
+# spring.data.mongodb.host=mongo-srv
+# spring.data.mongodb.port=27018
+# spring.data.mongodb.database=prod
+```
+
+#### Spring Webflow Redis Server-Side Session
+
+```properties
+# spring.session.store-type=redis
+# spring.redis.host=localhost
+# spring.redis.password=secret
+# spring.redis.port=6379
+```
 
 ### Authentication Exceptions
 
