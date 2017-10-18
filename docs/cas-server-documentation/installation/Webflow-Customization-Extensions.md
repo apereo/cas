@@ -108,7 +108,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 <div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided here are considered implementations internal to CAS mostly. They may be added or removed with little hesitation which means changed may break your deployment and upgrades at runtime. Remember that scripts are not statically compiled when you build CAS and you only may observe failures when you do in fact turn on the server. Thus, choose this option with good reason and make sure you have thought changes through before stepping into code.</p></div>
 
-A sample groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom action is inserted into the state to execute as part of its default *exit* transition. While this is a rather modest example, note that the script has the ability to add/remove actions, states, transitions, add/remove subflows, etc.
+A sample groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom action is inserted into the state to execute as soon as CAS enters that state in the flow. While this is a rather modest example, note that the script has the ability to add/remove actions, states, transitions, add/remove subflows, etc.
 
 ```groovy
 import java.util.*
@@ -145,9 +145,6 @@ def Object run(final Object... args) {
         })
 
         logger.info("Added action to ${state.id}'s entry action list")
-
-        webflow.createStateDefaultTransition(state, customActionState)
-        logger.info("Created default transition for ${state.id} to run ${customActionState.id}")
     }
 
     return true
