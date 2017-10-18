@@ -2,18 +2,12 @@ package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ScriptingUtils;
-import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link GroovyWebflowConfigurer}.
