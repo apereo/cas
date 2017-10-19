@@ -20,7 +20,7 @@ import {Location} from "@angular/common";
   styleUrls: ['./domains.component.css']
 })
 export class DomainsComponent implements OnInit {
-  displayedColumns = ['row'];
+  displayedColumns = ["actions","name"];
   domainDatabase = new DomainDatabase();
   dataSource: DomainDataSource | null;
   selectedItem: String;

@@ -15,36 +15,44 @@
 
 }
 
-.modified {
+.MODIFY {
   color: blue;
   font-style: italic;
 }
 
-.added {
+.ADD {
   color:green;
   font-style: italic;
 }
 
-.deleted {
+.DELETE {
   color:red;
   font-style: italic;
 }
 
-
-
-.titleBar {
-  display:inline-flex;
-  width:100%;
+.descriptionWidth {
+  flex: 1 1 auto;
+  color: inherit;
 }
 
-.title {
-  display:inline;
-  width:100%;
-  float:left;
+.serviceIdWidth {
+  flex: 0 0 240px;
+  color: inherit;
 }
 
-.nav {
-  display:inline;
-  float:right;
-  margin:auto;
+.nameWidth {
+  flex: 0 0 240px;
+  color:inherit !important;
+}
+
+.nameWidth a {
+  color:inherit;
+}
+
+.actionWidth {
+  flex: 0 0 50px;
+}
+
+.statusWidth {
+  flex: 0 0 50px;
 }

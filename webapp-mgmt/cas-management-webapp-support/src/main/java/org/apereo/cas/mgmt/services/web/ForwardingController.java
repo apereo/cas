@@ -13,7 +13,12 @@ import org.springframework.stereotype.Controller;
 @Controller("forwarding")
 public class ForwardingController {
 
-    @RequestMapping({"services/{id:.*}","form/{id:.*}", "domains", "duplicate/{id:.*}"})
+    @RequestMapping({
+            "services/{id:.*}",
+            "form/{id:.*}",
+            "domains",
+            "duplicate/{id:.*}",
+            "search/{query:.*}"})
     public String forward() {
         return "manage.html";
     }

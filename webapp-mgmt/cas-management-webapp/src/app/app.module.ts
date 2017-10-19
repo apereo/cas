@@ -19,6 +19,8 @@ import {SearchService} from "./search/SearchService";
 import {MATERIAL_COMPATIBILITY_MODE} from '@angular/material';
 import {HeaderService} from "./header/header.service";
 import {InitComponent} from "app/init.component";
+import {ControlsComponent} from "./controls/controls.component";
+import {ControlsService} from "./controls/controls.service";
 
 
 @NgModule({
@@ -38,7 +40,7 @@ import {InitComponent} from "app/init.component";
     HeaderComponent,
     DeleteComponent,
     SearchComponent,
-    InitComponent
+    InitComponent,
   ],
   entryComponents: [
     DeleteComponent
