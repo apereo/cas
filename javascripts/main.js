@@ -313,7 +313,7 @@ function generateDependencyLangFragments() {
 	      </tbody> \
 	      </table>";
 
-      var parentTable = $(val).closest('table').parent();
+      var parentTable = $(val).closest('pre.highlight').parent();
 
       var mavenId = Math.floor((Math.random() * 10000) + 1);
       var gradleId = Math.floor((Math.random() * 10000) + 1);
