@@ -1,1 +1,26 @@
+.highlight {
+  background-color: transparent;
+  position: relative;
+  margin-bottom: 40px;
 
+  
+
+  table {
+    td {
+      border-top: none;
+
+      &.gutter, &.rouge-gutter {
+        padding-right: 0;
+      }
+
+      &.code, &.rouge-code {
+        width: 100%;
+        padding-left: 0;
+
+        pre {
+          border-left-width: 0;
+        }
+      }
+    }
+  }
+}
