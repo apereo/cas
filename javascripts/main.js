@@ -287,7 +287,8 @@ function guidGenerator() {
 
 
 function generateDependencyLangFragments() {
-  $.each( $("div.language-xml.highlighter-rouge div.highlight pre"), function( i, val ) {
+  var preElemets = $("div.language-xml.highlighter-rouge div.highlight td.rouge-code pre");
+  $.each( preElements, function( i, val ) {
 
       var text = $(val).text();
       if (!text.trim().startsWith("<dependency>")) {
@@ -312,7 +313,7 @@ function generateDependencyLangFragments() {
 	      </tbody> \
 	      </table>";
 
-      var parentTable = $(val).parent().parent().parent().parent().parent();
+      var parentTable = $(val).closest('table');
 
       var mavenId = Math.floor((Math.random() * 10000) + 1);
       var gradleId = Math.floor((Math.random() * 10000) + 1);
@@ -342,7 +343,7 @@ function generateDependencyLangFragments() {
     <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
   </div>";
 
-      var divHighlight = parentTable.parent();
+      var divHighlight = parentTable.closest('div.highlight');
       
       divHighlight.empty();
       divHighlight.prepend(tabs);
