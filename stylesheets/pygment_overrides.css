@@ -5,6 +5,6 @@
   color: white;
 }
 
-.nav-pills {
+.nav-pills .nav-link {
   background-color: black; 
 }
