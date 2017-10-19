@@ -12,6 +12,7 @@ public class OAuthProperties {
     private Code code = new Code();
     private AccessToken accessToken = new AccessToken();
     private RefreshToken refreshToken = new RefreshToken();
+    private String throttler = "neverThrottle";
 
     public AccessToken getAccessToken() {
         return accessToken;
@@ -89,6 +90,14 @@ public class OAuthProperties {
         public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
             this.timeToKillInSeconds = timeToKillInSeconds;
         }
+    }
+
+    public String getThrottler() {
+        return throttler;
+    }
+
+    public void setThrottler(final String throttler) {
+        this.throttler = throttler;
     }
 }
 

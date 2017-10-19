@@ -58,8 +58,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -71,6 +74,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static org.apereo.cas.support.oauth.OAuthConstants.ACCESS_TOKEN_URL;
 import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
 
 /**
@@ -87,6 +91,9 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -210,7 +217,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new HandlerInterceptorAdapter() {
+        final HandlerInterceptorAdapter oauthHandlerInterceptorAdapter = new HandlerInterceptorAdapter() {
             @Override
             public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                                      final Object handler) throws Exception {
@@ -229,6 +236,30 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
             }
         };
+        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
+        if ("neverThrottle".equals(throttler)) {
+            return oauthHandlerInterceptorAdapter;
+        } else {
+            final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
+            final String throttledUrl = BASE_OAUTH20_URL.concat("/").concat(ACCESS_TOKEN_URL);
+            HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
+                @Override
+                public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+                    if (request.getServletPath().startsWith(throttledUrl) && !throttledInterceptor.preHandle(request, response, handler)) {
+                        return false;
+                    }
+                    return oauthHandlerInterceptorAdapter.preHandle(request, response, handler);
+                }
+
+                @Override
+                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final ModelAndView modelAndView) throws Exception {
+                    if (request.getServletPath().startsWith(throttledUrl)) {
+                        throttledInterceptor.postHandle(request, response, handler, modelAndView);
+                    }
+                }
+            };
+            return throttledInceptorAdapter;
+        }
     }
 
     @Override
