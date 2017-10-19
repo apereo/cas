@@ -170,7 +170,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 
-    private static Authentication getAuthentication(final Principal principal) {
+    protected static Authentication getAuthentication(final Principal principal) {
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(principal.getClass().getCanonicalName(),
                 metadata, principal, new ArrayList<>());
