@@ -7,7 +7,7 @@ by Jason Costello, @jsncostello
 *******************************************************************************/
 
 @import url(pygment_monokai.css);
-@import url(overrides.css);
+
 
 html, body {
   font-family: 'Lato', sans-serif;
@@ -299,3 +299,6 @@ footer {
 @media (min-width: 75em) {
 
 }
+
+
+@import url(overrides.css);
