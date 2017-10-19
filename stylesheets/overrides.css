@@ -9,7 +9,8 @@
   background-color: #272822; 
 }  
 
-.nav-pills .nav-link.active {
+.nav-pills .nav-link.active, .nav-pills .nav-link.active:focus {
   background-color: white;
   color: #272822;
 }
+
