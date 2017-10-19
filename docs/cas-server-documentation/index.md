@@ -5,7 +5,7 @@ title: CAS - Home
 
 # CAS Enterprise Single Sign-On
 
-* Spring Webflow/Spring Boot [Java server component](planning/Architecture.html).
+* [Spring Webflow](installation/Webflow-Customization.html)/Spring Boot [Java server component](planning/Architecture.html).
 * [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
 [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [SPNEGO](installation/SPNEGO-Authentication.html), 
 [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), 
