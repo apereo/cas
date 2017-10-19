@@ -22,12 +22,12 @@
       border-top: none;
 
       &.gutter, &.rouge-gutter {
-        padding-right: 0;
+        padding: 0;
       }
 
       &.code, &.rouge-code {
         width: 100%;
-        padding-left: 0;
+        padding: 0;
 
         pre {
           border-left-width: 0;
