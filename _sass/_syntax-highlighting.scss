@@ -3,14 +3,6 @@
   position: relative;
   margin-bottom: 40px;
 
-  pre {
-    padding: 10px;
-    background-color: #f8f8f4;
-    border: 1px solid #ececec;
-    overflow: auto;
-    margin-bottom: 0;
-  }
-
   pre, code {
     font-family: "Consolas", "Andale Mono", "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
     font-size: .8rem;
@@ -18,6 +10,14 @@
   }
 
   table {
+    pre {
+      padding: 10px;
+      background-color: #f8f8f4;
+      border: 1px solid #ececec;
+      overflow: auto;
+      margin-bottom: 0;
+    }
+
     td {
       border-top: none;
 
