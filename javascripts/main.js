@@ -287,7 +287,7 @@ function guidGenerator() {
 
 
 function generateDependencyLangFragments() {
-  var preElemets = $("div.language-xml.highlighter-rouge div.highlight td.rouge-code pre");
+  var preElements = $("div.language-xml.highlighter-rouge div.highlight td.rouge-code pre");
   $.each( preElements, function( i, val ) {
 
       var text = $(val).text();
