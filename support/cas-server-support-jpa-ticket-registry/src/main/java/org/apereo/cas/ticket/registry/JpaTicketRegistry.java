@@ -35,6 +35,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
 
+    private static final int STREAM_BATCH_SIZE = 100;
+
     private final TicketCatalog ticketCatalog;
     private final LockModeType lockType;
 
@@ -114,8 +116,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
                 // Unwrap to Hibernate Query, which supports streams
                 .map(q -> {
-                    org.hibernate.query.Query<Ticket> hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
-                    hq.setFetchSize(100);
+                    final org.hibernate.query.Query<Ticket> hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
+                    hq.setFetchSize(STREAM_BATCH_SIZE);
                     hq.setLockOptions(LockOptions.NONE);
                     return hq;
                 })
