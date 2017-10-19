@@ -304,14 +304,14 @@ function generateDependencyLangFragments() {
       
       var gradleDep = "compile \"" + $groupId.text() + ":" + $artifactId.text() + ":${project.'cas.version'}\"";
 
-      var gradleFragment = "<table style='border-spacing: 0'> \
+      var gradleFragment = "<pre class='highlight'><code><table style='border-spacing: 0'> \
 	      <tbody>\
 	      <tr>\
 	      	<td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td>\
 	      	<td class='code'><pre>" + gradleDep + "</pre></td>\
 	      </tr> \
 	      </tbody> \
-	      </table>";
+	      </table></code></pre>";
 
       var parentTable = $(val).closest('pre.highlight').parent();
 
