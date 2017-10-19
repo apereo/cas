@@ -21,11 +21,11 @@
     td {
       border-top: none;
 
-      &.gutter {
+      &.gutter, &.rogue-gutter {
         padding-right: 0;
       }
 
-      &.code {
+      &.code, &.rouge-code {
         width: 100%;
         padding-left: 0;
 
