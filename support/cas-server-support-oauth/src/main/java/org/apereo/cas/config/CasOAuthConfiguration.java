@@ -199,7 +199,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
         final String throttler = casProperties.getAuthn().getOauth().getThrottler();
-        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
+        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(
+                requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
         if ("neverThrottle".equals(throttler)) {
             return oAuth20HandlerInterceptorAdapter;
         } else {
@@ -215,7 +216,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 }
 
                 @Override
-                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final ModelAndView modelAndView) throws Exception {
+                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
+                                       final ModelAndView modelAndView) throws Exception {
                     if (request.getServletPath().startsWith(throttledUrl)) {
                         throttledInterceptor.postHandle(request, response, handler, modelAndView);
                     }
