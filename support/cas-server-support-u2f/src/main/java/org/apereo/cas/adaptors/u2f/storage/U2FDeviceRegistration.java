@@ -21,7 +21,7 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(name = "U2FDeviceRegistration")
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class U2FDeviceRegistration {
     @org.springframework.data.annotation.Id
     @Id

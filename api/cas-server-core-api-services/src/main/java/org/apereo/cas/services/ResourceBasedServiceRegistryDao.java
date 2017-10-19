@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import java.io.File;
-import java.nio.file.Watchable;
+import java.util.Collection;
 
 /**
  * This is {@link ResourceBasedServiceRegistryDao},
@@ -14,14 +14,6 @@ import java.nio.file.Watchable;
 public interface ResourceBasedServiceRegistryDao extends ServiceRegistryDao {
 
     /**
-     * Gets the watchable resource.
-     *
-     * @param <T> the type parameter
-     * @return the watchable resource
-     */
-    <T extends Watchable> T getWatchableResource();
-
-    /**
      * Update a single service instance.
      *
      * @param service the service
@@ -32,7 +24,7 @@ public interface ResourceBasedServiceRegistryDao extends ServiceRegistryDao {
      * Load registered service from the given file.
      *
      * @param file the file
-     * @return the registered service
+     * @return the registered services
      */
-    RegisteredService load(File file);
+    Collection<RegisteredService> load(File file);
 }

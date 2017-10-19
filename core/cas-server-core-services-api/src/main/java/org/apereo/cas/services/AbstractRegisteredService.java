@@ -49,7 +49,7 @@ import java.util.Set;
 @DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING,
         columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public abstract class AbstractRegisteredService implements RegisteredService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredService.class);
 

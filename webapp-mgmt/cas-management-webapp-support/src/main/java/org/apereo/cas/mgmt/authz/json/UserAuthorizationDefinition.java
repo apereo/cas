@@ -12,7 +12,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class UserAuthorizationDefinition implements Serializable {
     private static final long serialVersionUID = 5612860879960019695L;
 

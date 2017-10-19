@@ -5,11 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
-import org.apereo.cas.util.io.PathWatcherService;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.ComposableSupplier;
 import org.apereo.cas.util.io.LockedOutputStream;
+import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.Watchable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -46,12 +46,12 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
+
     private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE =
         service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                    + "This will overwrite previous service definitions and is likely a configuration problem. "
-                    + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
+                + "This will overwrite previous service definitions and is likely a configuration problem. "
+                + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
 
     private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
         LOG_SERVICE_DUPLICATE.accept(s2);
@@ -71,16 +71,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<>();
 
     /**
-     * The Registered service json serializer.
+     * The Registered service json serializers.
      */
-    private StringSerializer<RegisteredService> registeredServiceSerializer;
-
-    private Thread serviceRegistryWatcherThread;
+    private Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
 
     private PathWatcherService serviceRegistryConfigWatcher;
 
     private Pattern serviceFileNamePattern;
-    
+
     /**
      * Instantiates a new service registry dao.
      *
@@ -93,20 +91,35 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                                                    final StringSerializer<RegisteredService> serializer,
                                                    final boolean enableWatcher,
                                                    final ApplicationEventPublisher eventPublisher) {
-        initializeRegistry(configDirectory, serializer, enableWatcher, eventPublisher);
+        this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher);
     }
 
     /**
      * Instantiates a new Abstract resource based service registry dao.
      *
      * @param configDirectory the config directory
-     * @param serializer      the serializer
+     * @param serializers     the serializers
+     * @param enableWatcher   the enable watcher
+     * @param eventPublisher  the event publisher
+     */
+    public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
+                                                   final Collection<StringSerializer<RegisteredService>> serializers,
+                                                   final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher) {
+        initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher);
+    }
+
+    /**
+     * Instantiates a new Abstract resource based service registry dao.
+     *
+     * @param configDirectory the config directory
+     * @param serializers     the serializers
      * @param enableWatcher   the enable watcher
      * @param eventPublisher  the event publisher
      * @throws Exception the exception
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
-                                                   final StringSerializer<RegisteredService> serializer,
+                                                   final Collection<StringSerializer<RegisteredService>> serializers,
                                                    final boolean enableWatcher,
                                                    final ApplicationEventPublisher eventPublisher) throws Exception {
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
@@ -114,20 +127,20 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
         final File file = servicesDirectory.getFile();
-        initializeRegistry(Paths.get(file.getCanonicalPath()), serializer, enableWatcher, eventPublisher);
+        initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher);
     }
 
     private void initializeRegistry(final Path configDirectory,
-                                    final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
+                                    final Collection<StringSerializer<RegisteredService>> serializers,
                                     final boolean enableWatcher,
                                     final ApplicationEventPublisher eventPublisher) {
         setEventPublisher(eventPublisher);
         this.serviceFileNamePattern = RegexUtils.createPattern("\\w+-\\d+\\." + getExtension());
-        
+
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
-        this.registeredServiceSerializer = registeredServiceJsonSerializer;
+        this.registeredServiceSerializers = serializers;
 
         if (enableWatcher) {
             enableServicesDirectoryPathWatcher(configDirectory);
@@ -139,15 +152,18 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
         final Consumer<File> onCreate = file -> {
             LOGGER.debug("New service definition [{}] was created. Locating service entry from cache...", file);
-            final RegisteredService service = load(file);
-            if (service != null) {
-                if (findServiceById(service.getId()) != null) {
-                    LOG_SERVICE_DUPLICATE.accept(service);
-                }
-                LOGGER.debug("Updating service definitions with [{}]", service);
-                update(service);
-                createServiceRefreshEvent.andThen(this.casEventConsumer);
-            }
+            final Collection<RegisteredService> services = load(file);
+            services.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(service -> {
+                        if (findServiceById(service.getId()) != null) {
+                            LOG_SERVICE_DUPLICATE.accept(service);
+                        }
+                        LOGGER.debug("Updating service definitions with [{}]", service);
+                        update(service);
+                        createServiceRefreshEvent.andThen(this.casEventConsumer);
+                        
+                    });
         };
         final Consumer<File> onDelete = file -> {
             LOGGER.debug("Service definition [{}] was deleted. Reloading cache...", file);
@@ -156,19 +172,21 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         };
         final Consumer<File> onModify = file -> {
             LOGGER.debug("New service definition [{}] was modified. Locating service entry from cache...", file);
-            final RegisteredService newService = load(file);
-            if (newService != null) {
-                final RegisteredService oldService = findServiceById(newService.getId());
+            final Collection<RegisteredService> newServices = load(file);
+            newServices.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(newService -> {
+                        final RegisteredService oldService = findServiceById(newService.getId());
 
-                if (!newService.equals(oldService)) {
-                    LOGGER.debug("Updating service definitions with [{}]", newService);
-                    update(newService);
-                    createServiceRefreshEvent.andThen(this.casEventConsumer);
-                } else {
-                    LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
-                            + "in the event processing pipeline", newService.getId(), file.getName());
-                }
-            }
+                        if (!newService.equals(oldService)) {
+                            LOGGER.debug("Updating service definitions with [{}]", newService);
+                            update(newService);
+                            createServiceRefreshEvent.andThen(this.casEventConsumer);
+                        } else {
+                            LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
+                                    + "in the event processing pipeline", newService.getId(), file.getName());
+                        }
+                    });
         };
         this.serviceRegistryConfigWatcher = new PathWatcherService(serviceRegistryDirectory, onCreate, onModify, onDelete);
         this.serviceRegistryConfigWatcher.start(getClass().getSimpleName());
@@ -182,9 +200,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     public void destroy() {
         if (this.serviceRegistryConfigWatcher != null) {
             this.serviceRegistryConfigWatcher.close();
-        }
-        if (serviceRegistryWatcherThread != null) {
-            this.serviceRegistryWatcherThread.interrupt();
         }
     }
 
@@ -200,7 +215,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return this.serviceMap.values().stream()
+        return this.serviceMap.values()
+                .stream()
                 .filter(r -> r.matches(id))
                 .findFirst()
                 .orElse(null);
@@ -233,6 +249,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         final Collection<File> files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
         this.serviceMap = files.stream()
                 .map(this::load)
+                .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .sorted()
                 .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
@@ -249,7 +266,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @return the registered service, or null if file cannot be read, is not found, is empty or parsing error occurs.
      */
     @Override
-    public RegisteredService load(final File file) {
+    public Collection<RegisteredService> load(final File file) {
         if (!file.canRead()) {
             LOGGER.warn("[{}] is not readable. Check file permissions", file.getName());
             return null;
@@ -267,17 +284,24 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
         if (!RegexUtils.matches(this.serviceFileNamePattern, file.getName())) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
-                        + "While CAS tries to be forgiving as much as possible, it's recommended "
-                        + "that you rename the file to match the request pattern to avoid issues with duplicate service loading.",
+                            + "While CAS tries to be forgiving as much as possible, it's recommended "
+                            + "that you rename the file to match the request pattern to avoid issues with duplicate service loading. "
+                            + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                     file.getName(), this.serviceFileNamePattern.pattern());
         }
 
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-            return this.registeredServiceSerializer.from(in);
+            return this.registeredServiceSerializers
+                    .stream()
+                    .filter(s -> s.supports(file))
+                    .map(s -> s.load(in))
+                    .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -288,8 +312,21 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         }
         final File f = makeFile(service);
         try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
-            this.registeredServiceSerializer.to(out, service);
+            final boolean result = this.registeredServiceSerializers
+                    .stream()
+                    .anyMatch(s -> {
+                        try {
+                            s.to(out, service);
+                            return true;
+                        } catch (final Exception e) {
+                            LOGGER.debug(e.getMessage(), e);
+                            return false;
+                        }
+                    });
 
+            if (!result) {
+                throw new IOException("The service definition file could not be saved at " + f.getCanonicalPath());
+            }
             if (this.serviceMap.containsKey(service.getId())) {
                 LOGGER.debug("Found existing service definition by id [{}]. Saving...", service.getId());
             }
@@ -324,7 +361,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     private String getServiceDefinitionFileName(final RegisteredService service) {
         return service.getName() + '-' + service.getId() + '.' + getExtension();
     }
-    
 
     /**
      * Gets extension associated with files in the given resource directory.
@@ -332,12 +368,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @return the extension
      */
     protected abstract String getExtension();
-
-    @Override
-    public <T extends Watchable> T getWatchableResource() {
-        final Watchable watchable = this.serviceRegistryDirectory;
-        return (T) watchable;
-    }
 
     @Override
     public void update(final RegisteredService service) {

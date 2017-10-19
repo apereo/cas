@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.Couc
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -47,7 +47,7 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
-        return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new RegisteredServiceJsonSerializer(),
+        return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer(),
                 casProperties.getServiceRegistry().getCouchbase().isQueryEnabled());
     }
 }

@@ -30,7 +30,7 @@ import org.apereo.cas.services.UnauthorizedServiceExceptionTests;
 import org.apereo.cas.services.UnauthorizedSsoServiceExceptionTests;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilterTests;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilterTests;
-import org.apereo.cas.util.services.RegisteredServiceJsonSerializerTests;
+import org.apereo.cas.util.services.DefaultRegisteredServiceJsonSerializerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -74,6 +74,6 @@ import org.junit.runners.Suite;
         UnauthorizedProxyingExceptionTests.class,
         UnauthorizedServiceExceptionTests.class,
         UnauthorizedSsoServiceExceptionTests.class,
-        RegisteredServiceJsonSerializerTests.class})
+        DefaultRegisteredServiceJsonSerializerTests.class})
 public class AllServicesTestsSuite {
 }

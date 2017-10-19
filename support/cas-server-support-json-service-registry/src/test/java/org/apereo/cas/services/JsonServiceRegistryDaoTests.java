@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,7 +32,7 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     @Test
     public void verifyLegacyServiceDefn() throws Exception {
         final ClassPathResource resource = new ClassPathResource("Legacy-10000003.json");
-        final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
+        final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
         final RegisteredService service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
@@ -40,7 +40,7 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     @Test
     public void verifyExistingDefinitionForCompatibility2() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
+        final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
         final RegisteredService service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -52,7 +52,7 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     @Test
     public void verifyExistingDefinitionForCompatibility1() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        final RegisteredServiceJsonSerializer serializer = new RegisteredServiceJsonSerializer();
+        final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
         final RegisteredService service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());

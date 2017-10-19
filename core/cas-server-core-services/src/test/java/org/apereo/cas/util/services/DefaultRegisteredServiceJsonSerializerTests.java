@@ -1,22 +1,22 @@
 package org.apereo.cas.util.services;
 
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- * This is {@link RegisteredServiceJsonSerializerTests}.
+ * This is {@link DefaultRegisteredServiceJsonSerializerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class RegisteredServiceJsonSerializerTests {
+public class DefaultRegisteredServiceJsonSerializerTests {
 
     @Test
     public void checkNullability() {
-        final RegisteredServiceJsonSerializer zer = new RegisteredServiceJsonSerializer();
+        final DefaultRegisteredServiceJsonSerializer zer = new DefaultRegisteredServiceJsonSerializer();
         final String json = "    {\n"
                 + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
                 + "            \"serviceId\" : \"^https://xyz.*\",\n"
