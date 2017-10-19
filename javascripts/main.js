@@ -391,7 +391,7 @@ $(function () {
     responsiveImages();
     responsiveTables();
 
-    //copyButton();
+    copyButton();
 
     var formattedVersion = getActiveDocumentationVersionInView();
     if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
