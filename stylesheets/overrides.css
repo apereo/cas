@@ -5,3 +5,6 @@
   color: white;
 }
 
+.nav-pills .nav-link.active {
+  background-color: black;
+}
