@@ -85,7 +85,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
 
 
     @GetMapping("/manage.html")
-    public ModelAndView manage() {
+    public ModelAndView manage(final HttpServletResponse response) {
         final Map<String, Object> model = new HashMap<>();
         model.put(STATUS, HttpServletResponse.SC_OK);
         return new ModelAndView("manage",model);
