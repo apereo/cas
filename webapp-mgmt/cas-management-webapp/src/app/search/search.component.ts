@@ -42,10 +42,6 @@ export class SearchComponent implements OnInit {
         .subscribe(resp => this.serviceDatabase.load(resp));
   }
 
-  goBack() {
-    this.location.back();
-  }
-
   serviceEdit(id: number) {
     this.router.navigate(['form',id]);
   }

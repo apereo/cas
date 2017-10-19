@@ -62,19 +62,20 @@ export class FormComponent implements OnInit {
       .subscribe((data: { resp: AbstractRegisteredService}) => {
         if (data.resp) {
           this.loadService(data.resp);
+          this.goto(Tabs.BASICS)
         }
       });
-
-    this.route.url.subscribe((url: UrlSegment[]) => {
-      this.route.params.subscribe((params) => {
-        this.goto(Tabs.BASICS);
-      });
-    });
   }
 
   goto(tab:Tabs) {
     let route: any[] = [{outlets: {form: [this.tabRoute(tab)]}}];
     this.router.navigate(route,{skipLocationChange: true, relativeTo: this.route} );
+  }
+
+  save() {
+    this.saveForm();
+    this.data.save.emit();
+    this.data.submitted = true;
   }
 
   loadService(form: AbstractRegisteredService) {

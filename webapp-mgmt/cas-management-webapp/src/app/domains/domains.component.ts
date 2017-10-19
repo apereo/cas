@@ -48,11 +48,6 @@ export class DomainsComponent implements OnInit {
   view(domain: String) {
     this.router.navigate(['services', domain]);
   }
-
-  goBack() {
-    this.location.back();
-  }
-
 }
 
 export class DomainDatabase {

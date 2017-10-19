@@ -110,10 +110,6 @@ export class ServicesComponent implements OnInit,AfterViewInit {
       }));
   }
 
-  goBack() {
-    this.location.back();
-  }
-
   moveUp(a: ServiceItem) {
     let index: number = this.serviceDatabase.data.indexOf(a);
     if(index > 0) {
