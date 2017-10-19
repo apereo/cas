@@ -302,7 +302,7 @@ function generateDependencyLangFragments() {
       $groupId = $xml.find("groupId");
       $artifactId = $xml.find("artifactId");
       
-      var gradleDep = "compile \"" + $groupId.text() + ":" + $artifactId.text() + ":${project.'cas.version'}\"";
+      var gradleDep = "<span class='nt'>compile</span>\"" + $groupId.text() + "<span class='p'>:</span>" + $artifactId.text() + ":${project.'cas.version'}\"";
 
       var gradleFragment = "<pre class='highlight'><code><table style='border-spacing: 0'> \
 	      <tbody>\
@@ -340,7 +340,7 @@ function generateDependencyLangFragments() {
   </ul> \
   <div class='tab-content clearfix'> \
     <div class='tab-pane fade in active language-xml highlighter-rouge' id='maven" + mavenId + "'>" + parentTable.html() + "</div> \
-    <div class='tab-pane fade in language-groovy highlighter-rouge' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
+    <div class='tab-pane fade in language-java highlighter-rouge' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
   </div>";
 
       var divHighlight = parentTable.closest('div.highlight').parent();
