@@ -1,13 +1,10 @@
 <!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8">
-  <title th:text="#{management.services.header.apptitle}"/>
-  <meta name="version" th:content="${T(org.apereo.cas.util.CasVersion).getVersion()}" />
-  <meta name="_csrf" content="${pac4jCsrfToken}"/>
-  <meta name="_csrf_header" content="pac4jCsrfToken"/>
-  <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
-  <base href=".">
+  <title>Services Management</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+  <base href="/cas-management/">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -15,6 +12,6 @@
 </head>
 
 <body style="background-color: #f2f2f2">
-  <app-root th:type="${type}">Loading...</app-root>
+  <app-root>Loading...</app-root>
 </body>
 </html>

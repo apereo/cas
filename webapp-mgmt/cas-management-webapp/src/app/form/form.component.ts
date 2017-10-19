@@ -44,8 +44,6 @@ enum Tabs {
 export class FormComponent implements OnInit {
 
   id: String;
-  duplicate: boolean;
-  path: String;
 
   @ViewChild('tabGroup')
   tabGroup: MatTabGroup;
@@ -68,19 +66,15 @@ export class FormComponent implements OnInit {
       });
 
     this.route.url.subscribe((url: UrlSegment[]) => {
-      this.path = url[0].path;
       this.route.params.subscribe((params) => {
-        this.id = params['id'];
-        this.duplicate = params['duplicate'];
         this.goto(Tabs.BASICS);
       });
     });
   }
 
   goto(tab:Tabs) {
-    let route: any[] = [this.path,this.id,{duplicate: this.duplicate}];
-    route.push({outlets: {form: [this.tabRoute(tab)]}});
-    this.router.navigate(route,{skipLocationChange: true} );
+    let route: any[] = [{outlets: {form: [this.tabRoute(tab)]}}];
+    this.router.navigate(route,{skipLocationChange: true, relativeTo: this.route} );
   }
 
   loadService(form: AbstractRegisteredService) {

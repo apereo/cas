@@ -62,11 +62,11 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   }
 
   serviceEdit(selectedItem: String) {
-    this.router.navigate(['/form',selectedItem, {duplicate: false}]);
+    this.router.navigate(['/form',selectedItem]);
   }
 
   serviceDuplicate(selectedItem: String) {
-    this.router.navigate(['/form',selectedItem, {duplicate: true}]);
+    this.router.navigate(['/duplicate',selectedItem]);
   }
 
   openModalDelete(selectedItem: ServiceItem) {

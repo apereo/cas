@@ -66,7 +66,6 @@ describe('FormComponent', () => {
     activatedRoute.testUrl = { path() { return "";}};
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
-    component.path = "";
     component.ngOnInit = function() { };
     fixture.detectChanges();
   });

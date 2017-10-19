@@ -9,6 +9,7 @@ import org.apereo.cas.mgmt.CasManagementUtils;
 import org.apereo.cas.mgmt.DefaultCasManagementEventListener;
 import org.apereo.cas.mgmt.authentication.CasManagementSecurityInterceptor;
 import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
+import org.apereo.cas.mgmt.services.web.ForwardingController;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.web.CasManagementRootController;
@@ -153,6 +154,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
+    }
+
+    @Bean
+    public ForwardingController forwardingController() {
+        return new ForwardingController();
     }
 
     @Bean
