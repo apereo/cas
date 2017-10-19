@@ -387,12 +387,12 @@ clipboard.on('success', function(e) {
 
 $(function () {
 	
-    //ensureBootrapIsLoaded();
+    ensureBootrapIsLoaded();
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
-    //generateDependencyLangFragments();
-    //generateToolbarIcons();
-    //generateNavigationBarAndCrumbs();
+    generateDependencyLangFragments();
+    generateToolbarIcons();
+    generateNavigationBarAndCrumbs();
 	
     responsiveImages();
     responsiveTables();
