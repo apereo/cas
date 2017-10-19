@@ -91,7 +91,7 @@ and consult the docs to apply the new syntax.
 
 An example legacy JSON file is listed below for reference:
 
-```json
+```javascript
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^https://www.jasig.org/cas",
