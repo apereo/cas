@@ -343,7 +343,7 @@ function generateDependencyLangFragments() {
     <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
   </div>";
 
-      var divHighlight = parentTable.closest('div.highlight');
+      var divHighlight = parentTable.closest('div.highlight').parent();
       
       divHighlight.empty();
       divHighlight.prepend(tabs);
