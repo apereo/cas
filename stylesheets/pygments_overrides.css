@@ -1,3 +1,6 @@
 /**
  * CSS overrides for the default Pygment files
  */
+.highlight pre, .highlight code {
+  color: white;
+}
