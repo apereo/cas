@@ -61,7 +61,7 @@ public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
                                        CasConfigurationProperties casProperties) {
         super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
      }
-    
+
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = super.getLoginFlow();
@@ -83,11 +83,11 @@ public class SomethingConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-    
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -98,7 +98,7 @@ public class SomethingConfiguration {
     @Bean
     public CasWebflowConfigurer somethingWebflowConfigurer() {
         final SomethingWebflowConfigurer w = new SomethingWebflowConfigurer(flowBuilderServices, 
-                              loginFlowDefinitionRegistry, applicationContext, casProperties);
+                    loginFlowDefinitionRegistry, applicationContext, casProperties);
         ...
         w.initialize();
         return w;
