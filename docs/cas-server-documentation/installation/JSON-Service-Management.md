@@ -88,7 +88,7 @@ A number of legacy service definitions, supported by CAs automatically, are list
 
 ## CAS Add-ons
 
-Originally developed as an extension for CAS `3.5.x`, this add-on provided JSON syntax support in form of a single file that contained all service definitions. An example legacy JSON file is listed below for reference:
+Originally [developed as an extension](https://github.com/Unicon/cas-addons/wiki/Configuring-JSON-Service-Registry) for CAS `3.5.x`, this add-on provided JSON syntax support in form of a single file that contained all service definitions. An example legacy JSON file is listed below for reference:
 
 ```json
 {
