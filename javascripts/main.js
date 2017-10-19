@@ -384,7 +384,7 @@ $(function () {
     
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
-    //generateDependencyLangFragments();
+    generateDependencyLangFragments();
     generateToolbarIcons();
     generateNavigationBarAndCrumbs();
 	
