@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
@@ -62,7 +63,7 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
     public YamlServiceRegistryDao(final Resource configDirectory,
                                   final boolean enableWatcher,
                                   final ApplicationEventPublisher eventPublisher) throws Exception {
-        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher);
+        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher, eventPublisher);
     }
 
 
