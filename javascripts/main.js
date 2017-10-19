@@ -386,18 +386,18 @@ clipboard.on('success', function(e) {
 });
 
 $(function () {
-	console.log("Testing");
-    ensureBootrapIsLoaded();
+	
+    //ensureBootrapIsLoaded();
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
-    generateDependencyLangFragments();
-    generateToolbarIcons();
-    generateNavigationBarAndCrumbs();
+    //generateDependencyLangFragments();
+    //generateToolbarIcons();
+    //generateNavigationBarAndCrumbs();
 	
     responsiveImages();
     responsiveTables();
 
-    copyButton();
+    //copyButton();
 
     var formattedVersion = getActiveDocumentationVersionInView();
     if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
