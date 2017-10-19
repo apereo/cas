@@ -13,7 +13,6 @@ function generateNavigationBarAndCrumbs() {
     var uri = new URI(document.location);
     var segments = uri.segment();
     
-
     for (var i = 1; i < segments.length; i++) {
 	var clz = ((i + 1) >= segments.length) ? 'breadcrumb-item active' : 'breadcrumb-item ';
 	clz += "capitalize";      
@@ -380,6 +379,7 @@ clipboard.on('success', function(e) {
 });
 
 $(function () {
+	console.log("Testing");
     ensureBootrapIsLoaded();
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
