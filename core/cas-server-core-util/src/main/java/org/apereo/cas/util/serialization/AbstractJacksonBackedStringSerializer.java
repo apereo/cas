@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJacksonBackedStringSerializer.class);
-    
+
     private final PrettyPrinter prettyPrinter;
 
     private final ObjectMapper objectMapper;
@@ -119,18 +120,28 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public T from(final Writer writer) {
         return from(writer.toString());
     }
-    
+
     @Override
     public T from(final InputStream json) {
         try {
-            final String jsonString = isJsonFormat()
-                    ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
-                    : IOUtils.readLines(json, StandardCharsets.UTF_8).stream().collect(Collectors.joining("\n"));
-
+            final String jsonString = readJsonFrom(json);
             return readObjectFromJson(jsonString);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Read json from stream.
+     *
+     * @param json the json
+     * @return the string
+     * @throws IOException the io exception
+     */
+    protected String readJsonFrom(final InputStream json) throws IOException {
+        return isJsonFormat()
+                ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
+                : IOUtils.readLines(json, StandardCharsets.UTF_8).stream().collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -152,7 +163,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
 
             if (isJsonFormat()) {
-                final Stringify opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.FORMATTED : Stringify.FORMATTED;
+                final Stringify opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
                 JsonValue.readHjson(writer.toString()).writeTo(out, opt);
             } else {
                 IOUtils.write(writer.toString(), out);
@@ -171,7 +182,9 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             if (isJsonFormat()) {
                 try (FileWriter fileWriter = new FileWriter(out);
                      BufferedWriter buffer = new BufferedWriter(fileWriter)) {
-                    JsonValue.readHjson(writer.toString()).writeTo(buffer);
+
+                    final Stringify opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
+                    JsonValue.readHjson(writer.toString()).writeTo(buffer, opt);
                     buffer.flush();
                     fileWriter.flush();
                 }
@@ -233,7 +246,13 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return objectMapper;
     }
 
-    private T readObjectFromJson(final String jsonString) {
+    /**
+     * Read object from json.
+     *
+     * @param jsonString the json string
+     * @return the type
+     */
+    protected T readObjectFromJson(final String jsonString) {
         try {
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {

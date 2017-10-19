@@ -96,7 +96,7 @@ public class CasMetricsRepositoryConfiguration {
         };
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
     private static class MongoDbMetric implements Serializable {
         private static final long serialVersionUID = 8587687286389110789L;
 

@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.ldap.services;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.ldaptive.LdapAttribute;
@@ -30,7 +30,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
     private final LdapServiceRegistryProperties ldap;
 
-    private StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
+    private StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
 
     public DefaultLdapRegisteredServiceMapper(final LdapServiceRegistryProperties ldapProperties) {
         ldap = ldapProperties;

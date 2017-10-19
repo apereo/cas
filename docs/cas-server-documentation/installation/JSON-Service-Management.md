@@ -84,6 +84,41 @@ Note the trailing comma at the end. See the above link for more info on the alte
 
 ## Legacy Syntax
 
+A number of legacy service definitions, supported by CAs automatically, are listed below.
+
+## CAS Add-ons
+
+Originally developed as an extension for CAS `3.5.x`, this add-on provided JSON syntax support in form of a single file that contained all service definitions. An example legacy JSON file is listed below for reference:
+
+```json
+{
+    "services":[
+        {
+            "id":1,
+            "serviceId":"https://www.example.com/**",
+            "name":"GOOGLE",
+            "description":"Test service with ant-style pattern matching",
+            "theme":"my_example_theme",
+            "allowedToProxy":true,
+            "enabled":true,
+            "ssoEnabled":true,
+            "anonymousAccess":false,
+            "evaluationOrder":1,
+            "allowedAttributes":["uid", "mail"]
+        }
+    ]
+}
+```
+
+CAS is able to transform this definition into one that is officially supported. The results of transformations are printed into a temporary file where the user is warned about the presence of this legacy behavior and the location of the transformed files which should be reviewed and ultimately put into use in the relevant location to be loaded by the registry. 
+
+A few things to note here:
+
+- The `extraAttributes` property is ignored and may not be transformed.
+- Service identifier patterns in the legacy syntax may be specified as ant patterns. These patterns are automatically massaged by CAS during transformations to ensure they are turned into a valid regular expression as much as possible. You should of course review the results and make any manual modifications necessary to make the pattern functional.
+
+### Jasig 
+
 CAS automatically should remain backwards compatible with service definitions
 that were created by a CAS `4.2.x` instance. Warnings should show up in the logs
 when such deprecated service definitions are found. Deployers are advised to review each definition
