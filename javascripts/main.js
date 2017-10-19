@@ -339,8 +339,8 @@ function generateDependencyLangFragments() {
   </li> \
   </ul> \
   <div class='tab-content clearfix'> \
-    <div class='tab-pane fade in active language-xml highlighter-rouge highlight' id='maven" + mavenId + "'>" + parentTable.html() + "</div> \
-    <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
+    <div class='tab-pane fade in active language-xml highlighter-rouge' id='maven" + mavenId + "'>" + parentTable.html() + "</div> \
+    <div class='tab-pane fade in language-groovy highlighter-rouge' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
   </div>";
 
       var divHighlight = parentTable.closest('div.highlight').parent();
