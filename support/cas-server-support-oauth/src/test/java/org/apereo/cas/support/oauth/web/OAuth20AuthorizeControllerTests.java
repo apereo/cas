@@ -467,7 +467,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertEquals(SERVICE_NAME, model.get("serviceName"));
     }
 
-    private static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
         final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
         registeredServiceImpl.setName(name);
         registeredServiceImpl.setServiceId(serviceId);
@@ -477,9 +477,8 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         return registeredServiceImpl;
     }
 
-    private void clearAllServices() {
+    protected void clearAllServices() {
         final Collection<RegisteredService> col = this.servicesManager.getAllServices();
-
         col.forEach(r -> this.servicesManager.delete(r.getId()));
     }
 }

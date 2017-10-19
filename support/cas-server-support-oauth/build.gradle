@@ -13,6 +13,7 @@ dependencies {
     compileOnly project(":core:cas-server-core-tickets")
     compileOnly project(":support:cas-server-support-cookie")
 
+    testImplementation project(":support:cas-server-support-memcached-ticket-registry")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-person-directory")

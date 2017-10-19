@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
@@ -21,6 +22,7 @@ import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -72,6 +74,7 @@ import java.net.URI;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -80,6 +83,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -174,7 +178,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
      * @param value the value
      */
     public void setAutoReset(final boolean value) {
-        this.kryo.setAutoReset(false);
+        this.kryo.setAutoReset(value);
     }
 
     private void registerImmutableOrEmptyCollectionsWithKryo() {
@@ -183,7 +187,7 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         ImmutableSetSerializer.registerSerializers(this.kryo);
         ImmutableMapSerializer.registerSerializers(this.kryo);
         ImmutableMultimapSerializer.registerSerializers(this.kryo);
-
+        
         this.kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
         this.kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
         this.kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
@@ -193,6 +197,8 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         this.kryo.register(singletonSet.getClass());
         final Map singletonMap = Collections.singletonMap("key", "value");
         this.kryo.register(singletonMap.getClass());
+        final List list = Arrays.asList("key");
+        this.kryo.register(list.getClass(), new ArraysAsListSerializer());
     }
 
     private void registerCasServicesWithKryo() {
@@ -209,8 +215,10 @@ public class CasKryoTranscoder implements Transcoder<Object> {
     }
 
     private void registerCasAuthenticationWithKryo() {
+        
         this.kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
         this.kryo.register(BasicCredentialMetaData.class);
+        this.kryo.register(BasicIdentifiableCredential.class);
         this.kryo.register(DefaultHandlerResult.class);
         this.kryo.register(DefaultAuthentication.class);
         this.kryo.register(UsernamePasswordCredential.class);
