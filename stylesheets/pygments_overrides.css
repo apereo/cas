@@ -4,3 +4,7 @@
 .highlight pre, .highlight code {
   color: white;
 }
+
+.nav-pills {
+  background-color: black; 
+}
