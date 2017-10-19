@@ -36,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -113,13 +114,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
             return stopWebflow();
         }
-        // it's an authentication
+
         if (StringUtils.isNotBlank(clientName)) {
-            // get client
             final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             LOGGER.debug("Client: [{}]", client);
 
-            // get credentials
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
@@ -129,7 +128,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 return stopWebflow();
             }
 
-            // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
             LOGGER.debug("Retrieve service: [{}]", service);
@@ -141,7 +139,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             restoreRequestAttribute(request, session, this.localParamName);
             restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
-            // credentials not null -> try to authenticate
             if (credentials != null) {
                 final ClientCredential clientCredential = new ClientCredential(credentials);
                 final AuthenticationResult authenticationResult =
@@ -196,25 +193,29 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
 
-        this.clients.findAllClients().forEach(client -> {
-            try {
-                final IndirectClient indirectClient = (IndirectClient) client;
+        this.clients.findAllClients()
+                .stream()
+                .filter(IndirectClient.class::isInstance)
+                .forEach(client -> {
+                    try {
+                        final IndirectClient indirectClient = (IndirectClient) client;
 
-                final String name = client.getName();
-                final String type = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName()).replaceAll(StringUtils.EMPTY).toLowerCase();
-                final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
-                LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type));
-            } catch (final HttpAction e) {
-                if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
-                    LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
-                } else {
-                    LOGGER.warn(e.getMessage(), e);
-                }
-            } catch (final Exception e) {
-                LOGGER.error("Cannot process client [{}]", client, e);
-            }
-        });
+                        final String name = client.getName();
+                        final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
+                        final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+                        final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
+                        LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
+                        urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type));
+                    } catch (final HttpAction e) {
+                        if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
+                            LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
+                        } else {
+                            LOGGER.warn(e.getMessage(), e);
+                        }
+                    } catch (final Exception e) {
+                        LOGGER.error("Cannot process client [{}]", client, e);
+                    }
+                });
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
