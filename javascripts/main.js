@@ -327,11 +327,19 @@ function generateDependencyLangFragments() {
   <li class='nav-item'><a class='nav-link active' data-toggle='tab' href='#maven" + mavenId + "'>Maven</a></li> \
   <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#gradle" + gradleId + "'>Gradle</a></li> \
   <li role='presentation' class='nav-item dropdown'> \
-      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More<span class='caret'></span></a> \
+      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>Resources<span class='caret'></span></a> \
       <div class='dropdown-menu'> \
-          <a class='dropdown-item' href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
-          <a class='dropdown-item' href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a> \
-          <a class='dropdown-item' href='https://github.com/apereo/cas-webapp-docker'>Deploy CAS via Docker</a> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-overlay-template'>CAS Server Maven Overlay</a> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Server Gradle Overlay</a> \
+          <div class='dropdown-divider'></div> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-services-management-overlay'>CAS Management Maven Overlay</a> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-services-management-gradle-overlay'>CAS Management Gradle Overlay</a> \
+	  <div class='dropdown-divider'></div> \
+	  <a class='dropdown-item' href='https://github.com/apereo/cas-configserver-overlay'>CAS Configuration Server Overlay</a> \
+	  <a class='dropdown-item' href='https://github.com/apereo/cas-discoveryserver-overlay'>CAS Discovery Server Overlay</a> \
+	  <a class='dropdown-item' href='https://github.com/apereo/cas-bootadmin-overlay'>CAS Spring Boot Admin Server</a> \
+	  <div class='dropdown-divider'></div> \
+<a class='dropdown-item' href='https://github.com/apereo/cas-webapp-docker'>Dockerized CAS Deployment</a> \
       </div> \
   </li> \
   </ul> \
@@ -346,7 +354,6 @@ function generateDependencyLangFragments() {
       divHighlight.prepend(tabs);
   });
 }
-
 
 function responsiveImages() {
     $('img').each(function() {
