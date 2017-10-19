@@ -4,20 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CredentialMetaData;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -25,32 +17,18 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointCont
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
-import org.apereo.cas.util.EncodingUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.pac4j.core.context.HttpConstants;
-import org.pac4j.springframework.web.SecurityInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 import static org.junit.Assert.*;
 
