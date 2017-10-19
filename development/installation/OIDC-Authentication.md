@@ -5,7 +5,9 @@ title: CAS - OpenID Connect Authentication
 
 # OpenID Connect Authentication
 
-Allow CAS to act as an OpenId Connect Provider (OP).
+Allow CAS to act as an [OpenId Connect Provider (OP)](http://openid.net/connect/).
+
+<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of the <a href="OAuth-OpenId-Authentication.html">OAuth protocol</a> with some additional variations. If you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and behaviors that are documented for the <a href="OAuth-OpenId-Authentication.html">OAuth protocol</a> support may apply here just the same.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -33,8 +35,7 @@ The current implementation provides support for:
 
 | Field                                         | Description
 |-----------------------------------------------|-------------------------------------------------------
-| `/oidc/.well-known`                       | The discovery endpoint is a static page that you/clients use to query for CAS OIDC configuration information and metadata. No session is required. CAS returns basic information about endpoints, supported scopes, etc used for OIDC authentication.
-| `/oidc/.well-known/openid-configuration`  | Same as above.
+| `/oidc/.well-known`, `/oidc/.well-known/openid-configuration` | The discovery endpoint is a static page that you/clients use to query for CAS OIDC configuration information and metadata. No session is required. CAS returns basic information about endpoints, supported scopes, etc used for OIDC authentication.
 | `/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.

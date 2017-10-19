@@ -2505,7 +2505,6 @@ strategies when collecting principal attributes:
 # cas.authn.wsfed[0].encryptionPrivateKeyPassword=NONE
 ```
 
-
 ## Multifactor Authentication
 
 To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
@@ -3577,7 +3576,7 @@ Delegate authentication to an generic OAuth2 server.
 Delegate authentication to an external OpenID Connect server.
 
 ```properties
-# cas.authn.pac4j.oidc[0].type=GOOGLE|AZURE|GENERIC
+# cas.authn.pac4j.oidc[0].type=KEYCLOAK|GOOGLE|AZURE|GENERIC
 # cas.authn.pac4j.oidc[0].discoveryUri=
 # cas.authn.pac4j.oidc[0].maxClockSkew=
 # cas.authn.pac4j.oidc[0].scope=
@@ -4695,6 +4694,36 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.inMemory.crypto.alg=AES
 ```
 
+### JMS Ticket Registry
+
+To learn more about this topic, [please review this guide](Messaging-JMS-Ticket-Registry.html).
+
+#### JMS Ticket Registry ActiveMQ
+
+```properties
+# spring.activemq.broker-url=tcp://192.168.1.210:9876
+# spring.activemq.user=admin
+# spring.activemq.password=secret
+# spring.activemq.pool.enabled=true
+# spring.activemq.pool.max-connections=50
+```
+
+#### JMS Ticket Registry Artemis
+
+```properties
+# spring.artemis.mode=native
+# spring.artemis.host=192.168.1.210
+# spring.artemis.port=9876
+# spring.artemis.user=admin
+# spring.artemis.password=secret
+```
+
+#### JMS Ticket Registry JNDI
+
+```properties
+# spring.jms.jndi-name=java:/MyConnectionFactory
+```
+
 ### Ehcache Ticket Registry
 
 To learn more about this topic, [please review this guide](Ehcache-Ticket-Registry.html).
@@ -4960,6 +4989,23 @@ applicable to STs.
 
 ## TGT Expiration Policy
 
+Ticket expiration policies are activated in the following conditions:
+
+- If the timeout values for the default policy are all set to zero or less, CAS shall ensure tickets are *never* considered expired.
+- Disabling a policy requires that all its timeout settings be set to a value equal or less than zero.
+- If not ticket expiration policy is determined, CAS shall ensure the ticket are *always* considered expired.
+
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
+
+Ticket expiration policies are activated in the following order:
+
+1. Tickets are never expired, if and when settings for the default policy are configured accordingly.
+2. Timeout
+3. Default
+4. Throttled Timeout
+5. Hard Timeout
+6. Tickets always expire immediately.
+
 ### Default
 
 Provides a hard-time out as well as a sliding window.
@@ -5101,42 +5147,80 @@ To learn more about this topic, [please review this guide](../integration/Config
 Control how Spring Webflow's conversational session state should be managed by CAS,
 and all other webflow related settings.
 
-To learn more about this topic, [please review this guide](Webflow-Customization.html) or [this guide](Webflow-Customization-Sessions.html).
+To learn more about this topic, [please review this guide](Webflow-Customization.html).
 
 ```properties
-# cas.webflow.autoconfigure=true
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+```
 
+### Spring Webflow Auto Configuration
+
+Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](Webflow-Customization-Extensions.html).
+
+```properties
+# cas.webflow.autoconfigure=true
+```
+
+#### Spring Webflow Groovy Auto Configuration
+
+Control the Spring Webflow context via a custom Groovy script.
+
+```properties
+# cas.webflow.groovy.location=file:/etc/cas/config/custom-webflow.groovy
+```
+
+### Spring Webflow Session Management
+
+To learn more about this topic, [see this guide](Webflow-Customization-Sessions.html).
+
+```properties
 # cas.webflow.session.lockTimeout=30
 # cas.webflow.session.compress=false
 # cas.webflow.session.maxConversations=5
-# cas.webflow.session.storage=true
 
-# Manage session storage via Hazelcast
-# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+# Enable server-side session management
+# cas.webflow.session.storage=false
+```
 
-# Manage session storage via Mongo
-# spring.data.mongodb.host=mongo-srv
-# spring.data.mongodb.port=27018
-# spring.data.mongodb.database=prod
+#### Spring Webflow Client-Side Session
 
-# Manage session storage via Redis
-# spring.session.store-type=redis
-# spring.redis.host=localhost
-# spring.redis.password=secret
-# spring.redis.port=6379
-
+```properties
 # cas.webflow.crypto.signing.key=
 # cas.webflow.crypto.signing.keySize=512
+
 # cas.webflow.crypto.encryption.keySize=16
 # cas.webflow.crypto.encryption.key=
+
 # cas.webflow.crypto.alg=AES
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
 The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
+
+#### Spring Webflow Hazelcast Server-Side Session
+
+```properties
+# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+```
+
+#### Spring Webflow MongoDb Server-Side Session
+
+```properties
+# spring.data.mongodb.host=mongo-srv
+# spring.data.mongodb.port=27018
+# spring.data.mongodb.database=prod
+```
+
+#### Spring Webflow Redis Server-Side Session
+
+```properties
+# spring.session.store-type=redis
+# spring.redis.host=localhost
+# spring.redis.password=secret
+# spring.redis.port=6379
+```
 
 ### Authentication Exceptions
 
