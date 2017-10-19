@@ -284,13 +284,7 @@ function guidGenerator() {
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
-function ensureBootrapIsLoaded() {
-    if (typeof($.fn.modal) === 'undefined') {
-        // require a minimum version of bootstrap
-        $('head').prepend("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>");
-        $('head').append("<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'></script>");
-    }
-}
+
 
 function generateDependencyLangFragments() {
   $.each( $("div.language-xml.highlighter-rouge div.highlight pre"), function( i, val ) {
@@ -387,10 +381,10 @@ clipboard.on('success', function(e) {
 
 $(function () {
 	
-    ensureBootrapIsLoaded();
+    
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
-    generateDependencyLangFragments();
+    //generateDependencyLangFragments();
     generateToolbarIcons();
     generateNavigationBarAndCrumbs();
 	
