@@ -5,8 +5,11 @@
   color: white;
 }
 
-.nav-pills .nav-item.open .nav-link, .nav-pills .nav-item.open .nav-link:focus, 
-.nav-pills .nav-item.open .nav-link:hover, .nav-pills .nav-link.active, 
-.nav-pills .nav-link.active:focus, .nav-pills .nav-link.active:hover {
-  background-color: #272822;;
+.nav-pills .nav-link.active:hover {
+  background-color: #272822; 
+}  
+
+.nav-pills .nav-link.active {
+  background-color: white;
+  color: #272822;
 }
