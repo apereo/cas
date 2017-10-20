@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-authentication", automated = true)
+@RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class AdaptiveAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1840174229142982880L;

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.digest;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-digest-authentication")
+@RequiresModule(name = "cas-server-support-digest-authentication")
 public class DigestProperties implements Serializable {
 
     private static final long serialVersionUID = -7920128284733546444L;

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-hazelcast-ticket-registry")
+@RequiresModule(name = "cas-server-support-hazelcast-ticket-registry")
 public class HazelcastClusterProperties implements Serializable {
     private static final long serialVersionUID = 1817784607045775145L;
     /**

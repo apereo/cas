@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.trusted;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
  * This is {@link TrustedAuthenticationProperties}.
@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RequiredModule;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-trusted-webflow")
+@RequiresModule(name = "cas-server-support-trusted-webflow")
 public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalResolverProperties {
     private static final long serialVersionUID = 279410895614233349L;
     

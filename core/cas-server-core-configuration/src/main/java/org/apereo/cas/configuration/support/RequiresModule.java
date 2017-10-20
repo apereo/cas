@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This is {@link RequiredModule} that is put on top of a CAS properties class
+ * This is {@link RequiresModule} that is put on top of a CAS properties class
  * to indicate the required/using module that takes advantage of the settings.
  * The module typically needs to be available on the classpath at runtime
  * in order to activate a certain feature in CAS.
@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface RequiredModule {
+public @interface RequiresModule {
     /**
      * Indicate the name of the module required.
      * Module names typically don't carry prefixes such as {@code cas-server-}.

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.infinispan;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@RequiredModule(name = "cas-server-support-infinispan-ticket-registry")
+@RequiresModule(name = "cas-server-support-infinispan-ticket-registry")
 public class InfinispanProperties implements Serializable {
 
     private static final long serialVersionUID = 1974626726565626634L;

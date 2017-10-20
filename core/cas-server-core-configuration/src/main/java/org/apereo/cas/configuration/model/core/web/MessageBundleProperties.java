@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.web;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-web", automated = true)
+@RequiresModule(name = "cas-server-core-web", automated = true)
 public class MessageBundleProperties implements Serializable {
 
     private static final long serialVersionUID = 3769733438559663237L;
