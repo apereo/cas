@@ -6,7 +6,7 @@ title: CAS - Configuring Commandline Shell
 # CAS Command-line Shell
 
 The CAS command-line shell provides the ability to query the CAS server for help on available settings/modules and
-various other utility functions.The shell engine is presented as both a CLI utility and an interactive shell.
+various other utility functions. The shell engine is presented as both a CLI utility and an interactive shell.
 
 To invoke and work with the utility, simply execute:
 
