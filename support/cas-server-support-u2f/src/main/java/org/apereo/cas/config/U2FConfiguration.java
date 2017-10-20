@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepository;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
@@ -38,7 +39,7 @@ public class U2FConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @ConditionalOnMissingBean(name = "transactionManagerU2f")
     @Bean
     public PlatformTransactionManager transactionManagerU2f() {
@@ -70,12 +71,11 @@ public class U2FConfiguration {
                     u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
         }
 
-        if (u2f.getRest().getUrl() != null) {
-            return new U2FJsonResourceDeviceRepository(requestStorage,
-                    u2f.getJson().getLocation(),
-                    u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
+        if (StringUtils.isNotBlank(u2f.getRest().getUrl())) {
+            return new U2FRestResourceDeviceRepository(requestStorage,
+                    u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit(), u2f.getRest());
         }
-        
+
         final LoadingCache<String, Map<String, String>> userStorage =
                 Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())

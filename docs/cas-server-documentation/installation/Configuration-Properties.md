@@ -3008,6 +3008,12 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.jpa.pool.maxWait=2000
 ```
 
+### FIDO U2F REST
+
+```properties
+# cas.authn.mfa.u2f.rest.
+```
+
 ### Swivel Secure
 
 To learn more about this topic, [please review this guide](SwivelSecure-Authentication.html).
