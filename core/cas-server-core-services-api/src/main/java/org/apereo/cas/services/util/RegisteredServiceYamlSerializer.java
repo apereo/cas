@@ -2,6 +2,10 @@ package org.apereo.cas.services.util;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link RegisteredServiceYamlSerializer}.
@@ -15,5 +19,15 @@ public class RegisteredServiceYamlSerializer extends DefaultRegisteredServiceJso
     @Override
     protected JsonFactory getJsonFactory() {
         return new YAMLFactory();
+    }
+
+    @Override
+    public boolean supports(final File file) {
+        try {
+            final String contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
+            return contents.startsWith("--- !<");
+        } catch (final Exception e) {
+            return false;
+        }
     }
 }

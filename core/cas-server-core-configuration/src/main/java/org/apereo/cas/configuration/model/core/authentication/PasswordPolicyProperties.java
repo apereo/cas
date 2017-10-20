@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
@@ -16,8 +17,29 @@ import java.util.Map;
  */
 @RequiredModule(name = "cas-server-core-authentication", automated = true)
 public class PasswordPolicyProperties implements Serializable {
-
     private static final long serialVersionUID = -3878237508646993100L;
+
+    public enum PasswordPolicyHandlingOptions {
+        /**
+         * Default option to handle policy changes.
+         */
+        DEFAULT,
+        /**
+         * Handle account password policies via Groovy.
+         */
+        GROOVY,
+        /**
+         * Strategy to only activate password policy
+         * if the authentication response code is not blacklisted.
+         */
+        REJECT_RESULT_CODE
+    }
+
+    /**
+     * Decide how LDAP authentication should handle password policy changes.
+     */
+    private PasswordPolicyHandlingOptions strategy = PasswordPolicyHandlingOptions.DEFAULT;
+
     /**
      * Key-value structure (Map) that indicates a list of boolean attributes as keys.
      * If either attribute value is true, indicating an account state is flagged,
@@ -43,7 +65,7 @@ public class PasswordPolicyProperties implements Serializable {
 
     /**
      * Used by an account state handling policy that only calculates account warnings
-     * in case the LDAP entry carries an attribute {@link #warningAttributeName} 
+     * in case the LDAP entry carries an attribute {@link #warningAttributeName}
      * whose value matches this field.
      */
     private String warningAttributeValue;
@@ -71,6 +93,11 @@ public class PasswordPolicyProperties implements Serializable {
      * LDAP type. Accepted values are {@code GENERIC,AD,FreeIPA,EDirectory}
      */
     private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
+
+    /**
+     * Handle password policy via Groovy script.
+     */
+    private Groovy groovy = new Groovy();
 
     public AbstractLdapProperties.LdapType getType() {
         return type;
@@ -150,5 +177,26 @@ public class PasswordPolicyProperties implements Serializable {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public PasswordPolicyHandlingOptions getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(final PasswordPolicyHandlingOptions strategy) {
+        this.strategy = strategy;
+    }
+
+    public Groovy getGroovy() {
+        return groovy;
+    }
+
+    public void setGroovy(final Groovy groovy) {
+        this.groovy = groovy;
+    }
+
+    @RequiredModule(name = "cas-server-support-ldap")
+    public static class Groovy extends SpringResourceProperties {
+        private static final long serialVersionUID = 8079027843747126083L;
     }
 }
