@@ -89,6 +89,7 @@ layout: null
         *   [Swivel Secure](/$version/installation/SwivelSecure-Authentication.html)
         *   [Custom](/$version/installation/Custom-MFA-Authentication.html)
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
+    *   [Bypass](/$version/installation/Configuring-Multifactor-Authentication-Bypass.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
     
