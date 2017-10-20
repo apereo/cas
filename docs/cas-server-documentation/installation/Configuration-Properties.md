@@ -1864,7 +1864,6 @@ The following options can be used to passivate objects when they are checked bac
 
 You may receive unexpected LDAP failures, when CAS is configured to authenticate using `DIRECT` or `AUTHENTICATED` types and LDAP is locked down to not allow anonymous binds/searches. Every second attempt with a given LDAP connection from the pool would fail if it was on the same connection as a failed login attempt, and the regular connection validator would similarly fail. When a connection is returned back to a pool, it still may contain the principal and credentials from the previous attempt. Before the next bind attempt using that connection, the validator tries to validate the connection again but fails because it's no longer trying with the configured bind credentials but with whatever user DN was used in the previous step. Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect to LDAP with the configured bind credentials, effectively resetting the connection to what it should be after each bind request.
 
-
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
 
@@ -1899,13 +1898,16 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 #
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
 
-
 # cas.authn.ldap[0].collectDnAttribute=false
 # cas.authn.ldap[0].principalDnAttributeName=principalLdapDn
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].credentialCriteria=
+```
 
+### LDAP SSL
+
+```properties
 # cas.authn.ldap[0].saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
 # cas.authn.ldap[0].saslRealm=EXAMPLE.COM
 # cas.authn.ldap[0].saslAuthorizationId=
@@ -1917,7 +1919,11 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].keystore=
 # cas.authn.ldap[0].keystorePassword=
 # cas.authn.ldap[0].keystoreType=JKS|JCEKS|PKCS12
+```
 
+### LDAP Pooling
+
+```properties
 # cas.authn.ldap[0].poolPassivator=NONE|CLOSE|BIND
 # cas.authn.ldap[0].minPoolSize=3
 # cas.authn.ldap[0].maxPoolSize=10
@@ -1930,7 +1936,11 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].idleTime=5000
 # cas.authn.ldap[0].prunePeriod=5000
 # cas.authn.ldap[0].blockWaitTime=5000
+```
 
+### LDAP Search Entry Handlers
+
+```properties
 # cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 # cas.authn.ldap[0].allowMultipleDns=false
 
@@ -1957,7 +1967,11 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 # cas.authn.ldap[0].name=
 # cas.authn.ldap[0].order=0
+```
 
+### LDAP Passoword Encoding & Principal Transformation
+
+```properties
 # cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.ldap[0].passwordEncoder.characterEncoding=
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
@@ -1967,7 +1981,11 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].principalTransformation.suffix=
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
+```
 
+### LDAP Connection Validators
+
+```properties
 # cas.authn.ldap[0].validator.type=NONE|SEARCH|COMPARE
 # cas.authn.ldap[0].validator.baseDn=
 # cas.authn.ldap[0].validator.searchFilter=(objectClass=*)
@@ -1975,8 +1993,13 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].validator.attributeName=objectClass
 # cas.authn.ldap[0].validator.attributeValues=top
 # cas.authn.ldap[0].validator.dn=
+```
 
+### LDAP Password Policy
+
+```properties
 # cas.authn.ldap[0].passwordPolicy.type=GENERIC|AD|FreeIPA|EDirectory
+
 # cas.authn.ldap[0].passwordPolicy.enabled=true
 # cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
 # cas.authn.ldap[0].passwordPolicy.loginFailures=5
@@ -1988,7 +2011,49 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 # An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
 # cas.authn.ldap[0].passwordPolicy.customPolicyClass=com.example.MyAuthenticationResponseHandler
+
+# cas.authn.ldap[0].passwordPolicy.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
+# cas.authn.ldap[0].passwordPolicy.groovy.location=file:/etc/cas/config/password-policy.groovy
 ```
+
+#### Password Policy Strategies
+
+Password policy strategy types are outlined below. The strategy evaluates the authentication response received from LDAP and is allowed to review it upfront in order to further examine whether account state, messages and warnings is eligible for further investigation.
+
+| Option        | Description
+|---------------|-----------------------------------------------------------------------------
+| `DEFAULT`     | Accepts the auhentication response as is, and processes account state, if any.
+| `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
+| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
+
+If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
+
+```groovy
+import java.util.*
+import org.apereo.cas.authentication.*
+import org.ldaptive.auth.*
+import org.apereo.cas.authentication.support.*
+
+def List<MessageDescriptor> run(final Object... args) {
+    def response = args[0]
+    def configuration = args[1];
+    def logger = args[2]
+
+    logger.info("Handling password policy [{}] via ${configuration.getAccountStateHandler()}", response)
+
+    def accountStateHandler = configuration.getAccountStateHandler()
+    return accountStateHandler.handle(response, configuration)
+}
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------------------
+| `response`            | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse`
+| `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
 
 ## REST Authentication
 
