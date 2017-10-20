@@ -365,7 +365,7 @@ function copyButton() {
 
 var clipboard = new Clipboard('.copy-button', {
     text: function(trigger) {
-        var code = $(trigger).prev('pre').find('code table td.rouge-code pre').text();
+        var code = $(trigger).parent().find('td.rouge-code pre').text()
         return code;
     }
 });
