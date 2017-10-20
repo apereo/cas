@@ -52,6 +52,28 @@ Devices stored into the JSON file take on the following format:
 }
 ```
 
+### Groovy
+
+Device registrations may be managed via an external Groovy script. The script may be designed as follows:
+
+```groovy
+import java.util.*
+import org.apereo.cas.adaptors.u2f.storage.*
+
+def Map<String, List<U2FDeviceRegistration>> read(final Object... args) {
+    def logger = args[0]
+    ...
+    return null;
+}
+
+def Boolean write(final Object... args) {
+    List<U2FDeviceRegistration> list = args[0]
+    def logger = args[1]
+    ...
+    return true;
+}
+```
+
 ### JPA
 
 Device registrations may be kept inside a relational database by including the following module in the WAR overlay:
@@ -82,7 +104,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ### REST
 
-Device registrations may be managed via a REST API. Endpoints must be designed to accept/process `application/json`. The syntax for he collection of devices passed back and forth is designed in JSON and is identical to the JSON structure defined above.
+Device registrations may be managed via REST APIs. Endpoints must be designed to accept/process `application/json`. The syntax for he collection of devices passed back and forth is designed in JSON and is identical to the JSON structure defined above.
 
 The following parameters are passed:
 
