@@ -12,8 +12,18 @@
 .nav-pills .nav-link.active, .nav-pills .nav-link.active:focus, .nav-pills .nav-item.open .nav-link, .nav-pills .nav-item.open .nav-link:focus, .nav-pills .nav-item.open .nav-link:hover {
   background-color: #272822;
   color: white;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 code.highlighter-rouge {
   color: #318f7b 
+}
+
+
+/**
+ * Tab overrides
+ */
+div.tab-content div.tab-pane:first-child table {
+    border-top-left-radius: 0;
 }
