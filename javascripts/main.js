@@ -358,9 +358,13 @@ function responsiveTables() {
 
 function copyButton() {
     $('pre.highlight').each(function() {
-        var btn = '<button class="copy-button hidden-md-down fa fa-clipboard" />';
+        var btn = '<button class="copy-button hidden-md-down fa fa-clipboard" data-toggle="tooltip" title="Copy Code" />';
         $(this).append( btn );
     });
+}
+
+function enableBootstrapTooltips() {
+	$('[data-toggle="tooltip"]').tooltip(); 
 }
 
 var clipboard = new Clipboard('.copy-button', {
@@ -404,7 +408,7 @@ $(function () {
         $('#lg-menu').toggleClass('hidden-xs-down');
 
     });
-
+    enableBootstrapTooltips();
 });
 
 
