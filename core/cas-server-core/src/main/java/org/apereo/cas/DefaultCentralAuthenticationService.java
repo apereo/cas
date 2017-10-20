@@ -294,7 +294,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 }
             }
 
-            final Service selectedService = resolveServiceFromAuthenticationRequest(service);
+            final Service selectedService = resolveServiceFromAuthenticationRequest(serviceTicket.getService());
             LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
