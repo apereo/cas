@@ -83,13 +83,19 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         this.casUserProfileFactory = casUserProfileFactory;
     }
 
-
+    /**
+     * Mapped method to return the manage.html.
+     *
+     * @param response - HttpServletResponse
+     * @return - ModelAndView
+     */
     @GetMapping("/manage.html")
     public ModelAndView manage(final HttpServletResponse response) {
         final Map<String, Object> model = new HashMap<>();
         model.put(STATUS, HttpServletResponse.SC_OK);
-        return new ModelAndView("manage",model);
+        return new ModelAndView("manage", model);
     }
+
     /**
      * Ensure default service exists.
      */

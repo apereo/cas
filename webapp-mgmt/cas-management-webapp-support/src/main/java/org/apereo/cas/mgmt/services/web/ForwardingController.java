@@ -13,6 +13,12 @@ import org.springframework.stereotype.Controller;
 @Controller("forwarding")
 public class ForwardingController {
 
+    /**
+     * This mapping is used for all routes in the management that should be
+     * handled when the browser is refreshed or user types in the url bar.
+     *
+     * @return - String manage.html
+     */
     @RequestMapping({
             "services/{id:.*}",
             "form/{id:.*}",
