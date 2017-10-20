@@ -50,7 +50,10 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
      * Store device registration records inside a static JSON resource.
      */
     private Json json = new Json();
-
+    /**
+     * Store device registration records via a Groovy script.
+     */
+    private Groovy groovy = new Groovy();
     /**
      * Store device registration records via REST APIs.
      */
@@ -120,7 +123,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     public void setMongo(final MongoDb mongo) {
         this.mongo = mongo;
     }
-    
+
     public Jpa getJpa() {
         return jpa;
     }
@@ -137,6 +140,14 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
         this.rest = rest;
     }
 
+    public Groovy getGroovy() {
+        return groovy;
+    }
+
+    public void setGroovy(final Groovy groovy) {
+        this.groovy = groovy;
+    }
+
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -4334840263678287815L;
     }
@@ -149,12 +160,19 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
         }
     }
 
+    @RequiresModule(name = "cas-server-support-u2f")
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = -6883660787308509919L;
     }
 
+    @RequiresModule(name = "cas-server-support-u2f")
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
+    }
+
+    @RequiresModule(name = "cas-server-support-u2f")
+    public static class Groovy extends SpringResourceProperties {
+        private static final long serialVersionUID = 8079027843747126083L;
     }
 }
 

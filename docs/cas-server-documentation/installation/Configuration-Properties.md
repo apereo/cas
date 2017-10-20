@@ -3011,7 +3011,15 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 ### FIDO U2F REST
 
 ```properties
-# cas.authn.mfa.u2f.rest.
+# cas.authn.mfa.u2f.rest.url=https://somewhere.fido.org
+# cas.authn.mfa.u2f.rest.basicAuthUsername=
+# cas.authn.mfa.u2f.rest.basicAuthPassword=
+```
+
+### FIDO U2F Groovy
+
+```properties
+# cas.authn.mfa.u2f.groovy.location=file:/etc/cas/config/fido.groovy
 ```
 
 ### Swivel Secure
