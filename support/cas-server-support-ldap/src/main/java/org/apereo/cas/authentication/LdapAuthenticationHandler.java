@@ -4,14 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.support.AccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.LdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.ResultCode;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -25,7 +24,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,13 +47,17 @@ import java.util.Set;
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationHandler.class);
-
-
+    
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
     protected Map<String, Collection<String>> principalAttributeMap = new HashMap<>();
 
+    /**
+     * Decide how to execute password policy handling, if at all.
+     */
+    protected LdapPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy;
+    
     /**
      * Performs LDAP authentication given username/password.
      **/
@@ -96,12 +98,13 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param principalFactory the principal factory
      * @param order            the order
      * @param authenticator    Ldaptive authenticator component.
+     * @param strategy         the strategy
      */
     public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                     final Integer order,
-                                     final Authenticator authenticator) {
+                                     final Integer order, final Authenticator authenticator, final LdapPasswordPolicyHandlingStrategy strategy) {
         super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
+        this.passwordPolicyHandlingStrategy = strategy;
     }
 
     /**
@@ -164,22 +167,13 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         LOGGER.debug("LDAP response: [{}]", response);
 
-        if (!response.getResult() && response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
+        if (!passwordPolicyHandlingStrategy.supports(response)) {
             throw new FailedLoginException("Invalid credentials");
         }
 
-        final List<MessageDescriptor> messageList;
-        final LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration = (LdapPasswordPolicyConfiguration) super.getPasswordPolicyConfiguration();
-        if (ldapPasswordPolicyConfiguration != null) {
-            final AccountStateHandler accountStateHandler = ldapPasswordPolicyConfiguration.getAccountStateHandler();
-            LOGGER.debug("Applying password policy [{}] to [{}]", response, accountStateHandler);
-            messageList = accountStateHandler.handle(response, ldapPasswordPolicyConfiguration);
-        } else {
-            LOGGER.debug("No ldap password policy configuration is defined");
-            messageList = new ArrayList<>(0);
-        }
-
         if (response.getResult()) {
+            final List<MessageDescriptor> messageList = passwordPolicyHandlingStrategy.handle(response, 
+                    (LdapPasswordPolicyConfiguration) getPasswordPolicyConfiguration());
             LOGGER.debug("LDAP response returned a result. Creating the final LDAP principal");
             final Principal principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
             return createHandlerResult(upc, principal, messageList);

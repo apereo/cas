@@ -10,10 +10,15 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
+import org.apereo.cas.authentication.support.DefaultLdapPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.GroovyLdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.LdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
+import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -34,6 +39,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
 import java.time.Period;
 import java.util.Arrays;
@@ -90,10 +96,12 @@ public class LdapAuthenticationConfiguration {
                     LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
                             multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
+                    LOGGER.debug("Creating ldap password policy handling strategy for [{}]", l.getLdapUrl());
+                    final LdapPasswordPolicyHandlingStrategy strategy = createLdapPasswordPolicyHandlingStrategy(l);
+
                     LOGGER.debug("Creating ldap authentication handler for [{}]", l.getLdapUrl());
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(l.getName(),
-                            servicesManager, ldapPrincipalFactory(),
-                            l.getOrder(), authenticator);
+                            servicesManager, ldapPrincipalFactory(), l.getOrder(), authenticator, strategy);
                     handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
                     final List<String> additionalAttributes = l.getAdditionalAttributes();
@@ -151,6 +159,22 @@ public class LdapAuthenticationConfiguration {
             }
             return true;
         };
+    }
+
+    private LdapPasswordPolicyHandlingStrategy createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
+        if (l.getPasswordPolicy().getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
+            LOGGER.debug("Creating LDAP password policy handling strategy based on blacklisted authentication result codes");
+            return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
+        }
+        
+        final Resource location = l.getPasswordPolicy().getGroovy().getLocation();
+        if (l.getPasswordPolicy().getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
+            LOGGER.debug("Creating LDAP password policy handling strategy based on Groovy script [{}]", location);
+            return new GroovyLdapPasswordPolicyHandlingStrategy(location);
+        }
+
+        LOGGER.debug("Creating default LDAP password policy handling strategy");
+        return new DefaultLdapPasswordPolicyHandlingStrategy();
     }
 
     private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
