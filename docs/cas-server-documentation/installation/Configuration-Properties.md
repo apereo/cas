@@ -10,7 +10,7 @@ line switches](Configuration-Management.html#overview). This section provides a 
 references to the underlying modules that consume them.
 
 <div class="alert alert-info"><strong>Be Selective</strong><p>
-This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need.</p></div>
+This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
 
 Note that property names can be specified
 in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property`
@@ -246,7 +246,9 @@ server.useForwardHeaders=true
 server.connectionTimeout=20000
 ```
 
-### Embedded Tomcat Container
+### Embedded Apache Tomcat Container
+
+The following settings affect the runtime behavior of the embedded Apache Tomcat container.
 
 ```properties
 # server.tomcat.basedir=build/tomcat
@@ -531,6 +533,8 @@ Monitoring endpoints may also be secured by Spring Security. You can define the 
 
 #### Basic Authentication
 
+Enable basic authentication for Spring Security to secure endpoints.
+
 ```properties
 # security.basic.authorizeMode=none|role|authenticated
 # security.basic.enabled=true
@@ -540,6 +544,8 @@ Monitoring endpoints may also be secured by Spring Security. You can define the 
 
 #### JAAS Authentication
 
+Enable JAAS authentication for Spring Security to secure endpoints.
+
 ```properties
 # cas.adminPagesSecurity.jaas.loginConfig=file:/path/to/config
 # cas.adminPagesSecurity.jaas.refreshConfigurationOnStartup=true
@@ -547,6 +553,8 @@ Monitoring endpoints may also be secured by Spring Security. You can define the 
 ```
 
 #### JDBC Authentication
+
+Enable JDBC authentication for Spring Security to secure endpoints.
 
 ```properties
 # cas.adminPagesSecurity.jdbc.query=SELECT username,password,enabled FROM users WHERE username=?
@@ -573,6 +581,8 @@ Monitoring endpoints may also be secured by Spring Security. You can define the 
 ```
 
 #### LDAP Authentication
+
+Enable LDAP authentication for Spring Security to secure endpoints.
 
 ```properties
 # cas.adminPagesSecurity.ldap.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
