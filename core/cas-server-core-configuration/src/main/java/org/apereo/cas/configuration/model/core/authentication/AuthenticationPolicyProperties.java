@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-authentication", automated = true)
+@RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class AuthenticationPolicyProperties implements Serializable {
 
     private static final long serialVersionUID = 2039700004862120066L;

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.gua;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiredModule(name = "cas-server-support-gua")
+@RequiresModule(name = "cas-server-support-gua")
 public class GraphicalUserAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7527953699378415460L;
     /**

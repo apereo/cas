@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.core.events;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-events", automated = true)
+@RequiresModule(name = "cas-server-core-events", automated = true)
 public class EventsProperties implements Serializable {
 
     private static final long serialVersionUID = 1734523424737956370L;
@@ -84,12 +84,12 @@ public class EventsProperties implements Serializable {
         this.jpa = jpa;
     }
 
-    @RequiredModule(name = "cas-server-support-events-jpa")
+    @RequiresModule(name = "cas-server-support-events-jpa")
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 7647381223153797806L;
     }
 
-    @RequiredModule(name = "cas-server-support-events-mongo")
+    @RequiresModule(name = "cas-server-support-events-mongo")
     public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
 
@@ -98,7 +98,7 @@ public class EventsProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-events-influxdb")
+    @RequiresModule(name = "cas-server-support-events-influxdb")
     public static class InfluxDb extends InfluxDbProperties {
         private static final long serialVersionUID = -3918436901491275547L;
 

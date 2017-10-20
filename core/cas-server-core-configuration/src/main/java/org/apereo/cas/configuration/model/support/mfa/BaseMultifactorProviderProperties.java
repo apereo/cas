@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 
 /**
@@ -45,7 +47,8 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
      * the authentication request, bypass rules are then consulted to calculate whether the provider
      * should ignore the request and skip MFA conditionally.
      */
-    private Bypass bypass = new Bypass();
+    @NestedConfigurationProperty
+    private MultifactorAuthenticationProviderBypassProperties bypass = new MultifactorAuthenticationProviderBypassProperties();
     /**
      * The name of the authentication handler used to verify credentials in MFA.
      */
@@ -59,11 +62,11 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
         this.name = name;
     }
 
-    public Bypass getBypass() {
+    public MultifactorAuthenticationProviderBypassProperties getBypass() {
         return bypass;
     }
 
-    public void setBypass(final Bypass bypass) {
+    public void setBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
         this.bypass = bypass;
     }
 
@@ -82,101 +85,6 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
     public void setId(final String id) {
         this.id = id;
     }
-
-    /**
-     * The bypass options for multifactor authentication.
-     */
-    public static class Bypass implements Serializable {
-        private static final long serialVersionUID = -9181362378365850397L;
-        /**
-         * Skip multifactor authentication based on designated principal attribute names.
-         */
-        private String principalAttributeName;
-        /**
-         * Optionally, skip multifactor authentication based on designated principal attribute values.
-         */
-        private String principalAttributeValue;
-        /**
-         * Skip multifactor authentication based on designated authentication attribute names.
-         */
-        private String authenticationAttributeName;
-        /**
-         * Optionally, skip multifactor authentication based on designated authentication attribute values.
-         */
-        private String authenticationAttributeValue;
-        /**
-         * Skip multifactor authentication depending on form of primary authentication execution.
-         * Specifically, skip multifactor if the a particular authentication handler noted by its name
-         * successfully is able to authenticate credentials in the primary factor.
-         */
-        private String authenticationHandlerName;
-        /**
-         * Skip multifactor authentication depending on method/form of primary authentication execution.
-         * Specifically, skip multifactor if the authentication method attribute collected as part of
-         * authentication metadata matches a certain value.
-         */
-        private String authenticationMethodName;
-        /**
-         * Skip multifactor authentication depending on form of primary credentials.
-         * Value must equal the fully qualified class name of the credential type.
-         */
-        private String credentialClassType;
-
-        public String getCredentialClassType() {
-            return credentialClassType;
-        }
-
-        public void setCredentialClassType(final String credentialClassType) {
-            this.credentialClassType = credentialClassType;
-        }
-
-        public String getAuthenticationAttributeName() {
-            return authenticationAttributeName;
-        }
-
-        public void setAuthenticationAttributeName(final String authenticationAttributeName) {
-            this.authenticationAttributeName = authenticationAttributeName;
-        }
-
-        public String getAuthenticationAttributeValue() {
-            return authenticationAttributeValue;
-        }
-
-        public void setAuthenticationAttributeValue(final String authenticationAttributeValue) {
-            this.authenticationAttributeValue = authenticationAttributeValue;
-        }
-
-        public String getPrincipalAttributeName() {
-            return principalAttributeName;
-        }
-
-        public void setPrincipalAttributeName(final String principalAttributeName) {
-            this.principalAttributeName = principalAttributeName;
-        }
-
-        public String getPrincipalAttributeValue() {
-            return principalAttributeValue;
-        }
-
-        public void setPrincipalAttributeValue(final String principalAttributeValue) {
-            this.principalAttributeValue = principalAttributeValue;
-        }
-
-        public String getAuthenticationHandlerName() {
-            return authenticationHandlerName;
-        }
-
-        public void setAuthenticationHandlerName(final String authenticationHandlerName) {
-            this.authenticationHandlerName = authenticationHandlerName;
-        }
-
-        public String getAuthenticationMethodName() {
-            return authenticationMethodName;
-        }
-
-        public void setAuthenticationMethodName(final String authenticationMethodName) {
-            this.authenticationMethodName = authenticationMethodName;
-        }
-    }
+    
 }
 

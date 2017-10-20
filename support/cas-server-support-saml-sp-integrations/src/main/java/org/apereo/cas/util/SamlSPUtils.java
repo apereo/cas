@@ -2,8 +2,8 @@ package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -71,7 +71,7 @@ public final class SamlSPUtils {
                 service.setRequiredNameIdFormat(sp.getNameIdFormat());
             }
 
-            final Multimap<String, String> attributes = Beans.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
+            final Multimap<String, String> attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
             final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
             policy.addPolicy(new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(attributes)));
             service.setAttributeReleasePolicy(policy);

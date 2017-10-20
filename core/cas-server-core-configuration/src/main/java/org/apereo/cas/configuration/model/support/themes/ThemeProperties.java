@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.themes;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-themes", automated = true)
+@RequiresModule(name = "cas-server-support-themes", automated = true)
 public class ThemeProperties implements Serializable {
 
     private static final long serialVersionUID = 2248773823196496599L;

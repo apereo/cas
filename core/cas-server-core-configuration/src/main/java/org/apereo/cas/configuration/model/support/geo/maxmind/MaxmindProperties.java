@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.geo.maxmind;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.Resource;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-geolocation-maxmind")
+@RequiresModule(name = "cas-server-support-geolocation-maxmind")
 public class MaxmindProperties implements Serializable {
 
     private static final long serialVersionUID = 7883029275219817797L;

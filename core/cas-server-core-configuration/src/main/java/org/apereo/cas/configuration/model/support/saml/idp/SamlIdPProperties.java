@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-saml-idp")
+@RequiresModule(name = "cas-server-support-saml-idp")
 public class SamlIdPProperties implements Serializable {
 
     private static final long serialVersionUID = -5848075783676789852L;

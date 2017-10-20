@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.analytics;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-web", automated = true)
+@RequiresModule(name = "cas-server-core-web", automated = true)
 public class GoogleAnalyticsProperties implements Serializable {
 
     private static final long serialVersionUID = 5425678120443123345L;

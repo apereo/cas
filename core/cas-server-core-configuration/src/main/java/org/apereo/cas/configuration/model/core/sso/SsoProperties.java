@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.sso;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-authentication", automated = true)
+@RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class SsoProperties implements Serializable {
 
     private static final long serialVersionUID = -8777647966370741733L;

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.openid;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-openid")
+@RequiresModule(name = "cas-server-support-openid")
 public class OpenIdProperties implements Serializable {
 
     private static final long serialVersionUID = -2935759289483632610L;

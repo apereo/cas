@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 /**
@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-ldap-service-registry")
+@RequiresModule(name = "cas-server-support-ldap-service-registry")
 public class LdapServiceRegistryProperties extends AbstractLdapProperties {
 
     private static final long serialVersionUID = 2372867394066286022L;

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.logout;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-logout", automated = true)
+@RequiresModule(name = "cas-server-core-logout", automated = true)
 public class LogoutProperties implements Serializable {
     private static final long serialVersionUID = 7466171260665661949L;
     /**

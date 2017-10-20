@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.fortress;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Yudhi Karunia Surtan
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-fortress")
+@RequiresModule(name = "cas-server-support-fortress")
 public class FortressAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 9068259944327425315L;

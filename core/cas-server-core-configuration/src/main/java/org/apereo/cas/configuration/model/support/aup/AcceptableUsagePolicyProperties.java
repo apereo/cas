@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.aup;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-aup-webflow")
+@RequiresModule(name = "cas-server-support-aup-webflow")
 public class AcceptableUsagePolicyProperties implements Serializable {
     private static final long serialVersionUID = -7703477581675908899L;
     /**
@@ -85,7 +85,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         this.mongo = mongo;
     }
 
-    @RequiredModule(name = "cas-server-support-aup-mongo")
+    @RequiresModule(name = "cas-server-support-aup-mongo")
     public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
 
@@ -94,7 +94,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-aup-jdbc")
+    @RequiresModule(name = "cas-server-support-aup-jdbc")
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = -1325011278378393385L;
 
@@ -112,12 +112,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-aup-rest")
+    @RequiresModule(name = "cas-server-support-aup-rest")
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = -8102345678378393382L;
     }
 
-    @RequiredModule(name = "cas-server-support-aup-ldap")
+    @RequiresModule(name = "cas-server-support-aup-ldap")
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -7991011278378393382L;
         /**

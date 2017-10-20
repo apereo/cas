@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-saml-mdui")
+@RequiresModule(name = "cas-server-support-saml-mdui")
 public class SamlMetadataUIProperties implements Serializable {
 
     private static final long serialVersionUID = 2113479681245996975L;

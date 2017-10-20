@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.mongo.ticketregistry;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiredModule(name = "cas-server-support-mongo-ticket-registry")
+@RequiresModule(name = "cas-server-support-mongo-ticket-registry")
 public class MongoTicketRegistryProperties extends BaseMongoDbProperties {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoTicketRegistryProperties.class);
     

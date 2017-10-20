@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
  * This is {@link AuditMongoDbProperties}.
@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RequiredModule;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-audit-mongo")
+@RequiresModule(name = "cas-server-support-audit-mongo")
 public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
     private static final long serialVersionUID = 4940497540189318943L;
 

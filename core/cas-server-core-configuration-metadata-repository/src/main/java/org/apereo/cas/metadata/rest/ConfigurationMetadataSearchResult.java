@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.CollectionUtils;
@@ -56,7 +56,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
             valueHints.forEach(hint -> {
                 final Set values = CollectionUtils.toCollection(hint.getValue());
-                if (values.contains(RequiredModule.class.getName())) {
+                if (values.contains(RequiresModule.class.getName())) {
                     setRequiredModule(hint.getDescription());
                     setRequiredModuleAutomated(values.contains(Boolean.TRUE));
                 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@RequiredModule(name = "cas-server-support-hazelcast-ticket-registry")
+@RequiresModule(name = "cas-server-support-hazelcast-ticket-registry")
 public class HazelcastTicketRegistryProperties extends BaseHazelcastProperties {
     
     private static final long serialVersionUID = -1095208036374406772L;

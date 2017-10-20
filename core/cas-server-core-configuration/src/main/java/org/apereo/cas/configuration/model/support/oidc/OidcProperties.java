@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-oidc")
+@RequiresModule(name = "cas-server-support-oidc")
 public class OidcProperties implements Serializable {
 
     private static final long serialVersionUID = 813028615694269276L;

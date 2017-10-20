@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-core-util", automated = true)
+@RequiresModule(name = "cas-server-core-util", automated = true)
 public class SchedulingProperties implements Serializable {
 
     private static final long serialVersionUID = -1522227059439367394L;

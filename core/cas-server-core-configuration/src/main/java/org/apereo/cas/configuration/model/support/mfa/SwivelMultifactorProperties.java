@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 /**
@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-swivel")
+@RequiresModule(name = "cas-server-support-swivel")
 public class SwivelMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = -7409451053833491119L;
 

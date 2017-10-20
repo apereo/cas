@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-cookie", automated = true)
+@RequiresModule(name = "cas-server-support-cookie", automated = true)
 public class TicketGrantingCookieProperties extends CookieProperties {
 
     private static final long serialVersionUID = 7392972818105536350L;

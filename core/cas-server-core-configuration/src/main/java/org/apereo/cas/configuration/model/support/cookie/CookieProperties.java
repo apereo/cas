@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-cookie", automated = true)
+@RequiresModule(name = "cas-server-support-cookie", automated = true)
 public class CookieProperties implements Serializable {
 
     private static final long serialVersionUID = 6804770601645126835L;
