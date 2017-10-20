@@ -5,9 +5,8 @@ title: CAS - Multifactor Authentication Bypass
 
 # Multifactor Authentication Bypass
 
-Each multifactor provider is equipped with options to allow for MFA bypass. Once the provider
-is chosen to honor the authentication request, bypass rules are then consulted to calculate
-whether the provider should ignore the request and skip MFA conditionally.
+Each [multifactor provider](Configuring-Multifactor-Authentication.html) is equipped with options to allow for bypass. Once the provider
+is chosen to honor the authentication request, bypass rules are then consulted to calculate whether the provider should ignore the request and skip MFA conditionally.
 
 Bypass rules allow for the following options for each provider:
 
