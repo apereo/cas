@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
@@ -319,14 +319,14 @@ public class ConfigurationMetadataGenerator {
                 final ConfigurationMetadataHint hint = new ConfigurationMetadataHint();
                 hint.setName(entry.getName());
 
-                if (clazz.isAnnotationPresent(RequiredModule.class)) {
-                    final RequiredModule annotation = Arrays.stream(clazz.getAnnotations())
-                            .filter(a -> a.annotationType().equals(RequiredModule.class))
+                if (clazz.isAnnotationPresent(RequiresModule.class)) {
+                    final RequiresModule annotation = Arrays.stream(clazz.getAnnotations())
+                            .filter(a -> a.annotationType().equals(RequiresModule.class))
                             .findFirst()
-                            .map(RequiredModule.class::cast)
+                            .map(RequiresModule.class::cast)
                             .get();
                     final ValueHint valueHint = new ValueHint();
-                    valueHint.setValue(Stream.of(RequiredModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
+                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
                     valueHint.setDescription(annotation.name());
                     hint.getValues().add(valueHint);
                 }

@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -15,7 +15,7 @@ import java.util.Set;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-shiro")
+@RequiresModule(name = "cas-server-support-shiro")
 public class ShiroAuthenticationProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 8997401036330472417L;

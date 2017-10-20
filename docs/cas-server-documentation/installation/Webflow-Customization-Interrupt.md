@@ -99,10 +99,19 @@ The following parameters are passed to the script:
 | `service`             | The identifier (i.e. URL) of the requesting application.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
-
 ### REST
 
-This strategy reaches out to a REST endpoint resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the provided `username` and `service` parameters. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-rest).
+This strategy reaches out to a REST endpoint resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the following parameters:
+
+| Parameter             | Description
+|-------------------------------------------------------------------------------------------------------
+| `username`            | Authenticated principal id.
+| `service`             | The identifier (URL) for the requesting application.
+| `registeredService`   | The identifier of the registered service matched and found in the registry. 
+
+On a successful operation with a status code of `200`, the response body is expected to contain the JSON payload whose syntax and structure is identical to what is described above.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-rest).
 
 ### Custom
 

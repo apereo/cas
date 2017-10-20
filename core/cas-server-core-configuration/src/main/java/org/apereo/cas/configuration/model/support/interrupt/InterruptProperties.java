@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.interrupt;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-interrupt-webflow")
+@RequiresModule(name = "cas-server-support-interrupt-webflow")
 public class InterruptProperties implements Serializable {
     private static final long serialVersionUID = -4945287309473842615L;
 
@@ -53,17 +53,17 @@ public class InterruptProperties implements Serializable {
         this.rest = rest;
     }
 
-    @RequiredModule(name = "cas-server-support-interrupt-webflow")  
+    @RequiresModule(name = "cas-server-support-interrupt-webflow")  
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 1079027840047126083L;
     }
 
-    @RequiredModule(name = "cas-server-support-interrupt-webflow")
+    @RequiresModule(name = "cas-server-support-interrupt-webflow")
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
     }
 
-    @RequiredModule(name = "cas-server-support-interrupt-webflow")
+    @RequiresModule(name = "cas-server-support-interrupt-webflow")
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 1833594332973137011L;
     }

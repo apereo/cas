@@ -5,9 +5,8 @@ title: CAS - Multifactor Authentication Bypass
 
 # Multifactor Authentication Bypass
 
-Each multifactor provider is equipped with options to allow for MFA bypass. Once the provider
-is chosen to honor the authentication request, bypass rules are then consulted to calculate
-whether the provider should ignore the request and skip MFA conditionally.
+Each [multifactor provider](Configuring-Multifactor-Authentication.html) is equipped with options to allow for bypass. Once the provider
+is chosen to honor the authentication request, bypass rules are then consulted to calculate whether the provider should ignore the request and skip MFA conditionally.
 
 Bypass rules allow for the following options for each provider:
 
@@ -54,3 +53,70 @@ whose access should bypass MFA may be defined as such in the CAS service registr
   }
 }
 ```
+
+## Bypass via Groovy
+
+Multifactor authenticatio bypass may be determined using a Groovy script of your own design. The outcome of the script, if `true` indicates that multifactor authentication for the requested provider should proceed. Otherwise `false` indicates that  multifactor authentication for this provider should be skipped and bypassed. 
+
+The outline of the script may be as follows:
+
+```groovy
+import java.util.*
+
+def boolean run(final Object... args) {
+    def authentication = args[0]
+    def principal = args[1]
+    def registeredService = args[2]
+    def provider = args[3]
+    def logger = args[4]
+
+    // Stuff happens...
+
+    return false;
+}
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `authentication`      | The object representing the established authentication event.
+| `principal`           | The object representing the authenticated principal.
+| `service`             | The object representing the corresponding service definition in the registry.
+| `provider`            | The object representing the requested multifactor authentication provider.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+As an example, the following script skips multifactor authentication if the application requesting it is registered in the CAS service registry under the name `MyApplication` and only does so if the provider is Duo Security and the authenticated principal contains an attribute named `mustBypassMfa` whose values contains `true`.
+
+```groovy
+def String run(final Object... args) {
+    def authentication = args[0]
+    def principal = args[1]
+    def service = args[2]
+    def provider = args[3]
+    def logger = args[4]
+
+    if (service.name == "MyApplication") {
+        logger.info("Evaluating principal attributes ${principal.attributes}")
+
+        def bypass = principal.attributes['mustBypassMfa']
+        if (bypass.contains("true") && provider.id == "mfa-duo") {
+            logger.info("Skipping bypass for principal ${principal.id}")
+            return false
+        }
+    }
+    return true
+}
+```
+
+## Bypass via REST
+
+Multifactor authenticatio bypass may be determined using a REST API of your own design. Endpoints must be designed to accept/process `application/json` via `GET` requests. A returned status code `202` meaning `ACCEPTED` indicates that multifactor authentication for the requested provider should proceed. Otherwise multifactor authentication for this provider should be skipped and bypassed.
+
+The following parameters are passed:
+
+| Parameter        | Description
+|------------------|------------------------------------------------------------
+| `principal`      | The identifier of the authenticated principal.
+| `provider`       | The identifier of the multifactor authentication provider.
+| `service`        | The identifier of the registered service in the registry, if any.

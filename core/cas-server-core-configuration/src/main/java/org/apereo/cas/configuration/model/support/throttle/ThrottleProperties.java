@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.throttle;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-throttle", automated = true)
+@RequiresModule(name = "cas-server-support-throttle", automated = true)
 public class ThrottleProperties implements Serializable {
     private static final String DEFAULT_APPLICATION_CODE = "CAS";
     private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
@@ -93,7 +93,7 @@ public class ThrottleProperties implements Serializable {
     /**
      * Failure.
      */
-    @RequiredModule(name = "cas-server-support-throttle", automated = true)
+    @RequiresModule(name = "cas-server-support-throttle", automated = true)
     public static class Failure implements Serializable {
         private static final long serialVersionUID = 1246256695801461610L;
 
@@ -138,7 +138,7 @@ public class ThrottleProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-throttle-jdbc")
+    @RequiresModule(name = "cas-server-support-throttle-jdbc")
     public static class Jdbc extends AbstractJpaProperties {
         private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
                 + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";

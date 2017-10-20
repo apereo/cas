@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-core-util", automated = true)
+@RequiresModule(name = "cas-server-core-util", automated = true)
 public class ScheduledJobProperties implements Serializable {
     private static final long serialVersionUID = 9059671958275130605L;
 
