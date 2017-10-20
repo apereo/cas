@@ -6,10 +6,8 @@ import {ServiceViewService} from "./service.service";
 import {Location} from "@angular/common";
 import {MatDialog, MatPaginator, MatSnackBar} from "@angular/material";
 import {DeleteComponent} from "../delete/delete.component";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Observable} from "rxjs/Observable";
 import {ControlsService} from "../controls/controls.service";
-import {DataSource} from "@angular/cdk/table";
+import {Database, Datasource} from "../database";
 
 @Component({
   selector: 'app-services',
@@ -21,8 +19,8 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   domain: String;
   selectedItem: ServiceItem;
   revertItem: ServiceItem;
-  serviceDatabase = new ServiceDatabase();
-  dataSource: ServiceDataSource | null;
+  serviceDatabase: Database<ServiceItem> = new Database<ServiceItem>();
+  dataSource: Datasource<ServiceItem> | null;
   displayedColumns = ['actions','name','serviceId','description'];
 
   @ViewChild("paginator")
@@ -39,7 +37,7 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   }
 
   ngOnInit() {
-    this.dataSource = new ServiceDataSource(this.serviceDatabase,this.paginator);
+    this.dataSource = new Datasource(this.serviceDatabase,this.paginator);
     this.route.data
       .subscribe((data: { resp: ServiceItem[]}) => {
         if (!data.resp) {
@@ -145,49 +143,4 @@ export class ServicesComponent implements OnInit,AfterViewInit {
     let index = this.serviceDatabase.data.indexOf(this.selectedItem);
     return index < this.serviceDatabase.data.length - 1;
   }
-
-}
-
-export class ServiceDatabase {
-  dataChange: BehaviorSubject<ServiceItem[]> = new BehaviorSubject<ServiceItem[]>([]);
-  get data(): ServiceItem[] { return this.dataChange.value; }
-
-  constructor() {
-  }
-
-  load(services: ServiceItem[]) {
-    this.dataChange.next([]);
-    for(let service of services) {
-      this.addService(service);
-    }
-  }
-
-  addService(service: ServiceItem) {
-    const copiedData = this.data.slice();
-    copiedData.push(service);
-    this.dataChange.next(copiedData);
-  }
-
-}
-
-export class ServiceDataSource extends DataSource<any> {
-
-  constructor(private _serviceDatabase: ServiceDatabase, private _paginator: MatPaginator) {
-    super();
-  }
-
-  connect(): Observable<ServiceItem[]> {
-    const displayDataChanges = [
-      this._serviceDatabase.dataChange,
-      this._paginator.page,
-    ];
-
-    return Observable.merge(...displayDataChanges).map(() => {
-      const data = this._serviceDatabase.data.slice();
-      const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
-      return data.splice(startIndex, this._paginator.pageSize);
-    });
-  }
-
-  disconnect() {}
 }

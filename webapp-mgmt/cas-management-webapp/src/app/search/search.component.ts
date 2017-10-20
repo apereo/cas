@@ -1,19 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/observable/fromEvent';
 import {ServiceItem} from "../../domain/service-view-bean";
-import {DataSource} from "@angular/cdk/collections";
 import {MatPaginator, MatSnackBar} from "@angular/material";
 import {Messages} from "../messages";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {SearchService} from "./SearchService";
+import {Database, Datasource} from "../database";
 
 @Component({
   selector: 'app-search',
@@ -22,8 +14,8 @@ import {SearchService} from "./SearchService";
 })
 export class SearchComponent implements OnInit {
   displayedColumns = ['name','serviceId','description'];
-  serviceDatabase = new ServiceDatabase();
-  dataSource: ServiceDataSource | null;
+  serviceDatabase: Database<ServiceItem> = new Database<ServiceItem>();
+  dataSource: Datasource<ServiceItem> | null;
   query: String;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -36,7 +28,7 @@ export class SearchComponent implements OnInit {
               public snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.dataSource = new ServiceDataSource(this.serviceDatabase, this.paginator);
+    this.dataSource = new Datasource(this.serviceDatabase, this.paginator);
     this.route.paramMap
         .switchMap((params: ParamMap) => this.service.search(params.get('query')))
         .subscribe(resp => this.serviceDatabase.load(resp));
@@ -48,47 +40,3 @@ export class SearchComponent implements OnInit {
 
 }
 
-export class ServiceDatabase {
-  dataChange: BehaviorSubject<ServiceItem[]> = new BehaviorSubject<ServiceItem[]>([]);
-  get data(): ServiceItem[] { return this.dataChange.value; }
-
-  constructor() {
-  }
-
-  load(services: ServiceItem[]) {
-    this.dataChange.next([]);
-    for(let service of services) {
-      this.addService(service);
-    }
-  }
-
-  addService(service: ServiceItem) {
-    const copiedData = this.data.slice();
-    copiedData.push(service);
-    this.dataChange.next(copiedData);
-  }
-
-
-}
-
-export class ServiceDataSource extends DataSource<any> {
-
-  constructor(private _serviceDatabase: ServiceDatabase, private _paginator: MatPaginator) {
-    super();
-  }
-
-  connect(): Observable<ServiceItem[]> {
-    const displayDataChanges = [
-      this._serviceDatabase.dataChange,
-      this._paginator.page,
-    ];
-
-    return Observable.merge(...displayDataChanges).map(() => {
-      const data = this._serviceDatabase.data.slice();
-      const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
-      return data.splice(startIndex, this._paginator.pageSize);
-    });
-  }
-
-  disconnect() {}
-}
