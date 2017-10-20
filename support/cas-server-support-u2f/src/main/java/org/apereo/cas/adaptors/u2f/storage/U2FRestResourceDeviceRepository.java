@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.io.StringWriter;
@@ -44,7 +43,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     @Override
     protected Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
         try {
-            final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
+            final HttpResponse response = HttpUtils.executeGet(restProperties.getUrl(), 
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 return mapper.readValue(response.getEntity().getContent(),

@@ -110,6 +110,25 @@ public final class HttpUtils {
     }
 
     /**
+     * Execute get http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @return the http response
+     */
+    public static HttpResponse executeGet(final String url,
+                                          final String basicAuthUsername,
+                                          final String basicAuthPassword) {
+        try {
+            return executeGet(url, basicAuthPassword, basicAuthUsername, new HashMap<>());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
      * Execute post http response.
      *
      * @param url               the url
