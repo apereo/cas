@@ -13,14 +13,23 @@
             <p class="message" th:utext="${message.text}"/>
         </div>
         <section class="row btn-row">
-            <form method="post" id="form" class="fm-v clearfix" th:action="@{/login}" >
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <input type="hidden" name="_eventId" value="proceed"/>
-                <input class="btn btn-submit" name="continue" accesskey="l"
-                       th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
-            </form>
+            <div class="col-sm-3">
+                <form method="post" id="form" class="fm-v clearfix" th:action="@{/login}" >
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="proceed"/>
+                    <input class="btn btn-submit" name="continue" accesskey="l"
+                           th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+                </form>
+            </div>
+            <div class="col-sm-3" th:if="${passwordManagementEnabled}">
+                <form method="post" id="changePasswordForm" class="fm-v clearfix" th:action="@{/login}" >
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="changePassword"/>
+                    <input class="btn btn-submit" name="changePassword" accesskey="l"
+                           th:value="#{screen.button.changePassword}" tabindex="5" type="submit"/>
+                </form>
+            </div>
         </section>
-        
     </div>
 </div>
 </body>
