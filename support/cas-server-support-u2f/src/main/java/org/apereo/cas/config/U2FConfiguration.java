@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FGroovyResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepository;
@@ -71,6 +72,12 @@ public class U2FConfiguration {
                     u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
         }
 
+        if (u2f.getGroovy().getLocation() != null) {
+            return new U2FGroovyResourceDeviceRepository(requestStorage,
+                    u2f.getGroovy().getLocation(),
+                    u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
+        }
+        
         if (StringUtils.isNotBlank(u2f.getRest().getUrl())) {
             return new U2FRestResourceDeviceRepository(requestStorage,
                     u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit(), u2f.getRest());

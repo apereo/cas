@@ -18,7 +18,6 @@ public class U2FRegistration implements Serializable {
         this.appId = appId;
     }
 
-
     public String getVersion() {
         return "U2F_V2";
     }
