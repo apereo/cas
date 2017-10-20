@@ -78,7 +78,6 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.http.UrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
-import org.pac4j.springframework.web.CallbackController;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -320,7 +319,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20CallbackAuthorizeEndpointController(servicesManager, ticketRegistry,
                 oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(),
                 webApplicationServiceFactory,
-                oauthSecConfig(), callbackController(), callbackAuthorizeViewResolver(),
+                oauthSecConfig(), callbackAuthorizeViewResolver(),
                 profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
     }
 
@@ -522,14 +521,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder() {
         return new OAuth20CasAuthenticationBuilder(oauthPrincipalFactory(), webApplicationServiceFactory,
                 profileScopeToAttributesFilter(), casProperties);
-    }
-
-    @Bean
-    @RefreshScope
-    public CallbackController callbackController() {
-        final CallbackController c = new CallbackController();
-        c.setConfig(oauthSecConfig());
-        return c;
     }
 
     @ConditionalOnMissingBean(name = "accessTokenIdGenerator")
