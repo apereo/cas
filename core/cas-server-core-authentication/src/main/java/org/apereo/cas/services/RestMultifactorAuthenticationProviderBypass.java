@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
+
 /**
  * This is {@link RestMultifactorAuthenticationProviderBypass}.
  *
@@ -19,7 +21,7 @@ import org.springframework.http.HttpStatus;
 public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestMultifactorAuthenticationProviderBypass.class);
     private static final long serialVersionUID = -7553888418344342672L;
-    
+
     public RestMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
         super(bypassProperties);
     }
@@ -34,11 +36,14 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
                             + "service [{}] and provider [{}] via REST endpoint [{}]",
                     principal.getId(), registeredService, provider, rest.getUrl());
 
+            final Map<String, String> parameters = CollectionUtils.wrap("principal", CollectionUtils.wrap(principal.getId()),
+                    "provider", CollectionUtils.wrap(provider.getId()));
+            if (registeredService != null) {
+                parameters.put("service", registeredService.getServiceId());
+            }
+
             final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                    rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                    CollectionUtils.wrap("principal", CollectionUtils.wrap(principal.getId()),
-                            "service", CollectionUtils.wrap(registeredService.getServiceId()),
-                            "provider", CollectionUtils.wrap(provider.getId())));
+                    rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters);
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
