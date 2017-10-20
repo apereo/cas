@@ -39,7 +39,13 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
         try {
             final Map<String, String> parameters = new HashMap<>();
             parameters.put("username", authentication.getPrincipal().getId());
-            parameters.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            
+            if (service != null) {
+                parameters.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            }
+            if (registeredService != null) {
+                parameters.put("registeredService", registeredService.getServiceId());
+            }
             final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                     parameters);
