@@ -17,17 +17,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is {@link MemcachedPooledConnectionFactory}.
+ * This is {@link MemcachedPooledClientConnectionFactory}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class MemcachedPooledConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedPooledConnectionFactory.class);
+public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedPooledClientConnectionFactory.class);
     private final BaseMemcachedProperties memcachedProperties;
     private final Transcoder transcoder;
 
-    public MemcachedPooledConnectionFactory(final BaseMemcachedProperties memcachedProperties, final Transcoder transcoder) {
+    public MemcachedPooledClientConnectionFactory(final BaseMemcachedProperties memcachedProperties, final Transcoder transcoder) {
         this.memcachedProperties = memcachedProperties;
         this.transcoder = transcoder;
     }

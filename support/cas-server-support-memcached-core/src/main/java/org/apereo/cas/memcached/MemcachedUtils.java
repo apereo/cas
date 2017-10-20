@@ -6,6 +6,7 @@ import net.spy.memcached.transcoders.WhalinTranscoder;
 import net.spy.memcached.transcoders.WhalinV1Transcoder;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.memcached.kryo.CasKryoPool;
 import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +63,11 @@ public final class MemcachedUtils {
                 return whalinv1;
             case "kryo":
             default:
-                final CasKryoTranscoder kryo = new CasKryoTranscoder(kryoSerializableClasses);
-                kryo.setAutoReset(memcachedProperties.isKryoAutoReset());
-                kryo.setRegistrationRequired(memcachedProperties.isKryoRegistrationRequired());
-                kryo.setReplaceObjectsByReferences(memcachedProperties.isKryoObjectsByReference());
+                final CasKryoPool kryoPool = new CasKryoPool(kryoSerializableClasses, true,
+                        memcachedProperties.isKryoRegistrationRequired(),
+                        memcachedProperties.isKryoObjectsByReference(),
+                        memcachedProperties.isKryoAutoReset());
+                final CasKryoTranscoder kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
                 return kryo;
         }
