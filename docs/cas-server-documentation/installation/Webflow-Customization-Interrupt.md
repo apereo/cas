@@ -101,9 +101,7 @@ The following parameters are passed to the script:
 
 ### REST
 
-This strategy reaches out to a REST endpoint resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the provided `username` and `service` parameters (if available). 
-
-The following parameters are passed to the endpoint:
+This strategy reaches out to a REST endpoint resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the following parameters:
 
 | Parameter             | Description
 |-------------------------------------------------------------------------------------------------------
