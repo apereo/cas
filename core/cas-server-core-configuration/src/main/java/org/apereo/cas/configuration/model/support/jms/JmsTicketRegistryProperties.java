@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.jms;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-jms-ticket-registry")
+@RequiresModule(name = "cas-server-support-jms-ticket-registry")
 public class JmsTicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -2600525447128979994L;

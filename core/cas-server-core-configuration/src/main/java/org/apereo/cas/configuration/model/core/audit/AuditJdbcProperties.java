@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
  * This is {@link AuditJdbcProperties}.
@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.support.RequiredModule;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-audit-jdbc")
+@RequiresModule(name = "cas-server-support-audit-jdbc")
 public class AuditJdbcProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 4227475246873515918L;
 

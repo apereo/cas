@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.ehcache;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-ehcache-ticket-registry")
+@RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
 public class EhcacheProperties implements Serializable {
     private static final long serialVersionUID = 7772510035918976450L;
 

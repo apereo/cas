@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-authentication", automated = true)
+@RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class MetricsProperties implements Serializable {
     private static final long serialVersionUID = 345002357523418414L;
 
@@ -108,17 +108,17 @@ public class MetricsProperties implements Serializable {
         this.loggerName = loggerName;
     }
 
-    @RequiredModule(name = "cas-server-support-metrics")
+    @RequiresModule(name = "cas-server-support-metrics")
     public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = 8131713495513399930L;
     }
 
-    @RequiredModule(name = "cas-server-support-metrics")
+    @RequiresModule(name = "cas-server-support-metrics")
     public static class InfluxDb extends InfluxDbProperties {
         private static final long serialVersionUID = 1231713495513399930L;
     }
 
-    @RequiredModule(name = "cas-server-support-metrics")
+    @RequiresModule(name = "cas-server-support-metrics")
     public static class Statsd implements Serializable {
         private static final long serialVersionUID = 6541713495513399930L;
 
@@ -164,7 +164,7 @@ public class MetricsProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-metrics")
+    @RequiresModule(name = "cas-server-support-metrics")
     public static class OpenTsdb implements Serializable {
         private static final long serialVersionUID = 7419713490013390030L;
 
@@ -210,7 +210,7 @@ public class MetricsProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-metrics")
+    @RequiresModule(name = "cas-server-support-metrics")
     public static class Redis extends BaseRedisProperties {
         private static final long serialVersionUID = 6419713490013390030L;
 

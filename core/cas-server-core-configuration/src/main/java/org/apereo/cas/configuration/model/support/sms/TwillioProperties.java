@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.sms;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiredModule(name = "cas-server-support-sms-twillio")
+@RequiresModule(name = "cas-server-support-sms-twillio")
 public class TwillioProperties implements Serializable {
     private static final long serialVersionUID = -7043132225482495229L;
     /**
