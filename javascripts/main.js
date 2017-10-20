@@ -357,7 +357,7 @@ function responsiveTables() {
 }
 
 function copyButton() {
-    $('div.highlight').each(function() {
+    $('pre.highlight').each(function() {
         var btn = '<button class="copy-button hidden-md-down fa fa-clipboard" />';
         $(this).append( btn );
     });
