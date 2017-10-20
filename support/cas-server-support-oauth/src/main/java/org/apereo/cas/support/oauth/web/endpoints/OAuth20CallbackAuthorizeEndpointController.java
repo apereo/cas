@@ -59,7 +59,6 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
