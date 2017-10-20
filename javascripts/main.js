@@ -304,7 +304,7 @@ function generateDependencyLangFragments() {
       
       var gradleDep = "<span class='nt'>compile</span> \"" + $groupId.text() + "<span class='p'>:</span>" + $artifactId.text() + "<span class='p'>:</span><span class='nt'>${project.'cas.version'}</span>\"";
 
-      var gradleFragment = `<pre class='highlight'><code><table style='border-spacing: 0'><tbody><tr><td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td><td class='code'><pre>` + gradleDep + `</pre></td></tr></tbody></table></code></pre>`;
+      var gradleFragment = `<div class='highlight'><pre class='highlight'><code><table style='border-spacing: 0'><tbody><tr><td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td><td class='code'><pre>` + gradleDep + `</pre></td></tr></tbody></table></code></pre></div>`;
 
       var parentTable = $(val).closest('pre.highlight').parent();
 
