@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.geo.googlemaps;
 
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-geolocation-googlemaps")
+@RequiresModule(name = "cas-server-support-geolocation-googlemaps")
 public class GoogleMapsProperties implements Serializable {
     private static final long serialVersionUID = 4661113818711911462L;
     /**

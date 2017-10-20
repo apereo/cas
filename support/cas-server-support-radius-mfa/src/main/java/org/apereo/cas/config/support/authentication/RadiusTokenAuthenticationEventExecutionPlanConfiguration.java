@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthentica
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -15,7 +16,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.RadiusMultifactorProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
-import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.ServicesManager;
@@ -62,9 +62,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getRadius().getBypass()
-        );
+        return CoreAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getRadius().getBypass());
     }
 
     @RefreshScope

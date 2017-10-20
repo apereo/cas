@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-web", automated = true)
+@RequiresModule(name = "cas-server-core-web", automated = true)
 public class HttpWebRequestProperties implements Serializable {
 
     private static final long serialVersionUID = -5175966163542099866L;

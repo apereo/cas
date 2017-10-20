@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class MultifactorAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7416521468929733907L;
 

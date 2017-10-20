@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.jdbc;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-jdbc-authentication")
+@RequiresModule(name = "cas-server-support-jdbc-authentication")
 public class QueryEncodeJdbcAuthenticationProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = -6647373426301411768L;
     /**

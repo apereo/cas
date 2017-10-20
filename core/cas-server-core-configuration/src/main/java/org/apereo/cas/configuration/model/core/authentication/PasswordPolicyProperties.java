@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-authentication", automated = true)
+@RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class PasswordPolicyProperties implements Serializable {
     private static final long serialVersionUID = -3878237508646993100L;
 
@@ -37,6 +37,12 @@ public class PasswordPolicyProperties implements Serializable {
 
     /**
      * Decide how LDAP authentication should handle password policy changes.
+     * Acceptable values are:
+     * <ul>
+     *     <li><code>DEFAULT</code>: Default password policy rules handling account states.</li>
+     *     <li><code>GROOVY</code>: Handle account changes and warnings via Groovy scripts</li>
+     *     <li><code>REJECT_RESULT_CODE</code>: Handle account state only if the ldap authentication result code isn't blocked</li>
+     * </ul>
      */
     private PasswordPolicyHandlingOptions strategy = PasswordPolicyHandlingOptions.DEFAULT;
 
@@ -195,7 +201,7 @@ public class PasswordPolicyProperties implements Serializable {
         this.groovy = groovy;
     }
 
-    @RequiredModule(name = "cas-server-support-ldap")
+    @RequiresModule(name = "cas-server-support-ldap")
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
     }

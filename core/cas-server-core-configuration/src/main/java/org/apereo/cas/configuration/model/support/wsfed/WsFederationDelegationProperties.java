@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-support-wsfederation-webflow")
+@RequiresModule(name = "cas-server-support-wsfederation-webflow")
 public class WsFederationDelegationProperties implements Serializable {
 
     private static final long serialVersionUID = 5743971334977239938L;
