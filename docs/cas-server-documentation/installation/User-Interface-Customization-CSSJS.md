@@ -70,7 +70,8 @@ Anchors/fragments may be lost across redirects as the server-side handler of the
 
 ### WebJARs for Javascript/CSS Libraries
 
-The CAS application application packages third party static resources inside the CAS webapp rather than referencing CDN links so that CAS may be deployed on networks with limited interent access.
+The CAS application application packages third party static resources inside the CAS webapp rather than referencing CDN links so that CAS may be deployed on 
+networks with limited internet access.
 
 The 3rd party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
 that merges any folders under `META-INF/resources` in web application jars with the application's web root.

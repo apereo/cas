@@ -148,7 +148,7 @@ An impersonation session can be assigned a specific expiration policy that would
 
 ## Surrogate Attributes
 
-Upon a successful surrogate authentication event, the following attributes are communicated back to the application in order to detect an impersontion session:
+Upon a successful surrogate authentication event, the following attributes are communicated back to the application in order to detect an impersonation session:
 
 | Attribute             | Instructions
 |-----------------------|-------------------------------------------------------------------------------

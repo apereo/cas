@@ -28,7 +28,7 @@ When deployed the following URLs become available:
 
 ### High Availability Mode
 
-You always want to make sure the discovery server is run in high-availabilty mode. One option is to ensure each individual Eureka server is peer aware. See [this guide](http://cloud.spring.io/spring-cloud-static/spring-cloud.html#_peer_awareness) to learn how to manage that.
+You always want to make sure the discovery server is run in high-availability mode. One option is to ensure each individual Eureka server is peer aware. See [this guide](http://cloud.spring.io/spring-cloud-static/spring-cloud.html#_peer_awareness) to learn how to manage that.
 
 ## CAS Discovery Service Clients
 
