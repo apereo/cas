@@ -199,7 +199,8 @@ public class MyOAuthConfiguration {
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers accordinngly.
+as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment 
+environment and load balancers accordingly.
 
 # OpenID Authentication
 

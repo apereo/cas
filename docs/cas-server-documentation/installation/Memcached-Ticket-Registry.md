@@ -84,7 +84,7 @@ node set to find a new node on which to store the key. If the node location func
 which is likely for the _CONSISTENT_ strategy, a backup node will be computed. The value is written to and read from
 the failover node until the primary node recovers. The client will periodically check the failed node for liveliness
 and restore it to the node pool as soon as it recovers. When the primary node is resurrected, if it contains a value
-for a particular key, it would supercede the value known to the failover node. The most common effect on CAS behavior
+for a particular key, it would supersede the value known to the failover node. The most common effect on CAS behavior
 in this circumstance would occur when ticket-granting tickets have duplicate values, which could affect single sign-out
 and prevent access to services. In particular, services accessed and forced authentications that occur while the
 failover service is active would be lost when the failed node recovers. In most cases this behavior is tolerable,
@@ -96,6 +96,6 @@ on CAS behavior depends on the type of ticket requested:
 
 * Service ticket - Service access would be denied for the requested ticket, but permitted for subsequent attempts since
 a new ticket would be generated and validated.
-* Ticket-granting ticket - The SSO session would be terminated and reauthentication would be required.
+* Ticket-granting ticket - The SSO session would be terminated and re-authentication would be required.
 
-Read failures are thus entirely innocuous for environments where reauthentication is acceptable.
+Read failures are thus entirely innocuous for environments where re-authentication is acceptable.
