@@ -64,7 +64,7 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 | [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 | [CAS Gradle WAR Overlay](https://github.com/apereo/cas-gradle-overlay-template) | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 
-To construct the overlay project, you neeed to copy directories and files *that you need to customize* in the build directory over to the source directory.
+To construct the overlay project, you need to copy directories and files *that you need to customize* in the build directory over to the source directory.
 
 The Gradle overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.

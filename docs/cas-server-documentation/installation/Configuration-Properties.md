@@ -82,7 +82,7 @@ The above configuration also applies to online git-based repositories such as Gi
 
 ### Vault
 
-Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
+Load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
 
 ```properties
 # spring.cloud.vault.host=127.0.0.1
@@ -906,7 +906,7 @@ to be a JSON map as such:
 
 ### Ruby/Python/Javascript/Groovy
 
-Similiar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
 
 ```properties
 # cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
@@ -1979,7 +1979,7 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].order=0
 ```
 
-### LDAP Passoword Encoding & Principal Transformation
+### LDAP Password Encoding & Principal Transformation
 
 ```properties
 # cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder

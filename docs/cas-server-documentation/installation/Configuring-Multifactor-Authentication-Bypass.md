@@ -56,7 +56,8 @@ whose access should bypass MFA may be defined as such in the CAS service registr
 
 ## Bypass via Groovy
 
-Multifactor authenticatio bypass may be determined using a Groovy script of your own design. The outcome of the script, if `true` indicates that multifactor authentication for the requested provider should proceed. Otherwise `false` indicates that  multifactor authentication for this provider should be skipped and bypassed. 
+Multifactor authentication bypass may be determined using a Groovy script of your own design. The outcome of the script, if `true` indicates that multifactor
+ authentication for the requested provider should proceed. Otherwise `false` indicates that  multifactor authentication for this provider should be skipped and bypassed. 
 
 The outline of the script may be as follows:
 
@@ -111,7 +112,8 @@ def String run(final Object... args) {
 
 ## Bypass via REST
 
-Multifactor authenticatio bypass may be determined using a REST API of your own design. Endpoints must be designed to accept/process `application/json` via `GET` requests. A returned status code `202` meaning `ACCEPTED` indicates that multifactor authentication for the requested provider should proceed. Otherwise multifactor authentication for this provider should be skipped and bypassed.
+Multifactor authentication bypass may be determined using a REST API of your own design. Endpoints must be designed to accept/process `application/json` via 
+`GET` requests. A returned status code `202` meaning `ACCEPTED` indicates that multifactor authentication for the requested provider should proceed. Otherwise multifactor authentication for this provider should be skipped and bypassed.
 
 The following parameters are passed:
 

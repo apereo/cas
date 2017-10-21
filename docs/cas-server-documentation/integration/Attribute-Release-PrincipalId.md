@@ -7,7 +7,9 @@ title: CAS - Releasing Principal Id
 
 Registered CAS applications are given the ability to allow for configuration of a
 username attribute provider, which controls what should be the designated user identifier
-that is returned to the application. The user identifier by default is the authenticated CAS principal id, yet it optionally may be based off of an existing attribute that is available and resolved for the principal already. More practiaclly, this component determines what should be placed inside the `<cas:user>` tag in the final CAS validation payload that is returned to the application.
+that is returned to the application. The user identifier by default is the authenticated CAS principal id, yet it optionally may be based off of an existing 
+attribute that is available and resolved for the principal already. More practically, this component determines what should be placed inside the `<cas:user>`
+ tag in the final CAS validation payload that is returned to the application.
 
 <div class="alert alert-warning"><strong>Principal Id As Attribute</strong><p>You may also return the authenticated principal id as an extra attribute in the final CAS payload. See <a href="Attribute-Release-Policies.html">this guide</a> to learn more.</p></div>
 

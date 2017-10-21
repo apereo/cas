@@ -38,7 +38,7 @@ update-rc.d myapp defaults <priority>
 
 When executed as `root`, as is the case when `root` is being used to start an `init.d` service, the CAS default 
 executable script will run the web application as the user which owns the web application file. You should **never** 
-run CAS as `root` so the web applicatio file should never be owned by `root`. Instead, create a specific user to run 
+run CAS as `root` so the web application file should never be owned by `root`. Instead, create a specific user to run 
 CAS and use `chown` to make it the owner of the file. For example:
 
 ```bash

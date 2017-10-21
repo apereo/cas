@@ -111,7 +111,8 @@ In cases where you plan to design your own password encoder or write scripts to 
 </dependency>
 ```
 
-If you need to design your own password encoding scheme where the type is specified as a fully qualified Java class name, the structure of the class would be similiar to the following:
+If you need to design your own password encoding scheme where the type is specified as a fully qualified Java class name, the structure of the class would be
+ similar to the following:
 
 ```java
 package org.example.cas;
@@ -127,7 +128,8 @@ public class MyEncoder extends AbstractPasswordEncoder {
 }
 ```
 
-If you need to design your own password encoding scheme where the type is specified as a path to a Groovy script, the structure of the script would be similiar to the following:
+If you need to design your own password encoding scheme where the type is specified as a path to a Groovy script, the structure of the script would be similar
+ to the following:
 
 ```groovy
 import java.util.*
@@ -251,7 +253,7 @@ In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file l
 A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 
 Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
-of a cerain size for the key, you are to use the following set of commands to generate the token:
+of a certain size for the key, you are to use the following set of commands to generate the token:
 
 ```bash
 wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar

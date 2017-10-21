@@ -14,7 +14,7 @@ CAS by default operates on the following core webflow configuration files:
 | `login`             | `src/main/resources/webflow/login-webflow.xml`
 | `logout`            | `src/main/resources/webflow/logout-webflow.xml`
 
-The above flow configuration files present a minimal structure for what CAS needs at its core to handle login and logout flows. It is important to note that at runtime many other actions and states are injected into either of these flows dynamically depending on the CAS configuration and presence of feature modules. Also note that each feature module itself may dynamically present other opiniated subflow configuration files that are automagically picked up at runtime.
+The above flow configuration files present a minimal structure for what CAS needs at its core to handle login and logout flows. It is important to note that at runtime many other actions and states are injected into either of these flows dynamically depending on the CAS configuration and presence of feature modules. Also note that each feature module itself may dynamically present other opinionated subflow configuration files that are automagically picked up at runtime.
 
 So in truth, what you see above is not necessarily all of what you may get.
 

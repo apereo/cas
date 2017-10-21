@@ -13,7 +13,7 @@ JWTs are entirely self-contained and contain the authenticated principal as well
 
 ## Overview
 
-JWT-based service tickets are issued to applicationس based on the same semantics defined by the [CAS Protocol](../protocol/CAS-Protocol.html). CAS having received an authentication request via its `/login` endpoint will conditionally issue back `JWT` service tickets to the application in form of a `ticket` parameter via the requested http method.
+JWT-based service tickets are issued to application based on the same semantics defined by the [CAS Protocol](../protocol/CAS-Protocol.html). CAS having received an authentication request via its `/login` endpoint will conditionally issue back `JWT` service tickets to the application in form of a `ticket` parameter via the requested http method.
 
 All JWTs are by default signed and encrypted by CAS based on keys generated and controlled during deployment. Such keys may be exchanged with client applications to unpack the JWT and access claims.
 
@@ -21,7 +21,8 @@ All JWTs are by default signed and encrypted by CAS based on keys generated and 
 
 <a href="../images/cas_flow_jwt_diagram.png" target="_blank"><img src="../images/cas_flow_jwt_diagram.png" alt="CAS Web flow JWT diagram" title="CAS Web flow JWT diagram" /></a>
 
-Note that per the above diagram, the JWT request by default internally causes CAS to generate an `ST` for the application and immediately then validate it in order to get access to the auhenticated principal and attributes per policies associated with the application registration record in the CAS service registry. This response is transformed into a `JWT` that is then passed onto the client application.
+Note that per the above diagram, the JWT request by default internally causes CAS to generate an `ST` for the application and immediately then validate it in
+ order to get access to the authenticated principal and attributes per policies associated with the application registration record in the CAS service registry. This response is transformed into a `JWT` that is then passed onto the client application.
 
 In other words, the responsibility of receiving a service ticket (`ST`) and validating it is all moved into and handled internally by CAS. The application only needs to learn how to decipher and unpack the final `JWT` and ensure its validity.
 

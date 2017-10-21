@@ -36,7 +36,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#openid-authentication).
 
-## Registere Clients
+## Register Clients
 
 Register clients in the CAS service registry:
 

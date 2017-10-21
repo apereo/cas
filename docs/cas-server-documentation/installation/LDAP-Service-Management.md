@@ -5,7 +5,8 @@ title: CAS - LDAP Service Registry
 
 # LDAP Service Registry
 
-Service registry implementation which stores the services in a LDAP Directory and attemps to *map* service records to LDAP entrues in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` that is `casRegisteredService` attribute and are looked up by the `uid` attribute.
+Service registry implementation which stores the services in a LDAP Directory and attempts to *map* service records to LDAP entrues in order to configure 
+settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` that is `casRegisteredService` attribute and are looked up by the `uid` attribute.
 
 Support is enabled by adding the following module into the overlay:
 

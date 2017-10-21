@@ -44,15 +44,15 @@ public class MyAuthenticationHandler extends AbstractUsernamePasswordAuthenticat
 
 - Authentication handlers have the ability to produce a fully resolved principal along with attributes. If you have the ability to retrieve attributes from the same place as the original user/principal account store, the final `Principal` object that is resolved here must then be able to carry all those attributes and claims inside it at construction time.
 
-- The last parameter, `null`, is effevtively a collection of warnings that is eventually worked into the authentication chain and conditionally shown to the user. Examples of such warnings include password status nearing an expiration date, etc.
+- The last parameter, `null`, is effectively a collection of warnings that is eventually worked into the authentication chain and conditionally shown to the user. Examples of such warnings include password status nearing an expiration date, etc.
 
-- Authentication handlers also have the abililty to block authentication by throwing a number of specific exceptions. A more common exception to throw back is `FailedLoginException` to note authentication failure. Other specific exceptions may be thrown to indicate abnormalities with the account status itself, such as `AccountDisabledException`.
+- Authentication handlers also have the ability to block authentication by throwing a number of specific exceptions. A more common exception to throw back is `FailedLoginException` to note authentication failure. Other specific exceptions may be thrown to indicate abnormalities with the account status itself, such as `AccountDisabledException`.
 
 - Various other components such as `PrincipalNameTransformer`s, `PasswordEncoder`s and such may also be injected into our handler if need be, though these are skipped for now in this post for simplicity.
 
 ## Register
 
-Once the handler is designed, it needs to be registered with CAS and put into the authenication engine.
+Once the handler is designed, it needs to be registered with CAS and put into the authentication engine.
 This is done via the magic of `@Configuration` classes that are picked up automatically at runtime, per your approval,
 whose job is to understand how to dynamically modify the application context.
 

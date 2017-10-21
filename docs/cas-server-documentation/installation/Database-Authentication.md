@@ -24,4 +24,4 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## Password Policy Enforcement
 
 A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
-via column names that are defined in the CAS sttings. To learn how to enforce a password policy, please [review this guide](Password-Policy-Enforcement.html).
+via column names that are defined in the CAS settings. To learn how to enforce a password policy, please [review this guide](Password-Policy-Enforcement.html).

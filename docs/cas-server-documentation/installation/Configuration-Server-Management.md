@@ -96,7 +96,7 @@ The following endpoints are secured and exposed by the configuration server:
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
 | `/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/env`                            | Accepts a `GET` and describes all configuration sources of the configurtion server.
+| `/env`                            | Accepts a `GET` and describes all configuration sources of the configuration server.
 | `/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
 | `/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
 | `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
