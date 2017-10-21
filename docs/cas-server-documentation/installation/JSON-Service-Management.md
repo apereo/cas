@@ -112,7 +112,8 @@ Originally [developed as an extension](https://github.com/Unicon/cas-addons/wiki
 
 CAS is able to transform this definition into one that is officially supported. The results of transformations are written into a temporary file where the user is warned about the presence of this legacy behavior and the location of the transformed files. Changes should be reviewed and ultimately put into use in the relevant directory location to be loaded by the registry.
 
-To activate support for this legacy syntax, the services registry file needs to be renamed `servicesRegistry.json` and must be placed in the same directory as all other JSON service defnition files.
+To activate support for this legacy syntax, the services registry file needs to be renamed `servicesRegistry.json` and must be placed in the same directory 
+as all other JSON service definition files.
 
 A few things to note:
 
