@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.hibernate.LockOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -18,6 +19,7 @@ import javax.persistence.TypedQuery;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
+
+    private static final int STREAM_BATCH_SIZE = 100;
 
     private final TicketCatalog ticketCatalog;
     private final LockModeType lockType;
@@ -95,6 +99,29 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 .map(TypedQuery::getResultList)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets a stream which loads tickets from the database in batches instead of all at once to prevent OOM situations.
+     * <p>
+     * This method purposefully doesn't lock any rows, because the stream traversing can take an indeterminate
+     * amount of time, and logging in to an application with an existing TGT will update the TGT row in the database.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Stream<Ticket> getTicketsStream() {
+        return this.ticketCatalog.findAll().stream()
+                .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
+                // Unwrap to Hibernate Query, which supports streams
+                .map(q -> {
+                    final org.hibernate.query.Query<Ticket> hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
+                    hq.setFetchSize(STREAM_BATCH_SIZE);
+                    hq.setLockOptions(LockOptions.NONE);
+                    return hq;
+                })
+                .flatMap(org.hibernate.query.Query::stream);
     }
 
     @Override
