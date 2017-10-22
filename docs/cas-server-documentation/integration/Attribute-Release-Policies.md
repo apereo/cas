@@ -215,10 +215,6 @@ Identical to inline groovy attribute definitions, except the groovy script can a
 
 ### Groovy Script
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong>
-<p>Usage of this component is deprecated. Consider using alternatives.</p>
-</div>
-
 Let an external Groovy script decide how principal attributes should be released.
 
 ```json
@@ -245,7 +241,7 @@ def Map<String, List<Object>> run(final Object... args) {
     def logger = args[1]
 
     logger.debug("Current attributes received are {}", currentAttributes)
-    return[username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+    return [username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
 ```
 
