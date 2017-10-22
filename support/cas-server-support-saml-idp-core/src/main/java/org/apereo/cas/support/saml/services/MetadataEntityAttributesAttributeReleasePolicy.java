@@ -43,7 +43,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
 
         LOGGER.debug("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
         final EntityAttributesPredicate predicate = new EntityAttributesPredicate(CollectionUtils.wrap(attr), true);
-
+        
         if (predicate.apply(entityDescriptor)) {
             return authorizeReleaseOfAllowedAttributes(attributes);
         }
