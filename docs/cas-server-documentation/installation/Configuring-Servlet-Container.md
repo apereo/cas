@@ -25,11 +25,9 @@ may be overridden, if necessary and by default, CAS configures everything for yo
 
 ## Embedded
 
-Note that CAS itself ships with a number of embedded containers that allows the platform to be self-contained as much as possible. These embedded containers are an integral part of the CAS software, are maintained and updated usually for every release and surely are meant to and can be used in production deployments. You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
+Note that CAS itself ships with a number of embedded containers that allow the platform to be self-contained as much as possible. These embedded containers are an integral part of the CAS software, are maintained and updated usually for every release and surely are meant to and can be used in production deployments. You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>
-Remember that most if not all aspects of the embedded container can be controlled via the CAS properties.
-See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
+<div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded container can be controlled via the CAS properties. See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
 
 To see the relevant list of CAS properties, 
 please [review this guide](Configuration-Properties.html#embedded-container).
@@ -80,6 +78,10 @@ In order to force Apache Tomcat to use IPv4, configure the following as a system
 ```
 
 The same sort of configuration needs to be applied to your `$CATALINA_OPTS` environment variable in case of an external container.
+
+#### Faster Startup
+
+[This guide](https://wiki.apache.org/tomcat/HowTo/FasterStartUp) provides several recommendations on how to make web applications and Apache Tomcat as a whole to start up faster.
 
 #### Logging
 
