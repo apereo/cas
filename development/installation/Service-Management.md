@@ -95,5 +95,5 @@ There are is a wide range of service registries on the menu. The selection crite
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
 - Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
-- Choose a technology that shows promisig results under *your expected load*, having run performance and stress tests.
+- Choose a technology that shows promising results under *your expected load*, having run performance and stress tests.
 - Choose a technology that does not depend on outside processes, systems and manual work as much as possible, is self-reliant and self contained.
