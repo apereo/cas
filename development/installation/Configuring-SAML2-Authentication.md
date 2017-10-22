@@ -280,7 +280,7 @@ This policy allows a Groovy script to calculate the collection of released attri
   "id": 10,
   "metadataLocation": "path/to/incommon/metadata.xml",
   "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
+    "@class": "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy",
     "groovyScript": "file:/etc/cas/config/script.groovy"
   }
 }
