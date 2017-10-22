@@ -30,6 +30,8 @@ import {
   MatPaginatorModule
 } from "@angular/material";
 import {CdkTableModule} from "@angular/cdk/table";
+import {ControlsComponent} from "../controls/controls.component";
+import {ControlsService} from "../controls/controls.service";
 
 @NgModule({
   imports: [
@@ -61,8 +63,10 @@ import {CdkTableModule} from "@angular/cdk/table";
   ],
   declarations: [
     MyTooltipDirective,
+    ControlsComponent
   ],
   providers: [
+    ControlsService
   ],
   exports: [
     MyTooltipDirective,
@@ -88,7 +92,8 @@ import {CdkTableModule} from "@angular/cdk/table";
     MatDialogModule,
     MatAutocompleteModule,
     MatSnackBarModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    ControlsComponent
   ]
 })
 export class SharedModule {

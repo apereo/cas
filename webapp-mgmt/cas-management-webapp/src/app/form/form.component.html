@@ -1,6 +1,19 @@
 <div style="position:fixed;width: 100%; z-index: 1000;background-color: #f2f2f2; top: 51px" autocomplete="off" novalidate="novalidate">
 
-  <app-saveformtop (save)="saveForm()"></app-saveformtop>
+  <div style="display:flex;">
+    <div style="padding-top: 3px;">
+      <mat-icon style="padding-top: 3px;">add_circle</mat-icon>
+      <h4 style="display: inline;position: relative;top: -5px;">
+        <ng-container i18n="services.form.header.page.editService">
+          {{ messages.services_form_header_page_editService }}
+        </ng-container>
+      </h4>
+    </div>
+    <div style="flex: 1 1 auto"></div>
+    <div>
+      <app-controls (save)="save()"></app-controls>
+    </div>
+  </div>
 
   <mat-tab-group #tabGroup (selectedIndexChange)="goto($event)">
     <mat-tab>

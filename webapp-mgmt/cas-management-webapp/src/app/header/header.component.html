@@ -1,5 +1,5 @@
 <div class="header">
-  <div>
+  <div style="margin-right:10px;min-width:200px;max-width:200px;width:100%;">
     <a class="brand" href="manage.html" target="_self" id="homepageUrlLink">
       <img src="images/logo_cas.png" alt="apereo CAS logo" />
       <h4>
@@ -12,27 +12,32 @@
   <div class="searchbox">
     <input #search class="search" placeholder="Search Services">
   </div>
-  <div class="links">
-    <button *ngIf="type === 'DOMAIN' "mat-button routerLink="/domains">
-      <mat-icon>apps</mat-icon>
-      <span i18n>Domains</span>
-    </button>
-    <button *ngIf="type === 'DEFAULT'" mat-button routerLink="/services/defualt">
-      <mat-icon>apps</mat-icon>
-      <span i18n>Services</span>
-    </button>
-    <button mat-button routerLink="/form/-1">
-      <mat-icon>add_circle</mat-icon>
-      <span i18n="managment.services.header.navitem.addNewService">
-        {{ messages.management_services_header_navbar_navitem_addNewService }}
-      </span>
-    </button>
-    <button mat-button target="_self" id="logoutUrlLink" (click)="logout()">
-      <mat-icon>exit_to_app</mat-icon>
-      <ng-container i18n="management.services.header.navbar.navitem.logout">
-        {{ messages.management_services_header_navbar_navitem_logout }}
-      </ng-container>
+  <div>
+    <button mat-button [matMenuTriggerFor]="links">
+      <mat-icon>menu</mat-icon>
     </button>
   </div>
 </div>
+
+<mat-menu #links>
+  <button mat-menu-item *ngIf="type === 'DOMAIN' " routerLink="/domains">
+    <mat-icon>apps</mat-icon>
+    <span i18n>Domains</span>
+  </button>
+  <button *ngIf="type === 'DEFAULT'" mat-menu-item routerLink="/services/defualt">
+    <mat-icon>apps</mat-icon>
+    <span i18n>Services</span>
+  </button>
+  <button mat-menu-item routerLink="/form/-1">
+    <mat-icon>add_circle</mat-icon>
+    <span i18n="managment.services.header.navitem.addNewService">
+        {{ messages.management_services_header_navbar_navitem_addNewService }}
+      </span>
+  </button>
+  <button mat-menu-item target="_self" id="logoutUrlLink" (click)="logout()">
+    <mat-icon>exit_to_app</mat-icon>
+    <ng-container i18n="management.services.header.navbar.navitem.logout">
+      {{ messages.management_services_header_navbar_navitem_logout }}
+    </ng-container>
+  </button>
 

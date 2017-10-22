@@ -84,6 +84,19 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     }
 
     /**
+     * Mapped method to return the manage.html.
+     *
+     * @param response - HttpServletResponse
+     * @return - ModelAndView
+     */
+    @GetMapping("/manage.html")
+    public ModelAndView manage(final HttpServletResponse response) {
+        final Map<String, Object> model = new HashMap<>();
+        model.put(STATUS, HttpServletResponse.SC_OK);
+        return new ModelAndView("manage", model);
+    }
+
+    /**
      * Ensure default service exists.
      */
     private void ensureDefaultServiceExists() {
@@ -150,20 +163,9 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return new ResponseEntity<>(r.getName(), HttpStatus.OK);
     }
 
-    /**
-     * Method to show the RegisteredServices.
-     *
-     * @param response the response
-     * @return the Model and View to go to after the services are loaded.
-     */
-    @GetMapping(value = "/manage.html")
-    public ModelAndView manage(final HttpServletResponse response) {
-        ensureDefaultServiceExists();
-        final Map<String, Object> model = new HashMap<>();
-        model.put("defaultServiceUrl", this.defaultService.getId());
-        model.put("type", this.casProperties.getServiceRegistry().getManagementType());
-        model.put(STATUS, HttpServletResponse.SC_OK);
-        return new ModelAndView("manage", model);
+    @GetMapping(value = "managerType")
+    public ResponseEntity<String> getManagerType() {
+        return new ResponseEntity<String>(casProperties.getServiceRegistry().getManagementType().toString(), HttpStatus.OK);
     }
 
     /**
@@ -172,7 +174,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return the domains
      * @throws Exception the exception
      */
-    @GetMapping(value = "/domains")
+    @GetMapping(value = "/domainList")
     public ResponseEntity<Collection<String>> getDomains() throws Exception {
         final Collection<String> data = this.servicesManager.getDomains();
         return new ResponseEntity<>(data, HttpStatus.OK);
