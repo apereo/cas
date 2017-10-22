@@ -290,7 +290,7 @@ In the event that an aggregate is defined containing multiple entity ids, the be
 
 #### Entity Attributes Filter
 
-This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attribute attributes that match certain values.
+This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attributes that match certain values.
 
 ```json
 {
