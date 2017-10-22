@@ -6,8 +6,8 @@ import {ServiceViewService} from "./service.service";
 import {Location} from "@angular/common";
 import {MatDialog, MatPaginator, MatSnackBar} from "@angular/material";
 import {DeleteComponent} from "../delete/delete.component";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Observable} from "rxjs/Observable";
+import {ControlsService} from "../controls/controls.service";
+import {Database, Datasource} from "../database";
 
 @Component({
   selector: 'app-services',
@@ -15,12 +15,13 @@ import {Observable} from "rxjs/Observable";
   styleUrls: ['./services.component.css']
 })
 export class ServicesComponent implements OnInit,AfterViewInit {
-
-  dataTable: ServiceItem[];
   deleteItem: ServiceItem;
   domain: String;
   selectedItem: ServiceItem;
-  servicesDatabase = new ServicesDatabase();
+  revertItem: ServiceItem;
+  serviceDatabase: Database<ServiceItem> = new Database<ServiceItem>();
+  dataSource: Datasource<ServiceItem> | null;
+  displayedColumns = ['actions','name','serviceId','description'];
 
   @ViewChild("paginator")
   paginator: MatPaginator;
@@ -31,11 +32,12 @@ export class ServicesComponent implements OnInit,AfterViewInit {
               private service: ServiceViewService,
               private location: Location,
               public dialog: MatDialog,
-              public snackBar: MatSnackBar) {
-    this.dataTable = [];
+              public snackBar: MatSnackBar,
+              public controlsService: ControlsService) {
   }
 
   ngOnInit() {
+    this.dataSource = new Datasource(this.serviceDatabase,this.paginator);
     this.route.data
       .subscribe((data: { resp: ServiceItem[]}) => {
         if (!data.resp) {
@@ -43,35 +45,29 @@ export class ServicesComponent implements OnInit,AfterViewInit {
             duration: 5000
           });
         }
-        this.servicesDatabase.load(data.resp);
+        this.serviceDatabase.load(data.resp);
       });
     this.route.params.subscribe((params) => this.domain = params['domain']);
   }
 
   ngAfterViewInit() {
-    const displayDataChanges = [
-      this.servicesDatabase.dataChange,
-      this.paginator.page,
-    ];
 
-    Observable.merge(...displayDataChanges).map(() => {
-      const data = this.servicesDatabase.data.slice();
-      const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-      return data.splice(startIndex, this.paginator.pageSize);
-    }).subscribe((d) => setTimeout(() => this.dataTable = d,0));
   }
 
-  serviceEdit(selectedItem: String) {
-    this.router.navigate(['/form',selectedItem, {duplicate: false}]);
+  serviceEdit(item?: ServiceItem) {
+    if (item) {
+      this.selectedItem = item;
+    }
+    this.router.navigate(['/form',this.selectedItem.assignedId]);
   }
 
-  serviceDuplicate(selectedItem: String) {
-    this.router.navigate(['/form',selectedItem, {duplicate: true}]);
+  serviceDuplicate() {
+    this.router.navigate(['/duplicate',this.selectedItem.assignedId]);
   }
 
-  openModalDelete(selectedItem: ServiceItem) {
+  openModalDelete() {
     let dialogRef = this.dialog.open(DeleteComponent,{
-      data: selectedItem,
+      data: this.selectedItem,
       width: '500px',
       position: {top: '100px'}
     });
@@ -80,7 +76,7 @@ export class ServicesComponent implements OnInit,AfterViewInit {
         this.delete();
       }
     });
-    this.deleteItem = selectedItem;
+    this.deleteItem = this.selectedItem;
   };
 
   delete() {
@@ -106,20 +102,16 @@ export class ServicesComponent implements OnInit,AfterViewInit {
 
   getServices() {
     this.service.getServices(this.domain)
-      .then(resp => this.servicesDatabase.load(resp))
+      .then(resp => this.serviceDatabase.load(resp))
       .catch((e: any) => this.snackBar.open(this.messages.management_services_status_listfail,'Dismiss', {
         duration: 5000
       }));
   }
 
-  goBack() {
-    this.location.back();
-  }
-
   moveUp(a: ServiceItem) {
-    let index: number = this.servicesDatabase.data.indexOf(a);
+    let index: number = this.serviceDatabase.data.indexOf(a);
     if(index > 0) {
-      let b: ServiceItem = this.servicesDatabase.data[index - 1];
+      let b: ServiceItem = this.serviceDatabase.data[index - 1];
       a.evalOrder = index-1;
       b.evalOrder = index;
       this.service.updateOrder(a,b).then(resp => this.refresh());
@@ -127,34 +119,28 @@ export class ServicesComponent implements OnInit,AfterViewInit {
   }
 
   moveDown(a: ServiceItem) {
-    let index: number = this.servicesDatabase.data.indexOf(a);
-    if(index < this.servicesDatabase.data.length -1) {
-      let b: ServiceItem = this.servicesDatabase.data[index + 1];
+    let index: number = this.serviceDatabase.data.indexOf(a);
+    if(index < this.serviceDatabase.data.length -1) {
+      let b: ServiceItem = this.serviceDatabase.data[index + 1];
       a.evalOrder = index+1;
       b.evalOrder = index;
       this.service.updateOrder(a,b).then(resp => this.refresh());
     }
   }
 
-}
-
-export class ServicesDatabase {
-  dataChange: BehaviorSubject<ServiceItem[]> = new BehaviorSubject<ServiceItem[]>([]);
-  get data(): ServiceItem[] { return this.dataChange.value; }
-
-  constructor() {
-  }
-
-  load(services: ServiceItem[]) {
-    this.dataChange.next([]);
-    for(let service of services) {
-      this.addService(service);
+  showMoveUp(): boolean {
+    if (!this.selectedItem) {
+      return false;
     }
+    let index = this.serviceDatabase.data.indexOf(this.selectedItem);
+    return index > 0;
   }
 
-  addService(service: ServiceItem) {
-    const copiedData = this.data.slice();
-    copiedData.push(service);
-    this.dataChange.next(copiedData);
+  showMoveDown(): boolean {
+    if (!this.selectedItem) {
+      return false;
+    }
+    let index = this.serviceDatabase.data.indexOf(this.selectedItem);
+    return index < this.serviceDatabase.data.length - 1;
   }
 }

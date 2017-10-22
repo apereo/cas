@@ -7,6 +7,7 @@ import {ServicesComponent} from "./services/services.component";
 import {ServicesResolve} from "./services/services.resolover";
 import {DomainsComponent} from "./domains/domains.component";
 import {SearchComponent} from "./search/search.component";
+import {InitComponent} from "./init.component";
 
 @NgModule({
   imports: [
@@ -25,7 +26,11 @@ import {SearchComponent} from "./search/search.component";
       {
         path: 'search/:query',
         component: SearchComponent
-      }
+      },
+      {
+        path: 'manage.html',
+        component: InitComponent
+      },
     ]),
   ],
   exports: [ RouterModule ]

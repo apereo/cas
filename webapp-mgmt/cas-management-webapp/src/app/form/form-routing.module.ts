@@ -20,87 +20,99 @@ import {TabWsfedComponent} from "./tab-wsfed/tab-wsfed.component";
 import {TabContactsComponent} from "./tab-contacts/tab-contacts.component";
 import {TabExpirationComponent} from "./tab-expiration/tab-expiration.component";
 
+const childRoutes: Routes = [
+  {
+    path: 'basics',
+    component: TabBasicsComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'saml',
+    component: TabSamlComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'oauth',
+    component: TabOauthComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'wsfed',
+    component: TabWsfedComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'contacts',
+    component: TabContactsComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'logout',
+    component: TabLogoutComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'accessstrategy',
+    component: TabAccessstrategyComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'expiration',
+    component: TabExpirationComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'multiauth',
+    component: TabMulitauthComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'proxy',
+    component: TabProxyComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'userattr',
+    component: TabUsernameattrComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'attrRelease',
+    component: TabAttrreleaseComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'properties',
+    component: TabPropertiesComponent,
+    outlet: 'form'
+  },
+  {
+    path: 'advanced',
+    component: TabAdvancedComponent,
+    outlet: 'form'
+  }
+]
 @NgModule({
   imports: [
     RouterModule.forChild([
+      {
+        path: 'duplicate/:id',
+        component: FormComponent,
+        resolve: {
+          resp: FormResolve
+        },
+        children: childRoutes,
+        data: {
+          duplicate: true,
+        }
+      },
       {
         path: 'form/:id',
         component: FormComponent,
         resolve: {
           resp: FormResolve
         },
-        children: [
-          {
-            path: 'basics',
-            component: TabBasicsComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'saml',
-            component: TabSamlComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'oauth',
-            component: TabOauthComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'wsfed',
-            component: TabWsfedComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'contacts',
-            component: TabContactsComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'logout',
-            component: TabLogoutComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'accessstrategy',
-            component: TabAccessstrategyComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'expiration',
-            component: TabExpirationComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'multiauth',
-            component: TabMulitauthComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'proxy',
-            component: TabProxyComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'userattr',
-            component: TabUsernameattrComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'attrRelease',
-            component: TabAttrreleaseComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'properties',
-            component: TabPropertiesComponent,
-            outlet: 'form'
-          },
-          {
-            path: 'advanced',
-            component: TabAdvancedComponent,
-            outlet: 'form'
-          },
-        ]
+        children: childRoutes
       }
     ])
   ],
