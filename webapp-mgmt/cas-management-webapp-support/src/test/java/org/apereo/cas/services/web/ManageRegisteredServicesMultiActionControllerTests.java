@@ -116,7 +116,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     }
 
     @Test
-    public void verifyManage() throws Exception {
+    public void verifyManage() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName(NAME);
