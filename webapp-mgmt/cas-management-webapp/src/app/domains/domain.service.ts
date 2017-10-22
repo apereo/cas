@@ -13,7 +13,7 @@ export class DomainService extends Service {
   }
 
   getDomains(): Promise<String[]> {
-    return this.get<String[]>("domains");
+    return this.get<String[]>("domainList");
   }
 
  }
