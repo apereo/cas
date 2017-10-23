@@ -12,17 +12,15 @@ CAS is configured to decorate views based on the `theme` property of a given reg
 
 ### Configuration
 
-- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder.
-
-- Contents of this file should match the following:
+- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. Contents of this file should match the following:
 
 ```properties
 standard.custom.css.file=/themes/[theme_name]/css/cas.css
 cas.javascript.file=/themes/[theme_name]/js/cas.js
+admin.custom.css.file=/themes/[theme-name]/css/admin.css
 ```
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
-
 - Specify `[theme_name]` for the service definition under the `theme` property.
 
 ```json
@@ -37,12 +35,19 @@ cas.javascript.file=/themes/[theme_name]/js/cas.js
 
 ## Themed Views
 
-CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted
-for a different type of audience are entirely different structurally that simply
-using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
+CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted for a different type of audience are entirely different structurally that simply using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
 
 Views associated with a particular theme by default are expected to be found at: `src/main/resources/templates/<theme-id>`
 
 ### Configuration
+
+- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. Contents of this file should match the following:
+
+```properties
+standard.custom.css.file=/themes/[theme_name]/css/cas.css
+cas.javascript.file=/themes/[theme_name]/js/cas.js
+admin.custom.css.file=/themes/[theme-name]/css/admin.css
+```
+
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `src/main/resources/templates/<theme-id>`).
 - Specify the name of your theme for the service definition under the `theme` property.
