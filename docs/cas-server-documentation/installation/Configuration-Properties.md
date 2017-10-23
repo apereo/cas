@@ -2719,7 +2719,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.label=
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
-# cas.authn.mfa.gauth.trustedDeviceEnabled=true
+# cas.authn.mfa.gauth.trustedDeviceEnabled=false
 # cas.authn.mfa.gauth.name=
 
 # cas.authn.mfa.gauth.cleaner.enabled=true
@@ -2792,7 +2792,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.secretKey=
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
-# cas.authn.mfa.yubikey.trustedDeviceEnabled=true
+# cas.authn.mfa.yubikey.trustedDeviceEnabled=false
 # cas.authn.mfa.yubikey.name=
 
 # cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
@@ -2862,7 +2862,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
 # cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
-# cas.authn.mfa.radius.trustedDeviceEnabled=true
+# cas.authn.mfa.radius.trustedDeviceEnabled=false
 # cas.authn.mfa.radius.name=
 
 # cas.authn.mfa.radius.client.socketTimeout=0
@@ -2900,7 +2900,7 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].duoApplicationKey=
 # cas.authn.mfa.duo[0].duoIntegrationKey=
 # cas.authn.mfa.duo[0].duoApiHost=
-# cas.authn.mfa.duo[0].trustedDeviceEnabled=true
+# cas.authn.mfa.duo[0].trustedDeviceEnabled=false
 # cas.authn.mfa.duo[0].id=mfa-duo
 # cas.authn.mfa.duo[0].name=
 
@@ -3076,7 +3076,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.countryCode=1
 # cas.authn.mfa.authy.forceVerification=true
-# cas.authn.mfa.authy.trustedDeviceEnabled=true
+# cas.authn.mfa.authy.trustedDeviceEnabled=false
 # cas.authn.mfa.authy.name=
 
 # cas.authn.mfa.authy.bypass.principalAttributeName=bypass|skip
