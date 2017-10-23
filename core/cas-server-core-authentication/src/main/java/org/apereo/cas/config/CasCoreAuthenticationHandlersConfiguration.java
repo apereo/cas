@@ -91,14 +91,15 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final AcceptAuthenticationProperties acceptAuthenticationProperties = casProperties.getAuthn().getAccept();
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager,
+        final AcceptAuthenticationProperties props = casProperties.getAuthn().getAccept();
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
                 acceptUsersPrincipalFactory(), null, getParsedUsers());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(acceptAuthenticationProperties.getPrincipalTransformation()));
+        h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
         return h;
     }
 
@@ -110,7 +111,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     private Map<String, String> getParsedUsers() {
         final Pattern pattern = Pattern.compile("::");
-
         final String usersProperty = casProperties.getAuthn().getAccept().getUsers();
 
         if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {

@@ -44,7 +44,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
                                                         final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         try {
-            final Object[] args = {attributes, LOGGER};
+            final Object[] args = {attributes, LOGGER, principal, service};
             final Resource resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
         } catch (final Exception e) {
