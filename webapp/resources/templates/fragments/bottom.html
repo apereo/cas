@@ -7,7 +7,7 @@ head.ready(document, function () {
     	var jqueryUrl = /*[[@{#{webjars.jquerymin.js}}]]*/; 
         head.load(jqueryUrl, loadjQueryUI);
     } else {
-        resourceLoadedSuccessfully();
+        notifyResourcesAreLoaded(resourceLoadedSuccessfully);
     }
 });
 
@@ -18,7 +18,13 @@ function loadjQueryUI() {
 
 function loadjQueryCookies() {
 	var jqueryUrl = /*[[@{#{webjars.jquerycookie.js}}]]*/; 
-	head.load(jqueryUrl, resourceLoadedSuccessfully);
+	head.load(jqueryUrl, notifyResourcesAreLoaded(resourceLoadedSuccessfully));
+}
+
+function notifyResourcesAreLoaded(callback) {
+    if (typeof callback === "function") {
+        callback();
+    }
 }
 </script>
 
