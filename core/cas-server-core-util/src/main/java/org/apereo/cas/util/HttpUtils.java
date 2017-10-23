@@ -177,6 +177,29 @@ public final class HttpUtils {
     /**
      * Execute post http response.
      *
+     * @param url        the url
+     * @param entity     the entity
+     * @param parameters the parameters
+     * @return the http response
+     */
+    public static HttpResponse executePost(final String url,
+                                           final HttpEntity entity,
+                                           final Map<String, String> parameters) {
+        try {
+            final HttpClient client = buildHttpClient(null, null);
+            final URI uri = buildHttpUri(url, parameters);
+            final HttpPost request = new HttpPost(uri);
+            request.setEntity(entity);
+            return client.execute(request);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+    
+    /**
+     * Execute post http response.
+     *
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
@@ -187,9 +210,41 @@ public final class HttpUtils {
                                            final String basicAuthUsername,
                                            final String basicAuthPassword,
                                            final String jsonEntity) {
+        return executePost(url, basicAuthUsername, basicAuthPassword, jsonEntity, new HashMap<>());
+    }
+
+    /**
+     * Execute post http response.
+     *
+     * @param url        the url
+     * @param jsonEntity the json entity
+     * @param parameters the parameters
+     * @return the http response
+     */
+    public static HttpResponse executePost(final String url,
+                                           final String jsonEntity,
+                                           final Map<String, String> parameters) {
+        return executePost(url, null, null, jsonEntity, parameters);    
+    }
+
+    /**
+     * Execute post http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param jsonEntity        the json entity
+     * @param parameters        the parameters
+     * @return the http response
+     */
+    public static HttpResponse executePost(final String url,
+                                           final String basicAuthUsername,
+                                           final String basicAuthPassword,
+                                           final String jsonEntity,
+                                           final Map<String, String> parameters) {
         try {
             final HttpClient client = buildHttpClient(basicAuthUsername, basicAuthPassword);
-            final URI uri = buildHttpUri(url, new HashMap<>());
+            final URI uri = buildHttpUri(url, parameters);
             final HttpPost request = new HttpPost(uri);
             final StringEntity entity = new StringEntity(jsonEntity, ContentType.APPLICATION_JSON);
             request.setEntity(entity);
@@ -199,7 +254,6 @@ public final class HttpUtils {
         }
         return null;
     }
-
     /**
      * Prepare credentials if needed.
      *
