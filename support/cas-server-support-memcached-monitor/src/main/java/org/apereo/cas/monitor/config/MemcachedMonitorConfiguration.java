@@ -7,7 +7,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
-import org.apereo.cas.memcached.MemcachedPooledConnectionFactory;
+import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.monitor.MemcachedMonitor;
 import org.apereo.cas.monitor.Monitor;
@@ -43,7 +43,7 @@ public class MemcachedMonitorConfiguration {
     @Bean
     public Monitor memcachedMonitor() {
         final MonitorProperties.Memcached memcached = casProperties.getMonitor().getMemcached();
-        final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(memcached, memcachedMonitorTranscoder());
+        final MemcachedPooledClientConnectionFactory factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
         final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
         return new MemcachedMonitor(pool);
     }

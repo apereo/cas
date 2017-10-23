@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-gauth")
+@RequiresModule(name = "cas-server-support-gauth")
 public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = -7401748853833491119L;
     /**

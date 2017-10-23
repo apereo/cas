@@ -3,7 +3,8 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredModule(name = "cas-server-support-u2f")
+@RequiresModule(name = "cas-server-support-u2f")
 public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
     private static final long serialVersionUID = 6151350313777066398L;
 
@@ -49,6 +50,14 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
      * Store device registration records inside a static JSON resource.
      */
     private Json json = new Json();
+    /**
+     * Store device registration records via a Groovy script.
+     */
+    private Groovy groovy = new Groovy();
+    /**
+     * Store device registration records via REST APIs.
+     */
+    private Rest rest = new Rest();
     /**
      * Clean up expired records via a background cleaner process.
      */
@@ -115,16 +124,28 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
         this.mongo = mongo;
     }
 
-    public static class Json extends SpringResourceProperties {
-        private static final long serialVersionUID = -6883660787308509919L;
-    }
-
     public Jpa getJpa() {
         return jpa;
     }
 
     public void setJpa(final Jpa jpa) {
         this.jpa = jpa;
+    }
+
+    public Rest getRest() {
+        return rest;
+    }
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
+    }
+
+    public Groovy getGroovy() {
+        return groovy;
+    }
+
+    public void setGroovy(final Groovy groovy) {
+        this.groovy = groovy;
     }
 
     public static class Jpa extends AbstractJpaProperties {
@@ -137,6 +158,21 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
         public MongoDb() {
             setCollection("CasMongoDbU2FRepository");
         }
+    }
+
+    @RequiresModule(name = "cas-server-support-u2f")
+    public static class Json extends SpringResourceProperties {
+        private static final long serialVersionUID = -6883660787308509919L;
+    }
+
+    @RequiresModule(name = "cas-server-support-u2f")
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = -8102345678378393382L;
+    }
+
+    @RequiresModule(name = "cas-server-support-u2f")
+    public static class Groovy extends SpringResourceProperties {
+        private static final long serialVersionUID = 8079027843747126083L;
     }
 }
 

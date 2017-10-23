@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -15,7 +16,6 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,14 +91,15 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final AcceptAuthenticationProperties acceptAuthenticationProperties = casProperties.getAuthn().getAccept();
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager,
+        final AcceptAuthenticationProperties props = casProperties.getAuthn().getAccept();
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
                 acceptUsersPrincipalFactory(), null, getParsedUsers());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(acceptAuthenticationProperties.getPrincipalTransformation()));
+        h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
         return h;
     }
 
@@ -110,7 +111,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     private Map<String, String> getParsedUsers() {
         final Pattern pattern = Pattern.compile("::");
-
         final String usersProperty = casProperties.getAuthn().getAccept().getUsers();
 
         if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
@@ -157,7 +157,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                             h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
                         }
                         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
-                        h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
+                        h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
                         return h;
                     })
                     .collect(Collectors.toList());

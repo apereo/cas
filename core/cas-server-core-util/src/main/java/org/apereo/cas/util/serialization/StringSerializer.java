@@ -1,11 +1,15 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Interface to define operations needed to map objects from/to  clobs.
@@ -78,4 +82,28 @@ public interface StringSerializer<T> extends Serializable {
      * @param object the object to serialize
      */
     void to(File out, T object);
+
+    /**
+     * Load a collection of specified objects from the stream.
+     *
+     * @param stream the stream
+     * @return the collection
+     */
+    default Collection<T> load(final InputStream stream) {
+        final T result = from(stream);
+        if (result != null) {
+            return CollectionUtils.wrapList(result);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Supports the input stream for serialization?
+     *
+     * @param file the file
+     * @return true/false
+     */
+    default boolean supports(final File file) {
+        return true;
+    }
 }

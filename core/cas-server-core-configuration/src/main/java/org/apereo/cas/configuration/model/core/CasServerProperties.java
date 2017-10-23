@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.core;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core", automated = true)
+@RequiresModule(name = "cas-server-core", automated = true)
 public class CasServerProperties implements Serializable {
 
     private static final long serialVersionUID = 7876382696803430817L;

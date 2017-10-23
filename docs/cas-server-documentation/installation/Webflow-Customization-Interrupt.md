@@ -5,7 +5,8 @@ title: CAS - Authentication Interrupt
 
 # Authentication Interrupt
 
-CAS has the ability to pause and interrupt the authentication flow to reach out to external services and resources, querying for status and setings that would then dicatate how CAS should manage and control the SSO session. Interrupt services are able to present notification messages to the user, provide options for redirects to external services, etc. A common use case deals with presenting a *bulletin board* during the authentication flow to present messages and announcements to select users and then optionally require the audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
+CAS has the ability to pause and interrupt the authentication flow to reach out to external services and resources, querying for status and settings that 
+would then dictate how CAS should manage and control the SSO session. Interrupt services are able to present notification messages to the user, provide options for redirects to external services, etc. A common use case deals with presenting a *bulletin board* during the authentication flow to present messages and announcements to select users and then optionally require the audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
 
 In the interrupt flow, CAS is not at the moment reaching back to an external resource acting as an interrupt service to store, track or remember a user's decision. In other words, we are only dealing with the `R` (ie. Read) in `CRUD`. Today's functionality only deals with inquiring status and reading results solely in read-only mode. Interrupt services are themselves required and encouraged to redirect the audience to external resources where execution of an action resets the interrupt status thereby freeing CAS to proceed forward later on without having to interrupt the authentication flow again.  
 
@@ -99,10 +100,19 @@ The following parameters are passed to the script:
 | `service`             | The identifier (i.e. URL) of the requesting application.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
-
 ### REST
 
-This strategy reaches out to a REST endpoint resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the provided `username` and `service` parameters. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-rest).
+This strategy reaches out to a REST endpoint resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the following parameters:
+
+| Parameter             | Description
+|-------------------------------------------------------------------------------------------------------
+| `username`            | Authenticated principal id.
+| `service`             | The identifier (URL) for the requesting application.
+| `registeredService`   | The identifier of the registered service matched and found in the registry. 
+
+On a successful operation with a status code of `200`, the response body is expected to contain the JSON payload whose syntax and structure is identical to what is described above.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-rest).
 
 ### Custom
 

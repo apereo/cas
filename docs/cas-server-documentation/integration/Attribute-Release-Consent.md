@@ -5,7 +5,8 @@ title: CAS - Attribute Release Consent
 
 # Attribute Consent
 
-CAS provides the ability to enforce user-informed consent upon attribute release. Practically, this means that prior to accessing the target application, the user will be presented with a collection of attributes allowed to be released to the application with options to either proceed or deny the release of said attributes. There are also additional options to indicate how should underlying changes in the attribute release policy be considered by the consent engine. Users are also provied the ability to set up reminders in the event that no change is detected in the attribute release policy.
+CAS provides the ability to enforce user-informed consent upon attribute release. Practically, this means that prior to accessing the target application, the
+ user will be presented with a collection of attributes allowed to be released to the application with options to either proceed or deny the release of said attributes. There are also additional options to indicate how should underlying changes in the attribute release policy be considered by the consent engine. Users are also provided the ability to set up reminders in the event that no change is detected in the attribute release policy.
 
 Consent attribute records stored in the configured repository are signed and encrypted.
 

@@ -16,9 +16,7 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
- * @deprecated As of 5.1, a better option would be to use {@link ScriptedRegisteredServiceAttributeReleasePolicy}.
  */
-@Deprecated
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroovyScriptAttributeReleasePolicy.class);
     private static final long serialVersionUID = 1703080077563402223L;
@@ -26,7 +24,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private String groovyScript;
 
     public GroovyScriptAttributeReleasePolicy() {
-        LOGGER.warn("[{}] is deprecated and will be removed in future CAS versions", getClass().getSimpleName());
+        
     }
 
     public GroovyScriptAttributeReleasePolicy(final String groovyScript) {
@@ -46,13 +44,13 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
                                                         final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         try {
-            final Object[] args = {attributes, LOGGER};
+            final Object[] args = {attributes, LOGGER, principal, service};
             final Resource resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        LOGGER.warn("Groovy script [{}] does not exist, or cannot be loaded", groovyScript);
+        LOGGER.warn("Groovy script [{}] does not exist or cannot be loaded", groovyScript);
         return new HashMap<>();
     }
 }

@@ -13,7 +13,7 @@ import org.apereo.cas.configuration.model.support.services.stream.StreamingServi
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-services", automated = true)
+@RequiresModule(name = "cas-server-core-services", automated = true)
 public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;

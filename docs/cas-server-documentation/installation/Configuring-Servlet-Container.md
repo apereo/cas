@@ -15,20 +15,19 @@ There are is a wide range of servlet containers and servers on the menu. The sel
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
 - Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
-- Choose a technology that shows promisig results under *your expected load*, having run performance and stress tests.
+- Choose a technology that shows promisng results under *your expected load*, having run performance and stress tests.
 - Choose a technology that does not depend on outside processes, systems and manual work as much as possible, is self-reliant and self contained.
 
 ## Production Quality
 
-All servlet containers presented here, embedded or otherwise, aim to be production ready. This means that CAS ships with useful defaults out of the box that may be overriden, if necessary and by default, CAS configures everything for you from development to production in today’s platforms. In terms of their production quality, there is almost no difference between using an embedded container vs. an external one.
+All servlet containers presented here, embedded or otherwise, aim to be production ready. This means that CAS ships with useful defaults out of the box that 
+may be overridden, if necessary and by default, CAS configures everything for you from development to production in today’s platforms. In terms of their production quality, there is almost no difference between using an embedded container vs. an external one.
 
 ## Embedded
 
-Note that CAS itself ships with a number of embedded containers that allows the platform to be self-contained as much as possible. These embedded containers are an integral part of the CAS software, are maintained and updated usually for every release and surely are meant to and can be used in production deployments. You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
+Note that CAS itself ships with a number of embedded containers that allow the platform to be self-contained as much as possible. These embedded containers are an integral part of the CAS software, are maintained and updated usually for every release and surely are meant to and can be used in production deployments. You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>
-Remember that most if not all aspects of the embedded container can be controlled via the CAS properties.
-See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
+<div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded container can be controlled via the CAS properties. See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
 
 To see the relevant list of CAS properties, 
 please [review this guide](Configuration-Properties.html#embedded-container).
@@ -49,7 +48,7 @@ Additionally, it is also possible to run CAS as a fully executable web applicati
 ```
 
 This is achieved via the build process of the deployment overlay where a launch script is *inserted* at the beginning of the web application artifact. If you
- wish to see and exmaine the script, simply run the following commands:
+ wish to see and examine the script, simply run the following commands:
  
  ```bash
  # X is the number of lines from the beginning of the file
@@ -79,6 +78,10 @@ In order to force Apache Tomcat to use IPv4, configure the following as a system
 ```
 
 The same sort of configuration needs to be applied to your `$CATALINA_OPTS` environment variable in case of an external container.
+
+#### Faster Startup
+
+[This guide](https://wiki.apache.org/tomcat/HowTo/FasterStartUp) provides several recommendations on how to make web applications and Apache Tomcat as a whole to start up faster.
 
 #### Logging
 

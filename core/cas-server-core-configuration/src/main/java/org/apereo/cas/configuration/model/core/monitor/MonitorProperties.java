@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-monitor", automated = true)
+@RequiresModule(name = "cas-server-core-monitor", automated = true)
 public class MonitorProperties implements Serializable {
 
     private static final long serialVersionUID = -7047060071480971606L;
@@ -143,7 +143,7 @@ public class MonitorProperties implements Serializable {
         this.mongo = mongo;
     }
 
-    @RequiredModule(name = "cas-server-core-monitor", automated = true)
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class St implements Serializable {
         private static final long serialVersionUID = -8167395674267219982L;
         @NestedConfigurationProperty
@@ -158,7 +158,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-core-monitor", automated = true)
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class Tgt implements Serializable {
 
         private static final long serialVersionUID = -2756454350350278724L;
@@ -177,7 +177,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-core-monitor", automated = true)
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class Warn implements Serializable {
 
         private static final long serialVersionUID = 2788617778375787703L;
@@ -217,7 +217,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-core-monitor", automated = true)
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = 4722929378440179113L;
 
@@ -250,17 +250,17 @@ public class MonitorProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-memcached-monitor")
+    @RequiresModule(name = "cas-server-support-memcached-monitor")
     public static class Memcached extends BaseMemcachedProperties {
         private static final long serialVersionUID = -9139788158851782673L;
     }
 
-    @RequiredModule(name = "cas-server-support-mongo-monitor")
+    @RequiresModule(name = "cas-server-support-mongo-monitor")
     public static class MongoDb extends BaseMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
     }
 
-    @RequiredModule(name = "cas-server-support-jdbc-monitor")
+    @RequiresModule(name = "cas-server-support-jdbc-monitor")
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = -7139788158851782673L;
 
@@ -341,7 +341,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
-    @RequiredModule(name = "cas-server-support-reports", automated = true)
+    @RequiresModule(name = "cas-server-support-reports", automated = true)
     public static class Endpoints extends BaseEndpoint {
 
         /**
@@ -556,67 +556,67 @@ public class MonitorProperties implements Serializable {
             this.trustedDevices = trustedDevices;
         }
 
-        @RequiredModule(name = "cas-server-support-reports", automated = true)
+        @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class Dashboard extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-support-reports", automated = true)
+        @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class AuditEvents extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-support-reports", automated = true)
+        @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class AuthenticationEvents extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-configuration", automated = true)
+        @RequiresModule(name = "cas-server-core-configuration", automated = true)
         public static class ConfigurationState extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-monitor", automated = true)
+        @RequiresModule(name = "cas-server-core-monitor", automated = true)
         public static class HealthCheck extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-logging", automated = true)
+        @RequiresModule(name = "cas-server-core-logging", automated = true)
         public static class LoggingConfig extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-support-metrics", automated = true)
+        @RequiresModule(name = "cas-server-support-metrics", automated = true)
         public static class Metrics extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-support-person-directory", automated = true)
+        @RequiresModule(name = "cas-server-support-person-directory", automated = true)
         public static class AttributeResolution extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-web", automated = true)
+        @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class SingleSignOnReport extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-web", automated = true)
+        @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class Statistics extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-support-mfa-trusted", automated = true)
+        @RequiresModule(name = "cas-server-support-mfa-trusted", automated = true)
         public static class TrustedDevices extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-web", automated = true)
+        @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class Status extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core", automated = true)
+        @RequiresModule(name = "cas-server-core", automated = true)
         public static class SingleSignOnStatus extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-webflow", automated = true)
+        @RequiresModule(name = "cas-server-core-webflow", automated = true)
         public static class SpringWebflowReport extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-services", automated = true)
+        @RequiresModule(name = "cas-server-core-services", automated = true)
         public static class RegisteredServicesReport extends BaseEndpoint {
         }
 
-        @RequiredModule(name = "cas-server-core-configuration", automated = true)
+        @RequiresModule(name = "cas-server-core-configuration", automated = true)
         public static class ConfigurationMetadata extends BaseEndpoint {
         }
     }

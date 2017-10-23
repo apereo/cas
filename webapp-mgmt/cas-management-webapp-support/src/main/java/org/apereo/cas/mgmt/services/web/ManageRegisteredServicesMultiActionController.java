@@ -84,6 +84,21 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     }
 
     /**
+     * Mapped method to return the manage.html.
+     *
+     * @param response - HttpServletResponse
+     * @return - ModelAndView
+     */
+    @GetMapping("/manage.html")
+    public ModelAndView manage(final HttpServletResponse response) {
+        ensureDefaultServiceExists();
+        final Map<String, Object> model = new HashMap<>();
+        model.put(STATUS, HttpServletResponse.SC_OK);
+        model.put("defaultServiceUrl", this.defaultService.getId());
+        return new ModelAndView("manage", model);
+    }
+
+    /**
      * Ensure default service exists.
      */
     private void ensureDefaultServiceExists() {
@@ -137,8 +152,12 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      */
     @GetMapping(value = "/deleteRegisteredService")
     public ResponseEntity<String> deleteRegisteredService(@RequestParam("id") final long idAsLong) {
+        ensureDefaultServiceExists();
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
-        if (svc == null || svc.getId() == idAsLong) {
+        if (svc == null) {
+            return new ResponseEntity<>("The default service " + this.defaultService.getId() + " cannot be found. ", HttpStatus.BAD_REQUEST);
+        }
+        if (svc.getId() == idAsLong) {
             return new ResponseEntity<>("The default service " + this.defaultService.getId() + " cannot be deleted. "
                     + "The definition is required for accessing the application.", HttpStatus.BAD_REQUEST);
         }
@@ -150,20 +169,9 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return new ResponseEntity<>(r.getName(), HttpStatus.OK);
     }
 
-    /**
-     * Method to show the RegisteredServices.
-     *
-     * @param response the response
-     * @return the Model and View to go to after the services are loaded.
-     */
-    @GetMapping(value = "/manage.html")
-    public ModelAndView manage(final HttpServletResponse response) {
-        ensureDefaultServiceExists();
-        final Map<String, Object> model = new HashMap<>();
-        model.put("defaultServiceUrl", this.defaultService.getId());
-        model.put("type", this.casProperties.getServiceRegistry().getManagementType());
-        model.put(STATUS, HttpServletResponse.SC_OK);
-        return new ModelAndView("manage", model);
+    @GetMapping(value = "managerType")
+    public ResponseEntity<String> getManagerType() {
+        return new ResponseEntity<>(casProperties.getServiceRegistry().getManagementType().toString(), HttpStatus.OK);
     }
 
     /**
@@ -172,8 +180,9 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return the domains
      * @throws Exception the exception
      */
-    @GetMapping(value = "/domains")
+    @GetMapping(value = "/domainList")
     public ResponseEntity<Collection<String>> getDomains() throws Exception {
+        ensureDefaultServiceExists();
         final Collection<String> data = this.servicesManager.getDomains();
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
@@ -218,6 +227,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      */
     @GetMapping(value = "/search")
     public ResponseEntity<List<RegisteredServiceItem>> search(@RequestParam final String query) {
+        ensureDefaultServiceExists();
         final Pattern pattern = RegexUtils.createPattern("^.*" + query + ".*$");
         final List<RegisteredServiceItem> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = this.servicesManager.getAllServices()
@@ -238,6 +248,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      */
     @GetMapping(value = "formData")
     public ResponseEntity<FormData> getFormData() throws Exception {
+        ensureDefaultServiceExists();
         final FormData formData = new FormData();
         final Set<String> possibleUserAttributeNames = this.personAttributeDao.getPossibleUserAttributeNames();
         final List<String> possibleAttributeNames = new ArrayList<>();
@@ -260,6 +271,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     @ResponseStatus(HttpStatus.OK)
     public void updateOrder(final HttpServletRequest request, final HttpServletResponse response,
                             @RequestBody final RegisteredServiceItem[] svcs) {
+        ensureDefaultServiceExists();
         final String id = svcs[0].getAssignedId();
         final RegisteredService svcA = this.servicesManager.findServiceBy(Long.parseLong(id));
         if (svcA == null) {

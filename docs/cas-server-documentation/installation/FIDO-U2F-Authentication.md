@@ -37,6 +37,43 @@ This option should only be used for demo and testing purposes.
 
 A simple device repository implementation that collects user device registrations and saves them into a JSON file whose path is taught to CAS via settings. This is a very modest option and should mostly be used for demo and testing purposes. Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
 
+Devices stored into the JSON file take on the following format:
+
+```json
+{
+  "@class" : "java.util.HashMap",
+  "services" : [ "java.util.ArrayList", [ {
+    "@class" : "org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration",
+    "id" : 1508515100762,
+    "username" : "casuser",
+    "record" : "{\"keyHandle\":\"keyhandle11\",\"publicKey\":\"publickey1\",\"counter\":1,\"compromised\":false}",
+    "createdDate" : "2016-10-15"
+  } ] ]
+}
+```
+
+### Groovy
+
+Device registrations may be managed via an external Groovy script. The script may be designed as follows:
+
+```groovy
+import java.util.*
+import org.apereo.cas.adaptors.u2f.storage.*
+
+def Map<String, List<U2FDeviceRegistration>> read(final Object... args) {
+    def logger = args[0]
+    ...
+    return null;
+}
+
+def Boolean write(final Object... args) {
+    List<U2FDeviceRegistration> list = args[0]
+    def logger = args[1]
+    ...
+    return true;
+}
+```
+
 ### JPA
 
 Device registrations may be kept inside a relational database by including the following module in the WAR overlay:
@@ -64,3 +101,17 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f-mongodb).
+
+### REST
+
+Device registrations may be managed via REST APIs. Endpoints must be designed to accept/process `application/json`. The syntax for he collection of devices passed back and forth is designed in JSON and is identical to the JSON structure defined above.
+
+The following parameters are passed:
+
+| Operation        | Parameters      | Description      | Result
+|------------------|-----------------|-----------------------------------------------------------------------
+| `GET`            | N/A             | Retrieve all registered devices.     | `200` status code Collection of registered devices as JSON in the body of the response.
+| `POST`           | Collection of registered devices as JSON | Store registered devices. | `200`.
+
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f-rest).

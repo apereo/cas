@@ -268,6 +268,79 @@ needed for InCommon's Research and Scholarship service providers:
 }
 ```
 
+#### Groovy Script
+
+This policy allows a Groovy script to calculate the collection of released attributes.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy",
+    "groovyScript": "file:/etc/cas/config/script.groovy"
+  }
+}
+```
+
+The outline of the script may be designed as:
+
+```groovy
+import java.util.*
+import org.apereo.cas.support.saml.services.*
+import org.apereo.cas.support.saml.*
+
+def Map<String, Object> run(final Object... args) {
+    def attributes = args[0]
+    def service = args[1]
+    def resolver = args[2]
+    def facade = args[3]
+    def entityDescriptor = args[4]
+    def applicationContext = args[5]
+    def logger = args[6]
+    ...
+    return null;
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter        | Description
+|------------------|--------------------------------------------------------------------------------------------
+| `attributes`     | Map of current attributes resolved and available for release.
+| `service`        | The SAML service definition matched in the service registry.
+| `resolver`       | The metadata resolver instance of this service provider.
+| `facade`         | A wrapper on top of the metadata resolver that allows access to utility functions.
+| `entityDescriptor`    | The `EntityDescriptor` object matched and linked to this service provider's metadata.
+| `applicationContext`  | CAS application context allowing direct access to beans, etc.
+| `logger`         | The object responsible for issuing log messages such as `logger.info(...)`.
+
+An example script follows:
+
+```groovy
+import java.util.*
+import org.apereo.cas.support.saml.services.*
+import org.apereo.cas.support.saml.*
+
+def Map<String, Object> run(final Object... args) {
+    def attributes = args[0]
+    def service = args[1]
+    def resolver = args[2]
+    def facade = args[3]
+    def entityDescriptor = args[4]
+    def applicationContext = args[5]
+    def logger = args[6]
+
+    if (entityDescriptor.entityId == "TestingSAMLApplication") {
+      return [username:["something"], another:"attribute"]
+    }
+    return [:]
+}
+```
+
 #### Pattern Matching Entity Ids
 
 In the event that an aggregate is defined containing multiple entity ids, the below attribute release policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
@@ -290,7 +363,7 @@ In the event that an aggregate is defined containing multiple entity ids, the be
 
 #### Entity Attributes Filter
 
-This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attribute attributes that match certain values.
+This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attributes that match certain values.
 
 ```json
 {

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.slo;
 
-import org.apereo.cas.configuration.support.RequiredModule;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredModule(name = "cas-server-core-authentication", automated = true)
+@RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class SloProperties implements Serializable {
 
     private static final long serialVersionUID = 3676710533477055700L;
