@@ -5,8 +5,7 @@ title: CAS - Attribute Release Policies
 
 # Attribute Release Policies
 
-The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally, each policy has
- the ability to apply an optional filter to weed out their attributes based on their values.
+The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.
 
 The following settings are shared by all attribute release policies:
 
@@ -41,15 +40,11 @@ please [review this guide](../installation/Configuration-Properties.html#authent
 
 Principal attributes typically convey personally identifiable data about the authenticated user,
 such as address, last name, etc. Release policies are available in CAS and documented below
-to explicitly control the collection
-of attributes that may be authorized for release to a given application.
+to explicitly control the collection of attributes that may be authorized for release to a given application.
 
 ### Default
 
-CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle is not defined on a per-service
-basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise
-rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some
-applications per their attribute release policy.
+CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle is not defined on a per-service basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some applications per their attribute release policy.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#default-bundle).
 
@@ -63,7 +58,6 @@ Return all resolved principal attributes to the service.
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   }
@@ -90,7 +84,7 @@ also skips and refuses to release default attributes, if any.
 
 ### Return Allowed
 
-Only return the principal attributes that are explicitly allowed by the configuration.
+Only return the principal attributes that are explicitly allowed by the service definition.
 
 ```json
 {
@@ -98,7 +92,6 @@ Only return the principal attributes that are explicitly allowed by the configur
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
@@ -106,6 +99,31 @@ Only return the principal attributes that are explicitly allowed by the configur
 }
 ```
 
+### REST
+
+Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to accept/process `application/json`. The expected response status code is `200` where the body of the response includes a `Map` of attributes linked to their values.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy",
+    "endpoint" : "https://somewhere.example.org"
+  }
+}
+```
+
+The following parameters are passed to the endpoint:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `principal`           | The object representing the authenticated principal.
+| `service`             | The object representing the corresponding service definition in the registry.
+
+The body of the submitted request may also include a `Map` of currently resolved attributes. 
 
 ### Return Mapped
 
@@ -134,15 +152,14 @@ release `affiliation` and `group` to the web application configured.
 }
 ```
 
+
+
 ### Return MultiMapped
 
 The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
 with duplicate attributes values mapped to different names.
 
-For example, the following configuration will recognize the resolved 
-attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` whose values
-stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`.
-In other words, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
+For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
 
 
 ```json
@@ -151,7 +168,6 @@ In other words, the `eduPersonAffiliation` attribute is released twice under two
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes" : {
@@ -174,7 +190,6 @@ have resolved a `uid` attribute with a value of `piper`, you could then consider
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes" : {
@@ -202,7 +217,6 @@ Identical to inline groovy attribute definitions, except the groovy script can a
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes" : {
@@ -223,7 +237,6 @@ Let an external Groovy script decide how principal attributes should be released
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.GroovyScriptAttributeReleasePolicy",
     "groovyScript" : "classpath:/script.groovy"
@@ -258,7 +271,6 @@ to massage the CAS configuration to include the [Python modules](http://search.m
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy",
     "scriptFile" : "classpath:/script.[py|js|groovy]"
@@ -294,7 +306,6 @@ has access to the collection of resolved `attributes` as well as a `logger` obje
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
-  "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy",
     "scriptFile" : "groovy { return attributes }"
