@@ -19,6 +19,7 @@ CAS is configured to decorate views based on the `theme` property of a given reg
 ```properties
 standard.custom.css.file=/themes/[theme_name]/css/cas.css
 cas.javascript.file=/themes/[theme_name]/js/cas.js
+admin.custom.css.file=/themes/[theme-name]/css/admin.css
 ```
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
