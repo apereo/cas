@@ -2707,6 +2707,10 @@ ext.libraries = [
                 dependencies.create("net.unicon.iam:duo-java:$duoVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
+                },
+                dependencies.create("com.github.duosecurity:duo_client_java:-SNAPSHOT") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
                 }
         ],
         authyjava               : [

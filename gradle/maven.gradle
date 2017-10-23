@@ -147,33 +147,18 @@ def generatePom() {
                     archive "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
                 }
             }
-
             repositories {
+                repository {
+                    id "jcenter"
+                    url "https://jcenter.bintray.com"
+                    releases {
+                        enabled true
+                    }
+                }
                 repository {
                     id "shib-release"
                     url "https://build.shibboleth.net/nexus/content/repositories/releases"
                     releases {
-                        enabled true
-                    }
-                }
-                repository {
-                    id "spring-milestones"
-                    url "https://repo.spring.io/milestone"
-                    releases {
-                        enabled true
-                    }
-                }
-                repository {
-                    id "spring-snapshots"
-                    url "https://repo.spring.io/snapshot"
-                    snapshots {
-                        enabled true
-                    }
-                }
-                repository {
-                    id "spring-libs-snapshots"
-                    url "https://repo.spring.io/libs-snapshot"
-                    snapshots {
                         enabled true
                     }
                 }
@@ -186,14 +171,14 @@ def generatePom() {
                 }
                 repository {
                     id "jasig-legacy"
-                    url "http://developer.jasig.org/repo/content/groups/m2-legacy"
+                    url "https://developer.jasig.org/repo/content/groups/m2-legacy"
                     releases {
                         enabled true
                     }
                 }
                 repository {
                     id "couchbase"
-                    url "http://files.couchbase.com/maven2/"
+                    url "https://files.couchbase.com/maven2/"
                     releases {
                         enabled true
                     }
@@ -202,17 +187,6 @@ def generatePom() {
                     id "uniconiam"
                     url "https://dl.bintray.com/uniconiam/maven"
                     releases {
-                        enabled true
-                    }
-                }
-
-                repository {
-                    id "ldaptive"
-                    url "https://raw.github.com/vt-middleware/maven-repo/master"
-                    releases {
-                        enabled true
-                    }
-                    snapshots {
                         enabled true
                     }
                 }
