@@ -2,7 +2,6 @@ description = "Apereo CAS DuoSecurity Support"
 
 repositories {
     maven { url "https://dl.bintray.com/uniconiam/maven" }
-    maven { url "https://jitpack.io" }
     jcenter()
 }
 
