@@ -2367,6 +2367,7 @@ prior to production rollouts.</p></div>
 ```properties
 # cas.authn.accept.users=
 # cas.authn.accept.name=
+# cas.authn.accept.credentialCriteria=
 
 # cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
 # cas.authn.accept.passwordEncoder.characterEncoding=
