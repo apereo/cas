@@ -252,11 +252,22 @@ import java.util.*
 def Map<String, List<Object>> run(final Object... args) {
     def currentAttributes = args[0]
     def logger = args[1]
+    def principal = args[2]
+    def service = args[3]
 
     logger.debug("Current attributes received are {}", currentAttributes)
     return [username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
 ```
+
+The following parameters are passed to the script:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `currentAttributes`   | `Map` of attributes currently resolved and available for release.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| `principal`           | The object representing the authenticated principal.
+| `service`             | The object representing the corresponding service definition in the registry.
 
 ### Javascript/Python/Groovy Script
 

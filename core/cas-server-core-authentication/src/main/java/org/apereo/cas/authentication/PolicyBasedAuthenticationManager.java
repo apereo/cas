@@ -68,8 +68,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-
-
+    
     /**
      * Creates a new authentication manager with a map of authentication handlers to the principal resolvers that
      * should be used upon successful authentication if no principal is resolved by the authentication handler. If

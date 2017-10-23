@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AcceptUsersAuthenticationHandler.class);
-    
+
     /**
      * The list of users we will accept.
      */
@@ -63,8 +63,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+                                                                 final String originalPassword) throws GeneralSecurityException {
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }

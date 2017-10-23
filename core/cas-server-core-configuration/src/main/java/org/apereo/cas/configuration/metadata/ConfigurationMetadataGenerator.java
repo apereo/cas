@@ -18,6 +18,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
@@ -258,6 +259,7 @@ public class ConfigurationMetadataGenerator {
                         + QueryType.class.getSimpleName() + "|"
                         + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
                         + CaseCanonicalizationMode.class.getSimpleName() + "|"
+                        + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + "|"
                         + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
                         + "Map|List|Set")) {
                     LOGGER.error("Field " + n
