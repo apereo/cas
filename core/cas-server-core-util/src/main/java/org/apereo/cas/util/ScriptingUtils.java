@@ -194,10 +194,8 @@ public final class ScriptingUtils {
                 final T result = (T) groovyObject.invokeMethod(methodName, args);
                 LOGGER.trace("Results returned by the groovy script are [{}]", result);
 
-                if (!clazz.isAssignableFrom(result.getClass())) {
-                    throw new ClassCastException("Result [" + result
-                            + " is of type " + result.getClass()
-                            + " when we were expecting " + clazz);
+                if (result != null && !clazz.isAssignableFrom(result.getClass())) {
+                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
                 }
                 return result;
             } else {

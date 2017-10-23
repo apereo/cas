@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.theme.CookieThemeResolver;
@@ -46,6 +47,9 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasThemesConfiguration {
 
+    @Autowired
+    private ResourceLoader resourceLoader;
+    
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -157,7 +161,8 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
         final ServiceThemeResolver serviceThemeResolver = new ServiceThemeResolver(servicesManager,
-                serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies);
+                serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
+                this.resourceLoader);
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
         final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
