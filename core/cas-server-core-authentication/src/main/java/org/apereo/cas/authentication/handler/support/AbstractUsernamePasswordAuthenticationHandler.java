@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
@@ -29,7 +30,7 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractUsernamePasswordAuthenticationHandler.class);
-    
+
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
@@ -38,7 +39,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
-    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                         final PrincipalFactory principalFactory,
                                                          final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
@@ -71,7 +73,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
         userPass.setUsername(transformedUsername);
         userPass.setPassword(transformedPsw);
-        
+
         LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
         return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
     }
@@ -88,7 +90,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword) 
+    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword)
             throws GeneralSecurityException, PreventedException;
 
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
@@ -115,7 +117,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     public boolean supports(final Credential credential) {
         if (credential instanceof UsernamePasswordCredential) {
             if (this.credentialSelectionPredicate != null) {
-                return this.credentialSelectionPredicate.test(credential);
+                LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
+                final boolean result = this.credentialSelectionPredicate.test(credential);
+                LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", 
+                        credential, getName(), BooleanUtils.toStringTrueFalse(result));
             }
             return true;
         }
