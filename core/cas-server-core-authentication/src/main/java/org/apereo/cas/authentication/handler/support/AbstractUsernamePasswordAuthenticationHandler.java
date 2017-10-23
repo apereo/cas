@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.function.Predicate;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -34,8 +33,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
-
-    private Predicate<Credential> credentialSelectionPredicate = credential -> true;
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
@@ -101,10 +98,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void setCredentialSelectionPredicate(final Predicate<Credential> credentialSelectionPredicate) {
-        this.credentialSelectionPredicate = credentialSelectionPredicate;
-    }
-
     public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
@@ -115,16 +108,20 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     @Override
     public boolean supports(final Credential credential) {
-        if (credential instanceof UsernamePasswordCredential) {
-            if (this.credentialSelectionPredicate != null) {
-                LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
-                final boolean result = this.credentialSelectionPredicate.test(credential);
-                LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", 
-                        credential, getName(), BooleanUtils.toStringTrueFalse(result));
-            }
+        if (!credential.getClass().isAssignableFrom(UsernamePasswordCredential.class)) {
+            LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", credential, getName());
+            return false;
+        }
+        if (this.credentialSelectionPredicate == null) {
+            LOGGER.debug("No credential selection criteria is defined for handler [{}]. Credential is accepted for further processing", getName());
             return true;
         }
-        return false;
+
+        LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
+        final boolean result = this.credentialSelectionPredicate.test(credential);
+        LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]",
+                credential, getName(), BooleanUtils.toStringTrueFalse(result));
+        return result;
     }
 
     /**
