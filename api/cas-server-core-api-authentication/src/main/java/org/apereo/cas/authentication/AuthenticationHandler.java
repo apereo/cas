@@ -66,8 +66,7 @@ public interface AuthenticationHandler extends Ordered {
      * @return True if the handler supports the Credential, false otherwise.
      */
     boolean supports(Credential credential);
-
-
+    
     /**
      * Gets a unique name for this authentication handler within the Spring context that contains it.
      * For implementations that allow setting a unique name, deployers MUST take care to ensure that every
