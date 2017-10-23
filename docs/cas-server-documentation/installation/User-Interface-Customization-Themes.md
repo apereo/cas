@@ -4,9 +4,10 @@ title: CAS - User Interface Customization
 ---
 
 # Dynamic Themes
+
 With the introduction of [Service Management application](Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
-## Themes
+## Static Themes
 
 CAS is configured to decorate views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
 
@@ -51,3 +52,65 @@ admin.custom.css.file=/themes/[theme-name]/css/admin.css
 
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `src/main/resources/templates/<theme-id>`).
 - Specify the name of your theme for the service definition under the `theme` property.
+
+## Groovy Themes
+
+If you have multiple themes defined, it may be desireable to dynamically determine a theme for a given service definition. In order to do, you may calculate the final theme name via a Groovy script of your own design. The theme assigned to the service definition needs to point to the location of the script:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://www.example.org",
+  "name" : "MyTheme",
+  "theme" : "file:///etc/cas/config/themes.groovy",
+  "id" : 1000
+}
+```
+
+The script itself may be designed as:
+
+```groovy
+import java.util.*
+
+def String run(final Object... args) {
+    def service = args[0]
+    def registeredService = args[1]
+    def queryStrings = args[2]
+    def headers = args[3]
+    def logger = args[4]
+
+    // Determine theme ...
+
+    return null
+}
+```
+
+Returning `null` or blank will have CAS switch to the default theme. The following parameters may be passed to a Groovy script:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `service`             | The object representing the requesting service.
+| `registeredService`   | The object representing the matching registered service in the registry.
+| `queryStrings`        | Textual representation of all query strings found in the request, if any.
+| `headers`             | `Map` of all request headers and their values found in the request, if any.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+## RESTful Themes
+
+Somewhat similar to the above option, you may calculate the final theme name via a REST endpoint of your own design. The theme assigned to the service definition needs to point to the location of the REST API. Endpoints must be designed to accept/process `application/json` via `GET` requests. A returned status code `200` allows CAS to read the body of the response to determine the theme name. Empty response bodies will have CAS switch to the default theme.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://www.example.org",
+  "name" : "MyTheme",
+  "theme" : "https://themes.example.org",
+  "id" : 1000
+}
+```
+
+The following parameters may be passed to a Groovy script:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `service`             | The requesting service identifier.

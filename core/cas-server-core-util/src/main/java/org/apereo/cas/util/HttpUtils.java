@@ -102,7 +102,24 @@ public final class HttpUtils {
                                           final String basicAuthPassword,
                                           final Map<String, String> parameters) {
         try {
-            return execute(url, basicAuthPassword, basicAuthUsername, HttpMethod.GET.name(), parameters);
+            return execute(url, HttpMethod.GET.name(), basicAuthPassword, basicAuthUsername, parameters);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Execute get http response.
+     *
+     * @param url        the url
+     * @param parameters the parameters
+     * @return the http response
+     */
+    public static HttpResponse executeGet(final String url,
+                                          final Map<String, String> parameters) {
+        try {
+            return executeGet(url, null, null, parameters);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -196,7 +213,7 @@ public final class HttpUtils {
         }
         return null;
     }
-    
+
     /**
      * Execute post http response.
      *
@@ -224,7 +241,7 @@ public final class HttpUtils {
     public static HttpResponse executePost(final String url,
                                            final String jsonEntity,
                                            final Map<String, String> parameters) {
-        return executePost(url, null, null, jsonEntity, parameters);    
+        return executePost(url, null, null, jsonEntity, parameters);
     }
 
     /**
@@ -254,6 +271,7 @@ public final class HttpUtils {
         }
         return null;
     }
+
     /**
      * Prepare credentials if needed.
      *

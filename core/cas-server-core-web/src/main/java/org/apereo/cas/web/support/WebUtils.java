@@ -43,7 +43,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -613,7 +615,7 @@ public final class WebUtils {
         }
         return null;
     }
-
+    
     /**
      * Gets http servlet request user agent.
      *
@@ -623,6 +625,25 @@ public final class WebUtils {
         return getHttpServletRequestUserAgent(getHttpServletRequestFromExternalWebflowContext());
     }
 
+    /**
+     * Gets request headers.
+     *
+     * @param request the request
+     * @return the request headers
+     */
+    public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
+        final Map<String, String> headers = new LinkedHashMap<>();
+        final Enumeration<String> headerNames = request.getHeaderNames();
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                final String headerName = headerNames.nextElement();
+                final String headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
+                headers.put(headerName, headerValue);
+            }
+        }
+        return headers;
+    }
+    
     /**
      * Gets http servlet request geo location.
      *
@@ -760,7 +781,7 @@ public final class WebUtils {
     public static void putAttributeConsentEnabled(final RequestContext context, final Boolean enabled) {
         context.getFlowScope().put("attributeConsentEnabled", enabled);
     }
-    
+
     /**
      * Is remember me authentication enabled ?.
      *

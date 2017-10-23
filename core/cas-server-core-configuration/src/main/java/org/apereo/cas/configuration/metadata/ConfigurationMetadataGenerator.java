@@ -96,8 +96,7 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        new ConfigurationMetadataGenerator("/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration/build",
-                "/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration").execute();
+        new ConfigurationMetadataGenerator(args[0], args[1]).execute();
     }
 
     /**

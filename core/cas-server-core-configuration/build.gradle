@@ -21,10 +21,10 @@ task generateConfigurationMetadata(type: JavaExec) {
                 "Spring Boot metadata processor, to create configuration " +
                 "metadata for nested and indexed properties. The process starts with the build directory " +
                 "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
-        main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
-        classpath = sourceSets.main.runtimeClasspath
-        args buildDir, projectDir.canonicalPath
     }
+    main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
+    classpath = sourceSets.main.runtimeClasspath
+    args buildDir, projectDir.canonicalPath
 }
 
 compileJava.dependsOn(processResources)
