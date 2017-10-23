@@ -2,16 +2,16 @@ description = "Apereo CAS central configuration module providing type-safe confi
 
 dependencies {
     implementation libraries.springsecurity
-
     implementation libraries.mongo
     implementation libraries.jasypt
     implementation libraries.groovy
     implementation libraries.bouncycastle
+    
     optional libraries.springbootconfigmetadata
 
     api project(":api:cas-server-core-api-authentication")
-    compileOnly project(":core:cas-server-core-util")
     api project(":api:cas-server-core-api-webflow")
+    compileOnly project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-util")
 }
 
@@ -21,11 +21,10 @@ task generateConfigurationMetadata(type: JavaExec) {
                 "Spring Boot metadata processor, to create configuration " +
                 "metadata for nested and indexed properties. The process starts with the build directory " +
                 "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
+        main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
+        classpath = sourceSets.main.runtimeClasspath
+        args buildDir, projectDir.canonicalPath
     }
-
-    main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
-    classpath = sourceSets.main.runtimeClasspath
-    args buildDir, projectDir.canonicalPath
 }
 
 compileJava.dependsOn(processResources)
