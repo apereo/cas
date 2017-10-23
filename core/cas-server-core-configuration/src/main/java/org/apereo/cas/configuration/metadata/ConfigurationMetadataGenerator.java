@@ -22,8 +22,8 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
@@ -48,6 +48,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -68,9 +69,9 @@ import java.util.stream.StreamSupport;
  * {@code
  * private List<SomeClassProperties> list = new ArrayList<>()
  * }
- *
  * The generator additionally adds hints to the metadata generated to indicate
  * required properties and modules.
+ *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
@@ -95,7 +96,8 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        new ConfigurationMetadataGenerator(args[0], args[1]).execute();
+        new ConfigurationMetadataGenerator("/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration/build",
+                "/Users/Misagh/Workspace/GitWorkspace/cas-server/core/cas-server-core-configuration").execute();
     }
 
     /**
@@ -107,7 +109,7 @@ public class ConfigurationMetadataGenerator {
         final File jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
         final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-       
+
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
         final Map<String, Set> jsonMap = mapper.readValue(jsonFile, values);
@@ -124,15 +126,16 @@ public class ConfigurationMetadataGenerator {
                     final boolean indexBrackets = matcher.matches();
                     final String typeName = matcher.group(1);
                     final String typePath = buildTypeSourcePath(typeName);
+
                     parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
 
                 }));
-        
+
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
 
         final Set<ConfigurationMetadataHint> hints = processHints(properties, groups);
-        
+
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
         jsonMap.put("hints", hints);
@@ -246,28 +249,31 @@ public class ConfigurationMetadataGenerator {
         private void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {
             if (n.getElementType() instanceof ClassOrInterfaceType) {
                 final ClassOrInterfaceType type = (ClassOrInterfaceType) n.getElementType();
-                if (type.getNameAsString().endsWith("Properties")) {
+                if (!shouldTypeBeExcluded(type)) {
                     final Class clz = locatePropertiesClassForType(type);
-                    final String typePath = buildTypeSourcePath(clz.getName());
-                    parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
-                } else if (!type.getNameAsString().matches(String.class.getSimpleName() + "|"
-                        + Integer.class.getSimpleName() + "|"
-                        + Double.class.getSimpleName() + "|"
-                        + Long.class.getSimpleName() + "|"
-                        + Float.class.getSimpleName() + "|"
-                        + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + "|"
-                        + QueryType.class.getSimpleName() + "|"
-                        + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
-                        + CaseCanonicalizationMode.class.getSimpleName() + "|"
-                        + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + "|"
-                        + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
-                        + "Map|List|Set")) {
-                    LOGGER.error("Field " + n
-                            + " has a type of class/interface " + type.getNameAsString()
-                            + " yet its name does not end with 'Properties': ");
-
+                    if (clz != null && !clz.isMemberClass()) {
+                        final String typePath = buildTypeSourcePath(clz.getName());
+                        parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
+                    }
                 }
             }
+        }
+
+        private boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
+            return type.getNameAsString().matches(String.class.getSimpleName() + "|"
+                    + Integer.class.getSimpleName() + "|"
+                    + Double.class.getSimpleName() + "|"
+                    + Long.class.getSimpleName() + "|"
+                    + Float.class.getSimpleName() + "|"
+                    + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + "|"
+                    + QueryType.class.getSimpleName() + "|"
+                    + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
+                    + CaseCanonicalizationMode.class.getSimpleName() + "|"
+                    + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + "|"
+                    + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
+                    + Map.class.getSimpleName() + "|"
+                    + List.class.getSimpleName() + "|"
+                    + Set.class.getSimpleName());
         }
 
     }
@@ -312,12 +318,12 @@ public class ConfigurationMetadataGenerator {
                         .filter(g -> g.getName().equalsIgnoreCase(groupName))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
-                
+
                 final Matcher matcher = PATTERN_GENERICS.matcher(grp.getType());
                 final String className = matcher.find() ? matcher.group(1) : grp.getType();
                 final Class clazz = ClassUtils.getClass(className);
 
-            
+
                 final ConfigurationMetadataHint hint = new ConfigurationMetadataHint();
                 hint.setName(entry.getName());
 
