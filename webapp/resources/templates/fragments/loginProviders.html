@@ -22,7 +22,7 @@
                     <span th:case="linkedin" class="fa fa-linkedin"></span>
                     <span th:case="facebook" class="fa fa-facebook-square"></span>
                     <span th:case="oidc" class="fa fa-openid"></span>
-                    <span th:case="saml2" class="fa fa-lock"></span>
+                    <span th:case="saml2" th:class="${entry.cssClass}"></span>
                     <span th:case="*" class="fa fa-sign-in"></span>
 
                     [[${entry.name}]]

@@ -3717,6 +3717,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].identityProviderMetadataPath=
 
 # (Optional) Friendly name for IdP, e.g. "This Organization" or "That Organization"
+# This name, with 'nonword' characters converted to '-' (e.g. This Org (New) become This-Org--New- ),
+# is added to the "class" attribute of the redirect link on the login page, to allow for
+# custom styling of individual IdPs (e.g. for an organization logo).
 # cas.authn.pac4j.saml[0].clientName=
 
 # Control aspects of the authentication request sent to IdP
