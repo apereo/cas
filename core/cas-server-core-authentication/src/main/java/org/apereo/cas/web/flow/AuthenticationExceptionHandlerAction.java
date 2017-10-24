@@ -103,8 +103,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
                 .map(Class::getSimpleName)
                 .findFirst()
                 .orElseGet(() -> {
-                    LOGGER.error("Unable to translate handler errors of the authentication exception [{}]"
-                            + "Returning [{}]", e, UNKNOWN);
+                    LOGGER.debug("Unable to translate handler errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
                     return UNKNOWN;
                 });
 
