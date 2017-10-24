@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

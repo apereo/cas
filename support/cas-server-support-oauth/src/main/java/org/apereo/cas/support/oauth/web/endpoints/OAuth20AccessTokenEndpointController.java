@@ -19,6 +19,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
@@ -92,6 +93,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+
             if (!verifyAccessTokenRequest(request, response)) {
                 LOGGER.error("Access token request verification failed");
                 OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_REQUEST);
@@ -221,7 +223,26 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     }
 
     private boolean verifyAccessForGrantRefreshToken(final HttpServletRequest request, final UserProfile uProfile) {
-        return this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN);
+        if (!this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
+                || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
+                || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_SECRET)) {
+            return false;
+        }
+        final String token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);
+        final Ticket refreshToken = ticketRegistry.getTicket(token);
+        if (refreshToken == null) {
+            LOGGER.warn("Provided refresh token [{}] cannot be found in the registry", token);
+            return false;
+        }
+        if (!RefreshToken.class.isAssignableFrom(refreshToken.getClass())) {
+            LOGGER.warn("Provided refresh token [{}] is found in the registry but its type is not classified as a refresh token", token);
+            return false;
+        }
+        if (refreshToken.isExpired()) {
+            LOGGER.warn("Provided refresh token [{}] has expired and is no longer valid.", token);
+            return false;
+        }
+        return true;
     }
 
     private boolean verifyAccessForGrantAuthorizationCode(final HttpServletRequest request, final String grantType, final UserProfile uProfile) {
