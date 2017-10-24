@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -38,6 +39,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         final CasWebflowConfigurer w = new WsFederationWebflowConfigurer(flowBuilderServices, 
                 loginFlowDefinitionRegistry, applicationContext, casProperties);

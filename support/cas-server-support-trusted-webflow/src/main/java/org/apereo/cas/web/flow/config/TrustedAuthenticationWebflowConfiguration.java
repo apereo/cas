@@ -11,6 +11,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -39,6 +40,7 @@ public class TrustedAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
     @Bean
     @RefreshScope
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer trustedWebflowConfigurer() {
         final CasWebflowConfigurer w = new TrustedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 applicationContext, casProperties);
