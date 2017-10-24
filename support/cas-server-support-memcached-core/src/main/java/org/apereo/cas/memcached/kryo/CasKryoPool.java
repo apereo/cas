@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.pool.KryoCallback;
 import com.esotericsoftware.kryo.pool.KryoPool;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -15,6 +16,10 @@ import java.util.Collection;
 public class CasKryoPool implements KryoPool {
     private final KryoPool kryoPoolRef;
 
+    public CasKryoPool() {
+        this(new ArrayList<>(), true, true, false, false);
+    }
+    
     public CasKryoPool(final Collection<Class> classesToRegister) {
         this(classesToRegister, true, true, false, false);
     }
