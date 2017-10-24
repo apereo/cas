@@ -75,18 +75,18 @@ Registered services present the following metadata:
 
 The following options may be used to store services in CAS.
 
-| Storage          | Description
-|-------------------------------------------------------------------------------------------------------------------
-| Memory           | [See this guide](InMemory-Service-Management.html).
-| JSON             | [See this guide](JSON-Service-Management.html).
-| YAML             | [See this guide](YAML-Service-Management.html).
-| MongoDb          | [See this guide](Mongo-Service-Management.html).
-| LDAP             | [See this guide](LDAP-Service-Management.html).
-| JPA              | [See this guide](JPA-Service-Management.html).
-| Couchbase        | [See this guide](Couchbase-Service-Management.html).
-| DynamoDb         | [See this guide](DynamoDb-Service-Management.html).
-| REST             | [See this guide](REST-Service-Management.html).
-| Custom           | [See this guide](Custom-Service-Management.html).
+| Storage          | Description                                           | Usage
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Memory           | [See this guide](InMemory-Service-Management.html).   | Store service definitions XML stored in memory. Changes require CAS repackaging and server restarts
+| JSON             | [See this guide](JSON-Service-Management.html).       | Store service definitions in flat JSON files. HA deployments require replication of service definitions.
+| YAML             | [See this guide](YAML-Service-Management.html).       | Same as `JSON`.
+| MongoDb          | [See this guide](Mongo-Service-Management.html).      | Store service definitions in MongoDb. Candidate for HA deployments.
+| LDAP             | [See this guide](LDAP-Service-Management.html).       | Store service definitions in a directory server. Candidate for HA deployments.
+| JPA              | [See this guide](JPA-Service-Management.html).        | Store service definitions in a relational database (Oracle, MySQL, etc). Candidate for HA deployments.
+| Couchbase        | [See this guide](Couchbase-Service-Management.html).  | Store service definitions in Couchbase. Candidate for HA deployments.
+| DynamoDb         | [See this guide](DynamoDb-Service-Management.html).   | Store service definitions in DynamoDb. Candidate for HA deployments.
+| REST             | [See this guide](REST-Service-Management.html).       | Design your own service registry implementation as a REST API. Candidate for HA deployments.
+| Custom           | [See this guide](Custom-Service-Management.html).     | Design your own service registry using CAS APIs as an extension. Candidate for HA deployments.
 
 ### How Do I Choose?
 
