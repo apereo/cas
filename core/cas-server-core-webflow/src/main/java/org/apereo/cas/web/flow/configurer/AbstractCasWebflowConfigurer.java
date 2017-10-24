@@ -388,11 +388,20 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the expression
      */
     public Expression createExpression(final String expression, final Class expectedType) {
-        final ParserContext parserContext = new FluentParserContext()
-                .expectResult(expectedType);
+        final ParserContext parserContext = new FluentParserContext().expectResult(expectedType);
         return getSpringExpressionParser().parseExpression(expression, parserContext);
     }
 
+    /**
+     * Create expression.
+     *
+     * @param expression the expression
+     * @return the expression
+     */
+    public Expression createExpression(final String expression) {
+        return createExpression(expression, null);
+    }
+    
     /**
      * Gets spring expression parser.
      *
@@ -595,6 +604,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return flow.containsState(stateId);
     }
 
+    /**
+     * Contains subflow state.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the boolean
+     */
+    public boolean containsSubflowState(final Flow flow, final String stateId) {
+        if (containsFlowState(flow, stateId)) {
+            return getState(flow, stateId, SubflowState.class) != null;
+        }
+        return false;
+    }
     /**
      * Contains transition boolean.
      *

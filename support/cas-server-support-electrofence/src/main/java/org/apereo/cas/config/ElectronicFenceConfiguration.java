@@ -1,14 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -24,16 +21,8 @@ import org.apereo.cas.impl.notify.AuthenticationRiskTwilioSmsNotifier;
 import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.io.CommunicationsManager;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
-import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +30,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -68,52 +53,14 @@ public class ElectronicFenceConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
-    @Autowired(required = false)
-    private FlowBuilderServices flowBuilderServices;
-
-    @Autowired(required = false)
-    @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
+    
     @Autowired
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector selector;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-
+    
     @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
     @Bean
     @RefreshScope
@@ -126,21 +73,6 @@ public class ElectronicFenceConfiguration {
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskSmsNotifier() {
         return new AuthenticationRiskTwilioSmsNotifier(communicationsManager);
-    }
-
-    @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
-    @Bean
-    @Autowired
-    @RefreshScope
-    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
-                                                                               final AuthenticationSystemSupport authenticationSystemSupport) {
-        final CasWebflowEventResolver r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager,
-                ticketRegistrySupport, warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies, selector, authenticationRiskEvaluator(),
-                authenticationRiskMitigator(), casProperties);
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r, 0);
-        return r;
     }
 
     @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
@@ -198,16 +130,6 @@ public class ElectronicFenceConfiguration {
     @RefreshScope
     public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator() {
         return new GeoLocationAuthenticationRequestRiskCalculator(this.casEventRepository);
-    }
-
-    @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowConfigurer")
-    @Bean
-    @RefreshScope
-    public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        final CasWebflowConfigurer w = new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                applicationContext, casProperties);
-        w.initialize();
-        return w;
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")

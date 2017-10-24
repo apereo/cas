@@ -27,6 +27,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -95,6 +96,7 @@ public class SwivelConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelMultifactorWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer swivelMultifactorWebflowConfigurer() {
         final CasWebflowConfigurer w = new SwivelMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
@@ -136,6 +138,7 @@ public class SwivelConfiguration {
 
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
+        @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
             final CasWebflowConfigurer w = new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                     casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), 

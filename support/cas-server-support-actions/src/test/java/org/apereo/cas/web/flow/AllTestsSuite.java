@@ -10,19 +10,18 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({AuthenticationViaFormActionTests.class, 
+@Suite.SuiteClasses({AuthenticationViaFormActionTests.class,
         FrontChannelLogoutActionTests.class,
-        GenerateServiceTicketActionTests.class, 
+        GenerateServiceTicketActionTests.class,
         GenericSuccessViewActionTests.class,
-        InitialFlowSetupActionTests.class, 
+        InitialFlowSetupActionTests.class,
         LogoutActionTests.class,
-        InitialFlowSetupActionSsoTests.class, 
+        InitialFlowSetupActionSsoTests.class,
         InitialFlowSetupActionCookieTests.class,
         SendTicketGrantingTicketActionTests.class,
         SendTicketGrantingTicketActionSsoTests.class,
         ServiceAuthorizationCheckTests.class,
-        TicketGrantingTicketCheckActionTests.class, 
-        CasDefaultFlowUrlHandlerTests.class
+        TicketGrantingTicketCheckActionTests.class
 })
 public class AllTestsSuite {
 }

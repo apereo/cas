@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -47,6 +48,7 @@ public class CasScimConfiguration {
     
     @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer scimWebflowConfigurer() {
         final CasWebflowConfigurer w = new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         w.initialize();

@@ -329,7 +329,42 @@ public interface CasWebflowConstants {
     String STATE_ID_HANDLE_AUTHN_FAILURE = "handleAuthenticationFailure";
 
     /**
-     * State id 'initialFlowSetupAction'.
+     * Action id 'initialFlowSetupAction'.
      */
-    String STATE_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+    String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+
+    /**
+     * Action id 'generateServiceTicketAction'.
+     */
+    String ACTION_ID_GENERATE_SERVICE_TICKET = "generateServiceTicketAction";
+
+    /**
+     * Action id 'redirectToServiceAction'.
+     */
+    String ACTION_ID_REDIRECT_TO_SERVICE = "redirectToServiceAction";
+
+    /**
+     * Action id 'redirectToServiceAction'.
+     */
+    String ACTION_ID_TERMINATE_SESSION = "terminateSessionAction";
+
+    /**
+     * Action id 'authenticationExceptionHandler'.
+     */
+    String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
+    
+    /**
+     * Action id 'sendTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
+    
+    /**
+     * Transition id 'changePassword'.
+     */
+    String TRANSITION_ID_CHANGE_PASSWORD = "changePassword";
+
+    /**
+     * State id 'proceedFromAuthenticationWarningView'.
+     */
+    String STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW = "proceedFromAuthenticationWarningView";
 }

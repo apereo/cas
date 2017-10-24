@@ -109,7 +109,7 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
             return getDefaultThemeName();
         }
         if (StringUtils.isBlank(rService.getTheme())) {
-            LOGGER.warn("No theme name is specified for service [{}]. Using default theme [{}]", rService, getDefaultThemeName());
+            LOGGER.debug("No theme name is specified for service [{}]. Using default theme [{}]", rService, getDefaultThemeName());
             return getDefaultThemeName();
         }
 

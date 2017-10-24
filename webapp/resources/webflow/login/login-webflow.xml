@@ -3,11 +3,7 @@
       xmlns="http://www.springframework.org/schema/webflow"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
-
-    <on-start>
-        <evaluate expression="initialFlowSetupAction"/>
-    </on-start>
-
+    
     <action-state id="initialAuthenticationRequestValidationCheck">
         <evaluate expression="initialAuthenticationRequestValidationAction"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
@@ -43,18 +39,5 @@
         <transition on="successWithWarnings" to="showAuthenticationWarningMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="initializeLoginForm"/>
-    </action-state>
-
-    <view-state id="showAuthenticationWarningMessages" view="casLoginMessageView">
-        <on-entry>
-            <evaluate expression="sendTicketGrantingTicketAction"/>
-            <set name="requestScope.messages" value="messageContext.allMessages"/>
-        </on-entry>
-        <transition on="proceed" to="serviceCheck"/>
-    </view-state>
-    
-    <action-state id="sendTicketGrantingTicket">
-        <evaluate expression="sendTicketGrantingTicketAction"/>
-        <transition on="success" to="serviceCheck"/>
     </action-state>
 </flow>

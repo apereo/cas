@@ -6,18 +6,14 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.mdui.AbstractMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.ChainingMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.DynamicMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapter;
-import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserAction;
-import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
@@ -36,7 +32,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,22 +80,6 @@ public class SamlMetadataUIConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
-    @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
-    @Bean
-    public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        final CasWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry, samlMetadataUIParserAction(), applicationContext, casProperties);
-        w.initialize();
-        return w;
-    }
-
-    @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
-    @Bean
-    public Action samlMetadataUIParserAction() {
-        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter(), serviceFactory, servicesManager);
-    }
 
     @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
     @Bean
@@ -119,8 +98,7 @@ public class SamlMetadataUIConfiguration {
     }
 
     private void configureResource(final Map<Resource, MetadataFilterChain> resources,
-                                   final MetadataFilterChain chain,
-                                   final String r) throws Exception {
+                                   final MetadataFilterChain chain, final String r) {
         final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
