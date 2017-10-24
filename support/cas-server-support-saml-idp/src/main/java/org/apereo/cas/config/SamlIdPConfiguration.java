@@ -146,7 +146,6 @@ public class SamlIdPConfiguration {
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
     @Bean
-    @RefreshScope
     public ExpirationPolicy samlArtifactTicketExpirationPolicy() {
         return new SamlArtifactTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
@@ -334,10 +333,7 @@ public class SamlIdPConfiguration {
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
     @Bean
-    @RefreshScope
     public ExpirationPolicy samlAttributeQueryTicketExpirationPolicy() {
         return new SamlAttributeQueryTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
-    
-    
 }
