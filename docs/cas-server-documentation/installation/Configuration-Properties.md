@@ -2727,6 +2727,8 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
 # cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 
+
+# cas.authn.mfa.gauth.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.gauth.bypass.authenticationAttributeName=bypass|skip
@@ -2796,6 +2798,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=false
 # cas.authn.mfa.yubikey.name=
 
+# cas.authn.mfa.yubikey.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.yubikey.bypass.authenticationAttributeName=bypass|skip
@@ -2882,6 +2885,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.server.nasIpAddress=
 # cas.authn.mfa.radius.server.nasIpv6Address=
 
+# cas.authn.mfa.radius.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.radius.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.radius.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.radius.bypass.authenticationAttributeName=bypass|skip
@@ -2905,6 +2909,7 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].id=mfa-duo
 # cas.authn.mfa.duo[0].name=
 
+# cas.authn.mfa.duo[0].bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.duo[0].bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.duo[0].bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.duo[0].bypass.authenticationAttributeName=bypass|skip
@@ -2930,6 +2935,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.rank=0
 # cas.authn.mfa.u2f.name=
 
+# cas.authn.mfa.u2f.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.u2f.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.u2f.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.u2f.bypass.authenticationAttributeName=bypass|skip
@@ -3035,6 +3041,7 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 # cas.authn.mfa.swivel.rank=0
 # cas.authn.mfa.swivel.name=
 
+# cas.authn.mfa.swivel.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.swivel.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.swivel.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.swivel.bypass.authenticationAttributeName=bypass|skip
@@ -3057,6 +3064,7 @@ To learn more about this topic, [please review this guide](MicrosoftAzure-Authen
 # cas.authn.mfa.azure.name=
 # cas.authn.mfa.azure.allowInternationalCalls=false
 
+# cas.authn.mfa.azure.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.azure.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.azure.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.azure.bypass.authenticationAttributeName=bypass|skip
@@ -3080,6 +3088,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.trustedDeviceEnabled=false
 # cas.authn.mfa.authy.name=
 
+# cas.authn.mfa.authy.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.authy.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.authy.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.authy.bypass.authenticationAttributeName=bypass|skip
