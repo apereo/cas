@@ -12,7 +12,6 @@ title: CAS - Architecture
 The CAS server and clients comprise the two physical components of the CAS system architecture that communicate
 by means of various protocols.
 
-
 ### CAS Server
 
 The CAS server is Java servlet built on the Spring Framework whose primary responsibility is to authenticate users
