@@ -65,6 +65,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         final Set<Class<? extends Exception>> errors = new LinkedHashSet<>();
         errors.add(javax.security.auth.login.AccountLockedException.class);
         errors.add(javax.security.auth.login.CredentialExpiredException.class);
+        errors.add(javax.security.auth.login.AccountExpiredException.class);
         errors.add(AccountDisabledException.class);
         errors.add(InvalidLoginLocationException.class);
         errors.add(AccountPasswordMustChangeException.class);
