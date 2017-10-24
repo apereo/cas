@@ -53,7 +53,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         provider.getProviders().forEach(p -> {
             final FlowDefinitionRegistry duoFlowRegistry = buildDuoFlowRegistry(p);
             applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, p.getId());
