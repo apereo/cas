@@ -84,7 +84,7 @@ public class DelegatedClientAuthenticationActionTests {
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
                 null, mock(CentralAuthenticationService.class),
-                ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME, false);
+                ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME, false, null);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -143,7 +143,7 @@ public class DelegatedClientAuthenticationActionTests {
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
 
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
-                "theme", "locale", false);
+                "theme", "locale", false, null);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());

@@ -5,6 +5,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":core:cas-server-core-util")
+    implementation project(":support:cas-server-support-actions")
     
     api project(":api:cas-server-core-api")
     
@@ -17,4 +18,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-util")
 }

@@ -19,6 +19,8 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.service.ProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -88,16 +90,19 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final String themeParamName;
     private final String localParamName;
     private final boolean autoRedirect;
+    private final ProfileService<CommonProfile> profileService;
 
     public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
                                                final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
-                                               final String localParamName, final boolean autoRedirect) {
+                                               final String localParamName, final boolean autoRedirect,
+                                               final ProfileService<CommonProfile> profileService) {
         this.clients = clients;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = centralAuthenticationService;
         this.themeParamName = themeParamName;
         this.localParamName = localParamName;
         this.autoRedirect = autoRedirect;
+        this.profileService = profileService;
     }
 
     @Override
@@ -147,6 +152,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                         this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+
+                // Prepare for future Single Logout - save the profile
+                prepareForFutureSingleLogout(client, credentials, webContext);
+
                 return success();
             }
         }
@@ -301,6 +310,32 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         }
         return Optional.empty();
     }
+
+    /**
+     * Prepares for a future SAML Single Logout by saving the current user profile through a PAC4J profile service.
+     * 
+     * @param client
+     *            The current PAC4J client.
+     * @param credentials
+     *            Credentials from the user.
+     * @param webContext
+     *            PAC4J web context.
+     * 
+     * @throws Exception
+     *             If anything fails.
+     */
+    private void prepareForFutureSingleLogout(final BaseClient<Credentials, ? extends UserProfile> client, final Credentials credentials,
+            final WebContext webContext) throws HttpAction {
+        if (profileService != null) {
+            final CommonProfile profile = client.getUserProfile(credentials, webContext);
+            /* TODO: Unclear point here. What should the password be? Can it be the TGT ID? See SingleLogoutPreparationAction:57; we use
+             * the TGT ID to read he profile from the service there.
+             */
+            final String password = "TODO";
+            profileService.create(profile, password);
+        }
+    }
+
 
     /**
      * The Provider login page configuration.
