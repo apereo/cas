@@ -5,6 +5,8 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,6 +31,8 @@ import java.io.ByteArrayOutputStream;
  * @since 3.0.0
  */
 public class CasKryoTranscoder implements Transcoder<Object> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasKryoTranscoder.class);
+    
     private final CasKryoPool kryoPool;
 
     public CasKryoTranscoder(final CasKryoPool kryoPool) {
@@ -51,6 +55,9 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         try (CloseableKryo kryo = this.kryoPool.borrow();
              ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
              Output output = new Output(byteStream)) {
+            if (obj != null) {
+                LOGGER.trace("Writing object [{}] to memcached ", obj.getClass());
+            }
             kryo.writeClassAndObject(output, obj);
             output.flush();
             final byte[] bytes = byteStream.toByteArray();
