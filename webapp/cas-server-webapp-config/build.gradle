@@ -5,11 +5,12 @@ dependencies {
     implementation libraries.metrics
     implementation libraries.cassecurityfilter
 
+    api project(":api:cas-server-core-api-webflow")
+    
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
-    api project(":api:cas-server-core-api-webflow")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-pac4j-core")
