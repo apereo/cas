@@ -29,11 +29,12 @@ import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesR
 import org.apereo.cas.memcached.kryo.serial.RegisteredServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
-import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeTranscoder;
+import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeSerializer;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -43,6 +44,8 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy;
+import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -220,6 +223,9 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ReturnAllowedAttributeReleasePolicy.class);
         kryo.register(ReturnAllAttributeReleasePolicy.class);
         kryo.register(ReturnMappedAttributeReleasePolicy.class);
+        kryo.register(GroovyScriptAttributeReleasePolicy.class);
+        kryo.register(ScriptedRegisteredServiceAttributeReleasePolicy.class);
+        kryo.register(ReturnRestfulAttributeReleasePolicy.class);
         kryo.register(CachingPrincipalAttributesRepository.class);
         kryo.register(AbstractPrincipalAttributesRepository.class);
         kryo.register(AbstractPrincipalAttributesRepository.MergingStrategy.class);
@@ -238,7 +244,7 @@ public class CloseableKryoFactory implements KryoFactory {
 
     private void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
         kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
-        kryo.register(ZonedDateTime.class, new ZonedDateTimeTranscoder());
+        kryo.register(ZonedDateTime.class, new ZonedDateTimeSerializer());
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
         kryo.register(LinkedHashMap.class);
