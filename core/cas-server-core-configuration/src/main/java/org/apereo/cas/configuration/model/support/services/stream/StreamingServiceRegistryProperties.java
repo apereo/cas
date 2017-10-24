@@ -16,7 +16,10 @@ import java.io.Serializable;
 public class StreamingServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = 4957127900906059461L;
-    
+
+    /**
+     * Stream services with hazelcast.
+     */
     @NestedConfigurationProperty
     private StreamServicesHazelcastProperties hazelcast = new StreamServicesHazelcastProperties();
     

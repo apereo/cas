@@ -15,8 +15,15 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-throttle", automated = true)
 public class ThrottleProperties implements Serializable {
+    /**
+     * Default app code for throttling and audits.
+     */
     private static final String DEFAULT_APPLICATION_CODE = "CAS";
+    /**
+     * Default authentication failed action used as the code.
+     */
     private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
+    
     private static final long serialVersionUID = 6813165633105563813L;
 
     /**
@@ -140,6 +147,9 @@ public class ThrottleProperties implements Serializable {
 
     @RequiresModule(name = "cas-server-support-throttle-jdbc")
     public static class Jdbc extends AbstractJpaProperties {
+        /**
+         * SQL throttling query.
+         */
         private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
                 + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
         private static final long serialVersionUID = -9199878384425691919L;

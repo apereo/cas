@@ -62,133 +62,262 @@ public class CasConfigurationProperties implements Serializable {
     public static final String PREFIX = "cas";
 
     private static final long serialVersionUID = -8620267783496071683L;
-    
+
+    /**
+     * Interrupt/notification functionality.
+     */
     @NestedConfigurationProperty
     private InterruptProperties interrupt = new InterruptProperties();
-    
+
+    /**
+     * Attribute consent functionality.
+     */
     @NestedConfigurationProperty
     private ConsentProperties consent = new ConsentProperties();
 
+    /**
+     * SCIM functionality.
+     */
     @NestedConfigurationProperty
     private ScimProperties scim = new ScimProperties();
 
+    /**
+     * General settings for authentication.
+     */
     @NestedConfigurationProperty
     private AuthenticationProperties authn = new AuthenticationProperties();
 
+    /**
+     * Authentication audit functionality.
+     */
     @NestedConfigurationProperty
     private AuditProperties audit = new AuditProperties();
 
+    /**
+     * Http client and outgoing connections settings.
+     */
     @NestedConfigurationProperty
     private HttpClientProperties httpClient = new HttpClientProperties();
 
+    /**
+     * Person directory and principal resolution functionality.
+     */
     @NestedConfigurationProperty
     private PersonDirectoryPrincipalResolverProperties personDirectory = new PersonDirectoryPrincipalResolverProperties();
 
+    /**
+     * Authentication events functionality.
+     */
     @NestedConfigurationProperty
     private EventsProperties events = new EventsProperties();
 
+    /**
+     * Settings that define this CAS host.
+     */
     @NestedConfigurationProperty
     private HostProperties host = new HostProperties();
 
+    /**
+     * Logout functionality.
+     */
     @NestedConfigurationProperty
     private LogoutProperties logout = new LogoutProperties();
 
+    /**
+     * Metrics functionality.
+     */
     @NestedConfigurationProperty
     private MetricsProperties metrics = new MetricsProperties();
 
+    /**
+     * Monitoring functionality.
+     */
     @NestedConfigurationProperty
     private MonitorProperties monitor = new MonitorProperties();
 
+    /**
+     * REST API functionality.
+     */
     @NestedConfigurationProperty
     private RestProperties rest = new RestProperties();
 
+    /**
+     * Settings that define this CAS server instance.
+     */
     @NestedConfigurationProperty
     private CasServerProperties server = new CasServerProperties();
 
+    /**
+     * Service registry functionality.
+     */
     @NestedConfigurationProperty
     private ServiceRegistryProperties serviceRegistry = new ServiceRegistryProperties();
 
+    /**
+     * SLO functionality.
+     */
     @NestedConfigurationProperty
     private SloProperties slo = new SloProperties();
 
+    /**
+     * SSO functionality.
+     */
     @NestedConfigurationProperty
     private SsoProperties sso = new SsoProperties();
 
+    /**
+     * Ticketing functionality.
+     */
     @NestedConfigurationProperty
     private TicketProperties ticket = new TicketProperties();
 
+    /**
+     * Message bundles and internationalization functionality.
+     */
     @NestedConfigurationProperty
     private MessageBundleProperties messageBundle = new MessageBundleProperties();
 
+    /**
+     * Admin pages and their security, controling endpoints, etc.
+     */
     @NestedConfigurationProperty
     private AdminPagesSecurityProperties adminPagesSecurity = new AdminPagesSecurityProperties();
 
+    /**
+     * Settings that control filtering of the incoming http requests.
+     */
     @NestedConfigurationProperty
     private HttpWebRequestProperties httpWebRequest = new HttpWebRequestProperties();
 
+    /**
+     * Views and UI functionality.
+     */
     @NestedConfigurationProperty
     private ViewProperties view = new ViewProperties();
 
+    /**
+     * Google Analytics functionality.
+     */
     @NestedConfigurationProperty
     private GoogleAnalyticsProperties googleAnalytics = new GoogleAnalyticsProperties();
 
+    /**
+     * Google reCAPTCHA settings.
+     */
     @NestedConfigurationProperty
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
+    /**
+     * Twillio settings.
+     */
     @NestedConfigurationProperty
     private TwillioProperties twillio = new TwillioProperties();
 
+    /**
+     * Textmagic settings.
+     */
     @NestedConfigurationProperty
     private TextMagicProperties textMagic = new TextMagicProperties();
 
+    /**
+     * Clickatell settings.
+     */
     @NestedConfigurationProperty
     private ClickatellProperties clickatell = new ClickatellProperties();
 
+    /**
+     * AUP settings.
+     */
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
 
+    /**
+     * Clearpass settings.
+     */
     @NestedConfigurationProperty
     private ClearpassProperties clearpass = new ClearpassProperties();
 
+    /**
+     * Ticket-granting cookie settings.
+     */
     @NestedConfigurationProperty
     private TicketGrantingCookieProperties tgc = new TicketGrantingCookieProperties();
 
+    /**
+     * Warning cookie settings.
+     */
     @NestedConfigurationProperty
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
+    /**
+     * SAML SP integration settings.
+     */
     @NestedConfigurationProperty
     private SamlServiceProviderProperties samlSp = new SamlServiceProviderProperties();
 
+    /**
+     * MaxMind settings.
+     */
     @NestedConfigurationProperty
     private MaxmindProperties maxmind = new MaxmindProperties();
 
+    /**
+     * Google Maps settings.
+     */
     @NestedConfigurationProperty
     private GoogleMapsProperties googleMaps = new GoogleMapsProperties();
 
+    /**
+     * General database and hibernate settings.
+     */
     @NestedConfigurationProperty
     private DatabaseProperties jdbc = new DatabaseProperties();
 
+    /**
+     * Google Apps integration settings.
+     */
     @NestedConfigurationProperty
     private GoogleAppsProperties googleApps = new GoogleAppsProperties();
 
+    /**
+     * SAML Metadata UI settings and parsing.
+     */
     @NestedConfigurationProperty
     private SamlMetadataUIProperties samlMetadataUi = new SamlMetadataUIProperties();
 
+    /**
+     * SAML Core functionality and settings.
+     */
     @NestedConfigurationProperty
     private SamlCoreProperties samlCore = new SamlCoreProperties();
 
+    /**
+     * Shibboleth attribute resolution settings.
+     */
     @NestedConfigurationProperty
     private ShibbolethAttributeResolverProperties shibAttributeResolver = new ShibbolethAttributeResolverProperties();
 
+    /**
+     * UI and theme settings.
+     */
     @NestedConfigurationProperty
     private ThemeProperties theme = new ThemeProperties();
 
+    /**
+     * Locale and internationalization settings.
+     */
     @NestedConfigurationProperty
     private LocaleProperties locale = new LocaleProperties();
 
+    /**
+     * CAS Management Webapp functionality.
+     */
     @NestedConfigurationProperty
     private ManagementWebappProperties mgmt = new ManagementWebappProperties();
 
+    /**
+     * Spring Webflow functionality.
+     */
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
 

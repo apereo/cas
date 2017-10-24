@@ -33,6 +33,9 @@ public class FileAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    /**
+     * Principal transformation settings for this authentication.
+     */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 

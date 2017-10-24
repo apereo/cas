@@ -19,6 +19,9 @@ import java.io.Serializable;
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties implements Serializable {
     private static final long serialVersionUID = -1583614089051161614L;
 
+    /**
+     * Default port.
+     */
     private static final int PORT = 5801;
 
     /**
