@@ -103,6 +103,9 @@ public class WsFederationProperties implements Serializable {
         @NestedConfigurationProperty
         private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
+        /**
+         * Realm definition settings that define this CAS server.
+         */
         private RealmDefinition realm = new RealmDefinition();
 
         public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {

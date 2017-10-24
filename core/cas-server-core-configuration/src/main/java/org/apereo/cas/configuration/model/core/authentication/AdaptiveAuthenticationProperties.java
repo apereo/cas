@@ -34,6 +34,9 @@ public class AdaptiveAuthenticationProperties implements Serializable {
      */
     private String rejectIpAddresses;
 
+    /**
+     * Control settings that handle and calculate risky authentication attempts.
+     */
     @NestedConfigurationProperty
     private RiskBasedAuthenticationProperties risk = new RiskBasedAuthenticationProperties();
 
