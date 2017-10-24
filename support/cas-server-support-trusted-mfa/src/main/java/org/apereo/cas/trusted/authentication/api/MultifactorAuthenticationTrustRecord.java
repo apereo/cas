@@ -53,7 +53,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     }
 
     public String getRecordKey() {
-    	return recordKey;
+        return recordKey;
     }
 
     public void setRecordKey(final String id) {

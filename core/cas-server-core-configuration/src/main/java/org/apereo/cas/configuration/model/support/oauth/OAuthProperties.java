@@ -13,6 +13,7 @@ public class OAuthProperties {
     private Code code = new Code();
     private AccessToken accessToken = new AccessToken();
     private RefreshToken refreshToken = new RefreshToken();
+    private String throttler = "neverThrottle";
 
     public Grants getGrants() {
         return grants;
@@ -44,6 +45,14 @@ public class OAuthProperties {
 
     public void setCode(final Code code) {
         this.code = code;
+    }
+
+    public String getThrottler() {
+        return throttler;
+    }
+
+    public void setThrottler(final String throttler) {
+        this.throttler = throttler;
     }
 
     public static class Code {

@@ -62,13 +62,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -91,6 +96,9 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -190,7 +198,33 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
+        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
+        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(
+                requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
+        if ("neverThrottle".equals(throttler)) {
+            return oAuth20HandlerInterceptorAdapter;
+        } else {
+            final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
+            final String throttledUrl = BASE_OAUTH20_URL.concat("/").concat(ACCESS_TOKEN_URL);
+            final HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
+                @Override
+                public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+                    if (request.getServletPath().startsWith(throttledUrl) && !throttledInterceptor.preHandle(request, response, handler)) {
+                        return false;
+                    }
+                    return oAuth20HandlerInterceptorAdapter.preHandle(request, response, handler);
+                }
+
+                @Override
+                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
+                                       final ModelAndView modelAndView) throws Exception {
+                    if (request.getServletPath().startsWith(throttledUrl)) {
+                        throttledInterceptor.postHandle(request, response, handler, modelAndView);
+                    }
+                }
+            };
+            return throttledInceptorAdapter;
+        }
     }
 
     @Override
