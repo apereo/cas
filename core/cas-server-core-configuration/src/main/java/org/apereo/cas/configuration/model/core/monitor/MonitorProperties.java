@@ -146,6 +146,10 @@ public class MonitorProperties implements Serializable {
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class St implements Serializable {
         private static final long serialVersionUID = -8167395674267219982L;
+
+        /**
+         * Warning settings for this monitor.
+         */
         @NestedConfigurationProperty
         private Warn warn = new Warn(5000);
 

@@ -15,6 +15,9 @@ import java.io.Serializable;
 public class ScheduledJobProperties implements Serializable {
     private static final long serialVersionUID = 9059671958275130605L;
 
+    /**
+     * Scheduler settings to indicate how often the job should run.
+     */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
 

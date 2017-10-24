@@ -2,6 +2,7 @@
 <!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
+    <suppress id="javadocForPropertyFields" files=".*(?&lt;!Properties\.java)$" />
     <suppress checks="IllegalCatch" files="(.*Aspect)\.java"/>
     <suppress checks="JavadocStyleCheck" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="Indentation" files="(.*Tests*|Mock.*|Test.*)\.java"/>

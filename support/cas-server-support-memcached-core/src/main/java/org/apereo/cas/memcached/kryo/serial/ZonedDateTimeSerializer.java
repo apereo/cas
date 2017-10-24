@@ -15,13 +15,18 @@ import java.time.ZonedDateTime;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-public class ZonedDateTimeTranscoder extends Serializer<ZonedDateTime> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZonedDateTimeTranscoder.class);
+public class ZonedDateTimeSerializer extends Serializer<ZonedDateTime> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZonedDateTimeSerializer.class);
     
     @Override
     public void write(final Kryo kryo, final Output output, final ZonedDateTime dateTime) {
-        kryo.writeObject(output, dateTime.toInstant().toEpochMilli());
+        LOGGER.trace("Writing date/time [{}] to memcached", dateTime);
+        final long epochMilli = dateTime.toInstant().toEpochMilli();
+        LOGGER.trace("Writing date/time epoch milliseconds [{}] to memcached", epochMilli);
+        kryo.writeObject(output, epochMilli);
+        
         final String id = dateTime.getZone().getId();
+        LOGGER.trace("Writing date/time zone id [{}] to memcached", id);
         kryo.writeObject(output, id);
     }
 
