@@ -62,6 +62,9 @@ public class Pac4jSamlProperties implements Serializable {
 
     /**
      * Name of the SAML client mostly for UI purposes and uniqueness.
+     * This name, with 'nonword' characters converted to '-' (e.g. "This Org (New)" becomes "This-Org--New-")
+     * is added to the "class" atribute of the redirect link on the login page, to allow for
+     * custom styling of individual IdPs (e.g. for an organization logo).
      */
     private String clientName;
 
