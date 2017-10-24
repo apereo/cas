@@ -28,14 +28,14 @@ Registered services present the following metadata:
 
 | Field                             | Description
 |-----------------------------------|---------------------------------------------------------------------------------
-| `id`                              | Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`. This **MUST** be a valid numeric value.
+| `id`                              | Required unique identifier. This **MUST** be a valid numeric value.
 | `name`                            | Required name (`255` characters or less).
 | `description`                     | Optional free-text description of the service. (`255` characters or less)
 | `informationUrl`                  | Optional free-text link to the service information guide.
 | `privacyUrl`                      | Optional free-text link to the service privacy policy.
 | `logo`                            | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name. The value may be a relative path to the `images` directory of the CAS web application or it may be a full URL.
 | `serviceId`                       | Required [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
-| `theme`                           | Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
+| `theme`                           | Optional theme name that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
 | `proxyPolicy`                     | Determines whether the service is able to proxy authentication.
 | `evaluationOrder`                 | Determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first and acts as an internal sorting factor.
 | `requiredHandlers`                | Set of authentication handler names that must successfully authenticate credentials in order to access the service. If defined, only the selected required handlers are chosen to respond to authentication requests from this registered service.
@@ -75,18 +75,18 @@ Registered services present the following metadata:
 
 The following options may be used to store services in CAS.
 
-| Storage          | Description
-|-------------------------------------------------------------------------------------------------------------------
-| Memory           | [See this guide](InMemory-Service-Management.html).
-| JSON             | [See this guide](JSON-Service-Management.html).
-| YAML             | [See this guide](YAML-Service-Management.html).
-| MongoDb          | [See this guide](Mongo-Service-Management.html).
-| LDAP             | [See this guide](LDAP-Service-Management.html).
-| JPA              | [See this guide](JPA-Service-Management.html).
-| Couchbase        | [See this guide](Couchbase-Service-Management.html).
-| DynamoDb         | [See this guide](DynamoDb-Service-Management.html).
-| REST             | [See this guide](REST-Service-Management.html).
-| Custom           | [See this guide](Custom-Service-Management.html).
+| Storage          | Description                                           | Usage
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Memory           | [See this guide](InMemory-Service-Management.html).   | Store service definitions XML stored in memory. Changes require CAS repackaging and server restarts
+| JSON             | [See this guide](JSON-Service-Management.html).       | Store service definitions in flat JSON files. HA deployments require replication of service definitions.
+| YAML             | [See this guide](YAML-Service-Management.html).       | Same as `JSON`.
+| MongoDb          | [See this guide](Mongo-Service-Management.html).      | Store service definitions in MongoDb. Candidate for HA deployments.
+| LDAP             | [See this guide](LDAP-Service-Management.html).       | Store service definitions in a directory server. Candidate for HA deployments.
+| JPA              | [See this guide](JPA-Service-Management.html).        | Store service definitions in a relational database (Oracle, MySQL, etc). Candidate for HA deployments.
+| Couchbase        | [See this guide](Couchbase-Service-Management.html).  | Store service definitions in Couchbase. Candidate for HA deployments.
+| DynamoDb         | [See this guide](DynamoDb-Service-Management.html).   | Store service definitions in DynamoDb. Candidate for HA deployments.
+| REST             | [See this guide](REST-Service-Management.html).       | Design your own service registry implementation as a REST API. Candidate for HA deployments.
+| Custom           | [See this guide](Custom-Service-Management.html).     | Design your own service registry using CAS APIs as an extension. Candidate for HA deployments.
 
 ### How Do I Choose?
 
