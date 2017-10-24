@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -54,6 +55,7 @@ public class AzureAuthenticatorConfiguration {
     
     @ConditionalOnMissingBean(name = "azureAuthenticatorMultifactorWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer azureAuthenticatorMultifactorWebflowConfigurer() {
         final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 azureAuthenticatorFlowRegistry(), applicationContext, casProperties);
@@ -71,6 +73,7 @@ public class AzureAuthenticatorConfiguration {
 
         @ConditionalOnMissingBean(name = "azureMultifactorTrustWebflowConfigurer")
         @Bean
+        @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer azureMultifactorTrustWebflowConfigurer() {
             final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                     casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), azureAuthenticatorFlowRegistry(),

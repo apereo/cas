@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -41,6 +42,7 @@ public class CasCaptchaConfiguration {
 
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer captchaWebflowConfigurer() {
         final CasWebflowConfigurer w = new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 applicationContext, casProperties);
