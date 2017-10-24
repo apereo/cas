@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import org.apereo.cas.support.pac4j.util.Pac4JUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -54,7 +55,7 @@ public class SAML2ClientLogoutAction extends AbstractAction {
 
             Client<?, ?> client;
             try {
-                final String currentClientName = findCurrentClientName(context);
+                final String currentClientName = Pac4JUtils.findCurrentClientName(context);
                 client = (currentClientName == null) ? null : clients.findClient(currentClientName);
             } catch(final TechnicalException e) {
                 // this exception indicates that the SAML2Client is not in the list
@@ -76,22 +77,6 @@ public class SAML2ClientLogoutAction extends AbstractAction {
             LOGGER.warn(e.getMessage(), e);
         }
         return null;
-    }
-
-    /**
-     * Finds the current client name from the context, using the PAC4J Profile Manager. It is assumed that the context has previously been
-     * populated with the profile.
-     * 
-     * @param webContext
-     *            A web context (request + response).
-     * 
-     * @return The currently used client's name or {@code null} if there is no active profile.
-     */
-    private String findCurrentClientName(final WebContext webContext) {
-        @SuppressWarnings("unchecked")
-        final ProfileManager<? extends CommonProfile> pm = WebUtils.getPac4jProfileManager(webContext);
-        final Optional<? extends CommonProfile> profile = pm.get(true);
-        return profile.map(CommonProfile::getClientName).orElse(null);
     }
 
 }

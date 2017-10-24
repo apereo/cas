@@ -1,10 +1,16 @@
 package org.apereo.cas.support.pac4j.config;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.service.AbstractProfileService;
+import org.pac4j.core.profile.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,6 +51,19 @@ public class Pac4jConfiguration {
                 centralAuthenticationService, 
                 casProperties.getTheme().getParamName(), 
                 casProperties.getLocale().getParamName(), 
-                casProperties.getAuthn().getPac4j().isAutoRedirect());
+                casProperties.getAuthn().getPac4j().isAutoRedirect(),
+                pac4jProfileService());
+    }
+
+
+    @Bean
+    public ProfileService<CommonProfile> pac4jProfileService() {
+        // TODO: Let's return a real profile service that is able to work with SAML2 profiles
+        return new AbstractProfileService<CommonProfile>() {
+            @Override protected void insert(Map<String, Object> attributes) {}
+            @Override protected void update(Map<String, Object> attributes) {}
+            @Override protected void deleteById(String id) {}
+            @Override protected List<Map<String, Object>> read(List<String> names, String key, String value) {return null;}
+        };
     }
 }
