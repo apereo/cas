@@ -27,6 +27,9 @@ public class AcceptAuthenticationProperties implements Serializable {
      */
     private String name;
 
+    /**
+     * Password encoder settings for the authentication handler.
+     */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 

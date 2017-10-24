@@ -66,6 +66,9 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      */
     private MongoDb mongo = new MongoDb();
 
+    /**
+     * Crypto settings that sign/encrypt the device records.
+     */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
     

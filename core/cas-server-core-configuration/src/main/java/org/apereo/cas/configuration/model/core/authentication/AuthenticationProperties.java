@@ -51,34 +51,64 @@ import java.util.List;
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;
-    
+
+    /**
+     * Couchbase authentication settings.
+     */
     @NestedConfigurationProperty
     private CouchbaseAuthenticationProperties couchbase = new CouchbaseAuthenticationProperties();
 
+    /**
+     * Cassandra authentication settings.
+     */
     @NestedConfigurationProperty
     private CassandraAuthenticationProperties cassandra = new CassandraAuthenticationProperties();
-    
+
+    /**
+     * Cloud Directory authentication settings.
+     */
     @NestedConfigurationProperty
     private CloudDirectoryProperties cloudDirectory = new CloudDirectoryProperties();
-    
+
+    /**
+     * Surrogate authentication settings.
+     */
     @NestedConfigurationProperty
     private SurrogateAuthenticationProperties surrogate = new SurrogateAuthenticationProperties();
-    
+
+    /**
+     * Graphical User authentication settings.
+     */
     @NestedConfigurationProperty
     private GraphicalUserAuthenticationProperties gua = new GraphicalUserAuthenticationProperties();
-    
+
+    /**
+     * Password management settings.
+     */
     @NestedConfigurationProperty
     private PasswordManagementProperties pm = new PasswordManagementProperties();
 
+    /**
+     * Adaptive authentication settings.
+     */
     @NestedConfigurationProperty
     private AdaptiveAuthenticationProperties adaptive = new AdaptiveAuthenticationProperties();
 
+    /**
+     * Attribute repository settings.
+     */
     @NestedConfigurationProperty
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
+    /**
+     * Digest authentication settings.
+     */
     @NestedConfigurationProperty
     private DigestProperties digest = new DigestProperties();
 
+    /**
+     * REST-based authentication settings.
+     */
     @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
 
@@ -88,36 +118,69 @@ public class AuthenticationProperties implements Serializable {
      */
     private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
 
+    /**
+     * Authentication throttling settings.
+     */
     @NestedConfigurationProperty
     private ThrottleProperties throttle = new ThrottleProperties();
 
+    /**
+     * SAML identity provider settings.
+     */
     @NestedConfigurationProperty
     private SamlIdPProperties samlIdp = new SamlIdPProperties();
 
+    /**
+     * Customization of authentication errors and exceptions.
+     */
     @NestedConfigurationProperty
     private AuthenticationExceptionsProperties exceptions = new AuthenticationExceptionsProperties();
 
+    /**
+     * Authentication policy settings.
+     */
     @NestedConfigurationProperty
     private AuthenticationPolicyProperties policy = new AuthenticationPolicyProperties();
 
+    /**
+     * Accepting authentication based on statically defined users.
+     */
     @NestedConfigurationProperty
     private AcceptAuthenticationProperties accept = new AcceptAuthenticationProperties();
 
+    /**
+     * File-based authentication.
+     */
     @NestedConfigurationProperty
     private FileAuthenticationProperties file = new FileAuthenticationProperties();
 
+    /**
+     * Blacklist-based authentication.
+     */
     @NestedConfigurationProperty
     private RejectAuthenticationProperties reject = new RejectAuthenticationProperties();
 
+    /**
+     * Authentication based on a remote-address of a request.
+     */
     @NestedConfigurationProperty
     private RemoteAddressAuthenticationProperties remoteAddress = new RemoteAddressAuthenticationProperties();
 
+    /**
+     * Authentication settings when integrating CAS with a shibboleth IdP.
+     */
     @NestedConfigurationProperty
     private ShibbolethIdPProperties shibIdp = new ShibbolethIdPProperties();
-    
+
+    /**
+     * Shiro-based authentication.
+     */
     @NestedConfigurationProperty
     private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
 
+    /**
+     * Trusted authentication.
+     */
     @NestedConfigurationProperty
     private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
 
@@ -127,33 +190,63 @@ public class AuthenticationProperties implements Serializable {
      */
     private List<JaasAuthenticationProperties> jaas = new ArrayList<>();
 
+    /**
+     * JDBC authentication settings.
+     */
     @NestedConfigurationProperty
     private JdbcAuthenticationProperties jdbc = new JdbcAuthenticationProperties();
 
+    /**
+     * MFA settings.
+     */
     @NestedConfigurationProperty
     private MultifactorAuthenticationProperties mfa = new MultifactorAuthenticationProperties();
 
+    /**
+     * MongoDb authentication settings.
+     */
     @NestedConfigurationProperty
     private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
 
+    /**
+     * NTLM authentication settings.
+     */
     @NestedConfigurationProperty
     private NtlmProperties ntlm = new NtlmProperties();
 
+    /**
+     * OAuth authentication settings.
+     */
     @NestedConfigurationProperty
     private OAuthProperties oauth = new OAuthProperties();
 
+    /**
+     * OpenID Connect authentication settings.
+     */
     @NestedConfigurationProperty
     private OidcProperties oidc = new OidcProperties();
 
+    /**
+     * OpenID authentication settings.
+     */
     @NestedConfigurationProperty
     private OpenIdProperties openid = new OpenIdProperties();
 
+    /**
+     * Pac4j delegated authentication settings.
+     */
     @NestedConfigurationProperty
     private Pac4jProperties pac4j = new Pac4jProperties();
 
+    /**
+     * RADIUS authentication settings.
+     */
     @NestedConfigurationProperty
     private RadiusProperties radius = new RadiusProperties();
 
+    /**
+     * SPNEGO authentication settings.
+     */
     @NestedConfigurationProperty
     private SpnegoProperties spnego = new SpnegoProperties();
 
@@ -163,15 +256,27 @@ public class AuthenticationProperties implements Serializable {
      */
     private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
+    /**
+     * WS-FED delegated authentication settings.
+     */
     @NestedConfigurationProperty
     private WsFederationProperties wsfedIdp = new WsFederationProperties();
-    
+
+    /**
+     * X509 authentication settings.
+     */
     @NestedConfigurationProperty
     private X509Properties x509 = new X509Properties();
 
+    /**
+     * Token/JWT authentication settings.
+     */
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
 
+    /**
+     * Apache Fortress authentication settings.
+     */
     @NestedConfigurationProperty
     private FortressAuthenticationProperties fortress = new FortressAuthenticationProperties();
 

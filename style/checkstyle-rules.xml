@@ -26,8 +26,14 @@
             <property name="allowMissingParamTags" value="true"/>
         </module>
         <module name="JavadocVariable">
+            <property name="id" value="javadocForAllProtectedAndPublicFields"/>
             <property name="severity" value="error"/>
             <property name="scope" value="protected"/>
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="id" value="javadocForPropertyFields"/>
+            <property name="severity" value="error"/>
             <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
         </module>
         <module name="JavadocStyle">
