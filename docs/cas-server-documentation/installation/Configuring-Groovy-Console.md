@@ -35,7 +35,6 @@ default password will be randomly generated and displayed in the log output if o
 ```bash
 ssh -p 2000 user@localhost
 
-
 Using default password for shell access: ec03326c-4cf4-49ee-b745-7bb255c1dd7e
 ```
 
