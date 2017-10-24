@@ -1,15 +1,20 @@
 package org.apereo.cas.interrupt.webflow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+
+import java.util.Map;
 
 /**
  * This is {@link InterruptWebflowConfigurer}.
@@ -18,9 +23,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 5.2.0
  */
 public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
-
-    private static final String VIEW_ID_INTERRUPT_VIEW = "interruptView";
     private static final String INTERRUPT_VIEW_ID = "casInterruptView";
+    
+    private static final String VIEW_ID_INTERRUPT_VIEW = "interruptView";
+    
     private static final String STATE_ID_INQUIRE_INTERRUPT_ACTION = "inquireInterruptAction";
     private static final String STATE_ID_FINALIZE_INTERRUPT_ACTION = "finalizeInterruptFlowAction";
     private static final String STATE_ID_PREPARE_INTERRUPT_VIEW_ACTION = "prepareInterruptViewAction";
@@ -40,14 +46,32 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createInquireActionState(flow);
             createInterruptView(flow);
             createTransitionStateToInterrupt(flow);
+            createTransitionStateForMultifactorSubflows(flow);
+            createTransitionStateForAuthenticationWarnings(flow);
         }
     }
 
+    private void createTransitionStateForAuthenticationWarnings(final Flow flow) {
+        final ViewState state = getState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
+    }
+    
     private void createTransitionStateToInterrupt(final Flow flow) {
         final ActionState submit = getRealSubmissionState(flow);
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
     }
 
+    private void createTransitionStateForMultifactorSubflows(final Flow flow) {
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        providerMap.forEach((k, v) -> {
+            if (containsSubflowState(flow, v.getId())) {
+                final SubflowState state = getState(flow, v.getId(), SubflowState.class);
+                createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
+            }
+        });
+    }
+    
     private ActionState getRealSubmissionState(final Flow flow) {
         return getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
     }

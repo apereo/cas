@@ -17,6 +17,7 @@ import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
@@ -64,8 +65,36 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createDefaultEndStates(flow);
             createDefaultDecisionStates(flow);
             createDefaultActionStates(flow);
+            createDefaultViewStates(flow);
             createRememberMeAuthnWebflowConfig(flow);
         }
+    }
+
+    /**
+     * Create default view states.
+     *
+     * @param flow the flow
+     */
+    protected void createDefaultViewStates(final Flow flow) {
+        createAuthenticationWarningMessagesView(flow);
+    }
+
+    /**
+     * Create authentication warning messages view.
+     *
+     * @param flow the flow
+     */
+    protected void createAuthenticationWarningMessagesView(final Flow flow) {
+        final ViewState state = createViewState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, "casLoginMessageView");
+        
+        final SetAction setAction = new SetAction(createExpression("requestScope.messages"), createExpression("messageContext.allMessages"));
+        state.getEntryActionList().add(setAction);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED,
+                CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
+
+        final ActionState proceedAction = createActionState(flow, CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
+        proceedAction.getActionList().add(createEvaluateAction("sendTicketGrantingTicketAction"));
+        createStateDefaultTransition(proceedAction, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
     }
 
     /**
@@ -90,12 +119,19 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createDefaultActionStates(final Flow flow) {
+        createSendTicketGrantingTicketAction(flow);
         createGenerateServiceTicketAction(flow);
         createTerminateSessionAction(flow);
         createGatewayServicesMgmtAction(flow);
         createServiceAuthorizationCheckAction(flow);
         createRedirectToServiceActionState(flow);
         createHandleAuthenticationFailureAction(flow);
+    }
+
+    private void createSendTicketGrantingTicketAction(final Flow flow) {
+        final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET, 
+                createEvaluateAction("sendTicketGrantingTicketAction"));
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
     }
 
     /**

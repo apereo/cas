@@ -31,6 +31,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -145,6 +146,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         final CasWebflowConfigurer w = new WSFederationWebflowConfigurer(flowBuilderServices, 
                 loginFlowDefinitionRegistry, wsFederationMetadataUIAction(),
