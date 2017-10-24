@@ -102,6 +102,21 @@ export class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
   }
 }
 
+export class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+  endpoint: String;
+
+  static cName = "org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy";
+
+  constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
+    super(policy);
+    this["@class"] = ReturnRestfulAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === ReturnRestfulAttributeReleasePolicy.cName;
+  }
+}
+
 export class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
   groovyScript: String;
 
