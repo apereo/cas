@@ -110,9 +110,10 @@ public final class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
         final Collection<RegisteredService> services = servicesManager.getAllServices();
-        return (OAuthRegisteredService) services.stream()
+        return services.stream()
                 .filter(OAuthRegisteredService.class::isInstance)
-                .filter(s -> OAuthRegisteredService.class.cast(s).getClientId().equals(clientId))
+                .map(OAuthRegisteredService.class::cast)
+                .filter(s -> s.getClientId().equals(clientId))
                 .findFirst()
                 .orElse(null);
     }

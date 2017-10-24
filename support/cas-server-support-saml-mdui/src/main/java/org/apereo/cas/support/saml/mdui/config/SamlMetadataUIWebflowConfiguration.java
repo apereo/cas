@@ -5,26 +5,11 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.mdui.AbstractMetadataResolverAdapter;
-import org.apereo.cas.support.saml.mdui.ChainingMetadataResolverAdapter;
-import org.apereo.cas.support.saml.mdui.DynamicMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
-import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.jooq.lambda.Unchecked;
-import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
-import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
-import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
-import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -34,17 +19,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link SamlMetadataUIWebflowConfiguration}.

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
@@ -73,6 +74,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -136,7 +138,7 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public abstract class AbstractOAuth20Tests {
-    
+
     public static final String CONTEXT = "/oauth2.0/";
     public static final String CLIENT_ID = "1";
     public static final String CLIENT_SECRET = "secret";
@@ -153,7 +155,7 @@ public abstract class AbstractOAuth20Tests {
     public static final String GOOD_USERNAME = "test";
     public static final String GOOD_PASSWORD = "test";
     public static final int DELTA = 2;
-    public static final String GET = "GET";
+
     public static final String ERROR_EQUALS = "error=";
 
     @Autowired
@@ -167,7 +169,7 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     protected SecurityInterceptor requiresAuthenticationInterceptor;
-    
+
     @Autowired
     protected ApplicationContext applicationContext;
 
@@ -219,7 +221,12 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuthRegisteredService addRegisteredService() {
+        return addRegisteredService(false);
+    }
+
+    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken) {
         final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
+        registeredService.setGenerateRefreshToken(generateRefreshToken);
         servicesManager.save(registeredService);
         return registeredService;
     }
@@ -271,24 +278,23 @@ public abstract class AbstractOAuth20Tests {
                 .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
                 .build();
     }
-    
-    protected void internalVerifyClientOK(final RegisteredService service, final boolean basicAuth,
-                                        final boolean refreshToken, final boolean json) throws Exception {
+
+    protected Pair<String, String> internalVerifyClientOK(final RegisteredService service,
+                                                          final boolean refreshToken, final boolean json) throws Exception {
 
         final Principal principal = createPrincipal();
         final OAuthCode code = addCode(principal, service);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
-        if (basicAuth) {
-            final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
-            final String value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-            mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
-        } else {
-            mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
-        }
+        final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
+        final String value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+        mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -298,11 +304,14 @@ public abstract class AbstractOAuth20Tests {
         final String body = mockResponse.getContentAsString();
 
         final String accessTokenId;
+        String refreshTokenId = null;
+
         if (json) {
             assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
             assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
             if (refreshToken) {
                 assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
+                refreshTokenId = StringUtils.substringBetween(body, OAuth20Constants.REFRESH_TOKEN + "\":\"", "\",\"");
             }
             assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
             accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
@@ -311,6 +320,11 @@ public abstract class AbstractOAuth20Tests {
             assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + "=AT-"));
             if (refreshToken) {
                 assertTrue(body.contains(OAuth20Constants.REFRESH_TOKEN + "=RT-"));
+                refreshTokenId = Arrays.stream(body.split("&"))
+                        .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
+                        .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + "="))
+                        .findFirst()
+                        .get();
             }
             assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
             accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
@@ -321,6 +335,8 @@ public abstract class AbstractOAuth20Tests {
 
         final int timeLeft = getTimeLeft(body, refreshToken, json);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
+
+        return Pair.of(accessTokenId, refreshTokenId);
     }
 
     protected static int getTimeLeft(final String body, final boolean refreshToken, final boolean json) {

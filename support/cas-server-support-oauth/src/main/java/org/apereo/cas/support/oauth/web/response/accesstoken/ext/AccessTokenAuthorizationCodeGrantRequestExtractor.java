@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -10,15 +11,11 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -38,23 +35,23 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        final Optional<UserProfile> profile = manager.get(true);
-        final String clientId = profile.get().getId();
+        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        if (registeredService == null) {
+            throw new UnauthorizedServiceException("Unable to locate OAuth service in registry for client " + clientId);
+        }
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
         final OAuthToken token = getOAuthTokenFromRequest(request);
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
-        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(),
-                isAllowedToGenerateRefreshToken(), scopes);
+        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(), isAllowedToGenerateRefreshToken(), scopes);
     }
 
     /**
