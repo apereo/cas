@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
 import org.springframework.binding.convert.converters.Converter;
 import org.springframework.webflow.execution.repository.support.CompositeFlowExecutionKey;
@@ -10,7 +10,6 @@ import org.springframework.webflow.execution.repository.support.CompositeFlowExe
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@SuppressWarnings("rawtypes")
 public class CompositeFlowExecutionKeyConverter implements Converter {
 
     @Override

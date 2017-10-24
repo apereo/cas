@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;

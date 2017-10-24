@@ -270,7 +270,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    @RefreshScope
     @ConditionalOnMissingBean(name = "accessTokenExpirationPolicy")
     public ExpirationPolicy accessTokenExpirationPolicy() {
         final OAuthProperties oauth = casProperties.getAuthn().getOauth();
