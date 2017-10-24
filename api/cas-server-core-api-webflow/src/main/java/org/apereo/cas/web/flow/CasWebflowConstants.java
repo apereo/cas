@@ -332,4 +332,14 @@ public interface CasWebflowConstants {
      * State id 'initialFlowSetupAction'.
      */
     String STATE_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+
+    /**
+     * Transition id 'changePassword'.
+     */
+    String TRANSITION_ID_CHANGE_PASSWORD = "changePassword";
+
+    /**
+     * State id 'proceedFromAuthenticationWarningView'.
+     */
+    String STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW = "proceedFromAuthenticationWarningView";
 }

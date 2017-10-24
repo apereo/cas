@@ -28,6 +28,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -108,6 +109,7 @@ public class U2FWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
         final CasWebflowConfigurer w = new U2FMultifactorWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, u2fFlowRegistry(), applicationContext, casProperties);

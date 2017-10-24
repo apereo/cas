@@ -388,11 +388,20 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the expression
      */
     public Expression createExpression(final String expression, final Class expectedType) {
-        final ParserContext parserContext = new FluentParserContext()
-                .expectResult(expectedType);
+        final ParserContext parserContext = new FluentParserContext().expectResult(expectedType);
         return getSpringExpressionParser().parseExpression(expression, parserContext);
     }
 
+    /**
+     * Create expression.
+     *
+     * @param expression the expression
+     * @return the expression
+     */
+    public Expression createExpression(final String expression) {
+        return createExpression(expression, null);
+    }
+    
     /**
      * Gets spring expression parser.
      *
