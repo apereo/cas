@@ -96,7 +96,6 @@ be authorized to receive the PGT as an attribute for the given attribute release
   "evaluationOrder" : 0,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "authorizedToReleaseCredentialPassword" : false,
     "authorizedToReleaseProxyGrantingTicket" : true
   },
   "publicKey" : {
