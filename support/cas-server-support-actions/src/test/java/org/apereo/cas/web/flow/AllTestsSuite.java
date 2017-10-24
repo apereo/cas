@@ -21,7 +21,7 @@ import org.junit.runners.Suite;
         SendTicketGrantingTicketActionTests.class,
         SendTicketGrantingTicketActionSsoTests.class,
         ServiceAuthorizationCheckTests.class,
-        TicketGrantingTicketCheckActionTests.class,
+        TicketGrantingTicketCheckActionTests.class
 })
 public class AllTestsSuite {
 }

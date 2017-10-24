@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.ElectronicFenceConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.ElectronicFenceConfiguration,\
+  org.apereo.cas.config.ElectronicFenceWebflowConfiguration
