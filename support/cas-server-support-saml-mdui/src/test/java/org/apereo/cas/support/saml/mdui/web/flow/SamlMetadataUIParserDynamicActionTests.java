@@ -27,6 +27,7 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
+import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -68,6 +69,7 @@ import static org.junit.Assert.*;
         classes = {
                 SamlMetadataUIParserDynamicActionTests.CasTestConfiguration.class,
                 SamlMetadataUIConfiguration.class,
+                SamlMetadataUIWebflowConfiguration.class,
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
                 CasCoreTicketIdGeneratorsConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
