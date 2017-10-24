@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
+import java.util.function.Predicate;
+
 /**
  * Base class for all authentication handlers that support configurable naming.
  *
@@ -25,6 +27,12 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     protected final ServicesManager servicesManager;
 
     /**
+     * Indicates whether this handler is able to support the credentials passed to
+     * operate on it and validate. Default is true.
+     */
+    protected Predicate<Credential> credentialSelectionPredicate = credential -> true;
+    
+    /**
      * Sets the authentication handler name. Authentication handler names SHOULD be unique within an
      * {@link AuthenticationManager}, and particular implementations
      * may require uniqueness. Uniqueness is a best
@@ -38,7 +46,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * order numbers be unique on a best-effort basis.
      */
     private final int order;
-
+    
+    
     /**
      * Instantiates a new Abstract authentication handler.
      *
@@ -67,5 +76,9 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     @Override
     public int getOrder() {
         return this.order;
+    }
+
+    public void setCredentialSelectionPredicate(final Predicate<Credential> credentialSelectionPredicate) {
+        this.credentialSelectionPredicate = credentialSelectionPredicate;
     }
 }
