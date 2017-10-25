@@ -121,7 +121,7 @@ export class Messages {
  readonly services_form_label_attrRelease_principleAttRepo_cached_timeUnit = "Time Unit";
  readonly services_form_label_attrRelease_principleAttRepo_cached_expiration = "Expiration";
  readonly services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy = "Merging Strategy";
- readonly services_form_label_attrRelease_policies_scriptFile = "Script File";
+ readonly services_form_label_attrRelease_policies_scriptFile = "Script File Location";
  readonly services_form_label_attrRelease_policies_script = "Script Engine";
  readonly services_form_label_attrRelease_policies_groovy = "Groovy Script";
  readonly services_form_label_attrRelease_policies_denyAll = "Deny All";
@@ -130,6 +130,7 @@ export class Messages {
  readonly services_form_label_attrRelease_policies_returnMapped = "Return Mapped";
  readonly services_form_label_attrRelease_policies_sourceAttribute = "Source Attribute";
  readonly services_form_label_attrRelease_policies_casAttribute = "CAS Attribute";
+ readonly services_form_label_attrRelease_policies_groovySaml = "Script File Location";
  readonly services_form_label_attrRelease_consent_enabled = "User Consent Enabled";
  readonly services_form_label_attrRelease_consent_excludedAttributes = "Excluded Attributes";
  readonly services_form_label_attrRelease_consent_includeOnlyAttributes = "Include Only Attributes";
@@ -277,6 +278,7 @@ export class Messages {
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_expiration = "The cache expiration time. ";
  readonly services_form_tooltip_attrRelease_policies_returnAllowed = "List of resolved attributes out of the available collection of attributes from the attribute repository. Select attributes that are allowed to be released to the application";
  readonly services_form_tooltip_attrRelease_policies_returnMapped = "List of resolved attributes out of the available collection of attributes from the attribute repository. Select and virtually rename attributes that are allowed to be released to the application";
+ readonly services_form_tooltip_attrRelease_policies_groovySaml = "Location of a groovy script file that can be triggered by the server to determine the attributes to be released";
  readonly services_form_tooltip_attrRelease_consent_enabled = "Control whether consent is active/inactive for this service.";
  readonly services_form_tooltip_attrRelease_consent_excludedAttributes = "Exclude the indicated attributes from consent.";
  readonly services_form_tooltip_attrRelease_consent_includeOnlyAttributes = "Force-include the indicated attributes in consent, provided attributes are resolved.";
