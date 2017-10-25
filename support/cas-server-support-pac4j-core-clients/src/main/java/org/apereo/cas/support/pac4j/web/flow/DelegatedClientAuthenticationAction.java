@@ -79,6 +79,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
+    private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
     private final Clients clients;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -205,7 +206,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                         final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
                         final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                         LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                        urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type));
+                        urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
                     } catch (final HttpAction e) {
                         if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                             LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
@@ -221,6 +222,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No clients could be determined based on the provided configuration");
         }
+    }
+    
+    /**
+     * Get a valid CSS class for the given provider name.
+     * 
+     * @param name Name of the provider
+     */
+    private String getCssClass(final String name) {
+        String computedCssClass = "fa fa-lock";
+        if (name != null) {
+            computedCssClass = computedCssClass.concat(" " + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
+        }
+        LOGGER.debug("cssClass for {} is {} ", name, computedCssClass);
+        return computedCssClass;            
     }
 
     /**
@@ -295,6 +310,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         private final String name;
         private final String redirectUrl;
         private final String type;
+        private final String cssClass;
 
         /**
          * Instantiates a new Provider ui configuration.
@@ -302,11 +318,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
          * @param name        the name
          * @param redirectUrl the redirect url
          * @param type        the type
+         * @param cssClass    for SAML2 clients, the class name used for custom styling of the redirect link
          */
-        ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type) {
+        ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type, final String cssClass) {
             this.name = name;
             this.redirectUrl = redirectUrl;
             this.type = type;
+            this.cssClass = cssClass;
         }
 
         public String getName() {
@@ -319,6 +337,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         public String getType() {
             return type;
+        }
+        
+        public String getCssClass() {
+            return cssClass;
         }
     }
 }

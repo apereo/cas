@@ -117,6 +117,21 @@ export class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
   }
 }
 
+export class GroovySamlRegisteredServiceAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
+  groovyScript: String;
+
+  static cName =  "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy";
+
+  constructor(policy?: RegisteredServiceAttributeReleasePolicy) {
+    super(policy);
+    this["@class"] = GroovySamlRegisteredServiceAttributeReleasePolicy.cName;
+  }
+
+  static instanceOf(obj: any): boolean {
+    return obj["@class"] === GroovySamlRegisteredServiceAttributeReleasePolicy.cName;
+  }
+}
+
 export class WsFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
   allowedAttributes: Map<String,String>
 
