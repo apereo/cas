@@ -59,8 +59,8 @@ public class OAuthProperties implements Serializable {
      * This default bean authenticationThrottle can be overridden and/or different ThrottleSubmissionHandlerInterceptor
      * maybe configured for use.
      *
-     * @see org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor
-     * @see org.apereo.cas.web.support.config.CasThrottlingConfiguration#authenticationThrottle()
+     * org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor
+     * org.apereo.cas.web.support.config.CasThrottlingConfiguration#authenticationThrottle()
      */
     private String throttler = "neverThrottle";
 
