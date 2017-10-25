@@ -24,6 +24,8 @@ import com.google.common.base.Throwables;
  * request), that's why we invalidate it after the flow terminates.
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class TerminateSessionFlowExecutionListener extends FlowExecutionListenerAdapter {
 
@@ -37,6 +39,12 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
     }
 
 
+    /**
+     * Destroys the session on flow termination.
+     * 
+     * @param context
+     *            The flow request context.
+     */
     protected void terminate(final RequestContext context) {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -49,6 +57,14 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
     }
 
 
+    /**
+     * Destroys the session and performs PAC4J logout.
+     * 
+     * @param request
+     *            The HTTP request.
+     * @param response
+     *            The HTTP response.
+     */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         logger.debug("Destroying application session");
         final ProfileManager<?> manager = Pac4jUtils.getPac4jProfileManager(request, response);

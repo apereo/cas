@@ -33,6 +33,8 @@ import org.springframework.webflow.execution.RequestContext;
  * To be inserted (ideally) to the "on-entry" section of state "finishLogout", either declaratively or programmatically.
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
 

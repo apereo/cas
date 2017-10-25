@@ -25,9 +25,11 @@ import com.google.common.base.Throwables;
  * 
  * It is assumed that the session itself will be terminated in {@link TerminateSessionFlowExecutionListener}.
  * 
+ * @author jkacer
+ * 
  * @see TerminateSessionFlowExecutionListener
  * 
- * @author jkacer
+ * @since 5.2.0
  */
 public class DestroyTgtAndCookiesAction extends TerminateSessionAction {
 

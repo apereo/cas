@@ -31,7 +31,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 
 /**
- * Unit test of {@link IgnoreServiceRedirectUrlForSamlActionTests}.
+ * Unit test of {@link IgnoreServiceRedirectUrlForSamlAction}.
  * 
  * Tests these cases:
  * <ul>

@@ -328,7 +328,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             final WebContext webContext) throws HttpAction {
         if (profileService != null) {
             final CommonProfile profile = client.getUserProfile(credentials, webContext);
-            /* TODO: Unclear point here. What should the password be? Can it be the TGT ID? See SingleLogoutPreparationAction:57; we use
+            /* Unclear point here. What should the password be? Can it be the TGT ID? See SingleLogoutPreparationAction:57; we use
              * the TGT ID to read he profile from the service there.
              */
             final String password = "TODO";

@@ -27,6 +27,8 @@ import org.springframework.webflow.execution.RequestContext;
  * This action should be called from the Logout web flow.
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class SingleLogoutPreparationAction extends AbstractAction {
 
