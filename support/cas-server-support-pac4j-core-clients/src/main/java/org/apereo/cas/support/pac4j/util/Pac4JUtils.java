@@ -12,8 +12,10 @@ import org.pac4j.core.profile.ProfileManager;
  * A collection of utility methods related to PAC4J.
  * 
  * @author jkacer
+ * 
+ * @since 5.1.6
  */
-public class Pac4JUtils {
+public final class Pac4JUtils {
 
     /**
      * Private constructor to disable instantiation.

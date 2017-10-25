@@ -36,6 +36,12 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
     }
 
 
+    /**
+     * Destroys the session on flow termination.
+     * 
+     * @param context
+     *            The flow request context.
+     */
     protected void terminate(final RequestContext context) {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -48,6 +54,14 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
     }
 
 
+    /**
+     * Destroys the session and performs PAC4J logout.
+     * 
+     * @param request
+     *            The HTTP request.
+     * @param response
+     *            The HTTP response.
+     */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         logger.debug("Destroying application session");
         final ProfileManager<?> manager = WebUtils.getPac4jProfileManager(request, response);
