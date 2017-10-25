@@ -25,7 +25,7 @@ import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.*;
  */
 public class SendPasswordResetInstructionsAction extends AbstractAction {
     /** Param name for the token. */
-    public static final String PARAMETER_NAME_TOKEN = "t";
+    public static final String PARAMETER_NAME_TOKEN = "pswdrst";
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SendPasswordResetInstructionsAction.class);
 
@@ -64,7 +64,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         
         final String token = passwordManagementService.createToken(username);
         final String url = casProperties.getServer().getPrefix()
-                .concat('/' + FLOW_ID_PASSWORD_RESET + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
+                .concat('/' + FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
         
         LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url,
                 pm.getReset().getExpirationMinutes());
