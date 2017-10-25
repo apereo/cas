@@ -60,10 +60,12 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     public ProfileService<CommonProfile> pac4jProfileService() {
         // TODO: Let's return a real profile service that is able to work with SAML2 profiles
         return new AbstractProfileService<CommonProfile>() {
-            @Override protected void insert(Map<String, Object> attributes) {}
-            @Override protected void update(Map<String, Object> attributes) {}
-            @Override protected void deleteById(String id) {}
-            @Override protected List<Map<String, Object>> read(List<String> names, String key, String value) {return null;}
+            @Override protected void insert(final Map<String, Object> attributes) {}
+            @Override protected void update(final Map<String, Object> attributes) {}
+            @Override protected void deleteById(final String id) {}
+            @Override protected List<Map<String, Object>> read(final List<String> names, final String key, final String value) {
+                return null;
+            }
         };
     }
 

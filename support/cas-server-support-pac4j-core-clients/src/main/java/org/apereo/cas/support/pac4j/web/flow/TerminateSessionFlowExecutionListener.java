@@ -31,7 +31,7 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
 
 
     @Override
-    public void sessionEnded(RequestContext context, FlowSession session, String outcome, AttributeMap<?> output) {
+    public void sessionEnded(final RequestContext context, final FlowSession session, final String outcome, final AttributeMap<?> output) {
         super.sessionEnded(context, session, outcome, output);
         terminate(context);
     }
@@ -44,8 +44,7 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
             destroyApplicationSession(request, response);
             logger.debug("Terminated the application session successfully.");
         } catch (final Exception e) {
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

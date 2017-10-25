@@ -32,7 +32,7 @@ public class DummySingleLogoutService implements SingleLogoutService {
     }
 
     @Override
-    public void setBinding(String binding) {}
+    public void setBinding(final String binding) {}
 
     @Override
     public String getLocation() {
@@ -40,7 +40,7 @@ public class DummySingleLogoutService implements SingleLogoutService {
     }
 
     @Override
-    public void setLocation(String location) {}
+    public void setLocation(final String location) {}
 
     @Override
     public String getResponseLocation() {
@@ -48,7 +48,7 @@ public class DummySingleLogoutService implements SingleLogoutService {
     }
 
     @Override
-    public void setResponseLocation(String location) {}
+    public void setResponseLocation(final String location) {}
 
     @Override
     public void detach() {}
@@ -114,21 +114,21 @@ public class DummySingleLogoutService implements SingleLogoutService {
     }
 
     @Override
-    public void releaseChildrenDOM(boolean propagateRelease) {}
+    public void releaseChildrenDOM(final boolean propagateRelease) {}
 
     @Override
     public void releaseDOM() {}
 
     @Override
-    public void releaseParentDOM(boolean propagateRelease) {}
+    public void releaseParentDOM(final boolean propagateRelease) {}
 
     @Override
-    public XMLObject resolveID(String id) {
+    public XMLObject resolveID(final String id) {
         return null;
     }
 
     @Override
-    public XMLObject resolveIDFromRoot(String id) {
+    public XMLObject resolveIDFromRoot(final String id) {
         return null;
     }
 
@@ -136,13 +136,13 @@ public class DummySingleLogoutService implements SingleLogoutService {
     public void setDOM(Element dom) {}
 
     @Override
-    public void setNoNamespaceSchemaLocation(String location) {}
+    public void setNoNamespaceSchemaLocation(final String location) {}
 
     @Override
     public void setParent(XMLObject parent) {}
 
     @Override
-    public void setSchemaLocation(String location) {}
+    public void setSchemaLocation(final String location) {}
 
     @Override
     public Boolean isNil() {
@@ -155,10 +155,10 @@ public class DummySingleLogoutService implements SingleLogoutService {
     }
 
     @Override
-    public void setNil(Boolean newNil) {}
+    public void setNil(final Boolean newNil) {}
 
     @Override
-    public void setNil(XSBooleanValue newNil) {}
+    public void setNil(final XSBooleanValue newNil) {}
 
     @Override
     public LockableClassToInstanceMultiMap<Object> getObjectMetadata() {
@@ -171,7 +171,7 @@ public class DummySingleLogoutService implements SingleLogoutService {
     }
 
     @Override
-    public List<XMLObject> getUnknownXMLObjects(QName typeOrName) {
+    public List<XMLObject> getUnknownXMLObjects(final QName typeOrName) {
         return null;
     }
 

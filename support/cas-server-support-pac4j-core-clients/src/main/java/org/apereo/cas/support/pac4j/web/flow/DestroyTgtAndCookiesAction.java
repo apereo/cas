@@ -76,8 +76,7 @@ public class DestroyTgtAndCookiesAction extends TerminateSessionAction {
             // Do NOT destroy the session here. Keep it.
             return this.eventFactorySupport.success(this);
         } catch (final Exception e) {
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
