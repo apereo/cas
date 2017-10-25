@@ -70,7 +70,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
     }
 
 
-    protected void testServiceRemovalForParticularProfile(final CommonProfile profile, boolean shouldBeRemoved) throws Exception {
+    protected void testServiceRemovalForParticularProfile(final CommonProfile profile, final boolean shouldBeRemoved) throws Exception {
         // Prepare the input
         MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
         MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
@@ -104,7 +104,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
     }
 
 
-    private SAML2Profile samlProfile(String clientName) {
+    private SAML2Profile samlProfile(final String clientName) {
         SAML2Profile p = new SAML2Profile();
         p.setClientName(clientName);
         return p;
@@ -118,7 +118,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
     }
 
 
-    private <T extends CommonProfile> void saveMockProfile(WebContext wc, T profile) {
+    private <T extends CommonProfile> void saveMockProfile(final WebContext wc, final T profile) {
         @SuppressWarnings("unchecked")
         final ProfileManager<T> pm = WebUtils.getPac4jProfileManager(wc);
         pm.save(true, profile, false);
@@ -144,7 +144,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
     }
 
 
-    private void mockSamlClientMetadata(SAML2Client client, boolean hasLogoutService) {
+    private void mockSamlClientMetadata(final SAML2Client client, final boolean hasLogoutService) {
         IDPSSODescriptor idpssoDescriptor = mock(IDPSSODescriptor.class);
         if (hasLogoutService) {
             SingleLogoutService logoutService = new DummySingleLogoutService();
