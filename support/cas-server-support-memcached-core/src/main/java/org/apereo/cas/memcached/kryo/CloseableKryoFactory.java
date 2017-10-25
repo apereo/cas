@@ -70,6 +70,7 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -248,7 +249,9 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
         kryo.register(LinkedHashMap.class);
+        kryo.register(byte[].class);
         kryo.register(LinkedHashSet.class);
+        kryo.register(ByteBuffer.class);
         kryo.register(HashSet.class);
         kryo.register(URL.class, new URLSerializer());
         kryo.register(URI.class, new URISerializer());
