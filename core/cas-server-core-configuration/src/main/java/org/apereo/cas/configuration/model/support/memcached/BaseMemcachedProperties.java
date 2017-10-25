@@ -123,7 +123,7 @@ public class BaseMemcachedProperties implements Serializable {
      * of needing to know the classes to be serialized up front.  See {@code ComponentSerializationPlan} for help here.
      * </p>
      */
-    private boolean kryoRegistrationRequired;
+    private boolean kryoRegistrationRequired = true;
 
     public int getTranscoderCompressionThreshold() {
         return transcoderCompressionThreshold;

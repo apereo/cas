@@ -3839,6 +3839,7 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 # Used to secure authentication requests between the IdP and STS
 # cas.authn.wsfedIdp.sts.crypto.encryption.key=
 # cas.authn.wsfedIdp.sts.crypto.signing.key=
+# cas.authn.wsfedIdp.sts.crypto.enabled=true
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -4505,6 +4506,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Service-Mana
 # cas.serviceRegistry.dynamoDb.crypto.encryption.key=
 # cas.serviceRegistry.dynamoDb.crypto.encryption.keySize=16
 # cas.serviceRegistry.dynamoDb.crypto.alg=AES
+# cas.serviceRegistry.dynamoDb.crypto.enabled=false
 ```
 
 ### MongoDb Service Registry
@@ -4704,6 +4706,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.crypto.encryption.key=
 # cas.ticket.registry.jpa.crypto.encryption.keySize=16
 # cas.ticket.registry.jpa.crypto.alg=AES
+# cas.ticket.registry.jpa.crypto.enabled=false
 ```
 
 ### Couchbase Ticket Registry
@@ -4722,6 +4725,7 @@ To learn more about this topic, [please review this guide](Couchbase-Ticket-Regi
 # cas.ticket.registry.couchbase.crypto.encryption.key=
 # cas.ticket.registry.couchbase.crypto.encryption.keySize=16
 # cas.ticket.registry.couchbase.crypto.alg=AES
+# cas.ticket.registry.couchbase.crypto.enabled=false
 ```
 
 ### Hazelcast Ticket Registry
@@ -4759,6 +4763,7 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 # cas.ticket.registry.hazelcast.crypto.encryption.key=
 # cas.ticket.registry.hazelcast.crypto.encryption.keySize=16
 # cas.ticket.registry.hazelcast.crypto.alg=AES
+# cas.ticket.registry.hazelcast.crypto.enabled=false
 ```
 
 ### Infinispan Ticket Registry
@@ -4774,6 +4779,7 @@ To learn more about this topic, [please review this guide](Infinispan-Ticket-Reg
 # cas.ticket.registry.infinispan.crypto.encryption.key=
 # cas.ticket.registry.infinispan.crypto.encryption.keySize=16
 # cas.ticket.registry.infinispan.crypto.alg=AES
+# cas.ticket.registry.infinispan.crypto.enabled=false
 ```
 
 ### InMemory Ticket Registry
@@ -4794,6 +4800,7 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.inMemory.crypto.encryption.key=
 # cas.ticket.registry.inMemory.crypto.encryption.keySize=16
 # cas.ticket.registry.inMemory.crypto.alg=AES
+# cas.ticket.registry.inMemory.crypto.enabled=false
 ```
 
 ### JMS Ticket Registry
@@ -4859,6 +4866,7 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.crypto.encryption.key=
 # cas.ticket.registry.ehcache.crypto.encryption.keySize=16
 # cas.ticket.registry.ehcache.crypto.alg=AES
+# cas.ticket.registry.ehcache.crypto.enabled=false
 ```
 
 ### Ignite Ticket Registry
@@ -4895,6 +4903,7 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.crypto.encryption.key=
 # cas.ticket.registry.ignite.crypto.encryption.keySize=16
 # cas.ticket.registry.ignite.crypto.alg=AES
+# cas.ticket.registry.ignite.crypto.enabled=false
 ```
 
 ### Memcached Ticket Registry
@@ -4928,6 +4937,7 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.crypto.encryption.key=
 # cas.ticket.registry.memcached.crypto.encryption.keySize=16
 # cas.ticket.registry.memcached.crypto.alg=AES
+# cas.ticket.registry.memcached.crypto.enabled=false
 ```
 
 ### DynamoDb Ticket Registry
@@ -4970,6 +4980,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Ticket-Regis
 # cas.ticket.registry.dynamoDb.crypto.encryption.key=
 # cas.ticket.registry.dynamoDb.crypto.encryption.keySize=16
 # cas.ticket.registry.dynamoDb.crypto.alg=AES
+# cas.ticket.registry.dynamoDb.crypto.enabled=false
 ```
 
 ### MongoDb Ticket Registry
@@ -5000,6 +5011,7 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.crypto.encryption.key=
 # cas.ticket.registry.mongo.crypto.encryption.keySize=16
 # cas.ticket.registry.mongo.crypto.alg=AES
+# cas.ticket.registry.mongo.crypto.enabled=false
 ```
 
 ### Redis Ticket Registry
@@ -5041,6 +5053,7 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 # cas.ticket.registry.redis.crypto.encryption.key=
 # cas.ticket.registry.redis.crypto.encryption.keySize=16
 # cas.ticket.registry.redis.crypto.alg=AES
+# cas.ticket.registry.redis.crypto.enabled=false
 ```
 
 ## Protocol Ticket Security
@@ -5289,6 +5302,8 @@ To learn more about this topic, [see this guide](Webflow-Customization-Sessions.
 #### Spring Webflow Client-Side Session
 
 ```properties
+# cas.webflow.crypto.enabled=true
+
 # cas.webflow.crypto.signing.key=
 # cas.webflow.crypto.signing.keySize=512
 
@@ -5803,6 +5818,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.crypto.encryption.key=
 # cas.authn.pm.reset.crypto.signing.key=
+# cas.authn.pm.reset.crypto.enabled=true
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
