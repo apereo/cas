@@ -84,7 +84,7 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       this.types.push(Type.METADATA);
       this.display.push("Metadata Entity Attributes");
       this.types.push((Type.GROOVY_SAML));
-      this.display.push("Groovy SAML Script")
+      this.display.push("Groovy SAML Script");
     } else if (!this.isSaml && this.types.indexOf(Type.INCOMMON) > -1) {
       this.types.splice(this.types.indexOf(Type.INCOMMON), 1);
       this.display.splice(this.display.indexOf("InCommon"), 1);
