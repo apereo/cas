@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -38,9 +39,14 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final String entityId = getEntityIdAsParameter(service).get();
-        LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
-        return this.webApplicationServiceFactory.createService(entityId);
+        final Optional<String> result = getEntityIdAsParameter(service);
+        if (result.isPresent()) {
+            final String entityId = result.get();
+            LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
+            return this.webApplicationServiceFactory.createService(entityId);
+        }
+        LOGGER.debug("Could not located entity id from service authentication request at [{}]", service.getId());
+        return service;
     }
 
     @Override
@@ -68,16 +74,18 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
                 return Optional.of(param.get().getValue());
             }
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-            final String[] query = request.getQueryString().split("&");
-            final Optional<String> paramRequest = Arrays.stream(query)
-                    .map(p -> {
-                        final String[] params = p.split("=");
-                        return Pair.of(params[0], params[1]);
-                    })
-                    .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-                    .map(Pair::getValue)
-                    .findFirst();
-            return paramRequest;
+            if (request != null && StringUtils.isNotBlank(request.getQueryString())) {
+                final String[] query = request.getQueryString().split("&");
+                final Optional<String> paramRequest = Arrays.stream(query)
+                        .map(p -> {
+                            final String[] params = p.split("=");
+                            return Pair.of(params[0], params[1]);
+                        })
+                        .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                        .map(Pair::getValue)
+                        .findFirst();
+                return paramRequest;
+            }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
