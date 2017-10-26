@@ -35,7 +35,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @deprecated Use {@link #TOKEN_AS_SERVICE_TICKET} instead.
          **/
         @Deprecated
-        TOKEN_AS_RESOPONSE("jwtAsResponse"),
+        TOKEN_AS_RESOPONSE("jwtAsResponse", "true"),
 
         /**
          * Produce a JWT as a response when generating service tickets.
