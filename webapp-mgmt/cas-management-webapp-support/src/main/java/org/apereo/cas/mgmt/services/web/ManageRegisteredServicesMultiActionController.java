@@ -261,7 +261,6 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         formData.setAvailableAttributes(possibleAttributeNames);
         formData.setRegisteredServiceProperties(Arrays.asList(RegisteredServiceProperty.RegisteredServiceProperties.values()));
         return new ResponseEntity<>(formData, HttpStatus.OK);
-
     }
 
     /**

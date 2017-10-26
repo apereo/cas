@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -21,6 +22,7 @@ public interface RegisteredServiceProperty extends Serializable {
     /**
      * Collection of supported properties that control various functionality in CAS.
      */
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum RegisteredServiceProperties {
 
         /**

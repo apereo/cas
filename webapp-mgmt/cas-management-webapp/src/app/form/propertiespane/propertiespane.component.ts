@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, ChangeDetectorRef} from '@angular/core';
 import {Messages} from '../../messages';
-import {Data} from '../data';
+import {Data } from '../data';
 import {DataSource} from '@angular/cdk/table';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -10,6 +10,7 @@ import 'rxjs/add/operator/map';
 import {Util} from '../../util/util';
 import {DefaultRegisteredServiceProperty} from '../../../domain/property';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
+import {FormData} from '../../../domain/service-view-bean';
 
 @Component({
   selector: 'app-propertiespane',
@@ -21,7 +22,9 @@ export class PropertiespaneComponent implements OnInit {
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
   selectedRow: Row;
+  formData: FormData;
 
+  /*
   options: PropertyOption[] = [
     new PropertyOption('wsfed.relyingPartyIdentifier', 'WS-Fed Relying Party Identifier', 'custom-identifier'),
     new PropertyOption('jwtAsResponse', 'JWT As Response', 'true'),
@@ -32,11 +35,13 @@ export class PropertiespaneComponent implements OnInit {
     new PropertyOption('jwtSigningSecret', 'JWT Signing Secret', '<SECRET>'),
     new PropertyOption('jwtEncryptionSecret', 'JWT Encryption Secret', '<SECRET>')
   ];
+  */
 
 
   constructor(public messages: Messages,
               public data: Data,
               private changeRef: ChangeDetectorRef) {
+    this.formData = data.formData;
   }
 
   ngOnInit() {
@@ -71,10 +76,10 @@ export class PropertiespaneComponent implements OnInit {
   }
 
   selection(val: MatAutocompleteSelectedEvent) {
-    const opt: PropertyOption = val.option.value as PropertyOption;
-    this.doChange(this.selectedRow, opt.id)
+    const opt =  val.option.value;
+    this.doChange(this.selectedRow, opt.propertyName)
     if (val) {
-      this.data.service.properties[opt.id].values = [opt.value];
+      this.data.service.properties[opt.propertyName].values = [opt.defaultValue];
     }
   }
 }
@@ -119,6 +124,8 @@ export class AttributeDataSource extends DataSource<any> {
   disconnect() {}
 }
 
+/*
 export class PropertyOption {
   constructor(public id: string, public display: string, public value: string) {}
 }
+*/
