@@ -168,12 +168,16 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         LOGGER.debug("LDAP response: [{}]", response);
 
         if (!passwordPolicyHandlingStrategy.supports(response)) {
+            LOGGER.warn("Authentication has failed because LDAP password policy handling strategy [{}] cannot handle [{}].", response, 
+                    passwordPolicyHandlingStrategy.getClass().getSimpleName());
             throw new FailedLoginException("Invalid credentials");
         }
 
+        LOGGER.debug("Attempting to examine and handle LDAP password policy via [{}]", passwordPolicyHandlingStrategy.getClass().getSimpleName());
+        final List<MessageDescriptor> messageList = passwordPolicyHandlingStrategy.handle(response,
+                (LdapPasswordPolicyConfiguration) getPasswordPolicyConfiguration());
+        
         if (response.getResult()) {
-            final List<MessageDescriptor> messageList = passwordPolicyHandlingStrategy.handle(response, 
-                    (LdapPasswordPolicyConfiguration) getPasswordPolicyConfiguration());
             LOGGER.debug("LDAP response returned a result. Creating the final LDAP principal");
             final Principal principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
             return createHandlerResult(upc, principal, messageList);
