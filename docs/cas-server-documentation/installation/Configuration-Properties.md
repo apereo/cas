@@ -5495,7 +5495,7 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 ```properties
 # cas.rest.attributeName=
 # cas.rest.attributeValue=
-# cas.rest.throttler=neverThrottle
+# cas.rest.throttler=neverThrottle|authenticationThrottle
 ```
 
 ## Metrics

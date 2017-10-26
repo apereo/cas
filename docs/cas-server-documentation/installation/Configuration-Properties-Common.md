@@ -1,14 +1,11 @@
 ---
 layout: default
-title: CAS Properties Overview
+title: CAS Common Properties Overview
 ---
 
 # CAS Common Properties
 
-This document describes a number of suggestions and configuration options that apply
-to and are common amongst a selection of CAS modules and features.
-
-To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
+This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Naming Convention
 
@@ -48,6 +45,19 @@ should support the duration syntax for full clarity on unit of measure:
 
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
+
+## Authentication Throttling
+
+Certain functionality in CAS, such as [OAuth](OAuth-OpenId-Authentication.html) or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more generic authentication throttling functionality applied during the login flow and authentication attempts. To activate throttling functionality for a support module, the following strategies are supported in CAS setting.
+
+The following parameters are passed:
+
+| Value            | Description
+|------------------|-------------------------------------------
+| `neverThrottle`  | Disable throttling for the feature.
+| `authenticationThrottle` | Enable throttling for the feature.
+
+To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
 
 ## Authentication Credential Selection
 
