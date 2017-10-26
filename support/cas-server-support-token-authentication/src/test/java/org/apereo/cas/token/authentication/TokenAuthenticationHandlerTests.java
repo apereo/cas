@@ -23,9 +23,9 @@ import org.apereo.cas.config.TokenAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
-import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.junit.Test;
@@ -108,11 +108,11 @@ public class TokenAuthenticationHandlerTests {
 
             DefaultRegisteredServiceProperty p = new DefaultRegisteredServiceProperty();
             p.addValue(SIGNING_SECRET);
-            svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING, p);
+            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), p);
 
             p = new DefaultRegisteredServiceProperty();
             p.addValue(ENCRYPTION_SECRET);
-            svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION, p);
+            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), p);
 
             final List l = new ArrayList();
             l.add(svc);
