@@ -21,6 +21,7 @@ layout: null
 * [Configuration](#casconfigmgmt)
     *   [Overview](/$version/installation/Configuration-Management.html)
     *   [Configuration Server](/$version/installation/Configuration-Server-Management.html)
+    *   [Common Properties](/$version/installation/Configuration-Properties-Common.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Configuration Security](/$version/installation/Configuration-Properties-Security.html)
     *   [Configuration Metadata](/$version/installation/Configuration-Metadata-Repository.html)

@@ -54,13 +54,12 @@ public class OAuthProperties implements Serializable {
     private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
 
     /**
-     * Name of the authentication throttling bean from cas-server-support-throttle.  Defaults to neverThrottle which
-     * disables throttling.  If cas-server-support-throttle module is added then authenticationThrottle bean will be created.
-     * This default bean authenticationThrottle can be overridden and/or different ThrottleSubmissionHandlerInterceptor
-     * maybe configured for use.
-     *
-     * org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor
-     * org.apereo.cas.web.support.config.CasThrottlingConfiguration#authenticationThrottle()
+     * Name of the oauth throttling bean, assuming authentication throttling is turned on. Acceptable values are:
+     * 
+     * <ul>
+     *     <li><code>neverThrottle</code>: Disable throttling</li>
+     *     <li><code>authenticationThrottle</code>: Enable authentication throttling.</li>
+     * </ul>
      */
     private String throttler = "neverThrottle";
 
