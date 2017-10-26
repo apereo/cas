@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {SamlRegisteredService} from "../../../../domain/saml-service";
-import {Messages} from "../../../messages";
-import {Data} from "../../data";
+import {SamlRegisteredService} from '../../../../domain/saml-service';
+import {Messages} from '../../../messages';
+import {Data} from '../../data';
 
 @Component({
   selector: 'app-nameid',
