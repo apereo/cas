@@ -9,27 +9,27 @@ export abstract class AbstractPrincipalAttributesRepository extends PrincipalAtt
 }
 
 export class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
-  static cName = "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository";
+  static cName = 'org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository';
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj['@class'] === DefaultPrincipalAttributesRepository.cName;
+  }
 
   constructor() {
     super();
-    this["@class"] = DefaultPrincipalAttributesRepository.cName;
-  }
-
-  static instanceOf(obj: any): boolean {
-    return obj["@class"] === DefaultPrincipalAttributesRepository.cName;
+    this['@class'] = DefaultPrincipalAttributesRepository.cName;
   }
 }
 
 export class CachingPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
-  static cName = "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository";
+  static cName = 'org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository';
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj['@class'] === CachingPrincipalAttributesRepository.cName;
+  }
 
   constructor() {
     super();
-    this["@class"] = CachingPrincipalAttributesRepository.cName;
-  }
-
-  static instanceOf(obj: any): boolean {
-    return obj["@class"] === CachingPrincipalAttributesRepository.cName;
+    this['@class'] = CachingPrincipalAttributesRepository.cName;
   }
 }

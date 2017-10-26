@@ -1,7 +1,7 @@
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {DataSource} from "@angular/cdk/collections";
-import {MatPaginator} from "@angular/material";
-import {Observable} from "rxjs/Observable";
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {DataSource} from '@angular/cdk/collections';
+import {MatPaginator} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
@@ -18,7 +18,7 @@ export class Database<T> {
 
   load(items: T[]) {
     this.dataChange.next([]);
-    for(let item of items) {
+    for (const item of items) {
       this.addItem(item);
     }
   }
@@ -51,7 +51,7 @@ export class Datasource<T> extends DataSource<T> {
     ];
 
     return Observable.merge(...displayDataChanges).map(() => {
-      const data = this._domainDatabase.data.slice().filter((value: T) => this.filterFn(value,this.filter));
+      const data = this._domainDatabase.data.slice().filter((value: T) => this.filterFn(value, this.filter));
       const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
       return data.splice(startIndex, this._paginator.pageSize);
     });

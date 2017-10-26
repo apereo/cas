@@ -3,11 +3,11 @@
  */
 import { NgModule } from '@angular/core'
 import { RouterModule } from '@angular/router';
-import {ServicesComponent} from "./services/services.component";
-import {ServicesResolve} from "./services/services.resolover";
-import {DomainsComponent} from "./domains/domains.component";
-import {SearchComponent} from "./search/search.component";
-import {InitComponent} from "./init.component";
+import {ServicesComponent} from './services/services.component';
+import {ServicesResolve} from './services/services.resolover';
+import {DomainsComponent} from './domains/domains.component';
+import {SearchComponent} from './search/search.component';
+import {InitComponent} from './init.component';
 
 @NgModule({
   imports: [

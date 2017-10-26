@@ -1,12 +1,12 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
 
 import { MultiauthpaneComponent } from './multiauthpane.component';
-import {Messages} from "../../messages";
-import {Data} from "../data";
-import {SharedModule} from "../../shared/shared.module";
-import {RegexRegisteredService} from "../../../domain/registered-service";
+import {Messages} from '../../messages';
+import {Data} from '../data';
+import {SharedModule} from '../../shared/shared.module';
+import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('MultiauthpaneComponent', () => {
   let component: MultiauthpaneComponent;
