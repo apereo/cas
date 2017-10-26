@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Data} from "../data";
-import {Messages} from "../../messages";
-import {DefaultRegisteredServiceContact} from "../../../domain/contact";
-import {NgForm} from "@angular/forms";
+import {Data} from '../data';
+import {Messages} from '../../messages';
+import {DefaultRegisteredServiceContact} from '../../../domain/contact';
+import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-contacts',
@@ -30,7 +30,7 @@ export class ContactsComponent implements OnInit {
     this.selectedTab = this.data.service.contacts.length - 1;
     setTimeout(() => {
         this.form.resetForm();
-    },100);
+    }, 100);
   }
 
   deleteContact() {

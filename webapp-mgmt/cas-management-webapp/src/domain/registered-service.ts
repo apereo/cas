@@ -1,19 +1,19 @@
 
-import {DefaultRegisteredServiceAccessStrategy, RegisteredServiceAccessStrategy} from "./access-strategy";
-import {DefaultRegisteredServiceMultifactorPolicy, RegisteredServiceMultifactorPolicy} from "./multifactor";
-import {RefuseRegisteredServiceProxyPolicy, RegisteredServiceProxyPolicy} from "./proxy-policy,ts";
+import {DefaultRegisteredServiceAccessStrategy, RegisteredServiceAccessStrategy} from './access-strategy';
+import {DefaultRegisteredServiceMultifactorPolicy, RegisteredServiceMultifactorPolicy} from './multifactor';
+import {RefuseRegisteredServiceProxyPolicy, RegisteredServiceProxyPolicy} from './proxy-policy,ts';
 import {
   DefaultRegisteredServiceUsernameProvider,
   RegisteredServiceUsernameAttributeProvider
-} from "./attribute-provider";
+} from './attribute-provider';
 import {
-  RegisteredServiceAttributeReleasePolicy, RegisteredServiceConsentPolicy, ReturnAllAttributeReleasePolicy,
+  RegisteredServiceAttributeReleasePolicy,
   ReturnAllowedAttributeReleasePolicy
-} from "./attribute-release";
-import {RegisteredServicePublicKey} from "./public-key";
-import {DefaultRegisteredServiceProperty} from "./property";
-import {RegisteredServiceContact} from "./contact";
-import {RegisteredServiceExpirationPolicy} from "./expiration";
+} from './attribute-release';
+import {RegisteredServicePublicKey} from './public-key';
+import {DefaultRegisteredServiceProperty} from './property';
+import {RegisteredServiceContact} from './contact';
+import {RegisteredServiceExpirationPolicy} from './expiration';
 
 export abstract class RegisteredService {
   serviceId: String;
@@ -54,7 +54,7 @@ export abstract class RegisteredService {
     this.multifactorPolicy = (service && service.multifactorPolicy) || new DefaultRegisteredServiceMultifactorPolicy();
     this.logo = service && service.logo;
     this.logoutUrl = service && service.logoutUrl;
-    this.logoutType = (service && service.logoutType) || "BACK_CHANNEL";
+    this.logoutType = (service && service.logoutType) || 'BACK_CHANNEL';
     this.accessStrategy = (service && service.accessStrategy) || new DefaultRegisteredServiceAccessStrategy();
     this.publicKey = service && service.publicKey;
     this.properties = service && service.properties;
@@ -70,12 +70,14 @@ export abstract class AbstractRegisteredService extends RegisteredService {
 }
 
 export class RegexRegisteredService extends AbstractRegisteredService {
-  static cName = "org.apereo.cas.services.RegexRegisteredService";
+  static cName = 'org.apereo.cas.services.RegexRegisteredService';
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj['@class'] === RegexRegisteredService.cName;
+  }
+
   constructor(service?: RegisteredService) {
     super(service);
-    this["@class"] = RegexRegisteredService.cName;
-  }
-  static instanceOf(obj: any): boolean {
-    return obj && obj["@class"] === RegexRegisteredService.cName;
+    this['@class'] = RegexRegisteredService.cName;
   }
 }

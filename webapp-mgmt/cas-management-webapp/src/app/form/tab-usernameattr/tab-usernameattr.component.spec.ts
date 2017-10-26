@@ -1,14 +1,14 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { TabUsernameattrComponent } from './tab-usernameattr.component';
-import {Data} from "../data";
-import {Messages} from "../../messages";
-import {UidattrsComponent} from "../uidattrs/uidattrs.component";
-import {SharedModule} from "../../shared/shared.module";
+import {Data} from '../data';
+import {Messages} from '../../messages';
+import {UidattrsComponent} from '../uidattrs/uidattrs.component';
+import {SharedModule} from '../../shared/shared.module';
 
 describe('TabUsernameattrComponent', () => {
   let component: TabUsernameattrComponent;
