@@ -1,11 +1,11 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {Messages} from '../../messages';
+import {AbstractRegisteredService} from '../../../domain/registered-service';
 import {
   RefuseRegisteredServiceProxyPolicy,
   RegexMatchingRegisteredServiceProxyPolicy
-} from "../../../domain/proxy-policy,ts";
-import {Data} from "../data";
+} from '../../../domain/proxy-policy,ts';
+import {Data} from '../data';
 
 enum Type {
   REGEX,
@@ -34,7 +34,7 @@ export class ProxyComponent implements OnInit {
   }
 
   changeType() {
-    switch(+this.type) {
+    switch (+this.type) {
       case Type.REFUSE :
         this.data.service.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
         break;

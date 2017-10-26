@@ -1,14 +1,14 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { TabMulitauthComponent } from './tab-mulitauth.component';
-import {MultiauthpaneComponent} from "../multiauthpane/multiauthpane.component";
-import {Data} from "../data";
-import {Messages} from "../../messages";
-import {SharedModule} from "../../shared/shared.module";
+import {MultiauthpaneComponent} from '../multiauthpane/multiauthpane.component';
+import {Data} from '../data';
+import {Messages} from '../../messages';
+import {SharedModule} from '../../shared/shared.module';
 
 describe('TabMulitauthComponent', () => {
   let component: TabMulitauthComponent;

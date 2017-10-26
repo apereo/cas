@@ -1,11 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ServiceItem} from "../../domain/service-view-bean";
-import {MatPaginator, MatSnackBar} from "@angular/material";
-import {Messages} from "../messages";
-import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {Location} from "@angular/common";
-import {SearchService} from "./SearchService";
-import {Database, Datasource} from "../database";
+import {ServiceItem} from '../../domain/service-view-bean';
+import {MatPaginator, MatSnackBar} from '@angular/material';
+import {Messages} from '../messages';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {Location} from '@angular/common';
+import {SearchService} from './SearchService';
+import {Database, Datasource} from '../database';
 
 @Component({
   selector: 'app-search',
@@ -13,7 +13,7 @@ import {Database, Datasource} from "../database";
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
-  displayedColumns = ['name','serviceId','description'];
+  displayedColumns = ['name', 'serviceId', 'description'];
   serviceDatabase: Database<ServiceItem> = new Database<ServiceItem>();
   dataSource: Datasource<ServiceItem> | null;
   query: String;
@@ -35,7 +35,7 @@ export class SearchComponent implements OnInit {
   }
 
   serviceEdit(id: number) {
-    this.router.navigate(['form',id]);
+    this.router.navigate(['form', id]);
   }
 
 }
