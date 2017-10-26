@@ -16,22 +16,22 @@ export abstract class Service {
     });
   }
 
-  post<T>(url: string ,data: any): Promise<T> {
-    return this.http.post(url,JSON.stringify(data), { headers: this.headers()})
+  post<T>(url: string , data: any): Promise<T> {
+    return this.http.post(url, JSON.stringify(data), { headers: this.headers()})
       .toPromise()
-      .then(resp => resp.text().startsWith("{") || resp.text().startsWith("[") ? resp.json() : resp.text())
+      .then(resp => resp.text().startsWith('{') || resp.text().startsWith('[') ? resp.json() : resp.text())
       .catch(this.handleError);
   }
 
   get<T>(url: string): Promise<T> {
     return this.http.get(url)
       .toPromise()
-      .then(resp => resp.text().startsWith("{") || resp.text().startsWith("[") ? resp.json() : resp.text())
+      .then(resp => resp.text().startsWith('{') || resp.text().startsWith('[') ? resp.json() : resp.text())
       .catch(this.handleError);
   }
 
   handleError(e: any): Promise<any> {
-    console.log("An error Occurred: "+e);
+    console.log('An error Occurred: ' + e);
     return Promise.reject(e.message || e);
   }
 }

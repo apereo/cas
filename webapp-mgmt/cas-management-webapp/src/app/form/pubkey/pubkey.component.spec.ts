@@ -1,13 +1,13 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { PubkeyComponent } from './pubkey.component';
-import {Messages} from "../../messages";
-import {SharedModule} from "../../shared/shared.module";
-import {RegexRegisteredService} from "../../../domain/registered-service";
+import {Messages} from '../../messages';
+import {SharedModule} from '../../shared/shared.module';
+import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('PubkeyComponent', () => {
   let component: PubkeyComponent;

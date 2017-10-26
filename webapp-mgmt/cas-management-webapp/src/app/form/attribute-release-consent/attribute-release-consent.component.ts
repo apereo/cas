@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Data} from "../data";
-import {FormData } from "../../../domain/service-view-bean";
-import {Messages} from "../../messages";
-import {DefaultRegisteredServiceConsentPolicy} from "../../../domain/attribute-release";
+import {Data} from '../data';
+import {FormData } from '../../../domain/service-view-bean';
+import {Messages} from '../../messages';
+import {DefaultRegisteredServiceConsentPolicy} from '../../../domain/attribute-release';
 
 @Component({
   selector: 'app-attribute-release-consent',
@@ -22,6 +22,6 @@ export class AttributeReleaseConsentComponent implements OnInit {
 
 
   isEmpty(data: any[]): boolean {
-    return !data || data.length == 0;
+    return !data || data.length === 0;
   }
 }

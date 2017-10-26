@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Messages} from "../../messages";
-import {WSFederationRegisterdService} from "../../../domain/wsed-service";
-import {Data} from "../data";
+import {Messages} from '../../messages';
+import {WSFederationRegisterdService} from '../../../domain/wsed-service';
+import {Data} from '../data';
 
 @Component({
   selector: 'app-wsfedclient',

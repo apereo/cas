@@ -1,24 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {Messages} from "../messages";
-import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
-import {Location} from "@angular/common";
-import {FormService} from "./form.service";
-import {Data} from "./data";
-import {AbstractRegisteredService, RegexRegisteredService} from "../../domain/registered-service";
-import {CachingPrincipalAttributesRepository} from "../../domain/attribute-repo";
+import {Messages} from '../messages';
+import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
+import {Location} from '@angular/common';
+import {FormService} from './form.service';
+import {Data} from './data';
+import {AbstractRegisteredService, RegexRegisteredService} from '../../domain/registered-service';
+import {CachingPrincipalAttributesRepository} from '../../domain/attribute-repo';
 import {
   AnonymousRegisteredServiceUsernameProvider,
   PrincipalAttributeRegisteredServiceUsernameProvider
-} from "../../domain/attribute-provider";
+} from '../../domain/attribute-provider';
 import {
   RegexMatchingRegisteredServiceProxyPolicy
-} from "../../domain/proxy-policy,ts";
-import {OAuthRegisteredService, OidcRegisteredService} from "../../domain/oauth-service";
-import {SamlRegisteredService} from "../../domain/saml-service";
-import {WSFederationRegisterdService} from "../../domain/wsed-service";
-import {MatSnackBar, MatTabGroup} from "@angular/material";
-import {GrouperRegisteredServiceAccessStrategy} from "../../domain/access-strategy";
-import {RegisteredServiceRegexAttributeFilter} from "../../domain/attribute-filter";
+} from '../../domain/proxy-policy,ts';
+import {OAuthRegisteredService, OidcRegisteredService} from '../../domain/oauth-service';
+import {SamlRegisteredService} from '../../domain/saml-service';
+import {WSFederationRegisterdService} from '../../domain/wsed-service';
+import {MatSnackBar, MatTabGroup} from '@angular/material';
+import {GrouperRegisteredServiceAccessStrategy} from '../../domain/access-strategy';
+import {RegisteredServiceRegexAttributeFilter} from '../../domain/attribute-filter';
 
 enum Tabs {
   BASICS,
@@ -67,9 +67,9 @@ export class FormComponent implements OnInit {
       });
   }
 
-  goto(tab:Tabs) {
-    let route: any[] = [{outlets: {form: [this.tabRoute(tab)]}}];
-    this.router.navigate(route,{skipLocationChange: true, relativeTo: this.route} );
+  goto(tab: Tabs) {
+    const route: any[] = [{outlets: {form: [this.tabRoute(tab)]}}];
+    this.router.navigate(route, {skipLocationChange: true, relativeTo: this.route} );
   }
 
   save() {
@@ -109,19 +109,23 @@ export class FormComponent implements OnInit {
   }
 
   tabRoute(tab: Tabs): String {
-    if(tab > 0 && this.isCas()) {
+    if (tab > 0 && this.isCas()) {
       tab++
     }
-    switch(tab) {
+    switch (tab) {
       case Tabs.BASICS :
         return 'basics';
       case Tabs.TYPE :
-        if(this.isSaml())
+        if (this.isSaml()) {
           return 'saml';
-        if(this.isOauth() || this.isOidc())
+        }
+        if (this.isOauth() || this.isOidc()) {
           return 'oauth';
-        if(this.isWsFed())
+        }
+        if (this.isWsFed()) {
           return 'wsfed';
+        }
+        break;
       case Tabs.CONTACTS :
         return 'contacts';
       case Tabs.LOGOUT :
@@ -146,16 +150,14 @@ export class FormComponent implements OnInit {
   }
 
   textareaArrParse(dir, value) {
-    var newValue;
-    if(dir == 'load') {
-      newValue = value ? value.join("\n") : '';
-    }
-    else {
-      if (value != undefined) {
-        newValue = value.split("\n");
-        for (var i = newValue.length-1; i >= 0; i--) {
+    let newValue;
+    if (dir === 'load') {
+      newValue = value ? value.join('\n') : '';
+    } else {
+      if (value !== undefined) {
+        newValue = value.split('\n');
+        for (let i = newValue.length - 1; i >= 0; i--) {
           newValue[i] = newValue[i].trim();
-          if (!newValue[i]) newValue.splice(i, 1);
         }
       } else {
         newValue = [];
@@ -165,11 +167,11 @@ export class FormComponent implements OnInit {
   };
 
   saveForm() {
-    let formErrors: number = -1;
+    let formErrors = -1;
     this.clearErrors();
     formErrors = this.validateForm();
     if (formErrors > -1) {
-      this.snackBar.open(this.messages.services_form_alert_formHasErrors, 'Dismiss',{
+      this.snackBar.open(this.messages.services_form_alert_formHasErrors, 'Dismiss', {
         duration: 5000
       });
       this.tabGroup.selectedIndex = (formErrors > 0 && this.isCas()) ? formErrors - 1 : formErrors;
@@ -182,24 +184,24 @@ export class FormComponent implements OnInit {
   };
 
   clearErrors() {
-    let missing = document.getElementsByClassName('required-missing');
+    const missing = document.getElementsByClassName('required-missing');
     let i = 0;
-    let j = missing.length;
-    for(i = 0; i < j; i++) {
+    const j = missing.length;
+    for (i = 0; i < j; i++) {
       missing.item(0).classList.remove('required-missing');
     }
   }
 
   handleSave(id: number) {
-    let hasIdAssignedAlready = this.data.service.id && this.data.service.id > 0;
+    const hasIdAssignedAlready = this.data.service.id && this.data.service.id > 0;
 
-    if (!hasIdAssignedAlready && id && id != -1) {
+    if (!hasIdAssignedAlready && id && id !== -1) {
       this.data.service.id = id;
-      this.snackBar.open(this.messages.services_form_alert_serviceAdded,"Dismiss", {
+      this.snackBar.open(this.messages.services_form_alert_serviceAdded, 'Dismiss', {
         duration: 5000
       });
     } else {
-      this.snackBar.open(this.messages.services_form_alert_serviceUpdated,"Dismiss", {
+      this.snackBar.open(this.messages.services_form_alert_serviceUpdated, 'Dismiss', {
         duration: 5000
       });
     }
@@ -209,25 +211,26 @@ export class FormComponent implements OnInit {
   }
 
   handleNotSaved(e: any) {
-    this.snackBar.open(this.messages.services_form_alert_unableToSave,'Dismiss', {
+    this.snackBar.open(this.messages.services_form_alert_unableToSave, 'Dismiss', {
       duration: 5000
     });
   }
 
   validateRegex(pattern) {
     try {
-      if (pattern == "")
+      if (pattern === '') {
         return false;
-      let patt = new RegExp(pattern);
+      }
+      const patt = new RegExp(pattern);
       return true;
     } catch (e) {
-      console.log("Failed regex");
+      console.log('Failed regex');
       return false;
     }
   }
 
   validateForm(): Tabs {
-    let data = this.data.service;
+    const data = this.data.service;
 
     // Service Basics
     if (!data.serviceId ||
@@ -238,7 +241,7 @@ export class FormComponent implements OnInit {
     }
 
     if (this.isOauth()) {
-      let oauth: OAuthRegisteredService = data as OAuthRegisteredService;
+      const oauth: OAuthRegisteredService = data as OAuthRegisteredService;
       if (!oauth.clientId ||
           !oauth.clientSecret) {
         return Tabs.TYPE;
@@ -246,7 +249,7 @@ export class FormComponent implements OnInit {
     }
 
     if (this.isOidc()) {
-      let oidc: OidcRegisteredService = data as OidcRegisteredService;
+      const oidc: OidcRegisteredService = data as OidcRegisteredService;
       if (!oidc.clientId ||
           !oidc.clientSecret ||
           !oidc.jwks ||
@@ -257,14 +260,14 @@ export class FormComponent implements OnInit {
     }
 
     if (this.isSaml()) {
-      let saml: SamlRegisteredService = data as SamlRegisteredService;
+      const saml: SamlRegisteredService = data as SamlRegisteredService;
       if (!saml.metadataLocation) {
         return Tabs.TYPE;
       }
     }
 
     if (this.isWsFed()) {
-      let wsfed: WSFederationRegisterdService = data as WSFederationRegisterdService;
+      const wsfed: WSFederationRegisterdService = data as WSFederationRegisterdService;
       if (!wsfed.realm ||
           !wsfed.appliesTo) {
         return Tabs.TYPE;
@@ -272,7 +275,7 @@ export class FormComponent implements OnInit {
     }
 
     if (GrouperRegisteredServiceAccessStrategy.instanceOf(data.accessStrategy)) {
-      let grouper: GrouperRegisteredServiceAccessStrategy = data.accessStrategy as GrouperRegisteredServiceAccessStrategy;
+      const grouper: GrouperRegisteredServiceAccessStrategy = data.accessStrategy as GrouperRegisteredServiceAccessStrategy;
       if (!grouper.groupField) {
         return Tabs.ACCESS_STRATEGY;
       }
@@ -280,7 +283,8 @@ export class FormComponent implements OnInit {
 
     // Username Attribute Provider Options
     if (PrincipalAttributeRegisteredServiceUsernameProvider.instanceOf(data.usernameAttributeProvider)) {
-      let attrProvider: PrincipalAttributeRegisteredServiceUsernameProvider = data.usernameAttributeProvider as PrincipalAttributeRegisteredServiceUsernameProvider;
+      const attrProvider: PrincipalAttributeRegisteredServiceUsernameProvider =
+                          data.usernameAttributeProvider as PrincipalAttributeRegisteredServiceUsernameProvider;
       if (!attrProvider.usernameAttribute) {
         return Tabs.USERNAME_ATTRIBUTE;
       }
@@ -289,7 +293,8 @@ export class FormComponent implements OnInit {
       }
     }
     if (AnonymousRegisteredServiceUsernameProvider.instanceOf(data.usernameAttributeProvider)) {
-      let anonProvider: AnonymousRegisteredServiceUsernameProvider = data.usernameAttributeProvider as AnonymousRegisteredServiceUsernameProvider;
+      const anonProvider: AnonymousRegisteredServiceUsernameProvider =
+                          data.usernameAttributeProvider as AnonymousRegisteredServiceUsernameProvider;
       if (!anonProvider.persistentIdGenerator) {
         return Tabs.USERNAME_ATTRIBUTE;
       }
@@ -297,26 +302,25 @@ export class FormComponent implements OnInit {
 
     // Proxy Policy Options
     if (RegexMatchingRegisteredServiceProxyPolicy.instanceOf(data.proxyPolicy)) {
-      let regPolicy: RegexMatchingRegisteredServiceProxyPolicy = data.proxyPolicy as RegexMatchingRegisteredServiceProxyPolicy;
+      const regPolicy: RegexMatchingRegisteredServiceProxyPolicy = data.proxyPolicy as RegexMatchingRegisteredServiceProxyPolicy;
       if (!regPolicy.pattern || !this.validateRegex(regPolicy.pattern)) {
         return Tabs.PROXY;
       }
     }
 
-
-
     // Principle Attribute Repository Options
     if (CachingPrincipalAttributesRepository.instanceOf(data.attributeReleasePolicy.principalAttributesRepository)) {
-      let cache: CachingPrincipalAttributesRepository = data.attributeReleasePolicy.principalAttributesRepository as CachingPrincipalAttributesRepository;
-      if (!cache.timeUnit){
+      const cache: CachingPrincipalAttributesRepository =
+                   data.attributeReleasePolicy.principalAttributesRepository as CachingPrincipalAttributesRepository;
+      if (!cache.timeUnit) {
         return Tabs.ATTRIBUTE_RELEASE;
       }
-      if (!cache.mergingStrategy){
+      if (!cache.mergingStrategy) {
         return Tabs.ATTRIBUTE_RELEASE;
       }
     }
     if (data.attributeReleasePolicy.attributeFilter != null) {
-      let filter = data.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
+      const filter = data.attributeReleasePolicy.attributeFilter as RegisteredServiceRegexAttributeFilter;
       if (!this.validateRegex(filter.pattern)) {
         return Tabs.ATTRIBUTE_RELEASE;
       }
@@ -329,7 +333,7 @@ export class FormComponent implements OnInit {
     }
 
     if (data.contacts) {
-      for (let contact of data.contacts) {
+      for (const contact of data.contacts) {
         if (!contact.name || !contact.email) {
           return Tabs.CONTACTS;
         }
