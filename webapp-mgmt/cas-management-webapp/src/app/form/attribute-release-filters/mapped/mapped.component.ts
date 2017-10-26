@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {RegisteredServiceMappedRegexAttributeFilter} from "../../../../domain/attribute-filter";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {DataSource} from "@angular/cdk/collections";
-import {Observable} from "rxjs/Observable";
-import {Data} from "../../data";
-import {Messages} from "../../../messages";
+import {RegisteredServiceMappedRegexAttributeFilter} from '../../../../domain/attribute-filter';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {DataSource} from '@angular/cdk/collections';
+import {Observable} from 'rxjs/Observable';
+import {Data} from '../../data';
+import {Messages} from '../../../messages';
 
 @Component({
   selector: 'app-mapped',
@@ -12,12 +12,12 @@ import {Messages} from "../../../messages";
   styleUrls: ['./mapped.component.css']
 })
 export class MappedComponent implements OnInit {
-    displayedColumns = ['source', 'mapped', "delete"];
+    displayedColumns = ['source', 'mapped', 'delete'];
     attributeDatabase = new AttributeDatabase();
     dataSource: AttributeDataSource | null;
     formData;
 
-    @Input("filter")
+    @Input('filter')
     filter: RegisteredServiceMappedRegexAttributeFilter;
 
   constructor(public messages: Messages,
@@ -28,18 +28,18 @@ export class MappedComponent implements OnInit {
   ngOnInit() {
       this.dataSource = new AttributeDataSource(this.attributeDatabase);
       if (this.filter.patterns) {
-          for (let p of Array.from(Object.keys(this.filter.patterns))) {
+          for (const p of Array.from(Object.keys(this.filter.patterns))) {
               this.attributeDatabase.addRow(new Row(p));
           }
       }
   }
 
     addRow() {
-        this.attributeDatabase.addRow(new Row(""));
+        this.attributeDatabase.addRow(new Row(''));
     }
 
     doChange(row: Row, val: string) {
-        console.log(row.key +" : " + val);
+        console.log(row.key + ' : ' + val);
         this.filter.patterns[val] = this.filter.patterns[row.key as string];
         delete this.filter.patterns[row.key as string];
         row.key = val;
@@ -75,7 +75,7 @@ export class AttributeDatabase {
 
     removeRow(row: Row) {
         const copiedData = this.data.slice();
-        copiedData.splice(copiedData.indexOf(row),1);
+        copiedData.splice(copiedData.indexOf(row), 1);
         this.dataChange.next(copiedData);
     }
 }

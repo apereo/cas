@@ -1,10 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttributeReleaseChecksComponent } from './attribute-release-checks.component';
-import {SharedModule} from "../../shared/shared.module";
-import {FormsModule} from "@angular/forms";
-import {Messages} from "../../messages";
-import {RegexRegisteredService} from "../../../domain/registered-service";
+import {SharedModule} from '../../shared/shared.module';
+import {FormsModule} from '@angular/forms';
+import {Messages} from '../../messages';
+import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('AttributeReleaseChecksComponent', () => {
   let component: AttributeReleaseChecksComponent;

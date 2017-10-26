@@ -1,14 +1,14 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { TabPropertiesComponent } from './tab-properties.component';
-import {PropertiespaneComponent} from "../propertiespane/propertiespane.component";
-import {Messages} from "../../messages";
-import {Data} from "../data";
-import {SharedModule} from "../../shared/shared.module";
+import {PropertiespaneComponent} from '../propertiespane/propertiespane.component';
+import {Messages} from '../../messages';
+import {Data} from '../data';
+import {SharedModule} from '../../shared/shared.module';
 
 describe('TabPropertiesComponent', () => {
   let component: TabPropertiesComponent;

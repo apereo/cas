@@ -1,7 +1,7 @@
 
-import {Service} from "../service";
-import {Injectable} from "@angular/core";
-import {Http} from "@angular/http";
+import {Service} from '../service';
+import {Injectable} from '@angular/core';
+import {Http} from '@angular/http';
 
 @Injectable()
 export class HeaderService extends Service {
@@ -11,6 +11,6 @@ export class HeaderService extends Service {
   }
 
   getMangerType(): Promise<String> {
-    return this.get("managerType");
+    return this.get('managerType');
   }
 }

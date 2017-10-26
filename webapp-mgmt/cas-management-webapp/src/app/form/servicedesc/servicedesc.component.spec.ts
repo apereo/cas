@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
 
 import { ServicedescComponent } from './servicedesc.component';
-import {Messages} from "../../messages";
-import {SharedModule} from "../../shared/shared.module";
-import {RegexRegisteredService} from "../../../domain/registered-service";
+import {Messages} from '../../messages';
+import {SharedModule} from '../../shared/shared.module';
+import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('ServicedescComponent', () => {
   let component: ServicedescComponent;

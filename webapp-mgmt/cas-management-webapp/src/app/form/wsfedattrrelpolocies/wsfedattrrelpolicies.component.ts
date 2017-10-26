@@ -1,17 +1,17 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormData} from "../../../domain/service-view-bean";
-import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {Data} from "../data";
-import {DataSource} from "@angular/cdk/table";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Observable} from "rxjs/Observable";
+import {FormData} from '../../../domain/service-view-bean';
+import {Messages} from '../../messages';
+import {AbstractRegisteredService} from '../../../domain/registered-service';
+import {Data} from '../data';
+import {DataSource} from '@angular/cdk/table';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
-import {WSFederationRegisterdService} from "../../../domain/wsed-service";
-import {WsFederationClaimsReleasePolicy} from "../../../domain/attribute-release";
-import {Util} from "../../util/util";
+import {WSFederationRegisterdService} from '../../../domain/wsed-service';
+import {WsFederationClaimsReleasePolicy} from '../../../domain/attribute-release';
+import {Util} from '../../util/util';
 
 
 @Component({
@@ -25,7 +25,7 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
   selectOptions;
   wsFedOnly: boolean;
 
-  displayedColumns = ['source','mapped'];
+  displayedColumns = ['source', 'mapped'];
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
 
@@ -37,8 +37,8 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
   }
 
   ngOnInit() {
-    let attrPolicy: WsFederationClaimsReleasePolicy = this.data.service.attributeReleasePolicy as WsFederationClaimsReleasePolicy;
-    if(Util.isEmpty(attrPolicy.allowedAttributes)) {
+    const attrPolicy: WsFederationClaimsReleasePolicy = this.data.service.attributeReleasePolicy as WsFederationClaimsReleasePolicy;
+    if (Util.isEmpty(attrPolicy.allowedAttributes)) {
       attrPolicy.allowedAttributes = new Map();
     }
 
@@ -46,7 +46,7 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
       attrPolicy.allowedAttributes[k as string] = k;
     });
 
-    for(let key of Array.from(Object.keys(attrPolicy.allowedAttributes))) {
+    for (const key of Array.from(Object.keys(attrPolicy.allowedAttributes))) {
       this.attributeDatabase.addRow(new Row(key as string));
     };
 
@@ -54,7 +54,7 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
   }
 
   isEmpty(data: any[]): boolean {
-    return !data || data.length == 0;
+    return !data || data.length === 0;
   }
 
 }

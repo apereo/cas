@@ -1,7 +1,7 @@
-import {Injectable} from "@angular/core";
-import {Service} from "../service";
-import {Http} from "@angular/http";
-import {ServiceItem} from "../../domain/service-view-bean";
+import {Injectable} from '@angular/core';
+import {Service} from '../service';
+import {Http} from '@angular/http';
+import {ServiceItem} from '../../domain/service-view-bean';
 
 @Injectable()
 export class SearchService extends Service {
@@ -11,6 +11,6 @@ export class SearchService extends Service {
   }
 
   search(query: String): Promise<ServiceItem[]> {
-    return this.get("search?query="+query);
+    return this.get('search?query=' + query);
   }
 }

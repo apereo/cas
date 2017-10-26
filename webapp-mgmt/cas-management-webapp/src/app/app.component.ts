@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Messages} from "./messages";
+import {Messages} from './messages';
 
 @Component({
   selector: 'app-root',

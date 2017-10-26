@@ -5,9 +5,15 @@ export abstract class RegisteredServicePublicKey {
 }
 
 export class RegisteredServicePublicKeyImpl extends RegisteredServicePublicKey {
+  static cName = 'org.apereo.cas.services.RegisteredServicePublicKeyImpl';
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj['@class'] === RegisteredServicePublicKeyImpl.cName;
+  }
+
   constructor() {
     super();
-    this.algorithm = "RSA";
-    this["@class"] = "org.apereo.cas.services.RegisteredServicePublicKeyImpl";
+    this.algorithm = 'RSA';
+    this['@class'] = RegisteredServicePublicKeyImpl.cName;
   }
 }
