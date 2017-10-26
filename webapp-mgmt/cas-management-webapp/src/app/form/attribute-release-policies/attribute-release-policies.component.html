@@ -101,6 +101,19 @@
 
 </div>
 
+<div *ngIf="type == TYPE.RESTFUL">
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.attrRelease.policies.restful"
+           [placeholder]="messages.services_form_label_attrRelease_policies_restful"
+           [(ngModel)]="data.service.attributeReleasePolicy.endpoint">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.attrRelease.policies.restful"
+            [matTooltip]="messages.services_form_tooltip_attrRelease_policies_restful">help
+  </mat-icon>
+</div>
+
 <div *ngIf="type == TYPE.GROOVY_SAML">
   <mat-form-field class="textInput">
     <input matInput
