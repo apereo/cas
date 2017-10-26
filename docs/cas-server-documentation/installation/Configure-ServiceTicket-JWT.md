@@ -56,7 +56,7 @@ Signal the relevant application in CAS service registry to produce JWTs for serv
   "id" : 10,
   "properties" : {
     "@class" : "java.util.HashMap",
-    "jwtAsResponse" : {
+    "jwtAsServiceTicket" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "true" ] ]
     }
