@@ -1,7 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {Data} from "../data";
+import {Messages} from '../../messages';
+import {AbstractRegisteredService} from '../../../domain/registered-service';
+import {Data} from '../data';
 
 @Component({
   selector: 'app-logouttypeeval',
@@ -10,7 +10,7 @@ import {Data} from "../data";
 export class LogouttypeevalComponent implements OnInit {
 
   selectOptions;
-  logoutType = ["NONE","BACK_CHANNEL","FRONT_CHANNEL"];
+  logoutType = ['NONE', 'BACK_CHANNEL', 'FRONT_CHANNEL'];
 
   constructor(public messages: Messages,
               public data: Data) {

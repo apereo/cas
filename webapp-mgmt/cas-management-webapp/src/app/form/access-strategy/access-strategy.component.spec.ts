@@ -1,16 +1,16 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { AccessStrategyComponent } from './access-strategy.component';
-import {RejectedattributesComponent} from "../rejectedattributes/rejectedattributes.component";
-import {Messages} from "../../messages";
-import {FormData} from "../../../domain/service-view-bean";
-import {Data} from "../data";
-import {SharedModule} from "../../shared/shared.module";
-import {RegexRegisteredService} from "../../../domain/registered-service";
+import {RejectedattributesComponent} from '../rejectedattributes/rejectedattributes.component';
+import {Messages} from '../../messages';
+import {FormData} from '../../../domain/service-view-bean';
+import {Data} from '../data';
+import {SharedModule} from '../../shared/shared.module';
+import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('AccessStrategyComponent', () => {
   let component: AccessStrategyComponent;

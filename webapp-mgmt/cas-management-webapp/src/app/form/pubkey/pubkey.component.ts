@@ -1,8 +1,8 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
-import {RegisteredServicePublicKeyImpl} from "../../../domain/public-key";
-import {Data} from "../data";
+import {Messages} from '../../messages';
+import {AbstractRegisteredService} from '../../../domain/registered-service';
+import {RegisteredServicePublicKeyImpl} from '../../../domain/public-key';
+import {Data} from '../data';
 
 @Component({
   selector: 'app-pubkey',

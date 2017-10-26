@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
-import {TabBase} from "../tab-base";
+import {TabBaseComponent} from '../tab-base';
 
 @Component({
   selector: 'app-tab-properties',
   templateUrl: './tab-properties.component.html'
 })
-export class TabPropertiesComponent extends TabBase {}
+export class TabPropertiesComponent extends TabBaseComponent {}

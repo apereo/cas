@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {GrouperRegisteredServiceAccessStrategy} from "../../../../domain/access-strategy";
-import {Messages} from "../../../messages";
-import {Data} from "../../data";
+import {GrouperRegisteredServiceAccessStrategy} from '../../../../domain/access-strategy';
+import {Messages} from '../../../messages';
+import {Data} from '../../data';
 
 @Component({
   selector: 'app-grouper',
@@ -10,7 +10,7 @@ import {Data} from "../../data";
 })
 export class GrouperComponent implements OnInit {
 
-  groupFields = ["NAME","DISPLAY_NAME","EXTENSION","DISPLAY_EXTENSION"];
+  groupFields = ['NAME', 'DISPLAY_NAME', 'EXTENSION', 'DISPLAY_EXTENSION'];
 
   accessStrategy: GrouperRegisteredServiceAccessStrategy;
   constructor(public messages: Messages,
