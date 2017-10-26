@@ -1,6 +1,5 @@
 package org.apereo.cas.tokens;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,12 +9,9 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.DefaultServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * This is {@link JWTServiceTicketResourceEntityResponseFactory}.
@@ -52,17 +48,9 @@ public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServic
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final Map.Entry<String, RegisteredServiceProperty> property = registeredService.getProperties()
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().equalsIgnoreCase(TokenConstants.PROPERTY_NAME_TOKEN_AS_RESPONSE)
-                        && BooleanUtils.toBoolean(entry.getValue().getValue()))
-                .distinct()
-                .findFirst()
-                .orElse(null);
-
+        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESOPONSE.isAssignedTo(registeredService);
         
-        if (property == null) {
+        if (!tokenAsResponse) {
             LOGGER.debug("Service [{}] does not require JWTs as tickets", service);
             return super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         }
