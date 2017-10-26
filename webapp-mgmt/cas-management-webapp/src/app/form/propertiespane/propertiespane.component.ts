@@ -30,7 +30,7 @@ export class PropertiespaneComponent implements OnInit {
     new PropertyOption('jwtEncryptionSecretAlg','JWT Encryption Secret Alg','dir'),
     new PropertyOption('jwtSigningSecretAlg','JWT Signing Secret Alg', 'HS256'),
     new PropertyOption('jwtSigningSecret','JWT Signing Secret','<SECRET>'),
-    new PropertyOption('jwtEncryptionSecret','JWT Encrption Secret','<SECRET>')
+    new PropertyOption('jwtEncryptionSecret','JWT Encryption Secret','<SECRET>')
   ];
 
 
