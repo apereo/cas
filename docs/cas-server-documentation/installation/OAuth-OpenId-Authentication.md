@@ -196,15 +196,11 @@ public class MyOAuthConfiguration {
 
 [See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
-## Configuring Throttling for OAuth
+## Throttling
 
-Authentication throttling maybe enabled for `/oauth2.0/accessToken` by including `cas-server-support-throttle` and configuring name of the `ThrottledSubmissionHandlerInterceptor` bean in the oauth properties.  Default property configuration is `neverThrottle`.  Update properties
- to use the `authenticationThrottle` bean or another bean which you have defined.  The default throttling `authenticationThrottle` bean 
- may also be defined in cas overlay project.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
-    
-[See this guide](Configuring-Authentication-Throttling.md) to learn about CAS Authentication Throttling.
+Authentication throttling maybe enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to (turn on authentication 
+throttling)(Configuring-Authentication-Throttling.md) support. Once support is, OAuth throttling may be taught to CAS via settings. To see the relevant list of 
+CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
 ## Server Configuration
 
