@@ -7,8 +7,14 @@ export abstract class RegisteredServiceMultifactorPolicy {
 }
 
 export class DefaultRegisteredServiceMultifactorPolicy extends RegisteredServiceMultifactorPolicy {
+  static cName = 'org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy';
+
+  static instanceOf(obj: any): boolean {
+    return obj && obj['@class'] === DefaultRegisteredServiceMultifactorPolicy.cName;
+  }
+
   constructor() {
     super();
-    this["@class"] = "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy";
+    this['@class'] = DefaultRegisteredServiceMultifactorPolicy.cName;
   }
 }

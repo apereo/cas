@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Messages} from "../../messages";
-import {Data} from "../data";
+import {Messages} from '../../messages';
+import {Data} from '../data';
 
 @Component({
   selector: 'app-expiration',
