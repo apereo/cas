@@ -9,7 +9,8 @@ import {
   PatternMatchingEntityIdAttributeReleasePolicy,
   ReturnAllAttributeReleasePolicy,
   ReturnAllowedAttributeReleasePolicy,
-  ReturnMappedAttributeReleasePolicy, ScriptedRegisteredServiceAttributeReleasePolicy
+  ReturnMappedAttributeReleasePolicy, ReturnRestfulAttributeReleasePolicy,
+  ScriptedRegisteredServiceAttributeReleasePolicy
 } from "../../../domain/attribute-release";
 import {Data} from "../data";
 import {SamlRegisteredService} from "../../../domain/saml-service";
@@ -24,6 +25,7 @@ enum Type {
   INCOMMON,
   MATCHING,
   METADATA,
+  RESTFUL,
   GROOVY_SAML
 }
 
@@ -37,8 +39,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
   selectOptions;
   type: Type;
   TYPE = Type;
-  types = [Type.SCRIPT,Type.GROOVY,Type.RETURN_ALL,Type.DENY_ALL,Type.RETURN_ALLOWED,Type.RETURN_MAPPED];
-  display = ["Script Engine", "Groovy Script", "Return All", "Deny All","Return Allowed","Return Mapped"];
+  types = [Type.SCRIPT,Type.GROOVY,Type.RETURN_ALL,Type.DENY_ALL,Type.RETURN_ALLOWED,Type.RETURN_MAPPED,Type.RESTFUL];
+  display = ["Script Engine", "Groovy Script", "Return All", "Deny All","Return Allowed","Return Mapped","Return Restful"];
   isSaml: boolean;
 
   constructor(public messages: Messages,
@@ -70,6 +72,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       this.type = Type.MATCHING;
     } else if (MetadataEntityAttributesAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.METADATA;
+    } else if (ReturnRestfulAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
+      this.type = Type.RESTFUL;
     } else if (GroovySamlRegisteredServiceAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.GROOVY_SAML;
     }
@@ -132,6 +136,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       case Type.METADATA :
         this.data.service.attributeReleasePolicy = new MetadataEntityAttributesAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
+      case Type.RESTFUL :
+        this.data.service.attributeReleasePolicy = new ReturnRestfulAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
       case Type.GROOVY_SAML :
         this.data.service.attributeReleasePolicy = new GroovySamlRegisteredServiceAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
