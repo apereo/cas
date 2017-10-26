@@ -1,8 +1,8 @@
 import {Component, OnInit, Output, EventEmitter} from '@angular/core';
-import { Router } from "@angular/router";
-import {Messages} from "../messages";
-import {ControlsService} from "./controls.service";
-import {Location} from "@angular/common";
+import { Router } from '@angular/router';
+import {Messages} from '../messages';
+import {ControlsService} from './controls.service';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-controls',
@@ -20,12 +20,12 @@ export class ControlsComponent implements OnInit {
   constructor(public messages: Messages,
               public service: ControlsService,
               private router: Router,
-              public location: Location){
+              public location: Location) {
 
   }
 
   ngOnInit() {
-    this.showEdit = this.router.url.includes("form");
+    this.showEdit = this.router.url.includes('form');
   }
 
   goBack() {

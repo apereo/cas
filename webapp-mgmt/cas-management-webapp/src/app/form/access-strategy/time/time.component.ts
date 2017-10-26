@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {TimeBasedRegisteredServiceAccessStrategy} from "../../../../domain/access-strategy";
-import {Messages} from "../../../messages";
-import {Data} from "../../data";
+import {TimeBasedRegisteredServiceAccessStrategy} from '../../../../domain/access-strategy';
+import {Messages} from '../../../messages';
+import {Data} from '../../data';
 
 @Component({
   selector: 'app-time',

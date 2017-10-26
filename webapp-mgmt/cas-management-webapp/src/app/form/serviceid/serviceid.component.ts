@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Messages} from "../../messages";
-import {Data} from "../data";
-import {SamlRegisteredService} from "../../../domain/saml-service";
-import {OAuthRegisteredService, OidcRegisteredService} from "../../../domain/oauth-service";
-import {WSFederationRegisterdService} from "../../../domain/wsed-service";
+import {Messages} from '../../messages';
+import {Data} from '../data';
+import {SamlRegisteredService} from '../../../domain/saml-service';
+import {OAuthRegisteredService, OidcRegisteredService} from '../../../domain/oauth-service';
+import {WSFederationRegisterdService} from '../../../domain/wsed-service';
 
 @Component({
   selector: 'app-serviceid',

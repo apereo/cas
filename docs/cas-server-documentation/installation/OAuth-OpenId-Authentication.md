@@ -196,6 +196,12 @@ public class MyOAuthConfiguration {
 
 [See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
+## Throttling
+
+Authentication throttling maybe enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to (turn on authentication 
+throttling)(Configuring-Authentication-Throttling.md) support. Once support is, OAuth throttling may be taught to CAS via settings. To see the relevant list of 
+CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
