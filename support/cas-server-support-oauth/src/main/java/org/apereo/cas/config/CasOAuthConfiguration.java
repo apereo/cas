@@ -12,6 +12,7 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
@@ -69,6 +70,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -79,6 +81,8 @@ import org.pac4j.core.http.UrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -87,15 +91,20 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -110,6 +119,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasOAuthConfiguration.class);
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -219,8 +229,47 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
-                requiresAuthenticationAuthorizeInterceptor(), accessTokenGrantRequestExtractors());
+        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
+        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(
+                requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor(), accessTokenGrantRequestExtractors());
+
+        if ("neverThrottle".equalsIgnoreCase(throttler)) {
+            LOGGER.debug("Authentication throttling is disabled for OAuth");
+            return oAuth20HandlerInterceptorAdapter;
+        }
+        return getHandlerInterceptorForThrottling(oAuth20HandlerInterceptorAdapter);
+    }
+
+    private HandlerInterceptorAdapter getHandlerInterceptorForThrottling(final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter) {
+        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
+        LOGGER.debug("Locating authentication throttler instance [{}] for OAuth", throttler);
+        final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
+        
+        final String throttledUrl = OAuth20Constants.BASE_OAUTH20_URL.concat("/")
+                .concat(OAuth20Constants.ACCESS_TOKEN_URL + "|" + OAuth20Constants.TOKEN_URL);
+        final Pattern pattern = RegexUtils.createPattern(throttledUrl);
+        LOGGER.debug("Authentication throttler instance for OAuth shall intercept the URL pattern [{}]", pattern.pattern());
+
+        final HandlerInterceptorAdapter throttledInterceptorAdapter = new HandlerInterceptorAdapter() {
+            @Override
+            public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+                if (RegexUtils.matches(pattern, request.getServletPath()) && !throttledInterceptor.preHandle(request, response, handler)) {
+                    LOGGER.trace("OAuth authentication throttler prevented the request at [{}]", request.getServletPath());
+                    return false;
+                }
+                return oAuth20HandlerInterceptorAdapter.preHandle(request, response, handler);
+            }
+
+            @Override
+            public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
+                                   final ModelAndView modelAndView) throws Exception {
+                if (RegexUtils.matches(pattern, request.getServletPath())) {
+                    LOGGER.trace("OAuth authentication throttler post-processing the request at [{}]", request.getServletPath());
+                    throttledInterceptor.postHandle(request, response, handler, modelAndView);
+                }
+            }
+        };
+        return throttledInterceptorAdapter;
     }
 
     @Override
@@ -348,7 +397,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 new AccessTokenClientCredentialsGrantRequestExtractor(servicesManager, ticketRegistry,
                         oauthCasAuthenticationBuilder(), centralAuthenticationService,
                         casProperties.getAuthn().getOauth());
-        
+
         return CollectionUtils.wrapList(authzCodeExt, refreshTokenExt, pswExt, credsExt);
     }
 

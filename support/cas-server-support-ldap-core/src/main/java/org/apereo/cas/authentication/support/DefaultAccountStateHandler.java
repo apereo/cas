@@ -84,9 +84,9 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
 
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
-                                          final LdapPasswordPolicyConfiguration configuration)
-            throws LoginException {
+                                          final LdapPasswordPolicyConfiguration configuration) throws LoginException {
 
+        LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && response.getResult()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");
             handlePolicyAttributes(response);
@@ -122,7 +122,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages)
             throws LoginException {
 
-        LOGGER.debug("Handling error [{}]", error);
+        LOGGER.debug("Handling LDAP account state error [{}]", error);
         final LoginException ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
@@ -148,7 +148,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages) {
 
 
-        LOGGER.debug("Handling warning [{}]", warning);
+        LOGGER.debug("Handling account state warning [{}]", warning);
         if (warning == null) {
             LOGGER.debug("Account state warning not defined");
             return;

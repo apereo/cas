@@ -92,15 +92,15 @@ public class LdapAuthenticationConfiguration {
                             CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
-                    LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
+                    LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
                     final Authenticator authenticator = LdapUtils.newLdaptiveAuthenticator(l);
                     LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
                             multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
-                    LOGGER.debug("Creating ldap password policy handling strategy for [{}]", l.getLdapUrl());
+                    LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", l.getLdapUrl());
                     final LdapPasswordPolicyHandlingStrategy strategy = createLdapPasswordPolicyHandlingStrategy(l);
 
-                    LOGGER.debug("Creating ldap authentication handler for [{}]", l.getLdapUrl());
+                    LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(l.getName(),
                             servicesManager, ldapPrincipalFactory(), l.getOrder(), authenticator, strategy);
                     handler.setCollectDnAttribute(l.isCollectDnAttribute());
@@ -124,10 +124,10 @@ public class LdapAuthenticationConfiguration {
                     }
 
                     if (StringUtils.isBlank(l.getPrincipalAttributeId())) {
-                        LOGGER.debug("No principal id attribute is found for ldap authentication via [{}]", l.getLdapUrl());
+                        LOGGER.debug("No principal id attribute is found for LDAP authentication via [{}]", l.getLdapUrl());
                     } else {
                         handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
-                        LOGGER.debug("Using principal id attribute [{}] for ldap authentication via [{}]", l.getPrincipalAttributeId(),
+                        LOGGER.debug("Using principal id attribute [{}] for LDAP authentication via [{}]", l.getPrincipalAttributeId(),
                                 l.getLdapUrl());
                     }
 
@@ -140,7 +140,7 @@ public class LdapAuthenticationConfiguration {
                     final Map<String, Collection<String>> attributes = CollectionUtils.wrap(multiMapAttributes);
                     handler.setPrincipalAttributeMap(attributes);
 
-                    LOGGER.debug("Initializing ldap authentication handler for [{}]", l.getLdapUrl());
+                    LOGGER.debug("Initializing LDAP authentication handler for [{}]", l.getLdapUrl());
                     handler.initialize();
                     handlers.add(handler);
                 });
@@ -155,7 +155,7 @@ public class LdapAuthenticationConfiguration {
                 return false;
             }
             if (StringUtils.isBlank(l.getLdapUrl())) {
-                LOGGER.warn("Skipping LDAP authentication entry since no ldap url is defined");
+                LOGGER.warn("Skipping LDAP authentication entry since no LDAP url is defined");
                 return false;
             }
             return true;
@@ -164,17 +164,17 @@ public class LdapAuthenticationConfiguration {
 
     private LdapPasswordPolicyHandlingStrategy createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Creating LDAP password policy handling strategy based on blacklisted authentication result codes");
+            LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
         }
         
         final Resource location = l.getPasswordPolicy().getGroovy().getLocation();
         if (l.getPasswordPolicy().getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
-            LOGGER.debug("Creating LDAP password policy handling strategy based on Groovy script [{}]", location);
+            LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
             return new GroovyLdapPasswordPolicyHandlingStrategy(location);
         }
 
-        LOGGER.debug("Creating default LDAP password policy handling strategy");
+        LOGGER.debug("Created default LDAP password policy handling strategy");
         return new DefaultLdapPasswordPolicyHandlingStrategy();
     }
 

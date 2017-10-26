@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
@@ -81,7 +82,6 @@ public final class Beans {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-    
 
 
     /**
@@ -126,7 +126,17 @@ public final class Beans {
     public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
                                                                  final boolean forceIfBlankKeys,
                                                                  final String registryName) {
-        if (registry.isEnabled() || forceIfBlankKeys) {
+
+        boolean enabled = registry.isEnabled();
+        if (!enabled && (StringUtils.isNotBlank(registry.getEncryption().getKey())) && StringUtils.isNotBlank(registry.getSigning().getKey())) {
+            LOGGER.warn("Ticket registry encryption/signing for [{}] is not enabled explicitly in the configuration, yet signing/encryption keys "
+                    + "are defined for ticket operations. CAS will proceed to enable the ticket registry encryption/signing functionality. "
+                    + "If you intend to turn off this behavior, consider removing/disabling the signing/encryption keys defined in settings", registryName);
+            enabled = true;
+        }
+
+        if (enabled || forceIfBlankKeys) {
+            LOGGER.debug("Ticket registry encryption/signing is enabled for [{}]", registryName);
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),
                     registry.getSigning().getKey(),

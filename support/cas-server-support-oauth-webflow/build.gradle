@@ -1,12 +1,25 @@
 
 description = "Apereo CAS OAuth Webflow Support"
 dependencies {
+    api project(":api:cas-server-core-api-webflow")
+    
     implementation project(":core:cas-server-core-webflow")
     implementation project(":support:cas-server-support-oauth")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")
-    api project(":api:cas-server-core-api-webflow")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-services")
     implementation project(":support:cas-server-support-oauth-services")
+
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-tickets")
+
 }

@@ -2,8 +2,8 @@
  * Created by tschmidt on 2/13/17.
  */
 import {Http} from '@angular/http'
-import {Injectable} from "@angular/core";
-import {Service} from "../service";
+import {Injectable} from '@angular/core';
+import {Service} from '../service';
 
 @Injectable()
 export class DomainService extends Service {
@@ -13,7 +13,7 @@ export class DomainService extends Service {
   }
 
   getDomains(): Promise<String[]> {
-    return this.get<String[]>("domainList");
+    return this.get<String[]>('domainList');
   }
 
  }

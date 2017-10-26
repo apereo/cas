@@ -1,7 +1,7 @@
-import {Component, OnInit} from "@angular/core";
-import {Router} from "@angular/router";
-import {Messages} from "./messages";
-import {HeaderService} from "./header/header.service";
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {Messages} from './messages';
+import {HeaderService} from './header/header.service';
 
 @Component({
   selector: 'app-init',

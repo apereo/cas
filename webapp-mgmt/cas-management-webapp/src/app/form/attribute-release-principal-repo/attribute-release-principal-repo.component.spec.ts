@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttributeReleasePrincipalRepoComponent } from './attribute-release-principal-repo.component';
-import {SharedModule} from "../../shared/shared.module";
-import {FormsModule} from "@angular/forms";
-import {Messages} from "../../messages";
-import {FormData} from "../../../domain/service-view-bean";
-import {RegexRegisteredService} from "../../../domain/registered-service";
+import {SharedModule} from '../../shared/shared.module';
+import {FormsModule} from '@angular/forms';
+import {Messages} from '../../messages';
+import {FormData} from '../../../domain/service-view-bean';
+import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('AttributeReleasePrincipalRepoComponent', () => {
   let component: AttributeReleasePrincipalRepoComponent;

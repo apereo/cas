@@ -1,14 +1,14 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {DataSource} from "@angular/cdk/table";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Observable} from "rxjs/Observable";
+import {DataSource} from '@angular/cdk/table';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
-import {Data} from "../data";
-import {FormData} from "../../../domain/service-view-bean";
-import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {Data} from '../data';
+import {FormData} from '../../../domain/service-view-bean';
+import {Messages} from '../../messages';
+import {AbstractRegisteredService} from '../../../domain/registered-service';
 
 @Component({
   selector: 'app-mappedattributes',
@@ -17,7 +17,7 @@ import {AbstractRegisteredService} from "../../../domain/registered-service";
 })
 export class MappedattributesComponent implements OnInit {
   formData: FormData;
-  displayedColumns = ['source','mapped'];
+  displayedColumns = ['source', 'mapped'];
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
 
@@ -32,7 +32,7 @@ export class MappedattributesComponent implements OnInit {
   }
 
   ngOnInit() {
-    for(let key of Array.from(Object.keys(this.attributes))) {
+    for (const key of Array.from(Object.keys(this.attributes))) {
       this.attributeDatabase.addRow(new Row(key as string));
     };
 

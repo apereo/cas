@@ -1,18 +1,21 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {FormData } from "../../../domain/service-view-bean";
-import {Messages} from "../../messages";
-import {AbstractRegisteredService} from "../../../domain/registered-service";
+import {Component, OnInit} from '@angular/core';
+import {FormData } from '../../../domain/service-view-bean';
+import {Messages} from '../../messages';
 import {
-  DenyAllAttributeReleasePolicy, GroovySamlRegisteredServiceAttributeReleasePolicy, GroovyScriptAttributeReleasePolicy,
+  DenyAllAttributeReleasePolicy,
+  GroovySamlRegisteredServiceAttributeReleasePolicy,
+  GroovyScriptAttributeReleasePolicy,
   InCommonRSAttributeReleasePolicy,
   MetadataEntityAttributesAttributeReleasePolicy,
   PatternMatchingEntityIdAttributeReleasePolicy,
   ReturnAllAttributeReleasePolicy,
   ReturnAllowedAttributeReleasePolicy,
-  ReturnMappedAttributeReleasePolicy, ScriptedRegisteredServiceAttributeReleasePolicy
-} from "../../../domain/attribute-release";
-import {Data} from "../data";
-import {SamlRegisteredService} from "../../../domain/saml-service";
+  ReturnMappedAttributeReleasePolicy,
+  ReturnRestfulAttributeReleasePolicy,
+  ScriptedRegisteredServiceAttributeReleasePolicy
+} from '../../../domain/attribute-release';
+import {Data} from '../data';
+import {SamlRegisteredService} from '../../../domain/saml-service';
 
 enum Type {
   RETURN_ALL,
@@ -24,6 +27,7 @@ enum Type {
   INCOMMON,
   MATCHING,
   METADATA,
+  RESTFUL,
   GROOVY_SAML
 }
 
@@ -37,8 +41,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
   selectOptions;
   type: Type;
   TYPE = Type;
-  types = [Type.SCRIPT,Type.GROOVY,Type.RETURN_ALL,Type.DENY_ALL,Type.RETURN_ALLOWED,Type.RETURN_MAPPED];
-  display = ["Script Engine", "Groovy Script", "Return All", "Deny All","Return Allowed","Return Mapped"];
+  types = [Type.SCRIPT, Type.GROOVY, Type.RETURN_ALL, Type.DENY_ALL, Type.RETURN_ALLOWED, Type.RETURN_MAPPED, Type.RESTFUL];
+  display = ['Script Engine', 'Groovy Script', 'Return All', 'Deny All', 'Return Allowed', 'Return Mapped', 'Return Restful'];
   isSaml: boolean;
 
   constructor(public messages: Messages,
@@ -53,7 +57,7 @@ export class AttributeReleasePoliciesComponent implements OnInit {
     } else if (DenyAllAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.DENY_ALL;
     } else if (ReturnMappedAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
-      let mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
+      const mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
       this.formData.availableAttributes.forEach((item: any) => {
         mapped.allowedAttributes[item] = mapped.allowedAttributes[item] || [item];
       });
@@ -70,6 +74,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       this.type = Type.MATCHING;
     } else if (MetadataEntityAttributesAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.METADATA;
+    } else if (ReturnRestfulAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
+      this.type = Type.RESTFUL;
     } else if (GroovySamlRegisteredServiceAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.GROOVY_SAML;
     }
@@ -78,36 +84,36 @@ export class AttributeReleasePoliciesComponent implements OnInit {
 
     if (this.isSaml && this.types.indexOf(Type.INCOMMON) < 0) {
       this.types.push(Type.INCOMMON);
-      this.display.push("InCommon");
+      this.display.push('InCommon');
       this.types.push(Type.MATCHING);
-      this.display.push("Matching");
+      this.display.push('Matching');
       this.types.push(Type.METADATA);
-      this.display.push("Metadata Entity Attributes");
+      this.display.push('Metadata Entity Attributes');
       this.types.push((Type.GROOVY_SAML));
-      this.display.push("Groovy SAML Script");
+      this.display.push('Groovy SAML Script');
     } else if (!this.isSaml && this.types.indexOf(Type.INCOMMON) > -1) {
       this.types.splice(this.types.indexOf(Type.INCOMMON), 1);
-      this.display.splice(this.display.indexOf("InCommon"), 1);
+      this.display.splice(this.display.indexOf('InCommon'), 1);
       this.types.splice(this.types.indexOf(Type.MATCHING), 1);
-      this.display.splice(this.display.indexOf("Matching"), 1);
+      this.display.splice(this.display.indexOf('Matching'), 1);
       this.types.splice(this.types.indexOf(Type.METADATA), 1);
-      this.display.splice(this.display.indexOf("Metadata Entity Attributes"), 1);
+      this.display.splice(this.display.indexOf('Metadata Entity Attributes'), 1);
       this.types.splice(this.types.indexOf(Type.GROOVY_SAML), 1);
-      this.display.splice(this.display.indexOf("Groovy SAML Script"), 1);
+      this.display.splice(this.display.indexOf('Groovy SAML Script'), 1);
     }
   }
 
   changeType() {
-    switch(+this.type) {
+    switch (+this.type) {
       case Type.RETURN_ALL:
-        console.log("Changed to return all");
+        console.log('Changed to return all');
         this.data.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.DENY_ALL :
         this.data.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.RETURN_MAPPED :
-        let mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
+        const mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
         mapped.allowedAttributes = new Map();
         this.formData.availableAttributes.forEach((item: any) => {
           mapped.allowedAttributes[item] = [item];
@@ -118,7 +124,8 @@ export class AttributeReleasePoliciesComponent implements OnInit {
         this.data.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.SCRIPT :
-        this.data.service.attributeReleasePolicy = new ScriptedRegisteredServiceAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new ScriptedRegisteredServiceAttributeReleasePolicy(
+          this.data.service.attributeReleasePolicy);
         break;
       case Type.GROOVY :
         this.data.service.attributeReleasePolicy = new GroovyScriptAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
@@ -127,19 +134,25 @@ export class AttributeReleasePoliciesComponent implements OnInit {
         this.data.service.attributeReleasePolicy = new InCommonRSAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.MATCHING :
-        this.data.service.attributeReleasePolicy = new PatternMatchingEntityIdAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new PatternMatchingEntityIdAttributeReleasePolicy(
+          this.data.service.attributeReleasePolicy);
         break;
       case Type.METADATA :
-        this.data.service.attributeReleasePolicy = new MetadataEntityAttributesAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new MetadataEntityAttributesAttributeReleasePolicy(
+          this.data.service.attributeReleasePolicy);
+        break;
+      case Type.RESTFUL :
+        this.data.service.attributeReleasePolicy = new ReturnRestfulAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.GROOVY_SAML :
-        this.data.service.attributeReleasePolicy = new GroovySamlRegisteredServiceAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new GroovySamlRegisteredServiceAttributeReleasePolicy(
+          this.data.service.attributeReleasePolicy);
         break;
     }
   }
 
   isEmpty(data: any[]): boolean {
-    return !data || data.length == 0;
+    return !data || data.length === 0;
   }
 
 }

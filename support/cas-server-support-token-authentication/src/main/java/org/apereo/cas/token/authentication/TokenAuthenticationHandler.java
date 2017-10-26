@@ -17,7 +17,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.token.TokenConstants;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
@@ -63,15 +62,19 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         final String signingSecret = getRegisteredServiceJwtSigningSecret(service);
         final String encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
-        final String serviceSigningAlg = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING_ALG);
+        final String serviceSigningAlg = getRegisteredServiceJwtProperty(service,
+                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
         final String signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
 
-        final String encryptionAlg = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_ALG);
+        final String encryptionAlg = getRegisteredServiceJwtProperty(service,
+                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
         final String encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
 
-        final String encryptionMethod = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD);
+        final String encryptionMethod = getRegisteredServiceJwtProperty(service,
+                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
         final String encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
-        final String secretIsBase64String = getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED);
+        final String secretIsBase64String = getRegisteredServiceJwtProperty(service,
+                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
         final boolean secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
 
         if (StringUtils.isNotBlank(signingSecret)) {
@@ -112,7 +115,8 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             return a;
         }
         LOGGER.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
-                service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
+                service.getServiceId(),
+                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName());
         return null;
     }
 
@@ -127,7 +131,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @return the registered service jwt secret
      */
     private String getRegisteredServiceJwtEncryptionSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
+        return getRegisteredServiceJwtProperty(service, RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION);
     }
 
     /**
@@ -137,7 +141,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @return the registered service jwt secret
      */
     private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtProperty(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
+        return getRegisteredServiceJwtProperty(service, RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING);
     }
 
     /**
@@ -147,26 +151,20 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param propName the prop name
      * @return the registered service jwt secret
      */
-    protected String getRegisteredServiceJwtProperty(final RegisteredService service, final String propName) {
+    protected String getRegisteredServiceJwtProperty(final RegisteredService service, final RegisteredServiceProperty.RegisteredServiceProperties propName) {
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        if (service.getProperties().containsKey(propName)) {
-            final RegisteredServiceProperty propSigning = service.getProperties().get(propName);
-            final String tokenSigningSecret = propSigning.getValue();
-            if (StringUtils.isNotBlank(tokenSigningSecret)) {
-                LOGGER.debug("Found the secret value [{}] for service [{}]", propName, service.getServiceId());
-                return tokenSigningSecret;
-            }
+        if (propName.isAssignedTo(service)) {
+            return propName.getPropertyValue(service).getValue();
         }
-        LOGGER.warn("Service [{}] does not define a property [{}] in the registry",
-                service.getServiceId(), propName);
+        LOGGER.warn("Service [{}] does not define a property [{}] in the registry", service.getServiceId(), propName);
         return null;
     }
 
     /**
-     * Convert secret to bytes honoring {@link TokenConstants#PROPERTY_NAME_TOKEN_SECRETS_ARE_BASE64_ENCODED}
+     * Convert secret to bytes honoring {@link RegisteredServiceProperty.RegisteredServiceProperties#TOKEN_SECRETS_ARE_BASE64_ENCODED}
      * config parameter.
      *
      * @param secret                - String to be represented to byte[]
