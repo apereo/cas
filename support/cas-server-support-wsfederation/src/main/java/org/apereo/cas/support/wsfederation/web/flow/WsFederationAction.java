@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
@@ -238,9 +239,9 @@ public class WsFederationAction extends AbstractAction {
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-
-            if (registeredService.getProperties().containsKey("wsfed.relyingPartyIdentifier")) {
-                relyingPartyIdentifier = registeredService.getProperties().get("wsfed.relyingPartyIdentifier").getValue();
+            if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
+                relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties
+                        .WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
             }
         }
         LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
