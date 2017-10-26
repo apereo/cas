@@ -1,6 +1,5 @@
 package org.apereo.cas.token.authentication.principal;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -9,7 +8,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.TokenTicketBuilder;
 
 import java.util.Map;
@@ -37,21 +35,14 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
                                                   final Map<String, String> parameters) {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final Map.Entry<String, RegisteredServiceProperty> property = registeredService.getProperties()
-                .entrySet().stream()
-                .filter(entry -> entry.getKey().equalsIgnoreCase(TokenConstants.PROPERTY_NAME_TOKEN_AS_RESPONSE)
-                        && BooleanUtils.toBoolean(entry.getValue().getValue()))
-                .distinct()
-                .findFirst()
-                .orElse(null);
+        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESOPONSE.isAssignedTo(registeredService);
 
-        if (property == null) {
+        if (!tokenAsResponse) {
             return super.buildInternal(service, parameters);
         }
 
         final String jwt = generateToken(service, parameters);
-        final TokenWebApplicationService jwtService =
-                new TokenWebApplicationService(service.getId(), service.getOriginalUrl(), service.getArtifactId());
+        final TokenWebApplicationService jwtService = new TokenWebApplicationService(service.getId(), service.getOriginalUrl(), service.getArtifactId());
         jwtService.setFormat(service.getFormat());
         jwtService.setLoggedOutAlready(service.isLoggedOutAlready());
         parameters.put(CasProtocolConstants.PARAMETER_TICKET, jwt);
