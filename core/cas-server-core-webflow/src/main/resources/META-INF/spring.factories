@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration,\
+  org.apereo.cas.web.flow.config.CasWebflowContextConfiguration

@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
