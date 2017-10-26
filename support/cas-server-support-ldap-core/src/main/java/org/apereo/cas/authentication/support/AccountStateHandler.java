@@ -25,6 +25,5 @@ public interface AccountStateHandler {
      *
      * @throws LoginException When account state causes authentication failure.
      */
-    List<MessageDescriptor> handle(AuthenticationResponse response, LdapPasswordPolicyConfiguration configuration)
-            throws LoginException;
+    List<MessageDescriptor> handle(AuthenticationResponse response, LdapPasswordPolicyConfiguration configuration) throws LoginException;
 }

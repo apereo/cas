@@ -2,6 +2,8 @@ package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.ldaptive.auth.AuthenticationResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface LdapPasswordPolicyHandlingStrategy {
+    Logger LOGGER = LoggerFactory.getLogger(LdapPasswordPolicyHandlingStrategy.class);
 
     /**
      * Handle.
@@ -33,6 +36,10 @@ public interface LdapPasswordPolicyHandlingStrategy {
      * @return true /false
      */
     default boolean supports(final AuthenticationResponse response) {
-        return response != null;
+        if (response != null) {
+            LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", getClass().getSimpleName());
+            return true;
+        }
+        return false;
     }
 }
