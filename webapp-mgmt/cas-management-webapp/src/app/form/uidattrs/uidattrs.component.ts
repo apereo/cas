@@ -22,15 +22,12 @@ enum Type {
 export class UidattrsComponent implements OnInit {
 
   formData: FormData;
-  selectOptions;
   type: Type;
   TYPE = Type;
-  canonicalizations = ['NONE', 'UPPER', 'LOWER'];
 
   constructor(public messages: Messages,
               public data: Data) {
     this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {

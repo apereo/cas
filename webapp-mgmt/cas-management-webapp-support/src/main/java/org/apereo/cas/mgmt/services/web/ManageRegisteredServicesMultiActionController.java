@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.mgmt.authentication.CasUserProfile;
 import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
 import org.apereo.cas.mgmt.services.web.beans.FormData;
@@ -259,7 +260,6 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             Collections.sort(possibleAttributeNames);
         }
         formData.setAvailableAttributes(possibleAttributeNames);
-        formData.setRegisteredServiceProperties(Arrays.asList(RegisteredServiceProperty.RegisteredServiceProperties.values()));
         return new ResponseEntity<>(formData, HttpStatus.OK);
     }
 

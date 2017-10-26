@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -15,6 +16,34 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
 
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+    enum Providers {
+        MFA_DUO("mfa-duo", "Duo Security"),
+        MFA_AUTHY("mfa-authy","Authy Authenticator"),
+        MFA_YUBIKEY("mfa-yubikey","YubiKey"),
+        MFA_RADIUS("mfa-radius","RSA/RADIUS"),
+        MFA_WIKID("mfa-wikid","WiKID"),
+        MFA_GAUTH("mfa-gauth","Google Authenitcator"),
+        MFA_AZURE("mfa-azure","Microsoft Azure"),
+        MFA_U2F("mfa-u2f","FIDO U2F"),
+        MFA_SWIVEL("mfa-swivel","Swivel Secure");
+
+        private final String value;
+        private final String display;
+
+        Providers(final String value, final String display) {
+            this.value = value;
+            this.display = display;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+    }
     /**
      * The enum Failure modes.
      */

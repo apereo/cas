@@ -20,15 +20,10 @@ enum Type {
 })
 export class ServicetypeComponent implements OnInit {
 
-  selectOptions;
   type: Type;
-  TYPE = Type;
-  types = [Type.CAS, Type.OAUTH, Type.OIDC, Type.SAML, Type.WS_Fed];
-  display = ['CAS Client', 'OAuth2 Client', 'OpenID Connect Client', 'SAML2 Service Provider', 'WS Federation'];
 
   constructor(public messages: Messages,
-              private data: Data) {
-    this.selectOptions = data.selectOptions;
+              public data: Data) {
   }
 
   ngOnInit() {

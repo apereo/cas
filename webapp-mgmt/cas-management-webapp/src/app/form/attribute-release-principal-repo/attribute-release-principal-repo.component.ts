@@ -22,8 +22,6 @@ export class AttributeReleasePrincipalRepoComponent implements OnInit {
   formData: FormData;
   type: Type;
   TYPE = Type;
-  timeUnits = ['MILLISECONDS', 'SECONDS', 'MINUTES', 'HOURS', 'DAYS'];
-  mergeStrategies = ['NONE', 'ADD', 'MULTIVALUED', 'REPLACE'];
 
   constructor(public messages: Messages,
               public data: Data) {

@@ -25,7 +25,6 @@ describe('AttributeReleasePoliciesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleasePoliciesComponent);
     component = fixture.componentInstance;
-    component.selectOptions = new Data().selectOptions;
     component.formData = new FormData();
     fixture.detectChanges();
   });

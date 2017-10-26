@@ -4,7 +4,7 @@
            i18n-placeholder="services.form.label.multiauth.providers"
            [placeholder]="messages.services_form_label_multiauth_providers"
            [(ngModel)]="data.service.multifactorPolicy.multifactorAuthenticationProviders">
-      <mat-option *ngFor="let opt of providers" [value]="opt.key">
+      <mat-option *ngFor="let opt of formData.mfaProviders" [value]="opt.key">
         {{ opt.value }}
       </mat-option>
     </mat-select>
@@ -20,7 +20,7 @@
     <mat-select i18n-placeholder="services.form.label.multiauth.failuremode"
                 [placeholder]="messages.services_form_label_multiauth_failuremode"
                 [(ngModel)]="data.service.multifactorPolicy.failureMode">
-      <mat-option *ngFor="let opt of failureModes" [value]="opt">
+      <mat-option *ngFor="let opt of formData.mfaFailureModes" [value]="opt">
         {{ opt }}
       </mat-option>
     </mat-select>

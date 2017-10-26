@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -37,6 +38,34 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
          */
         FRONT_CHANNEL
     }
+
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+    enum ServiceType {
+        CAS_CLIENT("CAS Client", "cas"),
+        OAUTH2_CLIENT("OAuth2 Client","oauth"),
+        SAML2_SERVICE_PROVIDER("SAML2 Service Provider","saml"),
+        OIDC_CLIENT("OpenID Connect Client", "oidc"),
+        WS_FEDERATION("WS Federation", "wsfed");
+
+        private final String display;
+
+        private final String value;
+
+        ServiceType(final String display, final String value) {
+            this.display = display;
+            this.value = value;
+        }
+
+        public String getDisplay() {
+            return this.display;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+    }
+
+
     
     /**
      * Initial ID value of newly created (but not persisted) registered service.

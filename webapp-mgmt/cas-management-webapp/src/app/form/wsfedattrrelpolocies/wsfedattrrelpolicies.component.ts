@@ -22,7 +22,6 @@ import {Util} from '../../util/util';
 export class WsfedattrrelpoliciesComponent implements OnInit {
 
   formData: FormData;
-  selectOptions;
   wsFedOnly: boolean;
 
   displayedColumns = ['source', 'mapped'];
@@ -33,7 +32,6 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
   constructor(public messages: Messages,
               public data: Data) {
     this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {

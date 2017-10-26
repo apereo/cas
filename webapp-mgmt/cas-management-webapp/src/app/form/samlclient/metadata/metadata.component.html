@@ -82,7 +82,7 @@
     <mat-select i18n-placeholder="services.form.label.saml.metadata.role"
                 [placeholder]="messages.services_form_label_saml_metadata_role"
                 [(ngModel)]="service.metadataCriteriaRoles">
-      <mat-option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
+      <mat-option *ngFor="let opt of data.formData.samlRoles" [value]="opt.value">
         {{ opt.name}}
       </mat-option>
     </mat-select>

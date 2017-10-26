@@ -10,12 +10,10 @@ import {Data} from '../data';
 })
 export class WsfedclientComponent implements OnInit {
 
-  selectOptions;
   service: WSFederationRegisterdService;
 
   constructor(public messages: Messages,
               public data: Data) {
-    this.selectOptions = data.selectOptions;
     this.service = data.service as WSFederationRegisterdService;
   }
 

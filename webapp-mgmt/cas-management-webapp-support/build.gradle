@@ -25,6 +25,7 @@ dependencies {
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-grouper")
     implementation project(":support:cas-server-support-surrogate-api")
+    implementation project(":support:cas-server-support-ws-idp-api")
     
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

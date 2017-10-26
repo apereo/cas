@@ -24,20 +24,6 @@ export class PropertiespaneComponent implements OnInit {
   selectedRow: Row;
   formData: FormData;
 
-  /*
-  options: PropertyOption[] = [
-    new PropertyOption('wsfed.relyingPartyIdentifier', 'WS-Fed Relying Party Identifier', 'custom-identifier'),
-    new PropertyOption('jwtAsResponse', 'JWT As Response', 'true'),
-    new PropertyOption('jwtSecretsAreBase64Encoded', 'JWT Secrets Base 64 Encoded', 'false'),
-    new PropertyOption('jwtEncryptionSecretMethod', 'JWT Encryption Secret Method', 'A192CBC-HS384'),
-    new PropertyOption('jwtEncryptionSecretAlg', 'JWT Encryption Secret Alg', 'dir'),
-    new PropertyOption('jwtSigningSecretAlg', 'JWT Signing Secret Alg', 'HS256'),
-    new PropertyOption('jwtSigningSecret', 'JWT Signing Secret', '<SECRET>'),
-    new PropertyOption('jwtEncryptionSecret', 'JWT Encryption Secret', '<SECRET>')
-  ];
-  */
-
-
   constructor(public messages: Messages,
               public data: Data,
               private changeRef: ChangeDetectorRef) {
