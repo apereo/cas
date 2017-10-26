@@ -26,62 +26,69 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * using when delegating authentication to ADFS to indicate the relying party identifier.
          */
-        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier"),
+        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", ""),
         /**
          * Produce a JWT as a response when generating service tickets.
          * @deprecated Use {@link #TOKEN_AS_SERVICE_TICKET} instead.
          **/
         @Deprecated
-        TOKEN_AS_RESOPONSE("jwtAsResponse"),
+        TOKEN_AS_RESOPONSE("jwtAsResponse", "true"),
 
         /**
          * Produce a JWT as a response when generating service tickets.
          **/
-        TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket"),
+        TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false"),
 
         /**
          * Produce a JWT as a response when generating ticket-granting tickets.
          **/
-        TOKEN_AS_TICKET_GRANTING_TICKET("jwtAsTicketGrantingTicket"),
+        TOKEN_AS_TICKET_GRANTING_TICKET("jwtAsTicketGrantingTicket", "false"),
         
         /**
          * Jwt signing secret defined for a given service.
          **/
-        TOKEN_SECRET_SIGNING("jwtSigningSecret"),
+        TOKEN_SECRET_SIGNING("jwtSigningSecret", ""),
 
         /**
          * Jwt signing secret alg defined for a given service.
          **/
-        TOKEN_SECRET_SIGNING_ALG("jwtSigningSecretAlg"),
+        TOKEN_SECRET_SIGNING_ALG("jwtSigningSecretAlg", "HS256"),
 
         /**
          * Jwt encryption secret defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret"),
+        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", ""),
 
         /**
          * Jwt encryption secret alg defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg"),
+        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg", ""),
 
         /**
          * Jwt encryption secret method defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION_METHOD("jwtEncryptionSecretMethod"),
+        TOKEN_SECRET_ENCRYPTION_METHOD("jwtEncryptionSecretMethod", "A192CBC-HS384"),
 
         /**
          * Secrets are Base64 encoded.
          **/
-        TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded");
+        TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded", "false");
 
         private final String propertyName;
 
-        RegisteredServiceProperties(final String name) {
+        private final String defaultValue;
+
+        RegisteredServiceProperties(final String name, final String defaultValue) {
             this.propertyName = name;
+            this.defaultValue = defaultValue;
         }
 
         public String getPropertyName() {
             return propertyName;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
         }
 
         public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {

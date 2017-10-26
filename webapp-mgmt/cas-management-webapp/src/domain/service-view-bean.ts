@@ -1,6 +1,8 @@
 /**
  * Created by tschmidt on 2/13/17.
  */
+import {RegisteredServiceProperty} from './property';
+
 export class ServiceItem {
   evalOrder: number;
   assignedId: String;
@@ -11,5 +13,6 @@ export class ServiceItem {
 
 export class FormData {
   availableAttributes: String[] = [];
+  registeredServiceProperties: RegisteredServiceProperty[]
 }
 

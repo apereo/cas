@@ -10,6 +10,7 @@ import org.apereo.cas.mgmt.services.web.beans.FormData;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceItem;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -257,7 +259,9 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             Collections.sort(possibleAttributeNames);
         }
         formData.setAvailableAttributes(possibleAttributeNames);
+        formData.setRegisteredServiceProperties(Arrays.asList(RegisteredServiceProperty.RegisteredServiceProperties.values()));
         return new ResponseEntity<>(formData, HttpStatus.OK);
+
     }
 
     /**
