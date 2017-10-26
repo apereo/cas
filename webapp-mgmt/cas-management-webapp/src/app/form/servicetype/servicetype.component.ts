@@ -1,10 +1,10 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {Messages} from "../../messages";
-import {AbstractRegisteredService, RegexRegisteredService, RegisteredService} from "../../../domain/registered-service";
-import {OAuthRegisteredService, OidcRegisteredService} from "../../../domain/oauth-service";
-import {SamlRegisteredService} from "../../../domain/saml-service";
-import {WSFederationRegisterdService} from "../../../domain/wsed-service";
-import {Data} from "../data";
+import {Messages} from '../../messages';
+import {AbstractRegisteredService, RegexRegisteredService, RegisteredService} from '../../../domain/registered-service';
+import {OAuthRegisteredService, OidcRegisteredService} from '../../../domain/oauth-service';
+import {SamlRegisteredService} from '../../../domain/saml-service';
+import {WSFederationRegisterdService} from '../../../domain/wsed-service';
+import {Data} from '../data';
 
 enum Type {
   CAS,
@@ -23,8 +23,8 @@ export class ServicetypeComponent implements OnInit {
   selectOptions;
   type: Type;
   TYPE = Type;
-  types = [Type.CAS,Type.OAUTH,Type.OIDC,Type.SAML,Type.WS_Fed];
-  display = ["CAS Client","OAuth2 Client","OpenID Connect Client","SAML2 Service Provider","WS Federation"];
+  types = [Type.CAS, Type.OAUTH, Type.OIDC, Type.SAML, Type.WS_Fed];
+  display = ['CAS Client', 'OAuth2 Client', 'OpenID Connect Client', 'SAML2 Service Provider', 'WS Federation'];
 
   constructor(public messages: Messages,
               private data: Data) {
@@ -46,7 +46,7 @@ export class ServicetypeComponent implements OnInit {
   }
 
   changeType() {
-    switch(+this.type) {
+    switch (+this.type) {
       case Type.CAS :
         this.data.service = new RegexRegisteredService(this.data.service);
         break;

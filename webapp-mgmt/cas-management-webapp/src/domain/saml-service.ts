@@ -1,7 +1,8 @@
-
-import {RegexRegisteredService, RegisteredService} from "./registered-service";
+import {RegexRegisteredService, RegisteredService} from './registered-service';
 
 export class SamlRegisteredService extends RegexRegisteredService {
+  static cName = 'org.apereo.cas.support.saml.services.SamlRegisteredService';
+
   metadataLocation: String;
   metadataMaxValidity: number;
   requiredAuthenticationContextClass: String;
@@ -26,24 +27,19 @@ export class SamlRegisteredService extends RegexRegisteredService {
   skipGeneratingSubjectConfirmationRecipient: boolean;
   skipGeneratingSubjectConfirmationNotBefore: boolean;
 
-
-  static cName = "org.apereo.cas.support.saml.services.SamlRegisteredService";
+  static instanceOf(obj: any): boolean {
+    return obj && obj['@class'] === SamlRegisteredService.cName;
+  }
 
   constructor(service?: RegisteredService) {
     super(service);
-    this.metadataExpirationDuration = "PT60M";
-    this.metadataCriteriaRoles = "SPSSODescriptor";
+    this.metadataExpirationDuration = 'PT60M';
+    this.metadataCriteriaRoles = 'SPSSODescriptor';
     this.signResponses = true;
-    this.signingCredentialType = "BASIC";
+    this.signingCredentialType = 'BASIC';
     this.metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
     this.metadataCriteriaRemoveRolelessEntityDescriptors = true;
     this.skipGeneratingSubjectConfirmationNotBefore = true;
-    this["@class"] = SamlRegisteredService.cName;
+    this['@class'] = SamlRegisteredService.cName;
   }
-
-  static instanceOf(service: RegisteredService): boolean {
-    return SamlRegisteredService.cName == service["@class"];
-  }
-
-
 }
