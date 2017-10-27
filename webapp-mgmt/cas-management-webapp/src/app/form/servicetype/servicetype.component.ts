@@ -7,11 +7,11 @@ import {WSFederationRegisterdService} from '../../../domain/wsed-service';
 import {Data} from '../data';
 
 enum Type {
-  CAS = "cas",
-  OAUTH = "oath",
-  SAML = "saml",
-  OIDC = "oidc",
-  WS_FED = "wsfed"
+  CAS = 'cas',
+  OAUTH = 'oath',
+  SAML = 'saml',
+  OIDC = 'oidc',
+  WS_FED = 'wsfed'
 }
 
 @Component({
@@ -29,13 +29,13 @@ export class ServicetypeComponent implements OnInit {
 
   ngOnInit() {
     if (OAuthRegisteredService.instanceOf(this.data.service)) {
-      this.type = Type.OAUTH
+      this.type = Type.OAUTH;
     } else if (WSFederationRegisterdService.instanceOf(this.data.service)) {
-      this.type = Type.WS_FED
+      this.type = Type.WS_FED;
     } else if (OidcRegisteredService.instanceOf(this.data.service)) {
-      this.type = Type.OIDC
+      this.type = Type.OIDC;
     } else if (SamlRegisteredService.instanceOf(this.data.service)) {
-      this.type = Type.SAML
+      this.type = Type.SAML;
     } else {
       this.type = Type.CAS;
     }
