@@ -90,7 +90,9 @@ the core CAS codebase as well as for deployers; it's straightforward to customiz
 CAS and Spring API extension points. General knowledge of Spring is beneficial to understanding the interplay among
 some framework components, but it's not strictly required. 
 
+### Spring Boot
+
 CAS is also heavily based on [Spring Boot](http://projects.spring.io/spring-boot/), which allows it to take an opinionated view of 
 the Spring platform and third-party libraries to create a stand-alone web application without the hassle of XML configuration as much as possible.
-Spring Boot allows CAS to hide much of internal complexity of its components and their configuration and instead provides auto-configuration modules that simply 
-and automatically configure the running application context without much server interference. 
+Spring Boot allows CAS to hide much of the internal complexity of its components and their configuration and instead provides auto-configuration modules that simply 
+and automatically configure the running application context without much manual interference. 
