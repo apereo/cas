@@ -5818,6 +5818,9 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.emailAttribute=mail
 # cas.authn.pm.reset.securityQuestionsEnabled=true
 
+# Automatically log in after successful password change
+# cas.authn.pm.autoLogin=false
+
 # Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.crypto.encryption.key=
 # cas.authn.pm.reset.crypto.signing.key=
