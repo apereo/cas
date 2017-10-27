@@ -10,7 +10,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.saml.services.SamlProperties;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
-import org.ietf.jgss.Oid;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -105,7 +104,7 @@ public class FormData implements Serializable {
         return OidcProperties.EncryptAlgOptions.values();
     }
 
-    public OidcSubjectTypes[]  getOidcSubjectTypes() {
+    public OidcSubjectTypes[] getOidcSubjectTypes() {
         return OidcSubjectTypes.values();
     }
 

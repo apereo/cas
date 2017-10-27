@@ -16,17 +16,47 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
 
+    /**
+     * A list of options to present to the client for available MFA Providers.
+     */
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum Providers {
+        /**
+         * For mfa-duo.
+         */
         MFA_DUO("mfa-duo", "Duo Security"),
-        MFA_AUTHY("mfa-authy","Authy Authenticator"),
-        MFA_YUBIKEY("mfa-yubikey","YubiKey"),
-        MFA_RADIUS("mfa-radius","RSA/RADIUS"),
-        MFA_WIKID("mfa-wikid","WiKID"),
-        MFA_GAUTH("mfa-gauth","Google Authenitcator"),
-        MFA_AZURE("mfa-azure","Microsoft Azure"),
-        MFA_U2F("mfa-u2f","FIDO U2F"),
-        MFA_SWIVEL("mfa-swivel","Swivel Secure");
+        /**
+         * For mfa-authy.
+         */
+        MFA_AUTHY("mfa-authy", "Authy Authenticator"),
+        /**
+         * For mfa-yubikey.
+         */
+        MFA_YUBIKEY("mfa-yubikey", "YubiKey"),
+        /**
+         * For mfa-radius.
+         */
+        MFA_RADIUS("mfa-radius", "RSA/RADIUS"),
+        /**
+         * For mfa-wikid.
+         */
+        MFA_WIKID("mfa-wikid", "WiKID"),
+        /**
+         * For mfa-gauth.
+         */
+        MFA_GAUTH("mfa-gauth", "Google Authenitcator"),
+        /**
+         * For mfa-azure.
+         */
+        MFA_AZURE("mfa-azure", "Microsoft Azure"),
+        /**
+         * For mfa-u2f.
+         */
+        MFA_U2F("mfa-u2f", "FIDO U2F"),
+        /**
+         * For mfa-swivel.
+         */
+        MFA_SWIVEL("mfa-swivel", "Swivel Secure");
 
         private final String value;
         private final String display;
@@ -36,12 +66,22 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
             this.display = display;
         }
 
-        public String getValue() {
-            return value;
+        /**
+         * Returns the display string for this property.
+         *
+         * @return - String to display
+         */
+        public String getDisplay() {
+            return this.display;
         }
 
-        public String getDisplay() {
-            return display;
+        /**
+         * Returns the value to be stored for this property.
+         *
+         * @return - String value of the property
+         */
+        public String getValue() {
+            return this.value;
         }
     }
     /**

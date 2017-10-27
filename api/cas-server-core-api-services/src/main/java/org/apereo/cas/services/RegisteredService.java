@@ -39,12 +39,30 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
         FRONT_CHANNEL
     }
 
+    /**
+     * A list of protocol client types for services.
+     */
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum ServiceType {
+        /**
+         * For Services protected by CAS.
+         */
         CAS_CLIENT("CAS Client", "cas"),
-        OAUTH2_CLIENT("OAuth2 Client","oauth"),
-        SAML2_SERVICE_PROVIDER("SAML2 Service Provider","saml"),
+        /**
+         * For Services protected by OAuth.
+         */
+        OAUTH2_CLIENT("OAuth2 Client", "oauth"),
+        /**
+         * For Services protected by SAML.
+         */
+        SAML2_SERVICE_PROVIDER("SAML2 Service Provider", "saml"),
+        /**
+         * For Services protected by OIDC.
+         */
         OIDC_CLIENT("OpenID Connect Client", "oidc"),
+        /**
+         * For Services that are part of WS Federation.
+         */
         WS_FEDERATION("WS Federation", "wsfed");
 
         private final String display;
@@ -56,10 +74,20 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
             this.value = value;
         }
 
+        /**
+         * Returns the display string for this property.
+         *
+         * @return - String to display
+         */
         public String getDisplay() {
             return this.display;
         }
 
+        /**
+         * Returns the value to be stored for this property.
+         *
+         * @return - String value of the property
+         */
         public String getValue() {
             return this.value;
         }
