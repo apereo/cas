@@ -55,6 +55,7 @@ public class PasswordChangeAction extends AbstractAction {
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
             }
             if (passwordManagementService.change(c, bean)) {
+                WebUtils.putCredential(requestContext, new UsernamePasswordCredential(c.getUsername(), bean.getPassword()));
                 return new EventFactorySupport().event(this, PASSWORD_UPDATE_SUCCESS);
             }
         } catch (final InvalidPasswordException e) {
