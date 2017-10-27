@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * @since 5.2.0
  */
 public class CasCommandLineParser {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCommandLineParser.class);
     private static final int WIDTH = 120;
 
@@ -31,7 +31,6 @@ public class CasCommandLineParser {
 
     public CasCommandLineParser() {
         options = new Options();
-        options.addOption(CommandLineOptions.OPTION_GROUP);
         options.addOption(CommandLineOptions.OPTION_PROPERTY);
         options.addOption(CommandLineOptions.OPTION_HELP);
         options.addOption(CommandLineOptions.OPTION_SUMMARY);
@@ -41,7 +40,7 @@ public class CasCommandLineParser {
         options.addOption(CommandLineOptions.OPTION_GENERATE_KEY);
         options.addOption(CommandLineOptions.OPTION_GENERATE_JWT);
         options.addOption(CommandLineOptions.OPTION_SUBJECT);
-        
+
         parser = new DefaultParser();
     }
 
@@ -82,7 +81,7 @@ public class CasCommandLineParser {
                         + "5) etc.\n",
                 true);
     }
-    
+
     /**
      * Gets property.
      *
@@ -111,16 +110,6 @@ public class CasCommandLineParser {
      */
     public String getPropertyValue(final CommandLine line) {
         return getOptionValue(line, CommandLineOptions.OPTION_PROPERTY, StringUtils.EMPTY);
-    }
-    
-    /**
-     * Get group or module.
-     *
-     * @param line the line
-     * @return the string
-     */
-    public Pattern getGroup(final CommandLine line) {
-        return RegexUtils.createPattern(getOptionValue(line, CommandLineOptions.OPTION_GROUP, ".+"));
     }
 
     /**
@@ -153,7 +142,7 @@ public class CasCommandLineParser {
         return hasOption(line, CommandLineOptions.OPTION_GENERATE_JWT);
     }
 
-    
+
     /**
      * Is summary boolean.
      *
@@ -163,7 +152,7 @@ public class CasCommandLineParser {
     public boolean isSummary(final CommandLine line) {
         return hasOption(line, CommandLineOptions.OPTION_SUMMARY);
     }
-    
+
     /**
      * Is strict match boolean.
      *
