@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest;
+package org.apereo.cas.support.rest.factory;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -43,8 +43,7 @@ public class DefaultServiceTicketResourceEntityResponseFactory implements Servic
      * @return the service ticket
      */
     protected String grantServiceTicket(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final ServiceTicket ticket = centralAuthenticationService.grantServiceTicket(
-                ticketGrantingTicket, service, authenticationResult);
+        final ServiceTicket ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
 
         LOGGER.debug("Generated service ticket [{}]", ticket.getId());
         return ticket.getId();

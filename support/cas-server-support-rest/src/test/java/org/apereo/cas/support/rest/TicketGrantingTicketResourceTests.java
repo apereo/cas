@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.support.rest.factory.DefaultCredentialFactory;
+import org.apereo.cas.support.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -61,7 +63,7 @@ public class TicketGrantingTicketResourceTests {
     private MockMvc mockMvc;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final AuthenticationManager mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
@@ -69,7 +71,7 @@ public class TicketGrantingTicketResourceTests {
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
                 new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
                         new DefaultPrincipalElectionStrategy()), new DefaultCredentialFactory(),
-                casMock, new WebApplicationServiceFactory());
+                casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)
                 .defaultRequest(get("/")
