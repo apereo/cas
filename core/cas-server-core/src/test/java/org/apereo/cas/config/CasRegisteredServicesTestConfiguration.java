@@ -7,9 +7,11 @@ import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesR
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -36,11 +38,11 @@ public class CasRegisteredServicesTestConfiguration {
     public PrincipalAttributesRepository cachingPrincipalAttributeRepository() {
         return new CachingPrincipalAttributesRepository("SECONDS", 20);
     }
-    
+
     @Bean
     public List inMemoryRegisteredServices() {
         final List l = new ArrayList();
-        
+
         AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
@@ -123,7 +125,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(CollectionUtils.wrap("groupMembership")));
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc);
-        
+
 
         svc = RegisteredServiceTestUtils.getRegisteredService("testAnonymous");
         svc.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
@@ -151,6 +153,15 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc.setEvaluationOrder(1000);
+        l.add(svc);
+
+        svc = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
+        svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
+        svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        final DefaultRegisteredServiceProperty prop = new DefaultRegisteredServiceProperty();
+        prop.setValues(CollectionUtils.wrapSet(Boolean.TRUE.toString()));
+        svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName(), prop);
+        svc.setEvaluationOrder(2000);
         l.add(svc);
         return l;
     }

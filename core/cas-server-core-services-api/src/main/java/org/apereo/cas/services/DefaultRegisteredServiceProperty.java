@@ -38,6 +38,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Column(name = "property_values")
     private HashSet<String> values = new HashSet<>();
 
+    
     @Override
     public Set<String> getValues() {
         if (this.values == null) {

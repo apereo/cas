@@ -12,6 +12,7 @@ import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ import java.util.Map;
 public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(JWTTokenTicketBuilder.class);
 
-    private final AbstractUrlBasedTicketValidator ticketValidator;
+    private final TicketValidator ticketValidator;
     private final String casSeverPrefix;
     private final CipherExecutor<String, String> tokenCipherExecutor;
     private final ExpirationPolicy expirationPolicy;
