@@ -12,7 +12,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.rest.BadRequestException;
 import org.apereo.cas.support.rest.CredentialFactory;
-import org.apereo.cas.support.rest.TicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.support.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
