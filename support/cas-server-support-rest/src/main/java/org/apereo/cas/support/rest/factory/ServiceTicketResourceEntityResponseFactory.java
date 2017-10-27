@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest;
+package org.apereo.cas.support.rest.factory;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;

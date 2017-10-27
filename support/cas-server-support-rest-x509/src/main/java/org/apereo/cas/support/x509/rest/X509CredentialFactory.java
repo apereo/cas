@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.support.rest.DefaultCredentialFactory;
+import org.apereo.cas.support.rest.factory.DefaultCredentialFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
