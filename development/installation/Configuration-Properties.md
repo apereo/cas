@@ -2269,7 +2269,9 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 # cas.authn.token.principalTransformation.prefix=
 ```
 
-### JWT Service Tickets
+### JWT Tickets
+
+Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) or [this guide](../protocol/REST-Protocol.html) for more info.
 
 ```properties
 # cas.authn.token.crypto.enabled=true
