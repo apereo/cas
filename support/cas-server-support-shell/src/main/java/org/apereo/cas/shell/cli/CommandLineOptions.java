@@ -15,7 +15,7 @@ public class CommandLineOptions {
     public static final Option OPTION_SHELL = Option.builder("sh")
             .longOpt("shell")
             .desc("Launch into a CAS interactive shell to execute commands. Activating this option will disable "
-                    + "basic CLI capabilities and allows you to interactively query the CAS configuration metadata server.")
+                    + "basic CLI capabilities and allows you to interactively query the CAS configuration metadata server and more.")
             .build();
 
     /**
@@ -25,15 +25,6 @@ public class CommandLineOptions {
             .longOpt("property")
             .hasArg()
             .desc("Indicate the property name (i.e. cas.server.name). A regular expression pattern is an acceptable value, depending on function and usage.")
-            .build();
-
-    /**
-     * Command line option that indicates a group.
-     */
-    public static final Option OPTION_GROUP = Option.builder("g")
-            .hasArg()
-            .longOpt("group")
-            .desc("Indicate the group name (i.e. cas.authn). A regular expression pattern is an acceptable value, depending on function and usage.")
             .build();
 
     /**
