@@ -6,7 +6,6 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -29,9 +28,7 @@ import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguratio
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
 import org.junit.Test;
@@ -123,4 +120,21 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactoryTests {
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
     }
 
+    @Test
+    public void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
+        final AuthenticationResult result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        final TicketGrantingTicket tgt = centralAuthenticationService.createTicketGrantingTicket(result);
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, Boolean.TRUE.toString());
+        final ResponseEntity<String> response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
+        assertNotNull(response);
+        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+
+        final Object jwt = this.tokenCipherExecutor.decode(response.getBody());
+        final JWTClaimsSet claims = JWTClaimsSet.parse(jwt.toString());
+        assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
+    }
+    
 }
