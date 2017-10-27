@@ -68,7 +68,7 @@ POST /cas/v1/tickets HTTP/1.0
 username=battags&password=password&token=true&additionalParam1=paramvalue
 ```
 
-The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jwt-tickets).
+The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
 
 
 ## Request a Service Ticket
@@ -101,7 +101,7 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jwt-tickets).
+Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
 
 ## Validate Service Ticket
 
