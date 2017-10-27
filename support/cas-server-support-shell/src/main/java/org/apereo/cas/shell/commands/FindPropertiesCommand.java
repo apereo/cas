@@ -7,18 +7,17 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
+import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link FindPropertiesCommand}.
@@ -35,7 +34,6 @@ public class FindPropertiesCommand implements CommandMarker {
      * Find property.
      *
      * @param name    the name
-     * @param group   the group
      * @param strict  the strict match
      * @param summary the summary
      */
@@ -46,11 +44,6 @@ public class FindPropertiesCommand implements CommandMarker {
                     optionContext = "Property name regex pattern",
                     specifiedDefaultValue = ".+",
                     unspecifiedDefaultValue = ".+") final String name,
-            @CliOption(key = {"group"},
-                    help = "Group/module regex pattern that is associated with the property",
-                    optionContext = "Group/module regex pattern that is associated with the property",
-                    specifiedDefaultValue = ".+",
-                    unspecifiedDefaultValue = ".+") final String group,
             @CliOption(key = {"strict-match"},
                     help = "Whether pattern should be done in strict-mode which means "
                             + "the matching engine tries to match the entire region for the query.",
@@ -64,7 +57,7 @@ public class FindPropertiesCommand implements CommandMarker {
                     unspecifiedDefaultValue = "false",
                     specifiedDefaultValue = "true") final boolean summary) {
 
-        final Map<String, ConfigurationMetadataProperty> results = find(strict, summary, RegexUtils.createPattern(group), RegexUtils.createPattern(name));
+        final Map<String, ConfigurationMetadataProperty> results = find(strict, RegexUtils.createPattern(name));
 
         if (results.isEmpty()) {
             LOGGER.info("Could not find any results matching the criteria");
@@ -74,7 +67,10 @@ public class FindPropertiesCommand implements CommandMarker {
         results.forEach((k, v) -> {
             if (summary) {
                 LOGGER.info("{}={}", k, v.getDefaultValue());
-                LOGGER.info("{}", StringUtils.normalizeSpace(v.getShortDescription()));
+                final String value = StringUtils.normalizeSpace(v.getShortDescription());
+                if (StringUtils.isNotBlank(value)) {
+                    LOGGER.info("{}", value);
+                }
             } else {
                 LOGGER.info("Property: {}", k);
                 /*
@@ -98,29 +94,23 @@ public class FindPropertiesCommand implements CommandMarker {
      * Find.
      *
      * @param strict          the strict
-     * @param summary         the summary
-     * @param groupPattern    the group pattern
      * @param propertyPattern the property pattern
      * @return the map
      */
-    public Map<String, ConfigurationMetadataProperty> find(final boolean strict, final boolean summary,
-                                                           final Pattern groupPattern, final Pattern propertyPattern) {
+    public Map<String, ConfigurationMetadataProperty> find(final boolean strict, final Pattern propertyPattern) {
         final Map<String, ConfigurationMetadataProperty> results = new LinkedHashMap<>();
 
         final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
-        final Collection<ConfigurationMetadataGroup> groups = repository.getRepository().getAllGroups()
-                .entrySet()
-                .stream()
-                .filter(k -> strict ? RegexUtils.matches(groupPattern, k.getKey()) : RegexUtils.find(groupPattern, k.getKey()))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toSet());
+        final Map<String, ConfigurationMetadataProperty> props = repository.getRepository().getAllProperties();
 
-        groups.forEach(g -> g.getProperties().forEach((k, v) -> {
-            final boolean matched = strict ? RegexUtils.matches(propertyPattern, k) : RegexUtils.find(propertyPattern, k);
+        props.forEach((k, v) -> {
+            final boolean matched = StreamSupport.stream(RelaxedNames.forCamelCase(k).spliterator(), false)
+                    .map(Object::toString)
+                    .anyMatch(name -> strict ? RegexUtils.matches(propertyPattern, name) : RegexUtils.find(propertyPattern, name));
             if (matched) {
                 results.put(k, v);
             }
-        }));
+        });
 
         return results;
     }
@@ -132,6 +122,6 @@ public class FindPropertiesCommand implements CommandMarker {
      * @return the map
      */
     public Map<String, ConfigurationMetadataProperty> findByProperty(final String name) {
-        return find(false, false, RegexUtils.createPattern(".+"), RegexUtils.createPattern(name));
+        return find(false, RegexUtils.createPattern(name));
     }
 }
