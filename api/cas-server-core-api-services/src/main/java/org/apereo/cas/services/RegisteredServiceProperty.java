@@ -41,11 +41,6 @@ public interface RegisteredServiceProperty extends Serializable {
         TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket"),
 
         /**
-         * Produce a JWT as a response when generating ticket-granting tickets.
-         **/
-        TOKEN_AS_TICKET_GRANTING_TICKET("jwtAsTicketGrantingTicket"),
-
-        /**
          * Jwt signing secret defined for a given service.
          **/
         TOKEN_SECRET_SIGNING("jwtSigningSecret"),
