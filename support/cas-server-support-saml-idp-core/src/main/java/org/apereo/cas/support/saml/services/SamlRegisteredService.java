@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.javers.core.metamodel.annotation.TypeName;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -25,7 +24,6 @@ import java.util.TreeMap;
  */
 @Entity
 @DiscriminatorValue("saml")
-@TypeName("SamlRegisteredService")
 public class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-import org.javers.core.metamodel.annotation.TypeName;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -19,7 +18,6 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("wsfed")
-@TypeName("WSFederationRegisteredService")
 public class WSFederationRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = -3700571300568534062L;
 

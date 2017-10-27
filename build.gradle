@@ -286,7 +286,6 @@ subprojects {
         api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
-        api libraries.javers
 
         provided libraries.javax
 
