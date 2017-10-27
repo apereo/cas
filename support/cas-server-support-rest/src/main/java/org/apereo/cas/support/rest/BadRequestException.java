@@ -14,7 +14,7 @@ public class BadRequestException extends IllegalArgumentException {
      *
      * @param msg error message
      */
-    BadRequestException(final String msg) {
+    public BadRequestException(final String msg) {
         super(msg);
     }
 }
