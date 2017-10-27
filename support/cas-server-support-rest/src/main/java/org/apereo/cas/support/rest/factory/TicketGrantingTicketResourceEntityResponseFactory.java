@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest;
+package org.apereo.cas.support.rest.factory;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.http.ResponseEntity;

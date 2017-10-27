@@ -1,7 +1,9 @@
-package org.apereo.cas.support.rest;
+package org.apereo.cas.support.rest.factory;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.support.rest.BadRequestException;
+import org.apereo.cas.support.rest.CredentialFactory;
 import org.springframework.util.MultiValueMap;
 
 /**

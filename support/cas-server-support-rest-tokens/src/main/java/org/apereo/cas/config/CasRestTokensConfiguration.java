@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.rest.ServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.support.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.tokens.JWTServiceTicketResourceEntityResponseFactory;
