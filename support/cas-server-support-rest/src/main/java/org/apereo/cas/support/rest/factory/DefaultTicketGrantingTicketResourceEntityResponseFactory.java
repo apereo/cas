@@ -47,9 +47,9 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         } else {
             response = ticketGrantingTicket.getId();
         }
-        final ResponseEntity<String> enity = new ResponseEntity<>(response, headers, HttpStatus.CREATED);
-        LOGGER.debug("Created response entity [{}]", enity);
-        return enity;
+        final ResponseEntity<String> entity = new ResponseEntity<>(response, headers, HttpStatus.CREATED);
+        LOGGER.debug("Created response entity [{}]", entity);
+        return entity;
     }
 
     private boolean isDefaultContentType(final HttpServletRequest request) {

@@ -57,6 +57,6 @@ public class TokenCoreConfiguration {
         return new JWTTokenTicketBuilder(casClientTicketValidator,
                 casProperties.getServer().getPrefix(),
                 tokenCipherExecutor(),
-                grantingTicketExpirationPolicy.getTimeToLive());
+                grantingTicketExpirationPolicy);
     }
 }
