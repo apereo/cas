@@ -77,7 +77,6 @@ public class TicketGrantingTicketResource {
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
-     * @throws Exception in case of JSON parsing failure
      */
     @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
