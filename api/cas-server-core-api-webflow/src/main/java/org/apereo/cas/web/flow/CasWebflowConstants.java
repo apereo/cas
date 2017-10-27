@@ -367,4 +367,29 @@ public interface CasWebflowConstants {
      * State id 'proceedFromAuthenticationWarningView'.
      */
     String STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW = "proceedFromAuthenticationWarningView";
+
+    /**
+     * Action to check if login should redirect to password reset subflow.
+     */
+    String CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
+
+    /**
+     * State for password reset subflow "pswdResetSubflow".
+     */
+    String STATE_ID_PASSWORD_RESET_SUBFLOW = "pswdResetSubflow";
+
+    /**
+     * Login flow state indicating the password reset subflow is complete "pswdResetComplete".
+     */
+    String STATE_ID_PASSWORD_RESET_FLOW_COMPLETE = "pswdResetComplete";
+
+    /**
+     * State to restart the login flow fresh "redirectToLogin".
+     */
+    String STATE_ID_REDIRECT_TO_LOGIN = "redirectToLogin";
+
+    /**
+     * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
+     */
+    String STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN = "postLoginPswdChangeCheck";
 }

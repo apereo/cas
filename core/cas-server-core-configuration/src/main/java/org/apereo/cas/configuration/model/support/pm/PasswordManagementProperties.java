@@ -28,6 +28,11 @@ public class PasswordManagementProperties implements Serializable {
     private boolean enabled;
 
     /**
+     * Flag to indicate whether successful password change should trigger login automatically.
+     */
+    private boolean autoLogin;
+
+    /**
      * A String value representing password policy regex pattarn.
      * <p>
      * Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
@@ -78,6 +83,14 @@ public class PasswordManagementProperties implements Serializable {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isAutoLogin() {
+        return autoLogin;
+    }
+
+    public void setAutoLogin(final boolean autoLogin) {
+        this.autoLogin = autoLogin;
     }
 
     public String getPolicyPattern() {

@@ -13,6 +13,11 @@ may receive a secure link with a time-based expiration policy at their registere
 will allow the user to provide answers to his/her pre-defined security questions, which if successfully done,
 will allow the user to next reset their password and login again. You may also specify a pattern for accepted passwords. 
 
+By default, after a user has successfully changed their password they will be redirected to the login screen
+to enter their new password and log in. CAS can also be configured to automatically log the user in after
+a successful change. The `autoLogin` flag in [password management properties](Configuration-Properties.html#password-management)
+controls this behavior.
+
 To learn more about available notification options, please [see this guide](SMS-Messaging-Configuration.html) or [this guide](Sending-Email-Configuration.html).
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
