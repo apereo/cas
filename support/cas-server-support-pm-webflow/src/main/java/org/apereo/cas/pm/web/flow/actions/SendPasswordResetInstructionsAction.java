@@ -62,9 +62,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return error();
         }
         
-        final String token = passwordManagementService.createToken(username);
-        final String url = casProperties.getServer().getPrefix()
-                .concat('/' + FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
+        final String url = buildPasswordResetUrl(username, passwordManagementService, casProperties);
         
         LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url,
                 pm.getReset().getExpirationMinutes());
@@ -73,6 +71,21 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
         LOGGER.error("Failed to notify account [{}]", to);
         return error();
+    }
+
+    /**
+     * Utility method to generate a password reset URL.
+     *
+     * @param username username
+     * @param passwordManagementService passwordManagementService
+     * @param casProperties casProperties
+     * @return URL a user can use to start the password reset process
+     */
+    public static String buildPasswordResetUrl(final String username,
+            final PasswordManagementService passwordManagementService, final CasConfigurationProperties casProperties) {
+        final String token = passwordManagementService.createToken(username);
+        return casProperties.getServer().getPrefix()
+                .concat('/' + FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
     }
 
     /**
