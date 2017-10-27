@@ -390,8 +390,19 @@ public final class WebUtils {
     public static Credential getCredential(final RequestContext context) {
         final Credential cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
         final Credential cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
+        final Credential cFromConversation = (Credential) context.getConversationScope().get(PARAMETER_CREDENTIAL);
 
-        Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
+        Credential credential = cFromRequest;
+        if (credential == null || StringUtils.isBlank(credential.getId())) {
+            credential = cFromFlow;
+        }
+        if (credential == null || StringUtils.isBlank(credential.getId())) {
+            credential = cFromConversation;
+            if (credential != null && !StringUtils.isBlank(credential.getId())) {
+                //aup and some other modules look only in flow scope via expressions, push down if needed
+                context.getFlowScope().put(PARAMETER_CREDENTIAL, credential);
+            }
+        }
 
         if (credential == null) {
             final FlowSession session = context.getFlowExecutionContext().getActiveSession();
@@ -413,9 +424,11 @@ public final class WebUtils {
         if (c == null) {
             context.getRequestScope().remove(PARAMETER_CREDENTIAL);
             context.getFlowScope().remove(PARAMETER_CREDENTIAL);
+            context.getConversationScope().remove(PARAMETER_CREDENTIAL);
         } else {
             context.getRequestScope().put(PARAMETER_CREDENTIAL, c);
             context.getFlowScope().put(PARAMETER_CREDENTIAL, c);
+            context.getConversationScope().put(PARAMETER_CREDENTIAL, c);
         }
     }
 
