@@ -10,7 +10,7 @@ import 'rxjs/add/operator/map';
 import {Util} from '../../util/util';
 import {DefaultRegisteredServiceProperty} from '../../../domain/property';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
-import {FormData} from '../../../domain/service-view-bean';
+import {FormData} from '../../../domain/form-data';
 
 @Component({
   selector: 'app-propertiespane',

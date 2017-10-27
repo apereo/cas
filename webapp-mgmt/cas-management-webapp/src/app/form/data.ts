@@ -4,7 +4,7 @@
 
 import {EventEmitter, Injectable} from '@angular/core';
 import {AbstractRegisteredService} from '../../domain/registered-service';
-import {FormData} from '../../domain/service-view-bean';
+import {FormData} from '../../domain/form-data';
 import {FormComponent} from './form.component';
 
 @Injectable()

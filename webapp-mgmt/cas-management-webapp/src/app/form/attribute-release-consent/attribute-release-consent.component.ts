@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Data} from '../data';
-import {FormData } from '../../../domain/service-view-bean';
+import {FormData } from '../../../domain/form-data';
 import {Messages} from '../../messages';
-import {DefaultRegisteredServiceConsentPolicy} from '../../../domain/attribute-release';
 
 @Component({
   selector: 'app-attribute-release-consent',

@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 
 import { UidattrsComponent } from './uidattrs.component';
 import {Messages} from '../../messages';
-import {FormData} from '../../../domain/service-view-bean';
+import {FormData} from '../../../domain/form-data';
 import {SharedModule} from '../../shared/shared.module';
 import {RegexRegisteredService} from '../../../domain/registered-service';
 

@@ -7,10 +7,8 @@ import { DebugElement } from '@angular/core';
 import { AccessStrategyComponent } from './access-strategy.component';
 import {RejectedattributesComponent} from '../rejectedattributes/rejectedattributes.component';
 import {Messages} from '../../messages';
-import {FormData} from '../../../domain/service-view-bean';
-import {Data} from '../data';
+import {FormData} from '../../../domain/form-data';
 import {SharedModule} from '../../shared/shared.module';
-import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('AccessStrategyComponent', () => {
   let component: AccessStrategyComponent;

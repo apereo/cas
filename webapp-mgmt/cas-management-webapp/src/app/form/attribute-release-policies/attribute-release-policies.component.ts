@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormData } from '../../../domain/service-view-bean';
+import {FormData } from '../../../domain/form-data';
 import {Messages} from '../../messages';
 import {
   DenyAllAttributeReleasePolicy,

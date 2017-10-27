@@ -1,19 +1,6 @@
-/**
- * Created by tschmidt on 2/13/17.
- */
-import {RegisteredServiceProperty} from './property';
-
-export class ServiceItem {
-  evalOrder: number;
-  assignedId: String;
-  serviceId: String;
-  name: String;
-  description: String;
-}
-
 export class FormData {
   availableAttributes: String[] = [];
-  registeredServiceProperties: RegisteredServiceProperty[];
+  registeredServiceProperties: PropertyEnum[];
   grouperFields: String[];
   remoteCodes: String[];
   timeUnits: String[];
@@ -25,12 +12,16 @@ export class FormData {
   samlNameIds: String[];
   samlCredentialTypes: String[];
   wsFederationClaims: String[];
-  mfaProviders: any[];
+  mfaProviders: PropertyEnum[];
   mfaFailureModes: String[];
-  oidcScopes: any[];
+  oidcScopes: PropertyEnum[];
   oidcEncodingAlgOptions: String[];
   oidcEncryptAlgOptions: String[];
-  oidcSubjectTypes: any[];
+  oidcSubjectTypes: PropertyEnum[];
   canonicalizationModes: String[];
 }
 
+export interface PropertyEnum {
+  display: String;
+  value: String;
+}

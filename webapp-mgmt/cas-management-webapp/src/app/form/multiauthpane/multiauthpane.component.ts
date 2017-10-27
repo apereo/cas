@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Messages} from '../../messages';
 import {Data} from '../data';
-import {FormData} from '../../../domain/service-view-bean';
+import {FormData} from '../../../domain/form-data';
 
 @Component({
   selector: 'app-multiauthpane',
