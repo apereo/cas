@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
@@ -40,7 +39,7 @@ import static org.junit.Assert.*;
         CasCoreUtilConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
 public class UniquePrincipalAuthenticationPolicyTests {
