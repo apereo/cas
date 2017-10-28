@@ -14,11 +14,11 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-saml-sp-integrations")
 public class SamlServiceProviderProperties implements Serializable {
     /**
-     * <code>email</code> attribute to release.
+     * {@code email} attribute to release.
      */
     private static final String EMAIL = "email";
     /**
-     * <code>eduPersonPrincipalName</code> attribute to release.
+     * {@code eduPersonPrincipalName} attribute to release.
      */
     private static final String PRINCIPAL_NAME = "eduPersonPrincipalName";
     private static final long serialVersionUID = 8602328179113963081L;

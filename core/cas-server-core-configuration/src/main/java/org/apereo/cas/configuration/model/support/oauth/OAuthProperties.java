@@ -57,8 +57,8 @@ public class OAuthProperties implements Serializable {
      * Name of the oauth throttling bean, assuming authentication throttling is turned on. Acceptable values are:
      * 
      * <ul>
-     *     <li><code>neverThrottle</code>: Disable throttling</li>
-     *     <li><code>authenticationThrottle</code>: Enable authentication throttling.</li>
+     *     <li>{@code neverThrottle}: Disable throttling</li>
+     *     <li>{@code authenticationThrottle}: Enable authentication throttling.</li>
      * </ul>
      */
     private String throttler = "neverThrottle";
