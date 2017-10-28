@@ -23,7 +23,7 @@ public class AzureAuthenticatorGenerateTokenAction extends AbstractAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         final Integer code = Integer.valueOf(RandomStringUtils.randomNumeric(8));
         final AzureAuthenticatorTokenCredential c = new AzureAuthenticatorTokenCredential();
         c.setToken(code.toString());

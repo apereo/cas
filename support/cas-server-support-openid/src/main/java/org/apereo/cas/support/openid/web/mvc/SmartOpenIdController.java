@@ -66,7 +66,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         final Map<String, String> parameters = new HashMap<>();
         parameters.putAll(getAssociationResponse(request));
         return new ModelAndView(this.successView, parameters);

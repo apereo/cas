@@ -42,7 +42,7 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
                     help = "Path to the JSON/YAML service definitions directory",
                     specifiedDefaultValue = "/etc/cas/services",
                     unspecifiedDefaultValue = "/etc/cas/services",
-                    optionContext = "Path to the JSON/YAML service definitions directory") final String directory) throws Exception {
+                    optionContext = "Path to the JSON/YAML service definitions directory") final String directory) {
 
         if (StringUtils.isBlank(file) && StringUtils.isBlank(directory)) {
             LOGGER.warn("Either file or directory must be specified");

@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class HostNameBasedUniqueTicketIdGeneratorTests {
 
     @Test
-    public void verifyUniqueGenerationOfTicketIds() throws Exception {
+    public void verifyUniqueGenerationOfTicketIds() {
         final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);
         final String id1 = generator.getNewTicketId("TEST");
         final String id2 = generator.getNewTicketId("TEST");

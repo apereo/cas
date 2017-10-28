@@ -37,7 +37,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.ticketRegistry = new TestDistributedTicketRegistry(this);
         this.wasTicketUpdated = false;
     }

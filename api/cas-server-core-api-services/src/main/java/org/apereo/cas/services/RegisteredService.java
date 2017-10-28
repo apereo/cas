@@ -164,7 +164,7 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * @return the registered service
      * @throws CloneNotSupportedException the clone not supported exception
      */
-    RegisteredService clone() throws CloneNotSupportedException;
+    RegisteredService clone();
 
     /**
      * Returns the logout type of the service.

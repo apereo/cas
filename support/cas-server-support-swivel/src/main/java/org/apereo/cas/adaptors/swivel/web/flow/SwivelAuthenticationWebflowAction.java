@@ -20,7 +20,7 @@ public class SwivelAuthenticationWebflowAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         return this.casWebflowEventResolver.resolveSingle(requestContext);
     }
 }

@@ -27,7 +27,7 @@ public class RiskAwareAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ActionState submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);

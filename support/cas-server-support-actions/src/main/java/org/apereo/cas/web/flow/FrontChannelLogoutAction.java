@@ -39,7 +39,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-                                      final RequestContext context) throws Exception {
+                                      final RequestContext context) {
 
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         final Map<LogoutRequest, LogoutHttpMessage> logoutUrls = new HashMap<>();

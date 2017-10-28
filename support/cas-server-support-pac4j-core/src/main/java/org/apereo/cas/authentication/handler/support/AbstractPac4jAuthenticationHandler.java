@@ -41,7 +41,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
     protected HandlerResult createResult(final ClientCredential credentials, final UserProfile profile)
-            throws GeneralSecurityException, PreventedException {
+            throws GeneralSecurityException {
 
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);

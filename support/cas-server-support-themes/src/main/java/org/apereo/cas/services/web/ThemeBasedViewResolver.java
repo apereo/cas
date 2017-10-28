@@ -41,7 +41,7 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
 
     @Nullable
     @Override
-    public View resolveViewName(final String viewName, final Locale locale) throws Exception {
+    public View resolveViewName(final String viewName, final Locale locale) {
         // resolve the theme for this request
         final Optional<String> theme = Optional.of(RequestContextHolder.currentRequestAttributes())
                 .filter(ServletRequestAttributes.class::isInstance).map(ServletRequestAttributes.class::cast)

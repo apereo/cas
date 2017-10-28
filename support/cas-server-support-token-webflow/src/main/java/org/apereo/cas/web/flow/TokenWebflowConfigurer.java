@@ -26,7 +26,7 @@ public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ActionState actionState = createActionState(flow, "tokenAuthenticationCheck",

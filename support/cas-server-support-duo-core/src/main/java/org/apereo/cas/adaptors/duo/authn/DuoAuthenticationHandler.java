@@ -51,7 +51,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
      * @throws PreventedException       authentication failed exception
      */
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         if (credential instanceof DuoDirectCredential) {
             LOGGER.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);

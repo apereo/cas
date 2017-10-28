@@ -80,7 +80,7 @@ public class WsFederationAction extends AbstractAction {
      * @throws Exception all unhandled exceptions
      */
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final String wa = request.getParameter(WA);

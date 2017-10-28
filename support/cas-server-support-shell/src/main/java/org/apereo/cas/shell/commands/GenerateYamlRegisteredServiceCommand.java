@@ -44,7 +44,7 @@ public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
                     help = "Path to the destination YAML service definition file",
                     specifiedDefaultValue = "",
                     unspecifiedDefaultValue = "",
-                    optionContext = "Path to the destination YAML service definition file") final String destination) throws Exception {
+                    optionContext = "Path to the destination YAML service definition file") final String destination) {
 
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("File must be specified");

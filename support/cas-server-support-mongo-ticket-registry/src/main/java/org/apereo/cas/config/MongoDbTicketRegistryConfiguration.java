@@ -40,7 +40,7 @@ public class MongoDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) throws Exception {
+    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
         final MongoDbTicketRegistry registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
         registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
@@ -51,7 +51,7 @@ public class MongoDbTicketRegistryConfiguration {
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("lockingStrategy") final LockingStrategy lockingStrategy,
                                                        @Qualifier("logoutManager") final LogoutManager logoutManager,
-                                                       @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) throws Exception {
+                                                       @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
         final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");

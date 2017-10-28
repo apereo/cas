@@ -26,7 +26,7 @@ public class YubiKeyMultifactorTrustWebflowConfigurer extends AbstractMultifacto
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         registerMultifactorTrustedAuthentication(this.flowDefinitionRegistry);
     }
 }

@@ -20,7 +20,7 @@ public class U2FAuthenticationWebflowAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         return this.u2fAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }

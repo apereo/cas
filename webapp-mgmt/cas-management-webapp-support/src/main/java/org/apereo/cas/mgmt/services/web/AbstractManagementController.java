@@ -55,7 +55,7 @@ public abstract class AbstractManagementController {
      */
     @ExceptionHandler
     public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
-                                         final Exception ex) throws IOException {
+                                         final Exception ex) {
         LOGGER.error(ex.getMessage(), ex);
         final String contentType = request.getHeader(AJAX_REQUEST_HEADER_NAME);
         if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {

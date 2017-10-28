@@ -37,7 +37,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
 
     @Override
     protected void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
-                                           final HttpServletResponse response) throws Exception {
+                                           final HttpServletResponse response) {
         try {
             LOGGER.debug("Preparing the output model [{}] to render view [{}]", model.keySet(), getClass().getSimpleName());
             prepareMergedOutputModel(model, request, response);

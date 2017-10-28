@@ -23,12 +23,12 @@ public class JmsTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         final JmsTemplate jms = Mockito.mock(JmsTemplate.class);
         return new JmsTicketRegistry(jms, new StringBean());
     }

@@ -29,7 +29,7 @@ public class TimeoutExpirationPolicyTests {
     private Ticket ticket;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
         this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
@@ -47,7 +47,7 @@ public class TimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketIsExpired() throws InterruptedException {
+    public void verifyTicketIsExpired() {
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
     }

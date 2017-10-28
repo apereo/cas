@@ -15,7 +15,6 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -56,7 +55,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
                                                                  final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+            throws GeneralSecurityException {
         try {
             final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
                     transformedCredential.getPassword());

@@ -20,7 +20,7 @@ public class NoOpRevocationChecker implements RevocationChecker {
      *
      */
     @Override
-    public void check(final X509Certificate certificate) throws GeneralSecurityException {
+    public void check(final X509Certificate certificate) {
         // NO-OP
     }
 }

@@ -109,7 +109,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
-                                                               final WSFederationRequest fedRequest) throws Exception {
+                                                               final WSFederationRequest fedRequest) {
         final String postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
 
         final Map model = new HashMap<>();

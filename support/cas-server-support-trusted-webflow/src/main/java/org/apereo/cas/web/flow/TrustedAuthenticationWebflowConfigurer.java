@@ -25,7 +25,7 @@ public class TrustedAuthenticationWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ActionState actionState = createActionState(flow, "remoteAuthenticate",

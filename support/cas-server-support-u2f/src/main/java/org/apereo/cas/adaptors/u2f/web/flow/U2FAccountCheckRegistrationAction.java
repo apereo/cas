@@ -22,7 +22,7 @@ public class U2FAccountCheckRegistrationAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();
         if (u2FDeviceRepository.isDeviceRegisteredFor(p.getId())) {
             return success();

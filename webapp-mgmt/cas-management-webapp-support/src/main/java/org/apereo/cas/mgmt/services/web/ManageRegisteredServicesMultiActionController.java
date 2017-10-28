@@ -181,7 +181,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @throws Exception the exception
      */
     @GetMapping(value = "/domainList")
-    public ResponseEntity<Collection<String>> getDomains() throws Exception {
+    public ResponseEntity<Collection<String>> getDomains() {
         ensureDefaultServiceExists();
         final Collection<String> data = this.servicesManager.getDomains();
         return new ResponseEntity<>(data, HttpStatus.OK);
@@ -198,7 +198,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      */
     @GetMapping(value = "/user")
     public ResponseEntity<CasUserProfile> getUser(final HttpServletRequest request,
-                                                  final HttpServletResponse response) throws Exception {
+                                                  final HttpServletResponse response) {
         final CasUserProfile data = casUserProfileFactory.from(request, response);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
@@ -247,7 +247,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @throws Exception the exception
      */
     @GetMapping(value = "formData")
-    public ResponseEntity<FormData> getFormData() throws Exception {
+    public ResponseEntity<FormData> getFormData() {
         ensureDefaultServiceExists();
         final FormData formData = new FormData();
         final Set<String> possibleUserAttributeNames = this.personAttributeDao.getPossibleUserAttributeNames();

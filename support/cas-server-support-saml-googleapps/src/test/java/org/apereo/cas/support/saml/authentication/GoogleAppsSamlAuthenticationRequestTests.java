@@ -114,7 +114,7 @@ public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTe
     }
 
     @Test
-    public void ensureInflation() throws Exception {
+    public void ensureInflation() {
         final String deflator = CompressionUtils.deflate(SAML_REQUEST);
         final GoogleSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder(configBean);
         final String msg = builder.decodeSamlAuthnRequest(deflator);

@@ -19,7 +19,7 @@ public abstract class AbstractLdapTests {
     protected static InMemoryTestLdapDirectoryServer DIRECTORY;
 
     public static synchronized void initDirectoryServer(final InputStream ldifFile,
-                                                        final int port) throws IOException {
+                                                        final int port) {
         try {
             final boolean createInstance = DIRECTORY == null || !DIRECTORY.isAlive();
             if (createInstance) {

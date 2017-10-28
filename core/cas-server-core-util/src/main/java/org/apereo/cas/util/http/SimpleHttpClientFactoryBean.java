@@ -181,7 +181,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private ExecutorService executorService;
 
     @Override
-    public SimpleHttpClient getObject() throws Exception {
+    public SimpleHttpClient getObject() {
 
         final CloseableHttpClient httpClient = buildHttpClient();
 

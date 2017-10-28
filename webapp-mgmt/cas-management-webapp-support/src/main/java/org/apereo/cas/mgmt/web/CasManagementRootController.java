@@ -20,7 +20,7 @@ public class CasManagementRootController extends ParameterizableViewController {
     
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         final String url = request.getContextPath() + "/manage.html";
         LOGGER.debug("Initial url is [{}]", url);
         

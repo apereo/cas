@@ -77,7 +77,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             }
 
             @Override
-            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) {
                 map.forEach(request::setAttribute);
             }
         };

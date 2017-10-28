@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -102,7 +101,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+            throws GeneralSecurityException {
 
         if (this.kerberosKdcSystemProperty != null) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -209,7 +208,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
 
         @Override
-        public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
+        public void handle(final Callback[] callbacks) {
             Arrays.stream(callbacks).filter(callback -> {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);

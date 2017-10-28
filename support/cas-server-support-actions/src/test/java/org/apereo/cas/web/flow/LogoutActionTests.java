@@ -46,7 +46,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     private RequestContext requestContext;
 
     @Before
-    public void onSetUp() throws Exception {
+    public void onSetUp() {
         this.request = new MockHttpServletRequest();
         this.requestContext = mock(RequestContext.class);
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);

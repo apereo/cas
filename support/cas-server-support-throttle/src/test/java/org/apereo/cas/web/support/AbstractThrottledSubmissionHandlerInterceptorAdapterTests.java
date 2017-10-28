@@ -48,7 +48,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     protected ThrottledSubmissionHandlerInterceptor throttle;
     
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
         request.setLocalAddr(IP_ADDRESS);
@@ -56,7 +56,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         ClientInfoHolder.setClientInfo(null);
     }
 

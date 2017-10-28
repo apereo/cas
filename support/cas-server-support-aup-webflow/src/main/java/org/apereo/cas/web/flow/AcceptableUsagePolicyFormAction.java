@@ -64,7 +64,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         return verify(requestContext, WebUtils.getCredential(requestContext), requestContext.getMessageContext());
     }
 

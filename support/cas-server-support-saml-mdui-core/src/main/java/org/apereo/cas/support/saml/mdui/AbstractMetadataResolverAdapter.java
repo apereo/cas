@@ -176,7 +176,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @throws IOException the iO exception
      */
     private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain,
-                                                               final Resource resource, final Document document) throws IOException {
+                                                               final Resource resource, final Document document) {
         try {
             final Element metadataRoot = document.getDocumentElement();
             final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);

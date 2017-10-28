@@ -48,7 +48,7 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                 final String originalPassword) throws GeneralSecurityException, PreventedException {
+                                                                 final String originalPassword) throws GeneralSecurityException {
         final Statement statement = Select.select("*")
                 .from(Expression.i(couchbaseProperties.getBucket()))
                 .where(Expression.x(couchbaseProperties.getUsernameAttribute())

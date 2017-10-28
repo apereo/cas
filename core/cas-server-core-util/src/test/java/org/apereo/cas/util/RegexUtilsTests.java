@@ -13,14 +13,14 @@ import static org.junit.Assert.*;
 public class RegexUtilsTests {
 
     @Test
-    public void verifyNotValidRegex() throws Exception {
+    public void verifyNotValidRegex() {
         final String notValidRegex = "***";
 
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
     }
 
     @Test
-    public void verifyNullRegex() throws Exception {
+    public void verifyNullRegex() {
         final String nullRegex = null;
 
         assertFalse(RegexUtils.isValidRegex(nullRegex));

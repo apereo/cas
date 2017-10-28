@@ -5,7 +5,6 @@ import net.phonefactor.pfsdk.PFAuthParams;
 import net.phonefactor.pfsdk.PFAuthResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -41,7 +40,7 @@ public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostP
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         try {
             final AzureAuthenticatorTokenCredential c = (AzureAuthenticatorTokenCredential) credential;
             final RequestContext context = RequestContextHolder.getRequestContext();

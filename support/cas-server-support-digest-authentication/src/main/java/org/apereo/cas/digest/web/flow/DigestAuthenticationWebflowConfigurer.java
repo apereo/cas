@@ -25,7 +25,7 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ActionState actionState = createActionState(flow, "digestAuthenticationCheck",

@@ -60,7 +60,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.regex.Matcher;
@@ -182,7 +181,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     }
 
-    private static String encodeMessage(final String xmlString) throws IOException {
+    private static String encodeMessage(final String xmlString) {
         return CompressionUtils.deflate(xmlString);
     }
 

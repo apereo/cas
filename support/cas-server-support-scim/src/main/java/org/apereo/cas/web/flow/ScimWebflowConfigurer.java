@@ -23,7 +23,7 @@ public class ScimWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ActionState tgtAction = getState(flow, CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET, ActionState.class);

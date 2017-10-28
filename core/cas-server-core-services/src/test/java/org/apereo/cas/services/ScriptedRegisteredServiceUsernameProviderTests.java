@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  */
 public class ScriptedRegisteredServiceUsernameProviderTests {
     @Test
-    public void verifyUsernameProvider() throws Exception {
+    public void verifyUsernameProvider() {
         final ScriptedRegisteredServiceUsernameProvider p = new ScriptedRegisteredServiceUsernameProvider();
         p.setScript("file:src/test/resources/uidscript.groovy");
         final String id =

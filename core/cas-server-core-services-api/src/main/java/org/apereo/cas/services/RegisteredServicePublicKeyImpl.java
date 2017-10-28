@@ -69,7 +69,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     }
 
     @Override
-    public PublicKey createInstance() throws Exception {
+    public PublicKey createInstance() {
         try {
             final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.newInstance();
             if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {

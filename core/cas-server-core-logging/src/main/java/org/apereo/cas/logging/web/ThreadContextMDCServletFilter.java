@@ -40,10 +40,9 @@ public class ThreadContextMDCServletFilter implements Filter {
      * Does nothing.
      *
      * @param filterConfig filter initial configuration. Ignored.
-     * @throws ServletException never thrown in this case.
      */
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
     }
 
     @Override

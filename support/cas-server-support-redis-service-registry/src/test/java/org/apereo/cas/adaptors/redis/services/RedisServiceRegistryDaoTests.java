@@ -81,7 +81,7 @@ public class RedisServiceRegistryDaoTests {
     }
 
     @Test
-    public void verifyServiceRemovals() throws Exception {
+    public void verifyServiceRemovals() {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 3).forEach(i -> {
             final RegexRegisteredService r = new RegexRegisteredService();

@@ -38,7 +38,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
 
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);

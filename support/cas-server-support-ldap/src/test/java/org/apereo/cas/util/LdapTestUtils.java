@@ -81,7 +81,7 @@ public final class LdapTestUtils {
      * @param entries    Collection of LDAP entries.
      * @throws Exception On LDAP errors.
      */
-    public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) throws Exception {
+    public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
         try {
             for (final LdapEntry entry : entries) {
                 final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);

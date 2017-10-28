@@ -18,8 +18,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import java.security.GeneralSecurityException;
-
 /**
  * This is {@link U2FAuthenticationHandler}.
  *
@@ -38,7 +36,7 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws PreventedException {
         final U2FTokenCredential tokenCredential = (U2FTokenCredential) credential;
 
         final RequestContext context = RequestContextHolder.getRequestContext();

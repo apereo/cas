@@ -31,7 +31,7 @@ public class U2FMultifactorWebflowConfigurer extends AbstractCasMultifactorWebfl
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_U2F_EVENT_ID, this.u2fFlowRegistry);
     }
 }

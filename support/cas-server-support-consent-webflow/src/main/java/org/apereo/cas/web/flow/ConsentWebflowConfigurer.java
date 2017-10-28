@@ -33,7 +33,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
@@ -47,7 +47,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private void createInitialConsentEnabledAction(final Flow flow) {
         flow.getStartActionList().add(new Action() {
             @Override
-            public Event execute(final RequestContext requestContext) throws Exception {
+            public Event execute(final RequestContext requestContext) {
                 WebUtils.putAttributeConsentEnabled(requestContext, Boolean.TRUE);
                 return new EventFactorySupport().success(this);
             }

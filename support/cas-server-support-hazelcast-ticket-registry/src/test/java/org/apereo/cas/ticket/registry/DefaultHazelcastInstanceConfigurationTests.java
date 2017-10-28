@@ -101,7 +101,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
     }
 
     @Test
-    public void correctHazelcastInstanceIsCreated() throws Exception {
+    public void correctHazelcastInstanceIsCreated() {
         assertNotNull(this.hzInstance);
         final Config config = this.hzInstance.getConfig();
         assertFalse(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());

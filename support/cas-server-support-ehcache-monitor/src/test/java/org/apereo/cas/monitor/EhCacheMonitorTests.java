@@ -52,7 +52,7 @@ public class EhCacheMonitorTests {
     private Monitor monitor;
 
     @Test
-    public void verifyObserve() throws Exception {
+    public void verifyObserve() {
         CacheStatus status = CacheStatus.class.cast(monitor.observe());
         CacheStatistics stats = getServiceTicketStats(status);
 

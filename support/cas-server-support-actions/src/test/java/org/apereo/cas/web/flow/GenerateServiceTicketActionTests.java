@@ -40,7 +40,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     private TicketGrantingTicket ticketGrantingTicket;
 
     @Before
-    public void onSetUp() throws Exception {
+    public void onSetUp() {
         final AuthenticationResult authnResult = getAuthenticationSystemSupport()
                         .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());

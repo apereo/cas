@@ -39,7 +39,7 @@ public class CasManagementSecurityInterceptor extends SecurityInterceptor {
 
     @Override
     public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                           final Object handler, final ModelAndView modelAndView) throws Exception {
+                           final Object handler, final ModelAndView modelAndView) {
         if (!StringUtils.isEmpty(request.getQueryString()) && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
             final RedirectView v = new RedirectView(request.getRequestURL().toString());
             v.setExposeModelAttributes(false);

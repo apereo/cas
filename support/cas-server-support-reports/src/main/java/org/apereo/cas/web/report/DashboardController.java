@@ -96,7 +96,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
      * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> model = getEndpointsModelMap();

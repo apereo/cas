@@ -23,7 +23,7 @@ public class ChainingPrincipalResolverTests {
     private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Test
-    public void examineSupports() throws Exception {
+    public void examineSupports() {
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("a");
 
@@ -39,7 +39,7 @@ public class ChainingPrincipalResolverTests {
     }
 
     @Test
-    public void examineResolve() throws Exception {
+    public void examineResolve() {
         final Principal principalOut = principalFactory.createPrincipal("output");
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("input");

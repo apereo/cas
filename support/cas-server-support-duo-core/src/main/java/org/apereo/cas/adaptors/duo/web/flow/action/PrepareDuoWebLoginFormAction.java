@@ -26,7 +26,7 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();
 
         final DuoCredential c = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);

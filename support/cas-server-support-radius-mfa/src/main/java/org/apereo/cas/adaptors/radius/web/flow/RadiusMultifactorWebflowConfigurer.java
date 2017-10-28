@@ -29,7 +29,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_RADIUS_EVENT_ID, this.radiusFlowRegistry);
     }
 }

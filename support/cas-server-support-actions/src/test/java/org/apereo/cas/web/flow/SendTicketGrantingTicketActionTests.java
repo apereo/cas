@@ -48,7 +48,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     private MockRequestContext context;
 
     @Before
-    public void onSetUp() throws Exception {
+    public void onSetUp() {
         this.context = new MockRequestContext();
     }
 

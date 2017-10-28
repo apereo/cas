@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@FunctionalInterface
 public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor {
 
     /**
@@ -46,14 +45,7 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
      * Decrement the the throttle so authentication can resume.
      */
     void decrement();
-
-    @Override
-    default void afterConcurrentHandlingStarted(final HttpServletRequest request,
-                                                final HttpServletResponse response,
-                                                final Object handler) throws Exception {
-        
-    }
-
+    
     @Override
     default boolean preHandle(final HttpServletRequest request,
                               final HttpServletResponse response,
@@ -65,15 +57,6 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     default void postHandle(final HttpServletRequest request,
                             final HttpServletResponse response,
                             final Object handler,
-                            final ModelAndView modelAndView) throws Exception {
-
-    }
-
-    @Override
-    default void afterCompletion(final HttpServletRequest request,
-                                 final HttpServletResponse response,
-                                 final Object handler,
-                                 final Exception ex) throws Exception {
-
+                            final ModelAndView modelAndView) {
     }
 }

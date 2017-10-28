@@ -56,14 +56,14 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
 
     @Override
     public RegisteredService save(final RegisteredService rs) {
-        if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            return update(rs);
-        }
-
         try {
+            if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+                return update(rs);
+            }
+            
             final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeAddOperation(this.connectionFactory, entry);
-        } catch (final LdapException e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return rs;

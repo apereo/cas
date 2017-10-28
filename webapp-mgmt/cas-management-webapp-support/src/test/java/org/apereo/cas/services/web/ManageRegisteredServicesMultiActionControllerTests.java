@@ -69,7 +69,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyDeleteService() throws Exception {
+    public void verifyDeleteService() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName(NAME);

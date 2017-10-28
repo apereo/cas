@@ -42,7 +42,7 @@ public class DynamoDbServiceRegistryConfiguration {
     }
 
     @Bean
-    public ServiceRegistryDao serviceRegistryDao() throws Exception {
+    public ServiceRegistryDao serviceRegistryDao() {
         return new DynamoDbServiceRegistryDao(dynamoDbServiceRegistryFacilitator());
     }
 

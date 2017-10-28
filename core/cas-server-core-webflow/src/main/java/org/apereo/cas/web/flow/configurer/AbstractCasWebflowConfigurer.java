@@ -138,7 +138,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      *
      * @throws Exception the exception
      */
-    protected abstract void doInitialize() throws Exception;
+    protected abstract void doInitialize();
 
     @Override
     public Flow buildFlow(final String location, final String id) {

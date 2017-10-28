@@ -15,7 +15,7 @@ public class TokenTicketCipherExecutorTests {
     public static final String ST = "ST-1234567890";
 
     @Test
-    public void verifyCipheredToken() throws Exception {
+    public void verifyCipheredToken() {
         final TokenTicketCipherExecutor c = new TokenTicketCipherExecutor(null, 
                 "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true);
         final String token = c.encode(ST);
@@ -23,7 +23,7 @@ public class TokenTicketCipherExecutorTests {
     }
 
     @Test
-    public void verifyCipheredTokenWithoutEncryption() throws Exception {
+    public void verifyCipheredTokenWithoutEncryption() {
         final TokenTicketCipherExecutor c = new TokenTicketCipherExecutor(null,
                 "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false);
         final String token = c.encode(ST);

@@ -50,7 +50,7 @@ public class GenericSuccessViewAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         if (StringUtils.isNotBlank(this.redirectUrl)) {
             final Service service = this.serviceFactory.createService(this.redirectUrl);
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);

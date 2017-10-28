@@ -58,13 +58,13 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     }
 
     @Test
-    public void verifyNoProviders() throws Exception {
+    public void verifyNoProviders() {
         assertThat(strategy.resolve(NO_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), mockService(MFA_PROVIDER_ID_1), null).isPresent(),
                 is(false));
     }
 
     @Test
-    public void verifyRequestParameterTrigger() throws Exception {
+    public void verifyRequestParameterTrigger() {
         // opt-in parameter only
         assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), null, null).orElse(null), is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_2), null, null).orElse(null), is(MFA_PROVIDER_ID_2));
@@ -72,7 +72,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     }
 
     @Test
-    public void verifyRegisteredServiceTrigger() throws Exception {
+    public void verifyRegisteredServiceTrigger() {
         // regular RegisteredService trigger
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_1), null).orElse(null), is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_2), null).orElse(null), is(MFA_PROVIDER_ID_2));
@@ -112,7 +112,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     }
 
     @Test
-    public void verifyPrincipalAttributeTrigger() throws Exception {
+    public void verifyPrincipalAttributeTrigger() {
         // Principal attribute trigger
         assertThat(strategy.resolve(VALID_PROVIDERS, null, null, CoreAuthenticationTestUtils.mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_1)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
@@ -122,7 +122,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     }
 
     @Test
-    public void verifyMultipleTriggers() throws Exception {
+    public void verifyMultipleTriggers() {
         // opt-in overrides everything
         assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), mockService(MFA_PROVIDER_ID_2),
                 CoreAuthenticationTestUtils.mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2)).orElse(null),

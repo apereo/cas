@@ -45,13 +45,13 @@ public class FileTrustStoreSslSocketFactoryTests {
     }
 
     @Test
-    public void verifyTrustStoreNotFound() throws Exception {
+    public void verifyTrustStoreNotFound() {
         this.thrown.expect(RuntimeException.class);
         sslFactory(new FileSystemResource("test.jks"), "changeit");
     }
 
     @Test
-    public void verifyTrustStoreBadPassword() throws Exception {
+    public void verifyTrustStoreBadPassword() {
         this.thrown.expect(RuntimeException.class);
         sslFactory(RESOURCE, "invalid");
     }

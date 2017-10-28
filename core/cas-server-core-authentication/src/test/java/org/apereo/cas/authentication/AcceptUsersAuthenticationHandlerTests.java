@@ -29,7 +29,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
-    public AcceptUsersAuthenticationHandlerTests() throws Exception {
+    public AcceptUsersAuthenticationHandlerTests() {
         final Map<String, String> users = new HashMap<>();
         users.put(SCOTT, RUTGERS);
         users.put("dima", "javarules");
@@ -48,7 +48,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsProperUserCredentials() throws Exception {
+    public void verifySupportsProperUserCredentials() {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);

@@ -21,7 +21,7 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final String uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
         if (registry.isYubiKeyRegisteredFor(uid)) {
             return success();
