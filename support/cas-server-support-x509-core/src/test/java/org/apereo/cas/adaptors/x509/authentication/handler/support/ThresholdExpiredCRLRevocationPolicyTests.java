@@ -63,7 +63,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      * @throws Exception if there is an exception getting the test parameters.
      */
     @Parameters
-    public static Collection<Object[]> getTestParameters() throws Exception {
+    public static Collection<Object[]> getTestParameters() {
         final Collection<Object[]> params = new ArrayList<>();
 
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);

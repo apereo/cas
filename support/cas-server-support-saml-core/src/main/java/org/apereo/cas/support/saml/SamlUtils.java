@@ -158,7 +158,7 @@ public final class SamlUtils {
      * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
-                                                                           final String signatureResourceLocation) throws Exception {
+                                                                           final String signatureResourceLocation) {
         try {
             final Resource resource = resourceLoader.getResource(signatureResourceLocation);
             return buildSignatureValidationFilter(resource);

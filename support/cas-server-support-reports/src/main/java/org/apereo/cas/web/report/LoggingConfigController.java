@@ -115,7 +115,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
-    public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         Assert.notNull(this.loggerContext);
@@ -208,7 +208,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @return the logger configurations
      * @throws IOException the iO exception
      */
-    private Set<LoggerConfig> getLoggerConfigurations() throws IOException {
+    private Set<LoggerConfig> getLoggerConfigurations() {
         final Configuration configuration = this.loggerContext.getConfiguration();
         return new HashSet<>(configuration.getLoggers().values());
     }
@@ -259,7 +259,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getAuditLog")
     @ResponseBody
-    public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         Assert.notNull(this.loggerContext);
 

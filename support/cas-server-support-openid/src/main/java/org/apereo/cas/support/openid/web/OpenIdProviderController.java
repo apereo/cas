@@ -34,7 +34,7 @@ public class OpenIdProviderController {
      */
     @GetMapping("/openid/*")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         final Map model = new HashMap<>();
         model.put("openid_server", casProperties.getServer().getPrefix());
         return new ModelAndView("openIdProviderView", model);

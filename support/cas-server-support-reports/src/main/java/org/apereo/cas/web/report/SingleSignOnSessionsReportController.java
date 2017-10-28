@@ -293,7 +293,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      */
     @GetMapping
     public ModelAndView showSsoSessions(final HttpServletRequest request,
-                                        final HttpServletResponse response) throws Exception {
+                                        final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         return new ModelAndView(VIEW_SSO_SESSIONS);

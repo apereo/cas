@@ -48,7 +48,7 @@ public class CasSecurityInterceptor extends SecurityInterceptor {
 
     @Override
     public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                           final Object handler, final ModelAndView modelAndView) throws Exception {
+                           final Object handler, final ModelAndView modelAndView) {
         if (modelAndView != null
                 && StringUtils.isNotBlank(request.getQueryString())
                 && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {

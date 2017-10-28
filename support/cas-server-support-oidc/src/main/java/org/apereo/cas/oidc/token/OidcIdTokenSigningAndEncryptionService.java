@@ -46,7 +46,7 @@ public class OidcIdTokenSigningAndEncryptionService {
      * @return the string
      * @throws JoseException the jose exception
      */
-    public String encode(final OidcRegisteredService svc, final JwtClaims claims) throws JoseException {
+    public String encode(final OidcRegisteredService svc, final JwtClaims claims) {
         try {
             LOGGER.debug("Attempting to produce id token generated for service [{}]", svc);
             final JsonWebSignature jws = new JsonWebSignature();

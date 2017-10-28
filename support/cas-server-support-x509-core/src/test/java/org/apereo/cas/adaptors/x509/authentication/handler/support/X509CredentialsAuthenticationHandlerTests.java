@@ -84,7 +84,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      * @throws Exception On test data setup errors.
      */
     @Parameters
-    public static Collection<Object[]> getTestParameters() throws Exception {
+    public static Collection<Object[]> getTestParameters() {
         final Collection<Object[]> params = new ArrayList<>();
 
         X509CredentialsAuthenticationHandler handler;

@@ -114,12 +114,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
-
-        try {
-            return r == null ? null : r.clone();
-        } catch (final CloneNotSupportedException e) {
-            return r;
-        }
+        return r == null ? null : r.clone();
     }
 
     @Override

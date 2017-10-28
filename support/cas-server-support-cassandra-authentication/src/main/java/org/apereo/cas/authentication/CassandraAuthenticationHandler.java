@@ -35,7 +35,7 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword) throws GeneralSecurityException, PreventedException {
+                                                                 final String originalPassword) throws GeneralSecurityException {
         final String username = credential.getUsername();
         final String password = credential.getPassword();
 

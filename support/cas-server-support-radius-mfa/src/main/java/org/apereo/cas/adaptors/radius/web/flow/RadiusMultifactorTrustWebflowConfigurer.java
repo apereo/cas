@@ -25,7 +25,7 @@ public class RadiusMultifactorTrustWebflowConfigurer extends AbstractMultifactor
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         registerMultifactorTrustedAuthentication(this.flowDefinitionRegistry);
     }
 

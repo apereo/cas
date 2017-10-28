@@ -145,7 +145,7 @@ public class CasWebflowContextConfigurationTests {
             //CHECKSTYLE:OFF
             return new AbstractAction() {
                 @Override
-                protected Event doExecute(final RequestContext requestContext) throws Exception {
+                protected Event doExecute(final RequestContext requestContext) {
                     requestContext.getFlowScope().put("test0", Collections.singleton(TEST));
                     requestContext.getFlowScope().put("test1", Collections.singletonList(TEST));
                     requestContext.getFlowScope().put("test2", Collections.singletonMap(TEST, TEST));

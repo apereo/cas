@@ -70,7 +70,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();

@@ -6,7 +6,6 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
@@ -46,7 +45,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final SwivelCredential swivelCredential = (SwivelCredential) credential;
         if (swivelCredential == null || StringUtils.isBlank(swivelCredential.getToken())) {
             throw new IllegalArgumentException("No credential could be found or credential token is blank");

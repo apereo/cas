@@ -19,28 +19,28 @@ import static org.junit.Assert.*;
 public class HealthCheckMonitorTests {
 
     @Test
-    public void verifyObserveUnknown() throws Exception {
+    public void verifyObserveUnknown() {
         final HealthCheckMonitor monitor = new HealthCheckMonitor(new HashSet<>(0));
 
         assertEquals(StatusCode.UNKNOWN, monitor.observe().getCode());
     }
 
     @Test
-    public void verifyObserveOk() throws Exception {
+    public void verifyObserveOk() {
         final Set<Monitor> monitors = new HashSet<>(asList(new MemoryMonitor(0), newSessionMonitor()));
         final HealthCheckMonitor monitor = new HealthCheckMonitor(monitors);
         assertEquals(StatusCode.OK, monitor.observe().getCode());
     }
 
     @Test
-    public void verifyObserveWarn() throws Exception {
+    public void verifyObserveWarn() {
         final Set<Monitor> monitors = new HashSet<>(asList(new MemoryMonitor(100), newSessionMonitor()));
         final HealthCheckMonitor monitor = new HealthCheckMonitor(monitors);
         assertEquals(StatusCode.WARN, monitor.observe().getCode());
     }
 
     @Test
-    public void verifyThrowsUncheckedException() throws Exception {
+    public void verifyThrowsUncheckedException() {
         final Monitor throwsUnchecked = new Monitor() {
             @Override
             public String getName() {
