@@ -336,12 +336,18 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
     sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
     classDirectories = files(files(subprojects.sourceSets.main.output).collect {
         fileTree(dir: it,
+                include: '**/*.class',
                 exclude: [
                         '**/**Configuration.class',
+                        '**/**Configuration$**',
                         '**/**WebflowConfigurer.class',
+                        '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
+                        '**/**Exception$**',
                         '**/**Properties.class'
-                ])
+                ]).each {
+                println it.path
+        }
     })
 
     executionData = files(subprojects.jacocoTestReport.executionData)
