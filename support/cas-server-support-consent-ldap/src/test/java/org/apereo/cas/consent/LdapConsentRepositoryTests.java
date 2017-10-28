@@ -60,7 +60,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     
     @Autowired
     @Qualifier("consentRepository")
-    private LdapConsentRepository repository;
+    private ConsentRepository repository;
     
     @BeforeClass
     public static void bootstrap() throws Exception {

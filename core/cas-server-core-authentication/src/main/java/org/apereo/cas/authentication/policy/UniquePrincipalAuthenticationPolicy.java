@@ -41,11 +41,11 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
                 }
                 return pass;
             }).count();
-            if (count <= 1) {
+            if (count == 0) {
                 LOGGER.debug("Authentication policy is satisfied with [{}]", authPrincipal.getId());
                 return true;
             }
-            LOGGER.warn("Authentication policy cannot be satisfied with [{}] for whom a [{}] sessions currently exist",
+            LOGGER.warn("Authentication policy cannot be satisfied for principal [{}] because [{}] sessions currently exist",
                     authPrincipal.getId(), count);
             return false;
         } catch (final Exception e) {
