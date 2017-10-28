@@ -31,7 +31,7 @@ public class FileAuthenticationHandlerTests {
     private FileAuthenticationHandler authenticationHandler;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
                 FileAuthenticationHandler.DEFAULT_SEPARATOR);
         final PasswordEncoderProperties p = new PasswordEncoderProperties();

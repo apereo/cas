@@ -57,7 +57,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
-    protected void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) throws Exception {
+    protected void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
         try (StringWriter writer = new StringWriter()) {
             final Map<String, List<U2FDeviceRegistration>> newDevices = new HashMap<>();
             newDevices.put(MAP_KEY_SERVICES, list);

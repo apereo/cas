@@ -22,7 +22,7 @@ public class PrepareInterruptViewAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(PrepareInterruptViewAction.class);
     
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final Service service = WebUtils.getService(requestContext);
         final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);

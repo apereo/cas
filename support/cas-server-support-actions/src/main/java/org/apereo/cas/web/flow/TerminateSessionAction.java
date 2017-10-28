@@ -45,7 +45,7 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         boolean terminateSession = true;
         if (logoutProperties.isConfirmLogout()) {
             terminateSession = isLogoutRequestConfirmed(requestContext);

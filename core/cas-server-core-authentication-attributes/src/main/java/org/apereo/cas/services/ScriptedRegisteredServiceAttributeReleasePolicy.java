@@ -8,7 +8,6 @@ import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.script.ScriptException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -60,14 +59,14 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes,
-                                                                           final Matcher matcherInline) throws ScriptException {
+                                                                           final Matcher matcherInline) {
         final String script = matcherInline.group(1).trim();
         final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(script,
                 CollectionUtils.wrap("attributes", attributes, "logger", LOGGER));
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }
 
-    private Map<String, Object> getScriptedAttributesFromFile(final Map<String, Object> attributes) throws Exception {
+    private Map<String, Object> getScriptedAttributesFromFile(final Map<String, Object> attributes) {
         final Object[] args = {attributes, LOGGER};
         final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(this.scriptFile, args);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());

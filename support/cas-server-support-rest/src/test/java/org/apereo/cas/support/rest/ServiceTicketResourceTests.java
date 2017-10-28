@@ -57,7 +57,7 @@ public class ServiceTicketResourceTests {
     private MockMvc mockMvc;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final AuthenticationManager mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
@@ -105,11 +105,11 @@ public class ServiceTicketResourceTests {
                 .andExpect(content().string(OTHER_EXCEPTION));
     }
 
-    private void configureCasMockSTCreationToThrow(final Throwable e) throws Exception {
+    private void configureCasMockSTCreationToThrow(final Throwable e) {
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenThrow(e);
     }
 
-    private void configureCasMockToCreateValidST() throws Exception {
+    private void configureCasMockToCreateValidST() {
         final ServiceTicket st = mock(ServiceTicket.class);
         when(st.getId()).thenReturn("ST-1");
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);

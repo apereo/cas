@@ -24,7 +24,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     }
 
     @Override
-    public OidcServerDiscoverySettings getObject() throws Exception {
+    public OidcServerDiscoverySettings getObject() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final OidcServerDiscoverySettings discoveryProperties =
                 new OidcServerDiscoverySettings(casProperties, oidc.getIssuer());

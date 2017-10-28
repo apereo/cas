@@ -32,7 +32,7 @@ public class AuthenticationCredentialsLocalBinderClearingFilter implements Filte
     }
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
         //noop
     }
 

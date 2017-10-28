@@ -84,7 +84,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
      * @return the json web key set
      * @throws Exception the exception
      */
-    private Optional<JsonWebKeySet> buildJsonWebKeySet() throws Exception {
+    private Optional<JsonWebKeySet> buildJsonWebKeySet() {
         try {
             LOGGER.debug("Loading default JSON web key from [{}]", this.jwksFile);
             if (this.jwksFile != null) {

@@ -22,7 +22,7 @@ public class SurrogateSelectionAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Credential credential = WebUtils.getCredential(requestContext);
         if (credential instanceof UsernamePasswordCredential) {
             final UsernamePasswordCredential upc = UsernamePasswordCredential.class.cast(credential);

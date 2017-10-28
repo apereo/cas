@@ -18,10 +18,10 @@ public class AbstractPoolMonitorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
-    public void verifyObserveOK() throws Exception {
+    public void verifyObserveOK() {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor", executor, 1000) {
             @Override
-            protected StatusCode checkPool() throws Exception {
+            protected StatusCode checkPool() {
                 return StatusCode.OK;
             }
 

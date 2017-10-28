@@ -27,7 +27,7 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
         if (c == null) {
             LOGGER.debug("No credential found in the request context to provision");

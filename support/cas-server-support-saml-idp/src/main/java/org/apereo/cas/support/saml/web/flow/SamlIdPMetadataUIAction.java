@@ -40,7 +40,7 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Service service = this.serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
