@@ -73,10 +73,9 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             final Flow flow = Flow.class.cast(mfaProviderFlowRegistry.getFlowDefinition(id));
             if (containsFlowState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT)) {
                 final ActionState submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-                ensureEndStateTransitionExists(submit, flow,
-                        CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
-                ensureEndStateTransitionExists(submit, flow,
-                        CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
+                ensureEndStateTransitionExists(submit, flow, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
+                ensureEndStateTransitionExists(submit, flow, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
+                        CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
             }
         });
 
