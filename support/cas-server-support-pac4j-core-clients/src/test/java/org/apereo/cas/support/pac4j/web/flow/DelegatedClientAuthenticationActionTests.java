@@ -17,7 +17,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.exception.HttpAction;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -123,7 +122,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         final FacebookClient facebookClient = new FacebookClient() {
             @Override
-            protected OAuth20Credentials retrieveCredentials(final WebContext context) throws HttpAction {
+            protected OAuth20Credentials retrieveCredentials(final WebContext context) {
                 return new OAuth20Credentials("fakeVerifier", FacebookClient.class.getSimpleName());
             }
         };

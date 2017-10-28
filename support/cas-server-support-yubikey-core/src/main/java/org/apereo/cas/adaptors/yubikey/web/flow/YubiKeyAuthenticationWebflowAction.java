@@ -20,7 +20,7 @@ public class YubiKeyAuthenticationWebflowAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         return this.yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }

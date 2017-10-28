@@ -86,7 +86,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcClientRegistrationResponse> handleRequestInternal(@RequestBody final String jsonInput,
                                                                                 final HttpServletRequest request,
-                                                                                final HttpServletResponse response) throws Exception {
+                                                                                final HttpServletResponse response) {
         try {
             final OidcClientRegistrationRequest registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);

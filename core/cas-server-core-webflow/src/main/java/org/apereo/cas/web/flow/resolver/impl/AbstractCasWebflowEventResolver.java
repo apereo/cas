@@ -201,7 +201,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected Event grantTicketGrantingTicketToAuthenticationResult(final RequestContext context,
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                    final Service service) throws Exception {
+                                                                    final Service service) {
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =

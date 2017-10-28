@@ -118,7 +118,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     @GetMapping(value = "/getAuthnAudit")
     @ResponseBody
     public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         return this.auditTrailManager.get();
     }
@@ -140,7 +140,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                                                                                      final HttpServletResponse response,
                                                                                      @RequestParam final long start,
                                                                                      @RequestParam final String range,
-                                                                                     @RequestParam final String scale) throws Exception {
+                                                                                     @RequestParam final String scale) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -305,7 +305,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
-                                                 final HttpServletResponse httpServletResponse) throws Exception {
+                                                 final HttpServletResponse httpServletResponse) {
         ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
 
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);

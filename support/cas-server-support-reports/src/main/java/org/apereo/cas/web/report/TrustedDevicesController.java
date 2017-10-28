@@ -48,7 +48,7 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         return new ModelAndView("monitoring/viewTrustedDevices");
@@ -65,7 +65,7 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
     @GetMapping(value = "/getRecords")
     @ResponseBody
     public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
-                                                                final HttpServletResponse response) throws Exception {
+                                                                final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
@@ -87,7 +87,7 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
     @PostMapping(value = "/revokeRecord")
     @ResponseBody
     public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request,
-                                final HttpServletResponse response) throws Exception {
+                                final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         this.mfaTrustEngine.expire(key);

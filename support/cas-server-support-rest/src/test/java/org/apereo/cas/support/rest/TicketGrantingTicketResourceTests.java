@@ -191,21 +191,21 @@ public class TicketGrantingTicketResourceTests {
                 .andExpect(status().isOk());
     }
 
-    private void configureCasMockToCreateValidTGT() throws Exception {
+    private void configureCasMockToCreateValidTGT() {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
 
     }
 
-    private void configureCasMockTGTCreationToThrowAuthenticationException() throws Exception {
+    private void configureCasMockTGTCreationToThrowAuthenticationException() {
         final Map<String, Class<? extends Throwable>> handlerErrors = new HashMap<>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class)))
                 .thenThrow(new AuthenticationException(handlerErrors));
     }
 
-    private void configureCasMockTGTCreationToThrow(final Exception e) throws Exception {
+    private void configureCasMockTGTCreationToThrow(final Exception e) {
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenThrow(e);
     }
 }

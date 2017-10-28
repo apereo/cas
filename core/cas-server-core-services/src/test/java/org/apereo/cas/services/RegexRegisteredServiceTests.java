@@ -97,7 +97,7 @@ public class RegexRegisteredServiceTests {
     }
 
     @Test
-    public void verifyMatches() throws Exception {
+    public void verifyMatches() {
         final Service testService;
         if (serviceToMatch == null) {
             testService = null;

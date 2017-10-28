@@ -102,7 +102,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             consumes = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE},
             produces = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE})
     public void handleEcpRequest(final HttpServletResponse response,
-                                 final HttpServletRequest request) throws Exception {
+                                 final HttpServletRequest request) {
         final MessageContext soapContext = decodeSoapRequest(request);
         final Credential credential = extractBasicAuthenticationCredential(request, response);
 

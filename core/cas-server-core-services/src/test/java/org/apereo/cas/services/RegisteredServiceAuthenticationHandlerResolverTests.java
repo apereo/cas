@@ -30,7 +30,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     private Set<AuthenticationHandler> handlers;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         final List<RegisteredService> list = new ArrayList<>();
 

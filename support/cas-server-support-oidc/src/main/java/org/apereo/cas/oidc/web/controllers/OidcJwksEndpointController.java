@@ -76,7 +76,7 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
                                                         final HttpServletResponse response,
-                                                        final Model model) throws Exception {
+                                                        final Model model) {
 
         Assert.notNull(this.jwksFile, "JWKS file cannot be undefined or null.");
 

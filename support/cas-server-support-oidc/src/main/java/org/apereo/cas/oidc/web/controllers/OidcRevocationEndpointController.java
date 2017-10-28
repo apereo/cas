@@ -63,7 +63,7 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
-                                                        final HttpServletResponse response) throws Exception {
+                                                        final HttpServletResponse response) {
         try {
             final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor(getClass().getSimpleName());
             final UsernamePasswordCredentials credentials = authExtractor.extract(WebUtils.getPac4jJ2EContext(request, response));

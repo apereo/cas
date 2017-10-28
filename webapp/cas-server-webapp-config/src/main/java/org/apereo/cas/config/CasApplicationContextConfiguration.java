@@ -40,8 +40,7 @@ public class CasApplicationContextConfiguration {
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) 
-                    throws Exception {
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
                 final String queryString = request.getQueryString();
                 final String url = request.getContextPath() + "/login" + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));

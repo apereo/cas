@@ -20,7 +20,7 @@ public class SpnegoCredentialsToPrincipalResolverTests {
     private SpnegoCredential spnegoCredentials;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.resolver = new SpnegoPrincipalResolver();
         this.spnegoCredentials = new SpnegoCredential(new byte[]{0, 1, 2});
     }

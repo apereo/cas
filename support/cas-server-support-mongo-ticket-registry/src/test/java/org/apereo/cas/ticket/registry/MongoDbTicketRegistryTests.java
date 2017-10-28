@@ -78,7 +78,7 @@ public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(true, false);
     }
 
@@ -88,7 +88,7 @@ public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
     }
     

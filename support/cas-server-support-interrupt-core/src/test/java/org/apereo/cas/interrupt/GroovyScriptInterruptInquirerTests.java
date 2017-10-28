@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  */
 public class GroovyScriptInterruptInquirerTests {
     @Test
-    public void verifyResponseCanBeFoundFromGroovy() throws Exception {
+    public void verifyResponseCanBeFoundFromGroovy() {
         final GroovyScriptInterruptInquirer q = new GroovyScriptInterruptInquirer(new ClassPathResource("interrupt.groovy"));
         final InterruptResponse response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
                 CoreAuthenticationTestUtils.getRegisteredService(),

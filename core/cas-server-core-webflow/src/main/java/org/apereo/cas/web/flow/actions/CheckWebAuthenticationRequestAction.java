@@ -27,7 +27,7 @@ public class CheckWebAuthenticationRequestAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         LOGGER.debug("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);

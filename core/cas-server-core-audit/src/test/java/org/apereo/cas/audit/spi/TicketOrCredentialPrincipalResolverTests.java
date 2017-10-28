@@ -42,7 +42,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyResolverServiceTicket() throws Exception {
+    public void verifyResolverServiceTicket() {
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), c);
 
@@ -62,7 +62,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyResolverTicketGrantingTicket() throws Exception {
+    public void verifyResolverTicketGrantingTicket() {
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), c);
 
