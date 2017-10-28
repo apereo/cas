@@ -15,29 +15,26 @@ will allow the user to next reset their password and login again. You may also s
 
 By default, after a user has successfully changed their password they will be redirected to the login screen
 to enter their new password and log in. CAS can also be configured to automatically log the user in after
-a successful change. The `autoLogin` flag in [password management properties](Configuration-Properties.html#password-management)
-controls this behavior.
+a successful change. This behavior can be altered via CAS settings. 
 
-To learn more about available notification options, please [see this guide](SMS-Messaging-Configuration.html) or [this guide](Sending-Email-Configuration.html).
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
+To learn more about available notification options, please [see this guide](SMS-Messaging-Configuration.html) or [this guide](Sending-Email-Configuration.html). To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
 
 ## JSON
 
-To learn more about available notification options, please [see this guide](Password-Management-JSON.html).
+Accounts and password may be stored inside a static modest JSON resource. This option is most useful during development and for demo purposes. To learn more, please [see this guide](Password-Management-JSON.html).
 
 ## LDAP
 
-To learn more about available notification options, please [see this guide](Password-Management-LDAP.html).
+The account password and security questions may be stored inside an LDAP server. To learn more, please [see this guide](Password-Management-LDAP.html).
 
 ## JDBC
 
-To learn more about available notification options, please [see this guide](Password-Management-JDBC.html).
+The account password and security questions may be stored inside a relational database. To learn more, please [see this guide](Password-Management-JDBC.html).
 
 ## REST
 
-To learn more about available notification options, please [see this guide](Password-Management-REST.html).
+The account password and security questions can also be managed using a REST API. To learn more please [see this guide](Password-Management-REST.html).
 
 ## Custom
 
-To learn more about available notification options, please [see this guide](Password-Management-Custom.html).
+To design your own password management storage options and strategy, please [see this guide](Password-Management-Custom.html).

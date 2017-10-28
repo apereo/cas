@@ -39,7 +39,10 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactory extends Defaul
 
     @Override
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
-        final String tokenParam = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
+        String tokenParam = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
+        if (StringUtils.isBlank(tokenParam)) {
+            tokenParam = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);    
+        }
         if (StringUtils.isBlank(tokenParam) || !BooleanUtils.toBoolean(tokenParam)) {
             LOGGER.debug("The request indicates that ticket-granting ticket should not be created as a JWT");
             return super.build(ticketGrantingTicket, request);
