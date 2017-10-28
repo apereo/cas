@@ -110,7 +110,6 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         // but can be omitted in favor of the IdP picking the default endpoint location from metadata.
         String shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor1 = facade;
         if (StringUtils.isBlank(shire)) {
             final AssertionConsumerService acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
             if (acs == null) {

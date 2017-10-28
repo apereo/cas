@@ -53,8 +53,6 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
 import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.expression.spel.ActionPropertyAccessor;
 import org.springframework.webflow.expression.spel.BeanFactoryPropertyAccessor;
@@ -69,7 +67,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -213,19 +210,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         LOGGER.debug("Added action to the action state [{}] list of actions: [{}]", actionState.getId(), actionState.getActionList());
         return actionState;
     }
-
-    /**
-     * Create action state.
-     *
-     * @param flow    the flow
-     * @param name    the name
-     * @param actions the actions
-     * @return the action state
-     */
-    public ActionState createActionState(final Flow flow, final String name, final Function<? extends RequestContext, ? extends Event>... actions) {
-        return createActionState(flow, name, actions);
-    }
-
+    
     @Override
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                              final String thenStateId, final String elseStateId) {

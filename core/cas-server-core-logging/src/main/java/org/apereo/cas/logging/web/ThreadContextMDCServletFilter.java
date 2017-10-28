@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.MDC;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -76,8 +77,8 @@ public class ThreadContextMDCServletFilter implements Filter {
                 addContextAttribute(k, Arrays.toString(values));
             });
 
-            Collections.list(request.getAttributeNames())
-                    .forEach(a -> addContextAttribute(a, request.getAttribute(a)));
+            Collections.list(request.getHeaderNames()).forEach(a -> addContextAttribute(a, request.getHeader(a)));
+            Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
 
             final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {
