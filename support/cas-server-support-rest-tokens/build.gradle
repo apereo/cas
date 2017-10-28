@@ -12,6 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-services-authentication")
 
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core")
