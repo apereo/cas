@@ -42,7 +42,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] sign(final byte[] value) {
-        return EncodingUtils.signJws(this.signingKey, value);
+        return EncodingUtils.signJwsHMACSha512(this.signingKey, value);
     }
 
     /**
