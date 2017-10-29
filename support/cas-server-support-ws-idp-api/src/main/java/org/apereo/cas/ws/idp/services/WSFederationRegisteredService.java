@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -159,5 +160,11 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(getAppliesTo())
                 .append(policyNamespace)
                 .toHashCode();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "WS Federation Relying Party";
     }
 }

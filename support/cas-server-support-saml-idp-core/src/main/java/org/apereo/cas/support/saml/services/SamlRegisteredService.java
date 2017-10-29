@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -438,5 +439,11 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("skipGeneratingSubjectConfirmationNotOnOrAfter", this.skipGeneratingSubjectConfirmationNotOnOrAfter)
                 .append("skipGeneratingSubjectConfirmationRecipient", this.skipGeneratingSubjectConfirmationRecipient)
                 .toString();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "SAML2 Service Provider";
     }
 }

@@ -1,0 +1,21 @@
+description = "Apereo CAS Discovery Support"
+dependencies {
+
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-configuration")
+    
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-web")
+
+    compileOnly project(":support:cas-server-support-oauth-services")
+    compileOnly project(":support:cas-server-support-saml-idp-core")
+    compileOnly project(":support:cas-server-support-ws-idp-api")
+    compileOnly project(":support:cas-server-support-person-directory")
+    compileOnly project(":support:cas-server-support-oidc-services")
+    compileOnly project(":support:cas-server-support-oidc-core")
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+}

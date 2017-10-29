@@ -471,6 +471,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # cas.monitor.endpoints.dashboard.enabled=false
 # cas.monitor.endpoints.dashboard.sensitive=true
 
+# cas.monitor.endpoints.discovery.enabled=false
+# cas.monitor.endpoints.discovery.sensitive=true
+
 # cas.monitor.endpoints.auditEvents.enabled=false
 # cas.monitor.endpoints.auditEvents.sensitive=true
 

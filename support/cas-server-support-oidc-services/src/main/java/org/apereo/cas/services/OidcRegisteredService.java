@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -287,5 +288,11 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "OpenID Connect Relying Party";
     }
 }
