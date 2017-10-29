@@ -270,14 +270,26 @@ public final class EncodingUtils {
      *
      * @param key   the key
      * @param value the value
+     * @return the byte []
+     */
+    public static byte[] signJwsHMACSha512(final Key key, final byte[] value) {
+        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA512);
+    }
+
+    /**
+     * Sign jws.
+     *
+     * @param key            the key
+     * @param value          the value
+     * @param algHeaderValue the alg header value
      * @return the byte [ ]
      */
-    public static byte[] signJws(final Key key, final byte[] value) {
+    public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
         try {
             final String base64 = EncodingUtils.encodeBase64(value);
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(base64);
-            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+            jws.setAlgorithmHeaderValue(algHeaderValue);
             jws.setKey(key);
             return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
         } catch (final Exception e) {
