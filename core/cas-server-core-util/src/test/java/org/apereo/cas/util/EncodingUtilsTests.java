@@ -48,7 +48,7 @@ public class EncodingUtilsTests {
         try {
             final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
             factory.setAlgorithm(RsaKeyUtil.RSA);
-            factory.setLocation(new ClassPathResource("keys/RSA2048Private.p8"));
+            factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
             factory.setSingleton(false);
             return factory.getObject();
         } catch (final Exception e) {
