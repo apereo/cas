@@ -340,6 +340,8 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                 exclude: [
                         '**/**Configuration.class',
                         '**/**Configuration$**',
+                        '**/**Application.class',
+                        '**/**Application**',
                         '**/**WebflowConfigurer.class',
                         '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
