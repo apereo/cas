@@ -16,6 +16,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.PrivateKey;
 import java.util.Map;
 
 /**
@@ -276,6 +277,17 @@ public final class EncodingUtils {
         return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA512);
     }
 
+    /**
+     * Sign jws.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the byte []
+     */
+    public static byte[] signJwsRSASha512(final PrivateKey key, final byte[] value) {
+        return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512);
+    }
+    
     /**
      * Sign jws.
      *

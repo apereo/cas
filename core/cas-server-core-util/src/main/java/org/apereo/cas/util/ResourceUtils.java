@@ -24,7 +24,7 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.*;
 
 /**
  * Utility class to assist with resource operations.
@@ -50,6 +50,9 @@ public final class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getRawResourceFrom(final String location) throws IOException {
+        if (StringUtils.isBlank(location)) {
+            throw new IllegalArgumentException("Provided location does not exist and is empty");
+        }
         final AbstractResource res;
         if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
             res = new UrlResource(location);
@@ -99,6 +102,20 @@ public final class ResourceUtils {
         return false;
     }
 
+    /**
+     * Does resource exist?
+     *
+     * @param location the resource
+     * @return the boolean
+     */
+    public static boolean doesResourceExist(final String location) {
+        try {
+            return getResourceFrom(location) != null;
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return false;
+    }
 
     /**
      * Gets resource from a String location.

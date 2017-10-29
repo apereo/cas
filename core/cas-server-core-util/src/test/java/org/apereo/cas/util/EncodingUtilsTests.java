@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
-import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class EncodingUtilsTests {
     @Test
     public void verifyRsaKeyForJwtSigning() {
         final String value = "ThisValue";
-        final byte[] signed = EncodingUtils.signJws(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8), AlgorithmIdentifiers.RSA_USING_SHA512);
+        final byte[] signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8));
         final byte[] jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
         final String result = new String(jwt, StandardCharsets.UTF_8);
         assertTrue(result.equals(value));
