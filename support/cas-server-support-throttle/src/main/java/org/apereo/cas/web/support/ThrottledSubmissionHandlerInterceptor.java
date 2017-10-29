@@ -45,7 +45,7 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
      * Decrement the the throttle so authentication can resume.
      */
     void decrement();
-    
+
     @Override
     default boolean preHandle(final HttpServletRequest request,
                               final HttpServletResponse response,
@@ -58,5 +58,17 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
                             final HttpServletResponse response,
                             final Object handler,
                             final ModelAndView modelAndView) {
+    }
+
+    @Override
+    default void afterConcurrentHandlingStarted(final HttpServletRequest httpServletRequest,
+                                                final HttpServletResponse httpServletResponse, final Object o) throws Exception {
+    }
+
+    @Override
+    default void afterCompletion(final HttpServletRequest httpServletRequest,
+                                 final HttpServletResponse httpServletResponse,
+                                 final Object o,
+                                 final Exception e) throws Exception {
     }
 }

@@ -348,9 +348,7 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'
-                ]).each {
-                println it.path
-        }
+                ])
     })
 
     executionData = files(subprojects.jacocoTestReport.executionData)
