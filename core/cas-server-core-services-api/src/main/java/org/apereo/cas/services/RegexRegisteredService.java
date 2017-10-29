@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
 
@@ -51,5 +52,11 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     @Override
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "CAS Client";
     }
 }

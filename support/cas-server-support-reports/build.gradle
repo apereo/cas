@@ -10,6 +10,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-trusted-mfa")
     compileOnly project(":core:cas-server-core-events")
     provided project(":support:cas-server-support-cookie")
+    implementation project(":support:cas-server-support-discovery-profile")
 
     provided project(":core:cas-server-core-audit")
 }
