@@ -341,12 +341,13 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                         '**/**Configuration.class',
                         '**/**Configuration$**',
                         '**/**Application.class',
-                        '**/**Application**',
+                        '**/**Application$**',
                         '**/**WebflowConfigurer.class',
                         '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
                         '**/**Exception$**',
-                        '**/**Properties.class'
+                        '**/**Properties.class',
+                        '**/**Properties$**'
                 ]).each {
                 println it.path
         }
