@@ -4,17 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
-import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-import org.jose4j.jwk.JsonWebKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -93,7 +89,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (this.encryptionEnabled) {
             configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
         } else {
-            LOGGER.warn("Encryption operations of [{}] are not enabled so the cipher [{}] will only attempt to produce signed objects", 
+            LOGGER.warn("Encryption operations of [{}] are not enabled so the cipher [{}] will only attempt to produce signed objects",
                     getName(), getClass().getSimpleName());
         }
         configureSigningParameters(secretKeySigning);
@@ -122,14 +118,17 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         } else {
             LOGGER.debug("Located encryption key to use for [{}]", getName());
         }
-        this.secretKeyEncryptionKey = prepareJsonWebTokenKey(secretKeyToUse);
+        this.secretKeyEncryptionKey = EncodingUtils.generateJsonWebKey(secretKeyToUse);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
         LOGGER.debug("Initialized cipher encryption sequence via [{}]", contentEncryptionAlgorithmIdentifier);
     }
 
     @Override
     public String encode(final Serializable value) {
-        final String encoded = this.encryptionEnabled ? encryptValue(value) : value.toString();
+        final String algorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
+        final String encoded = this.encryptionEnabled
+                ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, algorithm, this.contentEncryptionAlgorithmIdentifier)
+                : value.toString();
         return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
 
@@ -139,82 +138,14 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
             if (encoded != null && encoded.length > 0) {
                 final String encodedObj = new String(encoded, StandardCharsets.UTF_8);
-                return this.encryptionEnabled ? decryptValue(encodedObj) : encodedObj;
+                return this.encryptionEnabled ? EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj) : encodedObj;
             }
             return null;
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
-
-    /**
-     * Prepare json web token key.
-     *
-     * @param secret the secret
-     * @return the key
-     */
-    private static Key prepareJsonWebTokenKey(final String secret) {
-        try {
-            final Map<String, Object> keys = new HashMap<>(2);
-            keys.put("kty", "oct");
-            keys.put(EncodingUtils.JSON_WEB_KEY, secret);
-            final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
-            return jwk.getKey();
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Encrypt the value based on the seed array whose length was given during afterPropertiesSet,
-     * and the key and content encryption ids.
-     *
-     * @param value the value
-     * @return the encoded value
-     */
-    private String encryptValue(final Serializable value) {
-        try {
-            final JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setPayload(serializeValue(value));
-            jwe.enableDefaultCompression();
-            jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
-            jwe.setEncryptionMethodHeaderParameter(this.contentEncryptionAlgorithmIdentifier);
-            jwe.setKey(this.secretKeyEncryptionKey);
-            LOGGER.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
-            return jwe.getCompactSerialization();
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
-                    + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Serialize value as string.
-     *
-     * @param value the value
-     * @return the string
-     */
-    protected String serializeValue(final Serializable value) {
-        return value.toString();
-    }
-
-    /**
-     * Decrypt value based on the key created during afterPropertiesSet.
-     *
-     * @param value the value
-     * @return the decrypted value
-     */
-    private String decryptValue(final String value) {
-        try {
-            final JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setKey(this.secretKeyEncryptionKey);
-            jwe.setCompactSerialization(value);
-            LOGGER.debug("Decrypting value...");
-            return jwe.getPayload();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
+    
 
     /**
      * Gets encryption key setting.
