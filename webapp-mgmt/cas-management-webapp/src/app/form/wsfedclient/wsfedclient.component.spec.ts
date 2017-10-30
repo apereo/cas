@@ -25,7 +25,6 @@ describe('WsfedclientComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WsfedclientComponent);
     component = fixture.componentInstance;
-    component.selectOptions = new Data().selectOptions;
     fixture.detectChanges();
   });
 

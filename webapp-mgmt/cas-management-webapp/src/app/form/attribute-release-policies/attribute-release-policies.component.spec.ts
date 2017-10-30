@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttributeReleasePoliciesComponent } from './attribute-release-policies.component';
-import {FormData} from '../../../domain/service-view-bean';
+import {FormData} from '../../../domain/form-data';
 import {SharedModule} from '../../shared/shared.module';
 import {FormModule} from '../form.module';
 import {FormsModule} from '@angular/forms';
@@ -25,7 +25,6 @@ describe('AttributeReleasePoliciesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AttributeReleasePoliciesComponent);
     component = fixture.componentInstance;
-    component.selectOptions = new Data().selectOptions;
     component.formData = new FormData();
     fixture.detectChanges();
   });

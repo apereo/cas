@@ -9,12 +9,10 @@ import {Data} from '../../data';
   styleUrls: ['./nameid.component.css']
 })
 export class NameidComponent implements OnInit {
-  selectOptions;
   service: SamlRegisteredService;
 
   constructor(public messages: Messages,
               public data: Data) {
-      this.selectOptions = data.selectOptions;
       this.service = data.service as SamlRegisteredService;
   }
 

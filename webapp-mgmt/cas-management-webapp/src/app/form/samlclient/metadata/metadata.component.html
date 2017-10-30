@@ -66,8 +66,8 @@
     <mat-select i18n-placeholder="services.form.label.saml.metadata.dir"
                 [placeholder]="messages.services_form_label_saml_metadata_dir"
                 [(ngModel)]="service.metadataCriteriaDirection">
-      <mat-option *ngFor="let opt of selectOptions.samlDirectionList" [value]="opt.value">
-        {{ opt.name }}
+      <mat-option *ngFor="let opt of data.formData.samlDirections" [value]="opt">
+        {{ opt }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -82,8 +82,8 @@
     <mat-select i18n-placeholder="services.form.label.saml.metadata.role"
                 [placeholder]="messages.services_form_label_saml_metadata_role"
                 [(ngModel)]="service.metadataCriteriaRoles">
-      <mat-option *ngFor="let opt of selectOptions.samlRoleList" [value]="opt.value">
-        {{ opt.name}}
+      <mat-option *ngFor="let opt of data.formData.samlRoles" [value]="opt">
+        {{ opt }}
       </mat-option>
     </mat-select>
   </mat-form-field>

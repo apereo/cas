@@ -15,6 +15,7 @@ export class DefaultRegisteredServiceMultifactorPolicy extends RegisteredService
 
   constructor() {
     super();
+    this.failureMode = 'NOT_SET';
     this['@class'] = DefaultRegisteredServiceMultifactorPolicy.cName;
   }
 }

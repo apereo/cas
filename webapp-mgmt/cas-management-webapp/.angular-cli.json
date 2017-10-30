@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "version": "1.0.0-beta.31",
     "name": "cas-management-angular-webapp"
   },
   "apps": [
@@ -28,7 +27,6 @@
         "dev": "environments/environment.ts",
         "prod": "environments/environment.prod.ts"
       }
-
     }
   ],
   "e2e": {
@@ -53,18 +51,16 @@
   },
   "defaults": {
     "styleExt": "css",
-    "prefixInterfaces": false,
-    "inline": {
-      "style": false,
-      "template": false
+    "class": {
+      "spec": false
     },
-    "spec": {
-      "class": false,
-      "component": true,
-      "directive": true,
-      "module": false,
-      "pipe": true,
-      "service": true
+    "component": {
+      "spec": true,
+      "inlineStyle": false,
+      "inlineTemplate": false
     }
+  },
+  "warnings": {
+    "typescriptMismatch": false
   }
 }

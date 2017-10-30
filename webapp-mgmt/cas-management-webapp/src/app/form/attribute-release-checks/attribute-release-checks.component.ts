@@ -1,7 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {FormData} from '../../../domain/service-view-bean';
 import {Messages} from '../../messages';
-import {AbstractRegisteredService} from '../../../domain/registered-service';
 import {Data} from '../data';
 
 @Component({

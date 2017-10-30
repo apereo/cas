@@ -4,7 +4,7 @@
 
 import {Injectable} from '@angular/core';
 import {Resolve, Router, ActivatedRouteSnapshot} from '@angular/router';
-import {ServiceItem} from '../../domain/service-view-bean';
+import {ServiceItem} from '../../domain/service-item';
 import {ServiceViewService} from './service.service';
 
 @Injectable()

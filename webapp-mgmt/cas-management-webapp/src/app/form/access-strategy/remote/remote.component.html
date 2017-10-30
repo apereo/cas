@@ -23,6 +23,6 @@
            [matTooltip]="messages.services_form_label_sas_authorizedCodes">help
   </mat-icon>
   <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let code of codes" [value]="code">{{ code }}</mat-option>
+    <mat-option *ngFor="let code of data.formData.remoteCodes" [value]="code">{{ code }}</mat-option>
   </mat-autocomplete>
 </div>

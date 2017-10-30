@@ -1,7 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Messages} from '../../messages';
-import {FormData} from '../../../domain/service-view-bean';
-import {AbstractRegisteredService} from '../../../domain/registered-service';
+import {FormData} from '../../../domain/form-data';
 import {
   AnonymousRegisteredServiceUsernameProvider,
   DefaultRegisteredServiceUsernameProvider,
@@ -22,15 +21,12 @@ enum Type {
 export class UidattrsComponent implements OnInit {
 
   formData: FormData;
-  selectOptions;
   type: Type;
   TYPE = Type;
-  canonicalizations = ['NONE', 'UPPER', 'LOWER'];
 
   constructor(public messages: Messages,
               public data: Data) {
     this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {

@@ -2,7 +2,7 @@
  * Created by tschmidt on 2/13/17.
  */
 import {Injectable} from '@angular/core';
-import {ServiceItem} from '../../domain/service-view-bean';
+import {ServiceItem} from '../../domain/service-item';
 import {Service} from '../service';
 import {Http} from '@angular/http';
 

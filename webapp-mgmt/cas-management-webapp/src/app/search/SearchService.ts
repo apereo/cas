@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Service} from '../service';
 import {Http} from '@angular/http';
-import {ServiceItem} from '../../domain/service-view-bean';
+import {ServiceItem} from '../../domain/service-item';
 
 @Injectable()
 export class SearchService extends Service {
