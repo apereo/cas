@@ -1,12 +1,12 @@
 package org.apereo.cas.support.oauth.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.javers.core.metamodel.annotation.TypeName;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -25,7 +25,6 @@ import java.util.Set;
  */
 @Entity
 @DiscriminatorValue("oauth")
-@TypeName("OAuthRegisteredService")
 public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
@@ -191,5 +190,11 @@ public class OAuthRegisteredService extends RegexRegisteredService {
         if (this.supportedResponseTypes == null) {
             this.supportedResponseTypes = new HashSet<>();
         }
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "OAuth2 Client";
     }
 }

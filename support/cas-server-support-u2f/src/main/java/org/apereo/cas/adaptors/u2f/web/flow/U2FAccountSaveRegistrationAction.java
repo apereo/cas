@@ -26,7 +26,7 @@ public class U2FAccountSaveRegistrationAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();
         final String response = requestContext.getRequestParameters().get("tokenResponse");
         final RegisterResponse registerResponse = RegisterResponse.fromJson(response);

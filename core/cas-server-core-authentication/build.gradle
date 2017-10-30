@@ -4,9 +4,13 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-events")
+    
     implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
+   
+    
     implementation libraries.groovy
     implementation libraries.springsecurity
     implementation libraries.caffein
@@ -14,5 +18,8 @@ dependencies {
     
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-authentication")
-    
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-services")
 }

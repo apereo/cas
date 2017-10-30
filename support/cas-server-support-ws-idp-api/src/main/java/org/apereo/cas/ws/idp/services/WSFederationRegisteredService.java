@@ -1,12 +1,12 @@
 package org.apereo.cas.ws.idp.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-import org.javers.core.metamodel.annotation.TypeName;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -19,7 +19,6 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("wsfed")
-@TypeName("WSFederationRegisteredService")
 public class WSFederationRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = -3700571300568534062L;
 
@@ -161,5 +160,11 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(getAppliesTo())
                 .append(policyNamespace)
                 .toHashCode();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "WS Federation Relying Party";
     }
 }

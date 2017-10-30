@@ -15,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class DuoDirectAuthenticationAction extends AbstractAction {
     
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final DuoDirectCredential c = new DuoDirectCredential(WebUtils.getAuthentication(requestContext));
         WebUtils.putCredential(requestContext, c);
         return success();

@@ -87,13 +87,12 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
      * @param request  the request
      * @param response the response
      * @return the response entity
-     * @throws Exception the exception
      */
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE,
             value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL})
     public ResponseEntity<OidcIntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
-                                                                                  final HttpServletResponse response) throws Exception {
+                                                                                  final HttpServletResponse response) {
         try {
             final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor(getClass().getSimpleName());
             final UsernamePasswordCredentials credentials = authExtractor.extract(WebUtils.getPac4jJ2EContext(request, response));

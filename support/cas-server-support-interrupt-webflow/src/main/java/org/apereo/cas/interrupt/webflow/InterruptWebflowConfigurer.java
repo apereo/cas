@@ -1,10 +1,10 @@
 package org.apereo.cas.interrupt.webflow;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -39,7 +39,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
@@ -63,7 +63,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> {
             if (containsSubflowState(flow, v.getId())) {
                 final SubflowState state = getState(flow, v.getId(), SubflowState.class);

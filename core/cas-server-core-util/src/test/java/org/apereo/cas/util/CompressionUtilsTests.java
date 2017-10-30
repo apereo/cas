@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class CompressionUtilsTests {
 
     @Test
-    public void verifyStringCompression() throws Exception {
+    public void verifyStringCompression() {
         final String srcTxt =
                 "lamEiLCJhZG1pbiI6dHJ1ZX0.|..03f329983b86f7d9a9f5fef85305880101d5e302afafa20154d094b229f757|eyJhbGciO"
                         + "iJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzY290Y2guaW8iLCJleHAiOjEzMDA4MTkzODAsIm5hbWUiOiJDaHJpcyBTZXZpbG"

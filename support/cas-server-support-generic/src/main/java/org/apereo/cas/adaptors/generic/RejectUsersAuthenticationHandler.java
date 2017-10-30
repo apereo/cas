@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -39,7 +38,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+            throws GeneralSecurityException {
 
         final String username = credential.getUsername();
         if (this.users.contains(username)) {

@@ -123,6 +123,13 @@
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.attrresolution}"></span>
                     </a>
                 </li>
+                <li th:if="${discoveryProfileEndpointEnabled}">
+                    <a th:href="@{/status/discovery}" class="casTooltip">Discovery Profile 
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.discovery}"></span>
+                    </a>
+                </li>
+                
+                
                 <li th:if="${trustedDevicesEnabled}">
                     <a th:href="@{/status/trustedDevs}" class="casTooltip">Trusted Devices
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.trusteddevs}"></span>

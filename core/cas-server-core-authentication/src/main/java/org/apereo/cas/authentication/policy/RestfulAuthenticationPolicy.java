@@ -46,7 +46,12 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
             final HttpHeaders acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<Principal> entity = new HttpEntity<>(authentication.getPrincipal(), acceptHeaders);
+            LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", authentication.getPrincipal(), this.endpoint);
             final ResponseEntity<String> resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
+            if (resp == null) {
+                LOGGER.warn("[{}] returned no responses", this.endpoint);
+                throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
+            }
             if (resp.getStatusCode() != HttpStatus.OK) {
                 final Exception ex = handleResponseStatusCode(resp.getStatusCode(), authentication.getPrincipal());
                 throw new GeneralSecurityException(ex);
@@ -58,7 +63,7 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         }
     }
 
-    private Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) throws Exception {
+    private Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
             return new AccountDisabledException("Could not authenticate forbidden account for " + p.getId());
         }

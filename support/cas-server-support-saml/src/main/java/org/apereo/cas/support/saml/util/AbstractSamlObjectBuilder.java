@@ -135,9 +135,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      *
      * @param objectType the object type
      * @return the saml object QName
-     * @throws Exception the exception
      */
-    public QName getSamlObjectQName(final Class objectType) throws Exception {
+    public QName getSamlObjectQName(final Class objectType) {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
             return (QName) f.get(null);

@@ -89,7 +89,7 @@ public class RedisObjectFactory {
             final List<String> nodes = redis.getSentinel().getNode();
             for (final String hostAndPort : nodes) {
                 final String[] args = StringUtils.split(hostAndPort, ":");
-                redisNodes.add(new RedisNode(args[0], Integer.valueOf(args[1])));
+                redisNodes.add(new RedisNode(args[0], Integer.parseInt(args[1])));
             }
         }
         return redisNodes;

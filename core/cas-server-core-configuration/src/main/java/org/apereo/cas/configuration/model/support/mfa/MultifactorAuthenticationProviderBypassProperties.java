@@ -34,9 +34,9 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
     /**
      * Acceptable values are:
      * <ul>
-     *     <li><code>DEFAULT</code>: Default bypass rules to skip provider via attributes, etc.</li>
-     *     <li><code>GROOVY</code>: Handle bypass decisions via a groovy script.</li>
-     *     <li><code>REST</code>: Handle bypass rules via a REST endpoint</li>
+     *     <li>{@code DEFAULT}: Default bypass rules to skip provider via attributes, etc.</li>
+     *     <li>{@code GROOVY}: Handle bypass decisions via a groovy script.</li>
+     *     <li>{@code REST}: Handle bypass rules via a REST endpoint</li>
      * </ul>
      */
     private MultifactorProviderBypassTypes type = MultifactorProviderBypassTypes.DEFAULT;

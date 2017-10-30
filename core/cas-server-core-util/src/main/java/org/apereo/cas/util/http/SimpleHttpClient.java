@@ -174,10 +174,9 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     /**
      * Shutdown the executor service and close the http client.
      *
-     * @throws Exception if the executor cannot properly shut down
      */
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         IOUtils.closeQuietly(this.requestExecutorService);
     }
 

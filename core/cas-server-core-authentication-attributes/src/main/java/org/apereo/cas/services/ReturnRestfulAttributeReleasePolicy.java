@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Return a collection of allowed attributes for the principal based on an external REST endpoint.
@@ -45,9 +44,6 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     protected Map<String, Object> getAttributesInternal(final Principal principal,
                                                         final Map<String, Object> attributes,
                                                         final RegisteredService service) {
-        final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        resolvedAttributes.putAll(attributes);
-
         try (StringWriter writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
             final HttpResponse response = HttpUtils.executePost(this.endpoint, writer.toString(),
@@ -60,7 +56,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     @Override

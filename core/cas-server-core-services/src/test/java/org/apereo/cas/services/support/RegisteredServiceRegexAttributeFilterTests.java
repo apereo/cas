@@ -66,7 +66,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(this.registeredService.getName()).thenReturn("sample test service");

@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -48,10 +47,9 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
      * @param credential Credential to authenticate.
      * @return the result of this handler
      * @throws GeneralSecurityException general security exception for errors
-     * @throws PreventedException       authentication failed exception
      */
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         if (credential instanceof DuoDirectCredential) {
             LOGGER.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);

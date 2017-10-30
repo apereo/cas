@@ -113,12 +113,11 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      * @param request  the request
      * @param response the response
      * @return the authn audit
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getAuthnAudit")
     @ResponseBody
     public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         return this.auditTrailManager.get();
     }
@@ -132,7 +131,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      * @param range    the range
      * @param scale    the scale
      * @return the authn audit
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getAuthnAudit/summary")
     @ResponseBody
@@ -140,7 +138,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                                                                                      final HttpServletResponse response,
                                                                                      @RequestParam final long start,
                                                                                      @RequestParam final String range,
-                                                                                     @RequestParam final String scale) throws Exception {
+                                                                                     @RequestParam final String scale) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -301,11 +299,10 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      * @param httpServletRequest  the http servlet request
      * @param httpServletResponse the http servlet response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
-                                                 final HttpServletResponse httpServletResponse) throws Exception {
+                                                 final HttpServletResponse httpServletResponse) {
         ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
 
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);

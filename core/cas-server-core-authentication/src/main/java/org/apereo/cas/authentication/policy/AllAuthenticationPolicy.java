@@ -15,7 +15,7 @@ public class AllAuthenticationPolicy implements AuthenticationPolicy {
     private static final Logger LOGGER = LoggerFactory.getLogger(AllAuthenticationPolicy.class);
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn) throws Exception {
+    public boolean isSatisfiedBy(final Authentication authn) {
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {
             LOGGER.warn("Number of successful authentications, [{}], does match the number of provided credentials, [{}].",
                     authn.getSuccesses(), authn.getCredentials());

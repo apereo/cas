@@ -1,0 +1,10 @@
+description = "Apereo CAS Microsoft Azure MFA Core"
+
+dependencies {
+    implementation libraries.zxingbarcode
+    
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":support:cas-server-support-otp-mfa")
+}

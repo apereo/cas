@@ -19,7 +19,6 @@ public interface ValidationAuthorizer {
      * @param request   the request
      * @param service   the service
      * @param assertion the assertion
-     * @throws Exception the exception
      */
-    void authorize(HttpServletRequest request, Service service, Assertion assertion) throws Exception;
+    void authorize(HttpServletRequest request, Service service, Assertion assertion);
 }

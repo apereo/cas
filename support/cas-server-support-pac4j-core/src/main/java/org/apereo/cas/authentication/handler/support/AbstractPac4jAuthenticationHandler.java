@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -38,10 +37,9 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @param profile     the retrieved user profile
      * @return the built handler result
      * @throws GeneralSecurityException On authentication failure.
-     * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
     protected HandlerResult createResult(final ClientCredential credentials, final UserProfile profile)
-            throws GeneralSecurityException, PreventedException {
+            throws GeneralSecurityException {
 
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
