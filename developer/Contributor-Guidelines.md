@@ -11,6 +11,8 @@ We want to start off by saying thank you for using CAS. This project is a labor 
 who catch bugs, make performance improvements and help with documentation. Every contribution is meaningful, so thank you 
 for participating. That being said, here are a few guidelines that we ask you to follow so we can successfully address your patch.
 
+<div class="alert alert-info"><strong>Remember</strong><p>If you have already identified an enhancement or a bug, it is <strong>STRONGLY</strong> recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request <strong>IS</strong> the issue and it will be tracked and tagged as such.</p></div>
+
 ## Be Not Afraid
 
 The goal of this guide is to, very simply put, help you learn how to catch fish. 
