@@ -69,8 +69,8 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider swivelAuthenticationProvider() {
-        final SwivelMultifactorAuthenticationProvider p =
-                new SwivelMultifactorAuthenticationProvider(swivelAuthenticationHandler());
+        final SwivelMultifactorProperties swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        final SwivelMultifactorAuthenticationProvider p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
         p.setBypassEvaluator(swivelBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getSwivel().getRank());
