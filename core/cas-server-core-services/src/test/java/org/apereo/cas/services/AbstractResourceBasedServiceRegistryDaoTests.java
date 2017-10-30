@@ -301,7 +301,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     }
 
     @Test
-    public void verifyServiceRemovals() throws Exception {
+    public void verifyServiceRemovals() {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 5).forEach(i -> {
             final RegexRegisteredService r = new RegexRegisteredService();
@@ -387,7 +387,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     }
 
     @Test
-    public void serializePublicKeyForServiceAndVerify() throws Exception {
+    public void serializePublicKeyForServiceAndVerify() {
         final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
                 "classpath:RSA1024Public.key", "RSA");
 
@@ -452,7 +452,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     }
     
     @Test
-    public void persistCustomServiceProperties() throws Exception {
+    public void persistCustomServiceProperties() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("persistCustomServiceProperties");

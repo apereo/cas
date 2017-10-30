@@ -30,7 +30,6 @@ public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
      *
      * @param file        the file
      * @param destination the destination
-     * @throws Exception the exception
      */
     @CliCommand(value = "generate-yaml", help = "Generate a YAML registered service definition")
     public void generateYaml(
@@ -44,7 +43,7 @@ public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
                     help = "Path to the destination YAML service definition file",
                     specifiedDefaultValue = "",
                     unspecifiedDefaultValue = "",
-                    optionContext = "Path to the destination YAML service definition file") final String destination) throws Exception {
+                    optionContext = "Path to the destination YAML service definition file") final String destination) {
 
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("File must be specified");

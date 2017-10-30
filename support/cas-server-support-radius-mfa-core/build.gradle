@@ -1,0 +1,12 @@
+description = "Apereo CAS RADIUS RSA MFA Support"
+
+repositories {
+    maven { url "https://jitpack.io" }
+    jcenter()
+}
+
+dependencies {
+    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-radius-core")
+}

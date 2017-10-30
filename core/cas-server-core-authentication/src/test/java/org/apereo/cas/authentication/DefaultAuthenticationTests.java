@@ -25,7 +25,7 @@ public class DefaultAuthenticationTests {
     private ObjectMapper mapper;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

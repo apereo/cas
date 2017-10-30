@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class OidcProfileEndpointController extends OAuth20UserProfileControllerC
     }
 
     @Override
-    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) throws IOException {
+    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) {
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         final Map<String, Object> map = new HashMap<>(principal.getAttributes());
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {

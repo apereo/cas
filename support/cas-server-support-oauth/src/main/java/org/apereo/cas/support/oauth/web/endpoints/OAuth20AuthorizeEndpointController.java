@@ -176,12 +176,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param context           the context
      * @param clientId          the client id
      * @return the model and view
-     * @throws Exception the exception
      */
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final J2EContext context,
-                                                         final String clientId) throws Exception {
+                                                         final String clientId) {
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");

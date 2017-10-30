@@ -1,0 +1,18 @@
+description = "Apereo CAS Core Multifactor Authentication"
+
+dependencies {
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-events")
+    api project(":api:cas-server-core-api-authentication")
+
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    
+    implementation libraries.groovy
+    implementation libraries.caffein
+    
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-authentication")
+}

@@ -12,17 +12,17 @@ import static org.junit.Assert.*;
  */
 public class CollectionUtilsTests {
     @Test
-    public void verifyWrappingItemsAsList() throws Exception {
+    public void verifyWrappingItemsAsList() {
         assertEquals(CollectionUtils.wrapList(1, 2, 3, 4).size(), 4);
     }
 
     @Test
-    public void verifyWrappingColItemsAsList() throws Exception {
+    public void verifyWrappingColItemsAsList() {
         assertEquals(CollectionUtils.wrapList(new Object[]{1, 2, 3, 4}, new Object[]{1, 2, 3, 4}, 5, 6).size(), 10);
     }
 
     @Test
-    public void verifyWrappingMapItemsAsList() throws Exception {
+    public void verifyWrappingMapItemsAsList() {
         assertEquals(CollectionUtils.wrapList(CollectionUtils.wrap("1", 2, "2", 2)).size(), 2);
     }
 }

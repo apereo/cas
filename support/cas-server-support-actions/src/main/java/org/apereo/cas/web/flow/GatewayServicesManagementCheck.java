@@ -32,7 +32,7 @@ public class GatewayServicesManagementCheck extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);

@@ -45,7 +45,7 @@ public class PasswordChangeAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         try {
             final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
             final PasswordChangeBean bean = requestContext.getFlowScope()

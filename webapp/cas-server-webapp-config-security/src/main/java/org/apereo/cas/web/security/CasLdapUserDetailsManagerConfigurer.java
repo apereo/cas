@@ -80,7 +80,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
     }
 
     @Override
-    public void configure(final B builder) throws Exception {
+    public void configure(final B builder) {
         final AuthenticationProvider provider = postProcess(buildLdapAuthenticationProvider());
         builder.authenticationProvider(provider);
     }

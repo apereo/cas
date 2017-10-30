@@ -28,7 +28,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCRLFetcher.class);
     
     @Override
-    public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException, CertificateException {
+    public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException {
         final Set<X509CRL> results = new HashSet<>();
         for (final Resource r : crls) {
             LOGGER.debug("Fetching CRL data from [{}]", r);

@@ -43,7 +43,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createClientActionActionState(flow);
@@ -74,7 +74,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 DelegatedClientAuthenticationAction.VIEW_ID_STOP_WEBFLOW);
         state.getEntryActionList().add(new AbstractAction() {
             @Override
-            protected Event doExecute(final RequestContext requestContext) throws Exception {
+            protected Event doExecute(final RequestContext requestContext) {
                 final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
                 final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request,

@@ -69,7 +69,6 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final WebApplicationServiceResponseBuilder rhs = (WebApplicationServiceResponseBuilder) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

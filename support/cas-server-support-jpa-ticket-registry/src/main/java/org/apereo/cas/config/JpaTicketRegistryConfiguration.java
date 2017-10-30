@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -54,7 +55,7 @@ public class JpaTicketRegistryConfiguration {
     public List<String> ticketPackagesToScan() {
         final Reflections reflections =
                 new Reflections(new ConfigurationBuilder()
-                        .setUrls(ClasspathHelper.forPackage("org.apereo.cas"))
+                        .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                         .setScanners(new SubTypesScanner(false)));
         final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
         final List<String> packages = subTypes

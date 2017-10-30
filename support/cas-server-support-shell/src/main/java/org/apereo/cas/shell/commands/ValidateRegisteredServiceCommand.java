@@ -29,7 +29,6 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
      *
      * @param file      the file
      * @param directory the directory
-     * @throws Exception the exception
      */
     @CliCommand(value = "validate-service", help = "Validate a given JSON/YAML service definition by path or directory")
     public void validateService(
@@ -42,7 +41,7 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
                     help = "Path to the JSON/YAML service definitions directory",
                     specifiedDefaultValue = "/etc/cas/services",
                     unspecifiedDefaultValue = "/etc/cas/services",
-                    optionContext = "Path to the JSON/YAML service definitions directory") final String directory) throws Exception {
+                    optionContext = "Path to the JSON/YAML service definitions directory") final String directory) {
 
         if (StringUtils.isBlank(file) && StringUtils.isBlank(directory)) {
             LOGGER.warn("Either file or directory must be specified");

@@ -93,7 +93,7 @@ public class RestAuthenticationHandlerTests {
     private ResponseActions server;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build()
                 .expect(manyTimes(), requestTo("http://localhost:8081/authn"))
                 .andExpect(method(HttpMethod.POST));

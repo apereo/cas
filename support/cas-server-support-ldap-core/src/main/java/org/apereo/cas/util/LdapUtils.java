@@ -396,9 +396,8 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param entry             the entry
      * @return true/false
-     * @throws LdapException the ldap exception
      */
-    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
+    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
         try (Connection connection = createConnection(connectionFactory)) {
             final AddOperation operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
@@ -415,9 +414,8 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param entry             the entry
      * @return true/false
-     * @throws LdapException the ldap exception
      */
-    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
+    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
         try (Connection connection = createConnection(connectionFactory)) {
             final DeleteOperation delete = new DeleteOperation(connection);
             final DeleteRequest request = new DeleteRequest(entry.getDn());

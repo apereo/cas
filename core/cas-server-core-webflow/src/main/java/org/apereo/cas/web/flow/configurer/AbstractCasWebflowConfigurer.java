@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.convert.ConversionExecutor;
@@ -53,8 +53,6 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
 import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.expression.spel.ActionPropertyAccessor;
 import org.springframework.webflow.expression.spel.BeanFactoryPropertyAccessor;
@@ -69,7 +67,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -136,9 +133,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Handle the initialization of the webflow.
      *
-     * @throws Exception the exception
      */
-    protected abstract void doInitialize() throws Exception;
+    protected abstract void doInitialize();
 
     @Override
     public Flow buildFlow(final String location, final String id) {
@@ -213,19 +209,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         LOGGER.debug("Added action to the action state [{}] list of actions: [{}]", actionState.getId(), actionState.getActionList());
         return actionState;
     }
-
-    /**
-     * Create action state.
-     *
-     * @param flow    the flow
-     * @param name    the name
-     * @param actions the actions
-     * @return the action state
-     */
-    public ActionState createActionState(final Flow flow, final String name, final Function<? extends RequestContext, ? extends Event>... actions) {
-        return createActionState(flow, name, actions);
-    }
-
+    
     @Override
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                              final String thenStateId, final String elseStateId) {
@@ -728,7 +712,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             c.add(def.getExecutionCriteria());
             return c;
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**
@@ -750,7 +734,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> createTransitionForState(state, v.getId(), v.getId()));
     }
 

@@ -14,7 +14,7 @@ public interface UrlValidator {
      * Note that the method calls #isValidAuthority()
      * which checks that the domain is valid.
      *
-     * @param value The value validation is being performed on.  A <code>null</code> value is considered invalid.
+     * @param value The value validation is being performed on.  A {@code null} value is considered invalid.
      * @return true if the url is valid.
      */
     boolean isValid(String value);

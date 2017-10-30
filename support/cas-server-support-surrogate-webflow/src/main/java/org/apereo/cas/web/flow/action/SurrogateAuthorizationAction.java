@@ -25,7 +25,7 @@ public class SurrogateAuthorizationAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Authentication ca = AuthenticationCredentialsLocalBinder.getCurrentAuthentication();
         try {
             final Service service = WebUtils.getService(requestContext);

@@ -1088,15 +1088,6 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
-        javers : [
-                dependencies.create("org.javers:javers-core:$javersVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                }
-        ],
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
@@ -1925,6 +1916,12 @@ ext.libraries = [
         ],
         springbootjetty         : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-jetty:$springBootVersion") {
+                    exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "javax.annotation", module: "javax.annotation-api")
+                    force = true
+                },
+                dependencies.create("org.ow2.asm:asm:$ow2AsmVersion") {
+                    transitive = false
                     force = true
                 }
         ],

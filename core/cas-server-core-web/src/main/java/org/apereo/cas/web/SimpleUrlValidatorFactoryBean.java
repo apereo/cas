@@ -21,7 +21,7 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     }
 
     @Override
-    public org.apereo.cas.web.UrlValidator getObject() throws Exception {
+    public org.apereo.cas.web.UrlValidator getObject() {
         return new SimpleUrlValidator(getUrlValidator(), getDomainValidator());
     }
 

@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributes
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -61,6 +60,6 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
     }
 }
