@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.MDC;
 
 import javax.servlet.Filter;
@@ -30,14 +29,11 @@ public class ThreadContextMDCServletFilter implements Filter {
 
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
-    private final CasConfigurationProperties casProperties;
 
     public ThreadContextMDCServletFilter(final TicketRegistrySupport ticketRegistrySupport,
-                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                         final CasConfigurationProperties casProperties) {
+                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.ticketRegistrySupport = ticketRegistrySupport;
-        this.casProperties = casProperties;
     }
 
     /**
@@ -74,14 +70,6 @@ public class ThreadContextMDCServletFilter implements Filter {
             addContextAttribute("requestUri", request.getRequestURI());
             addContextAttribute("scheme", request.getScheme());
             addContextAttribute("timezone", TimeZone.getDefault().getDisplayName());
-
-            if (StringUtils.isNotBlank(casProperties.getAudit().getAlternateClientAddrHeaderName())) {
-                addContextAttribute("alternateClientAddr", request.getHeader(casProperties.getAudit().getAlternateClientAddrHeaderName()));
-            }
-
-            if (StringUtils.isNotBlank(casProperties.getAudit().getAlternateServerAddrHeaderName())) {
-                addContextAttribute("alternateServerAddr", request.getHeader(casProperties.getAudit().getAlternateServerAddrHeaderName()));
-            }
 
             final Map<String, String[]> params = request.getParameterMap();
             params.keySet().forEach(k -> {
