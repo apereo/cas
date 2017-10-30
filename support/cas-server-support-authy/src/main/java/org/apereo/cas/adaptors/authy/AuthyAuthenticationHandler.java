@@ -22,11 +22,11 @@ import java.util.Map;
  * Authy authentication handler for CAS.
  *
  * @author Misagh Moayyed
- * @since 5.0
+ * @since 5.0.0
  */
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private Boolean forceVerification = Boolean.FALSE;
+    private final boolean forceVerification;
     private final AuthyClientInstance instance;
 
     public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -48,7 +48,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         }
 
         final Map<String, String> options = new HashMap<>(1);
-        options.put("force", this.forceVerification.toString());
+        options.put("force", Boolean.toString(this.forceVerification));
 
         final Token verification = this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
 

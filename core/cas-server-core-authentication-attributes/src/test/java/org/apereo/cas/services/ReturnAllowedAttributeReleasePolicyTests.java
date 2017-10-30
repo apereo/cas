@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
- * @since 5.0
+ * @since 5.0.0
  */
 public class ReturnAllowedAttributeReleasePolicyTests {
 
