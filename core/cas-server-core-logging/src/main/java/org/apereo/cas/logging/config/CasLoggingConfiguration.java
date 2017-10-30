@@ -33,15 +33,12 @@ public class CasLoggingConfiguration {
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
     
     @Bean
     public FilterRegistrationBean threadContextMDCServletFilter() {
         final Map<String, String> initParams = new HashMap<>();
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport, this.ticketGrantingTicketCookieGenerator, casProperties));
+        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport, this.ticketGrantingTicketCookieGenerator));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("threadContextMDCServletFilter");
