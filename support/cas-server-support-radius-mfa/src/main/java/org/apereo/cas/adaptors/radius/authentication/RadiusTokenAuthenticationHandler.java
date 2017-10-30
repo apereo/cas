@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import net.jradius.exception.TimeoutException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
@@ -16,7 +15,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
-import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,28 +73,5 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
         } catch (final Exception e) {
             throw new FailedLoginException("Radius authentication failed " + e.getMessage());
         }
-    }
-
-    /**
-     * Can ping boolean.
-     *
-     * @return true/false
-     */
-    public boolean canPing() {
-        final String uidPsw = getClass().getSimpleName();
-        for (final RadiusServer server : this.servers) {
-            LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
-                    + "successfully, mock authentication will fail correctly.", server);
-            try {
-                server.authenticate(uidPsw, uidPsw);
-            } catch (final TimeoutException | SocketTimeoutException e) {
-                LOGGER.debug("Server [{}] is not available", server);
-                continue;
-            } catch (final Exception e) {
-                LOGGER.debug("Pinging RADIUS server was successful. Response [{}]", e.getMessage());
-            }
-            return true;
-        }
-        return false;
     }
 }
