@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 
 /**
- * This is {@link CasTestAuthenticationEventExecutionPlanConfiguration}.
+ * This is {@link CasAuthenticationEventExecutionPlanTestConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @TestConfiguration("casTestAuthenticationEventExecutionPlanConfiguration")
-public class CasTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class CasAuthenticationEventExecutionPlanTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;

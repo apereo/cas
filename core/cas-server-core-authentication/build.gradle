@@ -17,6 +17,7 @@ dependencies {
     implementation libraries.metrics
     
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-tickets")

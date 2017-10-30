@@ -23,8 +23,7 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
-        LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id,
-                this.getClass().getSimpleName());
+        LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id, this.getClass().getSimpleName());
     }
 
     @Override
