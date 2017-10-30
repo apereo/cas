@@ -60,7 +60,6 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      * Gets the unit test parameters.
      *
      * @return  Test parameter data.
-     * @throws Exception if there is an exception getting the test parameters.
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {

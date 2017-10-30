@@ -77,7 +77,6 @@ public class WsFederationAction extends AbstractAction {
      *
      * @param context the context
      * @return the event
-     * @throws Exception all unhandled exceptions
      */
     @Override
     protected Event doExecute(final RequestContext context) {

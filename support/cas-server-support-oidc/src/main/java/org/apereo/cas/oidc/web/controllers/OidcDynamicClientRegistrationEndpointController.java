@@ -80,7 +80,6 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
      * @param request   the request
      * @param response  the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

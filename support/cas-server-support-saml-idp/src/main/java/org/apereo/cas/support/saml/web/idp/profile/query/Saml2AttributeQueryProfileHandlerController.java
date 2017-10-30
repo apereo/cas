@@ -80,7 +80,6 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
      *
      * @param response the response
      * @param request  the request
-     * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY)
     protected void handlePostRequest(final HttpServletResponse response,

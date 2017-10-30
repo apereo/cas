@@ -48,7 +48,6 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      *
      * @param propertyName the property name
      * @return the response entity
-     * @throws Exception the exception
      */
     @GetMapping(path = "/property")
     public ResponseEntity<ConfigurationMetadataProperty> findByPropertyName(@RequestParam("name") final String propertyName) {
@@ -61,7 +60,6 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      *
      * @param name the property name
      * @return the response entity
-     * @throws Exception the exception
      */
     @GetMapping(path = "/group")
     public ResponseEntity<ConfigurationMetadataGroup> findByGroupName(@RequestParam("name") final String name) {
@@ -73,7 +71,6 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * Find all groups.
      *
      * @return the response entity
-     * @throws Exception the exception
      */
     @GetMapping(path = "/groups")
     public ResponseEntity<Map<String, ConfigurationMetadataGroup>> findAllGroups() {
@@ -84,7 +81,6 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * Find all properties.
      *
      * @return the response entity
-     * @throws Exception the exception
      */
     @GetMapping(path = "/properties")
     public ResponseEntity<Map<String, ConfigurationMetadataProperty>> findAllProperties() {
@@ -124,7 +120,6 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {

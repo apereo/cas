@@ -35,7 +35,6 @@ public class AuthenticationEventsController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
@@ -50,7 +49,6 @@ public class AuthenticationEventsController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the records
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getEvents")
     @ResponseBody

@@ -44,7 +44,6 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
@@ -60,7 +59,6 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the records
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getRecords")
     @ResponseBody
@@ -82,7 +80,6 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the integer
-     * @throws Exception the exception
      */
     @PostMapping(value = "/revokeRecord")
     @ResponseBody

@@ -173,7 +173,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param resource            the resource
      * @param document            the xml document to parse
      * @return list of resolved metadata from resources.
-     * @throws IOException the iO exception
      */
     private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain,
                                                                final Resource resource, final Document document) {

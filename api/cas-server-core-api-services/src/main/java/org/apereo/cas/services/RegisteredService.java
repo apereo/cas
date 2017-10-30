@@ -162,7 +162,6 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * Clone this service.
      *
      * @return the registered service
-     * @throws CloneNotSupportedException the clone not supported exception
      */
     RegisteredService clone();
 

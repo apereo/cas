@@ -69,7 +69,6 @@ public class CasCommandLineShellApplication {
      * Command line runner.
      *
      * @return the command line runner
-     * @throws Exception the exception
      */
     @Bean
     public CommandLineRunner commandLineRunner() {

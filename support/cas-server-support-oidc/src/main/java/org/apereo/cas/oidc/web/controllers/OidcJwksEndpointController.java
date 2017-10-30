@@ -71,7 +71,6 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
      * @param response the response
      * @param model    the model
      * @return the jwk set
-     * @throws Exception the exception
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,

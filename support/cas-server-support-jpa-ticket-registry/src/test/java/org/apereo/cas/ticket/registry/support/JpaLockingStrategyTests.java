@@ -122,7 +122,6 @@ public class JpaLockingStrategyTests {
     /**
      * Test basic acquire/release semantics.
      *
-     * @throws Exception On errors.
      */
     @Test
     public void verifyAcquireAndRelease() {

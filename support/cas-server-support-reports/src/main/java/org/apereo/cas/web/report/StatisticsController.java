@@ -113,7 +113,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      * @param request  the request
      * @param response the response
      * @return the authn audit
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getAuthnAudit")
     @ResponseBody
@@ -132,7 +131,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      * @param range    the range
      * @param scale    the scale
      * @return the authn audit
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getAuthnAudit/summary")
     @ResponseBody
@@ -301,7 +299,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      * @param httpServletRequest  the http servlet request
      * @param httpServletResponse the http servlet response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,

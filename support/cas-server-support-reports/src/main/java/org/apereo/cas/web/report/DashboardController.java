@@ -93,7 +93,6 @@ public class DashboardController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {

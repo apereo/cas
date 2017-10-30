@@ -135,7 +135,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      *
      * @param objectType the object type
      * @return the saml object QName
-     * @throws Exception the exception
      */
     public QName getSamlObjectQName(final Class objectType) {
         try {

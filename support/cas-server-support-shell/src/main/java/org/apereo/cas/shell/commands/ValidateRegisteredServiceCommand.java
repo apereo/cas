@@ -29,7 +29,6 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
      *
      * @param file      the file
      * @param directory the directory
-     * @throws Exception the exception
      */
     @CliCommand(value = "validate-service", help = "Validate a given JSON/YAML service definition by path or directory")
     public void validateService(

@@ -396,7 +396,6 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param entry             the entry
      * @return true/false
-     * @throws LdapException the ldap exception
      */
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
         try (Connection connection = createConnection(connectionFactory)) {
@@ -415,7 +414,6 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param entry             the entry
      * @return true/false
-     * @throws LdapException the ldap exception
      */
     public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
         try (Connection connection = createConnection(connectionFactory)) {

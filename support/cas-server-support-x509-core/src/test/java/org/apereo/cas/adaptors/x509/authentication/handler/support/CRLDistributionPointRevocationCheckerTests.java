@@ -197,7 +197,6 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
     /**
      * Called once before every test.
      *
-     * @throws Exception On setup errors.
      */
     @After
     public void tearDown() {

@@ -176,7 +176,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param context           the context
      * @param clientId          the client id
      * @return the model and view
-     * @throws Exception the exception
      */
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,

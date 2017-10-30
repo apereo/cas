@@ -39,7 +39,6 @@ public class MultifactorAuthenticationTrustController {
      * @param response the response
      * @param request  the request
      * @return the all trusted devices
-     * @throws Exception the exception
      */
     @GetMapping
     @ResponseBody
