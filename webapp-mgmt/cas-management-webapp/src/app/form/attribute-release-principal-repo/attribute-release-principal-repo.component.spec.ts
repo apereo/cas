@@ -4,8 +4,7 @@ import { AttributeReleasePrincipalRepoComponent } from './attribute-release-prin
 import {SharedModule} from '../../shared/shared.module';
 import {FormsModule} from '@angular/forms';
 import {Messages} from '../../messages';
-import {FormData} from '../../../domain/service-view-bean';
-import {RegexRegisteredService} from '../../../domain/registered-service';
+import {FormData} from '../../../domain/form-data';
 
 describe('AttributeReleasePrincipalRepoComponent', () => {
   let component: AttributeReleasePrincipalRepoComponent;

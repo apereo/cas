@@ -18,7 +18,6 @@ import {Util} from '../../util/util';
 })
 export class SamlservicespaneComponent implements OnInit {
 
-  selectOptions;
   displayedColumns = ['source', 'mapped', 'delete'];
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
@@ -27,7 +26,6 @@ export class SamlservicespaneComponent implements OnInit {
 
   constructor(public messages: Messages,
               public data: Data) {
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
