@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.gauth.repository.token;
+package org.apereo.cas.adaptors.gauth.token;
 
 import org.apereo.cas.otp.repository.token.OneTimeToken;
 
