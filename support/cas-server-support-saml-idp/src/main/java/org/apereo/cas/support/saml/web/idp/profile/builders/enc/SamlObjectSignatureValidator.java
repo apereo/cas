@@ -288,7 +288,6 @@ public class SamlObjectSignatureValidator {
      * Gets signature validation configuration.
      *
      * @return the signature validation configuration
-     * @throws Exception the exception
      */
     protected SignatureValidationConfiguration getSignatureValidationConfiguration() {
         final BasicSignatureValidationConfiguration config =

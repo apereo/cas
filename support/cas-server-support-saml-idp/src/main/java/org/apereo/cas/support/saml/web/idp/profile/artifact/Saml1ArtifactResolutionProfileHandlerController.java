@@ -73,7 +73,6 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
      *
      * @param response the response
      * @param request  the request
-     * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
     protected void handlePostRequest(final HttpServletResponse response,

@@ -133,7 +133,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Handle the initialization of the webflow.
      *
-     * @throws Exception the exception
      */
     protected abstract void doInitialize();
 

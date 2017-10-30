@@ -60,7 +60,6 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      *
      * @param requestContext Flow request context.
      *
-     * @throws Exception in case ticket cannot be retrieved from the service layer
      * @return {@link #NOT_EXISTS}, {@link #INVALID}, or {@link #VALID}.
      */
     @Override

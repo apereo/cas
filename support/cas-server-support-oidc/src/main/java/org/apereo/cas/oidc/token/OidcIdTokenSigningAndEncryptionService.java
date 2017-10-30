@@ -9,7 +9,6 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +43,6 @@ public class OidcIdTokenSigningAndEncryptionService {
      * @param svc    the service
      * @param claims the claims
      * @return the string
-     * @throws JoseException the jose exception
      */
     public String encode(final OidcRegisteredService svc, final JwtClaims claims) {
         try {
