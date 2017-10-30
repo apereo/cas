@@ -1,0 +1,8 @@
+description = "Apereo CAS YubiKey Core Multifactor Authentication"
+dependencies {
+    implementation libraries.yubicoapi
+    
+    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+}
