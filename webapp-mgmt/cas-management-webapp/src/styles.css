@@ -149,3 +149,13 @@ a:focus {
   margin-left:auto;
   width:550px;
 }
+
+.footer {
+  background-color: #e6e6e6;
+  border-top: 5px solid #256d8d;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  font-size: 80%;
+  display:flex;
+}
