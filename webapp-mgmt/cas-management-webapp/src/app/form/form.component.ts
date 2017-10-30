@@ -119,8 +119,11 @@ export class FormComponent implements OnInit {
         if (this.isSaml()) {
           return 'saml';
         }
-        if (this.isOauth() || this.isOidc()) {
+        if (this.isOauth()) {
           return 'oauth';
+        }
+        if (this.isOidc()) {
+          return 'oidc';
         }
         if (this.isWsFed()) {
           return 'wsfed';

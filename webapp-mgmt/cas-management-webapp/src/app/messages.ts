@@ -109,6 +109,14 @@ export class Messages {
  readonly services_form_label_oauthBypass = 'OAuth Bypass Approval Prompt';
  readonly services_form_label_oauthRefreshToken = 'OAuth Refresh Token Generation';
  readonly services_form_label_oauthJsonFormat = 'JSON format for access tokens';
+
+ readonly services_form_label_oidcClientSecret = 'OIDC Client Secret';
+ readonly services_form_label_oidcClientId = 'OIDC Client ID';
+ readonly services_form_label_oidcShowSecret = 'Show Client Secret';
+ readonly services_form_label_oidcBypass = 'OIDC Bypass Approval Prompt';
+ readonly services_form_label_oidcRefreshToken = 'OIDC Refresh Token Generation';
+ readonly services_form_label_oidcJsonFormat = 'JSON format for access tokens';
+
  readonly services_form_label_attrRelease_excludeDefault = 'Exclude default bundle of attributes for release';
  readonly services_form_label_attrRelease_releaseCredPassword = 'Authorized to release to credential password';
  readonly services_form_label_attrRelease_releaseProxyTicket = 'Authorized to release proxy granting ticket ID';
