@@ -37,6 +37,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
      */
     public static final String FLOW_VAR_ID_PASSWORD = "password";
 
+    /**
+     * Name of parameter that can be supplied to login url to force display of password change during login.
+     */
+    public static final String DO_CHANGE_PASSWORD_PARAMETER = "doChangePassword";
+
     private static final String PASSWORD_CHANGE_ACTION = "passwordChangeAction";
     private static final String SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION = "sendInstructions";
 
@@ -112,6 +117,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             final ActionState initializeLoginFormState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             final String originalTargetState = initializeLoginFormState.getTransition(CasWebflowConstants.STATE_ID_SUCCESS).getTargetStateId();
             final SubflowState pswdResetSubFlowState = createSubflowState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, FLOW_ID_PASSWORD_RESET);
+
+            flow.getTransitionableState(CasWebflowConstants.STATE_ID_REAL_SUBMIT).getEntryActionList()
+                    .add(createEvaluateAction("flowScope." + DO_CHANGE_PASSWORD_PARAMETER
+                            + " = requestParameters." + DO_CHANGE_PASSWORD_PARAMETER + " != null"));
+
             createDecisionState(flow, CasWebflowConstants.CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION,
                     "requestParameters." + SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN + " != null",
                     CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW,
@@ -130,6 +140,17 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                     pswdResetSubFlowState,
                     CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE,
                     autoLogin ? CasWebflowConstants.STATE_ID_REAL_SUBMIT : CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN);
+
+            createDecisionState(flow,
+                    CasWebflowConstants.STATE_ID_CHECK_DO_CHANGE_PASSWORD,
+                    "flowScope." + DO_CHANGE_PASSWORD_PARAMETER + " == true",
+                    CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD,
+                    flow.getTransitionableState(CasWebflowConstants.STATE_ID_REAL_SUBMIT)
+                            .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId())
+                                    .getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));
+
+            createTransitionForState(flow.getTransitionableState(CasWebflowConstants.STATE_ID_REAL_SUBMIT), 
+                    CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_DO_CHANGE_PASSWORD, true);
 
             createDecisionState(flow,
                     CasWebflowConstants.STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN,
