@@ -72,7 +72,7 @@ public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new LinkedList<>(0);
+        return new LinkedList<>();
     }
 
     @Override

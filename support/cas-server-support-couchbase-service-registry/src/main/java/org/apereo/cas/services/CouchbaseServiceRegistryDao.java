@@ -118,7 +118,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
             return services;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new LinkedList<>(0);
+            return new LinkedList<>();
         }
     }
 
