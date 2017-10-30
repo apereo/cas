@@ -63,6 +63,6 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 }

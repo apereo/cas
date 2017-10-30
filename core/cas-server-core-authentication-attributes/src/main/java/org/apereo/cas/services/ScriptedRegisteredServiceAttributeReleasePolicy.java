@@ -45,7 +45,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
                                                         final RegisteredService service) {
         try {
             if (StringUtils.isBlank(this.scriptFile)) {
-                return new HashMap<>();
+                return new HashMap<>(0);
             }
             final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
             if (matcherInline.find()) {
@@ -55,7 +55,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes,
