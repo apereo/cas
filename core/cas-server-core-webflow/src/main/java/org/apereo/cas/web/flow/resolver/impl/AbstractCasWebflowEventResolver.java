@@ -397,7 +397,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("Provider [{}] could not be verified", provider);
-        return new HashSet<>();
+        return new HashSet<>(0);
     }
 
     private Set<Event> resolveEventViaAttribute(final Principal principal,

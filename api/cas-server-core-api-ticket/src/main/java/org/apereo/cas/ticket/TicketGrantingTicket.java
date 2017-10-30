@@ -113,6 +113,6 @@ public interface TicketGrantingTicket extends Ticket {
      * @since 5.1
      */
     default Collection<String> getDescendantTickets() {
-        return new HashSet<>();
+        return new HashSet<>(0);
     }
 }
