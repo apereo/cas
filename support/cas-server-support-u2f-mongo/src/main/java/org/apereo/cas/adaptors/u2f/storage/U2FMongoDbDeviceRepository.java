@@ -54,7 +54,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override

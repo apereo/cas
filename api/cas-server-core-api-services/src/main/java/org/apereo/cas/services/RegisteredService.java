@@ -241,7 +241,7 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * @since 4.2
      */
     default Map<String, RegisteredServiceProperty> getProperties() {
-        return new LinkedHashMap<>();
+        return new LinkedHashMap<>(0);
     }
 
     /**

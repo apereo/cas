@@ -59,7 +59,7 @@ public class GrouperFacade {
 
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
-                return new ArrayList<>();
+                return new ArrayList<>(0);
             }
             LOGGER.debug("Found [{}] groups for [{}]", results.length, subjectId);
             return CollectionUtils.wrapList(results);
