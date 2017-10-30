@@ -3,10 +3,13 @@ package org.apereo.cas.util.cipher;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.keys.RsaKeyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +30,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     private static final int SIGNING_KEY_SIZE = 512;
 
+    private String encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
     private String contentEncryptionAlgorithmIdentifier;
 
     private Key secretKeyEncryptionKey;
@@ -49,7 +53,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
                                     final boolean encryptionEnabled) {
-        this(secretKeyEncryption, secretKeySigning, ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256, encryptionEnabled);
+        this(secretKeyEncryption, secretKeySigning, EncodingUtils.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, encryptionEnabled);
     }
 
     public BaseStringCipherExecutor(final String secretKeyEncryption,
@@ -69,7 +73,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning) {
-        this(secretKeyEncryption, secretKeySigning, ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256, true);
+        this(secretKeyEncryption, secretKeySigning, EncodingUtils.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, true);
     }
 
     /**
@@ -89,8 +93,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (this.encryptionEnabled) {
             configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
         } else {
-            LOGGER.warn("Encryption operations of [{}] are not enabled so the cipher [{}] will only attempt to produce signed objects",
-                    getName(), getClass().getSimpleName());
+            LOGGER.warn("Encryption is not enabled for [{}]. The cipher [{}] will only produce signed objects", getName(), getClass().getSimpleName());
         }
         configureSigningParameters(secretKeySigning);
     }
@@ -118,16 +121,36 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         } else {
             LOGGER.debug("Located encryption key to use for [{}]", getName());
         }
-        this.secretKeyEncryptionKey = EncodingUtils.generateJsonWebKey(secretKeyToUse);
-        this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
-        LOGGER.debug("Initialized cipher encryption sequence via [{}]", contentEncryptionAlgorithmIdentifier);
+
+        try {
+            if (ResourceUtils.doesResourceExist(secretKeyToUse)) {
+                final Resource resource = ResourceUtils.getResourceFrom(secretKeyToUse);
+                LOGGER.debug("Located encryption key resource [{}]. Attempting to extract public key...", resource);
+
+                final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
+                factory.setAlgorithm(RsaKeyUtil.RSA);
+                factory.setLocation(resource);
+                factory.setSingleton(false);
+                this.secretKeyEncryptionKey = factory.getObject();
+                this.encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.RSA_OAEP_256;
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            if (this.secretKeyEncryptionKey == null) {
+                LOGGER.debug("Creating encryption key instance based on provided secret key");
+                this.secretKeyEncryptionKey = EncodingUtils.generateJsonWebKey(secretKeyToUse);
+            }
+            this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
+            LOGGER.debug("Initialized cipher encryption sequence via [{}] with algorithm [{}]",
+                    this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
+        }
     }
 
     @Override
     public String encode(final Serializable value) {
-        final String algorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
         final String encoded = this.encryptionEnabled
-                ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, algorithm, this.contentEncryptionAlgorithmIdentifier)
+                ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
                 : value.toString();
         return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
@@ -145,7 +168,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
-    
+
 
     /**
      * Gets encryption key setting.

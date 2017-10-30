@@ -3,7 +3,9 @@ package org.apereo.cas.util;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
@@ -23,15 +25,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link EncodingUtils}
- * that encapsulates common base64 calls and operations
- * in one spot.
+ * This is {@link EncodingUtils} that encapsulates common base64, signing and encryption calls and operations in one spot.
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
+ * @author Misagh Moayyed
  * @since 5.0.0
  */
 public final class EncodingUtils {
 
+    /**
+     * Default content encryption algorithm.
+     */
+    public static final String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM = ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
+    
     /**
      * JSON web key parameter that identifies the key..
      */
@@ -331,6 +337,28 @@ public final class EncodingUtils {
         }
     }
 
+    /**
+     * Encrypt value as jwt with direct algorithm and encryption content alg aes-128-sha-256.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the string
+     */
+    public static String encryptValueAsJwtDirectAes128Sha256(final Key key, final Serializable value) {
+        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+    }
+
+    /**
+     * Encrypt value as jwt rsa oeap 256 aes 256 sha 512 string.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the string
+     */
+    public static String encryptValueAsJwtRsaOeap256Aes256Sha512(final Key key, final Serializable value) {
+        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+    }
+    
     /**
      * Encrypt the value based on the seed array whose length was given during afterPropertiesSet,
      * and the key and content encryption ids.
