@@ -7,7 +7,7 @@ import { DebugElement } from '@angular/core';
 
 import { ServicesComponent } from './services.component';
 import {Messages} from '../messages';
-import {ServiceItem} from '../../domain/service-view-bean';
+import {ServiceItem} from '../../domain/service-item';
 import {ServiceViewService} from './service.service';
 
 const serviceViewServiceStub = {

@@ -4,8 +4,8 @@
                [placeholder]="messages.services_form_label_type"
                [(ngModel)]="type"
                (change)="changeType()">
-      <mat-option *ngFor="let opt of types; let i = index" [value]="opt">
-        {{ display[i] }}
+      <mat-option *ngFor="let opt of data.formData.serviceTypes; let i = index" [value]="opt.value">
+        {{ opt.display }}
       </mat-option>
     </mat-select>
   </mat-form-field>

@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, ChangeDetectorRef} from '@angular/core';
 import {Messages} from '../../messages';
-import {Data} from '../data';
+import {Data } from '../data';
 import {DataSource} from '@angular/cdk/table';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -10,6 +10,7 @@ import 'rxjs/add/operator/map';
 import {Util} from '../../util/util';
 import {DefaultRegisteredServiceProperty} from '../../../domain/property';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
+import {FormData} from '../../../domain/form-data';
 
 @Component({
   selector: 'app-propertiespane',
@@ -21,22 +22,12 @@ export class PropertiespaneComponent implements OnInit {
   attributeDatabase = new AttributeDatabase();
   dataSource: AttributeDataSource | null;
   selectedRow: Row;
-
-  options: PropertyOption[] = [
-    new PropertyOption('wsfed.relyingPartyIdentifier', 'WS-Fed Relying Party Identifier', 'custom-identifier'),
-    new PropertyOption('jwtAsResponse', 'JWT As Response', 'true'),
-    new PropertyOption('jwtSecretsAreBase64Encoded', 'JWT Secrets Base 64 Encoded', 'false'),
-    new PropertyOption('jwtEncryptionSecretMethod', 'JWT Encryption Secret Method', 'A192CBC-HS384'),
-    new PropertyOption('jwtEncryptionSecretAlg', 'JWT Encryption Secret Alg', 'dir'),
-    new PropertyOption('jwtSigningSecretAlg', 'JWT Signing Secret Alg', 'HS256'),
-    new PropertyOption('jwtSigningSecret', 'JWT Signing Secret', '<SECRET>'),
-    new PropertyOption('jwtEncryptionSecret', 'JWT Encryption Secret', '<SECRET>')
-  ];
-
+  formData: FormData;
 
   constructor(public messages: Messages,
               public data: Data,
               private changeRef: ChangeDetectorRef) {
+    this.formData = data.formData;
   }
 
   ngOnInit() {
@@ -71,10 +62,10 @@ export class PropertiespaneComponent implements OnInit {
   }
 
   selection(val: MatAutocompleteSelectedEvent) {
-    const opt: PropertyOption = val.option.value as PropertyOption;
-    this.doChange(this.selectedRow, opt.id)
+    const opt =  val.option.value;
+    this.doChange(this.selectedRow, opt.propertyName)
     if (val) {
-      this.data.service.properties[opt.id].values = [opt.value];
+      this.data.service.properties[opt.propertyName].values = [opt.defaultValue];
     }
   }
 }
@@ -119,6 +110,8 @@ export class AttributeDataSource extends DataSource<any> {
   disconnect() {}
 }
 
+/*
 export class PropertyOption {
   constructor(public id: string, public display: string, public value: string) {}
 }
+*/
