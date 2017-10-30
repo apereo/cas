@@ -48,6 +48,6 @@
 
 </mat-card>
 <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selection($event)">
-  <mat-option *ngFor="let opt of options" [value]="opt">{{ opt.display }}</mat-option>
+  <mat-option *ngFor="let opt of formData.registeredServiceProperties" [value]="opt">{{ opt.propertyName }}</mat-option>
 </mat-autocomplete>
 

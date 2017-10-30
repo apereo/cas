@@ -52,7 +52,7 @@ export class OidcRegisteredService extends OAuthRegisteredService {
     super(service);
     this.jsonFormat = true;
     this.signIdToken = true;
-    this.subjectType = 'public';
+    this.subjectType = 'PUBLIC';
     this['@class'] = OidcRegisteredService.cName;
   }
 }

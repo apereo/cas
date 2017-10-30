@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {ServiceItem} from '../../domain/service-view-bean';
+import {ServiceItem} from '../../domain/service-item';
 import {Messages} from '../messages';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ServiceViewService} from './service.service';
