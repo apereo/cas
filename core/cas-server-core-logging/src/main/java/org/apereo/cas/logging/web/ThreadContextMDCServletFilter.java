@@ -76,14 +76,11 @@ public class ThreadContextMDCServletFilter implements Filter {
                 final String[] values = params.get(k);
                 addContextAttribute(k, Arrays.toString(values));
             });
-        
-            Collections.list(request.getHeaderNames()).forEach(a -> addContextAttribute(a, request.getHeader(a)));
+            
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
-
             final Enumeration<String> requestHeaderNames = request.getHeaderNames();
             if (requestHeaderNames != null) {
-                Collections.list(requestHeaderNames)
-                    .forEach(h -> addContextAttribute(h, request.getHeader(h)));
+                Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h)));
             }
 
             final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
