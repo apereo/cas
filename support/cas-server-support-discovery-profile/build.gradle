@@ -14,6 +14,15 @@ dependencies {
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-ws-idp-api")
+
+    implementation project(":support:cas-server-support-authy-core")
+    implementation project(":support:cas-server-support-azure-core")
+    implementation project(":support:cas-server-support-u2f-core")
+    implementation project(":support:cas-server-support-swivel-core")
+    implementation project(":support:cas-server-support-gauth-core-mfa")
+    implementation project(":support:cas-server-support-duo-core-mfa")
+    implementation project(":support:cas-server-support-yubikey-core-mfa")
+    implementation project(":support:cas-server-support-radius-core-mfa")
     
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")
