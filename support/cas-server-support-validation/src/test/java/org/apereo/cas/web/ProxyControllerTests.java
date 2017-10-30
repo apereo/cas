@@ -22,7 +22,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -58,7 +58,7 @@ import static org.junit.Assert.*;
         ProxyControllerTests.ProxyTestConfiguration.class,
         CasProtocolViewsConfiguration.class,
         AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-        CasTestAuthenticationEventExecutionPlanConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,

@@ -25,8 +25,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder
-        implements SamlProfileObjectBuilder<AttributeStatement> {
+public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
     @Autowired
@@ -34,8 +33,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     private final ProtocolAttributeEncoder samlAttributeEncoder;
 
-    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
-                                                    final ProtocolAttributeEncoder samlAttributeEncoder) {
+    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean, final ProtocolAttributeEncoder samlAttributeEncoder) {
         super(configBean);
         this.samlAttributeEncoder = samlAttributeEncoder;
     }
@@ -60,7 +58,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
-
+        
         final SamlIdPProperties.Response resp = casProperties.getAuthn().getSamlIdp().getResponse();
         final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
