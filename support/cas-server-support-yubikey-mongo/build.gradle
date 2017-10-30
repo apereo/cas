@@ -6,6 +6,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-yubikey-core")
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":support:cas-server-support-yubikey-core-mfa")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")

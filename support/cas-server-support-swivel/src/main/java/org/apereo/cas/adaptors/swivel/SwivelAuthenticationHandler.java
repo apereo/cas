@@ -139,21 +139,4 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
         return errorMap;
     }
-
-    /**
-     * Can ping provider?
-     *
-     * @return the boolean
-     */
-    public boolean canPing() {
-        try {
-            final HttpURLConnection connection = (HttpURLConnection) new URL(swivelProperties.getSwivelUrl()).openConnection();
-            connection.setRequestMethod(HttpMethod.GET.name());
-            connection.connect();
-            return connection.getResponseCode() == HttpStatus.SC_OK;
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return false;
-    }
 }
