@@ -53,7 +53,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     @Override

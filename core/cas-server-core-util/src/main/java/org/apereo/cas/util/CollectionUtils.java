@@ -71,7 +71,7 @@ public final class CollectionUtils {
             inner.forEach((k, v) -> map.put(k, wrap(v)));
             return map;
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     /**
@@ -86,7 +86,7 @@ public final class CollectionUtils {
         if (source != null && !source.isEmpty()) {
             return new HashMap<>(source);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     /**

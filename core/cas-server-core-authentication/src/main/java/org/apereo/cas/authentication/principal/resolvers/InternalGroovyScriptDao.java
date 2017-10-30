@@ -52,7 +52,7 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
                 return results;
             }
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     @Override

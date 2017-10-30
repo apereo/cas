@@ -50,7 +50,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() throws Exception {
         if (!this.jsonResource.getFile().exists() || this.jsonResource.getFile().length() <= 0) {
             LOGGER.debug("JSON resource [{}] does not exist or is empty", jsonResource);
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
         return mapper.readValue(jsonResource.getInputStream(),
                 new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {

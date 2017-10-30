@@ -55,6 +55,6 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
             LOGGER.error(e.getMessage(), e);
         }
         LOGGER.warn("Groovy script [{}] does not exist or cannot be loaded", groovyScript);
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 }

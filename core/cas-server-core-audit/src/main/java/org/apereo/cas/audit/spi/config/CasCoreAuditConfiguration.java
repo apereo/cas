@@ -168,7 +168,7 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "customAuditActionResolverMap")
     @Bean
     public Map<String, AuditActionResolver> customAuditActionResolverMap() {
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     @ConditionalOnMissingBean(name = "auditResourceResolverMap")
@@ -204,7 +204,7 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "customAuditResourceResolverMap")
     @Bean
     public Map<String, AuditResourceResolver> customAuditResourceResolverMap() {
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     @ConditionalOnMissingBean(name = "auditablePrincipalResolver")

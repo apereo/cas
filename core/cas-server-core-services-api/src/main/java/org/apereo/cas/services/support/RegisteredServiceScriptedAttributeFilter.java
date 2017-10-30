@@ -85,7 +85,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     @Override

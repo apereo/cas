@@ -68,6 +68,6 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
         LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. "
                 + "If there are any default attributes set to be released to all services, "
                 + "those are also skipped for [{}]", service);
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 }
