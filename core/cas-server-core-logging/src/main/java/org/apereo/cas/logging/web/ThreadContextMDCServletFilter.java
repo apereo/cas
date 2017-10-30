@@ -81,7 +81,7 @@ public class ThreadContextMDCServletFilter implements Filter {
             Collections.list(request.getAttributeNames())
                     .forEach(a -> addContextAttribute(a, request.getAttribute(a)));
 
-			final Enumeration<String> requestHeaderNames = request.getHeaderNames();
+            final Enumeration<String> requestHeaderNames = request.getHeaderNames();
             if (requestHeaderNames != null) {
                 while (requestHeaderNames.hasMoreElements()) {
                     String requestHeaderName = requestHeaderNames.nextElement();
