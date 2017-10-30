@@ -2,6 +2,7 @@ description = "Apereo CAS Google Authenticator Mongo"
 dependencies {
     implementation project(":support:cas-server-support-gauth")
     implementation project(":support:cas-server-support-gauth-core")
+    implementation project(":support:cas-server-support-gauth-core-mfa")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-otp-mfa")

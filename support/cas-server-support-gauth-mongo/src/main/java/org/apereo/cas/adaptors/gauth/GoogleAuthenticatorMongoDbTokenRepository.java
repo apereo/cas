@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeToken;
 import org.slf4j.Logger;
