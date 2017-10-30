@@ -3,7 +3,6 @@ package org.apereo.cas.util.cipher;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
                                     final boolean encryptionEnabled) {
-        this(secretKeyEncryption, secretKeySigning, ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256, encryptionEnabled);
+        this(secretKeyEncryption, secretKeySigning, EncodingUtils.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, encryptionEnabled);
     }
 
     public BaseStringCipherExecutor(final String secretKeyEncryption,
@@ -69,7 +68,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning) {
-        this(secretKeyEncryption, secretKeySigning, ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256, true);
+        this(secretKeyEncryption, secretKeySigning, EncodingUtils.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, true);
     }
 
     /**

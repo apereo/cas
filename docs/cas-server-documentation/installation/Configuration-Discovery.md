@@ -10,7 +10,7 @@ Certain aspects of the CAS server deployment may be advertised via discovery end
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-discovery profile</artifactId>
+     <artifactId>cas-server-support-discovery-profile</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

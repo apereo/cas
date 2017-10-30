@@ -32,7 +32,6 @@ public class EncodingUtilsTests {
         final String result = new String(jwt, StandardCharsets.UTF_8);
         assertTrue(result.equals(value));
     }
-    
 
     @Test
     public void verifyRsaKeyForJwtSigning() {
@@ -43,6 +42,24 @@ public class EncodingUtilsTests {
         assertTrue(result.equals(value));
     }
 
+    @Test
+    public void verifyAesKeyForJwtEncryption() {
+        final String secret = EncodingUtils.generateJsonWebKey(256);
+        final Key key = EncodingUtils.generateJsonWebKey(secret);
+        final String value = "ThisValue";
+        final String found = EncodingUtils.encryptValueAsJwtDirectAes128Sha256(key, value);
+        final String jwt = EncodingUtils.decryptJwtValue(key, found);
+        assertTrue(jwt.equals(value));
+    }
+
+    @Test
+    public void verifyRsaKeyForJwtEncryption() {
+        final String value = "ThisValue";
+        final String found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
+        final String jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
+        assertTrue(jwt.equals(value));
+    }
+    
     private static PrivateKey getPrivateKey() {
         try {
             final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();

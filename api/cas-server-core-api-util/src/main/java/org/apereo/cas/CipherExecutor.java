@@ -10,7 +10,7 @@ package org.apereo.cas;
  * @since 4.1
  */
 public interface CipherExecutor<I, O> {
-
+    
     /**
      * Encrypt the value. Implementations may
      * choose to also sign the final value.
