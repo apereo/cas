@@ -11,7 +11,13 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  */
 @RequiresModule(name = "cas-server-support-authy")
 public class AuthyMultifactorProperties extends BaseMultifactorProviderProperties {
+    /**
+     * Provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-authy";
+
     private static final long serialVersionUID = -3746749663459157641L;
+    
     /**
      * Authy API key.
      */
@@ -55,7 +61,7 @@ public class AuthyMultifactorProperties extends BaseMultifactorProviderPropertie
     private boolean trustedDeviceEnabled;
 
     public AuthyMultifactorProperties() {
-        setId("mfa-authy");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public String getMailAttribute() {

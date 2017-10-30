@@ -51,7 +51,9 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
-                return MultifactorAuthenticationProvider.class.cast(c.newInstance());
+                final MultifactorAuthenticationProvider p = MultifactorAuthenticationProvider.class.cast(c.newInstance());
+                LOGGER.debug("Located supported multifactor authentication provider [{}]", p.getId());
+                return p;
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 return null;

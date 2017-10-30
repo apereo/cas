@@ -9,9 +9,14 @@ import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
  * @since 5.1.0
  */
 public class AzureAuthenticatorMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
-
     private static final long serialVersionUID = 4789727148634156909L;
-    
+
+    /**
+     * Required for serialization and reflection.
+     */
+    public AzureAuthenticatorMultifactorAuthenticationProvider() {
+    }
+
     @Override
     protected boolean isAvailable() {
         return true;
