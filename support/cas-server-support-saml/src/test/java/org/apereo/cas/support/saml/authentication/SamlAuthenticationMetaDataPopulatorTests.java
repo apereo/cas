@@ -31,7 +31,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     private SamlAuthenticationMetaDataPopulator populator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.populator = new SamlAuthenticationMetaDataPopulator();
     }
 

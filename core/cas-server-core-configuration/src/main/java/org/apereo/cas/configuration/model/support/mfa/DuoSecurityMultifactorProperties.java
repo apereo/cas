@@ -11,7 +11,13 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  */
 @RequiresModule(name = "cas-server-support-duo")
 public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderProperties {
+    /**
+     * Duo Security provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-duo";
+    
     private static final long serialVersionUID = -4655375354167880807L;
+    
     /**
      * Duo integration key.
      */
@@ -45,7 +51,7 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
     private boolean trustedDeviceEnabled;
 
     public DuoSecurityMultifactorProperties() {
-        setId("mfa-duo");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public boolean isTrustedDeviceEnabled() {

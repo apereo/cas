@@ -47,7 +47,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         final ConsentDecision decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return Pair.of(true, decision);
+            return Pair.of(true, null);
         }
 
         LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());

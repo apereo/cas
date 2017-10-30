@@ -2,12 +2,15 @@
 description = "Apereo CAS U2F Support"
 dependencies {
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
-    api project(":api:cas-server-core-api")
     implementation project(":core:cas-server-core-web")
+    implementation project(":support:cas-server-support-u2f-core")
+    
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api")
 
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver

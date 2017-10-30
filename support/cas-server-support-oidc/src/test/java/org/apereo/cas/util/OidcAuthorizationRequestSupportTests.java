@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class OidcAuthorizationRequestSupportTests {
 
     @Test
-    public void verify() throws Exception {
+    public void verify() {
         final String url = "https://tralala.whapi.com/something?prompt=value1";
         final Set<String> authorizationRequest = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
 

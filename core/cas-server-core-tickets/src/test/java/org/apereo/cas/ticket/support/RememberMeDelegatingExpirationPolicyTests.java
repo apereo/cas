@@ -38,7 +38,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
     private RememberMeDelegatingExpirationPolicy p;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
         p = new RememberMeDelegatingExpirationPolicy(rememberMe);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);

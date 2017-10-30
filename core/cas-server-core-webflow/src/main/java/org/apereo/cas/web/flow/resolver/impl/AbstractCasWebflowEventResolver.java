@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -197,11 +198,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param authenticationResultBuilder the authentication result builder
      * @param service                     the service
      * @return the event
-     * @throws Exception the exception
      */
     protected Event grantTicketGrantingTicketToAuthenticationResult(final RequestContext context,
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                    final Service service) throws Exception {
+                                                                    final Service service) {
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =
@@ -396,7 +396,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("Provider [{}] could not be verified", provider);
-        return new HashSet<>();
+        return new HashSet<>(0);
     }
 
     private Set<Event> resolveEventViaAttribute(final Principal principal,
@@ -515,9 +515,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the registered service multifactor authentication provider
      */
     protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
+        
         try {
             LOGGER.debug("Locating bean definition for [{}]", providerId);
-            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true).values().stream()
+            return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
                     .filter(p -> p.matches(providerId))
                     .findFirst();
         } catch (final Exception e) {

@@ -4,7 +4,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorJpaTokenRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;

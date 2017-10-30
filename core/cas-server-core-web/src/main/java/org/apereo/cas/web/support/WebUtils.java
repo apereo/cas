@@ -26,7 +26,6 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -628,7 +627,7 @@ public final class WebUtils {
         }
         return null;
     }
-    
+
     /**
      * Gets http servlet request user agent.
      *
@@ -656,7 +655,7 @@ public final class WebUtils {
         }
         return headers;
     }
-    
+
     /**
      * Gets http servlet request geo location.
      *
@@ -803,22 +802,6 @@ public final class WebUtils {
      */
     public static boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", false);
-    }
-
-    /**
-     * Gets all multifactor authentication providers from application context.
-     *
-     * @param applicationContext the application context
-     * @return the all multifactor authentication providers from application context
-     */
-    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
-            final ApplicationContext applicationContext) {
-        try {
-            return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
-        } catch (final Exception e) {
-            LOGGER.warn("Could not locate beans of type [{}]", MultifactorAuthenticationProvider.class);
-        }
-        return new HashMap<>(0);
     }
 
     /**

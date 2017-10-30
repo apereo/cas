@@ -69,10 +69,9 @@ public class CasCommandLineShellApplication {
      * Command line runner.
      *
      * @return the command line runner
-     * @throws Exception the exception
      */
     @Bean
-    public CommandLineRunner commandLineRunner() throws Exception {
+    public CommandLineRunner commandLineRunner() {
         return args -> {
             if (CasCommandLineParser.isShell(args)) {
                 final CasCommandLineShellBootstrapper sh = new CasCommandLineShellBootstrapper();

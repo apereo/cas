@@ -36,7 +36,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,11 +110,10 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the active loggers
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
-    public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         Assert.notNull(this.loggerContext);
@@ -195,7 +193,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
         if (factory != null) {
             return factory.getLoggersInContext(this.loggerContext);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     private static ILoggerFactory getCasLoggerFactoryInstance() {
@@ -206,9 +204,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * Gets logger configurations.
      *
      * @return the logger configurations
-     * @throws IOException the iO exception
      */
-    private Set<LoggerConfig> getLoggerConfigurations() throws IOException {
+    private Set<LoggerConfig> getLoggerConfigurations() {
         final Configuration configuration = this.loggerContext.getConfiguration();
         return new HashSet<>(configuration.getLoggers().values());
     }
@@ -255,11 +252,10 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the audit log
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getAuditLog")
     @ResponseBody
-    public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         Assert.notNull(this.loggerContext);
 

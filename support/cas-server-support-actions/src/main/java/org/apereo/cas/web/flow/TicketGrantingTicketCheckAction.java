@@ -60,11 +60,10 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      *
      * @param requestContext Flow request context.
      *
-     * @throws Exception in case ticket cannot be retrieved from the service layer
      * @return {@link #NOT_EXISTS}, {@link #INVALID}, or {@link #VALID}.
      */
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
         if (!StringUtils.hasText(tgtId)) {
             return new Event(this, NOT_EXISTS);

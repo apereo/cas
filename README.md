@@ -18,9 +18,7 @@ CAS is an enterprise multilingual single sign-on solution for the web and attemp
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server component by the same name hosted here, with support for a plethora of additional authentication protocols and features.
 
-## Contributions
-
-[![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)][contribute]
+## Contributions [![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)][contribute]
 
 - [How to contribute][contribute]
 
@@ -53,12 +51,13 @@ The following features are supported by the CAS project:
 * Password management and password policy enforcement.
 
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and 
-[Spring Cloud](http://projects.spring.io/spring-cloud/)
+[Spring Cloud](http://projects.spring.io/spring-cloud/).
 
 ## Development
 
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) 
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC) 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/apereo/cas/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/apereo/cas/?branch=master)
 [![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas) 
 [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas) 
 [![Coverage Status](https://coveralls.io/repos/github/apereo/cas/badge.svg?branch=master)](https://coveralls.io/github/apereo/cas?branch=master)
@@ -67,7 +66,9 @@ To build the project locally, please follow [this guide](https://apereo.github.i
 
 ## Deployment 
 
-[![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
+[![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) 
+[![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase is *ONLY* required if you wish to contribute to the development of the project.
 

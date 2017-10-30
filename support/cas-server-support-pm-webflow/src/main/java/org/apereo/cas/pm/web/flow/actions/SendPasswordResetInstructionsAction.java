@@ -43,7 +43,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         if (!communicationsManager.isMailSenderDefined()) {
             LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers");
             return error();

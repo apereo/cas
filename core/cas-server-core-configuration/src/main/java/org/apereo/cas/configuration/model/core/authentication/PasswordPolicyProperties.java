@@ -39,9 +39,9 @@ public class PasswordPolicyProperties implements Serializable {
      * Decide how LDAP authentication should handle password policy changes.
      * Acceptable values are:
      * <ul>
-     *     <li><code>DEFAULT</code>: Default password policy rules handling account states.</li>
-     *     <li><code>GROOVY</code>: Handle account changes and warnings via Groovy scripts</li>
-     *     <li><code>REJECT_RESULT_CODE</code>: Handle account state only if the ldap authentication result code isn't blocked</li>
+     *     <li>{@code DEFAULT}: Default password policy rules handling account states.</li>
+     *     <li>{@code GROOVY}: Handle account changes and warnings via Groovy scripts</li>
+     *     <li>{@code REJECT_RESULT_CODE}: Handle account state only if the ldap authentication result code isn't blocked</li>
      * </ul>
      */
     private PasswordPolicyHandlingOptions strategy = PasswordPolicyHandlingOptions.DEFAULT;

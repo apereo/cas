@@ -39,12 +39,11 @@ public class MultifactorAuthenticationTrustController {
      * @param response the response
      * @param request  the request
      * @return the all trusted devices
-     * @throws Exception the exception
      */
     @GetMapping
     @ResponseBody
     public Set<MultifactorAuthenticationTrustRecord> getAllTrustedDevices(final HttpServletResponse response,
-                                                                          final HttpServletRequest request) throws Exception {
+                                                                          final HttpServletRequest request) {
 
         final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
                 DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));

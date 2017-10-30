@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -189,5 +190,11 @@ public class OAuthRegisteredService extends RegexRegisteredService {
         if (this.supportedResponseTypes == null) {
             this.supportedResponseTypes = new HashSet<>();
         }
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "OAuth2 Client";
     }
 }

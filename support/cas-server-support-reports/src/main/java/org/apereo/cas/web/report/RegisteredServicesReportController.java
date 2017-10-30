@@ -46,11 +46,10 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the web async task
-     * @throws Exception the exception
      */
     @GetMapping
     @ResponseBody
-    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
                 .stream()

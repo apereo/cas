@@ -28,7 +28,7 @@ public class SamlIdPMetadataUIWebflowConfigurer extends AbstractCasWebflowConfig
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ViewState state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);

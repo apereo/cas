@@ -80,6 +80,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class SamlIdPConfigurationTests {
 
     @Test
-    public void verifyConfig() throws Exception {
+    public void verifyConfig() {
     }
 }

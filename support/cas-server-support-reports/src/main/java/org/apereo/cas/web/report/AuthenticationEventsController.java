@@ -35,11 +35,10 @@ public class AuthenticationEventsController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
@@ -50,11 +49,10 @@ public class AuthenticationEventsController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the records
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getEvents")
     @ResponseBody
-    public Collection<? extends CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Collection<? extends CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         return this.eventRepository.load();
     }

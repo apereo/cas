@@ -36,7 +36,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final Authentication c = WebUtils.getAuthentication(requestContext);
         if (c == null) {
             LOGGER.warn("Could not determine authentication from the request context");

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.TimeBasedAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -73,7 +74,8 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap = WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -98,7 +100,8 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
                 .map(style -> dow.getDisplayName(style, Locale.getDefault()))
                 .collect(Collectors.toList());
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap = WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final TimeBasedAuthenticationProperties timed = this.timedMultifactor.stream()
                 .filter(t -> {
                     boolean providerEvent = false;

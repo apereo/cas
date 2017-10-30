@@ -49,7 +49,7 @@ public class LogoutAction extends AbstractLogoutAction {
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-                                      final RequestContext context) throws Exception {
+                                      final RequestContext context) {
 
         boolean needFrontSlo = false;
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
