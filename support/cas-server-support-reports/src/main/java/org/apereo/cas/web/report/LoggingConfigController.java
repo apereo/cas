@@ -195,7 +195,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
         if (factory != null) {
             return factory.getLoggersInContext(this.loggerContext);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     private static ILoggerFactory getCasLoggerFactoryInstance() {
