@@ -83,10 +83,8 @@ public class ThreadContextMDCServletFilter implements Filter {
 
             final Enumeration<String> requestHeaderNames = request.getHeaderNames();
             if (requestHeaderNames != null) {
-                while (requestHeaderNames.hasMoreElements()) {
-                    String requestHeaderName = requestHeaderNames.nextElement();
-                    addContextAttribute(requestHeaderName, request.getHeader(requestHeaderName));
-                }
+                Collections.list(requestHeaderNames)
+                    .forEach(h -> addContextAttribute(h, request.getHeader(h)));
             }
 
             final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
