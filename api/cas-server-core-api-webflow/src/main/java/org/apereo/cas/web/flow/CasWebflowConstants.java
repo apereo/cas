@@ -392,4 +392,9 @@ public interface CasWebflowConstants {
      * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
      */
     String STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN = "postLoginPswdChangeCheck";
+
+    /**
+     * State id to check for do change password manual flag "checkDoChangePassword".
+     */
+    String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
 }
