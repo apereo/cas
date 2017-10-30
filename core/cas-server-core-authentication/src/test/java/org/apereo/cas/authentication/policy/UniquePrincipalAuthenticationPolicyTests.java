@@ -9,8 +9,9 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -61,7 +62,8 @@ public class UniquePrincipalAuthenticationPolicyTests {
     @Test
     public void verifyPolicyFailsUserFoundOnce() throws Exception {
         this.ticketRegistry.deleteAll();
-        this.ticketRegistry.addTicket(new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"), 
+                new NeverExpiresExpirationPolicy()));
         final UniquePrincipalAuthenticationPolicy p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
     }

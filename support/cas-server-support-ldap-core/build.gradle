@@ -8,5 +8,6 @@ dependencies {
     implementation libraries.pac4j
     
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
 }
