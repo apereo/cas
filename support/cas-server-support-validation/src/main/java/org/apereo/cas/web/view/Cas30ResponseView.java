@@ -86,7 +86,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         if (!registeredService.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any attributes", registeredService);
-            return new LinkedHashMap<>();
+            return new LinkedHashMap<>(0);
         }
         
         final Map<String, Object> filteredAuthenticationAttributes = new HashMap<>(getAuthenticationAttributes(model));

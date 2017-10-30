@@ -64,7 +64,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
         if (predicate == null) {
-            return new ArrayList<>();
+            return new ArrayList<>(0);
         }
         
         return getAllServices()
