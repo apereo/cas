@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey;
 import com.yubico.client.v2.YubicoClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
@@ -61,4 +62,10 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     public String getFriendlyName() {
         return "YubiKey";
     }
+
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), YubiKeyMultifactorProperties.DEFAULT_IDENTIFIER);
+    }
+
 }

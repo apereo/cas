@@ -1,8 +1,10 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
 import net.jradius.exception.TimeoutException;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.RadiusMultifactorProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +25,16 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
 
     public RadiusMultifactorAuthenticationProvider() {
     }
-
+    
     public RadiusMultifactorAuthenticationProvider(final List<RadiusServer> servers) {
         this.servers = servers;
     }
 
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), RadiusMultifactorProperties.DEFAULT_IDENTIFIER);
+    }
+    
     @Override
     protected boolean isAvailable() {
         return canPing();

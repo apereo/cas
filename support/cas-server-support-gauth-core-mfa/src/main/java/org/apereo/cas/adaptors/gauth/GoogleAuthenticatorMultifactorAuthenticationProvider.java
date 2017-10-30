@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 
 /**
  * The authentication provider for google authenticator.
@@ -17,6 +19,12 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
     public GoogleAuthenticatorMultifactorAuthenticationProvider() {
     }
 
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), GAuthMultifactorProperties.DEFAULT_IDENTIFIER);
+    }
+
+    
     @Override
     protected boolean isAvailable() {
         return true;
