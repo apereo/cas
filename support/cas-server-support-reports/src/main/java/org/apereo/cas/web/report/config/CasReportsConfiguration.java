@@ -116,10 +116,6 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     private ServerProperties serverProperties;
 
     @Autowired
-    @Qualifier("casServerProfileRegistrar")
-    private CasServerProfileRegistrar casServerProfileRegistrar;
-
-    @Autowired
     @Qualifier("healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
 
@@ -181,11 +177,6 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
-    public MvcEndpoint discoveryController() {
-        return new CasServerDiscoveryProfileController(casProperties, servicesManager, this.casServerProfileRegistrar);
-    }
-
-    @Bean
     public MvcEndpoint swfReportController() {
         return new SpringWebflowReportController(casProperties);
     }
@@ -236,6 +227,20 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         }
     }
 
+    /**
+     * The type server discovery profile configuration.
+     */
+    @ConditionalOnClass(value = CasServerProfileRegistrar.class)
+    @Configuration("serverDiscoveryProfileConfiguration")
+    public class ServerDiscoveryProfileConfiguration {
+
+        @Autowired
+        @Bean
+        public MvcEndpoint discoveryController(@Qualifier("casServerProfileRegistrar") final CasServerProfileRegistrar casServerProfileRegistrar) {
+            return new CasServerDiscoveryProfileController(casProperties, servicesManager, casServerProfileRegistrar);
+        }
+    }
+    
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
         config.enableSimpleBroker("/logs");
