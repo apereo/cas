@@ -316,8 +316,6 @@ may convey additional information about the nature of the request or the authent
 | `scheme`                            | Scheme of the HTTP request.
 | `timezone`                          | Timezone of the HTTP request.
 | `principal`                         | CAS authenticated principal id.
-| `alternateClientAddr`               | Client address for header defined in `cas.audit.alternateClientAddrHeaderName`.
-| `alternateServerAddr`               | Server address for header defined in `cas.audit.alternateServerAddrHeaderName`.
 
 Additionally, all available request attributes and parameters are exposed as variables.
 
