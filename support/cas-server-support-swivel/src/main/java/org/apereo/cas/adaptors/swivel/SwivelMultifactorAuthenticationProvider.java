@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.swivel;
 
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 
 /**
  * This is {@link SwivelMultifactorAuthenticationProvider}.
@@ -20,5 +20,10 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     @Override
     protected boolean isAvailable() {
         return this.handler.canPing();
+    }
+    
+    @Override
+    public String getFriendlyName() {
+        return "Swivel Secure";
     }
 }
