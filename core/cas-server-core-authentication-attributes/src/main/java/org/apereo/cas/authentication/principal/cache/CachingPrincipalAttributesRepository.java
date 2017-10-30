@@ -89,7 +89,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     @Override

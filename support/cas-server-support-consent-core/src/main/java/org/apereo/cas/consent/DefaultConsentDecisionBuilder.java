@@ -84,7 +84,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
             final String result = this.consentCipherExecutor.decode(decision.getAttributes());
             if (StringUtils.isBlank(result)) {
                 LOGGER.warn("Unable to decipher attributes from consent decision [{}]", decision.getId());
-                return new HashMap<>();
+                return new HashMap<>(0);
             }
             final String names = EncodingUtils.decodeBase64ToString(result);
             final Map<String, Object> attributes = MAPPER.readValue(names, Map.class);
