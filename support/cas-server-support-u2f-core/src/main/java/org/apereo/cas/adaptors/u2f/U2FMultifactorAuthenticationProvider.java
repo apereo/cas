@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.u2f;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 
 /**
  * This is {@link U2FMultifactorAuthenticationProvider}.
@@ -17,6 +19,12 @@ public class U2FMultifactorAuthenticationProvider extends AbstractMultifactorAut
     public U2FMultifactorAuthenticationProvider() {
     }
 
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), U2FMultifactorProperties.DEFAULT_IDENTIFIER);
+    }
+
+    
     @Override
     protected boolean isAvailable() {
         return true;

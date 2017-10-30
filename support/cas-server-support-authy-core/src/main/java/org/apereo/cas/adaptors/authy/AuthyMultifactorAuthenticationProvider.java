@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.authy;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorProperties;
 
 /**
  * The authentication provider for google authenticator.
@@ -17,6 +19,12 @@ public class AuthyMultifactorAuthenticationProvider extends AbstractMultifactorA
     public AuthyMultifactorAuthenticationProvider() {
     }
 
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), AuthyMultifactorProperties.DEFAULT_IDENTIFIER);
+    }
+
+    
     @Override
     public String getFriendlyName() {
         return "Authy";

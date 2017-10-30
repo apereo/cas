@@ -1,7 +1,9 @@
 package org.apereo.cas.adaptors.swivel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -27,6 +29,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     public SwivelMultifactorAuthenticationProvider() {
     }
     
+    
     public SwivelMultifactorAuthenticationProvider(final String swivelUrl) {
         this.swivelUrl = swivelUrl;
     }
@@ -39,6 +42,11 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     @Override
     public String getFriendlyName() {
         return "Swivel Secure";
+    }
+
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), SwivelMultifactorProperties.DEFAULT_IDENTIFIER);
     }
 
     /**
