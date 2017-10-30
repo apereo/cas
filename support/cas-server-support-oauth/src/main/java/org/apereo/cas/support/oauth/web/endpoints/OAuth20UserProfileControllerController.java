@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -149,7 +148,6 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      *
      * @param accessToken the access token
      * @return the linked multi value map
-     * @throws IOException the io exception
      */
     protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) {
         final Principal principal = accessToken.getAuthentication().getPrincipal();

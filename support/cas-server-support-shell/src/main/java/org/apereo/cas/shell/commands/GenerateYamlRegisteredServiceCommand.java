@@ -30,7 +30,6 @@ public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
      *
      * @param file        the file
      * @param destination the destination
-     * @throws Exception the exception
      */
     @CliCommand(value = "generate-yaml", help = "Generate a YAML registered service definition")
     public void generateYaml(

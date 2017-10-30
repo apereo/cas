@@ -46,7 +46,6 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the web async task
-     * @throws Exception the exception
      */
     @GetMapping
     @ResponseBody

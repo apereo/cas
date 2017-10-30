@@ -24,7 +24,6 @@ public interface CRLFetcher {
      * @return map of crl entries and their urls
      * @throws IOException the exception thrown if resources cant be fetched
      * @throws CRLException the exception thrown if resources cant be fetched
-     * @throws CertificateException the exception thrown if resources cant be fetched
      */
     Collection<X509CRL> fetch(@Size(min=1) Collection<Resource> crls) throws IOException, CRLException;
 

@@ -178,7 +178,6 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * Gets domains.
      *
      * @return the domains
-     * @throws Exception the exception
      */
     @GetMapping(value = "/domainList")
     public ResponseEntity<Collection<String>> getDomains() {
@@ -194,7 +193,6 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param request  the request
      * @param response the response
      * @return the user
-     * @throws Exception the exception
      */
     @GetMapping(value = "/user")
     public ResponseEntity<CasUserProfile> getUser(final HttpServletRequest request,
@@ -244,7 +242,6 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * Gets form data.
      *
      * @return the form data
-     * @throws Exception the exception
      */
     @GetMapping(value = "formData")
     public ResponseEntity<FormData> getFormData() {

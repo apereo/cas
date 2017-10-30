@@ -59,7 +59,6 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
      * @param request  the request
      * @param response the response
      * @return the jwk set
-     * @throws Exception the exception
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,

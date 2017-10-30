@@ -102,7 +102,6 @@ public class LoggingOutputSocketMessagingController {
      * Gets logs.
      *
      * @return the log output
-     * @throws Exception the exception
      */
 
     @SendTo("/logs/logoutput")

@@ -91,7 +91,6 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
@@ -109,7 +108,6 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
      * @param request  the request
      * @param response the response
      * @return the map
-     * @throws Exception the exception
      */
     @PostMapping(value = "/resolveattrs")
     @ResponseBody
