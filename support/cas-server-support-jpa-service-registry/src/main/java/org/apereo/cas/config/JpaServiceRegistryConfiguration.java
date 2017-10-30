@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -54,7 +55,7 @@ public class JpaServiceRegistryConfiguration {
     public List<String> jpaServicePackagesToScan() {
         final Reflections reflections =
                 new Reflections(new ConfigurationBuilder()
-                        .setUrls(ClasspathHelper.forPackage("org.apereo.cas"))
+                        .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                         .setScanners(new SubTypesScanner(false)));
         final Set<Class<? extends AbstractRegisteredService>> subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
         return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toList());
