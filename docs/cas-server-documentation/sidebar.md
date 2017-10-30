@@ -29,6 +29,7 @@ layout: null
     *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
     *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
     *   [Command-line Shell](/$version/installation/Configuring-Commandline-Shell.html) 
+    *   [Configuration Discovery](/$version/installation/Configuration-Discovery.html)
 
 * [Authentication](#casauthentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
