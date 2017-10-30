@@ -1,7 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {FormData} from '../../../domain/service-view-bean';
+import {Component, OnInit} from '@angular/core';
+import {FormData} from '../../../domain/form-data';
 import {Messages} from '../../messages';
-import {AbstractRegisteredService} from '../../../domain/registered-service';
 import {Data} from '../data';
 import {DataSource} from '@angular/cdk/table';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -9,7 +8,6 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
-import {WSFederationRegisterdService} from '../../../domain/wsed-service';
 import {WsFederationClaimsReleasePolicy} from '../../../domain/attribute-release';
 import {Util} from '../../util/util';
 
@@ -22,7 +20,6 @@ import {Util} from '../../util/util';
 export class WsfedattrrelpoliciesComponent implements OnInit {
 
   formData: FormData;
-  selectOptions;
   wsFedOnly: boolean;
 
   displayedColumns = ['source', 'mapped'];
@@ -33,7 +30,6 @@ export class WsfedattrrelpoliciesComponent implements OnInit {
   constructor(public messages: Messages,
               public data: Data) {
     this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
