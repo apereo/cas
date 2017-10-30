@@ -6,7 +6,6 @@ import { DebugElement } from '@angular/core';
 
 import { AttributeReleaseComponent } from './attribute-release.component';
 import {Messages} from '../../messages';
-import {FormData} from '../../../domain/service-view-bean';
 import {SharedModule} from '../../shared/shared.module';
 import {AttributeReleaseChecksComponent} from '../attribute-release-checks/attribute-release-checks.component';
 import {AttributeReleasePrincipalRepoComponent} from '../attribute-release-principal-repo/attribute-release-principal-repo.component';
