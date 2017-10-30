@@ -317,7 +317,7 @@ may convey additional information about the nature of the request or the authent
 | `timezone`                          | Timezone of the HTTP request.
 | `principal`                         | CAS authenticated principal id.
 
-Additionally, all available request attributes and parameters are exposed as variables.
+Additionally, all available request attributes, headers, and parameters are exposed as variables.
 
 The above variables may be used in logging patterns:
 
