@@ -1,0 +1,9 @@
+description = "Apereo CAS Duo Security Core MFA"
+
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    
+    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+}
