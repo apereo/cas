@@ -61,11 +61,11 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the descriptions
      */
     public Collection<String> getDescriptions() {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     public Collection<String> getDisplayNames() {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**
@@ -87,7 +87,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the information uR ls
      */
     public Collection<String> getInformationURLs() {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
 
@@ -110,7 +110,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the privacy statement uR ls
      */
     public Collection<String> getPrivacyStatementURLs() {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**
@@ -170,7 +170,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the logo urls
      */
     public Collection<Logo> getLogoUrls() {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**

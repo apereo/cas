@@ -163,7 +163,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         } catch (final Exception e) {
             LOGGER.warn("Could not retrieve input stream from resource. Moving on...", e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**
@@ -197,7 +197,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         } catch (final Exception ex) {
             LOGGER.warn("Could not initialize metadata resolver. Resource will be ignored", ex);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     public void setMetadataResources(final Map<Resource, MetadataFilterChain> metadataResources) {

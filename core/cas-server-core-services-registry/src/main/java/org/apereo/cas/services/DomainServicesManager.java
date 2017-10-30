@@ -60,7 +60,7 @@ public class DomainServicesManager extends AbstractServicesManager {
         final Collection<RegisteredService> registeredServices = getServicesForDomain(domain);
         if (registeredServices == null || registeredServices.isEmpty()) {
             LOGGER.debug("No services could be located for domain [{}]", domain);
-            return new ArrayList<>();
+            return new ArrayList<>(0);
         }
         return registeredServices;
     }

@@ -28,6 +28,6 @@ public interface LogoutExecutionPlan {
      * @return the logout handlers
      */
     default Collection<LogoutHandler> getLogoutHandlers() {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 }

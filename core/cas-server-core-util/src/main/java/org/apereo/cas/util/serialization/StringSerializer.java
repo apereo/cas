@@ -94,7 +94,7 @@ public interface StringSerializer<T> extends Serializable {
         if (result != null) {
             return CollectionUtils.wrapList(result);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**

@@ -53,7 +53,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override

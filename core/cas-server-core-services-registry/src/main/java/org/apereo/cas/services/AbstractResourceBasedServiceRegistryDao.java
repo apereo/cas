@@ -301,7 +301,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override

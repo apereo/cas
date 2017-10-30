@@ -60,7 +60,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
 

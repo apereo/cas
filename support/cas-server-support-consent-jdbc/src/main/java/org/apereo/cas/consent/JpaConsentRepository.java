@@ -49,7 +49,7 @@ public class JpaConsentRepository implements ConsentRepository {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class JpaConsentRepository implements ConsentRepository {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override
