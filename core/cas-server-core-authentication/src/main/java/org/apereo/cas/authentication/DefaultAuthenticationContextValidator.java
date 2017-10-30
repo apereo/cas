@@ -4,7 +4,6 @@ package org.apereo.cas.authentication;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
+
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,14 +67,13 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         final Collection<Object> contexts = CollectionUtils.toCollection(ctxAttr);
         LOGGER.debug("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-                getAllMultifactorAuthenticationProvidersFromApplicationContext();
+        final Map<String, MultifactorAuthenticationProvider> providerMap = 
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null) {
-            LOGGER.debug("No providers have been configured");
+            LOGGER.debug("No multifactor authentication providers are configured");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
-        final Optional<MultifactorAuthenticationProvider> requestedProvider =
-                locateRequestedProvider(providerMap.values(), requestedContext);
+        final Optional<MultifactorAuthenticationProvider> requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
 
         if (!requestedProvider.isPresent()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
@@ -160,20 +159,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
 
         return Pair.of(Boolean.FALSE, requestedProvider);
     }
-
-    /**
-     * Gets all multifactor authentication providers from application context.
-     *
-     * @return the all multifactor authentication providers from application context
-     */
-    private Map<String, MultifactorAuthenticationProvider> getAllMultifactorAuthenticationProvidersFromApplicationContext() {
-        try {
-            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
-        } catch (final Exception e) {
-            LOGGER.warn("Could not locate beans of type [{}] in the application context", MultifactorAuthenticationProvider.class);
-        }
-        return null;
-    }
+    
 
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
             final Collection<MultifactorAuthenticationProvider> providers) {

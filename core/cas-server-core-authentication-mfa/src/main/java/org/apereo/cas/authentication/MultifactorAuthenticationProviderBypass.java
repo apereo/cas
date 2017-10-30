@@ -1,6 +1,7 @@
-package org.apereo.cas.services;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
 

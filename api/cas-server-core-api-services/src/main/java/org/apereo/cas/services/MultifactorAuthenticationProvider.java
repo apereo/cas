@@ -36,6 +36,13 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     String getId();
 
     /**
+     * Gets the friendly-name for this provider.
+     *
+     * @return the name
+     */
+    String getFriendlyName();
+    
+    /**
      * Does provider match/support this identifier?
      * The identifier passed may be formed as a regular expression.
      * @param identifier the identifier

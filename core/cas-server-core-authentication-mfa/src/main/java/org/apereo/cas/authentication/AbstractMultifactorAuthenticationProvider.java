@@ -1,10 +1,11 @@
-package org.apereo.cas.services;
+package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -35,6 +36,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private int order;
 
+    public AbstractMultifactorAuthenticationProvider() {}
+    
     @Override
     public String getId() {
         return id;

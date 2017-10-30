@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f;
 
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 
 /**
  * This is {@link U2FMultifactorAuthenticationProvider}.
@@ -14,5 +14,10 @@ public class U2FMultifactorAuthenticationProvider extends AbstractMultifactorAut
     @Override
     protected boolean isAvailable() {
         return true;
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return "FIDO U2F";
     }
 }

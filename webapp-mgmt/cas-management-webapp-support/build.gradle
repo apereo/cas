@@ -17,14 +17,16 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-logging-config")
-
+    implementation project(":support:cas-server-support-ws-idp-api")
+    implementation project(":support:cas-server-support-person-directory")
+    implementation project(":support:cas-server-support-surrogate-api")
+    
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-saml-idp-core")
-    implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-oidc-core")
-    implementation project(":support:cas-server-support-grouper")
-    implementation project(":support:cas-server-support-surrogate-api")
+    implementation project(":support:cas-server-support-ws-idp-api")
+    implementation project(":support:cas-server-support-grouper-core")
     
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
