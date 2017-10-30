@@ -28,14 +28,14 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * using when delegating authentication to ADFS to indicate the relying party identifier.
          */
-        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", ""),
+        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY),
         /**
          * Produce a JWT as a response when generating service tickets.
          *
          * @deprecated Use {@link #TOKEN_AS_SERVICE_TICKET} instead.
          **/
         @Deprecated
-        TOKEN_AS_RESOPONSE("jwtAsResponse", "true"),
+        TOKEN_AS_RESPONSE("jwtAsResponse", "true"),
 
         /**
          * Produce a JWT as a response when generating service tickets.
@@ -45,7 +45,7 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Jwt signing secret defined for a given service.
          **/
-        TOKEN_SECRET_SIGNING("jwtSigningSecret", ""),
+        TOKEN_SECRET_SIGNING("jwtSigningSecret", StringUtils.EMPTY),
 
         /**
          * Jwt signing secret alg defined for a given service.
@@ -55,12 +55,12 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Jwt encryption secret defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", ""),
+        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", StringUtils.EMPTY),
 
         /**
          * Jwt encryption secret alg defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg", ""),
+        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg", StringUtils.EMPTY),
 
         /**
          * Jwt encryption secret method defined for a given service.
