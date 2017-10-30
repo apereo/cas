@@ -471,6 +471,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # cas.monitor.endpoints.dashboard.enabled=false
 # cas.monitor.endpoints.dashboard.sensitive=true
 
+# cas.monitor.endpoints.discovery.enabled=false
+# cas.monitor.endpoints.discovery.sensitive=true
+
 # cas.monitor.endpoints.auditEvents.enabled=false
 # cas.monitor.endpoints.auditEvents.sensitive=true
 
@@ -2040,8 +2043,9 @@ If the password policy strategy is to be handed off to a Groovy script, the outl
 
 ```groovy
 import java.util.*
-import org.apereo.cas.authentication.*
 import org.ldaptive.auth.*
+import org.apereo.cas.*
+import org.apereo.cas.authentication.*
 import org.apereo.cas.authentication.support.*
 
 def List<MessageDescriptor> run(final Object... args) {

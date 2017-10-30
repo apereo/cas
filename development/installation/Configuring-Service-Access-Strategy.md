@@ -237,7 +237,7 @@ The grouper access strategy is enabled by including the following dependency in 
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-grouper</artifactId>
+  <artifactId>cas-server-support-grouper-core</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
