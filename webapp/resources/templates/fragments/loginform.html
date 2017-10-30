@@ -61,6 +61,14 @@
                 </span>
             </div>
         </section>
+
+        <section class="row check">
+            <p th:if="${passwordManagementEnabled}">
+                <input type="checkbox" name="doChangePassword" id="doChangePassword" value="true" th:checked="${param.doChangePassword != null}" tabindex="4"/>
+                <label for="doChangePassword" th:text="#{screen.button.changePassword}"/>
+            </p>
+        </section>
+
         <section class="row check">
             <p th:if="${rememberMeAuthenticationEnabled}">
                 <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"/>
