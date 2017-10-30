@@ -25,11 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link EncodingUtils}
- * that encapsulates common base64 calls and operations
- * in one spot.
+ * This is {@link EncodingUtils} that encapsulates common base64, signing and encryption calls and operations in one spot.
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
+ * @author Misagh Moayyed
  * @since 5.0.0
  */
 public final class EncodingUtils {
