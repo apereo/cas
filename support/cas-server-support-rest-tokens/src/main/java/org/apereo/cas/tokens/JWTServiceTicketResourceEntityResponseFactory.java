@@ -48,7 +48,7 @@ public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServic
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESOPONSE.isAssignedTo(registeredService)
+        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService)
                 || RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
         
         if (!tokenAsResponse) {
