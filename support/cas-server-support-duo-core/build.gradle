@@ -16,6 +16,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util")
+    implementation project(":support:cas-server-support-duo-core-mfa")
     
     compileOnly project(":support:cas-server-support-trusted-mfa")
     

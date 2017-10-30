@@ -14,7 +14,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Entity
 @Table(name = "GoogleAuthenticatorRegistrationRecord")
 public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
