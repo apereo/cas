@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -35,10 +37,13 @@ import java.util.stream.Collectors;
  */
 public class CasServerProfileRegistrar implements ApplicationContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasServerProfileRegistrar.class);
-    
+
     private ApplicationContext applicationContext;
-    
-    public CasServerProfileRegistrar() {
+
+    private final ServicesManager servicesManager;
+
+    public CasServerProfileRegistrar(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
@@ -59,12 +64,20 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 return null;
             }
         };
+
         final Predicate filter = o -> !VariegatedMultifactorAuthenticationProvider.class.isAssignableFrom(Class.class.cast(o));
-        
         final Collector collector = Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName);
         return (Map) locateSubtypesByReflection(mapper, collector, AbstractMultifactorAuthenticationProvider.class, filter);
     }
 
+    private Map<String, Class> locatedRegisteredServiceTypesActive() {
+        return this.servicesManager.getAllServices()
+                .stream()
+                .map(svc -> Pair.of(svc.getFriendlyName(), svc.getClass()))
+                .distinct()
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+    
     private Map<String, Class> locatedRegisteredServiceTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
@@ -105,14 +118,14 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         final CasServerProfile profile = new CasServerProfile();
 
         profile.setRegisteredServiceTypesSupported(locatedRegisteredServiceTypesSupported());
-        //profile.setRegisteredServiceTypes(locatedRegisteredServiceTypesActive());
+        profile.setRegisteredServiceTypes(locatedRegisteredServiceTypesActive());
 
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
         profile.setMultifactorAuthenticationProviderTypes(locateMultifactorAuthenticationProviderTypesActive());
-        
+
         return profile;
     }
-
+    
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
