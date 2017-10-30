@@ -9,12 +9,8 @@ import {Data} from '../data';
 })
 export class LogouttypeevalComponent implements OnInit {
 
-  selectOptions;
-  logoutType = ['NONE', 'BACK_CHANNEL', 'FRONT_CHANNEL'];
-
   constructor(public messages: Messages,
               public data: Data) {
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {

@@ -31,7 +31,7 @@
       <mat-cell *cdkCellDef="let row">
         <mat-form-field>
           <mat-select [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes[row.key]">
-            <mat-option *ngFor="let item of selectOptions.wsfedClaimList" [value]="item.name">{{ item.name }}</mat-option>
+            <mat-option *ngFor="let item of data.formData.wsFederationClaims" [value]="item.value">{{ item.display }}</mat-option>
           </mat-select>
         </mat-form-field>
       </mat-cell>
