@@ -35,7 +35,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
                                                   final Map<String, String> parameters) {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESOPONSE.isAssignedTo(registeredService);
+        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService);
 
         if (!tokenAsResponse) {
             return super.buildInternal(service, parameters);

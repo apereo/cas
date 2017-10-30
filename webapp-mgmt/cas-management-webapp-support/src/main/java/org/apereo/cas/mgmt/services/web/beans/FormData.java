@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web.beans;
 
-import jdk.nashorn.internal.parser.JSONParser;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.OidcSubjectTypes;
@@ -9,8 +8,6 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
-import org.hjson.JsonArray;
-import org.hjson.JsonValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Form data passed onto the screen.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -38,31 +36,31 @@ public class FormData implements Serializable {
     private String[] samlCredentialTypes = {"BASIC", "X509"};
 
     private String[] encryptAlgOptions = {
-            "RSA-5",
-            "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW",
-            "A128KW",
-            "A192KW",
-            "A256KW",
-            "A128GCMKW",
-            "A192GXMKW",
-            "A256GCMKW",
-            "PBES2-HS256+A128KW",
-            "PBES2-HS384+A192KW",
-            "PBES2-HS512+A256KW"
+        "RSA-5",
+        "RSA-OAEP",
+        "RSA-OAEP-256",
+        "ECDH-ES",
+        "ECDH-ES+A128KW",
+        "ECDH-ES+A192KW",
+        "ECDH-ES+A256KW",
+        "A128KW",
+        "A192KW",
+        "A256KW",
+        "A128GCMKW",
+        "A192GXMKW",
+        "A256GCMKW",
+        "PBES2-HS256+A128KW",
+        "PBES2-HS384+A192KW",
+        "PBES2-HS512+A256KW"
     };
 
     private String[] encodingAlgOptions = {
-            "A128CBC-HS256",
-            "A192CBC-HS384",
-            "A256CBC-HS512",
-            "A128GCM",
-            "A192GCM",
-            "A256GCM"
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
+        "A128GCM",
+        "A192GCM",
+        "A256GCM"
     };
 
 
@@ -98,6 +96,11 @@ public class FormData implements Serializable {
         return RegisteredService.LogoutType.values();
     }
 
+    /**
+     * Gets service types.
+     *
+     * @return the service types
+     */
     public List<Option> getServiceTypes() {
         final ArrayList<Option> serviceTypes = new ArrayList<>();
         serviceTypes.add(new Option("CAS Client", "cas"));
@@ -128,6 +131,11 @@ public class FormData implements Serializable {
         return WSFederationClaims.values();
     }
 
+    /**
+     * Gets mfa providers.
+     *
+     * @return the mfa providers
+     */
     public List<Option> getMfaProviders() {
         final ArrayList<Option> providers = new ArrayList<>();
         providers.add(new Option("Duo Security", "mfa-duo"));
@@ -142,10 +150,20 @@ public class FormData implements Serializable {
         return providers;
     }
 
+    /**
+     * Get mfa failure modes registered service multifactor policy . failure modes [ ].
+     *
+     * @return the registered service multifactor policy . failure modes [ ]
+     */
     public RegisteredServiceMultifactorPolicy.FailureModes[] getMfaFailureModes() {
         return RegisteredServiceMultifactorPolicy.FailureModes.values();
     }
 
+    /**
+     * Gets oidc scopes.
+     *
+     * @return the oidc scopes
+     */
     public List<Option> getOidcScopes() {
         final ArrayList<Option> scopes = new ArrayList<>();
         scopes.add(new Option("Profile", "profile"));
@@ -185,7 +203,7 @@ public class FormData implements Serializable {
             return display;
         }
 
-        public void setDisplay(String display) {
+        public void setDisplay(final String display) {
             this.display = display;
         }
 
@@ -193,7 +211,7 @@ public class FormData implements Serializable {
             return value;
         }
 
-        public void setValue(String value) {
+        public void setValue(final String value) {
             this.value = value;
         }
     }
