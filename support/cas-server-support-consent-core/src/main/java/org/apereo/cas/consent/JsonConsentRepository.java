@@ -53,7 +53,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }
-        return new LinkedHashSet<>();
+        return new LinkedHashSet<>(0);
     }
 
     private boolean writeAccountToJsonResource() {

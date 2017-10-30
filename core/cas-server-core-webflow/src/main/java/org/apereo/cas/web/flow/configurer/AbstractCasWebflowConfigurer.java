@@ -713,7 +713,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             c.add(def.getExecutionCriteria());
             return c;
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     /**
