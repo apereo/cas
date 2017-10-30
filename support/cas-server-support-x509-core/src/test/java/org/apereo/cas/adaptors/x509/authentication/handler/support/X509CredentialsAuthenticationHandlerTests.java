@@ -81,7 +81,6 @@ public class X509CredentialsAuthenticationHandlerTests {
      * Gets the unit test parameters.
      *
      * @return Test parameter data.
-     * @throws Exception On test data setup errors.
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {

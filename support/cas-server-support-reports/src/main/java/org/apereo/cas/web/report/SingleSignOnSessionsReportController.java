@@ -289,7 +289,6 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view where json data will be rendered
-     * @throws Exception thrown during json processing
      */
     @GetMapping
     public ModelAndView showSsoSessions(final HttpServletRequest request,

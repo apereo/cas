@@ -36,7 +36,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,7 +110,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the active loggers
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
@@ -206,7 +204,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * Gets logger configurations.
      *
      * @return the logger configurations
-     * @throws IOException the iO exception
      */
     private Set<LoggerConfig> getLoggerConfigurations() {
         final Configuration configuration = this.loggerContext.getConfiguration();
@@ -255,7 +252,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the audit log
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getAuditLog")
     @ResponseBody

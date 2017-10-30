@@ -198,7 +198,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param authenticationResultBuilder the authentication result builder
      * @param service                     the service
      * @return the event
-     * @throws Exception the exception
      */
     protected Event grantTicketGrantingTicketToAuthenticationResult(final RequestContext context,
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
