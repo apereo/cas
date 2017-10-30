@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 
 /**
  * The authentication provider for google authenticator.
@@ -15,5 +15,10 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
     @Override
     protected boolean isAvailable() {
         return true;
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return "Google Authenticator";
     }
 }

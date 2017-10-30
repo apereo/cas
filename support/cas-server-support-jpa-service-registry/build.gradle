@@ -1,5 +1,7 @@
 description = "Apereo CAS JPA Service Registry Support"
 dependencies {
+    api project(":api:cas-server-core-api")
+    
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services")
     implementation project(":support:cas-server-support-jpa-util")

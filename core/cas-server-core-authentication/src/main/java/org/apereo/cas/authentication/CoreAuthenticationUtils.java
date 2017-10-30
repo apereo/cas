@@ -6,12 +6,7 @@ import groovy.lang.GroovyClassLoader;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.services.GroovyMultifactorAuthenticationProviderBypass;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.services.RestMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.util.CollectionUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.slf4j.Logger;
@@ -80,30 +75,6 @@ public final class CoreAuthenticationUtils {
         return multimap;
     }
 
-    /**
-     * New multifactor authentication provider bypass multifactor.
-     *
-     * @param props the props
-     * @return the multifactor authentication provider bypass
-     */
-    public static MultifactorAuthenticationProviderBypass newMultifactorAuthenticationProviderBypass(
-            final MultifactorAuthenticationProviderBypassProperties props) {
-
-        final MultifactorAuthenticationProviderBypass bypass;
-        switch (props.getType()) {
-            case GROOVY:
-                bypass = new GroovyMultifactorAuthenticationProviderBypass(props);
-                break;
-            case REST:
-                bypass = new RestMultifactorAuthenticationProviderBypass(props);
-                break;
-            case DEFAULT:
-            default:
-                bypass = new DefaultMultifactorAuthenticationProviderBypass(props);
-                break;
-        }
-        return bypass;
-    }
 
     /**
      * Gets credential selection predicate.

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.authy;
 
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 
 /**
  * The authentication provider for google authenticator.
@@ -10,4 +10,9 @@ import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
  */
 public class AuthyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
     private static final long serialVersionUID = 4789727148634156909L;
+
+    @Override
+    public String getFriendlyName() {
+        return "Authy";
+    }
 }

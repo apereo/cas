@@ -1,14 +1,17 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 
 /**
@@ -23,7 +26,13 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDuoMultifactorAuthenticationProvider.class);
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private final DuoSecurityAuthenticationService duoAuthenticationService;
+    private DuoSecurityAuthenticationService duoAuthenticationService;
+
+    /**
+     * Required for serialization purposes and reflection.
+     */
+    public DefaultDuoMultifactorAuthenticationProvider() {
+    }
 
     public DefaultDuoMultifactorAuthenticationProvider(final DuoSecurityAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
@@ -36,7 +45,13 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     @Override
     protected boolean isAvailable() {
+        Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
         return this.duoAuthenticationService.ping();
+    }
+
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override
@@ -67,6 +82,8 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     @Override
     protected boolean supportsInternal(final Event e, final Authentication authentication, final RegisteredService registeredService) {
+        Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
+        
         if (!super.supportsInternal(e, authentication, registeredService)) {
             return false;
         }
@@ -84,6 +101,15 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
         }
 
         return true;
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return "Duo Security";
+    }
+
+    public void setDuoAuthenticationService(final DuoSecurityAuthenticationService duoAuthenticationService) {
+        this.duoAuthenticationService = duoAuthenticationService;
     }
 }
 

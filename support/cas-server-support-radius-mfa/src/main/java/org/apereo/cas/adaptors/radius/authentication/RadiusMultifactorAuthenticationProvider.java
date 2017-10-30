@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 
 /**
  * The authentication provider for yubikey.
@@ -21,5 +21,10 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     @Override
     protected boolean isAvailable() {
         return this.radiusAuthenticationHandler.canPing();
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return "RADIUS (RSA,WiKID)";
     }
 }

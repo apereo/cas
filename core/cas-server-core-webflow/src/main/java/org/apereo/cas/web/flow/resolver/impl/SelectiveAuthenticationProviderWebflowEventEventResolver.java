@@ -5,6 +5,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
@@ -90,7 +91,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
             final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService) {
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         final Map<String, MultifactorAuthenticationProvider> providers =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
 
         if (providers == null || providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");

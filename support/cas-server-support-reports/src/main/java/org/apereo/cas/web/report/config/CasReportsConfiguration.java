@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.services.ServicesManager;
@@ -115,6 +116,10 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     private ServerProperties serverProperties;
 
     @Autowired
+    @Qualifier("casServerProfileRegistrar")
+    private CasServerProfileRegistrar casServerProfileRegistrar;
+
+    @Autowired
     @Qualifier("healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
 
@@ -177,7 +182,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint discoveryController() {
-        return new CasServerDiscoveryProfileController(casProperties, servicesManager);
+        return new CasServerDiscoveryProfileController(casProperties, servicesManager, this.casServerProfileRegistrar);
     }
 
     @Bean

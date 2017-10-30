@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
@@ -73,8 +74,8 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             return null;
         }
         
-        final Map<String, MultifactorAuthenticationProvider> providerMap = 
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -97,7 +98,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
         final String agent = WebUtils.getHttpServletRequestUserAgent();
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Set<Map.Entry<String, String>> entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
             final String mfaMethod = entry.getKey().toString();

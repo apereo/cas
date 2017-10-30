@@ -54,12 +54,22 @@ public interface Authentication extends Serializable {
      */
     Map<String, Object> getAttributes();
 
+
+    /**
+     * Add attribute to the authentication object and update the instance.
+     *
+     * @param name  the name
+     * @param value the value
+     */
+    void addAttribute(String name, Object value);
+
     /**
      * Gets a list of metadata about the credentials supplied at authentication time.
      *
-     * @return Non -null list of supplied credentials represented as metadata that should be considered safe for long-term storage
-     * (e.g. serializable and secure with respect to credential disclosure). The order of items in the returned list SHOULD be
-     * the same as the order in which the source credentials were presented and subsequently processed.
+     * @return Non -null list of supplied credentials represented as metadata that should be
+     * considered safe for long-term storage (e.g. serializable and secure with respect to credential disclosure).
+     * The order of items in the returned list SHOULD be the same as the order in which the source credentials
+     * were presented and subsequently processed.
      */
     List<CredentialMetaData> getCredentials();
 

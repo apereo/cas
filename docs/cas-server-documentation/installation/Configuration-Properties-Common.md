@@ -262,8 +262,7 @@ In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file l
 
 A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 
-Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
-of a certain size for the key, you are to use the following set of commands to generate the token:
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use the following set of commands to generate the token:
 
 ```bash
 wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
@@ -280,7 +279,11 @@ The outcome would be similar to:
 }
 ```
 
-The generated value for `k` needs to be assigned to the relevant CAS settings.
+The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
+
+### RSA
+
+Certain features such as the ability to produce [JWTs as CAS tickets](Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This may prove useful in cases where the consumer of the CAS-encoded payload is an outsider or a client application that need not have access to the signing secrets and may only be given a public key to verify the payload authenticity.
 
 ## DDL Configuration
 
@@ -288,7 +291,7 @@ Note that the default value for Hibernate's DDL setting is `create-drop`
 which may not be appropriate for use in production. Setting the value to
 `validate` may be more desirable, but any of the following options can be used:
 
-| Type                 | Description                            
+| Type                 | Description
 |----------------------|----------------------------------------------------------
 | `validate`           | Validate the schema, but make no changes to the database.
 | `update`             | Update the schema.

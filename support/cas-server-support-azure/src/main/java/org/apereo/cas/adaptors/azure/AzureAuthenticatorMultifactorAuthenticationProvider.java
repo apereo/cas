@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.azure;
 
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 
 /**
  * The authentication provider for azure authenticator.
@@ -15,5 +15,10 @@ public class AzureAuthenticatorMultifactorAuthenticationProvider extends Abstrac
     @Override
     protected boolean isAvailable() {
         return true;
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return "Microsoft Azure";
     }
 }

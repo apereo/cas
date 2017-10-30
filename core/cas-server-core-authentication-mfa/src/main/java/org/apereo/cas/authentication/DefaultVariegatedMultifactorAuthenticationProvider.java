@@ -1,6 +1,8 @@
-package org.apereo.cas.services;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
@@ -59,8 +61,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     public boolean matches(final String identifier) {
         return findProvider(identifier) != null;
     }
-
-
+    
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
@@ -90,4 +91,8 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
         return (T) provider;
     }
 
+    @Override
+    public String getFriendlyName() {
+        return providers.stream().map(MultifactorAuthenticationProvider::getFriendlyName).collect(Collectors.joining("|"));
+    }
 }

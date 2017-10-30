@@ -20,20 +20,26 @@ import java.util.Map;
  */
 public class CasServerDiscoveryProfileController extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
+    
     private final CasConfigurationProperties casProperties;
+    
+    private final CasServerProfileRegistrar casServerProfileRegistrar;
 
     /**
      * Instantiates a new mvc endpoint.
      * Endpoints are by default sensitive.
      *
-     * @param casProperties   the cas properties
-     * @param servicesManager the services manager
+     * @param casProperties             the cas properties
+     * @param servicesManager           the services manager
+     * @param casServerProfileRegistrar the cas server profile registrar
      */
     public CasServerDiscoveryProfileController(final CasConfigurationProperties casProperties,
-                                               final ServicesManager servicesManager) {
+                                               final ServicesManager servicesManager,
+                                               final CasServerProfileRegistrar casServerProfileRegistrar) {
         super("casdiscovery", "/discovery", casProperties.getMonitor().getEndpoints().getDiscovery(), casProperties);
         this.servicesManager = servicesManager;
         this.casProperties = casProperties;
+        this.casServerProfileRegistrar = casServerProfileRegistrar;
     }
 
     /**
@@ -47,10 +53,9 @@ public class CasServerDiscoveryProfileController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-
-        final CasServerProfileRegistrar registrar = new CasServerProfileRegistrar();
+        
         final Map<String, Object> results = new LinkedHashMap<>();
-        results.put("profile", registrar.getProfile());
+        results.put("profile", casServerProfileRegistrar.getProfile());
         return results;
     }
 }

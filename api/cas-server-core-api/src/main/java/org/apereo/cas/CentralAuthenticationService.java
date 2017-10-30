@@ -39,6 +39,11 @@ import java.util.function.Predicate;
 public interface CentralAuthenticationService {
 
     /**
+     * CAS namespace.
+     */
+    String NAMESPACE = CentralAuthenticationService.class.getPackage().getName();
+    
+    /**
      * Create a {@link TicketGrantingTicket} by authenticating credentials.
      * The details of the security policy around credential authentication and the definition
      * of authentication success are dependent on the implementation, but it SHOULD be safe to assume
