@@ -31,11 +31,11 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
     }
 
     /**
-     * Gets reource loader.
+     * Gets resource loader.
      *
-     * @return the reource loader
+     * @return the resource loader
      */
-    public static ResourceLoader getReourceLoader() {
+    public static ResourceLoader getResourceLoader() {
         return RESOURCE_LOADER;
     }
 
