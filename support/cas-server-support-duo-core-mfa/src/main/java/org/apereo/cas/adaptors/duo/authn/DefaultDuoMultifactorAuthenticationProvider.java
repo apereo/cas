@@ -107,10 +107,6 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     public String getFriendlyName() {
         return "Duo Security";
     }
-
-    public void setDuoAuthenticationService(final DuoSecurityAuthenticationService duoAuthenticationService) {
-        this.duoAuthenticationService = duoAuthenticationService;
-    }
 }
 
 
