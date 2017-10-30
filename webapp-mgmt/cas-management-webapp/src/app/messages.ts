@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 /**
  * Created by tschmidt on 2/10/17.
  */
-
+/* tslint:disable */
 @Injectable()
 export class Messages {
   // Welcome Screen Messages

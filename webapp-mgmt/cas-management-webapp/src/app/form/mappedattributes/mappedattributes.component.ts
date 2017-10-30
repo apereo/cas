@@ -6,9 +6,8 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
 import {Data} from '../data';
-import {FormData} from '../../../domain/service-view-bean';
+import {FormData} from '../../../domain/form-data';
 import {Messages} from '../../messages';
-import {AbstractRegisteredService} from '../../../domain/registered-service';
 
 @Component({
   selector: 'app-mappedattributes',
