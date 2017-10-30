@@ -1,12 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WsfedattrrelpoliciesComponent } from './wsfedattrrelpolicies.component';
-import {FormModule} from '../form.module';
 import {SharedModule} from '../../shared/shared.module';
 import {Messages} from '../../messages';
 import {FormsModule} from '@angular/forms';
-import {FormData} from '../../../domain/service-view-bean';
-import {RegexRegisteredService} from '../../../domain/registered-service';
+import {FormData} from '../../../domain/form-data';
 
 describe('WsfedattrrelpoliciesComponent', () => {
   let component: WsfedattrrelpoliciesComponent;

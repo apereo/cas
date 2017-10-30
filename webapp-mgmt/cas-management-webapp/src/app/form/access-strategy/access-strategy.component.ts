@@ -5,7 +5,7 @@ import {
   RemoteEndpointServiceAccessStrategy, SurrogateRegisteredServiceAccessStrategy,
   TimeBasedRegisteredServiceAccessStrategy
 } from '../../../domain/access-strategy';
-import {FormData} from '../../../domain/service-view-bean';
+import {FormData} from '../../../domain/form-data';
 import {AbstractRegisteredService} from '../../../domain/registered-service';
 import {Util} from '../../util/util';
 import {Data} from '../data';
@@ -24,7 +24,6 @@ export class AccessStrategyComponent implements OnInit {
 
 
   formData: FormData;
-  selectOptions;
   type: Type;
   TYPE = Type;
   types = [Type.DEFAULT, Type.TIME, Type.GROUPER, Type.REMOTE, Type.SURROGATE];
@@ -32,7 +31,6 @@ export class AccessStrategyComponent implements OnInit {
   constructor(public messages: Messages,
               public data: Data) {
     this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {

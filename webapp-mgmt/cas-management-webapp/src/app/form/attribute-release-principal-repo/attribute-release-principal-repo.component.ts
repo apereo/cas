@@ -1,7 +1,6 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {FormData} from '../../../domain/service-view-bean';
+import {Component, OnInit } from '@angular/core';
+import {FormData} from '../../../domain/form-data';
 import {Messages} from '../../messages';
-import {AbstractRegisteredService} from '../../../domain/registered-service';
 import {
   CachingPrincipalAttributesRepository,
   DefaultPrincipalAttributesRepository
@@ -22,8 +21,6 @@ export class AttributeReleasePrincipalRepoComponent implements OnInit {
   formData: FormData;
   type: Type;
   TYPE = Type;
-  timeUnits = ['MILLISECONDS', 'SECONDS', 'MINUTES', 'HOURS', 'DAYS'];
-  mergeStrategies = ['NONE', 'ADD', 'MULTIVALUED', 'REPLACE'];
 
   constructor(public messages: Messages,
               public data: Data) {

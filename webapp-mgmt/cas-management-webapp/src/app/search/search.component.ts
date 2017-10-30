@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ServiceItem} from '../../domain/service-view-bean';
+import {ServiceItem} from '../../domain/service-item';
 import {MatPaginator, MatSnackBar} from '@angular/material';
 import {Messages} from '../messages';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';

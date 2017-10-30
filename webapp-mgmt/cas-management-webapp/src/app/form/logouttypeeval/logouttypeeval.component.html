@@ -3,7 +3,7 @@
     <mat-select i18n-placeholder="services.form.label.logoutType"
                [placeholder]="messages.services_form_label_logoutType"
                [(ngModel)]="data.service.logoutType">
-      <mat-option *ngFor="let opt of logoutType" [value]="opt">{{ opt }}</mat-option>
+      <mat-option *ngFor="let opt of data.formData.logoutTypes" [value]="opt">{{ opt }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-icon style="font-size: medium"

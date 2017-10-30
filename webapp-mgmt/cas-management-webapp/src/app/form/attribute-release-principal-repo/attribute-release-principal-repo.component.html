@@ -23,7 +23,7 @@
                   i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.timeUnit"
                   [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit"
                   [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
-        <mat-option *ngFor="let opt of timeUnits" [value]="opt">
+        <mat-option *ngFor="let opt of formData.timeUnits" [value]="opt">
           {{ opt }}
         </mat-option>
       </mat-select>
@@ -53,7 +53,7 @@
                   i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy"
                   [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy"
                   [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
-        <mat-option *ngFor="let opt of mergeStrategies" [value]="opt">
+        <mat-option *ngFor="let opt of formData.mergingStrategies" [value]="opt">
           {{ opt }}
         </mat-option>
       </mat-select>

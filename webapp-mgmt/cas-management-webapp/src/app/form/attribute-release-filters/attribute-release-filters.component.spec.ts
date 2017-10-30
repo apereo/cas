@@ -4,9 +4,6 @@ import { AttributeReleaseFiltersComponent } from './attribute-release-filters.co
 import {SharedModule} from '../../shared/shared.module';
 import {FormsModule} from '@angular/forms';
 import {Messages} from '../../messages';
-import {Data} from '../data';
-import {FormData} from '../../../domain/service-view-bean';
-import {RegexRegisteredService} from '../../../domain/registered-service';
 
 describe('AttributeReleaseFiltersComponent', () => {
   let component: AttributeReleaseFiltersComponent;

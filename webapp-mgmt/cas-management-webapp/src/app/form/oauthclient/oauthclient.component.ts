@@ -11,12 +11,10 @@ import {Data} from '../data';
 export class OauthclientComponent implements OnInit {
 
   service: OAuthRegisteredService;
-  selectOptions;
   showOAuthSecret: boolean;
 
   constructor(public messages: Messages,
               public data: Data) {
-    this.selectOptions = data.selectOptions;
     this.service = data.service as OAuthRegisteredService;
   }
 

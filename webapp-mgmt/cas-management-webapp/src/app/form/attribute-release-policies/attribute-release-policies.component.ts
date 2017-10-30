@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormData } from '../../../domain/service-view-bean';
+import {FormData } from '../../../domain/form-data';
 import {Messages} from '../../messages';
 import {
   DenyAllAttributeReleasePolicy,
@@ -38,7 +38,6 @@ enum Type {
 })
 export class AttributeReleasePoliciesComponent implements OnInit {
   formData: FormData;
-  selectOptions;
   type: Type;
   TYPE = Type;
   types = [Type.SCRIPT, Type.GROOVY, Type.RETURN_ALL, Type.DENY_ALL, Type.RETURN_ALLOWED, Type.RETURN_MAPPED, Type.RESTFUL];
@@ -48,7 +47,6 @@ export class AttributeReleasePoliciesComponent implements OnInit {
   constructor(public messages: Messages,
               public data: Data) {
     this.formData = data.formData;
-    this.selectOptions = data.selectOptions;
   }
 
   ngOnInit() {
