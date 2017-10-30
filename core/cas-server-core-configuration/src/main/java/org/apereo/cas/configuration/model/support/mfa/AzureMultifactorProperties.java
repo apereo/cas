@@ -11,8 +11,14 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  */
 @RequiresModule(name = "cas-server-support-azure")
 public class AzureMultifactorProperties extends BaseMultifactorProviderProperties {
-    private static final long serialVersionUID = 6726032660671158922L;
 
+    /**
+     * Provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-azure";
+
+    private static final long serialVersionUID = 6726032660671158922L;
+    
     /**
      * The authentication modes supported by Azure.
      */
@@ -56,7 +62,7 @@ public class AzureMultifactorProperties extends BaseMultifactorProviderPropertie
     private boolean allowInternationalCalls;
 
     public AzureMultifactorProperties() {
-        setId("mfa-azure");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public String getPhoneAttributeName() {

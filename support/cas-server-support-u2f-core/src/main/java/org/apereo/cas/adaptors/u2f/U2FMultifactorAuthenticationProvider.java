@@ -11,6 +11,12 @@ import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 public class U2FMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
     private static final long serialVersionUID = 157455070794156717L;
 
+    /**
+     * Required for serialization and reflection.
+     */
+    public U2FMultifactorAuthenticationProvider() {
+    }
+
     @Override
     protected boolean isAvailable() {
         return true;

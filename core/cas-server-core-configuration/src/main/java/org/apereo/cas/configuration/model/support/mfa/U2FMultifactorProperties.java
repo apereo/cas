@@ -18,8 +18,13 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiresModule(name = "cas-server-support-u2f")
 public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
-    private static final long serialVersionUID = 6151350313777066398L;
+    /**
+     * Provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-u2f";
 
+    private static final long serialVersionUID = 6151350313777066398L;
+    
     /**
      * Store device registration records inside a JDBC resource.
      */
@@ -65,7 +70,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
     public U2FMultifactorProperties() {
-        setId("mfa-u2f");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public ScheduledJobProperties getCleaner() {

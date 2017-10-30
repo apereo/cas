@@ -22,9 +22,14 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private final YubicoClient client;
+    private YubicoClient client;
+    private HttpClient httpClient;
 
-    private final transient HttpClient httpClient;
+    /**
+     * Required for serialization and reflection.
+     */
+    public YubiKeyMultifactorAuthenticationProvider() {
+    }
 
     public YubiKeyMultifactorAuthenticationProvider(final YubicoClient client,
                                                     final HttpClient httpClient) {

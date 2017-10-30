@@ -12,7 +12,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 @RequiresModule(name = "cas-server-support-duo")
 public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderProperties {
     /**
-     * Duo Security provider id by default.
+     * Provider id by default.
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-duo";
     

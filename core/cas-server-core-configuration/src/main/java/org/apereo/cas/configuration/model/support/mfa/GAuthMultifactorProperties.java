@@ -18,7 +18,13 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-gauth")
 public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {
+    /**
+     * Provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-gauth";
+
     private static final long serialVersionUID = -7401748853833491119L;
+    
     /**
      * Issuer used in the barcode when dealing with device registration events.
      * Used in the registration URL to identify CAS.
@@ -70,7 +76,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProviderPropertie
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
 
     public GAuthMultifactorProperties() {
-        setId("mfa-gauth");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public Rest getRest() {
