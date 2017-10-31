@@ -8,11 +8,14 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Form data passed onto the screen.
@@ -24,8 +27,8 @@ public class FormData implements Serializable {
     private static final long serialVersionUID = -5201796557461644152L;
 
     private List<String> availableAttributes = new ArrayList<>();
-
-    private String[] remoteCodes = {"100", "200", "401", "403", "404", "500"};
+    
+    private List<Integer> remoteCodes = Arrays.stream(HttpStatus.values()).map(HttpStatus::value).collect(Collectors.toList());
 
     private String[] samlMetadataRoles = {"SPSSODescriptor", "IDPSSODescriptor"};
 
@@ -80,7 +83,7 @@ public class FormData implements Serializable {
         return GrouperGroupField.values();
     }
 
-    public String[] getRemoteCodes() {
+    public List<Integer> getRemoteCodes() {
         return remoteCodes;
     }
 
