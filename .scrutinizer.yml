@@ -1,0 +1,12 @@
+build:
+    project_setup:
+        override:
+            - export PUBLISH_SNAPSHOTS=false
+            - ./ci/init-travis-build.sh
+            - ./ci/install.sh
+    tests:
+        override:
+            -
+                coverage:
+                    file: './build/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml'
+                    format: 'jacoco'
