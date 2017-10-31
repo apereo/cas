@@ -111,8 +111,7 @@ public class CasConfigurationJasyptDecryptor {
     public String encryptValue(final String value) {
         try {
             initializeJasyptInstanceIfNecessary();
-            final String result = this.jasyptInstance.encrypt(value);
-            return result;
+            return this.jasyptInstance.encrypt(value);
         } catch (final Exception e) {
             LOGGER.error("Could not encrypt value [{}]", e);
         }
@@ -129,8 +128,7 @@ public class CasConfigurationJasyptDecryptor {
     public String decryptValue(final String value) {
         try {
             initializeJasyptInstanceIfNecessary();
-            final String result = this.jasyptInstance.decrypt(value);
-            return result;
+            return this.jasyptInstance.decrypt(value);
         } catch (final Exception e) {
             LOGGER.error("Could not decrypt value [{}]", e);
         }
