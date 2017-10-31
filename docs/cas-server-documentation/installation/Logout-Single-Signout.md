@@ -77,7 +77,7 @@ A sample back channel SLO message:
 CAS issues asynchronous AJAX `GET` logout requests via `JSONP` to authenticated services.
 The expected behaviour of the CAS client is to invalidate the application web session. 
 
-Support for front channel logout calls may be available only in development version of CAS clients.
+Front channel logout may not be available for all CAS clients. Ensure your CAS client does support this behavior before trying it out.
 
 A sample front channel SLO request
 
