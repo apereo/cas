@@ -7,7 +7,7 @@ title: CAS - Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
-## Development [![Coverage Status](https://coveralls.io/repos/github/apereo/cas/badge.svg?branch=master)](https://coveralls.io/github/apereo/cas?branch=master) [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) 
+## Development [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) 
 
 CAS development is powered by: <br/>
 
