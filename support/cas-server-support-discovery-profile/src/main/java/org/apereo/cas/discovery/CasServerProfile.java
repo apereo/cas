@@ -1,5 +1,6 @@
 package org.apereo.cas.discovery;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -28,6 +29,25 @@ public class CasServerProfile {
      * This indicates the capability and capacity of the server; NOT that the feature is necessarily currently active.
      */
     private Map<String, String> multifactorAuthenticationProviderTypesSupported;
+
+    private Collection<String> keyAlgorithmsSupported;
+    private Collection<String> contentEncryptionAlgorithmsSupported;
+
+    public Collection<String> getContentEncryptionAlgorithmsSupported() {
+        return contentEncryptionAlgorithmsSupported;
+    }
+
+    public void setContentEncryptionAlgorithmsSupported(final Collection<String> contentEncryptionAlgorithmsSupported) {
+        this.contentEncryptionAlgorithmsSupported = contentEncryptionAlgorithmsSupported;
+    }
+
+    public Collection<String> getKeyAlgorithmsSupported() {
+        return keyAlgorithmsSupported;
+    }
+
+    public void setKeyAlgorithmsSupported(final Collection<String> keyAlgorithmsSupported) {
+        this.keyAlgorithmsSupported = keyAlgorithmsSupported;
+    }
 
     public Map<String, Class> getRegisteredServiceTypesSupported() {
         return registeredServiceTypesSupported;

@@ -59,7 +59,7 @@ export abstract class RegisteredService {
     this.publicKey = service && service.publicKey;
     this.properties = service && service.properties;
     this.contacts = service && service.contacts;
-    this.expirationPolicy = service && service.expirationPolicy || new DefaultRegisteredServiceExpirationPolicy();
+    this.expirationPolicy = (service && service.expirationPolicy) || new DefaultRegisteredServiceExpirationPolicy();
   }
 }
 

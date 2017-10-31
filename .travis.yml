@@ -38,13 +38,13 @@ env:
   - PUBLISH_SNAPSHOTS=false
   - PUBLISH_SNAPSHOTS=true
 before_install:
-- chmod -R 777 ./travis/init-travis-build.sh
-- ./travis/init-travis-build.sh
-- chmod -R 777 ./travis/push-docs-ghpages.sh
-- ./travis/push-docs-ghpages.sh
+- chmod -R 777 ./ci/init-travis-build.sh
+- ./ci/init-travis-build.sh
+- chmod -R 777 ./ci/push-docs-ghpages.sh
+- ./ci/push-docs-ghpages.sh
 install: 
-- chmod -R 777 ./travis/install.sh
-- ./travis/install.sh
+- chmod -R 777 ./ci/install.sh
+- ./ci/install.sh
 script:
-- chmod -R 777 ./travis/script.sh
-- ./travis/script.sh
+- chmod -R 777 ./ci/script.sh
+- ./ci/script.sh

@@ -5,7 +5,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; 
     exit 0
 fi
 
-gradle="sudo ./gradlew"
+gradle="sudo ./gradlew $@"
 
 gradleBuildOptions="--stacktrace --parallel"
 gradleBuild="assemble"
@@ -38,6 +38,6 @@ echo -e "******************************************************************"
 if [ $retVal == 0 ]; then
     echo "Gradle build finished successfully."
 else
-    echo "Gradle build did NOT finished successfully."
+    echo "Gradle build did NOT finish successfully."
     exit $retVal
 fi
