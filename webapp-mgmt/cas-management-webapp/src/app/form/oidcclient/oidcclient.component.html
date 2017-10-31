@@ -6,6 +6,80 @@
     <div>
       <mat-form-field class="textInput">
         <input matInput required
+               i18n-placeholder="services.form.label.oidcClientId"
+               [placeholder]="messages.services_form_label_oidcClientId"
+               [(ngModel)]="service.clientId">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+                i18n-matTooltip="services.form.tooltip.oidcClientId"
+                [matTooltip]="messages.services_form_tooltip_oidcClientId">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required [type]="showOAuthSecret ? 'text' : 'password'"
+               i18n-placeholder="services.form.label.oidcClientSecret"
+               [placeholder]="messages.services_form_label_oidcClientSecret"
+               [(ngModel)]="service.clientSecret">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+                i18n-matTooltip="services.form.tooltip.oidcClientSecret"
+                [matTooltip]="messages.services_form_tooltip_oidcClientSecret">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="showOAuthSecret">
+        <ng-container i18n="services.form.label.oidcShowSecret">
+          {{ messages.services_form_label_oidcShowSecret }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcShowSecret"
+                  [matTooltip]="messages.services_form_tooltip_oidcShowSecret">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="service.bypassApprovalPrompt">
+        <ng-container i18n="services.form.label.oidcBypass">
+          {{ messages.services_form_label_oidcBypass }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcBypass"
+                  [matTooltip]="messages.services_form_tooltip_oidcBypass">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="service.generateRefreshToken">
+        <ng-container i18n="services.form.label.oidcRefreshToken">
+          {{ messages.services_form_label_oidcRefreshToken }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcRefreshToken"
+                  [matTooltip]="messages.services_form_tooltip_oidcRefreshToken">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div style="padding-bottom:10px;">
+      <mat-checkbox  [(ngModel)]="service.jsonFormat">
+        <ng-container i18n="services.form.label.oidcJsonFormat">
+          {{ messages.services_form_label_oidcJsonFormat }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcJsonFormat"
+                  [matTooltip]="messages.services_form_tooltip_oidcJsonFormat">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required
                i18n-placeholder="services.form.label.oidc.jwks"
                [placeholder]="messages.services_form_label_oidc_jwks"
                [(ngModel)]="service.jwks">
@@ -13,21 +87,6 @@
       <mat-icon style="font-size: medium"
                i18n-matTooltip="services.form.tooltip.oidc.jwks"
                [matTooltip]="messages.services_form_tooltip_oidc_jwks">help
-      </mat-icon>
-    </div>
-
-    <div>
-      <mat-form-field class="textInput">
-        <mat-select multiple
-                    i18n-placeholder="services.form.label.oidc.scopes"
-                    [placeholder]="messages.services_form_label_oidc_scopes"
-                    [(ngModel)]="service.scopes">
-          <mat-option *ngFor="let opt of data.formData.oidcScopes" [value]="opt.value">{{ opt.display }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-icon style="font-size: medium"
-               i18n-matTooltip="services.form.tooltip.oidc.scopes"
-               [matTooltip]="messages.services_form_tooltip_oidc_scopes">help
       </mat-icon>
     </div>
 
@@ -68,7 +127,7 @@
       </mat-checkbox>
     </div>
 
-    <div>
+    <div style="padding-bottom: 10px;">
       <mat-checkbox [(ngModel)]="service.encryptIdToken">
         <ng-container i18n="services.form.label.oidc.encrypt">
           {{ messages.services_form_label_oidc_encrypt }}
@@ -92,7 +151,7 @@
                [matTooltip]="messages.services_form_tooltip_oidc_encryptAlg">help
       </mat-icon>
       <mat-autocomplete #encryptAlgAuto="matAutocomplete">
-        <mat-option *ngFor="let opt of data.formData.oidcEncryptAlgOptions" [value]="opt.display">{{ opt.display }}</mat-option>
+        <mat-option *ngFor="let opt of data.formData.oidcEncryptAlgOptions" [value]="opt">{{ opt }}</mat-option>
       </mat-autocomplete>
     </div>
 
@@ -108,7 +167,7 @@
                [matTooltip]="messages.services_form_tooltip_oidc_encryptEnc">help
       </mat-icon>
       <mat-autocomplete #encodingAlgAuto="matAutocomplete">
-        <mat-option *ngFor="let opt of data.formData.oidcEncodingAlgOptions" [value]="opt.display">{{ opt.display }}</mat-option>
+        <mat-option *ngFor="let opt of data.formData.oidcEncodingAlgOptions" [value]="opt">{{ opt }}</mat-option>
       </mat-autocomplete>
     </div>
 

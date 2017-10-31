@@ -21,6 +21,7 @@ import {HeaderService} from './header/header.service';
 import {InitComponent} from 'app/init.component';
 import {ControlsComponent} from './controls/controls.component';
 import {ControlsService} from './controls/controls.service';
+import { FooterComponent } from './footer/footer.component';
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import {ControlsService} from './controls/controls.service';
     DeleteComponent,
     SearchComponent,
     InitComponent,
+    FooterComponent,
   ],
   entryComponents: [
     DeleteComponent

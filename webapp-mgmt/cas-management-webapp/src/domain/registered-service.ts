@@ -13,7 +13,7 @@ import {
 import {RegisteredServicePublicKey} from './public-key';
 import {DefaultRegisteredServiceProperty} from './property';
 import {RegisteredServiceContact} from './contact';
-import {RegisteredServiceExpirationPolicy} from './expiration';
+import {DefaultRegisteredServiceExpirationPolicy, RegisteredServiceExpirationPolicy} from './expiration';
 
 export abstract class RegisteredService {
   serviceId: String;
@@ -59,7 +59,7 @@ export abstract class RegisteredService {
     this.publicKey = service && service.publicKey;
     this.properties = service && service.properties;
     this.contacts = service && service.contacts;
-    this.expirationPolicy = service && service.expirationPolicy;
+    this.expirationPolicy = (service && service.expirationPolicy) || new DefaultRegisteredServiceExpirationPolicy();
   }
 }
 
