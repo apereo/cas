@@ -123,7 +123,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         }
 
         try {
-            if (ResourceUtils.doesResourceExist(secretKeyToUse)) {
+            if (ResourceUtils.isFile(secretKeyToUse) && ResourceUtils.doesResourceExist(secretKeyToUse)) {
                 final Resource resource = ResourceUtils.getResourceFrom(secretKeyToUse);
                 LOGGER.debug("Located encryption key resource [{}]. Attempting to extract public key...", resource);
 
@@ -142,7 +142,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 this.secretKeyEncryptionKey = EncodingUtils.generateJsonWebKey(secretKeyToUse);
             }
             this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
-            LOGGER.debug("Initialized cipher encryption sequence via [{}] with algorithm [{}]",
+            LOGGER.debug("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]",
                     this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
         }
     }

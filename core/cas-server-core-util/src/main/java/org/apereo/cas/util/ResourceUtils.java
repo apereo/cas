@@ -59,7 +59,7 @@ public final class ResourceUtils {
         } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
             res = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         } else {
-            res = new FileSystemResource(StringUtils.remove(location, "file:"));
+            res = new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
         }
         return res;
     }
@@ -112,7 +112,7 @@ public final class ResourceUtils {
         try {
             return getResourceFrom(location) != null;
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }
@@ -208,5 +208,15 @@ public final class ResourceUtils {
         } catch (final IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Is the resource a file?
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
+    public static boolean isFile(final String resource) {
+        return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
     }
 }

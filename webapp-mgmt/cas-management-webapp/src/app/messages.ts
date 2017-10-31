@@ -373,7 +373,7 @@ export class Messages {
   readonly footer_wiki = 'Wiki';
   readonly footer_issueTracker = 'Issue Tracker';
   readonly footer_mailingLists = 'Mailing Lists';
-  readonly footer_copyright = 'Copyright &copy; 2005 - 2015 Apereo, Inc. All rights reserved.';
+  readonly footer_copyright = 'Copyright &copy; 2005 - 2017 Apereo, Inc. All rights reserved.';
   readonly footer_poweredBy = 'Powered by <a href=\'http://www.apereo.org/cas\'>Apereo Central Authentication Service {0}</a>';
 
   readonly services_form_label_canonicalizationMode = 'cononicalizationMode';
