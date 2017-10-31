@@ -56,8 +56,6 @@ The following commandline boolean flags are supported by the build:
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
 | `enableIncremental`               | Enable Gradle's incremental compilation feature.
-| `enableKotlin`                    | Enable compilation of Kotlin's `.kt` files, if any. 
-| `enableJRebelAgent`               | Enable [JRebel support](https://zeroturnaround.com/software/jrebel/). Requires the environment variable `JREBEL_LIB_PATH` to point to the appropriate JRebel library path (DLL, etc).
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
