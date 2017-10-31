@@ -60,4 +60,6 @@ Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
 
 CAS development is powered by the following tools, projects and services.
 
-<a href="https://travis-ci.org"><img src="https://travis-ci.com/images/logos/TravisCI-Full-Color.png" width="230" height="55"></a>&nbsp;&nbsp;<a href="https://www.jetbrains.com/idea/"><img src="https://user-images.githubusercontent.com/1205228/31548576-1ac3d688-b038-11e7-9565-ffd89501872e.png" width="250" height="70"></a>
+<a href="https://travis-ci.org"><img src="https://travis-ci.com/images/logos/TravisCI-Full-Color.png" width="230" height="55"></a>&nbsp;&nbsp;<a href="https://www.jetbrains.com/idea/"><img src="https://user-images.githubusercontent.com/1205228/31548576-1ac3d688-b038-11e7-9565-ffd89501872e.png" width="250" height="70"></a><a href="https://www.eclipse.org"><img width="200" height="50" src="https://user-images.githubusercontent.com/1205228/32225495-ac7b1e94-be5a-11e7-8f83-5c7399398fb8.png"></a>
+
+
