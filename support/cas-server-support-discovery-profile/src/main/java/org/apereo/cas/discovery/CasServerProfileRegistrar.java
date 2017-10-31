@@ -1,6 +1,7 @@
 package org.apereo.cas.discovery;
 
 import com.google.common.base.Predicates;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -9,6 +10,9 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -18,9 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.apache.commons.lang3.tuple.Pair;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -77,7 +82,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 .distinct()
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
-    
+
     private Map<String, Class> locatedRegisteredServiceTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
@@ -109,6 +114,26 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 .collect(collector);
     }
 
+    private List<String> locateKeyAlgorithmsSupported() {
+        return ReflectionUtils.getFields(KeyManagementAlgorithmIdentifiers.class,
+            field -> Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers())
+                    && field.getType().equals(String.class))
+            .stream()
+            .map(Field::getName)
+            .sorted()
+            .collect(Collectors.toList());
+    }
+
+    private List<String> locateContentEncryptionAlgorithmsSupported() {
+        return ReflectionUtils.getFields(ContentEncryptionAlgorithmIdentifiers.class,
+            field -> Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers())
+                    && field.getType().equals(String.class))
+            .stream()
+            .map(Field::getName)
+            .sorted()
+            .collect(Collectors.toList());
+    }
+
     /**
      * Gets profile.
      *
@@ -123,9 +148,12 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
         profile.setMultifactorAuthenticationProviderTypes(locateMultifactorAuthenticationProviderTypesActive());
 
+        profile.setKeyAlgorithmsSupported(locateKeyAlgorithmsSupported());
+        profile.setContentEncryptionAlgorithmsSupported(locateContentEncryptionAlgorithmsSupported());
+
         return profile;
     }
-    
+
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
