@@ -1,0 +1,5 @@
+build:
+    project_setup:
+        override:
+            - ./travis/init-travis-build.sh
+            ./travis/install.sh
