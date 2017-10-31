@@ -34,6 +34,13 @@
         {{ messages.management_services_header_navbar_navitem_addNewService }}
       </span>
   </button>
+  <button mat-menu-item routerLink="/wizard">
+    <mat-icon>add_circle</mat-icon>
+    <span i18n="managment.services.header.navitem.addNewService">
+      Form Wizard
+        <!--{{ messages.management_services_header_navbar_navitem_addNewService }}-->
+      </span>
+  </button>
   <button mat-menu-item target="_self" id="logoutUrlLink" (click)="logout()">
     <mat-icon>exit_to_app</mat-icon>
     <ng-container i18n="management.services.header.navbar.navitem.logout">

@@ -72,6 +72,7 @@ import { NameidComponent } from './samlclient/nameid/nameid.component';
 import { MappedComponent } from './attribute-release-filters/mapped/mapped.component';
 import {TabOIDCComponent} from './tab-oidc/tab-oidc.component';
 
+import { ServiceWizardComponent } from './service-wizard/service-wizard.component';
 
 @NgModule({
   imports: [
@@ -146,6 +147,7 @@ import {TabOIDCComponent} from './tab-oidc/tab-oidc.component';
     OptionalComponent,
     NameidComponent,
     MappedComponent,
+    ServiceWizardComponent,
   ],
   providers: [
     FormResolve,

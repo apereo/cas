@@ -20,6 +20,7 @@ import {TabWsfedComponent} from './tab-wsfed/tab-wsfed.component';
 import {TabContactsComponent} from './tab-contacts/tab-contacts.component';
 import {TabExpirationComponent} from './tab-expiration/tab-expiration.component';
 import {TabOIDCComponent} from './tab-oidc/tab-oidc.component';
+import {ServiceWizardComponent} from "./service-wizard/service-wizard.component";
 
 const childRoutes: Routes = [
   {
@@ -115,6 +116,14 @@ const childRoutes: Routes = [
       {
         path: 'form/:id',
         component: FormComponent,
+        resolve: {
+          resp: FormResolve
+        },
+        children: childRoutes
+      },
+      {
+        path: 'wizard',
+        component: ServiceWizardComponent,
         resolve: {
           resp: FormResolve
         },
