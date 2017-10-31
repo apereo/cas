@@ -18,6 +18,7 @@ export class Messages {
 // SERVICES MANAGEMENT HEADER
   readonly management_services_header_apptitle = 'CAS Management';
   readonly management_services_header_navbar_navitem_addNewService = 'Add New Service';
+  readonly management_services_header_navbar_navitem_newServiceWizard = 'New Service Wizard';
   readonly management_services_header_navbar_navitem_manageService = 'Manage Services';
   readonly management_services_header_navbar_navitem_sessions = 'Sessions';
   readonly management_services_header_navbar_navitem_logout = 'Log Out';

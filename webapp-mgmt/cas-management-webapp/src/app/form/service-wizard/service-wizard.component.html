@@ -1,0 +1,198 @@
+<form #wizardForm="ngForm">
+    <mat-card class="tabCard">
+        <mat-card-title>
+            <h5>What type of service do you want to add?</h5>
+        </mat-card-title>
+        <div class="cardContent">
+            <div>
+                <mat-form-field class="textInput">
+                    <mat-select required
+                                i18n-placeholder="services.form.label.type"
+                                [placeholder]="messages.services_form_label_type"
+                                [(ngModel)]="type"
+                                name="type">
+                        <mat-option *ngFor="let service of serviceTypeList" [value]="service.value">
+                            {{service.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <button type="submit" style="display:none;" #submit></button>
+
+        </div>
+    </mat-card>
+
+    <!--
+    Service Name/URL Card
+    -->
+    <mat-card class="tabCard" id="serviceNameAndUrl" *ngIf="type">
+        <mat-card-title>
+            <h5>What do you want to name this Service?</h5>
+        </mat-card-title>
+        <div class="cardContent">
+            <p>Give your service a descriptive name so you can easily identify it in the future.</p>
+
+            <mat-form-field class="textInput">
+                <input
+                        matInput
+                        required
+                        placeholder="Service Name"
+                        name="name"
+                        ngModel>
+            </mat-form-field>
+
+            <mat-form-field class="textInput" *ngIf="type == 'cas'">
+                <input
+                        matInput
+                        required
+                        placeholder="Service Url"
+                        value=""
+                        name="url"
+                        ngModel>
+            </mat-form-field>
+
+            <mat-form-field class="textInput" *ngIf="type == 'oauth' || type == 'oidc'">
+                <input
+                        matInput
+                        required
+                        placeholder="Redirect Url"
+                        value=""
+                        name="url"
+                        ngModel>
+            </mat-form-field>
+
+            <mat-form-field class="textInput" *ngIf="type == 'saml'">
+                <input
+                        matInput
+                        required
+                        placeholder="Entity Id"
+                        value=""
+                        name="entityId"
+                        ngModel>
+            </mat-form-field>
+
+            <mat-form-field class="textInput" *ngIf="type == 'wsfed'">
+                <input
+                        matInput
+                        required
+                        placeholder="Consumer url"
+                        value=""
+                        name="consumerUrl"
+                        ngModel>
+            </mat-form-field>
+        </div>
+    </mat-card>
+
+    <!-- Additional Attributes Card-->
+    <mat-card class="tabCard" id="additionalAttributes" *ngIf="type && type !== 'cas'">
+        <mat-card-title>
+            <h5>Additional Attributes</h5>
+        </mat-card-title>
+        <div class="cardContent" *ngIf="type == 'oauth' || type == 'oidc'">
+            <mat-form-field class="textInput">
+                <input matInput
+                       required
+                       i18n-placeholder="services.form.label.oauthClientId"
+                       [placeholder]="messages.services_form_label_oauthClientId"
+                       value=""
+                       name="clientId"
+                       ngModel>
+            </mat-form-field>
+            <mat-form-field class="textInput">
+                <input matInput
+                       required
+                       i18n-placeholder="services.form.label.oauthClientSecret"
+                       [placeholder]="messages.services_form_label_oauthClientSecret"
+                       value=""
+                       name="clientSecret"
+                       ngModel>
+            </mat-form-field>
+        </div>
+
+        <div class="cardContent" *ngIf="type == 'saml'">
+            <mat-form-field class="textInput">
+                <input matInput
+                       required
+                       i18n-placeholder="services.form.label.saml.metadata.location"
+                       [placeholder]="messages.services_form_label_saml_metadata_location"
+                       value=""
+                       name="metadataLocation"
+                       ngModel>
+            </mat-form-field>
+        </div>
+
+        <div class="cardContent" *ngIf="type == 'wsfed'">
+            <mat-form-field class="textInput">
+                <input matInput
+                       required
+                       i18n-placeholder="services.form.label.wsfed.realm"
+                       [placeholder]="messages.services_form_label_wsfed_realm"
+                       value=""
+                       name="realm"
+                       ngModel>
+            </mat-form-field>
+            <mat-form-field class="textInput">
+                <input matInput
+                       required
+                       i18n-placeholder="services.form.label.wsfed.appliesTo"
+                       [placeholder]="messages.services_form_label_wsfed_appliesTo"
+                       value=""
+                       name="appliesTo"
+                       ngModel>
+            </mat-form-field>
+        </div>
+    </mat-card>
+
+    <mat-card class="tabCard" *ngIf="type">
+        <mat-card-title>
+            <h5>Attribute Release</h5>
+        </mat-card-title>
+        <div class="cardContent" *ngIf="type == 'cas'">
+            <mat-form-field class="textInput">
+                <mat-select multiple
+                            i18n-placeholder="services.form.label.attrRelease.policies.returnAllowed"
+                            [placeholder]="messages.services_form_label_attrRelease_policies_returnAllowed"
+                            [(ngModel)]="returnAllowed"
+                            name="returnAllowed">
+                    <mat-option *ngFor="let allowed of returnAllowedList" [value]="allowed">
+                        {{allowed}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="cardContent" *ngIf="type == 'oauth' || type == 'oidc'">
+            <mat-form-field class="textInput">
+                <mat-select multiple
+                            i18n-placeholder="services.form.label.oidc.scopes"
+                            [placeholder]="messages.services_form_label_oidc_scopes"
+                            [(ngModel)]="serviceScopes"
+                            name="serviceScopes">
+                    <mat-option *ngFor="let scope of scopes" [value]="scope">
+                        {{scope}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="cardContent" *ngIf="type == 'saml'"></div>
+        <div class="cardContent" *ngIf="type == 'wsfed'"></div>
+    </mat-card>
+
+    <mat-card class="tabCard actionButtons" *ngIf="wizardForm.form.valid">
+        <mat-card-title>
+            <h5>How do you want to create your service?</h5>
+        </mat-card-title>
+        <div class="cardContent">
+            <button mat-raised-button color="primary" type="submit" name="review"
+                    [disabled]="!wizardForm.form.valid"
+                    (click)="handleReviewDefaults(wizardForm.value); false">
+                Save and Create
+            </button>
+
+            <button mat-raised-button type="submit" name="steps"
+                    [disabled]="!wizardForm.form.valid"
+                    (click)="handleStepThroughSettings(wizardForm.value); false">
+                Save and Edit
+            </button>
+        </div>
+    </mat-card>
+</form>

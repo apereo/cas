@@ -1,0 +1,13 @@
+h5 {
+    font-weight: 200;
+    text-align: center;
+}
+
+.cardContent {
+    text-align: center;
+}
+
+button {
+    margin: 0 2rem;
+    padding: 1rem 2rem;
+}
