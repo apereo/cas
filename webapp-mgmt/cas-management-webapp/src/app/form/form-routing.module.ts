@@ -122,12 +122,8 @@ const childRoutes: Routes = [
         children: childRoutes
       },
       {
-        path: 'wizard',
-        component: ServiceWizardComponent,
-        resolve: {
-          resp: FormResolve
-        },
-        children: childRoutes
+          path: 'wizard',
+          component: ServiceWizardComponent,
       }
     ])
   ],
