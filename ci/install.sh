@@ -5,7 +5,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; 
     exit 0
 fi
 
-gradle="sudo ./gradlew"
+gradle="sudo ./gradlew $@"
 
 gradleBuildOptions="--stacktrace --parallel"
 gradleBuild="assemble"
