@@ -41,11 +41,21 @@
                         ngModel>
             </mat-form-field>
 
-            <mat-form-field class="textInput" *ngIf="type != 'saml' && type != 'wsfed'">
+            <mat-form-field class="textInput" *ngIf="type == 'cas'">
                 <input
                         matInput
                         required
                         placeholder="Service Url"
+                        value=""
+                        name="url"
+                        ngModel>
+            </mat-form-field>
+
+            <mat-form-field class="textInput" *ngIf="type == 'oauth' || type == 'oidc'">
+                <input
+                        matInput
+                        required
+                        placeholder="Redirect Url"
                         value=""
                         name="url"
                         ngModel>
