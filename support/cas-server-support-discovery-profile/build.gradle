@@ -1,3 +1,8 @@
+repositories {
+    maven { url "https://jitpack.io" }
+    jcenter()
+}
+
 description = "Apereo CAS Discovery Support"
 dependencies {
 
