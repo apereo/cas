@@ -5,7 +5,7 @@ title: CAS - Configuration Discovery
 
 # Configuration Discovery
 
-Certain aspects of the CAS server deployment may be advertised via discovery endpoint to indicate to client applications and consumers the set of features and capabilties that are turned on. The [discovery profile endpoint](Monitoring-Statistics.html) is enabled by including the following module in the overlay:
+Certain aspects of the CAS server deployment may be advertised via a discovery endpoint to indicate to client applications and consumers the set of features and capabilties that are turned on. The [discovery profile endpoint](Monitoring-Statistics.html) is enabled by including the following module in the overlay:
 
 ```xml
 <dependency>
@@ -15,7 +15,7 @@ Certain aspects of the CAS server deployment may be advertised via discovery end
 </dependency>
 ```
 
-The metadata reported in the discovery generally includes two categories of items:
+The metadata reported in the discovery profile generally includes two categories of items:
 
 - Capabilities that **could be** supported by the CAS server where the feature is available and yet isn't quite configured and turned on.
 - Capabilities that **are** actively and currently supported by and configured in the running CAS server.
