@@ -59,7 +59,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      */
     public void setSigningKey(final String signingSecretKey) {
         try {
-            if (ResourceUtils.doesResourceExist(signingSecretKey)) {
+            if (ResourceUtils.isFile(signingSecretKey) && ResourceUtils.doesResourceExist(signingSecretKey)) {
                 final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);
                 LOGGER.debug("Located signing key resource [{}]. Attempting to extract private key...", resource);
 
