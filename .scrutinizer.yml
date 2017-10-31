@@ -2,8 +2,8 @@ build:
     project_setup:
         override:
             - export PUBLISH_SNAPSHOTS=false
-            - ./travis/init-travis-build.sh
-            - ./travis/install.sh
+            - ./ci/init-travis-build.sh
+            - ./ci/install.sh
     tests:
         override:
             -
