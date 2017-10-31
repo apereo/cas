@@ -109,6 +109,14 @@ export class Messages {
  readonly services_form_label_oauthBypass = 'OAuth Bypass Approval Prompt';
  readonly services_form_label_oauthRefreshToken = 'OAuth Refresh Token Generation';
  readonly services_form_label_oauthJsonFormat = 'JSON format for access tokens';
+
+ readonly services_form_label_oidcClientSecret = 'OIDC Client Secret';
+ readonly services_form_label_oidcClientId = 'OIDC Client ID';
+ readonly services_form_label_oidcShowSecret = 'Show Client Secret';
+ readonly services_form_label_oidcBypass = 'OIDC Bypass Approval Prompt';
+ readonly services_form_label_oidcRefreshToken = 'OIDC Refresh Token Generation';
+ readonly services_form_label_oidcJsonFormat = 'JSON format for access tokens';
+
  readonly services_form_label_attrRelease_excludeDefault = 'Exclude default bundle of attributes for release';
  readonly services_form_label_attrRelease_releaseCredPassword = 'Authorized to release to credential password';
  readonly services_form_label_attrRelease_releaseProxyTicket = 'Authorized to release proxy granting ticket ID';
@@ -130,6 +138,7 @@ export class Messages {
  readonly services_form_label_attrRelease_policies_returnMapped = 'Return Mapped';
  readonly services_form_label_attrRelease_policies_sourceAttribute = 'Source Attribute';
  readonly services_form_label_attrRelease_policies_casAttribute = 'CAS Attribute';
+ readonly services_form_label_attrRelease_policies_wsFedClaim = 'WS Federation Claim';
  readonly services_form_label_attrRelease_policies_restful = 'REST Endpoint';
  readonly services_form_label_attrRelease_policies_groovySaml = 'Script File Location';
  readonly services_form_label_attrRelease_consent_enabled = 'User Consent Enabled';
@@ -278,7 +287,7 @@ export class Messages {
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit = 'Time unit of measure for the cache expiration policy.';
  readonly services_form_tooltip_attrRelease_principleAttRepo_cached_expiration = 'The cache expiration time. ';
  readonly services_form_tooltip_attrRelease_policies_returnAllowed = 'List of resolved attributes out of the available collection of attributes from the attribute repository. Select attributes that are allowed to be released to the application';
- readonly services_form_tooltip_attrRelease_policies_returnMapped = 'List of resolved attributes out of the available collection of attributes from the attribute repository. Select and virtually rename attributes that are allowed to be released to the application';
+ readonly services_form_tooltip_attrRelease_policies_returnWsMapped = 'List of WS Federation Claims that will be mapped to the corresponding attribute from the attributes repository.';
  readonly services_form_tooltip_attrRelease_policies_restful = 'The URL of the REST endpoint that will be called to retrieve a list of attributes that will be released';
  readonly services_form_tooltip_attrRelease_policies_groovySaml = 'Location of a groovy script file that can be triggered by the server to determine the attributes to be released';
  readonly services_form_tooltip_attrRelease_consent_enabled = 'Control whether consent is active/inactive for this service.';

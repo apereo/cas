@@ -119,8 +119,11 @@ export class FormComponent implements OnInit {
         if (this.isSaml()) {
           return 'saml';
         }
-        if (this.isOauth() || this.isOidc()) {
+        if (this.isOauth()) {
           return 'oauth';
+        }
+        if (this.isOidc()) {
+          return 'oidc';
         }
         if (this.isWsFed()) {
           return 'wsfed';
@@ -235,8 +238,7 @@ export class FormComponent implements OnInit {
     // Service Basics
     if (!data.serviceId ||
         !this.validateRegex(data.serviceId) ||
-        !data.name ||
-        !data.description) {
+        !data.name) {
       return Tabs.BASICS;
     }
 
@@ -268,8 +270,7 @@ export class FormComponent implements OnInit {
 
     if (this.isWsFed()) {
       const wsfed: WSFederationRegisterdService = data as WSFederationRegisterdService;
-      if (!wsfed.realm ||
-          !wsfed.appliesTo) {
+      if (!wsfed.appliesTo) {
         return Tabs.TYPE;
       }
     }
