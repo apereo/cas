@@ -38,6 +38,6 @@ echo -e "******************************************************************"
 if [ $retVal == 0 ]; then
     echo "Gradle build finished successfully."
 else
-    echo "Gradle build did NOT finished successfully."
+    echo "Gradle build did NOT finish successfully."
     exit $retVal
 fi
