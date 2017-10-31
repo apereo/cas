@@ -1,10 +1,8 @@
 build:
     project_setup:
         override:
-            - export PUBLISH_SNAPSHOTS=false
-            - export showStandardStreams=true
             - ./ci/init-travis-build.sh
-            - ./ci/install.sh
+            - ./ci/install.sh -DshowStandardStreams=true
     tests:
         override:
             -
