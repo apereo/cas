@@ -14,26 +14,9 @@
                         <mat-option *ngFor="let service of serviceTypeList" [value]="service.value">
                             {{service.name}}
                         </mat-option>
-                        <!--
-                                    <mat-option *ngFor="let opt of data.formData.serviceTypes; let i = index" [value]="opt.value">
-                                      {{ opt.display }}
-                                    </mat-option>
-                        -->
                     </mat-select>
                 </mat-form-field>
             </div>
-
-
-            <!--
-                  <mat-form-field class="textInput">
-                    <mat-select required placeholder="Service Type" [(ngModel)]="selectedValue" name="serviceType">
-                      <mat-option *ngFor="let service of serviceTypeList" [value]="service.value">
-                        {{service.name}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-            -->
-
             <button type="submit" style="display:none;" #submit></button>
 
         </div>
@@ -198,31 +181,17 @@
             <h5>How do you want to create your service?</h5>
         </mat-card-title>
         <div class="cardContent">
+            <button mat-raised-button color="primary" type="submit" name="review"
+                    [disabled]="!wizardForm.form.valid"
+                    (click)="handleReviewDefaults(wizardForm.value); false">
+                Save and Create
+            </button>
 
-<!--
-        <mat-grid-list cols="2" rowHeight="4:1">
-            <mat-grid-tile>
--->
-                <button mat-raised-button color="primary" type="submit" name="review"
-                        [disabled]="!wizardForm.form.valid"
-                        (click)="handleReviewDefaults(wizardForm.value); false">
-                    Save and Create
-                </button>
-<!--
-            </mat-grid-tile>
-
-            <mat-grid-tile>
--->
-                <button mat-raised-button type="submit" name="steps"
-                        [disabled]="!wizardForm.form.valid"
-                        (click)="handleStepThroughSettings(wizardForm.value); false">
-                    Save and Edit
-                </button>
-<!--
-
-            </mat-grid-tile>
-        </mat-grid-list>
--->
+            <button mat-raised-button type="submit" name="steps"
+                    [disabled]="!wizardForm.form.valid"
+                    (click)="handleStepThroughSettings(wizardForm.value); false">
+                Save and Edit
+            </button>
         </div>
     </mat-card>
 </form>
