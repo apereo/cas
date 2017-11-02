@@ -40,11 +40,11 @@ public class OAuth20Validator {
      */
     public boolean checkParameterExist(final HttpServletRequest request, final String name) {
         final String parameter = request.getParameter(name);
-        LOGGER.debug("[{}]: [{}]", name, parameter);
         if (StringUtils.isBlank(parameter)) {
             LOGGER.error("Missing request parameter: [{}]", name);
             return false;
         }
+        LOGGER.debug("Found provided request parameter [{}]", name);
         return true;
     }
 
