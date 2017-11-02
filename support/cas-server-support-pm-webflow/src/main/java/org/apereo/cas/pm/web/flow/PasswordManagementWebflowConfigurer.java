@@ -76,16 +76,18 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         if (casProperties.getAuthn().getPm().isEnabled()) {
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
-            final TransitionableState warningState = getTransitionableState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS);
-            warningState.getEntryActionList().add(createEvaluateAction(
-                    "flowScope.pswdChangePostLogin=true"));
-            createTransitionForState(warningState,
-                    "changePassword", CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
+            configurePasswordMustChangeForAuthnWarnings(flow);
             createPasswordResetFlow();
         } else {
             createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             createViewState(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
         }
+    }
+
+    private void configurePasswordMustChangeForAuthnWarnings(final Flow flow) {
+        final TransitionableState warningState = getTransitionableState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS);
+        warningState.getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));
+        createTransitionForState(warningState, "changePassword", CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
     }
 
     private void createPasswordResetFlow() {
@@ -147,9 +149,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                     CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD,
                     getTransitionableState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT)
                             .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId())
-                                    .getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));
+                    .getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));
 
-            createTransitionForState(getTransitionableState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT), 
+            createTransitionForState(getTransitionableState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT),
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_DO_CHANGE_PASSWORD, true);
 
             createDecisionState(flow,

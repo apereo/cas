@@ -16,7 +16,7 @@
     <mat-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
       <mat-form-field>
         <mat-select [(ngModel)]="data.service.attributeNameFormats[row.key]">
-          <mat-option *ngFor="let item of data.formData.samlNameIds" [value]="item">
+          <mat-option *ngFor="let item of data.formData.attributeNameFormats" [value]="item">
             {{item}}
           </mat-option>
         </mat-select>

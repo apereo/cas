@@ -1,16 +1,27 @@
 package org.apereo.cas.mgmt.services.web.beans;
 
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.grouper.GrouperGroupField;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.reflections.ReflectionUtils;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,45 +38,22 @@ public class FormData implements Serializable {
     private static final long serialVersionUID = -5201796557461644152L;
 
     private List<String> availableAttributes = new ArrayList<>();
-    
+
     private List<Integer> remoteCodes = Arrays.stream(HttpStatus.values()).map(HttpStatus::value).collect(Collectors.toList());
 
-    private String[] samlMetadataRoles = {"SPSSODescriptor", "IDPSSODescriptor"};
+    private String[] samlMetadataRoles = {SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME, IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME};
 
-    private String[] samlDirections = {"INCLUDE", "EXCLUDE"};
+    private List<String> samlDirections = Arrays.stream(PredicateFilter.Direction.values()).map(s -> s.name().toUpperCase()).collect(Collectors.toList());
 
-    private String[] samlNameIds = {"BASIC", "URI", "UNSPECIFIED"};
+    private String[] samlAttributeNameFormats = {Attribute.BASIC, Attribute.UNSPECIFIED, Attribute.URI_REFERENCE};
 
-    private String[] samlCredentialTypes = {"BASIC", "X509"};
+    private List<String> samlCredentialTypes = Arrays.stream(SamlIdPProperties.Response.SignatureCredentialTypes.values())
+            .map(s -> s.name().toUpperCase())
+            .collect(Collectors.toList());
 
-    private String[] encryptAlgOptions = {
-        "RSA-5",
-        "RSA-OAEP",
-        "RSA-OAEP-256",
-        "ECDH-ES",
-        "ECDH-ES+A128KW",
-        "ECDH-ES+A192KW",
-        "ECDH-ES+A256KW",
-        "A128KW",
-        "A192KW",
-        "A256KW",
-        "A128GCMKW",
-        "A192GXMKW",
-        "A256GCMKW",
-        "PBES2-HS256+A128KW",
-        "PBES2-HS384+A192KW",
-        "PBES2-HS512+A256KW"
-    };
+    private List<String> encryptAlgOptions = locateKeyAlgorithmsSupported();
 
-    private String[] encodingAlgOptions = {
-        "A128CBC-HS256",
-        "A192CBC-HS384",
-        "A256CBC-HS512",
-        "A128GCM",
-        "A192GCM",
-        "A256GCM"
-    };
-
+    private List<String> encodingAlgOptions = locateContentEncryptionAlgorithmsSupported();
 
     public List<String> getAvailableAttributes() {
         return this.availableAttributes;
@@ -118,15 +106,15 @@ public class FormData implements Serializable {
         return samlMetadataRoles;
     }
 
-    public String[] getSamlDirections() {
+    public List<String> getSamlDirections() {
         return samlDirections;
     }
 
-    public String[] getSamlNameIds() {
-        return samlNameIds;
+    public String[] getSamlAttributeNameFormats() {
+        return samlAttributeNameFormats;
     }
 
-    public String[] getSamlCredentialTypes() {
+    public List<String> getSamlCredentialTypes() {
         return samlCredentialTypes;
     }
 
@@ -168,20 +156,18 @@ public class FormData implements Serializable {
      * @return the oidc scopes
      */
     public List<Option> getOidcScopes() {
-        final ArrayList<Option> scopes = new ArrayList<>();
-        scopes.add(new Option("Profile", "profile"));
-        scopes.add(new Option("Email", "email"));
-        scopes.add(new Option("Address", "address"));
-        scopes.add(new Option("Phone", "phone"));
+        final List<Option> scopes = Arrays.stream(OidcConstants.StandardScopes.values())
+                .map(scope -> new Option(scope.getFriendlyName(), scope.getScope()))
+                .collect(Collectors.toList());
         scopes.add(new Option("User Defined", "user_defined"));
         return scopes;
     }
 
-    public String[] getOidcEncodingAlgOptions() {
+    public List<String> getOidcEncodingAlgOptions() {
         return encodingAlgOptions;
     }
 
-    public String[] getOidcEncryptAlgOptions() {
+    public List<String> getOidcEncryptAlgOptions() {
         return encryptAlgOptions;
     }
 
@@ -217,5 +203,26 @@ public class FormData implements Serializable {
         public void setValue(final String value) {
             this.value = value;
         }
+    }
+
+
+    private List<String> locateKeyAlgorithmsSupported() {
+        return ReflectionUtils.getFields(KeyManagementAlgorithmIdentifiers.class,
+            field -> Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers())
+                    && field.getType().equals(String.class))
+            .stream()
+            .map(Field::getName)
+            .sorted()
+            .collect(Collectors.toList());
+    }
+
+    private List<String> locateContentEncryptionAlgorithmsSupported() {
+        return ReflectionUtils.getFields(ContentEncryptionAlgorithmIdentifiers.class,
+            field -> Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers())
+                    && field.getType().equals(String.class))
+            .stream()
+            .map(Field::getName)
+            .sorted()
+            .collect(Collectors.toList());
     }
 }

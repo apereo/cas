@@ -128,8 +128,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                     service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
 
             final PredicateFilter filter = new PredicateFilter(dir, entityDescriptor ->
-                    StringUtils.isNotBlank(entityDescriptor.getEntityID())
-                            && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
+                    StringUtils.isNotBlank(entityDescriptor.getEntityID()) && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
 
             metadataFilterList.add(filter);
             LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
@@ -163,7 +162,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                     service.getMetadataLocation());
         }
     }
-    
+
     /**
      * Build required valid until filter if needed. See {@link RequiredValidUntilFilter}.
      *
