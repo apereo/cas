@@ -44,7 +44,7 @@ public final class MultifactorAuthenticationTrustUtils {
      */
     public static String generateGeography() {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final String geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgent());
+        final String geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
         return geography;
     }
 

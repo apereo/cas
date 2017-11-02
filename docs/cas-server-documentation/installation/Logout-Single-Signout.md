@@ -24,7 +24,6 @@ user experience by creating symmetry between login and logout.
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
 and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
-
 ## CAS Logout
 
 Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session.
@@ -98,6 +97,10 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 ### Turning Off Single Logout
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#single-logout).
+
+### Redirecting Logout to Service
+
+Logout requests may be optionally routed to an external URL bypassing the CAS logout screen. In order to to do you will need to specify the target destination typically in form of a `service` parameter to the CAS logout endpoint per the [CAS protocol specification](../protocol/CAS-Protocol-Specification.html).
 
 ### Single Logout Per Service
 

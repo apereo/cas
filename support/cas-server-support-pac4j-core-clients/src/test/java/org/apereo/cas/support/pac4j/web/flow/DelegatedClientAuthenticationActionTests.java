@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
@@ -42,8 +43,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.2
  */
 public class DelegatedClientAuthenticationActionTests {
-
-    private static final String TGT_NAME = "ticketGrantingTicketId";
+    
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
 
     private static final String MY_KEY = "my_key";
@@ -154,7 +154,7 @@ public class DelegatedClientAuthenticationActionTests {
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final MutableAttributeMap requestScope = mockRequestContext.getRequestScope();
         assertEquals(service, flowScope.get(CasProtocolConstants.PARAMETER_SERVICE));
-        assertEquals(TGT_ID, flowScope.get(TGT_NAME));
-        assertEquals(TGT_ID, requestScope.get(TGT_NAME));
+        assertEquals(TGT_ID, flowScope.get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID));
+        assertEquals(TGT_ID, requestScope.get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID));
     }
 }

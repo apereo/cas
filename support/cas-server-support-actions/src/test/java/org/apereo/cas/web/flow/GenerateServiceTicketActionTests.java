@@ -53,7 +53,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     public void verifyServiceTicketFromCookie() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
-        context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket.getId());
+        context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, this.ticketGrantingTicket.getId());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
