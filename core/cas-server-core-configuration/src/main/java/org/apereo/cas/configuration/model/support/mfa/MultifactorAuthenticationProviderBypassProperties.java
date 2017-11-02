@@ -75,6 +75,18 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
     private String credentialClassType;
 
     /**
+     * Skip multifactor authentication if the http request's remote address or host
+     * matches the value defined here. The value may be specified as a regular expression.
+     */
+    private String httpRequestRemoteAddress;
+
+    /**
+     * Skip multifactor authentication if the http request contains the defined header names.
+     * Header names may be comma-separated and can be regular expressions; values are ignored.
+     */
+    private String httpRequestHeaders;
+    
+    /**
      * Handle bypass using a Groovy resource.
      */
     private Groovy groovy = new Groovy();
@@ -161,6 +173,22 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
 
     public void setRest(final Rest rest) {
         this.rest = rest;
+    }
+
+    public String getHttpRequestRemoteAddress() {
+        return httpRequestRemoteAddress;
+    }
+
+    public void setHttpRequestRemoteAddress(final String httpRequestRemoteAddress) {
+        this.httpRequestRemoteAddress = httpRequestRemoteAddress;
+    }
+
+    public String getHttpRequestHeaders() {
+        return httpRequestHeaders;
+    }
+
+    public void setHttpRequestHeaders(final String httpRequestHeaders) {
+        this.httpRequestHeaders = httpRequestHeaders;
     }
 
     @RequiresModule(name = "cas-server-core-authentication", automated = true)

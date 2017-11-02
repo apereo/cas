@@ -15,6 +15,7 @@ Bypass rules allow for the following options for each provider:
 - Skip multifactor authentication based on designated **authentication** attribute **names**.
 - ...[and optionally] Skip multifactor authentication based on designated **authentication** attribute **values**.
 - Skip multifactor authentication depending on method/form of primary authentication execution.
+- Skip multifactor authentication depending on the properties of the http request such as remote addr/host and/or header names.
 
 A few simple examples follow:
 
