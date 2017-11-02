@@ -6,22 +6,22 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import java.io.Serializable;
 
 /**
- * This is {@link TwillioProperties}.
+ * This is {@link TwilioProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiresModule(name = "cas-server-support-sms-twillio")
-public class TwillioProperties implements Serializable {
+@RequiresModule(name = "cas-server-support-sms-twilio")
+public class TwilioProperties implements Serializable {
     private static final long serialVersionUID = -7043132225482495229L;
     /**
-     * Twillio account identifier used for authentication.
+     * Twilio account identifier used for authentication.
      */
     @RequiredProperty
     private String accountId;
 
     /**
-     * Twillio secret token used for authentication.
+     * Twilio secret token used for authentication.
      */
     @RequiredProperty
     private String token;
