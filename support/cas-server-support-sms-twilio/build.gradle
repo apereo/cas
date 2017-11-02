@@ -1,4 +1,4 @@
-description = "Apereo CAS Twillio SMS Support"
+description = "Apereo CAS Twilio SMS Support"
 dependencies {
 
     implementation project(":core:cas-server-core-web")
@@ -7,7 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-authentication")
     
-    implementation libraries.twillio
+    implementation libraries.twilio
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")
