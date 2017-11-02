@@ -129,7 +129,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                     final String grant = authentication.getAttributes()
                             .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
                     introspect.setGrantType(grant);
-                    introspect.setScope(OidcConstants.OPENID);
+                    introspect.setScope(OidcConstants.StandardScopes.OPENID.getName());
                     introspect.setAud(service.getServiceId());
                     introspect.setIss(casProperties.getAuthn().getOidc().getIssuer());
                     return new ResponseEntity<>(introspect, HttpStatus.OK);
