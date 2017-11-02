@@ -1,6 +1,7 @@
 package org.apereo.cas.token;
 
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import net.minidev.json.JSONObject;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
@@ -100,10 +101,14 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
         final JWTClaimsSet claimsSet = claims.build();
         final JSONObject object = claimsSet.toJSONObject();
-
+        
         final String jwtJson = object.toJSONString();
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
-        return tokenCipherExecutor.encode(jwtJson);
+        if (tokenCipherExecutor.isEnabled()) {
+            return tokenCipherExecutor.encode(jwtJson);
+        }
+        final String token = new PlainJWT(claimsSet).serialize();
+        return token; 
     }
 
 }

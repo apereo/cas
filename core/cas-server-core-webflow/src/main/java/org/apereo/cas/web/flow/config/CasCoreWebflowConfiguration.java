@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -14,12 +15,14 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -47,6 +50,8 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.RequestParameterMultifactorAuth
 import org.apereo.cas.web.flow.resolver.impl.mfa.RestEndpointMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.adaptive.AdaptiveMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.adaptive.TimedMultifactorAuthenticationPolicyEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -70,6 +75,7 @@ import java.util.Set;
 @Configuration("casCoreWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreWebflowConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreWebflowConfiguration.class);
 
     @Autowired(required = false)
     @Qualifier("geoLocationService")
@@ -293,14 +299,28 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     @RefreshScope
-    public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
+    public CipherExecutor webflowCipherExecutor() {
         final WebflowProperties webflow = casProperties.getWebflow();
-        return new WebflowConversationStateCipherExecutor(
-                webflow.getCrypto().getEncryption().getKey(),
-                webflow.getCrypto().getSigning().getKey(),
-                webflow.getCrypto().getAlg(),
-                webflow.getCrypto().getSigning().getKeySize(),
-                webflow.getCrypto().getEncryption().getKeySize());
+        final EncryptionRandomizedSigningJwtCryptographyProperties crypto = webflow.getCrypto();
+
+        boolean enabled = crypto.isEnabled();
+        if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+            LOGGER.warn("Webflow encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
+                    + "are defined for operations. CAS will proceed to enable the webflow encryption/signing functionality.");
+            enabled = true;
+        }
+        if (enabled) {
+            return new WebflowConversationStateCipherExecutor(
+                    crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg(),
+                    crypto.getSigning().getKeySize(),
+                    crypto.getEncryption().getKeySize());
+        }
+        LOGGER.warn("Webflow encryption/signing is turned off. This "
+                + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                + "signing and verification of webflow state.");
+        return NoOpCipherExecutor.getInstance();
     }
 
     @Bean
@@ -335,7 +355,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
     @RefreshScope
     public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
-        return new DefaultSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso().isRenewedAuthn());  
+        return new DefaultSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso().isRenewedAuthn());
     }
 
     @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
