@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
-import java.io.Serializable;
 
 /**
  * This is {@link JdbcPasswordManagementConfiguration}.
@@ -29,7 +28,7 @@ public class JdbcPasswordManagementConfiguration {
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor<Serializable, String> passwordManagementCipherExecutor;
+    private CipherExecutor passwordManagementCipherExecutor;
 
     @Bean
     public DataSource jdbcPasswordManagementDataSource() {
