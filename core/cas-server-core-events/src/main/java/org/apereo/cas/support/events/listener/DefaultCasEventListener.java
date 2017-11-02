@@ -118,9 +118,9 @@ public class DefaultCasEventListener {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         dto.putClientIpAddress(clientInfo.getClientIpAddress());
         dto.putServerIpAddress(clientInfo.getServerIpAddress());
-        dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
+        dto.putAgent(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
 
-        final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
+        final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
         if (location != null) {
             dto.putGeoLocation(location);
         }
