@@ -257,19 +257,19 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
-        switch (nameFormat.trim().toLowerCase()) {
-            case "basic":
-                attribute.setNameFormat(Attribute.BASIC);
-                break;
-            case "uri":
-                attribute.setNameFormat(Attribute.URI_REFERENCE);
-                break;
-            case "unspecified":
-                attribute.setNameFormat(Attribute.UNSPECIFIED);
-                break;
-            default:
-                attribute.setNameFormat(nameFormat);
-                break;
+        if (StringUtils.isBlank(nameFormat)) {
+            return;
+        }
+        
+        final String compareFormat = nameFormat.trim().toLowerCase();
+        if ("basic".equals(compareFormat) || compareFormat.equals(Attribute.BASIC)) {
+            attribute.setNameFormat(Attribute.BASIC);
+        } else if ("uri".equals(compareFormat) || compareFormat.equals(Attribute.URI_REFERENCE)) {
+            attribute.setNameFormat(Attribute.URI_REFERENCE);
+        } else if ("unspecified".equals(compareFormat) || compareFormat.equals(Attribute.UNSPECIFIED)) {
+            attribute.setNameFormat(Attribute.UNSPECIFIED);
+        } else {
+            attribute.setNameFormat(nameFormat);
         }
     }
 
@@ -349,7 +349,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param notBefore    the not before
      * @return the subject
      */
-    public Subject newSubject(final NameID nameId, final String recipient, final ZonedDateTime notOnOrAfter, 
+    public Subject newSubject(final NameID nameId, final String recipient, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo, final ZonedDateTime notBefore) {
 
         LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
@@ -357,11 +357,11 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
         final SubjectConfirmationData data = newSamlObject(SubjectConfirmationData.class);
-        
+
         if (StringUtils.isNotBlank(recipient)) {
             data.setRecipient(recipient);
         }
-        
+
         if (notOnOrAfter != null) {
             data.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
         }
@@ -373,13 +373,13 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             if (StringUtils.isNotBlank(ip)) {
                 data.setAddress(ip);
             }
-            
+
         }
-        
+
         if (notBefore != null) {
             data.setNotBefore(DateTimeUtils.dateTimeOf(notBefore));
         }
-        
+
         confirmation.setSubjectConfirmationData(data);
 
         final Subject subject = newSamlObject(Subject.class);
