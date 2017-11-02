@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -59,7 +59,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the response type
      */
     protected Response.ResponseType getWebApplicationServiceResponseType() {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+        final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         final String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
 
         if (StringUtils.isBlank(method)) {

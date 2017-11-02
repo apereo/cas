@@ -18,17 +18,11 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.inspektr.common.spi.PrincipalResolver;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -42,13 +36,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Common utilities for the web tier.
@@ -63,10 +54,6 @@ public final class WebUtils {
      */
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
 
-    /**
-     * Constant representing the request header for user agent.
-     */
-    public static final String USER_AGENT_HEADER = "user-agent";
 
     /**
      * Ticket-granting ticket id parameter used in various flow scopes.
@@ -120,30 +107,7 @@ public final class WebUtils {
         return null;
 
     }
-
-    /**
-     * Gets http servlet request from request attributes.
-     *
-     * @return the http servlet request from request attributes
-     */
-    public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
-        try {
-            return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    /**
-     * Gets http servlet response from request attributes.
-     *
-     * @return the http servlet response from request attributes
-     */
-    public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
-    }
-
+    
     /**
      * Gets the http servlet response from the context.
      *
@@ -430,69 +394,7 @@ public final class WebUtils {
             context.getConversationScope().put(PARAMETER_CREDENTIAL, c);
         }
     }
-
-    /**
-     * Return the username of the authenticated user (based on pac4j security).
-     *
-     * @return the authenticated username.
-     */
-    public static String getPac4jAuthenticatedUsername() {
-        final HttpServletRequest request = getHttpServletRequestFromRequestAttributes();
-        final HttpServletResponse response = getHttpServletResponseFromRequestAttributes();
-        if (request != null && response != null) {
-            final ProfileManager manager = getPac4jProfileManager(request, response);
-            final Optional<UserProfile> profile = manager.get(true);
-            if (profile != null && profile.isPresent()) {
-                final String id = profile.get().getId();
-                if (id != null) {
-                    return id;
-                }
-            }
-        }
-        return PrincipalResolver.UNKNOWN_USER;
-    }
-
-    /**
-     * Gets pac 4 j profile manager.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the pac 4 j profile manager
-     */
-    public static ProfileManager getPac4jProfileManager(final HttpServletRequest request, final HttpServletResponse response) {
-        final J2EContext context = getPac4jJ2EContext(request, response);
-        return getPac4jProfileManager(context);
-    }
-
-    /**
-     * Gets pac4j profile manager.
-     *
-     * @param context the context
-     * @return the pac4j profile manager
-     */
-    public static ProfileManager getPac4jProfileManager(final WebContext context) {
-        return new ProfileManager(context);
-    }
-
-    /**
-     * Gets pac4j context.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the context
-     */
-    public static J2EContext getPac4jJ2EContext(final HttpServletRequest request, final HttpServletResponse response) {
-        return new J2EContext(request, response);
-    }
-
-    /**
-     * Gets pac4j context.
-     *
-     * @return the pac4j context
-     */
-    public static J2EContext getPac4jJ2EContext() {
-        return getPac4jJ2EContext(getHttpServletRequestFromRequestAttributes(), getHttpServletResponseFromRequestAttributes());
-    }
+    
 
     /**
      * Is authenticating at a public workstation?
@@ -615,18 +517,7 @@ public final class WebUtils {
         return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT, AuthenticationResult.class);
     }
 
-    /**
-     * Gets http servlet request user agent.
-     *
-     * @param request the request
-     * @return the http servlet request user agent
-     */
-    public static String getHttpServletRequestUserAgent(final HttpServletRequest request) {
-        if (request != null) {
-            return request.getHeader(USER_AGENT_HEADER);
-        }
-        return null;
-    }
+    
 
     /**
      * Gets http servlet request user agent.
@@ -634,53 +525,9 @@ public final class WebUtils {
      * @return the http servlet request user agent
      */
     public static String getHttpServletRequestUserAgent() {
-        return getHttpServletRequestUserAgent(getHttpServletRequestFromExternalWebflowContext());
+        return HttpRequestUtils.getHttpServletRequestUserAgent(getHttpServletRequestFromExternalWebflowContext());
     }
-
-    /**
-     * Gets request headers.
-     *
-     * @param request the request
-     * @return the request headers
-     */
-    public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
-        final Map<String, String> headers = new LinkedHashMap<>();
-        final Enumeration<String> headerNames = request.getHeaderNames();
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                final String headerName = headerNames.nextElement();
-                final String headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
-                headers.put(headerName, headerValue);
-            }
-        }
-        return headers;
-    }
-
-    /**
-     * Gets http servlet request geo location.
-     *
-     * @param request the request
-     * @return the http servlet request geo location
-     */
-    public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest request) {
-        final int latIndex = 0;
-        final int longIndex = 1;
-        final int accuracyIndex = 2;
-        final int timeIndex = 3;
-        final GeoLocationRequest loc = new GeoLocationRequest();
-        if (request != null) {
-            final String geoLocationParam = request.getParameter("geolocation");
-            if (StringUtils.isNotBlank(geoLocationParam)) {
-                final String[] geoLocation = geoLocationParam.split(",");
-                loc.setLatitude(geoLocation[latIndex]);
-                loc.setLongitude(geoLocation[longIndex]);
-                loc.setAccuracy(geoLocation[accuracyIndex]);
-                loc.setTimestamp(geoLocation[timeIndex]);
-            }
-        }
-        return loc;
-    }
-
+    
     /**
      * Gets http servlet request geo location.
      *
@@ -689,7 +536,7 @@ public final class WebUtils {
     public static GeoLocationRequest getHttpServletRequestGeoLocation() {
         final HttpServletRequest servletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (servletRequest != null) {
-            return getHttpServletRequestGeoLocation(servletRequest);
+            return HttpRequestUtils.getHttpServletRequestGeoLocation(servletRequest);
         }
         return null;
     }

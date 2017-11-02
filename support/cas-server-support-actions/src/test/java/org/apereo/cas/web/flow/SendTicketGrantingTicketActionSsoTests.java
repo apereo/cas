@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -59,7 +60,7 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
-        request.addHeader(WebUtils.USER_AGENT_HEADER, "test");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);

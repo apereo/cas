@@ -24,7 +24,7 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -204,7 +204,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                                             final HttpServletResponse response) {
         try {
             final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);

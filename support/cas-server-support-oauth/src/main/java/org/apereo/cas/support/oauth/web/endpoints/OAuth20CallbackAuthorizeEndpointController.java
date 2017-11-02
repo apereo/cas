@@ -12,8 +12,8 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultCallbackLogic;
@@ -67,7 +67,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
         callback.perform(context, oauthConfig, J2ENopHttpActionAdapter.INSTANCE, null, false, false);
 
         final String url = StringUtils.remove(response.getHeader("Location"), "redirect:");
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
         return oAuth20CallbackAuthorizeViewResolver.resolve(context, manager, url);
     }
 }
