@@ -3,16 +3,16 @@ package org.apereo.cas.consent;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**
- * This is {@link ConsentCipherExecutor}.
+ * This is {@link AttributeReleaseConsentCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class ConsentCipherExecutor extends BaseStringCipherExecutor {
+public class AttributeReleaseConsentCipherExecutor extends BaseStringCipherExecutor {
 
-    public ConsentCipherExecutor(final String secretKeyEncryption,
-                                 final String secretKeySigning,
-                                 final String alg) {
+    public AttributeReleaseConsentCipherExecutor(final String secretKeyEncryption,
+                                                 final String secretKeySigning,
+                                                 final String alg) {
         super(secretKeyEncryption, secretKeySigning, alg);
     }
 

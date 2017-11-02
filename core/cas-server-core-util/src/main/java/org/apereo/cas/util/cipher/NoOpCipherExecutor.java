@@ -10,9 +10,9 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
+public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Serializable> {
 
-    private static CipherExecutor<Serializable, String> INSTANCE;
+    private static CipherExecutor<Serializable, Serializable> INSTANCE;
 
     protected NoOpCipherExecutor() {
     }
@@ -22,7 +22,7 @@ public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Str
      *
      * @return the instance
      */
-    public static CipherExecutor<Serializable, String> getInstance() {
+    public static CipherExecutor<Serializable, Serializable> getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new NoOpCipherExecutor();
         }
@@ -30,13 +30,13 @@ public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Str
     }
 
     @Override
-    public String encode(final Serializable value) {
-        return value.toString();
+    public Serializable encode(final Serializable value) {
+        return value;
     }
 
     @Override
-    public String decode(final Serializable value) {
-        return value.toString();
+    public Serializable decode(final Serializable value) {
+        return value;
     }
 
     @Override
