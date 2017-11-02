@@ -4,6 +4,8 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":core:cas-server-core-util")
+    
     api project(":api:cas-server-core-api")
     
     implementation libraries.pac4j

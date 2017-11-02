@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
@@ -90,7 +90,7 @@ public class CasConsentReviewController {
     public WebAsyncTask<Collection<Map<String, Object>>> getConsentDecisions(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
         final Callable<Collection<Map<String, Object>>> asyncTask = () -> {
-            final String principal = WebUtils.getPac4jAuthenticatedUsername();
+            final String principal = Pac4jUtils.getPac4jAuthenticatedUsername();
             if (!PrincipalResolver.UNKNOWN_USER.equals(principal)) {
                 LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
                 final Collection<ConsentDecision> consentDecisions = this.consentRepository.findConsentDecisions(principal);
@@ -118,7 +118,7 @@ public class CasConsentReviewController {
     @PostMapping("/deleteConsentDecision")
     @ResponseBody
     public boolean deleteConsentDecision(@RequestParam final Long decisionId) {
-        final String principal = WebUtils.getPac4jAuthenticatedUsername();
+        final String principal = Pac4jUtils.getPac4jAuthenticatedUsername();
         LOGGER.debug("Deleting consent decision with id [{}] for principal [{}].", decisionId, principal);        
         return this.consentRepository.deleteConsentDecision(decisionId, principal);
     }
@@ -133,7 +133,7 @@ public class CasConsentReviewController {
     @GetMapping("/logout")
     public String logout(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Performing Pac4j logout...");
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
         return CONSENT_LOGOUT_VIEW;
     }
@@ -149,7 +149,7 @@ public class CasConsentReviewController {
         LOGGER.debug("Callback endpoint hit...");
         
         final CallbackLogic logic = this.pac4jConfig.getCallbackLogic();
-        final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
+        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
         logic.perform(context, this.pac4jConfig, J2ENopHttpActionAdapter.INSTANCE,
                 this.casProperties.getServer().getPrefix().concat("/consentReview"), Boolean.FALSE, Boolean.FALSE);
     }

@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityPr
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.AuthenticationRequest;
@@ -72,7 +72,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
 
                 LOGGER.debug("Collected user profile [{}]", profile);
 
-                this.authorizationGenerator.generate(WebUtils.getPac4jJ2EContext(), profile);
+                this.authorizationGenerator.generate(Pac4jUtils.getPac4jJ2EContext(), profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
                 final Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -82,7 +82,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 final RequireAnyRoleAuthorizer authorizer = new RequireAnyRoleAuthorizer(adminPagesSecurityProperties.getAdminRoles());
                 LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
 
-                final J2EContext context = WebUtils.getPac4jJ2EContext();
+                final J2EContext context = Pac4jUtils.getPac4jJ2EContext();
 
                 if (authorizer.isAllAuthorized(context, CollectionUtils.wrap(profile))) {
                     return new UsernamePasswordAuthenticationToken(username, password, authorities);
