@@ -2,8 +2,8 @@ package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +100,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     @Override
     public WebApplicationService createService(final String id) {
-        return newWebApplicationService(WebUtils.getHttpServletRequestFromRequestAttributes(), id);
+        return newWebApplicationService(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), id);
     }
 }

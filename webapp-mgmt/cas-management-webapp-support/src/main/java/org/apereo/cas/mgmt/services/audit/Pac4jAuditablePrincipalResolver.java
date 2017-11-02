@@ -1,7 +1,7 @@
 package org.apereo.cas.mgmt.services.audit;
 
+import org.apereo.cas.util.Pac4jUtils;
 import org.aspectj.lang.JoinPoint;
-import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 
 /**
@@ -31,7 +31,7 @@ public class Pac4jAuditablePrincipalResolver implements PrincipalResolver {
     }
 
     private static String getFromSecurityContext() {
-        return WebUtils.getPac4jAuthenticatedUsername();
+        return Pac4jUtils.getPac4jAuthenticatedUsername();
     }
 
 }

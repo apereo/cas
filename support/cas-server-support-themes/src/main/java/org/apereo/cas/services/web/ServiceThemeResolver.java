@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
@@ -79,7 +80,7 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
             return getDefaultThemeName();
         }
 
-        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
+        final String userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
 
         if (StringUtils.isBlank(userAgent)) {
             return getDefaultThemeName();
@@ -135,7 +136,7 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof FileSystemResource) {
                 LOGGER.debug("Executing groovy script to determine theme for [{}]", service.getId());
                 final String result = ScriptingUtils.executeGroovyScript(resource, new Object[]{service, rService,
-                        request.getQueryString(), WebUtils.getRequestHeaders(request), LOGGER}, String.class);
+                        request.getQueryString(), HttpRequestUtils.getRequestHeaders(request), LOGGER}, String.class);
                 return StringUtils.defaultIfBlank(result, getDefaultThemeName());
             }
             if (resource instanceof UrlResource) {

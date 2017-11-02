@@ -17,7 +17,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,7 @@ public class ServiceThemeResolverTests {
         scope.put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
-        request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, MOZILLA);
         assertEquals(DEFAULT_THEME_NAME, this.themeResolver.resolveThemeName(request));
     }
 
@@ -95,7 +95,7 @@ public class ServiceThemeResolverTests {
     public void verifyGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "myServiceId");
-        request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, MOZILLA);
         assertEquals(DEFAULT_THEME_NAME, this.themeResolver.resolveThemeName(request));
     }
 }
