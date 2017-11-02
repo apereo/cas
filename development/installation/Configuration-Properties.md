@@ -1426,7 +1426,7 @@ To learn more about this topic, [please review this guide](SMS-Email-Configurati
 
 To learn more about this topic, [please review this guide](SMS-Messaging-Configuration.html).
 
-### Twillio
+### Twilio
 
 ```properties
 # cas.twilio.accountId=
