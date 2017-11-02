@@ -4342,6 +4342,7 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.header.hsts=true
 # cas.httpWebRequest.header.xcontent=true
 # cas.httpWebRequest.header.cache=true
+# cas.httpWebRequest.header.contentSecurityPolicy=
 
 # cas.httpWebRequest.cors.enabled=false
 # cas.httpWebRequest.cors.allowCredentials=false
