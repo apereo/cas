@@ -265,6 +265,14 @@ public class HttpWebRequestProperties implements Serializable {
          */
         private boolean xss = true;
 
+        /**
+         * Helps you reduce XSS risks on modern browsers by declaring what dynamic
+         * resources are allowed to load via a HTTP Header.
+         * Header value is made up of one or more directives.
+         * Multiple directives are separated with a semicolon.
+         */
+        private String contentSecurityPolicy;
+
         public boolean isCache() {
             return cache;
         }
@@ -303,6 +311,14 @@ public class HttpWebRequestProperties implements Serializable {
 
         public void setXss(final boolean xss) {
             this.xss = xss;
+        }
+
+        public String getContentSecurityPolicy() {
+            return contentSecurityPolicy;
+        }
+
+        public void setContentSecurityPolicy(final String contentSecurityPolicy) {
+            this.contentSecurityPolicy = contentSecurityPolicy;
         }
     }
 
