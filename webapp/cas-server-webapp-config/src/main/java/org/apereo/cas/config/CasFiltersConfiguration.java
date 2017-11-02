@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
@@ -80,6 +81,9 @@ public class CasFiltersConfiguration {
         initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(header.isHsts()));
         initParams.put("enableXFrameOptions", BooleanUtils.toStringTrueFalse(header.isXframe()));
         initParams.put("enableXSSProtection", BooleanUtils.toStringTrueFalse(header.isXss()));
+        if (StringUtils.isNotBlank(header.getContentSecurityPolicy())) {
+            initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
+        }
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ResponseHeadersEnforcementFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
