@@ -4,12 +4,12 @@
 import {Injectable} from '@angular/core';
 import {ServiceItem} from '../../domain/service-item';
 import {Service} from '../service';
-import {Http} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class ServiceViewService extends Service {
 
-  constructor(protected http: Http) {
+  constructor(http: HttpClient) {
     super(http);
   }
 
