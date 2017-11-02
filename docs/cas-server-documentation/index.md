@@ -65,5 +65,6 @@ CAS development is powered by the following tools, projects and services.
     <td><a href="https://travis-ci.org"><img src="https://travis-ci.com/images/logos/TravisCI-Full-Color.png" width="230" height="55"></a></td>
     <td><a href="https://www.jetbrains.com/idea/"><img src="https://user-images.githubusercontent.com/1205228/31548576-1ac3d688-b038-11e7-9565-ffd89501872e.png" width="250" height="70"></a></td>
     <td><a href="https://www.eclipse.org"><img width="200" height="50" src="https://user-images.githubusercontent.com/1205228/32225495-ac7b1e94-be5a-11e7-8f83-5c7399398fb8.png"></a></td>
-  </tr>
+    <td><a href="https://www.eclipse.org"><img width="200" height="50" src="https://user-images.githubusercontent.com/1205228/32322526-0b58ac44-bfda-11e7-822e-ad763eb80faf.png"></a></td>
+  </tr>
 </table>
