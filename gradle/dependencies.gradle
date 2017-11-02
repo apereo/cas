@@ -1694,7 +1694,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        twillio                 : dependencies.create("com.twilio.sdk:twilio:$twilioVersion") {
+        twilio                 : dependencies.create("com.twilio.sdk:twilio:$twilioVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
