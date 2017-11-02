@@ -5,16 +5,25 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
+import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
 import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
@@ -48,6 +57,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -324,5 +336,42 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
         return new DefaultSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso().isRenewedAuthn());  
+    }
+
+    @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
+    @Bean
+    public Action authenticationExceptionHandler() {
+        return new AuthenticationExceptionHandlerAction(handledAuthenticationExceptions());
+    }
+
+    @RefreshScope
+    @Bean
+    public Set<Class<? extends Exception>> handledAuthenticationExceptions() {
+        /*
+         * Order is important here; We want the account policy exceptions to be handled
+         * first before moving onto more generic errors. In the event that multiple handlers
+         * are defined, where one failed due to account policy restriction and one fails
+         * due to a bad password, we want the error associated with the account policy
+         * to be processed first, rather than presenting a more generic error associated
+         */
+        final Set<Class<? extends Exception>> errors = new LinkedHashSet<>();
+        errors.add(javax.security.auth.login.AccountLockedException.class);
+        errors.add(javax.security.auth.login.CredentialExpiredException.class);
+        errors.add(javax.security.auth.login.AccountExpiredException.class);
+        errors.add(AccountDisabledException.class);
+        errors.add(InvalidLoginLocationException.class);
+        errors.add(AccountPasswordMustChangeException.class);
+        errors.add(InvalidLoginTimeException.class);
+
+        errors.add(javax.security.auth.login.AccountNotFoundException.class);
+        errors.add(javax.security.auth.login.FailedLoginException.class);
+        errors.add(UnauthorizedServiceForPrincipalException.class);
+        errors.add(PrincipalException.class);
+        errors.add(UnsatisfiedAuthenticationPolicyException.class);
+        errors.add(UnauthorizedAuthenticationException.class);
+
+        errors.addAll(casProperties.getAuthn().getExceptions().getExceptions());
+
+        return errors;
     }
 }

@@ -248,6 +248,16 @@ public final class WebUtils {
     }
 
     /**
+     * Gets unauthorized redirect url into flow scope.
+     *
+     * @param context the context
+     * @return the unauthorized redirect url into flow scope
+     */
+    public static URI getUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context) {
+        return context.getFlowScope().get(PARAMETER_UNAUTHORIZED_REDIRECT_URL, URI.class);
+    }
+    
+    /**
      * Put logout requests into flow scope.
      *
      * @param context  the context
