@@ -16,7 +16,7 @@ node {
     download = true
 }
 
-npm_install.dependsOn(npm_cache_clean)
+npm_install.dependsOn(npm_cache_verify)
 
 task npmLint(type: NpmTask) {
     dependsOn npm_install
