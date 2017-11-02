@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
@@ -106,7 +107,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final HttpSession session = request.getSession();
 
         // web context
-        final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+        final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
         // get client
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
@@ -181,7 +182,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final HttpSession session = request.getSession();
 
         // web context
-        final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+        final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
         // save parameters in web session
         final WebApplicationService service = WebUtils.getService(context);

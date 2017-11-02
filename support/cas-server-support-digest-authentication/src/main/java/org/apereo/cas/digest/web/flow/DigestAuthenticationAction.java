@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.digest.DigestCredential;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.util.DigestAuthenticationUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -55,7 +56,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
             final DigestAuthExtractor extractor = new DigestAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             final DigestCredentials credentials = extractor.extract(webContext);
             if (credentials == null) {

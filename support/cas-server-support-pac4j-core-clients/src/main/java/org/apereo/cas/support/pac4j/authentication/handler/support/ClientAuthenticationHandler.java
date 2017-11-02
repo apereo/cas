@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthentication
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -62,7 +63,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
-            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             final UserProfile userProfile = client.getUserProfile(credentials, webContext);
             LOGGER.debug("Final user profile is: [{}]", userProfile);

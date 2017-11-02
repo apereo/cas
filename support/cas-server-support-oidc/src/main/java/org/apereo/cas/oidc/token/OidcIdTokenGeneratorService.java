@@ -14,7 +14,7 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
@@ -81,8 +81,8 @@ public class OidcIdTokenGeneratorService {
         }
 
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
-        final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
 
         LOGGER.debug("Attempting to produce claims for the id token [{}]", accessTokenId);

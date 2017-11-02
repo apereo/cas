@@ -13,7 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -60,7 +60,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                 final String grantValue = grantType.get().getValue();
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
                     LOGGER.debug("Located grant type [{}]; checking for service headers");
-                    final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+                    final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
                 }
                 if (StringUtils.isBlank(id)) {

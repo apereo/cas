@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -50,7 +51,7 @@ public class SAML2ClientLogoutAction extends AbstractAction {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
+            final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             Client<?, ?> client;
             try {
@@ -89,7 +90,7 @@ public class SAML2ClientLogoutAction extends AbstractAction {
      */
     private String findCurrentClientName(final WebContext webContext) {
         @SuppressWarnings("unchecked")
-        final ProfileManager<? extends CommonProfile> pm = WebUtils.getPac4jProfileManager(webContext);
+        final ProfileManager<? extends CommonProfile> pm = Pac4jUtils.getPac4jProfileManager(webContext);
         final Optional<? extends CommonProfile> profile = pm.get(true);
         return profile.map(CommonProfile::getClientName).orElse(null);
     }

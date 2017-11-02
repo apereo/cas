@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -39,7 +40,7 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
