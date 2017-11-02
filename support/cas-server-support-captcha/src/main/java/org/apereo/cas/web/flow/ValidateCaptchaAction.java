@@ -56,7 +56,7 @@ public class ValidateCaptchaAction extends AbstractAction {
             final HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
 
             con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", WebUtils.getHttpServletRequestUserAgent());
+            con.setRequestProperty("User-Agent", WebUtils.getHttpServletRequestUserAgentFromRequestContext());
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
             final String postParams = "secret=" + recaptchaProperties.getSecret() + "&response=" + gRecaptchaResponse;

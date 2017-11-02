@@ -39,8 +39,8 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final String agent = WebUtils.getHttpServletRequestUserAgent();
-        final GeoLocationRequest geoLocation = WebUtils.getHttpServletRequestGeoLocation();
+        final String agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
+        final GeoLocationRequest geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
 
         if (!adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
             final String msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
