@@ -257,6 +257,14 @@ export class Messages {
  readonly services_form_tooltip_oauthBypass = 'Indicates whether the OAuth confirmation screen should be displayed before accessing the service application.';
  readonly services_form_tooltip_oauthRefreshToken = 'Indicates whether a refresh token should be generated with the access token for this OAuth client';
  readonly services_form_tooltip_oauthJsonFormat = 'Indicates whether the access token response should be in JSON format or in plain text';
+
+  readonly services_form_tooltip_oidcClientSecret = 'Secret key for this OIDC client. Only applies to OIDC service types.';
+  readonly services_form_tooltip_oidcClientId = 'OAuth client id for this OIDC client. Only applies to OIDC service types.';
+  readonly services_form_tooltip_oidcShowSecret = 'Enable to show your OIDC Client Secret.';
+  readonly services_form_tooltip_oidcBypass = 'Indicates whether the OIDC confirmation screen should be displayed before accessing the service application.';
+  readonly services_form_tooltip_oidcRefreshToken = 'Indicates whether a refresh token should be generated with the access token for this OIDC client';
+  readonly services_form_tooltip_oidcJsonFormat = 'Indicates whether the access token response should be in JSON format or in plain text';
+
  readonly services_form_tooltip_theme = 'A token that represents the theme that should be applied to CAS when this service asks for authentication.  Valid values are a theme name configured in the CAS deployment, a REST endpoint or a groovy file location.';
  readonly services_form_tooltip_evalOrder = 'Determines how CAS should load, sort and evaluate services per this numeric order.';
  readonly services_form_tooltip_requiredHandlers = 'Collection of authentication handler ids defined in the CAS server configuration ' +
