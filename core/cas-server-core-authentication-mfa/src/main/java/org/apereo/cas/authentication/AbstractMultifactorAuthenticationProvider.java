@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
-import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
-import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.*;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -36,8 +36,9 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private int order;
 
-    public AbstractMultifactorAuthenticationProvider() {}
-    
+    public AbstractMultifactorAuthenticationProvider() {
+    }
+
     @Override
     public String getId() {
         return id;
@@ -61,18 +62,20 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     }
 
     @Override
-    public final boolean supports(final Event e, final Authentication authentication, final RegisteredService registeredService) {
-        if (e == null || !e.getId().matches(getId())) {
-            LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", e, getId());
+    public final boolean supports(final Event event, final Authentication authentication,
+                                  final RegisteredService registeredService, final HttpServletRequest request) {
+        if (event == null || !event.getId().matches(getId())) {
+            LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", event, getId());
             return false;
         }
-        
-        if (bypassEvaluator != null && !bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, this)) {
+
+        if (bypassEvaluator != null
+                && !bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, this, request)) {
             LOGGER.debug("Request cannot be supported by provider [{}] as it's configured for bypass", getId());
             return false;
         }
 
-        if (supportsInternal(e, authentication, registeredService)) {
+        if (supportsInternal(event, authentication, registeredService)) {
             LOGGER.debug("[{}] voted to support this authentication request", getClass().getSimpleName());
             return true;
         }

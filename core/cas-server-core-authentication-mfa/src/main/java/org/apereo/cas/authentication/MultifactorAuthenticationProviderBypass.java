@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 /**
@@ -30,8 +31,10 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable {
      * @param authentication    the authentication
      * @param registeredService the registered service in question
      * @param provider          the provider
+     * @param request           the request
      * @return false is request isn't supported and can be bypassed. true otherwise.
      */
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication, RegisteredService registeredService,
-                                                           MultifactorAuthenticationProvider provider);
+                                                           MultifactorAuthenticationProvider provider,
+                                                           HttpServletRequest request);
 }

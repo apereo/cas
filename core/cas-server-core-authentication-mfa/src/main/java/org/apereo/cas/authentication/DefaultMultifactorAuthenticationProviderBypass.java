@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,7 +36,8 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
                                                                   final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider) {
+                                                                  final MultifactorAuthenticationProvider provider,
+                                                                  final HttpServletRequest request) {
 
         final Principal principal = authentication.getPrincipal();
         LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}]",
