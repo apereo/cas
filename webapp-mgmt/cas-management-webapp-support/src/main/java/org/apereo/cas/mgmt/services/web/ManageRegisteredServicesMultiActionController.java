@@ -1,9 +1,12 @@
 package org.apereo.cas.mgmt.services.web;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.discovery.CasServerProfile;
 import org.apereo.cas.mgmt.authentication.CasUserProfile;
 import org.apereo.cas.mgmt.authentication.CasUserProfileFactory;
 import org.apereo.cas.mgmt.services.web.beans.FormData;
@@ -13,6 +16,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpMessage;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +36,12 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -244,8 +256,9 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @return the form data
      */
     @GetMapping(value = "formData")
-    public ResponseEntity<FormData> getFormData() {
+    public ResponseEntity<FormData> getFormData() throws Exception {
         ensureDefaultServiceExists();
+        final CasServerProfile profile = getCasServerProfile();
         final FormData formData = new FormData();
         final Set<String> possibleUserAttributeNames = this.personAttributeDao.getPossibleUserAttributeNames();
         final List<String> possibleAttributeNames = new ArrayList<>();
@@ -254,6 +267,19 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             Collections.sort(possibleAttributeNames);
         }
         formData.setAvailableAttributes(possibleAttributeNames);
+        if (profile != null) {
+            formData.setOidcEncodingAlgOption((String[])profile.getContentEncryptionAlgorithmsSupported().toArray());
+            formData.setOidcEncryptAlgOptions((String[])profile.getContentEncryptionAlgorithmsSupported().toArray());
+            final List<FormData.Option> providers = profile.getMultifactorAuthenticationProviderTypes()
+                    .entrySet().stream()
+                    .map(e -> new FormData.Option(e.getValue(), e.getKey()))
+                    .collect(Collectors.toList());
+            formData.setMfaProviders(providers);
+            final List<FormData.Option> serviceTypes = profile.getRegisteredServiceTypes().entrySet().stream()
+                    .map(e -> new FormData.Option(e.getValue().getCanonicalName(), e.getKey()))
+                    .collect(Collectors.toList());
+            formData.setServiceTypes(serviceTypes);
+        }
         return new ResponseEntity<>(formData, HttpStatus.OK);
     }
 
@@ -295,5 +321,46 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         return serviceItem;
     }
 
+    private CasServerProfile getCasServerProfile() throws Exception {
+        URL url = new URL(casProperties.getServer().getPrefix() + "/status/profile");
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            Map<String, Object> map = mapper.readValue(url, new TypeReference<Map<String, Object>>() {
+            });
+            return (CasServerProfile) map.get("profile");
+        } catch (IOException io) {
+            io.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public class Option {
+        private String display;
+        private String value;
+
+        Option(final String display, final String value) {
+            this.display = display;
+            this.value = value;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+
+        public void setDisplay(final String display) {
+            this.display = display;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(final String value) {
+            this.value = value;
+        }
+    }
 }
 

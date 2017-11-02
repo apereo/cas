@@ -66,6 +66,30 @@ public class FormData implements Serializable {
         "A256GCM"
     };
 
+    private List<Option> serviceTypes;
+
+    private List<Option> providers;
+
+    public FormData() {
+        serviceTypes = new ArrayList<>();
+        serviceTypes.add(new Option("CAS Client", "cas"));
+        serviceTypes.add(new Option("OAuth2 Client", "oauth"));
+        serviceTypes.add(new Option("SAML2 Service Provider", "saml"));
+        serviceTypes.add(new Option("OpenID Connect Client", "oidc"));
+        serviceTypes.add(new Option("WS Federation", "wsfed"));
+
+        providers = new ArrayList<>();
+        providers.add(new Option("Duo Security", "mfa-duo"));
+        providers.add(new Option("Authy Authenticator", "mfa-authy"));
+        providers.add(new Option("YubiKey", "mfa-yubikey"));
+        providers.add(new Option("RSA/RADIUS", "mfa-radius"));
+        providers.add(new Option("WiKID", "mfa-wikid"));
+        providers.add(new Option("Google Authenitcator", "mfa-gauth"));
+        providers.add(new Option("Microsoft Azure", "mfa-azure"));
+        providers.add(new Option("FIDO U2F", "mfa-u2f"));
+        providers.add(new Option("Swivel Secure", "mfa-swivel"));
+    }
+
 
     public List<String> getAvailableAttributes() {
         return this.availableAttributes;
@@ -105,13 +129,11 @@ public class FormData implements Serializable {
      * @return the service types
      */
     public List<Option> getServiceTypes() {
-        final ArrayList<Option> serviceTypes = new ArrayList<>();
-        serviceTypes.add(new Option("CAS Client", "cas"));
-        serviceTypes.add(new Option("OAuth2 Client", "oauth"));
-        serviceTypes.add(new Option("SAML2 Service Provider", "saml"));
-        serviceTypes.add(new Option("OpenID Connect Client", "oidc"));
-        serviceTypes.add(new Option("WS Federation", "wsfed"));
-        return serviceTypes;
+       return this.serviceTypes;
+    }
+
+    public void setServiceTypes(List<Option> serviceTypes) {
+        this.serviceTypes = serviceTypes;
     }
 
     public String[] getSamlRoles() {
@@ -140,17 +162,11 @@ public class FormData implements Serializable {
      * @return the mfa providers
      */
     public List<Option> getMfaProviders() {
-        final ArrayList<Option> providers = new ArrayList<>();
-        providers.add(new Option("Duo Security", "mfa-duo"));
-        providers.add(new Option("Authy Authenticator", "mfa-authy"));
-        providers.add(new Option("YubiKey", "mfa-yubikey"));
-        providers.add(new Option("RSA/RADIUS", "mfa-radius"));
-        providers.add(new Option("WiKID", "mfa-wikid"));
-        providers.add(new Option("Google Authenitcator", "mfa-gauth"));
-        providers.add(new Option("Microsoft Azure", "mfa-azure"));
-        providers.add(new Option("FIDO U2F", "mfa-u2f"));
-        providers.add(new Option("Swivel Secure", "mfa-swivel"));
         return providers;
+    }
+
+    public void setMfaProviders(List<Option> providers) {
+        this.providers = providers;
     }
 
     /**
@@ -181,8 +197,16 @@ public class FormData implements Serializable {
         return encodingAlgOptions;
     }
 
+    public void setOidcEncodingAlgOption(final String[] encodingAlgOptions) {
+        this.encodingAlgOptions = encodingAlgOptions;
+    }
+
     public String[] getOidcEncryptAlgOptions() {
         return encryptAlgOptions;
+    }
+
+    public void setOidcEncryptAlgOptions(final String[] oidcEncryptAlgOptions) {
+        this.encryptAlgOptions = oidcEncryptAlgOptions;
     }
 
     public OidcSubjectTypes[] getOidcSubjectTypes() {
@@ -193,11 +217,11 @@ public class FormData implements Serializable {
         return CaseCanonicalizationMode.values();
     }
 
-    private class Option {
+    public static class Option {
         private String display;
         private String value;
 
-        Option(final String display, final String value) {
+        public Option(final String display, final String value) {
             this.display = display;
             this.value = value;
         }

@@ -50,6 +50,7 @@ include "docs:cas-server-documentation-swagger"
 
 include "support:cas-server-support-bom"
 include "support:cas-server-support-discovery-profile"
+include "support:cas-server-support-discovery-profile-api"
 include "support:cas-server-support-person-directory"
 include "support:cas-server-support-bootadmin-client"
 include "support:cas-server-support-jdbc-drivers"
