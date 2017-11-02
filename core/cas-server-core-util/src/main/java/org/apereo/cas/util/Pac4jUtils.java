@@ -79,6 +79,7 @@ public final class Pac4jUtils {
      * @return the pac4j context
      */
     public static J2EContext getPac4jJ2EContext() {
-        return getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
+        return getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), 
+                HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
     }
 }
