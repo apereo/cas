@@ -2,11 +2,13 @@
  * Created by tsschmi on 4/25/17.
  */
 
-import {Http, Headers, ResponseContentType} from '@angular/http';
+import { Headers, ResponseContentType} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
+import {textDef} from '@angular/core/src/view';
 
 export abstract class Service {
 
-  constructor(protected http: Http) {
+  constructor(protected http: HttpClient) {
 
   }
 
@@ -17,16 +19,23 @@ export abstract class Service {
   }
 
   post<T>(url: string , data: any): Promise<T> {
-    return this.http.post(url, JSON.stringify(data), { headers: this.headers()})
+    return this.http.post<T>(url, JSON.stringify(data))
       .toPromise()
-      .then(resp => resp.text().startsWith('{') || resp.text().startsWith('[') ? resp.json() : resp.text())
+      .then(resp => resp)
       .catch(this.handleError);
   }
 
   get<T>(url: string): Promise<T> {
     return this.http.get(url)
       .toPromise()
-      .then(resp => resp.text().startsWith('{') || resp.text().startsWith('[') ? resp.json() : resp.text())
+      .then(resp => resp)
+      .catch(this.handleError);
+  }
+
+  getText(url: string): Promise<String> {
+    return this.http.get(url, {responseType: 'text'})
+      .toPromise()
+      .then(resp => resp)
       .catch(this.handleError);
   }
 
