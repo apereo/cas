@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,7 +71,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         final OpenIdServiceFactory factory = new OpenIdServiceFactory("");
         final OpenIdService service = factory.createService(request);
         context.getFlowScope().put("service", service);
-        context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
+        context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, "tgtId");
 
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request,
@@ -93,7 +94,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
         final OpenIdService service = new OpenIdServiceFactory("").createService(request);
         context.getFlowScope().put("service", service);
-        context.getFlowScope().put("ticketGrantingTicketId", t.getId());
+        context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals("success", this.action.execute(context).getId());
     }

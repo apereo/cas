@@ -2,6 +2,8 @@ package org.apereo.cas.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -11,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link HttpRequestUtils}.
@@ -20,12 +24,12 @@ import java.util.Map;
  * @since 5.2.0
  */
 public final class HttpRequestUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestUtils.class);
-
     /**
      * Constant representing the request header for user agent.
      */
     public static final String USER_AGENT_HEADER = "user-agent";
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestUtils.class);
     
     private HttpRequestUtils() {}
     
@@ -108,4 +112,18 @@ public final class HttpRequestUtils {
         }
         return null;
     }
+
+    /**
+     * Gets the service from the request based on given extractors.
+     *
+     * @param argumentExtractors the argument extractors
+     * @param request            the request
+     * @return the service, or null.
+     */
+    public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final HttpServletRequest request) {
+        return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
+                .filter(Objects::nonNull).findFirst().orElse(null);
+    }
+    
+    
 }

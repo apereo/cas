@@ -39,7 +39,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Common utilities for the web tier.
@@ -53,7 +52,6 @@ public final class WebUtils {
      * Request attribute that contains message key describing details of authorization failure.
      */
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
-
 
     /**
      * Ticket-granting ticket id parameter used in various flow scopes.
@@ -132,18 +130,7 @@ public final class WebUtils {
         }
         return null;
     }
-
-    /**
-     * Gets the service from the request based on given extractors.
-     *
-     * @param argumentExtractors the argument extractors
-     * @param request            the request
-     * @return the service, or null.
-     */
-    public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final HttpServletRequest request) {
-        return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
-                .filter(Objects::nonNull).findFirst().orElse(null);
-    }
+    
 
     /**
      * Gets the service.
@@ -154,7 +141,7 @@ public final class WebUtils {
      */
     public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        return getService(argumentExtractors, request);
+        return HttpRequestUtils.getService(argumentExtractors, request);
     }
 
     /**
@@ -183,8 +170,7 @@ public final class WebUtils {
      * @param context the context
      * @param ticket  the ticket value
      */
-    public static void putTicketGrantingTicketInScopes(
-            final RequestContext context, final TicketGrantingTicket ticket) {
+    public static void putTicketGrantingTicketInScopes(final RequestContext context, final TicketGrantingTicket ticket) {
         final String ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
@@ -516,16 +502,15 @@ public final class WebUtils {
     public static AuthenticationResult getAuthenticationResult(final RequestContext ctx) {
         return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT, AuthenticationResult.class);
     }
-
     
-
     /**
      * Gets http servlet request user agent.
      *
      * @return the http servlet request user agent
      */
-    public static String getHttpServletRequestUserAgent() {
-        return HttpRequestUtils.getHttpServletRequestUserAgent(getHttpServletRequestFromExternalWebflowContext());
+    public static String getHttpServletRequestUserAgentFromRequestContext() {
+        final HttpServletRequest httpServletRequestFromExternalWebflowContext = getHttpServletRequestFromExternalWebflowContext();
+        return HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequestFromExternalWebflowContext);
     }
     
     /**
@@ -533,8 +518,8 @@ public final class WebUtils {
      *
      * @return the http servlet request geo location
      */
-    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
-        final HttpServletRequest servletRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
+        final HttpServletRequest servletRequest = getHttpServletRequestFromExternalWebflowContext();
         if (servletRequest != null) {
             return HttpRequestUtils.getHttpServletRequestGeoLocation(servletRequest);
         }
