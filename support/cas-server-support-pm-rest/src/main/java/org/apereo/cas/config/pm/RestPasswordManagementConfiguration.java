@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.Serializable;
-
 /**
  * This is {@link RestPasswordManagementConfiguration}.
  *
@@ -28,7 +26,7 @@ public class RestPasswordManagementConfiguration {
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor<Serializable, String> passwordManagementCipherExecutor;
+    private CipherExecutor passwordManagementCipherExecutor;
 
     @RefreshScope
     @Bean

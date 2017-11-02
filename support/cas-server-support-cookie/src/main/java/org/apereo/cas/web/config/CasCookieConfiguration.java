@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
@@ -61,13 +62,19 @@ public class CasCookieConfiguration {
     @Bean
     public CipherExecutor cookieCipherExecutor() {
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getTgc().getCrypto();
-        if (crypto.isEnabled()) {
-            return new TicketGrantingCookieCipherExecutor(crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg());
+        boolean enabled = crypto.isEnabled();
+        if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+            LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
+                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
+            enabled = true;
         }
 
-        LOGGER.info("Ticket-granting cookie encryption/signing is turned off. This "
+        if (enabled) {
+            return new TicketGrantingCookieCipherExecutor(crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(), crypto.getAlg());
+        }
+
+        LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "
                 + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
                 + "signing and verification of ticket-granting cookies.");
         return NoOpCipherExecutor.getInstance();

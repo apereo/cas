@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
-import java.io.Serializable;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -47,7 +46,7 @@ public class PasswordManagementConfiguration {
     @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
     @RefreshScope
     @Bean
-    public CipherExecutor<Serializable, String> passwordManagementCipherExecutor() {
+    public CipherExecutor passwordManagementCipherExecutor() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         final EncryptionJwtSigningJwtCryptographyProperties crypto = pm.getReset().getCrypto();
         if (pm.isEnabled() && crypto.isEnabled()) {

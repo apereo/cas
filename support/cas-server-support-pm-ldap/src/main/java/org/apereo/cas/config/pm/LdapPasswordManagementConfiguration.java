@@ -11,8 +11,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.Serializable;
-
 /**
  * This is {@link LdapPasswordManagementConfiguration}.
  *
@@ -27,7 +25,7 @@ public class LdapPasswordManagementConfiguration {
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor<Serializable, String> passwordManagementCipherExecutor;
+    private CipherExecutor passwordManagementCipherExecutor;
 
     @RefreshScope
     @Bean
