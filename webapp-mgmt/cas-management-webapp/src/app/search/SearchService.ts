@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Service} from '../service';
-import {Http} from '@angular/http';
 import {ServiceItem} from '../../domain/service-item';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class SearchService extends Service {
 
-  constructor(protected http: Http) {
+  constructor(http: HttpClient) {
     super(http);
   }
 
