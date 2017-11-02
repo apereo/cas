@@ -1,5 +1,7 @@
 description = "Apereo CAS JPA Ticket Registry Support"
 dependencies {
+    api project(":api:cas-server-core-api")
+    
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-util")
