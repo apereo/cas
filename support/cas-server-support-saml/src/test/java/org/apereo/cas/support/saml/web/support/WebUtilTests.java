@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
