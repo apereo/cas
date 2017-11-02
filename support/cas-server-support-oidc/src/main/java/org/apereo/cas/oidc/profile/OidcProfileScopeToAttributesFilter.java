@@ -107,7 +107,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             final Collection<String> scopes = new ArrayList<>(OAuth20Utils.getRequestedScopes(context));
             scopes.addAll(oidcService.getScopes());
 
-            if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getName())) {
+            if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.debug("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
                         + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
                         + "CAS will not process any attribute claims and will return the authenticated principal as is.", scopes);
@@ -201,7 +201,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 }
             }
         });
-        otherScopes.remove(OidcConstants.StandardScopes.OPENID.getName());
+        otherScopes.remove(OidcConstants.StandardScopes.OPENID.getScope());
         if (!otherScopes.isEmpty()) {
             LOGGER.debug("Mapped scopes [{}] to attribute release policy [{}]", otherScopes,
                     OidcCustomScopeAttributeReleasePolicy.class.getSimpleName());

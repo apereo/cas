@@ -19,7 +19,7 @@ public class OidcCustomScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
     }
 
     public OidcCustomScopeAttributeReleasePolicy(final List<String> allowedAttributes) {
-        this(OidcConstants.StandardScopes.CUSTOM.getName(), allowedAttributes);
+        this(OidcConstants.StandardScopes.CUSTOM.getScope(), allowedAttributes);
     }
 
     public OidcCustomScopeAttributeReleasePolicy(final String scopeName, final List<String> allowedAttributes) {

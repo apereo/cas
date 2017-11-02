@@ -5,6 +5,7 @@ dependencies {
     implementation libraries.pac4j
     implementation libraries.casclient
     implementation libraries.groovy
+    implementation libraries.opensaml
     implementation libraries.springcloudconfigclient
     implementation libraries.thymeleaf
 
