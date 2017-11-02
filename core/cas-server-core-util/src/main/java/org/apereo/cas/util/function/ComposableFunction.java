@@ -8,8 +8,6 @@ import java.util.function.Function;
  * Represents a function that accepts one argument and produces a result and
  * could be with a Consumer of the resulting type.
  *
- * TODO: Candidate for removal in case component is added to JDK.
- *
  * @author David Rodriguez
  *
  * @param <T> the type of the input to the function

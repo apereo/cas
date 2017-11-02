@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -89,7 +90,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private boolean encryptAssertions;
 
     @Column(length = 255, updatable = true, insertable = true)
-    private String metadataCriteriaRoles = "SPSSODescriptor";
+    private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
     @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;

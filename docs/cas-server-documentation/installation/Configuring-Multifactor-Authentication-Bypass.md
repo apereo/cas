@@ -15,6 +15,7 @@ Bypass rules allow for the following options for each provider:
 - Skip multifactor authentication based on designated **authentication** attribute **names**.
 - ...[and optionally] Skip multifactor authentication based on designated **authentication** attribute **values**.
 - Skip multifactor authentication depending on method/form of primary authentication execution.
+- Skip multifactor authentication depending on the properties of the http request such as remote addr/host and/or header names.
 
 A few simple examples follow:
 
@@ -86,6 +87,7 @@ The parameters passed are as follows:
 | `service`             | The object representing the corresponding service definition in the registry.
 | `provider`            | The object representing the requested multifactor authentication provider.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| `httpRequest`         | The object responsible for capturing the http request.
 
 As an example, the following script skips multifactor authentication if the application requesting it is registered in the CAS service registry under the name `MyApplication` and only does so if the provider is Duo Security and the authenticated principal contains an attribute named `mustBypassMfa` whose values contains `true`.
 
@@ -96,6 +98,7 @@ def String run(final Object... args) {
     def service = args[2]
     def provider = args[3]
     def logger = args[4]
+    def httpRequest = args[5]
 
     if (service.name == "MyApplication") {
         logger.info("Evaluating principal attributes ${principal.attributes}")

@@ -21,8 +21,8 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.credentials.extractor.CredentialsExtractor;
@@ -95,7 +95,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                                                                                   final HttpServletResponse response) {
         try {
             final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor(getClass().getSimpleName());
-            final UsernamePasswordCredentials credentials = authExtractor.extract(WebUtils.getPac4jJ2EContext(request, response));
+            final UsernamePasswordCredentials credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");
             }
@@ -129,7 +129,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                     final String grant = authentication.getAttributes()
                             .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
                     introspect.setGrantType(grant);
-                    introspect.setScope(OidcConstants.OPENID);
+                    introspect.setScope(OidcConstants.StandardScopes.OPENID.getScope());
                     introspect.setAud(service.getServiceId());
                     introspect.setIss(casProperties.getAuthn().getOidc().getIssuer());
                     return new ResponseEntity<>(introspect, HttpStatus.OK);

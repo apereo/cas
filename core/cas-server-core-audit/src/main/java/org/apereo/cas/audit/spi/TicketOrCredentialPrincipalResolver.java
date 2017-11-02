@@ -9,7 +9,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.AopUtils;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 
 import org.aspectj.lang.JoinPoint;
@@ -123,7 +123,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
             }
             LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         }
-        return WebUtils.getPac4jAuthenticatedUsername();
+        return Pac4jUtils.getPac4jAuthenticatedUsername();
     }
 
     /**

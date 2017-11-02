@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
                                         final RegisteredService service,
                                         final Collection<CasEvent> events) {
 
-        final String agent = WebUtils.getHttpServletRequestUserAgent(request);
+        final String agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         LOGGER.debug("Filtering authentication events for user agent [{}]", agent);
         final long count = events.stream().filter(e -> e.getAgent().equalsIgnoreCase(agent)).count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", agent, count);

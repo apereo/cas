@@ -288,6 +288,11 @@ ext.libraries = [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
                 },
+                dependencies.create("org.apache.commons:commons-text:$commonsTextVersion") {
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    force = true
+                },
                 dependencies.create("org.apache.commons:commons-pool2:$commonsPoolVersion") {
                     force = true
                 },
@@ -1694,7 +1699,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        twillio                 : dependencies.create("com.twilio.sdk:twilio:$twilioVersion") {
+        twilio                 : dependencies.create("com.twilio.sdk:twilio:$twilioVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")

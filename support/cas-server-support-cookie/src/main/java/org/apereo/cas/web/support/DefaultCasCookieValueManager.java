@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -46,7 +47,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
                 .append(COOKIE_FIELD_SEPARATOR)
                 .append(clientInfo.getClientIpAddress());
 
-        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
+        final String userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         if (StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Request does not specify a user-agent");
         }
@@ -84,7 +85,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
                     + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
         }
 
-        final String agent = WebUtils.getHttpServletRequestUserAgent(request);
+        final String agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         if (!userAgent.equals(agent)) {
             throw new IllegalStateException("Invalid cookie. Required user-agent " + userAgent + " does not match " + agent);
         }

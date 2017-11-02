@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
+import org.apereo.cas.oidc.OidcConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +12,6 @@ import java.util.List;
  * @since 5.1.0
  */
 public class OidcCustomScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
-    /**
-     * Custom misc scope.
-     */
-    public static final String SCOPE_CUSTOM = "custom";
-
     private static final long serialVersionUID = -8338967628001071540L;
 
     public OidcCustomScopeAttributeReleasePolicy() {
@@ -22,7 +19,7 @@ public class OidcCustomScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
     }
 
     public OidcCustomScopeAttributeReleasePolicy(final List<String> allowedAttributes) {
-        this(SCOPE_CUSTOM, allowedAttributes);
+        this(OidcConstants.StandardScopes.CUSTOM.getScope(), allowedAttributes);
     }
 
     public OidcCustomScopeAttributeReleasePolicy(final String scopeName, final List<String> allowedAttributes) {

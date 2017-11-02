@@ -93,8 +93,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             if (registrationRequest.getScopes().isEmpty()) {
                 throw new Exception("Registration request does not contain any scope values");
             }
-            if (!registrationRequest.getScope().contains(OidcConstants.OPENID)) {
-                throw new Exception("Registration request scopes do not contain [{}]" + OidcConstants.OPENID);
+            if (!registrationRequest.getScope().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
+                throw new Exception("Registration request scopes do not contain " + OidcConstants.StandardScopes.OPENID.getScope());
             }
 
             final OidcRegisteredService registeredService = new OidcRegisteredService();

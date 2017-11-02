@@ -38,7 +38,7 @@ import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderPr
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.configuration.model.support.sms.ClickatellProperties;
 import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
-import org.apereo.cas.configuration.model.support.sms.TwillioProperties;
+import org.apereo.cas.configuration.model.support.sms.TwilioProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
@@ -208,13 +208,13 @@ public class CasConfigurationProperties implements Serializable {
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     /**
-     * Twillio settings.
+     * Twilio settings.
      */
     @NestedConfigurationProperty
-    private TwillioProperties twillio = new TwillioProperties();
+    private TwilioProperties twilio = new TwilioProperties();
 
     /**
-     * Textmagic settings.
+     * TextMagic settings.
      */
     @NestedConfigurationProperty
     private TextMagicProperties textMagic = new TextMagicProperties();
@@ -625,12 +625,12 @@ public class CasConfigurationProperties implements Serializable {
         this.samlSp = samlSp;
     }
 
-    public TwillioProperties getTwillio() {
-        return twillio;
+    public TwilioProperties getTwilio() {
+        return twilio;
     }
 
-    public void setTwillio(final TwillioProperties twillio) {
-        this.twillio = twillio;
+    public void setTwilio(final TwilioProperties twilio) {
+        this.twilio = twilio;
     }
 
     public TextMagicProperties getTextMagic() {

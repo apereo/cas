@@ -6,11 +6,16 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -28,15 +33,27 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      */
     protected final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
+    private final Pattern httpRequestRemoteAddressPattern;
+    private final Set<Pattern> httpRequestHeaderPatterns;
+
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
         this.bypassProperties = bypassProperties;
+
+        if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
+            this.httpRequestRemoteAddressPattern = RegexUtils.createPattern(bypassProperties.getHttpRequestRemoteAddress());
+        } else {
+            this.httpRequestRemoteAddressPattern = RegexUtils.MATCH_NOTHING_PATTERN;
+        }
+
+        final Set<String> values = org.springframework.util.StringUtils.commaDelimitedListToSet(bypassProperties.getHttpRequestHeaders());
+        this.httpRequestHeaderPatterns = values.stream().map(RegexUtils::createPattern).collect(Collectors.toSet());
     }
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
                                                                   final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider) {
-
+                                                                  final MultifactorAuthenticationProvider provider,
+                                                                  final HttpServletRequest request) {
         final Principal principal = authentication.getPrincipal();
         LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}]",
                 principal.getId(), registeredService, provider);
@@ -49,7 +66,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
         final boolean bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypassProperties, authentication);
         if (bypassByAuthn) {
-            LOGGER.debug("Bypass rules for authentication [{}] indicate the request may be ignored", principal.getId());
+            LOGGER.debug("Bypass rules for authentication for principal [{}] indicate the request may be ignored", principal.getId());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
@@ -60,7 +77,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
                 authentication.getAttributes(), false
         );
         if (bypassByAuthnMethod) {
-            LOGGER.debug("Bypass rules for authentication method [{}] indicate the request may be ignored", principal.getId());
+            LOGGER.debug("Bypass rules for authentication method [{}] indicate the request may be ignored", bypassProperties.getAuthenticationMethodName());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
@@ -71,14 +88,21 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
                 authentication.getAttributes(), false
         );
         if (bypassByHandlerName) {
-            LOGGER.debug("Bypass rules for authentication handlers [{}] indicate the request may be ignored", principal.getId());
+            LOGGER.debug("Bypass rules for authentication handlers [{}] indicate the request may be ignored", bypassProperties.getAuthenticationHandlerName());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
         final boolean bypassByCredType = locateMatchingCredentialType(authentication, bypassProperties.getCredentialClassType());
         if (bypassByCredType) {
-            LOGGER.debug("Bypass rules for credential types [{}] indicate the request may be ignored", principal.getId());
+            LOGGER.debug("Bypass rules for credential types [{}] indicate the request may be ignored", bypassProperties.getCredentialClassType());
+            updateAuthenticationToRememberBypass(authentication, provider, principal);
+            return false;
+        }
+
+        final boolean bypassByHttpRequest = locateMatchingHttpRequest(authentication, request);
+        if (bypassByHttpRequest) {
+            LOGGER.debug("Bypass rules for http request indicate the request may be ignored for [{}]", principal.getId());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
@@ -162,8 +186,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      */
     protected boolean locateMatchingAttributeBasedOnPrincipalAttributes(
             final MultifactorAuthenticationProviderBypassProperties bypass, final Principal principal) {
-        return locateMatchingAttributeValue(bypass.getPrincipalAttributeName(),
-                bypass.getPrincipalAttributeValue(), principal.getAttributes());
+        return locateMatchingAttributeValue(bypass.getPrincipalAttributeName(), bypass.getPrincipalAttributeValue(), principal.getAttributes());
     }
 
     /**
@@ -178,7 +201,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
                                                    final Map<String, Object> attributes) {
         return locateMatchingAttributeValue(attrName, attrValue, attributes, true);
     }
-
+    
     /**
      * Evaluate attribute rules for bypass.
      *
@@ -231,5 +254,37 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);
         return !values.isEmpty();
+    }
+
+    /**
+     * Locate matching http request and determine if bypass should be enabled.
+     *
+     * @param authentication the authentication
+     * @param request        the request
+     * @return true /false
+     */
+    protected boolean locateMatchingHttpRequest(final Authentication authentication, final HttpServletRequest request) {
+        if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
+            if (httpRequestRemoteAddressPattern.matcher(request.getRemoteAddr()).find()) {
+                LOGGER.debug("Http request remote address [{}] matches [{}]", bypassProperties.getHttpRequestRemoteAddress(), request.getRemoteAddr());
+                return true;
+            }
+            if (httpRequestRemoteAddressPattern.matcher(request.getRemoteHost()).find()) {
+                LOGGER.debug("Http request remote host [{}] matches [{}]", bypassProperties.getHttpRequestRemoteAddress(), request.getRemoteHost());
+                return true;
+            }
+        }
+
+        if (StringUtils.isNotBlank(bypassProperties.getHttpRequestHeaders())) {
+            final List<String> headerNames = Collections.list(request.getHeaderNames());
+            final boolean matched = this.httpRequestHeaderPatterns.stream()
+                    .anyMatch(pattern -> headerNames.stream().anyMatch(name -> pattern.matcher(name).matches()));
+            if (matched) {
+                LOGGER.debug("Http request remote headers [{}] match [{}]", headerNames, bypassProperties.getHttpRequestHeaders());
+                return true;
+            }
+        }
+
+        return false;
     }
 }

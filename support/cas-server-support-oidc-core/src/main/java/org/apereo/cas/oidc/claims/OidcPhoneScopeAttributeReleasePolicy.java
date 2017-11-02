@@ -19,7 +19,7 @@ public class OidcPhoneScopeAttributeReleasePolicy extends BaseOidcScopeAttribute
     private final List<String> allowedAttributes = Stream.of("phone_number", "phone_number_verified").collect(Collectors.toList());
 
     public OidcPhoneScopeAttributeReleasePolicy() {
-        super(OidcConstants.PHONE);
+        super(OidcConstants.StandardScopes.PHONE.getScope());
         setAllowedAttributes(allowedAttributes);
     }
 

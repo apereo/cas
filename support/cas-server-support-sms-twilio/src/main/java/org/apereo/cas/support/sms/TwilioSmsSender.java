@@ -8,15 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is {@link TwillioSmsSender}.
+ * This is {@link TwilioSmsSender}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class TwillioSmsSender implements SmsSender {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TwillioSmsSender.class);
+public class TwilioSmsSender implements SmsSender {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TwilioSmsSender.class);
     
-    public TwillioSmsSender(final String accountId, final String token) {
+    public TwilioSmsSender(final String accountId, final String token) {
         Twilio.init(accountId, token);
     }
 

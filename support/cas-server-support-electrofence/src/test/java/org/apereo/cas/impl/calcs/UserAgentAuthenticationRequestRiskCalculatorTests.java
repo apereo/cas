@@ -32,9 +32,9 @@ import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
@@ -120,7 +120,7 @@ public class UserAgentAuthenticationRequestRiskCalculatorTests {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
 
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");

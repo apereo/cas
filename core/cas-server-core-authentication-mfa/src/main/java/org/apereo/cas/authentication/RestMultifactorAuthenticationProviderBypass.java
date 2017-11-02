@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -29,7 +30,8 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider) {
+                                                                  final MultifactorAuthenticationProvider provider,
+                                                                  final HttpServletRequest request) {
         try {
             final Principal principal = authentication.getPrincipal();
             final MultifactorAuthenticationProviderBypassProperties.Rest rest = bypassProperties.getRest();
@@ -49,6 +51,6 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider);
+        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
     }
 }

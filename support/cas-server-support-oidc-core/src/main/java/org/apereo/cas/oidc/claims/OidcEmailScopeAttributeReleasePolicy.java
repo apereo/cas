@@ -19,7 +19,7 @@ public class OidcEmailScopeAttributeReleasePolicy extends BaseOidcScopeAttribute
     private List<String> allowedAttributes = Stream.of("email", "email_verified").collect(Collectors.toList());
 
     public OidcEmailScopeAttributeReleasePolicy() {
-        super(OidcConstants.EMAIL);
+        super(OidcConstants.StandardScopes.EMAIL.getScope());
         setAllowedAttributes(allowedAttributes);
     }
 

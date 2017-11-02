@@ -224,8 +224,7 @@ server.contextPath=/cas
 # By default and if you remove this setting, CAS runs on port 8080
 server.port=8443
 
-# To disable SSL configuration, comment out the following settings
-# Or set to blank values.
+# To disable SSL configuration, comment out the following settings or set to blank values.
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
@@ -1426,7 +1425,7 @@ To learn more about this topic, [please review this guide](SMS-Email-Configurati
 
 To learn more about this topic, [please review this guide](SMS-Messaging-Configuration.html).
 
-### Twillio
+### Twilio
 
 ```properties
 # cas.twilio.accountId=
@@ -2742,6 +2741,8 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.gauth.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.gauth.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.gauth.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.gauth.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 #### Google Authenticator JSON
@@ -2812,6 +2813,8 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.yubikey.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.yubikey.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.yubikey.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.yubikey.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 #### YubiKey JSON Device Store
@@ -2899,6 +2902,8 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.radius.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.radius.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.radius.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.radius.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ### DuoSecurity
@@ -2923,6 +2928,8 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.duo[0].bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.duo[0].bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.duo[0].bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo.
@@ -2949,6 +2956,8 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.u2f.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.u2f.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.u2f.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.u2f.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 
 # cas.authn.mfa.u2f.expireRegistrations=30
 # cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
@@ -3055,6 +3064,8 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 # cas.authn.mfa.swivel.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.swivel.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.swivel.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.swivel.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.swivel.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ### Microsoft Azure
@@ -3078,6 +3089,8 @@ To learn more about this topic, [please review this guide](MicrosoftAzure-Authen
 # cas.authn.mfa.azure.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.azure.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.azure.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.azure.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.azure.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ### Authy
@@ -3102,6 +3115,8 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.authy.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.authy.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.authy.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.authy.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ## SAML Core

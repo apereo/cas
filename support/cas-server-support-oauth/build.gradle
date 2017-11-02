@@ -1,5 +1,7 @@
 description = "Apereo CAS Server OAuth Provider Support"
 dependencies {
+    api project(":api:cas-server-core-api")
+    
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":core:cas-server-core-services")

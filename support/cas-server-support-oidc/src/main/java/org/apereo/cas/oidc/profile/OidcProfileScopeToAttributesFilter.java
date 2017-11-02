@@ -107,7 +107,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             final Collection<String> scopes = new ArrayList<>(OAuth20Utils.getRequestedScopes(context));
             scopes.addAll(oidcService.getScopes());
 
-            if (!scopes.contains(OidcConstants.OPENID)) {
+            if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.debug("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
                         + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
                         + "CAS will not process any attribute claims and will return the authenticated principal as is.", scopes);
@@ -153,49 +153,55 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         oidc.getScopes().forEach(s -> {
             LOGGER.debug("Reviewing scope [{}] for [{}]", s, service.getServiceId());
 
-            switch (s.trim().toLowerCase()) {
-                case OidcConstants.EMAIL:
-                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, OidcEmailScopeAttributeReleasePolicy.class.getSimpleName());
-                    policy.getPolicies().add(new OidcEmailScopeAttributeReleasePolicy());
-                    break;
-                case OidcConstants.ADDRESS:
-                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
-                            OidcAddressScopeAttributeReleasePolicy.class.getSimpleName());
-                    policy.getPolicies().add(new OidcAddressScopeAttributeReleasePolicy());
-                    break;
-                case OidcConstants.PROFILE:
-                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
-                            OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
-                    policy.getPolicies().add(new OidcProfileScopeAttributeReleasePolicy());
-                    break;
-                case OidcConstants.PHONE:
-                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
-                            OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
-                    policy.getPolicies().add(new OidcPhoneScopeAttributeReleasePolicy());
-                    break;
-                case OidcConstants.OFFLINE_ACCESS:
-                    LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
-                    oidc.setGenerateRefreshToken(Boolean.TRUE);
-                    break;
-                case OidcCustomScopeAttributeReleasePolicy.SCOPE_CUSTOM:
-                    LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());
-                    otherScopes.add(s.trim());
-                    break;
-                default:
-                    LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
-                            + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
+            try {
+                final OidcConstants.StandardScopes scope = OidcConstants.StandardScopes.valueOf(s.trim().toLowerCase().toUpperCase());
+                switch (scope) {
+                    case EMAIL:
+                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, OidcEmailScopeAttributeReleasePolicy.class.getSimpleName());
+                        policy.getPolicies().add(new OidcEmailScopeAttributeReleasePolicy());
+                        break;
+                    case ADDRESS:
+                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
+                                OidcAddressScopeAttributeReleasePolicy.class.getSimpleName());
+                        policy.getPolicies().add(new OidcAddressScopeAttributeReleasePolicy());
+                        break;
+                    case PROFILE:
+                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
+                                OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
+                        policy.getPolicies().add(new OidcProfileScopeAttributeReleasePolicy());
+                        break;
+                    case PHONE:
+                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
+                                OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
+                        policy.getPolicies().add(new OidcPhoneScopeAttributeReleasePolicy());
+                        break;
+                    case OFFLINE_ACCESS:
+                        LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
+                        oidc.setGenerateRefreshToken(Boolean.TRUE);
+                        break;
+                    case CUSTOM:
+                        LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());
+                        otherScopes.add(s.trim());
+                        break;
+                    default:
+                        LOGGER.debug("Scope [{}] is unsupported for service [{}]", s, service.getId());
+                        break;
+                }
+            } catch (final Exception e) {
+                LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
+                        + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
 
-                    final BaseOidcScopeAttributeReleasePolicy userPolicy = userScopes.stream()
-                            .filter(t -> t.getScopeName().equals(s.trim()))
-                            .findFirst()
-                            .orElse(null);
-                    if (userPolicy != null) {
-                        LOGGER.debug("Mapped user-defined scope [{}] to attribute release policy [{}]", s, userPolicy);
-                        policy.getPolicies().add(userPolicy);
-                    }
+                final BaseOidcScopeAttributeReleasePolicy userPolicy = userScopes.stream()
+                        .filter(t -> t.getScopeName().equals(s.trim()))
+                        .findFirst()
+                        .orElse(null);
+                if (userPolicy != null) {
+                    LOGGER.debug("Mapped user-defined scope [{}] to attribute release policy [{}]", s, userPolicy);
+                    policy.getPolicies().add(userPolicy);
+                }
             }
         });
-        otherScopes.remove(OidcConstants.OPENID);
+        otherScopes.remove(OidcConstants.StandardScopes.OPENID.getScope());
         if (!otherScopes.isEmpty()) {
             LOGGER.debug("Mapped scopes [{}] to attribute release policy [{}]", otherScopes,
                     OidcCustomScopeAttributeReleasePolicy.class.getSimpleName());

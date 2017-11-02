@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This is {@link GroovyMultifactorAuthenticationProviderBypass}.
  *
@@ -28,17 +30,18 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider) {
+                                                                  final MultifactorAuthenticationProvider provider,
+                                                                  final HttpServletRequest request) {
         try {
             final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                             + "service [{}] and provider [{}] via Groovy script [{}]",
                     principal.getId(), registeredService, provider, this.groovyScript);
             return ScriptingUtils.executeGroovyScript(this.groovyScript,
-                    new Object[]{authentication, principal, registeredService, provider, LOGGER}, Boolean.class);
+                    new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider);
+        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
     }
 }
