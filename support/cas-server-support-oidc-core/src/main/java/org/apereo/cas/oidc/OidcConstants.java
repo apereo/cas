@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc;
 
+import org.apache.commons.text.WordUtils;
+
 /**
  * This is {@link OidcConstants}.
  *
@@ -51,7 +53,7 @@ public interface OidcConstants {
          * Custom scope.
          */
         CUSTOM("custom"),
-        
+
         /**
          * address scope.
          */
@@ -61,7 +63,7 @@ public interface OidcConstants {
          * email scope.
          */
         EMAIL("email"),
-        
+
         /**
          * profile scope.
          */
@@ -77,14 +79,18 @@ public interface OidcConstants {
          */
         OFFLINE_ACCESS("offline_access");
 
-        private final String name;
+        private final String scope;
 
-        StandardScopes(final String name) {
-            this.name = name;
+        StandardScopes(final String scope) {
+            this.scope = scope;
         }
 
-        public String getName() {
-            return name;
+        public String getScope() {
+            return scope;
+        }
+
+        public String getFriendlyName() {
+            return WordUtils.capitalize("offline_access".replace('_', ' '));
         }
     }
 
@@ -94,7 +100,7 @@ public interface OidcConstants {
     String PROMPT_NONE = "none";
 
     /**
-     * The Authorization Server SHOULD prompt the End-User for reauthentication.
+     * The Authorization Server SHOULD prompt the End-User for re-authentication.
      */
     String PROMPT_LOGIN = "login";
 
