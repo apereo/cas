@@ -4,14 +4,12 @@
 
 import {Injectable} from '@angular/core';
 import {Service} from '../service';
-import {Http} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class ControlsService extends Service {
 
-  constructor (protected http: Http) {
+  constructor(http: HttpClient) {
     super(http);
   }
-
-
 }

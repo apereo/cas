@@ -11,6 +11,7 @@ import {Data} from '../data';
 export class OidcclientComponent implements OnInit {
 
   service: OidcRegisteredService;
+  showOAuthSecret: boolean;
 
   constructor(public messages: Messages,
               public data: Data) {
