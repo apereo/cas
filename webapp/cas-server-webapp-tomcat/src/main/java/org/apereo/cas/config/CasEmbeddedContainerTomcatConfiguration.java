@@ -72,8 +72,10 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureRewriteValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final Resource res = casProperties.getServer().getRewriteValveConfigLocation();
+        final Resource res = casProperties.getServer().getRewriteValve().getLocation();
         if (ResourceUtils.doesResourceExist(res)) {
+            LOGGER.debug("Configuring rewrite valve at [{}]", res);
+            
             final RewriteValve valve = new RewriteValve() {
                 @Override
                 protected synchronized void startInternal() throws LifecycleException {

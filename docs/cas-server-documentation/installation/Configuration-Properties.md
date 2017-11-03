@@ -360,6 +360,14 @@ for the embedded Tomcat container.
 # cas.server.extAccessLog.directory=
 ```
 
+#### Rewrite Valve Valve
+
+Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html) for the embedded Tomcat container.
+
+```properties
+# cas.server.rewriteValve.location=classpath://container/tomcat/rewrite.config
+```
+
 ## CAS Server
 
 Identify the CAS server. `name` and `prefix` are always required settings.
