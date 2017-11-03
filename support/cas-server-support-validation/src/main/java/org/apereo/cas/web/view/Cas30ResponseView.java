@@ -16,6 +16,7 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,15 +36,22 @@ public class Cas30ResponseView extends Cas20ResponseView {
     
     private final boolean releaseProtocolAttributes;
 
+    private final Collection<String> onlyReleaseProtocolAttributes;
+    private final Collection<String> neverReleaseProtocolAttributes;
+
     public Cas30ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder,
                              final ServicesManager servicesManager,
                              final String authenticationContextAttribute,
                              final View view,
                              final boolean releaseProtocolAttributes,
+                             final Collection<String> onlyReleaseProtocolAttributes,
+                             final Collection<String> neverReleaseProtocolAttributes,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view, serviceSelectionStrategy);
         this.releaseProtocolAttributes = releaseProtocolAttributes;
+        this.onlyReleaseProtocolAttributes = onlyReleaseProtocolAttributes;
+        this.neverReleaseProtocolAttributes = neverReleaseProtocolAttributes;
     }
 
     @Override
@@ -101,6 +109,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, CollectionUtils.wrap(contextProvider));
         }        
+
+        filterAuthenticationAttributesByReleaseVisibility(filteredAuthenticationAttributes);
+
         return filteredAuthenticationAttributes;
     }
 
@@ -148,5 +159,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
             });
         });
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
+    }
+
+    private void filterAuthenticationAttributesByReleaseVisibility(final Map<String, Object> attributes) {
+        attributes.keySet().removeAll(neverReleaseProtocolAttributes);
+        if (!onlyReleaseProtocolAttributes.isEmpty()) {
+            attributes.keySet().retainAll(onlyReleaseProtocolAttributes);
+        }
     }
 }

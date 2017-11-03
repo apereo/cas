@@ -38,6 +38,7 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -109,7 +110,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         };
 
         final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager,
-                "attribute", viewDelegated, true,
+                "attribute", viewDelegated, true, new HashSet<>(), new HashSet<>(),
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
