@@ -6,6 +6,7 @@ import org.apereo.cas.services.web.view.AbstractCasView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -22,7 +23,8 @@ public class Cas10ResponseView extends AbstractCasView {
                              final ProtocolAttributeEncoder protocolAttributeEncoder, 
                              final ServicesManager servicesManager, 
                              final String authenticationContextAttribute) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
+                new HashSet<>(), new HashSet<>());
     }
 
     @Override
