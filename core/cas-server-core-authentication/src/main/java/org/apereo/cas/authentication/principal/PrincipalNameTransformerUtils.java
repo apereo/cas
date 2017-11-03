@@ -3,8 +3,12 @@ package org.apereo.cas.authentication.principal;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
+import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformer;
+import org.apereo.cas.util.transforms.NoOpPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
+import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
 
 /**
  * This is {@link PrincipalNameTransformerUtils}.
@@ -24,30 +28,39 @@ public final class PrincipalNameTransformerUtils {
      * @return the principal name transformer
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
+        final ChainingPrincipalNameTransformer chain = new ChainingPrincipalNameTransformer();
 
-        final PrincipalNameTransformer res;
+        if (p.getGroovy().getLocation() != null) {
+            final GroovyPrincipalNameTransformer t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
+            chain.addTransformer(t);
+        }
+        
+        if (StringUtils.isNotBlank(p.getPattern())) {
+            final RegexPrincipalNameTransformer t = new RegexPrincipalNameTransformer(p.getPattern());
+            chain.addTransformer(t);
+        }
+
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
             final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
-            res = t;
+            chain.addTransformer(t);
         } else {
-            res = formUserId -> formUserId;
+            chain.addTransformer(new NoOpPrincipalNameTransformer());
         }
 
-        switch (p.getCaseConversion()) {
-            case UPPERCASE:
-                final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer(res);
-                t.setToUpperCase(true);
-                return t;
-
-            case LOWERCASE:
-                final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
-                t1.setToUpperCase(false);
-                return t1;
-            default:
-                //nothing
+        if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.UPPERCASE) {
+            final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer();
+            t.setToUpperCase(true);
+            chain.addTransformer(t);
         }
-        return res;
+
+        if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.LOWERCASE) {
+            final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer();
+            t.setToUpperCase(false);
+            chain.addTransformer(t);
+        }
+
+        return chain;
     }
 }

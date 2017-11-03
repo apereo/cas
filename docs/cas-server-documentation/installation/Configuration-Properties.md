@@ -1552,6 +1552,8 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.passwordEncoder.secret=
 # cas.authn.radius.passwordEncoder.strength=16
 
+# cas.authn.radius.principalTransformation.pattern=(.+)@example.org
+# cas.authn.radius.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.radius.principalTransformation.suffix=
 # cas.authn.radius.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.radius.principalTransformation.prefix=
@@ -1572,6 +1574,8 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 # cas.authn.file.passwordEncoder.secret=
 # cas.authn.file.passwordEncoder.strength=16
 
+# cas.authn.file.principalTransformation.pattern=(.+)@example.org
+# cas.authn.file.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.file.principalTransformation.suffix=
 # cas.authn.file.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.file.principalTransformation.prefix=
@@ -1591,6 +1595,8 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 # cas.authn.reject.passwordEncoder.secret=
 # cas.authn.reject.passwordEncoder.strength=16
 
+# cas.authn.reject.principalTransformation.pattern=(.+)@example.org
+# cas.authn.reject.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.reject.principalTransformation.suffix=
 # cas.authn.reject.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.reject.principalTransformation.prefix=
@@ -1642,6 +1648,8 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
 # cas.authn.jdbc.query[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.query[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.query[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.query[0].principalTransformation.suffix=
 # cas.authn.jdbc.query[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.query[0].principalTransformation.prefix=
@@ -1685,6 +1693,8 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
 # cas.authn.jdbc.search[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.search[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.search[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.search[0].principalTransformation.suffix=
 # cas.authn.jdbc.search[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.search[0].principalTransformation.prefix=
@@ -1725,6 +1735,8 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].passwordEncoder.secret=
 # cas.authn.jdbc.bind[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.bind[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.bind[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.bind[0].principalTransformation.suffix=
 # cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.bind[0].principalTransformation.prefix=
@@ -1780,6 +1792,8 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
 # cas.authn.jdbc.encode[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.encode[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.encode[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.encode[0].principalTransformation.suffix=
 # cas.authn.jdbc.encode[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.encode[0].principalTransformation.prefix=
@@ -1797,6 +1811,8 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.collectionName=users
 # cas.authn.mongo.name=
 
+# cas.authn.mongo.principalTransformation.pattern=(.+)@example.org
+# cas.authn.mongo.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.mongo.principalTransformation.suffix=
 # cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.mongo.principalTransformation.prefix=
@@ -1998,6 +2014,8 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].passwordEncoder.secret=
 # cas.authn.ldap[0].passwordEncoder.strength=16
 
+# cas.authn.ldap[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.ldap[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.ldap[0].principalTransformation.suffix=
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
@@ -2213,6 +2231,8 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].passwordEncoder.secret=
 # cas.authn.jaas[0].passwordEncoder.strength=16
 
+# cas.authn.jaas[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jaas[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jaas[0].principalTransformation.suffix=
 # cas.authn.jaas[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jaas[0].principalTransformation.prefix=
@@ -2275,6 +2295,8 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ```properties
 # cas.authn.token.name=
 
+# cas.authn.token.principalTransformation.pattern=(.+)@example.org
+# cas.authn.token.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.token.principalTransformation.suffix=
 # cas.authn.token.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.token.principalTransformation.prefix=
@@ -2320,6 +2342,8 @@ To learn more about this topic, [please review this guide](Couchbase-Authenticat
 # cas.authn.couchbase.passwordEncoder.secret=
 # cas.authn.couchbase.passwordEncoder.strength=16
 
+# cas.authn.couchbase.principalTransformation.pattern=(.+)@example.org
+# cas.authn.couchbase.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.couchbase.principalTransformation.suffix=
 # cas.authn.couchbase.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.couchbase.principalTransformation.prefix=
@@ -2355,6 +2379,8 @@ To learn more about this topic, [please review this guide](AWS-CloudDirectory-Au
 # cas.authn.cloudDirectory.passwordEncoder.secret=
 # cas.authn.cloudDirectory.passwordEncoder.strength=16
 
+# cas.authn.cloudDirectory.principalTransformation.pattern=(.+)@example.org
+# cas.authn.cloudDirectory.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.cloudDirectory.principalTransformation.suffix=
 # cas.authn.cloudDirectory.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.cloudDirectory.principalTransformation.prefix=
@@ -2388,6 +2414,8 @@ prior to production rollouts.</p></div>
 # cas.authn.accept.passwordEncoder.secret=
 # cas.authn.accept.passwordEncoder.strength=16
 
+# cas.authn.accept.principalTransformation.pattern=(.+)@example.org
+# cas.authn.accept.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.accept.principalTransformation.suffix=
 # cas.authn.accept.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.accept.principalTransformation.prefix=
@@ -2540,6 +2568,8 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.passwordEncoder.secret=
 # cas.authn.shiro.passwordEncoder.strength=16
 
+# cas.authn.shiro.principalTransformation.pattern=(.+)@example.org
+# cas.authn.shiro.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.shiro.principalTransformation.suffix=
 # cas.authn.shiro.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.shiro.principalTransformation.prefix=
