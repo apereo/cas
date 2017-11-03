@@ -164,6 +164,19 @@ public final class CollectionUtils {
      * @param source the source
      * @return the set
      */
+    public static <T> Set<T> wrapSet(final T... source) {
+        final Set<T> list = new LinkedHashSet<>();
+        addToCollection(list, source);
+        return list;
+    }
+    
+    /**
+     * Wrap set set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
     public static <T> List<T> wrapList(final T... source) {
         final List<T> list = new ArrayList<>();
         addToCollection(list, source);
