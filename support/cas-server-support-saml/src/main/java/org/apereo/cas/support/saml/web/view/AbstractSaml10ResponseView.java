@@ -77,6 +77,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      *                                       to adjust their server time configuration.
      * @param issueLength                    Sets the length of time in seconds between the {@code NotBefore}
      *                                       and {@code NotOnOrAfter} attributes in the SAML assertion. Default 30s.
+     * @param authnAttrsToRelease            The Authentication attributes to release in the response. If this
+     *                                       collection is empty, all attributes are released.
+     * @param authnAttrsToNeverRelease       The Authentication attributes to never release in the response.
      */
     public AbstractSaml10ResponseView(final boolean successResponse,
                                       final ProtocolAttributeEncoder protocolAttributeEncoder,
