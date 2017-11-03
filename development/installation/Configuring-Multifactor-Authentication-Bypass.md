@@ -71,6 +71,7 @@ def boolean run(final Object... args) {
     def registeredService = args[2]
     def provider = args[3]
     def logger = args[4]
+    def httpRequest = args[5]
 
     // Stuff happens...
 
