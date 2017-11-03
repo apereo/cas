@@ -167,6 +167,16 @@ The following options may be used:
 | `UPPERCASE`             | Convert the username to uppercase.
 | `LOWERCASE`             | Convert the username to lowercase.
 
+Authentication handlers as part of principal transformation may also be provided a path to a Groovy script to transform the provided username. The outline of the script may take on the following form:
+
+```groovy
+def String run(final Object... args) {
+    def providedUsername = args[0]
+    def logger = args[1]
+    return providedUsername.concat("SomethingElse)
+}
+```
+
 ## Hibernate & JDBC
 
 Control global properties that are relevant to Hibernate,
@@ -285,7 +295,7 @@ The generated value for `k` needs to be assigned to the relevant CAS settings. N
 
 Certain features such as the ability to produce [JWTs as CAS tickets](Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an outsider and a client application that need not have access to the signing secrets directly and visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity and decode it. This particular option makes little sense in situations where CAS itself is both a producer and a consumer of the payload.
 
-<div class="alert alert-info"><strong>Remember</strong><p>Signing and encryption options are not mutually exclusive. While it would be rather nonsensical, it is entire possible for CAS to use <code>AES</code> keys for signing and <code>RSA</code> keys for encryption, or vice versa.</p></div>
+<div class="alert alert-info"><strong>Remember</strong><p>Signing and encryption options are not mutually exclusive. While it would be rather nonsensical, it is entirely possible for CAS to use <code>AES</code> keys for signing and <code>RSA</code> keys for encryption, or vice versa.</p></div>
 
 In order to enable RSA functionality for signing payloads, you will need to generate a private/public keypair via the following sample commands:
 
