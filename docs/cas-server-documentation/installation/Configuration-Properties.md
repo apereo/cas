@@ -349,7 +349,7 @@ backend cas-pool
 
 #### Extended Access Log Valve
 
-Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
+Enable the [extended access log](http://tomcat.apache.org/tomcat-8.0-doc/config/valve.html#Extended_Access_Log_Valve)
 for the embedded Tomcat container.
 
 ```properties
