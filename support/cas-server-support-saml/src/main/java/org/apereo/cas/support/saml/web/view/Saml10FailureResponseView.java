@@ -8,6 +8,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
 
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -28,8 +29,8 @@ public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
             final String encoding, 
             final int skewAllowance,
             final int issueLength) {
-        super(false, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, 
-                samlObjectBuilder, samlArgumentExtractor, encoding, skewAllowance, issueLength);
+        super(false, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, samlObjectBuilder,
+                samlArgumentExtractor, encoding, skewAllowance, issueLength, new HashSet<>(), new HashSet<>());
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiresModule(name = "cas-server-support-validation", automated = true)
-public class ProtocolAttributeReleaseProperties {
+public class AuthenticationAttributeReleaseProperties {
     private List<String> neverRelease = new ArrayList<>();
 
     private List<String> onlyRelease = new ArrayList<>();

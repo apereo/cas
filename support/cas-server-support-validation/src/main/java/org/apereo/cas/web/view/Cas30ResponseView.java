@@ -36,22 +36,18 @@ public class Cas30ResponseView extends Cas20ResponseView {
     
     private final boolean releaseProtocolAttributes;
 
-    private final Collection<String> onlyReleaseProtocolAttributes;
-    private final Collection<String> neverReleaseProtocolAttributes;
-
     public Cas30ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder,
                              final ServicesManager servicesManager,
                              final String authenticationContextAttribute,
                              final View view,
                              final boolean releaseProtocolAttributes,
-                             final Collection<String> onlyReleaseProtocolAttributes,
-                             final Collection<String> neverReleaseProtocolAttributes,
+                             final Collection<String> authnAttrsToRelease,
+                             final Collection<String> authnAttrsToNeverRelease,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view, serviceSelectionStrategy);
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
+                authnAttrsToRelease, authnAttrsToNeverRelease, serviceSelectionStrategy);
         this.releaseProtocolAttributes = releaseProtocolAttributes;
-        this.onlyReleaseProtocolAttributes = onlyReleaseProtocolAttributes;
-        this.neverReleaseProtocolAttributes = neverReleaseProtocolAttributes;
     }
 
     @Override
@@ -96,8 +92,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any attributes", registeredService);
             return new LinkedHashMap<>(0);
         }
-        
-        final Map<String, Object> filteredAuthenticationAttributes = new HashMap<>(getAuthenticationAttributes(model));
+
+        final Map<String, Object> filteredAuthenticationAttributes =
+                new HashMap<>(filterAuthenticationAttributesForRelease(getAuthenticationAttributes(model)));
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
                 CollectionUtils.wrap(getAuthenticationDate(model)));
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
@@ -109,8 +106,6 @@ public class Cas30ResponseView extends Cas20ResponseView {
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, CollectionUtils.wrap(contextProvider));
         }        
-
-        filterAuthenticationAttributesByReleaseVisibility(filteredAuthenticationAttributes);
 
         return filteredAuthenticationAttributes;
     }
@@ -159,12 +154,5 @@ public class Cas30ResponseView extends Cas20ResponseView {
             });
         });
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
-    }
-
-    private void filterAuthenticationAttributesByReleaseVisibility(final Map<String, Object> attributes) {
-        attributes.keySet().removeAll(neverReleaseProtocolAttributes);
-        if (!onlyReleaseProtocolAttributes.isEmpty()) {
-            attributes.keySet().retainAll(onlyReleaseProtocolAttributes);
-        }
     }
 }

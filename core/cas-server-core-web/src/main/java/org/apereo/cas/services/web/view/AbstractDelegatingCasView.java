@@ -8,6 +8,7 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -30,8 +31,11 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
                                      final ProtocolAttributeEncoder protocolAttributeEncoder,
                                      final ServicesManager servicesManager,
                                      final String authenticationContextAttribute,
-                                     final View view) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
+                                     final View view,
+                                     final Collection<String> authnAttrsToRelease,
+                                     final Collection<String> authnAttrsToNeverRelease) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
+                authnAttrsToRelease, authnAttrsToNeverRelease);
         this.view = view;
     }
 

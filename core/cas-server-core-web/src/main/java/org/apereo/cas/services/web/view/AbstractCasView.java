@@ -20,6 +20,7 @@ import org.springframework.web.servlet.view.AbstractView;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,14 +58,21 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final String authenticationContextAttribute;
 
+    private final Collection<String> authnAttrsToRelease;
+    private final Collection<String> authnAttrsToNeverRelease;
+
     public AbstractCasView(final boolean successResponse,
                            final ProtocolAttributeEncoder protocolAttributeEncoder,
                            final ServicesManager servicesManager,
-                           final String authenticationContextAttribute) {
+                           final String authenticationContextAttribute,
+                           final Collection<String> authnAttrsToRelease,
+                           final Collection<String> authnAttrsToNeverRelease) {
         this.successResponse = successResponse;
         this.protocolAttributeEncoder = protocolAttributeEncoder;
         this.servicesManager = servicesManager;
         this.authenticationContextAttribute = authenticationContextAttribute;
+        this.authnAttrsToRelease = authnAttrsToRelease;
+        this.authnAttrsToNeverRelease = authnAttrsToNeverRelease;
     }
 
     /**
@@ -160,6 +168,25 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
         return (String) authn.getAttributes().get(attributeName);
+    }
+
+    /**
+     * Filter the authentication attributes for release in validation responses.
+     *
+     * @param rawAttributes the attributes to filter
+     */
+    protected Map<String, Object> filterAuthenticationAttributesForRelease(final Map<String, Object> rawAttributes) {
+        final Map<String, Object> attrs = new HashMap<>(rawAttributes);
+
+        // remove any attributes explicitly prohibited
+        attrs.keySet().removeAll(authnAttrsToNeverRelease);
+
+        // only apply whitelist if it contains attributes
+        if (!authnAttrsToRelease.isEmpty()) {
+            attrs.keySet().retainAll(authnAttrsToRelease);
+        }
+
+        return attrs;
     }
 
     /**

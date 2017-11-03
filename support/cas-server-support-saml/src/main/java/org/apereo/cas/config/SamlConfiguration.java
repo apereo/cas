@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationAttributeReleaseProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
@@ -93,12 +94,14 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
+        final AuthenticationAttributeReleaseProperties authenticationAttributeRelease = casProperties.getAuthn().getAuthenticationAttributeRelease();
         return new Saml10SuccessResponseView(protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
                 StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
                 casProperties.getSamlCore().getIssueLength(), casProperties.getSamlCore().getIssuer(),
-                casProperties.getSamlCore().getAttributeNamespace());
+                casProperties.getSamlCore().getAttributeNamespace(), authenticationAttributeRelease.getOnlyRelease(),
+                authenticationAttributeRelease.getNeverRelease());
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceFailureView")

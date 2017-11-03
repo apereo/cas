@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -85,8 +86,11 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                                       final ArgumentExtractor samlArgumentExtractor,
                                       final String encoding,
                                       final int skewAllowance,
-                                      final int issueLength) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
+                                      final int issueLength,
+                                      final Collection<String> authnAttrsToRelease,
+                                      final Collection<String> authnAttrsToNeverRelease) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
+                authnAttrsToRelease, authnAttrsToNeverRelease);
         this.samlObjectBuilder = samlObjectBuilder;
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.encoding = encoding;

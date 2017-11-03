@@ -11,6 +11,8 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -28,14 +30,27 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
      * The Service selection strategy.
      */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
-    public Cas20ResponseView(final boolean successResponse, 
+
+    public Cas20ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder, 
                              final ServicesManager servicesManager, 
                              final String authenticationContextAttribute, 
                              final View view,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
+        this(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
+                new HashSet<>(), new HashSet<>(), serviceSelectionStrategy);
+    }
+
+    protected Cas20ResponseView(final boolean successResponse,
+                                final ProtocolAttributeEncoder protocolAttributeEncoder,
+                                final ServicesManager servicesManager,
+                                final String authenticationContextAttribute,
+                                final View view,
+                                final Collection<String> authnAttrsToRelease,
+                                final Collection<String> authnAttrsToNeverRelease,
+                                final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
+                authnAttrsToRelease, authnAttrsToNeverRelease);
         this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategy;
     }
 

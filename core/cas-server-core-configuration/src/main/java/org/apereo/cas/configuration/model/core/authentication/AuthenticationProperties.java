@@ -281,10 +281,10 @@ public class AuthenticationProperties implements Serializable {
     private FortressAuthenticationProperties fortress = new FortressAuthenticationProperties();
 
     /**
-     * Authentication/protocol attribute release settings.
+     * Authentication attribute release settings.
      */
     @NestedConfigurationProperty
-    private ProtocolAttributeReleaseProperties protocolAttributeRelease = new ProtocolAttributeReleaseProperties();
+    private AuthenticationAttributeReleaseProperties authenticationAttributeRelease = new AuthenticationAttributeReleaseProperties();
 
     /**
      * Whether CAS authentication/protocol attributes
@@ -308,12 +308,12 @@ public class AuthenticationProperties implements Serializable {
         this.surrogate = surrogate;
     }
 
-    public ProtocolAttributeReleaseProperties getProtocolAttributeRelease() {
-        return protocolAttributeRelease;
+    public AuthenticationAttributeReleaseProperties getAuthenticationAttributeRelease() {
+        return authenticationAttributeRelease;
     }
 
-    public void setProtocolAttributeRelease(final ProtocolAttributeReleaseProperties protocolAttributeRelease) {
-        this.protocolAttributeRelease = protocolAttributeRelease;
+    public void setAuthenticationAttributeRelease(final AuthenticationAttributeReleaseProperties authenticationAttributeRelease) {
+        this.authenticationAttributeRelease = authenticationAttributeRelease;
     }
 
     public boolean isReleaseProtocolAttributes() {

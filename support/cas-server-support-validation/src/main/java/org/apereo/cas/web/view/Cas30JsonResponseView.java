@@ -35,12 +35,12 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
                                  final ServicesManager servicesManager,
                                  final String authenticationContextAttribute,
                                  final boolean releaseProtocolAttributes,
-                                 final Collection<String> onlyReleaseProtocolAttributes,
-                                 final Collection<String> neverReleaseProtocolAttributes,
+                                 final Collection<String> authnAttrsToRelease,
+                                 final Collection<String> authnAttrsToNeverRelease,
                                  final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                createDelegatedView(), releaseProtocolAttributes, onlyReleaseProtocolAttributes,
-                neverReleaseProtocolAttributes, serviceSelectionStrategy);
+                createDelegatedView(), releaseProtocolAttributes, authnAttrsToRelease,
+                authnAttrsToNeverRelease, serviceSelectionStrategy);
     }
 
     private static MappingJackson2JsonView createDelegatedView() {

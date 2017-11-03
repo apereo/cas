@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, NoOpCipherExecutor.getInstance()),
                 mgmr, "attribute", new Saml10ObjectBuilder(configBean),
                 new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(),
-                1000, 30, "testIssuer", "whatever");
+                1000, 30, "testIssuer", "whatever", new HashSet<>(), new HashSet<>());
     }
 
     @Test
