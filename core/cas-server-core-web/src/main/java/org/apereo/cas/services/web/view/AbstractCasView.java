@@ -174,6 +174,8 @@ public abstract class AbstractCasView extends AbstractView {
      * Filter the authentication attributes for release in validation responses.
      *
      * @param rawAttributes the attributes to filter
+     * @return The filtered authentication attributes
+     * @since 5.2.0
      */
     protected Map<String, Object> filterAuthenticationAttributesForRelease(final Map<String, Object> rawAttributes) {
         final Map<String, Object> attrs = new HashMap<>(rawAttributes);
