@@ -25,7 +25,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     fi
 else
     echo -e "The build is publishing snapshots; Skipping tests and checks...\n"
-    gradleBuild="$gradleBuild -x test -x check"
+    gradleBuild="$gradleBuild -x test -x check -x javadoc"
 fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
