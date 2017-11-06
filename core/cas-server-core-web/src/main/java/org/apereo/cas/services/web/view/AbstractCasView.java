@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ import org.springframework.web.servlet.view.AbstractView;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,21 +58,18 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final String authenticationContextAttribute;
 
-    private final Collection<String> authnAttrsToRelease;
-    private final Collection<String> authnAttrsToNeverRelease;
+    protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     public AbstractCasView(final boolean successResponse,
                            final ProtocolAttributeEncoder protocolAttributeEncoder,
                            final ServicesManager servicesManager,
                            final String authenticationContextAttribute,
-                           final Collection<String> authnAttrsToRelease,
-                           final Collection<String> authnAttrsToNeverRelease) {
+                           final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
         this.successResponse = successResponse;
         this.protocolAttributeEncoder = protocolAttributeEncoder;
         this.servicesManager = servicesManager;
         this.authenticationContextAttribute = authenticationContextAttribute;
-        this.authnAttrsToRelease = authnAttrsToRelease;
-        this.authnAttrsToNeverRelease = authnAttrsToNeverRelease;
+        this.authenticationAttributeReleasePolicy = authenticationAttributeReleasePolicy;
     }
 
     /**
@@ -168,27 +165,6 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
         return (String) authn.getAttributes().get(attributeName);
-    }
-
-    /**
-     * Filter the authentication attributes for release in validation responses.
-     *
-     * @param rawAttributes the attributes to filter
-     * @return The filtered authentication attributes
-     * @since 5.2.0
-     */
-    protected Map<String, Object> filterAuthenticationAttributesForRelease(final Map<String, Object> rawAttributes) {
-        final Map<String, Object> attrs = new HashMap<>(rawAttributes);
-
-        // remove any attributes explicitly prohibited
-        attrs.keySet().removeAll(authnAttrsToNeverRelease);
-
-        // only apply whitelist if it contains attributes
-        if (!authnAttrsToRelease.isEmpty()) {
-            attrs.keySet().retainAll(authnAttrsToRelease);
-        }
-
-        return attrs;
     }
 
     /**

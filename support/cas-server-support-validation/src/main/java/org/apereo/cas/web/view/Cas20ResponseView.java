@@ -4,6 +4,7 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -36,21 +35,10 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
                              final ServicesManager servicesManager, 
                              final String authenticationContextAttribute, 
                              final View view,
+                             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        this(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
-                new HashSet<>(), new HashSet<>(), serviceSelectionStrategy);
-    }
-
-    protected Cas20ResponseView(final boolean successResponse,
-                                final ProtocolAttributeEncoder protocolAttributeEncoder,
-                                final ServicesManager servicesManager,
-                                final String authenticationContextAttribute,
-                                final View view,
-                                final Collection<String> authnAttrsToRelease,
-                                final Collection<String> authnAttrsToNeverRelease,
-                                final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
-                authnAttrsToRelease, authnAttrsToNeverRelease);
+                authenticationAttributeReleasePolicy);
         this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategy;
     }
 

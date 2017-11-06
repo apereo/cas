@@ -9,8 +9,8 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.AuthenticationAttributeReleaseProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationAuthorizer;
@@ -56,6 +56,10 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("cas3SuccessView")
     private View cas3SuccessView;
+
+    @Autowired
+    @Qualifier("authenticationAttributeReleasePolicy")
+    private AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Autowired
     @Qualifier("authenticationContextValidator")
@@ -125,14 +129,15 @@ public class CasValidationConfiguration {
     @ConditionalOnMissingBean(name = "cas1ServiceSuccessView")
     public View cas1ServiceSuccessView() {
         return new Cas10ResponseView(true, protocolAttributeEncoder, servicesManager,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), authenticationAttributeReleasePolicy);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "cas1ServiceFailureView")
     public View cas1ServiceFailureView() {
         return new Cas10ResponseView(false, protocolAttributeEncoder,
-                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                authenticationAttributeReleasePolicy);
     }
 
     @Bean
@@ -140,13 +145,12 @@ public class CasValidationConfiguration {
     public View cas2ServiceSuccessView() {
         return new Cas20ResponseView(true, protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                this.cas2SuccessView, selectionStrategies);
+                cas2SuccessView, authenticationAttributeReleasePolicy, selectionStrategies);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "cas3ServiceJsonView")
     public View cas3ServiceJsonView() {
-        final AuthenticationAttributeReleaseProperties authenticationAttributeRelease = casProperties.getAuthn().getAuthenticationAttributeRelease();
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final boolean isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30JsonResponseView(true,
@@ -154,15 +158,13 @@ public class CasValidationConfiguration {
                 servicesManager,
                 authenticationContextAttribute,
                 isReleaseProtocolAttributes,
-                authenticationAttributeRelease.getOnlyRelease(),
-                authenticationAttributeRelease.getNeverRelease(),
+                authenticationAttributeReleasePolicy,
                 selectionStrategies);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
     public View cas3ServiceSuccessView() {
-        final AuthenticationAttributeReleaseProperties protocolAttributeRelease = casProperties.getAuthn().getAuthenticationAttributeRelease();
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final boolean isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30ResponseView(true,
@@ -171,8 +173,7 @@ public class CasValidationConfiguration {
                 authenticationContextAttribute,
                 cas3SuccessView,
                 isReleaseProtocolAttributes,
-                protocolAttributeRelease.getOnlyRelease(),
-                protocolAttributeRelease.getNeverRelease(),
+                authenticationAttributeReleasePolicy,
                 selectionStrategies);
     }
 

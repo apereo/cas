@@ -2,13 +2,13 @@ package org.apereo.cas.services.web.view;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -32,10 +32,9 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
                                      final ServicesManager servicesManager,
                                      final String authenticationContextAttribute,
                                      final View view,
-                                     final Collection<String> authnAttrsToRelease,
-                                     final Collection<String> authnAttrsToNeverRelease) {
+                                     final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                authnAttrsToRelease, authnAttrsToNeverRelease);
+                authenticationAttributeReleasePolicy);
         this.view = view;
     }
 

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,11 +42,10 @@ public class Cas30ResponseView extends Cas20ResponseView {
                              final String authenticationContextAttribute,
                              final View view,
                              final boolean releaseProtocolAttributes,
-                             final Collection<String> authnAttrsToRelease,
-                             final Collection<String> authnAttrsToNeverRelease,
+                             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
-                authnAttrsToRelease, authnAttrsToNeverRelease, serviceSelectionStrategy);
+                authenticationAttributeReleasePolicy, serviceSelectionStrategy);
         this.releaseProtocolAttributes = releaseProtocolAttributes;
     }
 
@@ -93,8 +92,11 @@ public class Cas30ResponseView extends Cas20ResponseView {
             return new LinkedHashMap<>(0);
         }
 
-        final Map<String, Object> filteredAuthenticationAttributes =
-                new HashMap<>(filterAuthenticationAttributesForRelease(getAuthenticationAttributes(model)));
+        // Authentication Attributes
+        final Map<String, Object> filteredAuthenticationAttributes = authenticationAttributeReleasePolicy
+                .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
+
+        // CAS 3.0 specific protocol attributes
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
                 CollectionUtils.wrap(getAuthenticationDate(model)));
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
