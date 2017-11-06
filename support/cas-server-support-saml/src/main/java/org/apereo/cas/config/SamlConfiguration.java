@@ -116,7 +116,7 @@ public class SamlConfiguration {
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
                 StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
-                casProperties.getSamlCore().getIssueLength());
+                casProperties.getSamlCore().getIssueLength(), authenticationAttributeReleasePolicy);
     }
 
 
