@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Default AuthenticationAttributeReleasePolicy implementation.
@@ -18,7 +19,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     private Collection<String> attributesToRelease;
 
     @Nonnull
-    private HashSet<String> attributesToNeverRelease = new HashSet<>();
+    private Set<String> attributesToNeverRelease = new HashSet<>();
 
     public void setAttributesToRelease(final Collection<String> attrs) {
         attributesToRelease = attrs;
