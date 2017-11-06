@@ -306,9 +306,17 @@ openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 
 The private key path (i.e. `file:///path/to/private.key`) needs to be configured for the signing key in CAS properties for the relevant feature. The public key needs to be shared with client applications and consumers of the payload in order to validate the payload signature.
 
+```properties
+# cas.xyz.crypto.signing.key=file:///etc/cas/config/private.key
+```
+
 <div class="alert alert-info"><strong>Key Size</strong><p>Remember that RSA key sizes are required to be at least <code>2048</code> and above. Smaller key sizes are not accepted by CAS and will cause runtime errors. Choose wisely.</p></div>
 
 In order to enable RSA functionality for encrypting payloads, you will need to essentially execute the reverse of the above operations. The client application will provide you with a public key which will be used to encrypt the payload and whose path (i.e. `file:///path/to/public.key`) needs to be configured for the encryption key in CAS properties for the relevant feature. Once the payload is submitted, the client should use its own private key to decode the payload and unpack it.
+
+```properties
+# cas.xyz.crypto.encryption.key=file:///etc/cas/config/public.key
+```
 
 ## DDL Configuration
 
