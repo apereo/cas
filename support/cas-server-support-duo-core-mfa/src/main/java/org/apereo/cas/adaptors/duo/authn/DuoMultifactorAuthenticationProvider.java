@@ -16,4 +16,11 @@ public interface DuoMultifactorAuthenticationProvider extends MultifactorAuthent
      * @return the duo authentication service
      */
     DuoSecurityAuthenticationService getDuoAuthenticationService();
+
+    /**
+     * Link to the registration portal where new users
+     * will be redirected to sign up for duo.
+     * @return the url.
+     */
+    String getRegistrationUrl();
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Authentication;
@@ -20,12 +21,13 @@ import org.springframework.webflow.execution.Event;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
-        implements DuoMultifactorAuthenticationProvider {
+public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDuoMultifactorAuthenticationProvider.class);
     private static final long serialVersionUID = 4789727148634156909L;
 
+    private String registrationUrl;
+    
     private DuoSecurityAuthenticationService duoAuthenticationService;
 
     /**
@@ -89,14 +91,14 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
         }
 
         final Principal principal = authentication.getPrincipal();
-        final DuoUserAccountAuthStatus acct = this.duoAuthenticationService.getDuoUserAccountAuthStatus(principal.getId());
+        final DuoUserAccount acct = this.duoAuthenticationService.getDuoUserAccount(principal.getId());
         LOGGER.debug("Found duo user account status [{}] for [{}]", acct, principal);
 
-        if (acct == DuoUserAccountAuthStatus.ALLOW) {
+        if (acct.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
             LOGGER.debug("Account status is set for allow/bypass for [{}]", principal);
             return false;
         }
-        if (acct == DuoUserAccountAuthStatus.DENY) {
+        if (acct.getStatus() == DuoUserAccountAuthStatus.DENY) {
             LOGGER.warn("Account status is set to deny access to [{}]", principal);
         }
 
@@ -106,6 +108,15 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     @Override
     public String getFriendlyName() {
         return "Duo Security";
+    }
+
+    @Override
+    public String getRegistrationUrl() {
+        return registrationUrl;
+    }
+
+    public void setRegistrationUrl(final String registrationUrl) {
+        this.registrationUrl = registrationUrl;
     }
 }
 

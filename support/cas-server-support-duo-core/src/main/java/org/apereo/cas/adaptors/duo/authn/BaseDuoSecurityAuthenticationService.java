@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
@@ -25,16 +26,18 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
-    
+
     private static final int AUTH_API_VERSION = 2;
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
-    private static final String RESULT_KEY_RESULT= "result";
+    private static final String RESULT_KEY_RESULT = "result";
+    private static final String RESULT_KEY_ENROLL_PORTAL_URL = "enroll_portal_url";
+    private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseDuoSecurityAuthenticationService.class);
-    
+
     /**
      * Duo Properties.
      */
@@ -114,7 +117,10 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     }
 
     @Override
-    public DuoUserAccountAuthStatus getDuoUserAccountAuthStatus(final String username) {
+    public DuoUserAccount getDuoUserAccount(final String username) {
+        final DuoUserAccount account = new DuoUserAccount(username);
+        account.setStatus(DuoUserAccountAuthStatus.AUTH);
+
         try {
             final Http userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
@@ -129,12 +135,19 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
                 final JsonNode response = result.get(RESULT_KEY_RESPONSE);
                 final String authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
-                return DuoUserAccountAuthStatus.valueOf(authResult);
+
+                final DuoUserAccountAuthStatus status = DuoUserAccountAuthStatus.valueOf(authResult);
+                account.setStatus(status);
+                account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
+                if (status == DuoUserAccountAuthStatus.ENROLL) {
+                    final String enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
+                    account.setEnrollPortalUrl(enrollUrl);
+                }
             }
         } catch (final Exception e) {
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
         }
-        return DuoUserAccountAuthStatus.AUTH;
+        return account;
     }
 
     private static String buildUrlHttpScheme(final String url) {

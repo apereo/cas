@@ -40,11 +40,7 @@ function preserveAnchorTagOnForm() {
         var location = self.document.location;
         var hash = decodeURIComponent(location.hash);
         
-        if (hash == undefined || hash === '') {
-            return;
-        }
-        
-        if (hash && hash.indexOf('#') === -1) {
+        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
             hash = '#' + hash;
         }
 

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
+import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.authentication.Credential;
 
 import java.io.Serializable;
@@ -51,5 +51,5 @@ public interface DuoSecurityAuthenticationService extends Serializable {
      * @param username the actual user name
      * @return the duo user account
      */
-    DuoUserAccountAuthStatus getDuoUserAccountAuthStatus(String username);
+    DuoUserAccount getDuoUserAccount(String username);
 }

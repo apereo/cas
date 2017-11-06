@@ -2956,6 +2956,7 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].duoApiHost=
 # cas.authn.mfa.duo[0].trustedDeviceEnabled=false
 # cas.authn.mfa.duo[0].id=mfa-duo
+# cas.authn.mfa.duo[0].registrationUrl=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
 
 # cas.authn.mfa.duo[0].bypass.type=DEFAULT|GROOVY|REST

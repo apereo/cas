@@ -21,6 +21,9 @@ public interface CasWebflowConstants {
     /** Cancel transition id. */
     String TRANSITION_ID_CANCEL = "cancel";
 
+    /** Enroll transition id. */
+    String TRANSITION_ID_ENROLL = "enroll";
+    
     /**
      * The state id 'success'.
      */

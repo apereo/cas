@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
+import org.apereo.cas.adaptors.duo.web.flow.action.DetermineDuoUserAccountAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.DefaultVariegatedMultifactorAuthenticationProvider;
@@ -94,13 +95,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                         && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
                 .forEach(duo -> {
                     final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
-                    final DefaultDuoMultifactorAuthenticationProvider pWeb = new DefaultDuoMultifactorAuthenticationProvider(s);
-                    pWeb.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-                    pWeb.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
-                    pWeb.setOrder(duo.getRank());
-                    pWeb.setId(duo.getId());
-
-                    provider.addProvider(pWeb);
+                    final DefaultDuoMultifactorAuthenticationProvider duoP = new DefaultDuoMultifactorAuthenticationProvider(s);
+                    duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+                    duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
+                    duoP.setOrder(duo.getRank());
+                    duoP.setId(duo.getId());
+                    duoP.setRegistrationUrl(duo.getRegistrationUrl());
+                    provider.addProvider(duoP);
                 });
 
         if (provider.getProviders().isEmpty()) {
@@ -114,6 +115,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider());
     }
 
+    @Bean
+    public Action determineDuoUserAccountAction() {
+        return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider());
+    }
+    
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {

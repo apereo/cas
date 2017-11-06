@@ -36,7 +36,7 @@ public class DuoSecurityConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -61,7 +61,7 @@ public class DuoSecurityConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-    
+
     @Bean
     public Action duoNonWebAuthenticationAction() {
         return new DuoDirectAuthenticationAction();
@@ -74,12 +74,12 @@ public class DuoSecurityConfiguration {
     
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
-        return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport, 
-                centralAuthenticationService, 
-                servicesManager, 
+        return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport,
+                centralAuthenticationService,
+                servicesManager,
                 ticketRegistrySupport,
-                warnCookieGenerator, 
-                authenticationRequestServiceSelectionStrategies, 
+                warnCookieGenerator,
+                authenticationRequestServiceSelectionStrategies,
                 multifactorAuthenticationProviderSelector);
     }
 }
