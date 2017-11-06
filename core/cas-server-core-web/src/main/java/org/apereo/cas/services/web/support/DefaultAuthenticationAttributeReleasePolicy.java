@@ -44,7 +44,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      * Return authentications attributes that we are allowed to release to client systems.
      *
      * @param authentication The authentication object we are processing.
-     * @return
+     * @return The attributes to be released
      */
     @Override
     public Map<String, Object> getAuthenticationAttributesForRelease(@Nonnull final Authentication authentication) {

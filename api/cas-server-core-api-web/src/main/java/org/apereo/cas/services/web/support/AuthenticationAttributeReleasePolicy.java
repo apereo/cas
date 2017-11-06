@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * This component is used to handle release of protocol attributes in validation responses.
+ * This component is used to handle release of authentication attributes in validation responses.
  *
  * @author Daniel Frett
  * @since 5.2.0
