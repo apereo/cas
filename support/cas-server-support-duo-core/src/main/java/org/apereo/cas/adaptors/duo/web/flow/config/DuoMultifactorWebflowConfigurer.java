@@ -44,8 +44,10 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private final VariegatedMultifactorAuthenticationProvider provider;
 
-    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                           final boolean enableDeviceRegistration, final VariegatedMultifactorAuthenticationProvider provider,
+    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                           final boolean enableDeviceRegistration, 
+                                           final VariegatedMultifactorAuthenticationProvider provider,
                                            final ApplicationContext applicationContext,
                                            final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration, applicationContext, casProperties);
@@ -79,20 +81,27 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private FlowDefinitionRegistry buildDuoFlowRegistry(final MultifactorAuthenticationProvider p) {
         final DynamicFlowModelBuilder modelBuilder = new DynamicFlowModelBuilder();
+        
+        createDuoFlowVariables(modelBuilder);
+        createDuoFlowStartActions(modelBuilder);
+        createDuoFlowStates(modelBuilder);
 
-        // vars
-        final LinkedList<VarModel> vars = new LinkedList<>();
-        vars.add(new VarModel(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class.getName()));
-        modelBuilder.setVars(vars);
+        return createDuoFlowDefinitionRegistry(p, modelBuilder);
+    }
 
-        // starts
-        final LinkedList<AbstractActionModel> starts = new LinkedList<>();
-        starts.add(new EvaluateModel("initialFlowSetupAction"));
-        modelBuilder.setOnStartActions(starts);
+    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final MultifactorAuthenticationProvider p, final DynamicFlowModelBuilder modelBuilder) {
+        final FlowModelHolder holder = new DefaultFlowModelHolder(modelBuilder);
+        final FlowBuilder flowBuilder = new FlowModelFlowBuilder(holder);
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
+        builder.addFlowBuilder(flowBuilder, p.getId());
+        return builder.build();
+    }
 
-        // states
+    private void createDuoFlowStates(final DynamicFlowModelBuilder modelBuilder) {
         final LinkedList<AbstractStateModel> states = new LinkedList<>();
 
+        ///////////////
+        
         ActionStateModel actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         LinkedList<AbstractActionModel> actions = new LinkedList<>();
         actions.add(new EvaluateModel("initializeLoginAction"));
@@ -101,7 +110,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         LinkedList<TransitionModel> trans = new LinkedList<>();
         TransitionModel transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo("determineDuoRequest");
+        transModel.setTo("determineDuoUserAccount");
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -109,6 +118,27 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         ///////////////
 
+        actModel = new ActionStateModel("determineDuoUserAccount");
+        actions = new LinkedList<>();
+        actions.add(new EvaluateModel("determineDuoUserAccountAction"));
+        actModel.setActions(actions);
+
+        trans = new LinkedList<>();
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        transModel.setTo("determineDuoRequest");
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_ENROLL);
+        transModel.setTo("redirectToDuoRegistration");
+        trans.add(transModel);
+        
+        actModel.setTransitions(trans);
+        states.add(actModel);
+        
+        ////////////
+        
         actModel = new ActionStateModel("determineDuoRequest");
         actions = new LinkedList<>();
         actions.add(new EvaluateModel("checkWebAuthenticationRequestAction"));
@@ -213,16 +243,26 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         ////////////////////
 
+        final ViewStateModel endModel = new ViewStateModel("redirectToDuoRegistration");
+        endModel.setView("externalRedirect:#{flowScope.duoRegistrationUrl}");
+        states.add(endModel);
+        
+        ////////////////////
         states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_SUCCESS));
 
         ////////////////////
-
         modelBuilder.setStates(states);
+    }
 
-        final FlowModelHolder holder = new DefaultFlowModelHolder(modelBuilder);
-        final FlowBuilder flowBuilder = new FlowModelFlowBuilder(holder);
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, p.getId());
-        return builder.build();
+    private void createDuoFlowStartActions(final DynamicFlowModelBuilder modelBuilder) {
+        final LinkedList<AbstractActionModel> starts = new LinkedList<>();
+        starts.add(new EvaluateModel("initialFlowSetupAction"));
+        modelBuilder.setOnStartActions(starts);
+    }
+
+    private void createDuoFlowVariables(final DynamicFlowModelBuilder modelBuilder) {
+        final LinkedList<VarModel> vars = new LinkedList<>();
+        vars.add(new VarModel(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class.getName()));
+        modelBuilder.setVars(vars);
     }
 }
