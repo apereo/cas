@@ -96,7 +96,6 @@ public class AuthyMultifactorProperties extends BaseMultifactorProviderPropertie
         this.phoneAttribute = phoneAttribute;
     }
     
-
     public boolean isForceVerification() {
         return forceVerification;
     }
