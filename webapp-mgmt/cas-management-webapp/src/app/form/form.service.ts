@@ -5,31 +5,28 @@ import {Http, Headers} from '@angular/http'
 import {Injectable} from '@angular/core';
 import {AbstractRegisteredService} from '../../domain/registered-service';
 import {FormData} from '../../domain/form-data';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class FormService {
 
-  constructor(private http: Http) {}
+  constructor(private http: HttpClient) {}
 
   getService(id: string): Promise<AbstractRegisteredService> {
     return this.http.get('getService?id=' + id)
       .toPromise()
       .then(resp => {
-        const as: AbstractRegisteredService = resp.json() as AbstractRegisteredService;
+        const as: AbstractRegisteredService = resp as AbstractRegisteredService;
         return as;
       })
       .catch(this.handleError)
   }
 
   saveService(service: AbstractRegisteredService): Promise<number> {
-    const headers = new Headers({
-      'Content-Type': 'application/json'
-    });
-
     return this.http
-      .post('saveService', JSON.stringify(service), {headers: headers})
+      .post('saveService', service)
       .toPromise()
-      .then(resp => resp.text())
+      .then(resp => resp)
       .catch(this.handleError)
   }
 
@@ -37,7 +34,7 @@ export class FormService {
   formData(): Promise<FormData> {
     return this.http.get('formData')
       .toPromise()
-      .then(resp => resp.json())
+      .then(resp => resp)
       .catch(this.handleError);
   }
 
