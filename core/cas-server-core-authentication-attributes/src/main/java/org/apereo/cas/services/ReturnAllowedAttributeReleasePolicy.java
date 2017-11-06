@@ -61,7 +61,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     /**
      * Authorize release of allowed attributes map.
      *
-     * @param attrs the attrs
+     * @param attrs the attributes
      * @return the map
      */
     protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Map<String, Object> attrs) {

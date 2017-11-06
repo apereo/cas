@@ -46,6 +46,15 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
     private String duoApiHost;
 
     /**
+     * Link to a registration app, typically developed in-house
+     * in order to allow new users to sign-up for duo functionality.
+     * If the user account status requires enrollment and this link
+     * is specified, CAS will redirect the authentication flow
+     * to this registration app. Otherwise, the default duo mechanism
+     * for new-user registrations shall take over.
+     */
+    private String registrationUrl;
+    /**
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
@@ -92,5 +101,13 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
 
     public void setDuoApiHost(final String duoApiHost) {
         this.duoApiHost = duoApiHost;
+    }
+
+    public String getRegistrationUrl() {
+        return registrationUrl;
+    }
+
+    public void setRegistrationUrl(final String registrationUrl) {
+        this.registrationUrl = registrationUrl;
     }
 }
