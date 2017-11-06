@@ -11,6 +11,7 @@ import java.util.Map;
 /**
  * Default AuthenticationAttributeReleasePolicy implementation.
  *
+ * @author Daniel Frett
  * @since 5.2.0
  */
 public class DefaultAuthenticationAttributeReleasePolicy implements AuthenticationAttributeReleasePolicy {
@@ -27,12 +28,23 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
         attributesToNeverRelease = attrs != null ? new HashSet<>(attrs) : new HashSet<>();
     }
 
+    /**
+     * Add additional attributes that should never be released in a validation response.
+     *
+     * @param attrs Additional attributes to never release
+     */
     public void addAttributesToNeverRelease(final Collection<String> attrs) {
         if (attrs != null) {
             attributesToNeverRelease.addAll(attrs);
         }
     }
 
+    /**
+     * Return authentications attributes that we are allowed to release to client systems.
+     *
+     * @param authentication The authentication object we are processing.
+     * @return
+     */
     @Override
     public Map<String, Object> getAuthenticationAttributesForRelease(@Nonnull final Authentication authentication) {
         final HashMap<String, Object> attrs = new HashMap<>(authentication.getAttributes());

@@ -58,6 +58,9 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final String authenticationContextAttribute;
 
+    /**
+     * Authentication attribute release policy.
+     */
     protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     public AbstractCasView(final boolean successResponse,
