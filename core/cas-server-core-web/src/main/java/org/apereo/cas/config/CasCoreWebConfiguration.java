@@ -1,14 +1,16 @@
 package org.apereo.cas.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
+import com.google.common.collect.ImmutableSet;
+import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationAttributeReleaseProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
@@ -25,6 +28,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * This is {@link CasCoreWebConfiguration}.
@@ -92,4 +100,24 @@ public class CasCoreWebConfiguration {
         return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls);
     }
 
+    @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
+    @RefreshScope
+    @Bean
+    public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy() {
+        final AuthenticationAttributeReleaseProperties authenticationAttributeRelease =
+                casProperties.getAuthn().getAuthenticationAttributeRelease();
+        final DefaultAuthenticationAttributeReleasePolicy policy = new DefaultAuthenticationAttributeReleasePolicy();
+        policy.setAttributesToRelease(authenticationAttributeRelease.getOnlyRelease());
+        policy.setAttributesToNeverRelease(authenticationAttributeRelease.getNeverRelease());
+        policy.addAttributesToNeverRelease(internalAuthenticationAttributes());
+        return policy;
+    }
+
+    @Bean
+    public Set<String> internalAuthenticationAttributes() {
+        return ImmutableSet.of(
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME
+        );
+    }
 }

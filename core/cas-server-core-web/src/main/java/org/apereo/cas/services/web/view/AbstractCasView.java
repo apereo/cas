@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.slf4j.Logger;
@@ -57,14 +58,21 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final String authenticationContextAttribute;
 
+    /**
+     * Authentication attribute release policy.
+     */
+    protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+
     public AbstractCasView(final boolean successResponse,
                            final ProtocolAttributeEncoder protocolAttributeEncoder,
                            final ServicesManager servicesManager,
-                           final String authenticationContextAttribute) {
+                           final String authenticationContextAttribute,
+                           final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
         this.successResponse = successResponse;
         this.protocolAttributeEncoder = protocolAttributeEncoder;
         this.servicesManager = servicesManager;
         this.authenticationContextAttribute = authenticationContextAttribute;
+        this.authenticationAttributeReleasePolicy = authenticationAttributeReleasePolicy;
     }
 
     /**
