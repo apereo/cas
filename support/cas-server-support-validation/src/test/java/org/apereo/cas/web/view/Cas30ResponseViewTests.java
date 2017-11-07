@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
@@ -42,7 +43,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-
 
 /**
  * Unit tests for {@link Cas30ResponseView}.
@@ -108,8 +108,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         };
 
-        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager,
-                "attribute", viewDelegated, true,
+        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager, "attribute",
+                viewDelegated, true, new DefaultAuthenticationAttributeReleasePolicy(),
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
