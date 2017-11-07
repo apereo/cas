@@ -8,7 +8,7 @@ import {Data} from '../data';
 
 enum Type {
   CAS = 'cas',
-  OAUTH = 'oath',
+  OAUTH = 'oauth',
   SAML = 'saml',
   OIDC = 'oidc',
   WS_FED = 'wsfed'
