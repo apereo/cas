@@ -12,6 +12,7 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
@@ -63,8 +64,8 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, NoOpCipherExecutor.getInstance()),
                 mgmr, "attribute", new Saml10ObjectBuilder(configBean),
-                new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(),
-                1000, 30, "testIssuer", "whatever");
+                new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(), 1000, 30,
+                "testIssuer", "whatever", new DefaultAuthenticationAttributeReleasePolicy());
     }
 
     @Test

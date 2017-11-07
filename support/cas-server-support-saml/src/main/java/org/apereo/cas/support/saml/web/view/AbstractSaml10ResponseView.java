@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -76,6 +77,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      *                                       to adjust their server time configuration.
      * @param issueLength                    Sets the length of time in seconds between the {@code NotBefore}
      *                                       and {@code NotOnOrAfter} attributes in the SAML assertion. Default 30s.
+     * @param authAttrReleasePolicy          This policy controls which authentication attributes get released in a
+     *                                       validation response.
      */
     public AbstractSaml10ResponseView(final boolean successResponse,
                                       final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -85,8 +88,10 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                                       final ArgumentExtractor samlArgumentExtractor,
                                       final String encoding,
                                       final int skewAllowance,
-                                      final int issueLength) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
+                                      final int issueLength,
+                                      final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
+                authAttrReleasePolicy);
         this.samlObjectBuilder = samlObjectBuilder;
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.encoding = encoding;
