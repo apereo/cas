@@ -1061,8 +1061,9 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 Defines whether CAS should include and release protocol attributes defined in the specification in addition to the
 principal attributes. By default all authentication attributes are released when protocol attributes are enabled for
-release. If you wish to restrict which authentication attributes get released, you can use the onlyRelease and
-neverRelease properties.
+release. If you wish to restrict which authentication attributes get released, you can use the below settings to control authentication attributes more globally.
+
+Protocol/authentication attributes may also be released conditionally on a per-service basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
 
 ```properties
 # cas.authn.releaseProtocolAttributes=true
