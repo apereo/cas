@@ -7,7 +7,7 @@
 }
 
 .actionWidth {
-  flex: 0 0 20px;
+  flex: 0 0 40px;
 }
 
 /deep/.mat-autocomplete-panel {
