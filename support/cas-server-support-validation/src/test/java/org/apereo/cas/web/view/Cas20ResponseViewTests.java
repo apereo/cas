@@ -5,6 +5,7 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
+import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
@@ -25,7 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-
 
 /**
  * Unit tests for {@link Cas20ResponseView}.
@@ -82,7 +82,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         };
         final Cas20ResponseView view = new Cas20ResponseView(true, null,
-                null, "attribute", delegatedView, 
+                null, "attribute", delegatedView, new DefaultAuthenticationAttributeReleasePolicy(),
                 new DefaultAuthenticationServiceSelectionPlan());
         view.render(modelAndView.getModel(), req, resp);
 

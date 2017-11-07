@@ -15,7 +15,6 @@ import {DomainsModule} from './domains/domains.module';
 import { SearchComponent } from './search/search.component';
 import {SearchService} from './search/SearchService';
 
-import {MATERIAL_COMPATIBILITY_MODE} from '@angular/material';
 import {HeaderService} from './header/header.service';
 import {InitComponent} from 'app/init.component';
 import {ControlsComponent} from './controls/controls.component';
@@ -50,8 +49,7 @@ import {HttpClientModule} from '@angular/common/http';
   providers: [
     Messages,
     SearchService,
-    HeaderService,
-    {provide: MATERIAL_COMPATIBILITY_MODE, useValue: true}
+    HeaderService
   ],
   bootstrap: [AppComponent]
 })

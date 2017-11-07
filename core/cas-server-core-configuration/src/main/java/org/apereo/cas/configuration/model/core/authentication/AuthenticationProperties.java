@@ -281,6 +281,12 @@ public class AuthenticationProperties implements Serializable {
     private FortressAuthenticationProperties fortress = new FortressAuthenticationProperties();
 
     /**
+     * Authentication attribute release settings.
+     */
+    @NestedConfigurationProperty
+    private AuthenticationAttributeReleaseProperties authenticationAttributeRelease = new AuthenticationAttributeReleaseProperties();
+
+    /**
      * Whether CAS authentication/protocol attributes
      * should be released as part of ticket validation.
      */
@@ -300,6 +306,14 @@ public class AuthenticationProperties implements Serializable {
 
     public void setSurrogate(final SurrogateAuthenticationProperties surrogate) {
         this.surrogate = surrogate;
+    }
+
+    public AuthenticationAttributeReleaseProperties getAuthenticationAttributeRelease() {
+        return authenticationAttributeRelease;
+    }
+
+    public void setAuthenticationAttributeRelease(final AuthenticationAttributeReleaseProperties authenticationAttributeRelease) {
+        this.authenticationAttributeRelease = authenticationAttributeRelease;
     }
 
     public boolean isReleaseProtocolAttributes() {
