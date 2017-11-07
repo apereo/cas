@@ -4,6 +4,7 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +29,16 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
      * The Service selection strategy.
      */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
-    public Cas20ResponseView(final boolean successResponse, 
+
+    public Cas20ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder, 
                              final ServicesManager servicesManager, 
                              final String authenticationContextAttribute, 
                              final View view,
+                             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
+                authenticationAttributeReleasePolicy);
         this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategy;
     }
 
