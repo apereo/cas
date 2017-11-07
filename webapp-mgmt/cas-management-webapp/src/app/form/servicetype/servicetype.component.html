@@ -3,7 +3,7 @@
     <mat-select i18n-placeholder="services.form.label.type"
                [placeholder]="messages.services_form_label_type"
                [(ngModel)]="type"
-               (change)="changeType()">
+               (selectionChange)="changeType()">
       <mat-option *ngFor="let opt of data.formData.serviceTypes; let i = index" [value]="opt.value">
         {{ opt.display }}
       </mat-option>
