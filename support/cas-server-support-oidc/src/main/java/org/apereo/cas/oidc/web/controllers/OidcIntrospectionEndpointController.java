@@ -101,38 +101,14 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
             }
 
             final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, credentials.getUsername());
-            if (this.validator.checkServiceValid(service)
-                    && this.validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
-                    && this.validator.checkClientSecret(service, credentials.getPassword())) {
-                final String accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
+            if (validateIntrospectionRequest(service, credentials, request)) {
+                final String accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
+                        request.getParameter(OAuth20Constants.TOKEN));
+
+                LOGGER.debug("Located access token [{}] in the request", accessToken);
                 final AccessToken ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
                 if (ticket != null) {
-                    final OidcIntrospectionAccessTokenResponse introspect = new OidcIntrospectionAccessTokenResponse();
-                    introspect.setActive(true);
-                    introspect.setClientId(service.getClientId());
-                    final Authentication authentication = ticket.getAuthentication();
-                    final String subject = authentication.getPrincipal().getId();
-                    introspect.setSub(subject);
-                    introspect.setUniqueSecurityName(subject);
-                    introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
-                    introspect.setIat(ticket.getCreationTime().toInstant().toEpochMilli());
-
-                    final Object methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-                    final String realmNames = CollectionUtils.toCollection(methods)
-                            .stream()
-                            .map(Object::toString)
-                            .collect(Collectors.joining(","));
-
-                    introspect.setRealmName(realmNames);
-                    introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
-
-                    final String grant = authentication.getAttributes()
-                            .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
-                    introspect.setGrantType(grant);
-                    introspect.setScope(OidcConstants.StandardScopes.OPENID.getScope());
-                    introspect.setAud(service.getServiceId());
-                    introspect.setIss(casProperties.getAuthn().getOidc().getIssuer());
-                    return new ResponseEntity<>(introspect, HttpStatus.OK);
+                    return createIntrospectionResponse(service, ticket);
                 }
             }
         } catch (final Exception e) {
@@ -140,5 +116,44 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private boolean validateIntrospectionRequest(final OAuthRegisteredService service,
+                                                 final UsernamePasswordCredentials credentials,
+                                                 final HttpServletRequest request) {
+        final boolean tokenExists = validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
+                || validator.checkParameterExist(request, OAuth20Constants.TOKEN);
+        return validator.checkServiceValid(service)
+                && tokenExists
+                && validator.checkClientSecret(service, credentials.getPassword());
+    }
+
+    private ResponseEntity<OidcIntrospectionAccessTokenResponse> createIntrospectionResponse(final OAuthRegisteredService service, final AccessToken ticket) {
+        final OidcIntrospectionAccessTokenResponse introspect = new OidcIntrospectionAccessTokenResponse();
+        introspect.setActive(true);
+        introspect.setClientId(service.getClientId());
+        final Authentication authentication = ticket.getAuthentication();
+        final String subject = authentication.getPrincipal().getId();
+        introspect.setSub(subject);
+        introspect.setUniqueSecurityName(subject);
+        introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
+        introspect.setIat(ticket.getCreationTime().toInstant().toEpochMilli());
+
+        final Object methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
+        final String realmNames = CollectionUtils.toCollection(methods)
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+
+        introspect.setRealmName(realmNames);
+        introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
+
+        final String grant = authentication.getAttributes()
+                .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
+        introspect.setGrantType(grant);
+        introspect.setScope(OidcConstants.StandardScopes.OPENID.getScope());
+        introspect.setAud(service.getServiceId());
+        introspect.setIss(casProperties.getAuthn().getOidc().getIssuer());
+        return new ResponseEntity<>(introspect, HttpStatus.OK);
     }
 }

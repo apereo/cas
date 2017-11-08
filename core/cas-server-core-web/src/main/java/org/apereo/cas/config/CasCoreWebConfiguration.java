@@ -1,14 +1,16 @@
 package org.apereo.cas.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
+import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationAttributeReleaseProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
@@ -25,6 +28,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * This is {@link CasCoreWebConfiguration}.
@@ -43,8 +51,9 @@ public class CasCoreWebConfiguration {
      * Load property files containing non-i18n fallback values
      * that should be exposed to Thyme templates.
      * keys in properties files added last will take precedence over the
-     * internal cas_common_messages.properties. 
+     * internal cas_common_messages.properties.
      * Keys in regular messages bundles will override any of the common messages.
+     *
      * @return PropertiesFactoryBean containing all common (non-i18n) messages
      */
     @Bean
@@ -73,7 +82,7 @@ public class CasCoreWebConfiguration {
         bean.setCacheSeconds(mb.getCacheSeconds());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
         bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
-        bean.setBasenames(mb.getBaseNames().toArray(new String[] {}));
+        bean.setBasenames(mb.getBaseNames().toArray(new String[]{}));
         bean.setCommonMessages(casCommonMessages);
         return bean;
     }
@@ -90,6 +99,21 @@ public class CasCoreWebConfiguration {
     public FactoryBean<UrlValidator> urlValidator() {
         final boolean allowLocalLogoutUrls = this.casProperties.getHttpClient().isAllowLocalLogoutUrls();
         return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls);
+    }
+
+    @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
+    @RefreshScope
+    @Bean
+    public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy() {
+        final AuthenticationAttributeReleaseProperties authenticationAttributeRelease =
+                casProperties.getAuthn().getAuthenticationAttributeRelease();
+        final DefaultAuthenticationAttributeReleasePolicy policy = new DefaultAuthenticationAttributeReleasePolicy();
+        policy.setAttributesToRelease(authenticationAttributeRelease.getOnlyRelease());
+        final Set<String> attributesToNeverRelease = CollectionUtils.wrapSet(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        attributesToNeverRelease.addAll(authenticationAttributeRelease.getNeverRelease());
+        policy.setAttributesToNeverRelease(attributesToNeverRelease);
+        return policy;
     }
 
 }
