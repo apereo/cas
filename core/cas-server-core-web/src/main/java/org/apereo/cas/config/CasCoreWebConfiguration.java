@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -11,6 +10,7 @@ import org.apereo.cas.configuration.model.core.authentication.AuthenticationAttr
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -51,8 +51,9 @@ public class CasCoreWebConfiguration {
      * Load property files containing non-i18n fallback values
      * that should be exposed to Thyme templates.
      * keys in properties files added last will take precedence over the
-     * internal cas_common_messages.properties. 
+     * internal cas_common_messages.properties.
      * Keys in regular messages bundles will override any of the common messages.
+     *
      * @return PropertiesFactoryBean containing all common (non-i18n) messages
      */
     @Bean
@@ -81,7 +82,7 @@ public class CasCoreWebConfiguration {
         bean.setCacheSeconds(mb.getCacheSeconds());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
         bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
-        bean.setBasenames(mb.getBaseNames().toArray(new String[] {}));
+        bean.setBasenames(mb.getBaseNames().toArray(new String[]{}));
         bean.setCommonMessages(casCommonMessages);
         return bean;
     }
@@ -108,16 +109,11 @@ public class CasCoreWebConfiguration {
                 casProperties.getAuthn().getAuthenticationAttributeRelease();
         final DefaultAuthenticationAttributeReleasePolicy policy = new DefaultAuthenticationAttributeReleasePolicy();
         policy.setAttributesToRelease(authenticationAttributeRelease.getOnlyRelease());
-        policy.setAttributesToNeverRelease(authenticationAttributeRelease.getNeverRelease());
-        policy.addAttributesToNeverRelease(internalAuthenticationAttributes());
+        final Set<String> attributesToNeverRelease = CollectionUtils.wrapSet(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        attributesToNeverRelease.addAll(authenticationAttributeRelease.getNeverRelease());
+        policy.setAttributesToNeverRelease(attributesToNeverRelease);
         return policy;
     }
 
-    @Bean
-    public Set<String> internalAuthenticationAttributes() {
-        return ImmutableSet.of(
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
-                RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME
-        );
-    }
 }
