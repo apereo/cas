@@ -115,20 +115,20 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final String username = credential.getUsername();
         final String password = credential.getPassword();
 
+        Principal principal = null;
         final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
             lc.login();
+            final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
+            if (principals != null && !principals.isEmpty()) {
+                final java.security.Principal secPrincipal = principals.iterator().next();
+                principal = this.principalFactory.createPrincipal(secPrincipal.getName());
+            }
         } finally {
             lc.logout();
         }
 
-        Principal principal = null;
-        final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
-        if (principals != null && !principals.isEmpty()) {
-            final java.security.Principal secPrincipal = principals.iterator().next();
-            principal = this.principalFactory.createPrincipal(secPrincipal.getName());
-        }
         return createHandlerResult(credential, principal, null);
     }
 
