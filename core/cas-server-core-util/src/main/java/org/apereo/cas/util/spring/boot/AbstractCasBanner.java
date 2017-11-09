@@ -7,7 +7,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
-import org.aspectj.util.FileUtil;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.env.Environment;
