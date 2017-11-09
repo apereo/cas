@@ -13,6 +13,7 @@ package org.apereo.cas.services.listener;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface RegisteredServiceEntryEventService {
     /**
      * Process.
