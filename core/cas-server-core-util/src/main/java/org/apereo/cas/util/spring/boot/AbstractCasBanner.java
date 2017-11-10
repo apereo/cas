@@ -81,6 +81,7 @@ public abstract class AbstractCasBanner implements Banner {
             final Runtime runtime = Runtime.getRuntime();
             formatter.format("JVM Free Memory: %s%n", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
             formatter.format("JVM Maximum Memory: %s%n", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
+            formatter.format("JVM Total Memory: %s%n", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
             formatter.format("JCE Installed: %s%n", StringUtils.capitalize(BooleanUtils.toStringYesNo(isJceInstalled())));
             formatter.format("%s%n", LINE_SEPARATOR);
 
