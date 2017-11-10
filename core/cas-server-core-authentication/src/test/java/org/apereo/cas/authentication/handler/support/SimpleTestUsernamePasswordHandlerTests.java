@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,6 +33,11 @@ public class SimpleTestUsernamePasswordHandlerTests {
     @Test
     public void verifySupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+    }
+
+    @Test
+    public void verifySupportsRememberMeUserCredentials() {
+        assertTrue(this.authenticationHandler.supports(new RememberMeUsernamePasswordCredential()));
     }
 
     @Test
