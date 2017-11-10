@@ -2,7 +2,7 @@ build:
     project_setup:
         override:
             - ./ci/init-travis-build.sh
-            - ./ci/install.sh -DshowStandardStreams=true
+            - ./ci/install.sh -DshowStandardStreams=true -x javadoc
     tests:
         override:
             -
