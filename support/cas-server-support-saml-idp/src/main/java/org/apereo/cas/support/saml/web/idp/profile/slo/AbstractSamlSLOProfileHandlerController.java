@@ -10,6 +10,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -21,7 +23,6 @@ import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,10 +91,11 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         }
 
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
-            final MetadataResolver resolver = SamlIdPUtils.getMetadataResolverForAllSamlServices(this.servicesManager,
-                    SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest),
-                    this.samlRegisteredServiceCachingMetadataResolver);
-            this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, resolver, request, ctx);
+            final String entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
+            final SamlRegisteredService registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
+            final SamlRegisteredServiceServiceProviderMetadataFacade facade = SamlRegisteredServiceServiceProviderMetadataFacade
+                    .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
+            this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);
         response.sendRedirect(casProperties.getServer().getLogoutUrl());
