@@ -309,7 +309,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                 final MultifactorAuthenticationProvider provider) {
         final Map<String, Object> map = new HashMap<>();
         map.put(Principal.class.getName(), principal);
-        map.put(RegisteredService.class.getName(), service);
+        if (service != null) {
+            map.put(RegisteredService.class.getName(), service);
+        }
         map.put(MultifactorAuthenticationProvider.class.getName(), provider);
         return map;
     }
