@@ -1,15 +1,13 @@
 package org.apereo.cas.authentication.handler.support;
 
-import org.apereo.cas.authentication.AbstractAuthenticationHandler;
-import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
-import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
@@ -34,7 +32,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
+public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTestUsernamePasswordAuthenticationHandler.class);
 
@@ -67,14 +65,14 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
                 this.getClass().getName());
     }
-    
+
     @Override
-    public HandlerResult authenticate(final Credential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
-        final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
-        final String username = usernamePasswordCredential.getUsername();
-        final String password = usernamePasswordCredential.getPassword();
+        final String username = credential.getUsername();
+        final String password = credential.getPassword();
 
         final Exception exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
@@ -99,10 +97,5 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         }
         LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();
-    }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof UsernamePasswordCredential;
     }
 }

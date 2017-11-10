@@ -108,8 +108,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     @Override
     public boolean supports(final Credential credential) {
-        if (!credential.getClass().isAssignableFrom(UsernamePasswordCredential.class)) {
-            LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", credential, getName());
+        if (!UsernamePasswordCredential.class.isInstance(credential)) {
+            LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
             return false;
         }
         if (this.credentialSelectionPredicate == null) {
