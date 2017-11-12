@@ -22,6 +22,8 @@ CAS is an open and well-documented authentication protocol. The primary implemen
 
 - [How to contribute][contribute]
 
+If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
+
 ## Documentation
 
 [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
