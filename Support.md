@@ -43,8 +43,7 @@ ecosystem.
 
 ## Paid/Commercial Support
 
-A number of [consulting firms offer paid support](https://www.apereo.org/content/commercial-affiliates) for CAS. We list a few here with whom we have had positive experiences
-and feel comfortable recommending.
+A number of [consulting firms offer paid support](https://www.apereo.org/content/commercial-affiliates) for CAS.
 
 
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
