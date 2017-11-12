@@ -26,7 +26,7 @@ Please search the archives before posting to the community discussion list.
 
 ### Chat Room  
 
-The CAS community chat room is provided by [Gitter][casgitter].
+The CAS community chat room is provided by [Gitter][casgitter]. Apereo also has an official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` channel. The sign-up page is [available here](https://apereo.slack.com/signup).
 
 ### Mailing Lists
 
