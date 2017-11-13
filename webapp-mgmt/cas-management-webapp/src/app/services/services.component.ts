@@ -4,10 +4,9 @@ import {Messages} from '../messages';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ServiceViewService} from './service.service';
 import {Location} from '@angular/common';
-import {MatDialog, MatPaginator, MatSnackBar} from '@angular/material';
+import {MatDialog, MatPaginator, MatSnackBar, MatTableDataSource} from '@angular/material';
 import {DeleteComponent} from '../delete/delete.component';
 import {ControlsService} from '../controls/controls.service';
-import {Database, Datasource} from '../database';
 
 @Component({
   selector: 'app-services',
@@ -18,9 +17,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   deleteItem: ServiceItem;
   domain: String;
   selectedItem: ServiceItem;
-  revertItem: ServiceItem;
-  serviceDatabase: Database<ServiceItem> = new Database<ServiceItem>();
-  dataSource: Datasource<ServiceItem> | null;
+  dataSource: MatTableDataSource<ServiceItem>;
   displayedColumns = ['actions', 'name', 'serviceId', 'description'];
 
   @ViewChild('paginator')
@@ -37,7 +34,8 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.dataSource = new Datasource(this.serviceDatabase, this.paginator);
+    this.dataSource = new MatTableDataSource([]);
+    this.dataSource.paginator = this.paginator;
     this.route.data
       .subscribe((data: { resp: ServiceItem[]}) => {
         if (!data.resp) {
@@ -45,8 +43,11 @@ export class ServicesComponent implements OnInit, AfterViewInit {
             duration: 5000
           });
         }
-        this.serviceDatabase.load(data.resp);
-      });
+        setTimeout(() => {
+          this.dataSource.data = data.resp;
+        },10);
+      }
+    );
     this.route.params.subscribe((params) => this.domain = params['domain']);
   }
 
@@ -102,16 +103,16 @@ export class ServicesComponent implements OnInit, AfterViewInit {
 
   getServices() {
     this.service.getServices(this.domain)
-      .then(resp => this.serviceDatabase.load(resp))
+      .then(resp => this.dataSource.data = resp)
       .catch((e: any) => this.snackBar.open(this.messages.management_services_status_listfail, 'Dismiss', {
         duration: 5000
       }));
   }
 
   moveUp(a: ServiceItem) {
-    const index: number = this.serviceDatabase.data.indexOf(a);
+    const index: number = this.dataSource.data.indexOf(a);
     if (index > 0) {
-      const b: ServiceItem = this.serviceDatabase.data[index - 1];
+      const b: ServiceItem = this.dataSource.data[index - 1];
       a.evalOrder = index - 1;
       b.evalOrder = index;
       this.service.updateOrder(a, b).then(resp => this.refresh());
@@ -119,9 +120,9 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   }
 
   moveDown(a: ServiceItem) {
-    const index: number = this.serviceDatabase.data.indexOf(a);
-    if (index < this.serviceDatabase.data.length - 1) {
-      const b: ServiceItem = this.serviceDatabase.data[index + 1];
+    const index: number = this.dataSource.data.indexOf(a);
+    if (index < this.dataSource.data.length - 1) {
+      const b: ServiceItem = this.dataSource.data[index + 1];
       a.evalOrder = index + 1;
       b.evalOrder = index;
       this.service.updateOrder(a, b).then(resp => this.refresh());
@@ -132,7 +133,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     if (!this.selectedItem) {
       return false;
     }
-    const index = this.serviceDatabase.data.indexOf(this.selectedItem);
+    const index = this.dataSource.data.indexOf(this.selectedItem);
     return index > 0;
   }
 
@@ -140,7 +141,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     if (!this.selectedItem) {
       return false;
     }
-    const index = this.serviceDatabase.data.indexOf(this.selectedItem);
-    return index < this.serviceDatabase.data.length - 1;
+    const index = this.dataSource.data.indexOf(this.selectedItem);
+    return index < this.dataSource.data.length - 1;
   }
 }
