@@ -3,6 +3,7 @@ dependencies {
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-pac4j-core")
+    compile project(":support:cas-server-support-actions")
     implementation libraries.pac4j
     implementation libraries.opensaml
     

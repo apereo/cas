@@ -84,9 +84,10 @@ public class DelegatedClientAuthenticationActionTests {
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
+//        final ProfileService<CommonProfile> profileService = mock(ProfileService.class);
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
                 null, mock(CentralAuthenticationService.class),
-                "theme", "locale", false);
+                "theme", "locale", false, null);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -143,8 +144,10 @@ public class DelegatedClientAuthenticationActionTests {
         final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
 
+//        final ProfileService<CommonProfile> profileService = mock(ProfileService.class);
+
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
-                "theme", "locale", false);
+                "theme", "locale", false, null);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
