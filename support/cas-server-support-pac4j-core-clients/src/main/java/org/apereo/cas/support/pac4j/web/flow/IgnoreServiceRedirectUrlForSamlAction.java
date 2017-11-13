@@ -65,7 +65,7 @@ public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
 
 
     @Override
-    protected Event doExecute(RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
