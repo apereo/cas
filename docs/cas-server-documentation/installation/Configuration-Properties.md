@@ -4535,6 +4535,20 @@ To learn more about this topic, [please review this guide](Redis-Service-Managem
 # cas.serviceRegistry.redis.sentinel.nodes=localhost:26379,localhost:26380,localhost:26381
 ```
 
+### CosmosDb Service Registry
+
+To learn more about this topic, [please review this guide](CosmosDb-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.cosmosDb.uri=
+# cas.serviceRegistry.cosmosDb.key=
+# cas.serviceRegistry.cosmosDb.database=
+# cas.serviceRegistry.cosmosDb.collection=
+# cas.serviceRegistry.cosmosDb.throughput=10000
+# cas.serviceRegistry.cosmosDb.dropCollection=true
+# cas.serviceRegistry.cosmosDb.consistencyLevel=Session
+```
+
 ### DynamoDb Service Registry
 
 To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
