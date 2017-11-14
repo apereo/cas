@@ -90,6 +90,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
      * @return The value of the Logout URL (service) from the web flow after the tested action is executed.
      * 
      * @throws Exception
+     *             When the action execution fails.
      */
     protected Object testServiceRemovalForParticularProfile(final CommonProfile profile) throws Exception {
         // Prepare the input
