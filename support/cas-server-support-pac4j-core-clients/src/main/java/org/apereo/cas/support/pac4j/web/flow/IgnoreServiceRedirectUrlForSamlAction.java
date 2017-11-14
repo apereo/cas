@@ -42,8 +42,8 @@ public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
     /**
      * Name of the web flow attribute that holds the URL where to redirect after the flow.
      * 
-     * @see WebUtils#putLogoutRedirectUrl(RequestContext, String)
-     * @see LogoutAction#doExecuteInternal()
+     * @see org.apereo.cas.web.support.WebUtils#putLogoutRedirectUrl(RequestContext, String)
+     * @see org.apereo.cas.web.flow.LogoutAction#doInternalExecute()
      */
     public static final String FLOW_ATTR_LOGOUT_REDIR_URL = "logoutRedirectUrl";
 
