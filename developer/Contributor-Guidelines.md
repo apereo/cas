@@ -62,11 +62,6 @@ Very simply put:
 
 > You are the one you have been waiting for.
 
-<div class="alert alert-success">
-  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <strong>Notepad Works</strong><br/>Try not to use issue trackers as a backlog for items that need fixes from others. Any good task management software on your laptop will do instead. 
-</div> 
-
 ## What if I am not a developer?
 
 If you have already diagnosed a problem or have found a use case for an attractive improvement and feature, we strongly recommend you simply [walk down the path](https://github.com/apereo/cas/graphs/contributors) of making that all a reality and *contribute* back. If you find yourself unable to do so, you will need to find and procure resources that can [teach you the how-to](https://www.coursera.org/) or [do it for you](https://www.apereo.org/content/commercial-affiliates). Talk to your institution, company, organization, supervisor, boss, mentor, architect, etc and have them procure the right resources for the job.
