@@ -1,13 +1,11 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {DataSource} from '@angular/cdk/table';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
 import {Data} from '../data';
 import {FormData} from '../../../domain/form-data';
 import {Messages} from '../../messages';
+import {Row, RowDataSource} from '../row';
 
 @Component({
   selector: 'app-mappedattributes',
@@ -17,8 +15,7 @@ import {Messages} from '../../messages';
 export class MappedattributesComponent implements OnInit {
   formData: FormData;
   displayedColumns = ['source', 'mapped'];
-  attributeDatabase = new AttributeDatabase();
-  dataSource: AttributeDataSource | null;
+  dataSource: RowDataSource;
 
   @Input()
   attributes: Map<String, String[]>;
@@ -31,46 +28,13 @@ export class MappedattributesComponent implements OnInit {
   }
 
   ngOnInit() {
+    const rows = [];
     for (const key of Array.from(Object.keys(this.attributes))) {
-      this.attributeDatabase.addRow(new Row(key as string));
+      rows.push(new Row(key as string));
     };
-
-    this.dataSource = new AttributeDataSource(this.attributeDatabase);
+    this.dataSource = new RowDataSource(rows);
     this.changeDetector.detectChanges();
   }
 
 }
 
-export class Row {
-  source: String;
-
-  constructor(source: String) {
-    this.source = source;
-  }
-}
-
-export class AttributeDatabase {
-  dataChange: BehaviorSubject<Row[]> = new BehaviorSubject<Row[]>([]);
-  get data(): Row[] { return this.dataChange.value; }
-
-  constructor() {
-  }
-
-  addRow(row: Row) {
-    const copiedData = this.data.slice();
-    copiedData.push(row);
-    this.dataChange.next(copiedData);
-  }
-}
-
-export class AttributeDataSource extends DataSource<any> {
-  constructor(private _attributeDatabase: AttributeDatabase) {
-    super();
-  }
-
-  connect(): Observable<Row[]> {
-    return this._attributeDatabase.dataChange;
-  }
-
-  disconnect() {}
-}

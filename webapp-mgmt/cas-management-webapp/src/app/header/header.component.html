@@ -10,7 +10,7 @@
     </a>
   </div>
   <div class="searchbox">
-    <input #search class="search" placeholder="Search Services">
+    <input #search class="search" placeholder="Search Services" (keypress)="doSearch($event.target.value)">
   </div>
   <div>
     <button mat-button [matMenuTriggerFor]="links">
