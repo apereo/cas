@@ -1,9 +1,8 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +26,8 @@ import org.springframework.webflow.test.MockRequestContext;
  * Unit test of {@link SingleLogoutPreparationAction}.
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class SingleLogoutPreparationActionTests {
 
@@ -44,17 +45,17 @@ public class SingleLogoutPreparationActionTests {
     @Test
     public void actionShouldPopulateRequestAndSessionWithPac4JProfile() throws Exception {
         // Prepare the input
-        MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
-        MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
-        MockHttpSession session = new MockHttpSession();
+        final MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
+        final MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
+        final MockHttpSession session = new MockHttpSession();
         nativeRequest.setSession(session);
-        MockServletContext servletContext = new MockServletContext();
-        ServletExternalContext externalContext = new ServletExternalContext(servletContext, nativeRequest, nativeResponse);
-        MockRequestContext rc = new MockRequestContext();
+        final MockServletContext servletContext = new MockServletContext();
+        final ServletExternalContext externalContext = new ServletExternalContext(servletContext, nativeRequest, nativeResponse);
+        final MockRequestContext rc = new MockRequestContext();
         rc.setExternalContext(externalContext);
 
         // Run the tested action
-        Event e = actionUnderTest.doExecute(rc);
+        final Event e = actionUnderTest.doExecute(rc);
 
         // Check the result
         assertEquals("success", e.getId());
@@ -67,14 +68,14 @@ public class SingleLogoutPreparationActionTests {
 
     @Before
     public void setUpTestedObject() {
-        CommonProfile profile = new CommonProfile();
+        final CommonProfile profile = new CommonProfile();
         profile.setClientName("UnitTestClient");
         profile.setId("Profile-1");
 
-        ProfileService<CommonProfile> profileServiceMock = mock(ProfileService.class);
+        final ProfileService<CommonProfile> profileServiceMock = mock(ProfileService.class);
         when(profileServiceMock.findById(TGT_ID)).thenReturn(profile);
 
-        CookieRetrievingCookieGenerator ticketGrantingTicketCookieGeneratorMock = mock(CookieRetrievingCookieGenerator.class);
+        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGeneratorMock = mock(CookieRetrievingCookieGenerator.class);
         when(ticketGrantingTicketCookieGeneratorMock.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn(TGT_ID);
 
         actionUnderTest = new SingleLogoutPreparationAction(ticketGrantingTicketCookieGeneratorMock, profileServiceMock);

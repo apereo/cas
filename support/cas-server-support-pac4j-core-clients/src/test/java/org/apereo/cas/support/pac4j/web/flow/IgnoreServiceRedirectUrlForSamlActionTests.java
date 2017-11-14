@@ -2,9 +2,7 @@ package org.apereo.cas.support.pac4j.web.flow;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.apereo.cas.util.Pac4jUtils;
 import org.junit.Before;
@@ -42,6 +40,8 @@ import org.springframework.webflow.test.MockRequestContext;
  * 
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class IgnoreServiceRedirectUrlForSamlActionTests {
 
@@ -54,7 +54,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
     @Test
     public void samlClientWithoutSloShouldNotRemoveService() throws Exception {
-        Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_NO_SLO));
+        final Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_NO_SLO));
 
         // Check that the service value is still in the flow
         assertNotNull("For SAML clients without SLO services defined, the 'service' parameter should have been retained.",
@@ -64,7 +64,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
     @Test
     public void samlClientWithSloShouldRemoveService() throws Exception {
-        Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_WITH_SLO));
+        final Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_WITH_SLO));
 
         // Check that the service value has disappeared from the flow
         assertNull("For SAML clients with SLO services defined, the 'service' parameter should have been removed.", logoutUrlFromFlow);
@@ -73,7 +73,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
     @Test
     public void otherClientShouldNotRemoveService() throws Exception {
-        Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(anotherProfile());
+        final Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(anotherProfile());
 
         // Check that the service value is still in the flow
         assertNotNull("For non-SAML2 clients, the 'service' parameter should have been retained.", logoutUrlFromFlow);
@@ -93,20 +93,20 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
      */
     protected Object testServiceRemovalForParticularProfile(final CommonProfile profile) throws Exception {
         // Prepare the input
-        MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
-        MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
-        MockHttpSession session = new MockHttpSession();
+        final MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
+        final MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
+        final MockHttpSession session = new MockHttpSession();
         nativeRequest.setSession(session);
-        MockServletContext servletContext = new MockServletContext();
-        ServletExternalContext externalContext = new ServletExternalContext(servletContext, nativeRequest, nativeResponse);
-        MockRequestContext rc = new MockRequestContext();
+        final MockServletContext servletContext = new MockServletContext();
+        final ServletExternalContext externalContext = new ServletExternalContext(servletContext, nativeRequest, nativeResponse);
+        final MockRequestContext rc = new MockRequestContext();
         rc.setExternalContext(externalContext);
 
         // Simulate that the "service" is in the flow scope
         rc.getFlowScope().put(IgnoreServiceRedirectUrlForSamlAction.FLOW_ATTR_LOGOUT_REDIR_URL, "http://my-service");
 
         // Assure the PAC4J profile exist
-        WebContext wc = Pac4jUtils.getPac4jJ2EContext(nativeRequest, nativeResponse);
+        final WebContext wc = Pac4jUtils.getPac4jJ2EContext(nativeRequest, nativeResponse);
         saveMockProfile(wc, profile);
 
         // Run the tested action
@@ -117,14 +117,14 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
 
     private SAML2Profile samlProfile(final String clientName) {
-        SAML2Profile p = new SAML2Profile();
+        final SAML2Profile p = new SAML2Profile();
         p.setClientName(clientName);
         return p;
     }
 
 
     private CommonProfile anotherProfile() {
-        CommonProfile p = new CommonProfile();
+        final CommonProfile p = new CommonProfile();
         p.setClientName(CLIENT_NAME_NON_SAML);
         return p;
     }
@@ -139,15 +139,15 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
     @Before
     public void setUpTestedAction() {
-        SAML2Client samlClientMockNoSlo = mock(SAML2Client.class);
+        final SAML2Client samlClientMockNoSlo = mock(SAML2Client.class);
         mockSamlClientMetadata(samlClientMockNoSlo, false);
 
-        SAML2Client samlClientMockWithSlo = mock(SAML2Client.class);
+        final SAML2Client samlClientMockWithSlo = mock(SAML2Client.class);
         mockSamlClientMetadata(samlClientMockWithSlo, true);
         
-        FormClient anotherClientMock = mock(FormClient.class);
+        final FormClient anotherClientMock = mock(FormClient.class);
 
-        Clients clientsMock = mock(Clients.class);
+        final Clients clientsMock = mock(Clients.class);
         when(clientsMock.findClient(CLIENT_NAME_SAML_NO_SLO)).thenReturn(samlClientMockNoSlo);
         when(clientsMock.findClient(CLIENT_NAME_SAML_WITH_SLO)).thenReturn(samlClientMockWithSlo);
         when(clientsMock.findClient(CLIENT_NAME_NON_SAML)).thenReturn(anotherClientMock);
@@ -157,22 +157,22 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
 
     private void mockSamlClientMetadata(final SAML2Client client, final boolean hasLogoutService) {
-        IDPSSODescriptor idpssoDescriptor = mock(IDPSSODescriptor.class);
+        final IDPSSODescriptor idpssoDescriptor = mock(IDPSSODescriptor.class);
         if (hasLogoutService) {
-            SingleLogoutService logoutService = new DummySingleLogoutService();
+            final SingleLogoutService logoutService = new DummySingleLogoutService();
             when(idpssoDescriptor.getSingleLogoutServices()).thenReturn(singletonList(logoutService));
         }
 
-        SAMLMetadataContext samlMetadataContext = mock(SAMLMetadataContext.class);
+        final SAMLMetadataContext samlMetadataContext = mock(SAMLMetadataContext.class);
         when(samlMetadataContext.getRoleDescriptor()).thenReturn(idpssoDescriptor);
 
-        SAMLPeerEntityContext peerEntityContext = mock(SAMLPeerEntityContext.class);
+        final SAMLPeerEntityContext peerEntityContext = mock(SAMLPeerEntityContext.class);
         when(peerEntityContext.getSubcontext(SAMLMetadataContext.class, true)).thenReturn(samlMetadataContext);
 
-        SAML2MessageContext saml2MessageContext = mock(SAML2MessageContext.class);
+        final SAML2MessageContext saml2MessageContext = mock(SAML2MessageContext.class);
         when(saml2MessageContext.getSubcontext(SAMLPeerEntityContext.class, true)).thenReturn(peerEntityContext);
 
-        SAMLContextProvider samlContextProviderMock = mock(SAMLContextProvider.class);
+        final SAMLContextProvider samlContextProviderMock = mock(SAMLContextProvider.class);
         when(samlContextProviderMock.buildContext(any(WebContext.class))).thenReturn(saml2MessageContext);
 
         when(client.getContextProvider()).thenReturn(samlContextProviderMock);

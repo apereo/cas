@@ -23,6 +23,8 @@ import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceM
  * Does not do anything.
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class DummySingleLogoutService implements SingleLogoutService {
 

@@ -1,11 +1,9 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,6 +29,8 @@ import org.springframework.webflow.test.MockRequestContext;
  * Tests only terminate(), which is overridden in the action, not the whole doExecute().
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class DestroyTgtAndCookiesActionTests {
 
@@ -51,17 +51,17 @@ public class DestroyTgtAndCookiesActionTests {
     @Test
     public void terminateDeletesCookiesAndTgt() {
         // Prepare the input
-        MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
-        MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
-        MockHttpSession session = new MockHttpSession();
+        final MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
+        final MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
+        final MockHttpSession session = new MockHttpSession();
         nativeRequest.setSession(session);
-        MockServletContext servletContext = new MockServletContext();
-        ServletExternalContext externalContext = new ServletExternalContext(servletContext, nativeRequest, nativeResponse);
-        MockRequestContext rc = new MockRequestContext();
+        final MockServletContext servletContext = new MockServletContext();
+        final ServletExternalContext externalContext = new ServletExternalContext(servletContext, nativeRequest, nativeResponse);
+        final MockRequestContext rc = new MockRequestContext();
         rc.setExternalContext(externalContext);
 
         // Run the tested action
-        Event e = actionUnderTest.terminate(rc);
+        final Event e = actionUnderTest.terminate(rc);
         assertNotNull("Null event returned by the action.", e);
         assertEquals("The result of the action is not success.", "success", e.getId());
 
