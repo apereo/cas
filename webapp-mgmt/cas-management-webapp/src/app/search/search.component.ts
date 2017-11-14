@@ -1,11 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ServiceItem} from '../../domain/service-item';
-import {MatPaginator, MatSnackBar} from '@angular/material';
+import {MatPaginator, MatSnackBar, MatTableDataSource} from '@angular/material';
 import {Messages} from '../messages';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {SearchService} from './SearchService';
-import {Database, Datasource} from '../database';
 
 @Component({
   selector: 'app-search',
@@ -14,8 +13,7 @@ import {Database, Datasource} from '../database';
 })
 export class SearchComponent implements OnInit {
   displayedColumns = ['name', 'serviceId', 'description'];
-  serviceDatabase: Database<ServiceItem> = new Database<ServiceItem>();
-  dataSource: Datasource<ServiceItem> | null;
+  dataSource: MatTableDataSource<ServiceItem>;
   query: String;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -28,10 +26,11 @@ export class SearchComponent implements OnInit {
               public snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.dataSource = new Datasource(this.serviceDatabase, this.paginator);
+    this.dataSource = new MatTableDataSource([]);
+    this.dataSource.paginator = this.paginator;
     this.route.paramMap
         .switchMap((params: ParamMap) => this.service.search(params.get('query')))
-        .subscribe(resp => this.serviceDatabase.load(resp));
+        .subscribe(resp => this.dataSource.data = resp);
   }
 
   serviceEdit(id: number) {

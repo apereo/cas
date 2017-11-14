@@ -1,15 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Messages} from '../../messages';
 import {SamlRegisteredService} from '../../../domain/saml-service';
 import {Data} from '../data';
-
-import {DataSource} from '@angular/cdk/table';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
 import {Util} from '../../util/util';
+import {Row, RowDataSource} from '../row';
 
 @Component({
   selector: 'app-samlservicespane',
@@ -19,8 +13,7 @@ import {Util} from '../../util/util';
 export class SamlservicespaneComponent implements OnInit {
 
   displayedColumns = ['source', 'mapped', 'delete'];
-  attributeDatabase = new AttributeDatabase();
-  dataSource: AttributeDataSource | null;
+  dataSource: RowDataSource;
 
   type: String;
 
@@ -30,18 +23,18 @@ export class SamlservicespaneComponent implements OnInit {
 
   ngOnInit() {
     const service: SamlRegisteredService = this.data.service as SamlRegisteredService;
-
+    const rows = [];
     if (Util.isEmpty(service.attributeNameFormats)) {
       service.attributeNameFormats = new Map();
     }
     for (const p of Array.from(Object.keys(service.attributeNameFormats))) {
-      this.attributeDatabase.addRow(new Row(p));
+      rows.push(new Row(p));
     }
-    this.dataSource = new AttributeDataSource(this.attributeDatabase);
+    this.dataSource = new RowDataSource(rows);
   }
 
   addRow() {
-    this.attributeDatabase.addRow(new Row(''));
+    this.dataSource.addRow();
   }
 
   doChange(row: Row, val: string) {
@@ -54,46 +47,7 @@ export class SamlservicespaneComponent implements OnInit {
   delete(row: Row) {
     const service: SamlRegisteredService = this.data.service as SamlRegisteredService
     delete service.attributeNameFormats[row.key as string];
-    this.attributeDatabase.removeRow(row);
+    this.dataSource.removeRow(row);
   }
 }
 
-export class Row {
-  key: String;
-
-  constructor(source: String) {
-    this.key = source;
-  }
-}
-
-export class AttributeDatabase {
-  dataChange: BehaviorSubject<Row[]> = new BehaviorSubject<Row[]>([]);
-  get data(): Row[] { return this.dataChange.value; }
-
-  constructor() {
-  }
-
-  addRow(row: Row) {
-    const copiedData = this.data.slice();
-    copiedData.push(row);
-    this.dataChange.next(copiedData);
-  }
-
-  removeRow(row: Row) {
-    const copiedData = this.data.slice();
-    copiedData.splice(copiedData.indexOf(row), 1);
-    this.dataChange.next(copiedData);
-  }
-}
-
-export class AttributeDataSource extends DataSource<any> {
-  constructor(private _attributeDatabase: AttributeDatabase) {
-    super();
-  }
-
-  connect(): Observable<Row[]> {
-    return this._attributeDatabase.dataChange;
-  }
-
-  disconnect() {}
-}

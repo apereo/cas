@@ -1,10 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSnackBar} from '@angular/material';
+import {MatPaginator, MatSnackBar, MatTableDataSource} from '@angular/material';
 import {DomainService} from './domain.service';
 import {Messages} from 'app/messages';
 import {Router} from '@angular/router';
 import {Location} from '@angular/common';
-import {Database, Datasource} from '../database';
 
 @Component({
   selector: 'app-domains',
@@ -13,8 +12,7 @@ import {Database, Datasource} from '../database';
 })
 export class DomainsComponent implements OnInit {
   displayedColumns = ['actions', 'name'];
-  domainDatabase: Database<String> = new Database<String>();
-  dataSource: Datasource<String> | null;
+  dataSource: MatTableDataSource<String>;
   selectedItem: String;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -26,15 +24,11 @@ export class DomainsComponent implements OnInit {
               private location: Location) { }
 
   ngOnInit() {
-    this.dataSource = new Datasource(this.domainDatabase, this.paginator, this.filterFn);
+    this.dataSource = new MatTableDataSource([]);
+    this.dataSource.paginator = this.paginator;
     this.domainService.getDomains()
-      .then(resp => this.domainDatabase.load(resp))
+      .then(resp => this.dataSource.data = resp)
       .catch(e => {console.log(e); this.snackBar.open('Failed to load domains', 'Dismiss'); });
-  }
-
-  filterFn(item: String, filter: String): boolean {
-    const searchStr = item.toLowerCase();
-    return searchStr.indexOf(filter.toLowerCase()) !== -1;
   }
 
   doFilter(val: string) {
