@@ -45,7 +45,7 @@ export class ServicesComponent implements OnInit, AfterViewInit {
         }
         setTimeout(() => {
           this.dataSource.data = data.resp;
-        },10);
+        }, 10);
       }
     );
     this.route.params.subscribe((params) => this.domain = params['domain']);

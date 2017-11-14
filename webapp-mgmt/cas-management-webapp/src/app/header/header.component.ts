@@ -25,7 +25,6 @@ export class HeaderComponent implements OnInit {
   }
 
   doSearch(val: string) {
-    console.log("in search");
     this.router.navigate( ['search', val]);
   }
 
