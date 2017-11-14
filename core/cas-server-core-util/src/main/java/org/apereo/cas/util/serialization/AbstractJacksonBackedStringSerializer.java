@@ -172,8 +172,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             throw new IllegalArgumentException(e);
         }
     }
-
-
+    
     @Override
     public void to(final File out, final T object) {
         try (StringWriter writer = new StringWriter()) {
@@ -196,6 +195,16 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         }
     }
 
+    @Override
+    public String toString(final T object) {
+        try (StringWriter writer = new StringWriter()) {
+            to(writer, object);
+            return writer.toString();
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+    
     /**
      * Initialize object mapper.
      *

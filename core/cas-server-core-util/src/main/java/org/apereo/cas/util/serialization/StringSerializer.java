@@ -82,7 +82,14 @@ public interface StringSerializer<T> extends Serializable {
      * @param object the object to serialize
      */
     void to(File out, T object);
-
+    
+    /**
+     * Return the object as a string in memory.
+     * @param object the object
+     * @return string representation of the object.
+     */
+    String toString(T object);
+    
     /**
      * Load a collection of specified objects from the stream.
      *
