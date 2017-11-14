@@ -65,7 +65,9 @@ public interface ServiceRegistryDao {
      * @return number of registered services held by any particular implementation
      * @since 5.0.0
      */
-    long size();
+    default long size() {
+        return load().size();
+    }
 
     /**
      * Returns the friendly name of this registry.
