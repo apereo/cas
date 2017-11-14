@@ -69,7 +69,7 @@ Needless to say, the attributes need to have been resolved for the principal pri
 
 This is a more generic variant of the above trigger. It may be useful in cases where there is more than one provider configured and available in the application runtime and you need to design a strategy to dynamically decide on the provider that should be activated for the request.
 
-The decision is handed off to a `Predicate` implementation that define in a Groovy script whose location is taught to CAS. The responsibility of the `test` function is to determine eligibility of the provider to be triggered. If the predicate determines multiple providers as eligible by returning `true` more than one, the first provider in the sorted result set ranked by the provider's order will be chosen to respond.
+The decision is handed off to a `Predicate` implementation defined in a Groovy script whose location is taught to CAS. The responsibility of the `test` function in the script is to determine eligibility of the provider to be triggered. If the predicate determines multiple providers as eligible by returning `true` more than one, the first provider in the sorted result set ranked by the provider's order will be chosen to respond.
 
 The Groovy script predicate may be designed as such:
 

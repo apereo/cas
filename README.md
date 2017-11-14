@@ -9,6 +9,7 @@
 [![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg)](https://twitter.com/apereo)
 [![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4)][cassupport]
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter] 
+[![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg)][casslack]
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
 
 ## Introduction
@@ -21,6 +22,8 @@ CAS is an open and well-documented authentication protocol. The primary implemen
 ## Contributions [![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)][contribute]
 
 - [How to contribute][contribute]
+
+If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
 
 ## Documentation
 
@@ -62,7 +65,7 @@ The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/
 [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas) 
 [![Coverage Status](https://coveralls.io/repos/github/apereo/cas/badge.svg?branch=master)](https://coveralls.io/github/apereo/cas?branch=master)
 
-To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html).
+To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html). The release schedule is [available here](https://github.com/apereo/cas/milestones).
 
 ## Deployment 
 
@@ -86,4 +89,5 @@ CAS is 100% free open source software managed by [Apereo](https://www.apereo.org
 [releasenotes]: https://github.com/apereo/cas/releases
 [cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
