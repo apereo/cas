@@ -34,10 +34,6 @@ public class SingleLogoutPreparationActionTests {
 
     private SingleLogoutPreparationAction actionUnderTest;
 
-    private ProfileService<CommonProfile> profileServiceMock;
-
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGeneratorMock;
-
     private CommonProfile profile;
 
 
@@ -77,10 +73,10 @@ public class SingleLogoutPreparationActionTests {
         profile.setClientName("UnitTestClient");
         profile.setId("Profile-1");
 
-        profileServiceMock = mock(ProfileService.class);
+        ProfileService<CommonProfile> profileServiceMock = mock(ProfileService.class);
         when(profileServiceMock.findById(TGT_ID)).thenReturn(profile);
 
-        ticketGrantingTicketCookieGeneratorMock = mock(CookieRetrievingCookieGenerator.class);
+        CookieRetrievingCookieGenerator ticketGrantingTicketCookieGeneratorMock = mock(CookieRetrievingCookieGenerator.class);
         when(ticketGrantingTicketCookieGeneratorMock.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn(TGT_ID);
 
         actionUnderTest = new SingleLogoutPreparationAction(ticketGrantingTicketCookieGeneratorMock, profileServiceMock);

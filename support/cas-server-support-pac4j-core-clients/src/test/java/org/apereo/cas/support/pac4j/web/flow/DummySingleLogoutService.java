@@ -133,13 +133,13 @@ public class DummySingleLogoutService implements SingleLogoutService {
     }
 
     @Override
-    public void setDOM(Element dom) {}
+    public void setDOM(final Element dom) {}
 
     @Override
     public void setNoNamespaceSchemaLocation(final String location) {}
 
     @Override
-    public void setParent(XMLObject parent) {}
+    public void setParent(final XMLObject parent) {}
 
     @Override
     public void setSchemaLocation(final String location) {}

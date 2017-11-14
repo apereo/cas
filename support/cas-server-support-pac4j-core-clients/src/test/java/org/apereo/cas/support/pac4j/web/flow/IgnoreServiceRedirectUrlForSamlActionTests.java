@@ -54,23 +54,44 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
     @Test
     public void samlClientWithoutSloShouldNotRemoveService() throws Exception {
-        testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_NO_SLO), false);
+        Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_NO_SLO));
+
+        // Check that the service value is still in the flow
+        assertNotNull("For SAML clients without SLO services defined, the 'service' parameter should have been retained.",
+                logoutUrlFromFlow);
     }
 
 
     @Test
     public void samlClientWithSloShouldRemoveService() throws Exception {
-        testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_WITH_SLO), true);
+        Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(samlProfile(CLIENT_NAME_SAML_WITH_SLO));
+
+        // Check that the service value has disappeared from the flow
+        assertNull("For SAML clients with SLO services defined, the 'service' parameter should have been removed.", logoutUrlFromFlow);
     }
 
 
     @Test
     public void otherClientShouldNotRemoveService() throws Exception {
-        testServiceRemovalForParticularProfile(anotherProfile(), false);
+        Object logoutUrlFromFlow = testServiceRemovalForParticularProfile(anotherProfile());
+
+        // Check that the service value is still in the flow
+        assertNotNull("For non-SAML2 clients, the 'service' parameter should have been retained.", logoutUrlFromFlow);
     }
 
 
-    protected void testServiceRemovalForParticularProfile(final CommonProfile profile, final boolean shouldBeRemoved) throws Exception {
+    /**
+     * Executes the tested action on a mock request context. A provided PAC4J user profile is saved into the session and request using the
+     * PAC4J manager.
+     * 
+     * @param profile
+     *            The PAC4J user profile.
+     * 
+     * @return The value of the Logout URL (service) from the web flow after the tested action is executed.
+     * 
+     * @throws Exception
+     */
+    protected Object testServiceRemovalForParticularProfile(final CommonProfile profile) throws Exception {
         // Prepare the input
         MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
         MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
@@ -90,17 +111,8 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
 
         // Run the tested action
         actionUnderTest.doExecute(rc);
-        
-        if (shouldBeRemoved) {
-            // Check that the service value has disappeared from the flow
-            assertNull("For SAML clients with SLO services defined, the 'service' parameter should have been removed.",
-                    rc.getFlowScope().get(IgnoreServiceRedirectUrlForSamlAction.FLOW_ATTR_LOGOUT_REDIR_URL));
-        } else {
-            // Check that the service value is still in the flow
-            assertNotNull("For non-SAML2 clients and SAML clients without SLO services defined, the 'service' parameter"
-                    + " should have been retained.",
-                    rc.getFlowScope().get(IgnoreServiceRedirectUrlForSamlAction.FLOW_ATTR_LOGOUT_REDIR_URL));
-        }
+
+        return rc.getFlowScope().get(IgnoreServiceRedirectUrlForSamlAction.FLOW_ATTR_LOGOUT_REDIR_URL);
     }
 
 
