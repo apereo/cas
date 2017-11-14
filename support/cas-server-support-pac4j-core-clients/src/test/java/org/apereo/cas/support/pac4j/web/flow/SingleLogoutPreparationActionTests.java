@@ -7,7 +7,6 @@ import static org.mockito.Mockito.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.context.Pac4jConstants;
@@ -61,8 +60,8 @@ public class SingleLogoutPreparationActionTests {
         assertEquals("success", e.getId());
 
         // Check request and session attributes
-        Assert.assertNotNull("No user profile was saved into the request.", nativeRequest.getAttribute(Pac4jConstants.USER_PROFILES));
-        Assert.assertNotNull("No user profile was saved into the session.", session.getAttribute(Pac4jConstants.USER_PROFILES));
+        assertNotNull("No user profile was saved into the request.", nativeRequest.getAttribute(Pac4jConstants.USER_PROFILES));
+        assertNotNull("No user profile was saved into the session.", session.getAttribute(Pac4jConstants.USER_PROFILES));
     }
 
 
