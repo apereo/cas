@@ -4690,7 +4690,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
-## Service Registey Replication Hazelcast
+## Service Registry Replication Hazelcast
 
 ```properties
 # cas.serviceRegistry.stream.hazelcast.duration=PT30S
