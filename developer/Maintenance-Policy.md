@@ -12,6 +12,11 @@ In particular, the following questions are addressed:
 - How long should a CAS release be maintained?
 - What is the appropriate scope for release maintenance once a release is retired?
 
+## Schedules
+
+The project release schedule is [available here](https://github.com/apereo/cas/milestones). The 
+[maintenance policy](Maintenance-Policy.html) is also available.
+
 ## Policy
 
 - CAS adopters **MAY EXPECT** a CAS release to be maintained for one calendar year, starting from the original release date.
