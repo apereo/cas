@@ -1,6 +1,7 @@
 package org.apereo.cas.services.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.RegisteredService;
@@ -21,6 +22,13 @@ public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBacke
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceJsonSerializer.class);
 
     private static final long serialVersionUID = 7645698151115635245L;
+
+    public DefaultRegisteredServiceJsonSerializer() {
+    }
+
+    public DefaultRegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter) {
+        super(prettyPrinter);
+    }
 
     /**
      * Mixins are added to the object mapper in order to

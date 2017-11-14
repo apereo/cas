@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -42,6 +43,12 @@ public class ServiceRegistryProperties implements Serializable {
          */
         DEFAULT
     }
+    /**
+     * Properties pertaining to Cosmos DB service registry.
+     */
+    @NestedConfigurationProperty
+    private CosmosDbServiceRegistryProperties cosmosDb = new CosmosDbServiceRegistryProperties();
+    
     /**
      * Properties pertaining to REST service registry.
      */
@@ -269,5 +276,13 @@ public class ServiceRegistryProperties implements Serializable {
 
     public void setSms(final SmsProperties sms) {
         this.sms = sms;
+    }
+
+    public CosmosDbServiceRegistryProperties getCosmosDb() {
+        return cosmosDb;
+    }
+
+    public void setCosmosDb(final CosmosDbServiceRegistryProperties cosmosDb) {
+        this.cosmosDb = cosmosDb;
     }
 }

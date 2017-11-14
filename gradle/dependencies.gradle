@@ -1103,6 +1103,14 @@ ext.libraries = [
                     force = true
                 }
         ],
+        cosmosdb       : [
+                dependencies.create("com.microsoft.azure:azure-documentdb:$cosmosdbVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("com.microsoft.azure:spring-data-documentdb:$springDataCosmosDbVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         jdom                    : dependencies.create("jdom:jdom:$jdomVersion") {
             exclude(group: "xml-apis", module: "xml-apis")
             force = true
