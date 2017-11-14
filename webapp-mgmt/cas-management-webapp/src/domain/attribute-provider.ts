@@ -41,6 +41,21 @@ export class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
   }
 }
 
+export class ShibbolethCompatiblePersistentIdGenerator {
+  static cName = 'org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator';
+
+  salt: String;
+  attribute: String;
+
+  static instsanceOf(obj: any): boolean {
+    return obj && obj['@class'] === ShibbolethCompatiblePersistentIdGenerator.cName;
+  }
+
+  constructor() {
+    this['@class'] = ShibbolethCompatiblePersistentIdGenerator.cName
+  }
+}
+
 export class AnonymousRegisteredServiceUsernameProvider extends RegisteredServiceUsernameAttributeProvider {
   static cName = 'org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider';
 
@@ -54,20 +69,5 @@ export class AnonymousRegisteredServiceUsernameProvider extends RegisteredServic
     super();
     this['@class'] = AnonymousRegisteredServiceUsernameProvider.cName;
     this.persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
-  }
-}
-
-export class ShibbolethCompatiblePersistentIdGenerator {
-  static cName = 'org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator';
-
-  salt: String;
-  attribute: String;
-
-  static instsanceOf(obj: any): boolean {
-    return obj && obj['@class'] === ShibbolethCompatiblePersistentIdGenerator.cName;
-  }
-
-  constructor() {
-    this['@class'] = ShibbolethCompatiblePersistentIdGenerator.cName
   }
 }
