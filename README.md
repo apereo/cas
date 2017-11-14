@@ -65,7 +65,7 @@ The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/
 [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas) 
 [![Coverage Status](https://coveralls.io/repos/github/apereo/cas/badge.svg?branch=master)](https://coveralls.io/github/apereo/cas?branch=master)
 
-To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html).
+To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html). The release schedule is [available here](https://github.com/apereo/cas/milestones).
 
 ## Deployment 
 
