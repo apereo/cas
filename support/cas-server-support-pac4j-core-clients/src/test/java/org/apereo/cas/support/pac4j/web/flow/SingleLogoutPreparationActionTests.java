@@ -34,8 +34,6 @@ public class SingleLogoutPreparationActionTests {
 
     private SingleLogoutPreparationAction actionUnderTest;
 
-    private CommonProfile profile;
-
 
     /**
      * Tests that the action properly populates the session and the request with a PAC4J profile.
@@ -69,7 +67,7 @@ public class SingleLogoutPreparationActionTests {
 
     @Before
     public void setUpTestedObject() {
-        profile = new CommonProfile();
+        CommonProfile profile = new CommonProfile();
         profile.setClientName("UnitTestClient");
         profile.setId("Profile-1");
 
