@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div style="margin-right:25px;margin-left:25px;">
+<div style="display: flex; flex-direction: column; margin-right:25px;margin-left:25px;">
   <mat-table #table [dataSource]="dataSource">
 
     <ng-container matColumnDef="name">
@@ -57,8 +57,6 @@
   </mat-table>
 
   <mat-paginator #paginator
-                [length]="serviceDatabase.data.length"
-                [pageIndex]="0"
                 [pageSize]="10"
                 [pageSizeOptions]="[5, 10, 25, 100]">
   </mat-paginator>
