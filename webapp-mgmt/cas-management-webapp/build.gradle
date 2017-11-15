@@ -31,6 +31,13 @@ task buildClientWatch(type: NpmTask, dependsOn: "npm_install", group: "applicati
     args = ['run', 'buildWatch']
 }
 
+task ngLint(type: NpmTask, dependsOn: "npm_install", group: "check",
+        description: "Runs Angular TypeScript and HtML Linting") {
+    args = ['run', 'lint']
+}
+
+check.dependsOn(ngLint)
+
 bootRun {
     addResources = true
     systemProperties = System.properties
