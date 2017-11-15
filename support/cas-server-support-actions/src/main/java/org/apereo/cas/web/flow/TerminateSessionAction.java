@@ -41,7 +41,7 @@ public class TerminateSessionAction extends AbstractAction {
      * 
      * The attribute value should be set via its setter during web flow reconfiguration, if needed.
      */
-    private boolean applicationSessionDestroyDeferred = false;
+    private boolean applicationSessionDestroyDeferred;
 
     public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService,
                                   final CookieRetrievingCookieGenerator tgtCookieGenerator,
