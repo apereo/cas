@@ -5,7 +5,6 @@ import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthent
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationActionTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.apereo.cas.support.pac4j.web.flow.DestroyTgtAndCookiesActionTests;
 import org.apereo.cas.support.pac4j.web.flow.IgnoreServiceRedirectUrlForSamlActionTests;
 import org.apereo.cas.support.pac4j.web.flow.SingleLogoutPreparationActionTests;
 import org.apereo.cas.support.pac4j.web.flow.TerminateSessionFlowExecutionListenerTests;
@@ -20,7 +19,6 @@ import org.apereo.cas.support.pac4j.web.flow.TerminateSessionFlowExecutionListen
 @Suite.SuiteClasses({
     ClientAuthenticationHandlerTests.class,
     DelegatedClientAuthenticationActionTests.class,
-    DestroyTgtAndCookiesActionTests.class,
     IgnoreServiceRedirectUrlForSamlActionTests.class,
     SingleLogoutPreparationActionTests.class,
     TerminateSessionFlowExecutionListenerTests.class

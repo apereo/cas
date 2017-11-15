@@ -35,6 +35,14 @@ public class TerminateSessionAction extends AbstractAction {
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
     private final LogoutProperties logoutProperties;
 
+    /**
+     * If set to {@code true}, the action will not destroy the HTTP session. Useful in situations where we need the HTTP session until the
+     * end of the webflow. It is assumed that the session itself will be terminated in a flow execution listener, if not terminated here.
+     * 
+     * The attribute value should be set via its setter during web flow reconfiguration, if needed.
+     */
+    private boolean applicationSessionDestroyDeferred = false;
+
     public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService,
                                   final CookieRetrievingCookieGenerator tgtCookieGenerator,
                                   final CookieRetrievingCookieGenerator warnCookieGenerator,
@@ -83,8 +91,12 @@ public class TerminateSessionAction extends AbstractAction {
             this.ticketGrantingTicketCookieGenerator.removeCookie(response);
             this.warnCookieGenerator.removeCookie(response);
 
-            destroyApplicationSession(request, response);
-            LOGGER.debug("Terminated all CAS sessions successfully.");
+            if (!applicationSessionDestroyDeferred) {
+                destroyApplicationSession(request, response);
+                LOGGER.debug("Terminated all CAS sessions successfully.");
+            } else {
+                LOGGER.debug("CAS session destroy deferred until the end of the flow.");
+            }
             return this.eventFactorySupport.success(this);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -113,4 +125,21 @@ public class TerminateSessionAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }
+
+    /**
+     * Getter for {@code applicationSessionDestroyDeferred}.
+     * @return The value of {@code applicationSessionDestroyDeferred}.
+     */
+    public boolean isApplicationSessionDestroyDeferred() {
+        return applicationSessionDestroyDeferred;
+    }
+
+    /**
+     * Setter for {@code applicationSessionDestroyDeferred}.
+     * @param applicationSessionDestroyDeferred The new value of {@code applicationSessionDestroyDeferred}.
+     */
+    public void setApplicationSessionDestroyDeferred(final boolean applicationSessionDestroyDeferred) {
+        this.applicationSessionDestroyDeferred = applicationSessionDestroyDeferred;
+    }
+
 }

@@ -1,9 +1,10 @@
-package org.apereo.cas.support.pac4j.web.flow;
+package org.apereo.cas.web.flow;
 
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,19 +25,15 @@ import org.springframework.webflow.test.MockRequestContext;
 
 
 /**
- * Unit test of {@link DestroyTgtAndCookiesAction}.
- * 
- * Tests only terminate(), which is overridden in the action, not the whole doExecute().
+ * Unit test of {@link TerminateSessionAction}.
  * 
  * @author jkacer
- * 
- * @since 5.2.0
  */
-public class DestroyTgtAndCookiesActionTests {
+public class TerminateSessionActionTests {
 
     private static final String TGT_ID = "TGT-1";
 
-    private DestroyTgtAndCookiesAction actionUnderTest;
+    private TerminateSessionAction actionUnderTest;
 
     @Mock
     private CentralAuthenticationService casMock;
@@ -49,7 +46,26 @@ public class DestroyTgtAndCookiesActionTests {
 
 
     @Test
-    public void terminateDeletesCookiesAndTgt() {
+    public void terminateDeletesCookiesAndTgtAndInvalidatesSession() {
+        final MockHttpSession session = terminateWithMockChecks();
+        assertTrue("The HTTP session should have been invalidated after the action is executed.", session.isInvalid());
+    }
+
+    @Test
+    public void terminateDeletesCookiesAndTgtButDoesNotInvalidateSession() {
+        actionUnderTest.setApplicationSessionDestroyDeferred(true);
+        final MockHttpSession session = terminateWithMockChecks();
+        assertFalse("The HTTP session should have not been invalidated after the action is executed.", session.isInvalid());
+    }
+
+
+    /**
+     * Runs {@code terminate()} on the tested action, providing a mock request context. Verifies that the TGT is destroyed and the cookies
+     * are removed.
+     * 
+     * @return HTTP session from the request - for additional checks outside.
+     */
+    private MockHttpSession terminateWithMockChecks() {
         // Prepare the input
         final MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
         final MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
@@ -69,14 +85,17 @@ public class DestroyTgtAndCookiesActionTests {
         verify(casMock).destroyTicketGrantingTicket(TGT_ID);
         verify(tgtCookieGenMock).removeCookie(nativeResponse);
         verify(warnCookieGenMock).removeCookie(nativeResponse);
+
+        return session;
     }
+
 
     @Before
     public void setUpTestedAction() {
         MockitoAnnotations.initMocks(this);
         when(casMock.destroyTicketGrantingTicket(TGT_ID)).thenReturn(emptyList());
         when(tgtCookieGenMock.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn(TGT_ID);
-        actionUnderTest = new DestroyTgtAndCookiesAction(casMock, tgtCookieGenMock, warnCookieGenMock, new LogoutProperties());
+        actionUnderTest = new TerminateSessionAction(casMock, tgtCookieGenMock, warnCookieGenMock, new LogoutProperties());
     }
 
 }
