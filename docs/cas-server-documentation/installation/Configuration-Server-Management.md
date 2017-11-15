@@ -56,7 +56,7 @@ web application server, it matters not where settings come from and it has no kn
 talks to the configuration server to locate settings and move on.
 
 <div class="alert alert-info"><strong>Configuration Security</strong><p>This is a very good strategy to ensure configuration settings
-are not scatted around various deployment environments leading to a more secure deployment. The configuration server need not be
+are not scattered around various deployment environments leading to a more secure deployment. The configuration server need not be
 exposed to the outside world, and it can safely and secure be hidden behind firewalls, etc allowing access to only authorized clients
 such as the CAS server web application.</p></div>
 
