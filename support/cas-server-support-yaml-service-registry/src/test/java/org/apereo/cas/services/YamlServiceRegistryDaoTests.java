@@ -16,7 +16,8 @@ public class YamlServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     @Before
     public void setup() {
         try {
-            this.dao = new YamlServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+            this.dao = new YamlServiceRegistryDao(RESOURCE, false, 
+                    mock(ApplicationEventPublisher.class), new NoOpDistributedCacheManager());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }

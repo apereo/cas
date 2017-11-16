@@ -27,7 +27,8 @@ public class OidcRegisteredServiceTests {
     private final ServiceRegistryDao dao;
 
     public OidcRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
+                mock(ApplicationEventPublisher.class), new NoOpDistributedCacheManager());
     }
 
     @BeforeClass

@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
@@ -79,6 +80,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private Pattern serviceFileNamePattern;
 
+    private DistributedCacheManager distributedCacheManager = new NoOpDistributedCacheManager();
+    
     /**
      * Instantiates a new service registry dao.
      *
@@ -90,8 +93,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
                                                    final boolean enableWatcher,
-                                                   final ApplicationEventPublisher eventPublisher) {
-        this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher);
+                                                   final ApplicationEventPublisher eventPublisher,
+                                                   final DistributedCacheManager distributedCacheManager) {
+        this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher, distributedCacheManager);
     }
 
     /**
@@ -105,8 +109,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
                                                    final Collection<StringSerializer<RegisteredService>> serializers,
                                                    final boolean enableWatcher,
-                                                   final ApplicationEventPublisher eventPublisher) {
-        initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher);
+                                                   final ApplicationEventPublisher eventPublisher,
+                                                   final DistributedCacheManager distributedCacheManager) {
+        initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher, distributedCacheManager);
     }
 
     /**
@@ -121,20 +126,25 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
                                                    final Collection<StringSerializer<RegisteredService>> serializers,
                                                    final boolean enableWatcher,
-                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
+                                                   final ApplicationEventPublisher eventPublisher,
+                                                   final DistributedCacheManager distributedCacheManager) throws Exception {
+       
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
         final File file = servicesDirectory.getFile();
-        initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher);
+        initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher, distributedCacheManager);
     }
 
     private void initializeRegistry(final Path configDirectory,
                                     final Collection<StringSerializer<RegisteredService>> serializers,
                                     final boolean enableWatcher,
-                                    final ApplicationEventPublisher eventPublisher) {
+                                    final ApplicationEventPublisher eventPublisher,
+                                    final DistributedCacheManager distributedCacheManager) {
         setEventPublisher(eventPublisher);
+
+        this.distributedCacheManager = distributedCacheManager;
         this.serviceFileNamePattern = RegexUtils.createPattern("\\w+-\\d+\\." + getExtension());
 
         this.serviceRegistryDirectory = configDirectory;
@@ -195,9 +205,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     /**
      * Destroy the watch service thread.
+     *
+     * @throws Exception the exception
      */
     @PreDestroy
-    public void destroy() {
+    public void destroy() throws Exception {
+        if (this.distributedCacheManager != null) {
+            this.distributedCacheManager.close();
+        }
         if (this.serviceRegistryConfigWatcher != null) {
             this.serviceRegistryConfigWatcher.close();
         }
@@ -269,23 +284,23 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     public Collection<RegisteredService> load(final File file) {
         if (!file.canRead()) {
             LOGGER.warn("[{}] is not readable. Check file permissions", file.getName());
-            return null;
+            return new ArrayList<>(0);
         }
 
         if (!file.exists()) {
             LOGGER.warn("[{}] is not found at the path specified", file.getName());
-            return null;
+            return new ArrayList<>(0);
         }
 
         if (file.length() == 0) {
             LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", file.getName());
-            return null;
+            return new ArrayList<>(0);
         }
 
         if (!RegexUtils.matches(this.serviceFileNamePattern, file.getName())) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
                             + "While CAS tries to be forgiving as much as possible, it's recommended "
-                            + "that you rename the file to match the request pattern to avoid issues with duplicate service loading. "
+                            + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
                             + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                     file.getName(), this.serviceFileNamePattern.pattern());
         }
@@ -372,5 +387,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     @Override
     public void update(final RegisteredService service) {
         this.serviceMap.put(service.getId(), service);
+    }
+
+    @Override
+    public DistributedCacheManager getCacheManager() {
+        return this.distributedCacheManager;
     }
 }

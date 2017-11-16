@@ -3,6 +3,7 @@ package org.apereo.cas.grouper.services;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JsonServiceRegistryDao;
+import org.apereo.cas.services.NoOpDistributedCacheManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +45,8 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
         final GrouperRegisteredServiceAccessStrategy grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, 
+                mock(ApplicationEventPublisher.class), new NoOpDistributedCacheManager());
         dao.save(service);
         dao.load();
     }

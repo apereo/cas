@@ -18,6 +18,8 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -48,7 +50,7 @@ import java.util.stream.Collectors;
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration("casStandaloneBootstrapConfiguration")
-public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator {
+public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator, PriorityOrdered {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreBootstrapStandaloneConfiguration.class);
 
     private CasConfigurationJasyptDecryptor configurationJasyptDecryptor;
@@ -110,7 +112,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     private void loadSettingsFromStandaloneConfigFile(final Properties props, final File configFile) {
         final Properties pp = new Properties();
-        
+
         try (FileReader r = new FileReader(configFile)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
             pp.load(r);
@@ -191,5 +193,10 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
                 props.putAll(decryptProperties(pp));
             }
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

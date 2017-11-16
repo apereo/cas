@@ -44,7 +44,6 @@ public class RegisteredServicesQueuedEvent implements Serializable {
         return publisher;
     }
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -53,5 +52,19 @@ public class RegisteredServicesQueuedEvent implements Serializable {
                 .append("service", service.getServiceId())
                 .append("publisher", publisher.getId())
                 .toString();
+    }
+
+    public String getKey() {
+        return buildKey(this.service);
+    }
+
+    /**
+     * Gets key.
+     *
+     * @param service the service
+     * @return the key
+     */
+    public static String buildKey(final RegisteredService service) {
+        return service.getId() + ";" + service.getName() + ";" + service.getServiceId();
     }
 }
