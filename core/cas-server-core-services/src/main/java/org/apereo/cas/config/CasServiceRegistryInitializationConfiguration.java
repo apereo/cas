@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
+import org.apereo.cas.services.NoOpDistributedCacheManager;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
@@ -87,7 +88,7 @@ public class CasServiceRegistryInitializationConfiguration {
             super(location, CollectionUtils.wrapList(
                     new CasAddonsRegisteredServicesJsonSerializer(),
                     new DefaultRegisteredServiceJsonSerializer()),
-                    false, publisher);
+                    false, publisher, new NoOpDistributedCacheManager());
         }
 
         @Override

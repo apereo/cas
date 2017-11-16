@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.DistributedCacheManager;
+
 import java.io.File;
 import java.util.Collection;
 
@@ -27,4 +29,15 @@ public interface ResourceBasedServiceRegistryDao extends ServiceRegistryDao {
      * @return the registered services
      */
     Collection<RegisteredService> load(File file);
+
+    /**
+     * A distributed cache that is designed to handle replication
+     * of resources across a cluster. The replication is usually
+     * handled via a distributed cache implementation such as hazelcast,
+     * AMQP, etc. By default and unless configured explicitly, the
+     * cache implementation is a no-op.
+     *
+     * @return the cache manager instance
+     */
+    DistributedCacheManager getCacheManager();
 }
