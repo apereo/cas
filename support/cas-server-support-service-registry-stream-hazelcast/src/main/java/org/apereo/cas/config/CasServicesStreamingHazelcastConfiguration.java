@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
-import org.apereo.cas.services.HazelcastRegisteredServiceDistributedCacheManager;
+import org.apereo.cas.services.RegisteredServiceHazelcastDistributedCacheManager;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPublisher;
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -50,9 +51,10 @@ public class CasServicesStreamingHazelcastConfiguration {
     @Bean
     @RefreshScope
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
-        return new HazelcastRegisteredServiceDistributedCacheManager(casRegisteredServiceHazelcastInstance(), servicesManager);
+        return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance(), servicesManager);
     }
 
+    @ConditionalOnProperty(prefix = "cas.serviceRegistry.stream", name = "enabled", havingValue = "true")
     @Bean
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceHazelcastStreamPublisher(registeredServiceDistributedCacheManager(),
