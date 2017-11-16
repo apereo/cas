@@ -23,7 +23,9 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     @Before
     public void setUp() {
         try {
-            this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+            this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
+                    mock(ApplicationEventPublisher.class),
+                    new NoOpDistributedCacheManager());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }

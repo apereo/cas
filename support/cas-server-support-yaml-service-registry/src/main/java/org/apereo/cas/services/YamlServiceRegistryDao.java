@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 
+import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -46,8 +47,11 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param enableWatcher   the enable watcher
      * @param eventPublisher  the event publisher
      */
-    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher) {
-        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher);
+    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, 
+                                  final ApplicationEventPublisher eventPublisher,
+                                  final DistributedCacheManager distributedCacheManager) {
+        super(configDirectory, new RegisteredServiceYamlSerializer(), 
+                enableWatcher, eventPublisher, distributedCacheManager);
     }
 
     /**
@@ -62,8 +66,10 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      */
     public YamlServiceRegistryDao(final Resource configDirectory,
                                   final boolean enableWatcher,
-                                  final ApplicationEventPublisher eventPublisher) throws Exception {
-        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher, eventPublisher);
+                                  final ApplicationEventPublisher eventPublisher,
+                                  final DistributedCacheManager distributedCacheManager) throws Exception {
+        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), 
+                enableWatcher, eventPublisher, distributedCacheManager);
     }
 
 
