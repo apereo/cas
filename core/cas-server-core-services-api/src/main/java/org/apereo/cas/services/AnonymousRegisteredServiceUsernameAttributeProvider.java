@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Service;
@@ -71,6 +72,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
         return id;
     }
 
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -83,11 +85,17 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
             return false;
         }
         final AnonymousRegisteredServiceUsernameAttributeProvider rhs = (AnonymousRegisteredServiceUsernameAttributeProvider) obj;
-        return this.persistentIdGenerator.equals(rhs.persistentIdGenerator);
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.persistentIdGenerator, rhs.persistentIdGenerator)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 113).toHashCode();
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(persistentIdGenerator)
+                .toHashCode();
     }
 }

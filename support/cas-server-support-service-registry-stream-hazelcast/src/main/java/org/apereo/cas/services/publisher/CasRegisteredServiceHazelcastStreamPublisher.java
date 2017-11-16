@@ -1,11 +1,14 @@
 package org.apereo.cas.services.publisher;
 
+import org.apereo.cas.DistributedCacheManager;
+import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.DistributedCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
+
+import java.util.Date;
 
 /**
  * This is {@link CasRegisteredServiceHazelcastStreamPublisher}.
@@ -16,18 +19,25 @@ import org.springframework.context.ApplicationEvent;
 public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegisteredServiceStreamPublisher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasRegisteredServiceHazelcastStreamPublisher.class);
 
-    private final DistributedCacheManager<RegisteredService, RegisteredService, RegisteredServicesQueuedEvent> distributedCacheManager;
+    private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
 
     public CasRegisteredServiceHazelcastStreamPublisher(final DistributedCacheManager instance,
                                                         final StringBean publisherId) {
         super(publisherId);
         this.distributedCacheManager = instance;
     }
+    @Override
+    protected void handleCasRegisteredServiceDeletedEvent(final RegisteredService service, final ApplicationEvent event) {
+        final long time = new Date().getTime();
+        LOGGER.debug("Removing service [{}] from cache [{}] @ [{}]", service, this.distributedCacheManager.getName(), time);
+        this.distributedCacheManager.remove(service);
+    }
 
     @Override
-    protected void publishInternal(final RegisteredService service, final ApplicationEvent event) {
-        final RegisteredServicesQueuedEvent eventToPublish = getEventToPublish(service, event);
-        LOGGER.debug("Publishing event [{}] to cache [{}]", eventToPublish, this.distributedCacheManager.getName());
-        this.distributedCacheManager.set(service, eventToPublish);
+    protected void handleCasRegisteredServiceUpdateEvents(final RegisteredService service, final ApplicationEvent event) {
+        final long time = new Date().getTime();
+        final DistributedCacheObject<RegisteredService> item = new DistributedCacheObject<>(time, service);
+        LOGGER.debug("Storing item [{}] to cache [{}] @ [{}]", item, this.distributedCacheManager.getName(), time);
+        this.distributedCacheManager.set(service, item);
     }
 }
