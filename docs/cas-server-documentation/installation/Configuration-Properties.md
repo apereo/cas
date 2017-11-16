@@ -4704,7 +4704,20 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
+## Service Registry Replication
+
+Control how CAS services definition files should be replicated across a CAS cluster.
+To learn more about this topic, [please review this guide](Configuring-Service-Replication.html)
+
+
+```properties
+# cas.serviceRegistry.stream.enabled=true
+```
+
 ## Service Registry Replication Hazelcast
+
+Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
+To learn more about this topic, [please review this guide](Configuring-Service-Replication.html)
 
 ```properties
 # cas.serviceRegistry.stream.hazelcast.duration=PT30S
@@ -4818,7 +4831,6 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 
 ```properties
 # cas.ticket.registry.hazelcast.pageSize=500
-# cas.ticket.registry.hazelcast.configLocation=
 
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
 # cas.ticket.registry.hazelcast.cluster.maxNoHeartbeatSeconds=300

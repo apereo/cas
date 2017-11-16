@@ -31,7 +31,7 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
      * adjusted if the latency between the CAS nodes in the cluster is too large. Having too
      * short a value will cause the record to expire before it reaches other members of the cluster.
      */
-    private String duration = "PT30S";
+    private String duration = "PT2M";
 
     /**
      * Configuration of the hazelcast instance to queue and stream items.

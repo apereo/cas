@@ -50,7 +50,9 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
         if (obj.getClass() != getClass()) {
             return false;
         }
-        return new EqualsBuilder().isEquals();
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     @Override

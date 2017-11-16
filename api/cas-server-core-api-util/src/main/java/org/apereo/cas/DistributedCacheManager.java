@@ -1,6 +1,11 @@
 package org.apereo.cas;
 
 import java.io.Closeable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * This is {@link DistributedCacheManager} that acts as a facade for a cache implementation.
@@ -10,12 +15,11 @@ import java.io.Closeable;
  *
  * @param <K> the type parameter
  * @param <V> the type parameter
- * @param <C> the type parameter
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface DistributedCacheManager<K, V, C> extends Closeable {
+public interface DistributedCacheManager<K extends Serializable, V extends DistributedCacheObject> extends Closeable {
 
     /**
      * Get item.
@@ -28,12 +32,21 @@ public interface DistributedCacheManager<K, V, C> extends Closeable {
     }
 
     /**
+     * Gets all items in the cache.
+     *
+     * @return the all
+     */
+    default Collection<V> getAll() {
+        return new ArrayList<>(0);
+    }
+
+    /**
      * Set item in the cache.
      *
      * @param key  the key
      * @param item the item to store in the cache
      */
-    default void set(final K key, final C item) {
+    default void set(final K key, final V item) {
     }
 
     /**
@@ -61,5 +74,29 @@ public interface DistributedCacheManager<K, V, C> extends Closeable {
      */
     default String getName() {
         return this.getClass().getSimpleName();
+    }
+
+    /**
+     * Find values matching this predicate.
+     *
+     * @param filter the filter
+     * @return the collection
+     */
+    default Collection<V> findAll(final Predicate<V> filter) {
+        return new ArrayList<>(0);
+    }
+
+    /**
+     * Find values matching this predicate.
+     *
+     * @param filter the filter
+     * @return the collection
+     */
+    default Optional<V> find(final Predicate<V> filter) {
+        final Collection<V> results = findAll(filter);
+        if (results.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(results.iterator().next());
     }
 }

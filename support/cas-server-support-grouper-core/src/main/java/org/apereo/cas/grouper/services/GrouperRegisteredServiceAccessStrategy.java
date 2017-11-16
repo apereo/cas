@@ -1,6 +1,8 @@
 package org.apereo.cas.grouper.services;
 
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
@@ -68,5 +70,32 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
 
     public GrouperGroupField getGroupField() {
         return this.groupField;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final GrouperRegisteredServiceAccessStrategy rhs = (GrouperRegisteredServiceAccessStrategy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.groupField, rhs.groupField)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(groupField)
+                .toHashCode();
     }
 }
