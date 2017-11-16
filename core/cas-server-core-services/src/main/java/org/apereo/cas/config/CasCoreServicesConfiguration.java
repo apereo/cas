@@ -14,8 +14,10 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
+import org.apereo.cas.services.NoOpDistributedCacheManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServicesManager;
@@ -117,6 +119,13 @@ public class CasCoreServicesConfiguration {
         return new RegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
     }
 
+    @ConditionalOnMissingBean(name = "registeredServiceDistributedCacheManager")
+    @Bean
+    @RefreshScope
+    public DistributedCacheManager registeredServiceDistributedCacheManager() {
+        return new NoOpDistributedCacheManager();
+    }
+    
     @ConditionalOnMissingBean(name = "serviceRegistryDao")
     @Bean
     @RefreshScope

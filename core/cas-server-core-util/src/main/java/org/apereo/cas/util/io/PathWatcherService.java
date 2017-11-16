@@ -130,7 +130,7 @@ public class PathWatcherService implements Runnable, Closeable {
             key.pollEvents().stream().filter(event -> event.count() <= 1).forEach(event -> {
                 final String eventName = event.kind().name();
 
-                //The filename is the context of the event.
+                // The filename is the context of the event.
                 final WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 final Path filename = ev.context();
 
@@ -147,6 +147,8 @@ public class PathWatcherService implements Runnable, Closeable {
                     onModify.accept(file);
                 }
             });
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
         } finally {
             this.readLock.unlock();
         }

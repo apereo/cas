@@ -24,11 +24,11 @@ Note that for certain type of service registry backends, deploying the managemen
 
 ### Maven
 
-A template overlay for the management webapp is [provided here](https://github.com/apereo/cas-services-management-overlay).
+A template overlay for the management webapp is [provided here](https://github.com/apereo/cas-management-overlay).
 
 ### Gradle
 
-A template overlay for the management webapp is [provided here](https://github.com/apereo/cas-services-management--gradle-overlay).
+A template overlay for the management webapp is [provided here](https://github.com/apereo/cas-management--gradle-overlay).
 
 ## Configuration
 

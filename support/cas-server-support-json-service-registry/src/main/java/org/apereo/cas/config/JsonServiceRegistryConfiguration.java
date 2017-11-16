@@ -3,10 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.JsonServiceRegistryDao;
+import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,11 +34,16 @@ public class JsonServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("registeredServiceDistributedCacheManager")
+    private DistributedCacheManager registeredServiceDistributedCacheManager;
+    
     @Bean
     public ServiceRegistryDao serviceRegistryDao() {
         try {
             final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-            return new JsonServiceRegistryDao(registry.getJson().getLocation(), registry.isWatcherEnabled(), eventPublisher);
+            return new JsonServiceRegistryDao(registry.getJson().getLocation(), 
+                    registry.isWatcherEnabled(), eventPublisher, registeredServiceDistributedCacheManager);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
