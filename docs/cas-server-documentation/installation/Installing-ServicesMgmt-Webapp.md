@@ -22,6 +22,8 @@ Note that for certain type of service registry backends, deploying the managemen
 
 ## Installation
 
+The source code repository for the CAS management web application is [located here](https://github.com/apereo/cas-management).
+
 ### Maven
 
 A template overlay for the management webapp is [provided here](https://github.com/apereo/cas-management-overlay).
