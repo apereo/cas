@@ -27,6 +27,8 @@ import org.springframework.webflow.test.MockRequestContext;
  * Unit test of {@link TerminateSessionAction}.
  * 
  * @author jkacer
+ * 
+ * @since 5.2.0
  */
 public class TerminateSessionActionTests {
 
