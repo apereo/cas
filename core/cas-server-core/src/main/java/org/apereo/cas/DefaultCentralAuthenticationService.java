@@ -140,15 +140,16 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             throws AuthenticationException, AbstractTicketException {
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
+        final Service selectedService = resolveServiceFromAuthenticationRequest(service);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
+        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, ticketGrantingTicket);
 
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
-        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket);
-        evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
+        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, selectedService, ticketGrantingTicket);
+        evaluateProxiedServiceIfNeeded(selectedService, ticketGrantingTicket, registeredService);
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
-        getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(service, registeredService));
+        getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(selectedService, registeredService));
 
         final Authentication latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
         AuthenticationCredentialsLocalBinder.bindCurrent(latestAuthentication);
