@@ -9,7 +9,7 @@ ext {
     sonatypePassword = System.getProperty("sonatypePassword")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
-    
+
     publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
     Open the Git repository in the current directory.
@@ -47,6 +47,7 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
+        classpath "io.franzbecker:gradle-lombok:1.11"
     }
 }
 
@@ -62,13 +63,13 @@ allprojects {
         apply plugin: "nebula.lint"
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
-    
+
     if (project.name == "cas-server-support-bom") {
         logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
-    
+
     signing {
         required = isArtifactSigningRequired
         sign configurations.archives
@@ -110,6 +111,7 @@ subprojects {
         doLast {}
     }
     apply plugin: "java-library"
+    apply plugin: "io.franzbecker.gradle-lombok"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
     apply plugin: "propdeps"
@@ -125,11 +127,11 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        
+
         if (rootProject.publishSnapshots) {
             maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         }
-        
+
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
@@ -228,6 +230,10 @@ subprojects {
         }
     }
 
+    lombok {
+        version = "${lombokVersion}"
+    }
+
     checkstyle {
         configFile new File(rootDir, "style/checkstyle-rules.xml")
         configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
@@ -297,7 +303,7 @@ subprojects {
             findbugsPlugins libraries.findbugscontrib
             findbugsPlugins libraries.findbugssec
         }
-
+        compileOnly libraries.lombok
         testImplementation libraries.tests
     }
 }
