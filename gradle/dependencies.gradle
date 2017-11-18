@@ -7,6 +7,11 @@ ext.libraries = [
                     force = true
                 }
         ],
+        lombok                  : [
+                dependencies.create("org.projectlombok:lombok:$lombokVersion") {
+                    force = true
+                }
+        ],
         semver                  : [
                 dependencies.create("com.vdurmont:semver4j:$semverVersion") {
                     force = true
@@ -997,7 +1002,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        activemq               : [
+        activemq                : [
                 dependencies.create("org.apache.activemq:activemq-core:$activemqVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jasypt", module: "jasypt")
@@ -1103,7 +1108,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        cosmosdb       : [
+        cosmosdb                : [
                 dependencies.create("com.microsoft.azure:azure-documentdb:$cosmosdbVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
@@ -1707,7 +1712,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        twilio                 : dependencies.create("com.twilio.sdk:twilio:$twilioVersion") {
+        twilio                  : dependencies.create("com.twilio.sdk:twilio:$twilioVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -2640,7 +2645,7 @@ ext.libraries = [
                 }
         ],
 
-        springsecurityconfig : [
+        springsecurityconfig    : [
                 dependencies.create("org.springframework.security:spring-security-config:$springSecurityVersion") {
                     exclude(group: "aopalliance", module: "aopalliance")
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -2659,7 +2664,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springsecurityweb : [
+        springsecurityweb       : [
                 dependencies.create("org.springframework.security:spring-security-web:$springSecurityVersion") {
                     exclude(group: "aopalliance", module: "aopalliance")
                     exclude(group: "org.springframework", module: "spring-aop")
