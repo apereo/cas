@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casServicesStreamingHazelcastConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.serviceRegistry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasServicesStreamingHazelcastConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasServicesStreamingHazelcastConfiguration.class);
 
@@ -53,8 +54,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
         return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance(), servicesManager);
     }
-
-    @ConditionalOnProperty(prefix = "cas.serviceRegistry.stream", name = "enabled", havingValue = "true")
+    
     @Bean
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceHazelcastStreamPublisher(registeredServiceDistributedCacheManager(),
