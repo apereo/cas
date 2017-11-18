@@ -83,7 +83,7 @@ CAS is 100% free open source software managed by [Apereo](https://www.apereo.org
 [overlay]: https://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: http://www.apereo.org/cas/download
-[cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/
+[cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
 [casmavencentral]: http://mvnrepository.com/artifact/org.apereo.cas
 [downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
 [releasenotes]: https://github.com/apereo/cas/releases
