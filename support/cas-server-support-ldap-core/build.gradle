@@ -1,6 +1,7 @@
 description = "Apereo CAS LDAP Core Support"
 dependencies {
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     compileOnly project(":core:cas-server-core-authentication")
     api libraries.ldaptive
     implementation libraries.shiro
