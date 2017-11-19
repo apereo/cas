@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -10,6 +9,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcProperties}.
@@ -46,20 +47,20 @@ public class OidcProperties implements Serializable {
     /**
      * List of supported scopes.
      */
-    private List<String> scopes = CollectionUtils.wrapList("openid", "profile", "email", "address", "phone", "offline_access");
+    private List<String> scopes = Stream.of("openid", "profile", "email", "address", "phone", "offline_access").collect(Collectors.toList());;
     /**
      * List of supported claims.
      */
-    private List<String> claims = CollectionUtils.wrapList("sub", "name", "preferred_username",
+    private List<String> claims = Stream.of("sub", "name", "preferred_username",
             "family_name", "given_name", "middle_name", "given_name", "profile",
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",
-            "phone_number_verified", "address");
+            "phone_number_verified", "address").collect(Collectors.toList());;
 
     /**
      * List of supported subject types.
      */
-    private List<String> subjectTypes = CollectionUtils.wrapList("public", "pairwise");
+    private List<String> subjectTypes = Stream.of("public", "pairwise").collect(Collectors.toList());;
 
     /**
      * Mapping of user-defined scopes. Key is the new scope name

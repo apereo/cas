@@ -3,7 +3,7 @@ package org.apereo.cas.util;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.apereo.cas.CipherExecutor;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
@@ -33,11 +33,6 @@ import java.util.Map;
  */
 public final class EncodingUtils {
 
-    /**
-     * Default content encryption algorithm.
-     */
-    public static final String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM = ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
-    
     /**
      * JSON web key parameter that identifies the key..
      */
@@ -345,7 +340,8 @@ public final class EncodingUtils {
      * @return the string
      */
     public static String encryptValueAsJwtDirectAes128Sha256(final Key key, final Serializable value) {
-        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
+                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
     }
 
     /**
@@ -356,7 +352,8 @@ public final class EncodingUtils {
      * @return the string
      */
     public static String encryptValueAsJwtRsaOeap256Aes256Sha512(final Key key, final Serializable value) {
-        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+        return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
+                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
     }
     
     /**

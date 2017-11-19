@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link HazelcastClusterProperties}.
@@ -71,7 +72,7 @@ public class HazelcastClusterProperties implements Serializable {
      * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which indicates multiple members are going to be added.
      */
     @RequiredProperty
-    private List<String> members = CollectionUtils.wrap("localhost");
+    private List<String> members = Stream.of("localhost").collect(Collectors.toList());;
     /**
      * Sets the maximum size of the map.
      */

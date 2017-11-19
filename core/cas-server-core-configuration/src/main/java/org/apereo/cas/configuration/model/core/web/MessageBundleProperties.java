@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.core.web;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Configuration properties class for message.bundle.
@@ -40,14 +41,14 @@ public class MessageBundleProperties implements Serializable {
     /**
      * A list of strings representing base names for this message bundle.
      */
-    private List<String> baseNames = CollectionUtils.wrapList("classpath:custom_messages", "classpath:messages");
+    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages").collect(Collectors.toList());;
 
     /**
      * A list of strings representing common names for this message bundle.
      * <p>
      * Entries in last common names override first values (as opposed to baseNames used in message bundles).
      */
-    private List<String> commonNames = CollectionUtils.wrapList("classpath:common_messages.properties", "file:/etc/cas/config/common_messages.properties");
+    private List<String> commonNames = Stream.of("classpath:common_messages.properties", "file:/etc/cas/config/common_messages.properties").collect(Collectors.toList());;
 
     public String getEncoding() {
         return encoding;

@@ -6,7 +6,6 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,20 +78,23 @@ public class CasConfigurationPropertiesEnvironmentManager {
 
     /**
      * Rebind cas configuration properties.
+     *
+     * @param applicationContext the application context
      */
-    public void rebindCasConfigurationProperties() {
-        rebindCasConfigurationProperties(this.binder);
+    public void rebindCasConfigurationProperties(final ApplicationContext applicationContext) {
+        rebindCasConfigurationProperties(this.binder, applicationContext);
     }
 
     /**
      * Rebind cas configuration properties.
      *
-     * @param binder the binder
+     * @param binder             the binder
+     * @param applicationContext the application context
      */
-    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder) {
+    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
+                                                        final ApplicationContext applicationContext) {
         Assert.notNull(binder, "Configuration binder cannot be null");
         
-        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final Map<String, CasConfigurationProperties> map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
         final String name = map.keySet().iterator().next();
         LOGGER.debug("Reloading CAS configuration via [{}]", name);
