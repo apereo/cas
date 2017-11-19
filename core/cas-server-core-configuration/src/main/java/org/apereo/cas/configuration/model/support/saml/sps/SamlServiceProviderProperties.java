@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -471,7 +472,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -5320292115253509284L;
 
         public Box() {
-            setAttributes(CollectionUtils.wrapList(EMAIL, "firstName", "lastName"));
+            setAttributes(Stream.of(EMAIL, "firstName", "lastName").collect(Collectors.toList()));
         }
     }
 
@@ -504,7 +505,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 4685484530782109454L;
 
         public Salesforce() {
-            setAttributes(CollectionUtils.wrapList("mail", PRINCIPAL_NAME));
+            setAttributes(Stream.of("mail", PRINCIPAL_NAME).collect(Collectors.toList()));
         }
     }
 
@@ -513,7 +514,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 4329681021653966734L;
 
         public ServiceNow() {
-            setAttributes(CollectionUtils.wrap(PRINCIPAL_NAME));
+            setAttributes(Stream.of(PRINCIPAL_NAME).collect(Collectors.toList()));
         }
     }
 
@@ -532,7 +533,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Office365() {
             setNameIdAttribute("scopedImmutableID");
-            setAttributes(CollectionUtils.wrapList("IDPEmail", "ImmutableID"));
+            setAttributes(Stream.of("IDPEmail", "ImmutableID").collect(Collectors.toList()));
             setSignResponses(false);
             setSignAssertions(true);
         }
@@ -543,7 +544,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 8449304623099588610L;
 
         public WebAdvisor() {
-            setAttributes(CollectionUtils.wrap("uid"));
+            setAttributes(Stream.of("uid").collect(Collectors.toList()));
         }
     }
 
@@ -553,7 +554,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Webex() {
             setNameIdAttribute(EMAIL);
-            setAttributes(CollectionUtils.wrapList("firstName", "lastName"));
+            setAttributes(Stream.of("firstName", "lastName").collect(Collectors.toList()));
             setSignResponses(false);
             setSignAssertions(true);
         }
@@ -564,7 +565,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -2426590644028989950L;
 
         public Tableau() {
-            setAttributes(CollectionUtils.wrap("username"));
+            setAttributes(Stream.of("username").collect(Collectors.toList()));
         }
     }
 
@@ -574,7 +575,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public TestShib() {
             //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-            setAttributes(CollectionUtils.wrap(PRINCIPAL_NAME));
+            setAttributes(Stream.of(PRINCIPAL_NAME).collect(Collectors.toList()));
         }
     }
 
@@ -584,7 +585,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Zoom() {
             setNameIdAttribute("mail");
-            setAttributes(CollectionUtils.wrapList("mail", "sn", "givenName"));
+            setAttributes(Stream.of("mail", "sn", "givenName").collect(Collectors.toList()));
         }
     }
 
@@ -594,7 +595,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public ArcGIS() {
             setNameIdAttribute("arcNameId");
-            setAttributes(CollectionUtils.wrapList("mail", "givenName", "arcNameId"));
+            setAttributes(Stream.of("mail", "givenName", "arcNameId").collect(Collectors.toList()));
         }
     }
 
@@ -605,7 +606,7 @@ public class SamlServiceProviderProperties implements Serializable {
         public InCommon() {
             //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
             //setSignatureLocation("/etc/cas/config/certs/inc-md-cert.pem");
-            setAttributes(CollectionUtils.wrap(PRINCIPAL_NAME));
+            setAttributes(Stream.of(PRINCIPAL_NAME).collect(Collectors.toList()));
         }
     }
 
@@ -635,7 +636,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public OpenAthens() {
             //setMetadata("https://login.openathens.net/saml/2/metadata-sp");
-            setAttributes(CollectionUtils.wrapList(PRINCIPAL_NAME, EMAIL));
+            setAttributes(Stream.of(PRINCIPAL_NAME, EMAIL).collect(Collectors.toList()));
         }
     }
 
@@ -653,7 +654,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -5466434234795577247L;
 
         public AdobeCloud() {
-            setAttributes(CollectionUtils.wrapList("firstName", "lastName", EMAIL));
+            setAttributes(Stream.of("firstName", "lastName", EMAIL).collect(Collectors.toList()));
         }
     }
 
@@ -662,7 +663,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 5855725238963607605L;
 
         public AcademicWorks() {
-            setAttributes(CollectionUtils.wrapList("displayName", EMAIL));
+            setAttributes(Stream.of("displayName", EMAIL).collect(Collectors.toList()));
         }
     }
 
@@ -671,7 +672,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 6177866628049579956L;
 
         public EasyIep() {
-            setAttributes(CollectionUtils.wrap("employeeId"));
+            setAttributes(Stream.of("employeeId").collect(Collectors.toList()));
         }
     }
 
@@ -680,7 +681,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -9023417844664430533L;
 
         public InfiniteCampus() {
-            setAttributes(CollectionUtils.wrap("employeeId"));
+            setAttributes(Stream.of("employeeId").collect(Collectors.toList()));
         }
     }
 
@@ -689,7 +690,8 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -1688194227471468248L;
 
         public SecuringTheHuman() {
-            setAttributes(CollectionUtils.wrapList("firstName", "lastName", EMAIL, "scopedUserId", "department", "reference"));
+            setAttributes(Stream.of("firstName", "lastName", EMAIL, "scopedUserId", "department", "reference")
+                    .collect(Collectors.toList()));
         }
     }
 
@@ -699,7 +701,8 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Slack() {
             setNameIdFormat("persistent");
-            setAttributes(CollectionUtils.wrapList("User.Email", "User.Username", "first_name", "last_name"));
+            setAttributes(Stream.of("User.Email", "User.Username", "first_name", "last_name")
+                    .collect(Collectors.toList()));
             setNameIdAttribute("employeeId");
         }
     }
@@ -711,7 +714,7 @@ public class SamlServiceProviderProperties implements Serializable {
         public Zendesk() {
             setNameIdFormat("emailAddress");
             setNameIdAttribute("email");
-            setAttributes(CollectionUtils.wrapList("organization", "tags", "phone", "role"));
+            setAttributes(Stream.of("organization", "tags", "phone", "role").collect(Collectors.toList()));
         }
     }
 

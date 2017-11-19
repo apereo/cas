@@ -1,4 +1,4 @@
-description = "Apereo CAS central configuration module providing type-safe configuration domain model to the rest of CAS server"
+description = "Apereo CAS central configuration module"
 
 dependencies {
     implementation libraries.springsecurity
@@ -9,10 +9,9 @@ dependencies {
     
     optional libraries.springbootconfigmetadata
 
+    api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
-    compileOnly project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-util")
 }
 
 task generateConfigurationMetadata(type: JavaExec) {

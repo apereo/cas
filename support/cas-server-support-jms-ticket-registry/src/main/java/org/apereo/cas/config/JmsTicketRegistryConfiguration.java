@@ -5,10 +5,10 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.JmsTicketRegistry;
 import org.apereo.cas.ticket.registry.JmsTicketRegistryReceiver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -54,7 +54,7 @@ public class JmsTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry() {
         final JmsTicketRegistryProperties jms = casProperties.getTicket().getRegistry().getJms();
-        final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
+        final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
         return new JmsTicketRegistry(this.jmsTemplate, messageQueueTicketRegistryIdentifier(), cipher);
     }
 

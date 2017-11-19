@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -14,11 +15,15 @@ import org.springframework.context.event.EventListener;
  */
 public class CasCloudBusConfigurationEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCloudBusConfigurationEventListener.class);
-    
+
+    private final ApplicationContext applicationContext;
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-    public CasCloudBusConfigurationEventListener(final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
+    public CasCloudBusConfigurationEventListener(
+            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+            final ApplicationContext applicationContext) {
         this.configurationPropertiesEnvironmentManager = configurationPropertiesEnvironmentManager;
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -29,6 +34,6 @@ public class CasCloudBusConfigurationEventListener {
     @EventListener
     public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
         LOGGER.debug("Received event [{}]", event);
-        configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
+        configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.applicationContext);
     }
 }

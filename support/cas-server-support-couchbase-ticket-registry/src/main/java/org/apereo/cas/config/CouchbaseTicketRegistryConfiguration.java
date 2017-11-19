@@ -2,13 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,7 +48,7 @@ public class CouchbaseTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
         final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketRegistryCouchbaseClientFactory(), ticketCatalog);
-        c.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
+        c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
         System.setProperty("com.couchbase.queryEnabled", Boolean.toString(couchbase.isQueryEnabled()));
         return c;
     }

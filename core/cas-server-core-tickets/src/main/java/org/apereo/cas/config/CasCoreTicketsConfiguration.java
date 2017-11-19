@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -42,6 +41,7 @@ import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
@@ -223,7 +223,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                 + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
-        final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
+        final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
 
         if (mem.isCache()) {
             final LogoutManager logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);

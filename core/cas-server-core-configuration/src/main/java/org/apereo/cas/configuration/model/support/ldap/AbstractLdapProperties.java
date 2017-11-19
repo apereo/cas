@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractLdapProperties}.
@@ -565,7 +566,7 @@ public abstract class AbstractLdapProperties implements Serializable {
         /**
          * Attribute values to use for the compare validator.
          */
-        private List<String> attributeValues = CollectionUtils.wrap("top");
+        private List<String> attributeValues = Stream.of("top").collect(Collectors.toList());
         /**
          * DN to compare to use for the compare validator.
          */

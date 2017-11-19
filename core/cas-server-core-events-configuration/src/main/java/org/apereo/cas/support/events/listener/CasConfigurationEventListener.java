@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public class CasConfigurationEventListener {
     @Autowired(required = false)
     private ContextRefresher contextRefresher;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
     public CasConfigurationEventListener(final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
@@ -77,9 +81,9 @@ public class CasConfigurationEventListener {
     private void rebind() {
         LOGGER.info("Refreshing CAS configuration. Stand by...");
         if (configurationPropertiesEnvironmentManager != null) {
-            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
+            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.applicationContext);
         } else {
-            CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.binder);
+            CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.binder, this.applicationContext);
         }
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.util;
 
-
-import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.CipherExecutor;
 
 import java.io.Serializable;
 
@@ -36,7 +35,7 @@ public class EncryptionJwtSigningJwtCryptographyProperties implements Serializab
     /**
      * The signing/encryption algorithm to use.
      */
-    private String alg = EncodingUtils.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
+    private String alg = CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
 
     public EncryptionJwtCryptoProperties getEncryption() {
         return encryption;

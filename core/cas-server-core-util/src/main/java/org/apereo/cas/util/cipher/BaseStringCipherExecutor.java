@@ -53,7 +53,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning,
                                     final boolean encryptionEnabled) {
-        this(secretKeyEncryption, secretKeySigning, EncodingUtils.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, encryptionEnabled);
+        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, encryptionEnabled);
     }
 
     public BaseStringCipherExecutor(final String secretKeyEncryption,
@@ -73,7 +73,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption,
                                     final String secretKeySigning) {
-        this(secretKeyEncryption, secretKeySigning, EncodingUtils.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, true);
+        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, true);
     }
 
     /**
