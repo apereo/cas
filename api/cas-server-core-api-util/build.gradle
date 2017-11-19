@@ -1,5 +1,5 @@
 
 description = "Apereo CAS Core Utility APIs"
 dependencies {
-    
+    api libraries.jose4j
 }
