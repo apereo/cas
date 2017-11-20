@@ -1,0 +1,11 @@
+description = "Apereo CAS Core Logout"
+dependencies {
+    api project(":api:cas-server-core-api-logout")
+    
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-tickets-api")
+}
+
+
