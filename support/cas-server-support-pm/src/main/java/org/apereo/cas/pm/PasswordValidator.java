@@ -27,7 +27,7 @@ public class PasswordValidator {
     public void validateCasMustChangePassView(final PasswordChangeBean bean, final ValidationContext context) {
         final MessageContext messages = context.getMessageContext();
 
-        if(!StringUtils.hasText(bean.getPassword())) {
+        if (!StringUtils.hasText(bean.getPassword())) {
             messages.addMessage(new MessageBuilder().error().source("pm.passwordFailedCriteria").
                     defaultText("Password policy rejected empty password.").build());
             return;
