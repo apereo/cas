@@ -1,6 +1,7 @@
 package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -39,7 +40,8 @@ public class DefaultRegisteredServiceCipherExecutorTests {
     }
 
     private AbstractRegisteredService getService(final String keyLocation) {
-        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("test");
+        final AbstractRegisteredService svc = new RegexRegisteredService();
+        svc.setServiceId("Testing");
         svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
         return svc;
     }
