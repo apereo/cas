@@ -42,6 +42,9 @@ The management web application is primarily controlled by a `management.yml|prop
 
 The [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and settings, needs to be configured in the same exact way for the management web application.
 
+## User Attributes
+The set of user attributes defined in the CAS Server's [authentication attributes](Configuration-Properties.html#authentication-attributes) or [attribute resolution](Attribute-Resolution.html) configurations should be mapped in the Service Management webapp's configuration using the [stub-based attribute repository](Configuration-Properties.html#attributes). This will make the attributes available for selction in the management webapp's various user attributes-related dropdowns.
+
 ## Authentication
 
 Access to the management webapp can be configured via the following strategies.
