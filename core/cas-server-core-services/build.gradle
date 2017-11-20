@@ -11,11 +11,5 @@ dependencies {
     
     implementation libraries.groovy
     implementation project(":core:cas-server-core-util-api")
-    
-    testImplementation project(":core:cas-server-core-authentication-attributes")
-    testImplementation project(":core:cas-server-core-authentication-api")
-    testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":support:cas-server-support-person-directory")
 }
 
