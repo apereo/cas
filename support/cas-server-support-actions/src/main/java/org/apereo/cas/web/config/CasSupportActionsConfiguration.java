@@ -162,6 +162,7 @@ public class CasSupportActionsConfiguration {
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
                 servicesManager,
+                authenticationRequestServiceSelectionStrategies,
                 ticketGrantingTicketCookieGenerator,
                 warnCookieGenerator, casProperties);
     }
