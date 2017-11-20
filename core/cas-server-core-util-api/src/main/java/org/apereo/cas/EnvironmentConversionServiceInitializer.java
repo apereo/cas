@@ -1,4 +1,4 @@
-package org.apereo.cas.config.support;
+package org.apereo.cas;
 
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -14,7 +14,7 @@ public class EnvironmentConversionServiceInitializer implements ApplicationConte
     @Override
     public void initialize(final ConfigurableApplicationContext ctx) {
         final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
-        conversionService.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(ctx));
+        conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
 
     }

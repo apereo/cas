@@ -28,7 +28,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
+import org.apereo.cas.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredService;

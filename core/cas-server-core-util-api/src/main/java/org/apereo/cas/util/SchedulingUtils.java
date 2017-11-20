@@ -1,6 +1,6 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
+import org.apereo.cas.CasEmbeddedValueResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.util.StringValueResolver;
@@ -22,7 +22,7 @@ public final class SchedulingUtils {
      * @return the string value resolver
      */
     public static StringValueResolver prepScheduledAnnotationBeanPostProcessor(final ApplicationContext applicationContext) {
-        final StringValueResolver resolver = new CasConfigurationEmbeddedValueResolver(applicationContext);
+        final StringValueResolver resolver = new CasEmbeddedValueResolver(applicationContext);
         final ScheduledAnnotationBeanPostProcessor sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
         sch.setEmbeddedValueResolver(resolver);
         return resolver;

@@ -2,11 +2,11 @@ description = "Apereo CAS JDBC Monitor Support"
 dependencies {
 
     implementation project(":core:cas-server-core-monitor")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
-    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-util")
 }

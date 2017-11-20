@@ -19,5 +19,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" 
         echo -e "*************************************************************"
     fi
 else
+    echo -e "*************************************************************"
     echo -e "Publishing snapshots to Sonatype will be skipped.\n"
+    echo -e "*************************************************************"
 fi
