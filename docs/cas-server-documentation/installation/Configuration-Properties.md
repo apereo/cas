@@ -5262,7 +5262,19 @@ The configuration of the CAS management web application is handled inside a `man
 #cas.mgmt.authzIpRegex=
 ```
 
+### Attributes
+
+Attribute configuration and customizations that are processed and accepted by the management web application are defined via the following settings:
+
+```properties
+# cas.authn.attributeRepository.stub.attributes.uid=uid
+# cas.authn.attributeRepository.stub.attributes.givenName=givenName
+# cas.authn.attributeRepository.stub.attributes.eppn=eppn
+```
+
 ### LDAP Authorization
+
+Use LDAP to enforce access into the management web application either by group or attribute.
 
 ```properties
 # Enable authorization based on groups
