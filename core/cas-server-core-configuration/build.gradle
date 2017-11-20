@@ -9,9 +9,11 @@ dependencies {
     
     optional libraries.springbootconfigmetadata
 
+    api project(":api:cas-server-core-api-configuration")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
+    api project(":core:cas-server-core-configuration-api")
 }
 
 task generateConfigurationMetadata(type: JavaExec) {

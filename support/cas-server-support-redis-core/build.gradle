@@ -2,6 +2,6 @@ description = "Apereo CAS Redis Core Support"
 dependencies {
     implementation libraries.springbootredis
     
-    implementation project(":core:cas-server-core-util")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
 }
