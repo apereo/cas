@@ -4,11 +4,21 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
+import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService.LogoutType;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
@@ -19,12 +29,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -60,7 +73,7 @@ public class DefaultLogoutManagerTests {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
@@ -73,13 +86,13 @@ public class DefaultLogoutManagerTests {
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
         final Map<String, Service> services = new HashMap<>();
-        this.simpleWebApplicationServiceImpl = RegisteredServiceTestUtils.getService(URL);
+        this.simpleWebApplicationServiceImpl = getService(URL);
         services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(services);
 
         this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), 
                 singleLogoutServiceMessageHandler, false, mock(LogoutExecutionPlan.class));
-        this.registeredService = RegisteredServiceTestUtils.getRegisteredService(URL);
+        this.registeredService = getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
 
@@ -160,5 +173,25 @@ public class DefaultLogoutManagerTests {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        try {
+            final RegexRegisteredService s = new RegexRegisteredService();
+            s.setServiceId(id);
+            s.setName("Test registered service " + id);
+            s.setDescription("Registered service description");
+            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+            s.setId(RandomUtils.getInstanceNative().nextInt(Math.abs(s.hashCode())));
+            return s;
+        } catch (final Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public static AbstractWebApplicationService getService(final String url) {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", url);
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 }
