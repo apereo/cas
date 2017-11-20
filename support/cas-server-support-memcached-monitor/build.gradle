@@ -15,6 +15,6 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":core:cas-server-core")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
     compileOnly project(":support:cas-server-support-saml")
 }
