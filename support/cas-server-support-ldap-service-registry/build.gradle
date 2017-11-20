@@ -13,5 +13,5 @@ dependencies {
     testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
 }
