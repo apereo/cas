@@ -64,7 +64,8 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
         final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
-        this.action = new InitialFlowSetupAction(argExtractors, servicesManager, authenticationRequestServiceSelectionStrategies, tgtCookieGenerator, warnCookieGenerator, casProperties);
+        this.action = new InitialFlowSetupAction(argExtractors, servicesManager, authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
+                warnCookieGenerator, casProperties);
 
         this.action.afterPropertiesSet();
     }
