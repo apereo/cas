@@ -8,6 +8,4 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation libraries.groovy
     implementation libraries.caffein
-
-    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }

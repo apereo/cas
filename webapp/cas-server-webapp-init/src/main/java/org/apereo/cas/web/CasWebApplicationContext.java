@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
+import org.apereo.cas.CasEmbeddedValueResolver;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
@@ -23,7 +23,7 @@ public class CasWebApplicationContext extends AnnotationConfigEmbeddedWebApplica
     protected void onRefresh() {
         final ScheduledAnnotationBeanPostProcessor sch = (ScheduledAnnotationBeanPostProcessor)
                 getBeanFactory().getBean(TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME, BeanPostProcessor.class);
-        sch.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(this));
+        sch.setEmbeddedValueResolver(new CasEmbeddedValueResolver(this));
         super.onRefresh();
     }
 
