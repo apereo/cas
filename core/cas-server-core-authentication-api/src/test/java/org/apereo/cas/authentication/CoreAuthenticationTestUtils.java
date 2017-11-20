@@ -65,8 +65,7 @@ public final class CoreAuthenticationTestUtils {
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url),
-                    CoreAuthenticationTestUtils.getRegisteredService(url));
+            return new HttpBasedServiceCredential(new URL(url), getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }

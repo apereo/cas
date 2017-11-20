@@ -1,4 +1,4 @@
-description = "Apereo CAS Core Configuration"
+description = "Apereo CAS Core Configuration API"
 
 dependencies {
     implementation libraries.springsecurity

@@ -4,7 +4,6 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-ldap-core")
     implementation libraries.groovy
     implementation libraries.caffein
