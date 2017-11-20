@@ -7,6 +7,7 @@ dependencies {
     
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-logging")
 
     testImplementation project(":support:cas-server-support-person-directory")
@@ -19,6 +20,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-authentication-attributes")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core")
 }

@@ -16,6 +16,6 @@ dependencies {
     compileOnly project(":core:cas-server-core-services")
     
     testImplementation project(":core:cas-server-core-services")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
 }
 

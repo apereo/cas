@@ -1,6 +1,7 @@
 description = "Apereo CAS Hazelcast Integration"
 dependencies {
     implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-tickets")
     implementation project(":support:cas-server-support-hazelcast-core")
     implementation project(":core:cas-server-core-configuration-api")
     api project(":api:cas-server-core-api-util")
@@ -17,5 +18,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
 }
