@@ -6,10 +6,10 @@ repositories {
 }
 dependencies {
 
-    implementation project(":core:cas-server-core-util")
-    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-attributes")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":core:cas-server-core-authentication-mfa")
 

@@ -2,6 +2,6 @@ description = "Apereo CAS Swivel Core Support"
 
 dependencies {
     implementation project(":core:cas-server-core-authentication-mfa")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
 }
