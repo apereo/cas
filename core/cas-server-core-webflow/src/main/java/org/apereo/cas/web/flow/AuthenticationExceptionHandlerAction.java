@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
+import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
@@ -20,6 +21,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -142,8 +144,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * @return true if any custom errors have been added, false otherwise.
      */
     public final boolean containsCustomErrors() {
-        return DEFAULT_ERROR_LIST.size() != this.errors.size()
-                && this.errors.containsAll(DEFAULT_ERROR_LIST);
+        return DEFAULT_ERROR_LIST.size() != this.errors.size() && this.errors.containsAll(DEFAULT_ERROR_LIST);
     }
 
     /**
@@ -160,22 +161,23 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * Maps an authentication exception onto a state name. Also sets an ERROR severity message in the message context.
      *
      * @param e              Authentication error to handle.
-     * @param messageContext the spring message context
+     * @param requestContext the spring context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
-    public String handle(final Exception e, final MessageContext messageContext) {
+    public String handle(final Exception e, final RequestContext requestContext) {
         if (e instanceof AuthenticationException) {
-            return handleAuthenticationException((AuthenticationException) e, messageContext);
+            return handleAuthenticationException((AuthenticationException) e, requestContext);
         }
 
         if (e instanceof AbstractTicketException) {
-            return handleAbstractTicketException((AbstractTicketException) e, messageContext);
+            return handleAbstractTicketException((AbstractTicketException) e, requestContext);
         }
 
         // we don't recognize this exception
-        LOGGER.trace("Unable to translate errors of the authentication exception [{}]"
-                + "Returning [{}]", e, UNKNOWN);
+        LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
+
+        final MessageContext messageContext = requestContext.getMessageContext();
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
     }
@@ -189,11 +191,19 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * error that is configured. If no match is found, {@value #UNKNOWN} is returned.
      *
      * @param e              Authentication error to handle.
-     * @param messageContext the spring message context
+     * @param requestContext the spring context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     protected String handleAuthenticationException(final AuthenticationException e,
-                                                   final MessageContext messageContext) {
+                                                   final RequestContext requestContext) {
+        if (e.getHandlerErrors().containsKey(UnauthorizedServiceForPrincipalException.class.getSimpleName())) {
+            final URI url = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(requestContext);
+            if (url != null) {
+                LOGGER.warn("Unauthorized service access for principal; CAS will be redirecting to [{}]", url);
+                return CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK;
+            }
+        }
+
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {
@@ -204,6 +214,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
         // output message and return handlerErrorName
         final String messageCode = this.messageBundlePrefix + handlerErrorName;
+        final MessageContext messageContext = requestContext.getMessageContext();
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return handlerErrorName;
     }
@@ -215,15 +226,16 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * {@value AuthenticationExceptionHandlerAction#UNKNOWN} is returned.
      *
      * @param e              Ticket exception to handle.
-     * @param messageContext the spring message context
+     * @param requestContext the spring context
      * @return Name of next flow state to transition to or {@value AuthenticationExceptionHandlerAction#UNKNOWN}
      */
-    protected String handleAbstractTicketException(final AbstractTicketException e, final MessageContext messageContext) {
+    protected String handleAbstractTicketException(final AbstractTicketException e, final RequestContext requestContext) {
         // find the first error in the error list that matches the AbstractTicketException
         final Optional<String> match = this.errors.stream()
                 .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
                 .findFirst();
 
+        final MessageContext messageContext = requestContext.getMessageContext();
         match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
         return match.orElse(UNKNOWN);
     }
@@ -231,8 +243,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final String event = handle(requestContext.getCurrentEvent().getAttributes().get("error", Exception.class),
-                requestContext.getMessageContext());
+        final String event = handle(requestContext.getCurrentEvent().getAttributes().get("error", Exception.class), requestContext);
         return new EventFactorySupport().event(this, event);
     }
 }

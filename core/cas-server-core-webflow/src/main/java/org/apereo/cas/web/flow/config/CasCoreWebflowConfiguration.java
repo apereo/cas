@@ -13,6 +13,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.web.flow.AuthenticationExceptionHandlerAction;
 import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.RedirectToServiceAction;
@@ -140,6 +141,14 @@ public class CasCoreWebflowConfiguration {
                 selector, casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
+    @Bean
+    public Action authenticationExceptionHandler() {
+        final AuthenticationExceptionHandlerAction h = new AuthenticationExceptionHandlerAction();
+        h.setErrors(casProperties.getAuthn().getExceptions().getExceptions());
+        return h;
+    }
+    
     @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderSelector")
     @Bean
     @RefreshScope
