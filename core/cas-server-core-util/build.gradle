@@ -5,6 +5,8 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-web")
+
+    implementation project(":core:cas-server-core-util-api")
     
     implementation libraries.shiro
     implementation libraries.pac4j

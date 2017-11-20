@@ -5,17 +5,17 @@ dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-util")
 
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-validation")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation libraries.metrics
     
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
-    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-logout")

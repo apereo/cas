@@ -1,4 +1,4 @@
-package org.apereo.cas.config.support;
+package org.apereo.cas;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,16 +11,16 @@ import org.springframework.core.convert.ConversionService;
 import java.time.Duration;
 
 /**
- * This is {@link CasConfigurationEmbeddedValueResolver}.
+ * This is {@link CasEmbeddedValueResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasConfigurationEmbeddedValueResolver extends EmbeddedValueResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationEmbeddedValueResolver.class);
+public class CasEmbeddedValueResolver extends EmbeddedValueResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedValueResolver.class);
     private final ConfigurableApplicationContext applicationContext;
 
-    public CasConfigurationEmbeddedValueResolver(final ApplicationContext applicationContext) {
+    public CasEmbeddedValueResolver(final ApplicationContext applicationContext) {
         super(((ConfigurableApplicationContext) applicationContext).getBeanFactory());
         this.applicationContext = ConfigurableApplicationContext.class.cast(applicationContext);
     }

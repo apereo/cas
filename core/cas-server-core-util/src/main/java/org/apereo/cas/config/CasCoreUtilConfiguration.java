@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
+import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -79,7 +79,7 @@ public class CasCoreUtilConfiguration {
     public void init() {
         final ConfigurableApplicationContext ctx = applicationContextProvider().getConfigurableApplicationContext();
         final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
-        conversionService.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(ctx));
+        conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
         final ConfigurableEnvironment env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
         env.setConversionService(conversionService);

@@ -1,13 +1,9 @@
 description = "Apereo CAS RADIUS Support"
 
-repositories {
-    maven { url "https://jitpack.io" }
-    jcenter()
-}
-
 dependencies {
     implementation project(":support:cas-server-support-radius-core")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication-api")
+    
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-configuration-api")
 }

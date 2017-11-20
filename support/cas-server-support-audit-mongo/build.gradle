@@ -3,7 +3,7 @@ dependencies {
 	api project(":api:cas-server-core-api")
  
     implementation libraries.mongo
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-mongo-core")
  
     provided project(":core:cas-server-core-audit")

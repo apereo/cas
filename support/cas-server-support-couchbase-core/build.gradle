@@ -7,5 +7,5 @@ repositories {
 
 dependencies {
     api libraries.couchbase
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
 }
