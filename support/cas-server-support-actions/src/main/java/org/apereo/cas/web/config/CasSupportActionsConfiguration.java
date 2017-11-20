@@ -186,7 +186,11 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "generateServiceTicketAction")
     public Action generateServiceTicketAction() {
-        return new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService, ticketRegistrySupport, servicesManager);
+        return new GenerateServiceTicketAction(authenticationSystemSupport,
+                centralAuthenticationService,
+                ticketRegistrySupport,
+                servicesManager,
+                authenticationRequestServiceSelectionStrategies);
     }
 
     @Bean
