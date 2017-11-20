@@ -17,7 +17,7 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":core:cas-server-core-webflow")
