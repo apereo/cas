@@ -124,7 +124,7 @@ dependencies {
     implementation project(":support:cas-server-support-configuration")
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-actions")
-    implementation project(":support:cas-server-support-cookie")
+    implementation project(":core:cas-server-core-cookie")
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
