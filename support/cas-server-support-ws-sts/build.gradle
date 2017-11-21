@@ -15,7 +15,8 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core")
     testImplementation project(path: ":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
-    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

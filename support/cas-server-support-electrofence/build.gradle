@@ -19,7 +19,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":support:cas-server-support-events-memory")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-api")
