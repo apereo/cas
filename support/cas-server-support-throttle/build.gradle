@@ -12,7 +12,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-cookie")
     
     testCompileOnly libraries.javax
 }
