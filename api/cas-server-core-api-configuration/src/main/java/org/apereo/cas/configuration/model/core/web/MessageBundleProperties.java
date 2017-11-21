@@ -41,15 +41,18 @@ public class MessageBundleProperties implements Serializable {
     /**
      * A list of strings representing base names for this message bundle.
      */
-    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages").collect(Collectors.toList());;
+    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages").collect(Collectors.toList());
+    ;
 
     /**
      * A list of strings representing common names for this message bundle.
      * <p>
      * Entries in last common names override first values (as opposed to baseNames used in message bundles).
      */
-    private List<String> commonNames = Stream.of("classpath:common_messages.properties", "file:/etc/cas/config/common_messages.properties").collect(Collectors.toList());;
-
+    private List<String> commonNames = Stream.of("classpath:common_messages.properties",
+        "file:/etc/cas/config/common_messages.properties")
+        .collect(Collectors.toList());
+    
     public String getEncoding() {
         return encoding;
     }
