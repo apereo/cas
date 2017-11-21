@@ -7,7 +7,7 @@ title: CAS - Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
-## Development [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) 
+## Development 
 
 ## Source Checkout
 
