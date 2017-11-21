@@ -13,7 +13,8 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
-    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout-api")

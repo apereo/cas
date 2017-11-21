@@ -13,7 +13,7 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
 
     compileOnly project(":core:cas-server-core-tickets")
-    implementation project(":core:cas-server-core-cookie")
+    implementation project(":core:cas-server-core-cookie-api")
 
     testImplementation project(":support:cas-server-support-memcached-ticket-registry")
     testImplementation project(":core:cas-server-core-util")
@@ -28,5 +28,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-cookie-api")
 }

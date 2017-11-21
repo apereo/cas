@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-cookie", automated = true)
+@RequiresModule(name = "cas-server-core-cookie", automated = true)
 public class CookieProperties implements Serializable {
 
     private static final long serialVersionUID = 6804770601645126835L;
