@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -38,17 +39,20 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private final CasConfigurationProperties casProperties;
     private final ServicesManager servicesManager;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final List<ArgumentExtractor> argumentExtractors;
 
     public InitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors,
                                   final ServicesManager servicesManager,
+                                  final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionPlan,
                                   final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                   final CookieRetrievingCookieGenerator warnCookieGenerator,
                                   final CasConfigurationProperties casProperties) {
         this.argumentExtractors = argumentExtractors;
         this.servicesManager = servicesManager;
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionPlan;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.warnCookieGenerator = warnCookieGenerator;
         this.casProperties = casProperties;
@@ -67,7 +71,8 @@ public class InitialFlowSetupAction extends AbstractAction {
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
 
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final Service selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                         registeredService.getServiceId(),
