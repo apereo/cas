@@ -35,7 +35,6 @@ import java.security.KeyStore;
 @Configuration("casCoreHttpConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
-@AutoConfigureBefore(CasCoreAuthenticationConfiguration.class)
 public class CasCoreHttpConfiguration {
 
     @Autowired
