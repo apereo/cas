@@ -74,7 +74,6 @@ import javax.annotation.PostConstruct;
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
-                CasCookieConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,

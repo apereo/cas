@@ -105,7 +105,6 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-
     
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {

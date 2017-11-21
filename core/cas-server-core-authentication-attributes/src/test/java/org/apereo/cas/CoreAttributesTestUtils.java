@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**

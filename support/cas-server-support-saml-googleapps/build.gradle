@@ -9,6 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-authentication")
 
+
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":core:cas-server-core-util")
@@ -17,8 +18,11 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-api")
 }
