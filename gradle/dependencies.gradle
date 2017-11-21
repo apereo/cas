@@ -7,11 +7,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-        lombok                  : [
-                dependencies.create("org.projectlombok:lombok:$lombokVersion") {
-                    force = true
-                }
-        ],
         semver                  : [
                 dependencies.create("com.vdurmont:semver4j:$semverVersion") {
                     force = true
