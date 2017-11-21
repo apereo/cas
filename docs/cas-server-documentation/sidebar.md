@@ -203,7 +203,6 @@ layout: null
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
-    *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 
