@@ -27,7 +27,7 @@ If you have already identified an enhancement or a bug, it is STRONGLY recommend
 
 ## Documentation
 
-[![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
+[![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server)
 
 - [Documentation][wiki]
 - [Blog][blog]
