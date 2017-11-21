@@ -88,7 +88,7 @@ Then, open the project as you would for any other project and let IDEA resolve t
 
 The following IDEA settings for Gradle may also be useful:
 
-![image](https://cloud.githubusercontent.com/assets/1205228/23250938/68e0b7ac-f9c0-11e6-9ce1-cb1fae07c6ae.png)
+![image](https://user-images.githubusercontent.com/1205228/33073158-33b20b64-ce7f-11e7-91d9-3b9f867201f4.png)
 
 - Note how 'Use auto-import' is turned off. To resolve Gradle modules and dependencies, you are required to force refresh the project rather than have IDEA auto-refresh the project as you make changes to the build script. Disabling auto-import usually results in much better performance.
 - Note how 'Offline work' is enabled. This is equivalent to Gradle's own `--offline` flag, forcing the build to not contact Maven/Gradle repositories for resolving dependencies. Working offline usually results in much better performance.
@@ -149,7 +149,7 @@ To test the functionality provided by a given CAS module, execute the following 
 - Add the module reference to the build script (i.e. `build.gradle`) of web application you intend to run (i.e Web App, Management Web App, etc)
 
 ```gradle
-compile project(":support:cas-server-support-modulename")
+implementation project(":support:cas-server-support-modulename")
 ```
 
 - Prepare the embedded container, as described below, to run and deploy the web application
