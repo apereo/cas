@@ -41,8 +41,8 @@ public class MessageBundleProperties implements Serializable {
     /**
      * A list of strings representing base names for this message bundle.
      */
-    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages").collect(Collectors.toList());
-    ;
+    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages")
+        .collect(Collectors.toList());
 
     /**
      * A list of strings representing common names for this message bundle.
