@@ -9,10 +9,6 @@ This page documents the steps that a CAS developer/contributor should take for b
 
 ## Development [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) 
 
-CAS development is powered by: <br/>
-
-<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="../images/intellijidea.gif" width="100" height="100" valign="middle" style="vertical-align:middle"></a>
-
 ## Source Checkout
 
 The following shell commands may be used to grab the source from the repository:
@@ -56,6 +52,7 @@ The following commandline boolean flags are supported by the build:
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
 | `enableIncremental`               | Enable Gradle's incremental compilation feature.
+| `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -86,6 +83,8 @@ cd cas-server
 ```
 
 Then, open the project as you would for any other project and let IDEA resolve the Gradle dependencies. 
+
+<div class="alert alert-warning"><strong>YMMV</strong><p>Using the Gradle tool window to refresh the CAS project might very quickly lead to out-of-memory errors and JVM hang-ups. If you do need to refresh the project, it might be more productive to use the <code>idea</code> task from the command-line first to re-generate the project structure first and then resume. This task is only required if you are about to add/remove CAS modules or update a module's build dependencies.</p></div>
 
 The following IDEA settings for Gradle may also be useful:
 
@@ -220,7 +219,7 @@ cd webapp/cas-server-webapp-tomcat
 # Or for the management-webapp:
 # cd webapp-mgmt/cas-management-webapp
 
-../../gradlew build bootRun --parallel --offline
+../../gradlew build bootRun --parallel --offline --configure-on-demand --build-cache --stacktrace
 ```
 
 The response will look something like this:
