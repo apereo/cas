@@ -47,6 +47,7 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
@@ -109,6 +110,7 @@ subprojects {
             description: "Display a graph of all project dependencies") {
         doLast {}
     }
+    apply plugin: "kotlin"
     apply plugin: "java-library"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
@@ -274,6 +276,8 @@ subprojects {
     dependencies {
         implementation libraries.aspectj
         implementation libraries.validationapi
+
+        api libraries.kotlin
         api libraries.log4j
         api libraries.guava
         api libraries.commons
