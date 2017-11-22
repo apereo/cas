@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -39,7 +39,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
         final Response response = new WebApplicationServiceResponseBuilder().build(impl, 
-                "ticketId", CoreAuthenticationTestUtils.getAuthentication());
+                "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
     }
@@ -67,8 +67,8 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
 
-        final Response response = new WebApplicationServiceResponseBuilder().build(impl, null, 
-                CoreAuthenticationTestUtils.getAuthentication());
+        final Response response = new WebApplicationServiceResponseBuilder().build(impl, null,
+            RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
@@ -80,7 +80,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(SERVICE, "http://foo.com/");
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
         final Response response = new WebApplicationServiceResponseBuilder().build(impl, null,
-                CoreAuthenticationTestUtils.getAuthentication());
+            RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
@@ -93,7 +93,7 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
         final Response response = new WebApplicationServiceResponseBuilder().build(impl, null,
-                CoreAuthenticationTestUtils.getAuthentication());
+            RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertEquals("http://foo.com/?param=test", response.getUrl());

@@ -31,6 +31,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.junit.runner.RunWith;
@@ -76,6 +77,7 @@ import javax.annotation.PostConstruct;
         CasCoreTicketCatalogConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreLogoutConfiguration.class,
+        CasCookieConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,

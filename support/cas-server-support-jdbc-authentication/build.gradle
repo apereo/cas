@@ -9,7 +9,9 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")
 }

@@ -47,7 +47,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     private final int order;
     
-    
     /**
      * Instantiates a new Abstract authentication handler.
      *

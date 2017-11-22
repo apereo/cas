@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
  * @since 4.1.0
  */
 public class HostNameBasedUniqueTicketIdGeneratorTests {
-
+    
     @Test
     public void verifyUniqueGenerationOfTicketIds() {
         final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);

@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -17,8 +16,8 @@ public class ScriptedRegisteredServiceUsernameProviderTests {
         final ScriptedRegisteredServiceUsernameProvider p = new ScriptedRegisteredServiceUsernameProvider();
         p.setScript("file:src/test/resources/uidscript.groovy");
         final String id =
-                p.resolveUsername(CoreAuthenticationTestUtils.getPrincipal(), CoreAuthenticationTestUtils.getService(),
-                        CoreAuthenticationTestUtils.getRegisteredService());
+                p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
+                    RegisteredServiceTestUtils.getRegisteredService());
         assertEquals(id, "test");
     }
 }

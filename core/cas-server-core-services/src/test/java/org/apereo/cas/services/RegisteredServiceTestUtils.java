@@ -1,16 +1,25 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.apereo.cas.services.RegisteredService.LogoutType;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2.0
  */
 public final class RegisteredServiceTestUtils {
-
+    public static final String CONST_USERNAME = "test";
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
 
@@ -98,6 +107,10 @@ public final class RegisteredServiceTestUtils {
         return attributes;
     }
 
+    public static AbstractRegisteredService getRegisteredService() {
+        return getRegisteredService(CONST_TEST_URL);
+    }
+    
     public static AbstractRegisteredService getRegisteredService(final String id) {
         try {
             final RegexRegisteredService s = new RegexRegisteredService();
@@ -138,4 +151,39 @@ public final class RegisteredServiceTestUtils {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    public static Principal getPrincipal() {
+        return getPrincipal(CONST_USERNAME);
+    }
+
+    public static Principal getPrincipal(final String name) {
+        return getPrincipal(name, new HashMap<>(0));
+    }
+
+    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
+    }
+
+    public static Authentication getAuthentication() {
+        return getAuthentication(CONST_USERNAME);
+    }
+
+    public static Authentication getAuthentication(final String name) {
+        return getAuthentication(getPrincipal(name));
+    }
+
+    public static Authentication getAuthentication(final Principal principal) {
+        return getAuthentication(principal, new HashMap<>(0));
+    }
+
+    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
+        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        return new DefaultAuthenticationBuilder(principal)
+            .addCredential(meta)
+            .addSuccess("testHandler", new DefaultHandlerResult(handler, meta))
+            .setAttributes(attributes)
+            .build();
+    }
+
 }

@@ -6,6 +6,7 @@ dependencies {
     implementation project(":support:cas-server-support-couchbase-core")
     
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
 }

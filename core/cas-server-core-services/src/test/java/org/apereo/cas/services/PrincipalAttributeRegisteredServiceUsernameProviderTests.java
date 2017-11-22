@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
@@ -38,8 +37,8 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         final String mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", mappedAttribute);
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
-        final RegisteredService registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+        final AbstractRegisteredService registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        registeredService.setAttributeReleasePolicy(policy);
 
         final Map<String, Object> principalAttributes = new HashMap<>();
         principalAttributes.put("email", "user@example.org");
