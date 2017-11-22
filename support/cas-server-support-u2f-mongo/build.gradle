@@ -14,5 +14,6 @@ dependencies {
     implementation project(":support:cas-server-support-u2f-core")
     implementation project(":support:cas-server-support-mongo-core")
 
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(path: ":support:cas-server-support-u2f", configuration: "tests")
 }
