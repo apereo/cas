@@ -54,8 +54,7 @@ public interface AuthenticationHandler extends Ordered {
      * take care to populate the cause, where applicable, with the error that prevented authentication.
      */
     HandlerResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
-
-
+    
     /**
      * Determines whether the handler has the capability to authenticate the given credential. In practical terms,
      * the {@link #authenticate(Credential)} method MUST be capable of processing a given credential if
@@ -65,7 +64,9 @@ public interface AuthenticationHandler extends Ordered {
      *
      * @return True if the handler supports the Credential, false otherwise.
      */
-    boolean supports(Credential credential);
+    default boolean supports(final Credential credential) {
+        return false;
+    }
     
     /**
      * Gets a unique name for this authentication handler within the Spring context that contains it.
