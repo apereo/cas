@@ -80,7 +80,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
 
     @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     @Override
-    public ModelAndView handleRequestPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequest(request, response);
     }
 
